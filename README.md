@@ -1,2 +1,3 @@
-# TheSpaceWarOnline
-play.thespacewar.com
+Not open source.
+
+Copyright and all rights reserved etc
