@@ -19,39 +19,75 @@
                         <div v-for="card in opponentStation.handSizeCards" class="card card-faceDown"/>
                     </div>
                 </div>
+                <div class="field-zone field-section">
+                </div>
+                <div class="field-piles field-section">
+                    <div class="field-drawPile">
+                        <div class="card card-faceDown"/>
+                    </div>
+                    <div class="field-discardPile">
+                        <div v-if="opponentDiscardedCards.length === 0"
+                             class="card card--placeholder"/>
+                        <div v-else
+                             :style="getCardImageStyle(opponentTopDiscardCard)"
+                             class="card card--turnedAround"/>
+                    </div>
+                </div>
                 <div class="field-opponentCardsOnHand field-section">
                     <div
                             v-for="n in opponentCardCount"
                             :style="getOpponentCardStyle(n - 1)"
                             class="card card-faceDown"/>
                 </div>
-                <div class="field-piles field-section">
-                </div>
             </div>
             <div class="field-player">
                 <div class="field-piles field-section">
+                    <div class="field-drawPile">
+                        <div class="card card-faceDown"/>
+                    </div>
+                    <div class="field-discardPile">
+                        <div v-if="playerDiscardedCards.length === 0" class="card card--placeholder"/>
+                        <div v-else
+                             :style="getCardImageStyle(playerTopDiscardCard)"
+                             class="card"/>
+                        <div v-if="holdingCard" @click="cardGhostClick('discard')" class="card card-ghost"/>
+                    </div>
                 </div>
-                <div class="field-playerCardsOnHand field-section">
-                    <div
-                            v-for="card, index in playerCardModels"
-                            v-if="card !== holdingCard"
-                            :style="getCardStyle(card, index)"
-                            :class="getPlayerCardClasses(card)"
-                            @click="playerCardClick(card)"/>
+                <div class="field-zone field-section">
+                    <template v-for="n in 6">
+                        <div v-if="n <= playerCardsInZone.length"
+                             class="card"
+                             :style="getCardInZoneStyle(playerCardsInZone[n - 1])"/>
+                        <div v-else-if="holdingCard"
+                             @click="cardGhostClick('zone')"
+                             class="card card-ghost"/>
+                        <div v-else class="card card--placeholder"/>
+                    </template>
                 </div>
                 <div class="field-playerStation field-station field-section">
                     <div class="field-stationRow">
                         <div v-for="card in playerStation.drawCards" class="card card-faceDown"/>
                         <div v-if="holdingCard" @click="cardGhostClick('station-draw')" class="card card-ghost"/>
+                        <div v-else class="card card--placeholder"/>
                     </div>
                     <div class="field-stationRow">
                         <div v-for="card in playerStation.actionCards" class="card card-faceDown"/>
                         <div v-if="holdingCard" @click="cardGhostClick('station-action')" class="card card-ghost"/>
+                        <div v-else class="card card--placeholder"/>
                     </div>
                     <div class="field-stationRow">
                         <div v-for="card in playerStation.handSizeCards" class="card card-faceDown"/>
                         <div v-if="holdingCard" @click="cardGhostClick('station-handSize')" class="card card-ghost"/>
+                        <div v-else class="card card--placeholder"/>
                     </div>
+                </div>
+                <div class="field-playerCardsOnHand field-section">
+                    <div
+                            v-for="card, index in playerCardModels"
+                            v-if="card !== holdingCard"
+                            :style="getCardOnHandStyle(card, index)"
+                            :class="getPlayerCardClasses(card)"
+                            @click="playerCardClick(card)"/>
                 </div>
             </div>
         </div>
@@ -80,6 +116,9 @@
                 'playerStation',
                 'opponentStation',
                 'opponentCardCount',
+                'playerCardsInZone',
+                'playerDiscardedCards',
+                'opponentDiscardedCards'
             ]),
             ...mapGetters([
                 'playerCardModels'
@@ -93,12 +132,19 @@
                     backgroundImage: 'url(/card/' + this.holdingCard.id + '/image)',
                     pointerEvents: 'none'
                 }
+            },
+            opponentTopDiscardCard() {
+                return this.opponentDiscardedCards[this.opponentDiscardedCards.length - 1];
+            },
+            playerTopDiscardCard() {
+                return this.playerDiscardedCards[this.playerDiscardedCards.length - 1];
             }
         },
         methods: {
             ...mapActions([
                 'init',
-                'putDownCard'
+                'putDownCard',
+                'discardCard'
             ]),
             playerCardClick(card) {
                 if (this.actionPoints >= card.cost) {
@@ -106,7 +152,12 @@
                 }
             },
             cardGhostClick(location) {
-                this.putDownCard({ location, cardId: this.holdingCard.id });
+                if (location === 'discard') {
+                    this.discardCard(this.holdingCard.id);
+                }
+                else {
+                    this.putDownCard({ location, cardId: this.holdingCard.id });
+                }
                 this.holdingCard = null;
             },
             emptyClick() {
@@ -115,12 +166,12 @@
                 }
             },
             getOpponentCardStyle(index) {
-                const cardCount = this.playerCardsOnHand.length;
-                const turnDistance = 2;
+                const cardCount = this.opponentCardCount;
+                const turnDistance = 1.5;
                 const startDegrees = -((cardCount - 1) * turnDistance * .5);
                 let degrees = index * turnDistance;
                 return {
-                    transform: 'rotate(' + ((startDegrees + degrees)) + 'deg)',
+                    transform: 'rotate(' + (startDegrees + degrees) + 'deg)',
                     transformOrigin: 'center -1600%'
                 }
             },
@@ -134,7 +185,7 @@
                 }
                 return classes;
             },
-            getCardStyle(card, index) {
+            getCardOnHandStyle(card, index) {
                 const cardCount = this.playerCardsOnHand.length;
                 const turnDistance = 1.5;
                 const startDegrees = -((cardCount - 1) * turnDistance * .5);
@@ -142,6 +193,16 @@
                 return {
                     transform: 'rotate(' + (startDegrees + degrees) + 'deg)',
                     transformOrigin: 'center 1600%',
+                    backgroundImage: 'url(/card/' + card.id + '/image)'
+                }
+            },
+            getCardInZoneStyle(card) {
+                return {
+                    ...this.getCardImageStyle(card)
+                }
+            },
+            getCardImageStyle(card) {
+                return {
                     backgroundImage: 'url(/card/' + card.id + '/image)'
                 }
             }
@@ -166,8 +227,8 @@
 <style scoped lang="scss">
     $cardWidth: 652px;
     $cardHeight: 916px;
-    $opponentCardWidth: calc(#{$cardWidth} / 10);
-    $opponentCardHeight: calc(#{$cardHeight} / 10);
+    $opponentCardWidth: calc(#{$cardWidth} / 12);
+    $opponentCardHeight: calc(#{$cardHeight} / 12);
     $playerCardWidth: calc(#{$cardWidth} / 5);
     $playerCardHeight: calc(#{$cardHeight} / 5);
 
@@ -181,18 +242,6 @@
         width: 100vw;
         height: 100vh;
         overflow: hidden;
-    }
-
-    .field .field-section:first-child {
-        border-right: 2px dashed rgba(0, 0, 0, .12);
-        padding-right: 20px;
-        margin-right: 20px;
-    }
-
-    .field .field-section:last-child {
-        border-left: 2px dashed rgba(0, 0, 0, .12);
-        padding-left: 20px;
-        margin-left: 20px;
     }
 
     .field {
@@ -210,20 +259,31 @@
         position: relative;
     }
 
-    .field-opponent {
-        flex: 0 0 30%;
+    .field-player {
+        .card-faceDown {
+            border-color: #E63946;
+            background-color: #FF5964;
+        }
     }
 
-    .field-station {
-        display: flex;
-        flex: 0 0 20%;
+    .field-opponent {
+        flex: 0 0 30%;
+
+        .card {
+            width: $opponentCardWidth;
+            height: $opponentCardHeight;
+        }
+
+        .card-faceDown {
+            background-color: #35A7FF;
+            border-color: #38618C;
+        }
     }
 
     .field-playerStation {
         flex-direction: column-reverse;
-    }
+        margin-right: 8px;
 
-    .field-playerStation .field-stationRow {
         .card {
             width: $playerCardWidth;
             height: $playerCardHeight;
@@ -254,13 +314,22 @@
         }
     }
 
+    .field-station {
+        display: flex;
+        flex: 0 0 20%;
+    }
+
     .field-stationRow {
         display: flex;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
     }
 
     .field-piles {
-        flex: 0 0 10%;
+        flex: 0 0 12%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-evenly;
     }
 
     .field-drawPile {
@@ -268,7 +337,35 @@
     }
 
     .field-discardPile {
+        position: relative;
 
+        .field-player & {
+            width: $playerCardWidth;
+            height: $playerCardHeight;
+        }
+
+        .field-opponent & {
+            width: $opponentCardWidth;
+            height: $opponentCardHeight;
+        }
+
+        .card {
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+    }
+
+    .field-zone {
+        flex: 1 0;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+
+        .card {
+            margin: 4px;
+            box-sizing: border-box;
+        }
     }
 
     .field-opponentCardsOnHand {
@@ -309,15 +406,13 @@
         position: absolute;
         bottom: 0;
         transition: bottom .2s ease-out, width .2s ease-out, height .2s ease-out;
+        box-sizing: content-box;
 
         &::after {
             content: "";
             width: 100%;
             height: 175%;
             position: absolute;
-            /*left: 50%;*/
-            /*right: 50%;*/
-            //transform: translateY(-50%);
         }
 
         &::before {
@@ -338,7 +433,6 @@
         }
 
         &--highlight {
-            border: 2px solid #000000;
             outline: 4px solid #8ae68a;
 
             &:hover {
@@ -350,22 +444,32 @@
     .card {
         width: $playerCardWidth;
         height: $playerCardHeight;
-        border: 3px solid #96965a;
         display: flex;
         flex-direction: column;
         background: white;
         background-size: 100% 100%;
+        box-sizing: border-box;
+
+        &--placeholder {
+            background: none;
+            border-color: transparent;
+        }
+
+        &--turnedAround {
+            transform: rotate(180deg);
+        }
     }
 
     .card-faceDown {
-        background: #4e4e2e;
+        border-width: 3px;
+        border-style: solid;
     }
 
     .card-ghost {
         width: $playerCardWidth;
         height: $playerCardHeight;
-        outline: 4px solid #8ae68a;
-        background: white;
+        border: 4px solid #8ae68a;
+        background: transparent;
     }
 
     .holdingCard {

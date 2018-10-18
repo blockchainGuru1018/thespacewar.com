@@ -17,13 +17,16 @@ module.exports = function (deps) {
             opponentUser,
             ownUser: userRepository.getOwnUser(),
             actionPoints: 15,
+            playerCardsInZone: [],
+            playerCardsOnHand: [],
+            playerDiscardedCards: [],
             playerStation: {
                 drawCards: [],
                 actionCards: [],
                 handSizeCards: []
             },
-            playerCardsOnHand: [],
             opponentCardCount: 0,
+            opponentDiscardedCards: [],
             opponentStation: {
                 drawCards: [],
                 actionCards: [],
@@ -46,7 +49,11 @@ module.exports = function (deps) {
             persistOngoingMatch,
             nextPhase,
             putDownCard,
-            putDownOpponentCard
+            putDownOpponentCard,
+            discardCard,
+            opponentDiscardedCard,
+            setOpponentCardCount,
+            placeCardInZone
         }
     };
 
@@ -96,7 +103,7 @@ module.exports = function (deps) {
             state.opponentStation.actionCards.push({});
         }
         else if (location === 'handSize') {
-            state.opponentStation.actionCards.push({});
+            state.opponentStation.handSizeCards.push({});
         }
     }
 
@@ -109,14 +116,20 @@ module.exports = function (deps) {
         const {
             stationCards,
             cardsOnHand,
+            cardsInZone,
+            discardedCards,
             opponentCardCount,
+            opponentDiscardedCards,
             opponentStationCards,
             phase,
             actionPoints
         } = restoreState;
         commit('setPlayerStationCards', stationCards);
         commit('setPlayerCardsOnHand', cardsOnHand);
+        state.playerCardsInZone = cardsInZone;
+        state.playerDiscardedCards = discardedCards;
         state.opponentCardCount = opponentCardCount;
+        state.opponentDiscardedCards = opponentDiscardedCards;
         commit('setOpponentStationCards', opponentStationCards);
 
         state.phase = phase;
@@ -146,7 +159,7 @@ module.exports = function (deps) {
         state.phase = PHASES[PHASES.indexOf(state.phase) + 1];
     }
 
-    function putDownCard({ state }, { location, cardId }) {
+    function putDownCard({ state, dispatch }, { location, cardId }) {
         const cardIndexOnHand = state.playerCardsOnHand.findIndex(c => c.id === cardId);
         const card = state.playerCardsOnHand[cardIndexOnHand];
         state.playerCardsOnHand.splice(cardIndexOnHand, 1);
@@ -161,7 +174,34 @@ module.exports = function (deps) {
         else if (location === 'station-handSize') {
             state.playerStation.handSizeCards.push(card);
         }
+        else if (location === 'zone') {
+            dispatch('placeCardInZone', card);
+        }
+
         matchController.emit('putDownCard', { location, cardId });
+    }
+
+    function placeCardInZone({ state }, card) {
+        state.playerCardsInZone.push(card);
+    }
+
+    function discardCard({ state }, cardId) {
+        const cardIndexOnHand = state.playerCardsOnHand.findIndex(c => c.id === cardId);
+        const card = state.playerCardsOnHand[cardIndexOnHand];
+        state.playerCardsOnHand.splice(cardIndexOnHand, 1);
+        state.actionPoints += 2;
+        state.playerDiscardedCards.push(card);
+        matchController.emit('discardCard', cardId);
+    }
+
+    function setOpponentCardCount({ state }, opponentCardCount) {
+        state.opponentCardCount = opponentCardCount;
+    }
+
+    function opponentDiscardedCard({ state }, { bonusCard, discardedCard, opponentCardCount }) {
+        state.playerCardsOnHand.unshift(bonusCard);
+        state.opponentCardCount = opponentCardCount;
+        state.opponentDiscardedCards.push(discardedCard);
     }
 
     function putDownOpponentCard({ state, commit }, { location }) {

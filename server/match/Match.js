@@ -24,6 +24,7 @@ module.exports = function (deps) {
         getOwnState,
         nextPhase,
         putDownCard,
+        discardCard,
         updatePlayer,
         toClientModel
     };
@@ -32,14 +33,14 @@ module.exports = function (deps) {
         const gameHasAlreadyStarted = state.playersReady >= players.length;
         if (gameHasAlreadyStarted) {
             for (let player of players) {
-                emitRestoreStateForPlayer(player);
+                emitRestoreStateForPlayer(player.id);
             }
         }
         else {
             state.playersReady++;
             if (state.playersReady === players.length) {
-                players.forEach(startGameForPlayer);
-                players.forEach(emitBeginGameForPlayer);
+                players.forEach(player => startGameForPlayer(player.id));
+                players.forEach(player => emitBeginGameForPlayer(player.id));
             }
         }
     }
@@ -62,11 +63,33 @@ module.exports = function (deps) {
             const stationLocation = location.split('-').pop();
             state.stationCards.push({ place: stationLocation, card });
         }
-        else {
-
+        else if (location === 'zone') {
+            state.cardsInZone.push(card);
         }
 
         emitToOpponent(playerId, 'putDownOpponentCard', { location });
+    }
+
+    function discardCard(playerId, cardId) {
+        const playerState = getOwnState(playerId);
+        const cardIndexOnHand = playerState.cardsOnHand.findIndex(c => c.id === cardId);
+        const card = playerState.cardsOnHand[cardIndexOnHand];
+        if (!card) throw new Error('Invalid state - someone is cheating');
+        playerState.cardsOnHand.splice(cardIndexOnHand, 1);
+        playerState.actionPoints += getActionPointsFromDiscardingCard();
+        playerState.discardedCards.push(card);
+
+        const opponentId = getOpponentId(playerId);
+        const opponentDeck = getOpponentDeck(playerId);
+        const opponentState = getOpponentState(playerId);
+        const bonusCard = opponentDeck.drawSingle();
+        opponentState.cardsOnHand.push(bonusCard);
+        emitToPlayer(opponentId, 'opponentDiscardedCard', {
+            bonusCard,
+            discardedCard: card,
+            opponentCardCount: getPlayerCardCount(playerId)
+        });
+        emitOpponentCardCount(playerId);
     }
 
     function getOwnState(playerId) {
@@ -78,18 +101,21 @@ module.exports = function (deps) {
         Object.assign(player, mergeData);
     }
 
-    function emitRestoreStateForPlayer(player) {
-        const data = state.playerState[player.id];
-        const opponentId = getOpponentId(player.id);
-        emitToPlayer(player, 'restoreState', {
+    function emitOpponentCardCount(playerId) {
+        emitToPlayer(playerId, 'setOpponentCardCount', getOpponentCardCount(playerId));
+    }
+
+    function emitRestoreStateForPlayer(playerId) {
+        const data = state.playerState[playerId];
+        emitToPlayer(playerId, 'restoreState', {
             ...data,
-            opponentCardCount: getOpponentCardCount(opponentId),
-            opponentStationCards: getOpponentStationCards(opponentId),
+            opponentCardCount: getOpponentCardCount(playerId),
+            opponentDiscardedCards: getOpponentDiscardedCards(playerId),
+            opponentStationCards: getOpponentStationCards(playerId),
         });
     }
 
-    function startGameForPlayer(player) {
-        const playerId = player.id
+    function startGameForPlayer(playerId) {
         let playerDeck = state.deckByPlayerId[playerId];
         let stationCards = [
             { card: playerDeck.drawSingle(), place: 'draw' },
@@ -102,9 +128,31 @@ module.exports = function (deps) {
         state.playerState[playerId] = {
             cardsOnHand,
             stationCards,
+            cardsInZone: [],
+            discardedCards: [],
             phase: 'draw',
             actionPoints: getActionPointsFromStationCards(stationCards)
         };
+    }
+
+    function emitBeginGameForPlayer(playerId) {
+        const { stationCards, cardsOnHand } = state.playerState[playerId];
+        emitToPlayer(playerId, 'beginGame', {
+            stationCards,
+            cardsOnHand,
+            opponentCardCount: getOpponentCardCount(playerId),
+            opponentStationCards: getOpponentStationCards(playerId)
+        });
+    }
+
+    function emitToOpponent(playerId, action, value) {
+        const opponent = players.find(p => p.id !== playerId);
+        emitToPlayer(opponent.id, action, value);
+    }
+
+    function emitToPlayer(playerId, action, value) {
+        const player = players.find(p => p.id === playerId)
+        player.connection.emit('match', { matchId, action, value });
     }
 
     function getActionPointsFromStationCards(stationCards) {
@@ -113,24 +161,8 @@ module.exports = function (deps) {
             .length * 2;
     }
 
-    function emitBeginGameForPlayer(player) {
-        const { stationCards, cardsOnHand } = state.playerState[player.id];
-        const opponentId = getOpponentId(player.id);
-        emitToPlayer(player, 'beginGame', {
-            stationCards,
-            cardsOnHand,
-            opponentCardCount: getOpponentCardCount(opponentId),
-            opponentStationCards: getOpponentStationCards(opponentId)
-        });
-    }
-
-    function emitToOpponent(playerId, action, value) {
-        const opponent = players.find(p => p.id !== playerId);
-        emitToPlayer(opponent, action, value);
-    }
-
-    function emitToPlayer(player, action, value) {
-        player.connection.emit('match', { matchId, action, value });
+    function getActionPointsFromDiscardingCard() {
+        return 2;
     }
 
     function toClientModel() {
@@ -140,17 +172,40 @@ module.exports = function (deps) {
         }
     }
 
-    function getOpponentCardCount(opponentId) {
-        const opponentState = state.playerState[opponentId];
-        return opponentState.cardsOnHand.length;
+    function getOpponentCardCount(playerId) {
+        const opponentId = getOpponentId(playerId);
+        return getPlayerCardCount(opponentId);
     }
 
-    function getOpponentStationCards(opponentId) {
-        const opponentState = state.playerState[opponentId];
+    function getPlayerCardCount(playerId) {
+        const playerState = state.playerState[playerId];
+        return playerState.cardsOnHand.length;
+    }
+
+    function getOpponentDiscardedCards(playerId) {
+        const opponentId = getOpponentId(playerId);
+        return getPlayerDiscardedCards(opponentId);
+    }
+
+    function getPlayerDiscardedCards(playerId) {
+        const playerState = state.playerState[playerId];
+        return playerState.discardedCards;
+    }
+
+    function getOpponentStationCards(playerId) {
+        const opponentState = state.playerState[getOpponentId(playerId)];
         return opponentState.stationCards.map(s => ({ place: s.place }));
     }
 
     function getOpponentId(playerId) {
         return players.find(p => p.id !== playerId).id;
+    }
+
+    function getOpponentState(playerId) {
+        return state.playerState[getOpponentId(playerId)];
+    }
+
+    function getOpponentDeck(playerId) {
+        return state.deckByPlayerId[getOpponentId(playerId)];
     }
 };
