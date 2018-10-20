@@ -78,11 +78,15 @@ module.exports = function (deps) {
         const cardIndexOnHand = playerState.cardsOnHand.findIndex(c => c.id === cardId);
         const card = playerState.cardsOnHand[cardIndexOnHand];
         const canAffordCard = playerState.actionPoints >= card.cost;
-        if (!card || !canAffordCard) throw new Error('Invalid state - someone is cheating');
+        const isStationCard = location.startsWith('station');
+        if (!card) throw CheatError('Card is not on hand');
+        if (!isStationCard && !canAffordCard) {
+            throw CheatError('Cannot afford card');
+        }
         playerState.cardsOnHand.splice(cardIndexOnHand, 1);
         playerState.actionPoints -= card.cost;
 
-        if (location.startsWith('station')) {
+        if (isStationCard) {
             const stationLocation = location.split('-').pop();
             playerState.stationCards.push({ place: stationLocation, card });
         }
@@ -159,8 +163,7 @@ module.exports = function (deps) {
             discardedCards: [],
             phase: 'draw',
             actionPoints: getActionPointsFromStationCards(stationCards),
-            events: [],
-            currentPlayer: state.currentPlayer
+            events: []
         };
     }
 
@@ -169,6 +172,7 @@ module.exports = function (deps) {
         emitToPlayer(playerId, 'beginGame', {
             stationCards,
             cardsOnHand,
+            currentPlayer: state.currentPlayer,
             opponentCardCount: getOpponentCardCount(playerId),
             opponentStationCards: getOpponentStationCards(playerId)
         });
@@ -247,3 +251,8 @@ module.exports = function (deps) {
         return state.deckByPlayerId[getOpponentId(playerId)];
     }
 };
+
+function CheatError(reason) {
+    const error = new Error(`Someone is trying to cheat - ${reason}`);
+    error.type = 'cheatDetected';
+}
