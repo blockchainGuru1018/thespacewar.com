@@ -58,7 +58,7 @@
                         <div v-if="n <= playerCardsInZone.length"
                              class="card"
                              :style="getCardInZoneStyle(playerCardsInZone[n - 1])"/>
-                        <div v-else-if="holdingCard"
+                        <div v-else-if="playerZoneCardGhostVisible"
                              @click="cardGhostClick('zone')"
                              class="card card-ghost"/>
                         <div v-else class="card card--placeholder"/>
@@ -67,17 +67,23 @@
                 <div class="field-playerStation field-station field-section">
                     <div class="field-stationRow">
                         <div v-for="card in playerStation.drawCards" class="card card-faceDown"/>
-                        <div v-if="holdingCard" @click="cardGhostClick('station-draw')" class="card card-ghost"/>
+                        <div v-if="stationCardGhostVisible"
+                             @click="cardGhostClick('station-draw')"
+                             class="card card-ghost"/>
                         <div v-else class="card card--placeholder"/>
                     </div>
                     <div class="field-stationRow">
                         <div v-for="card in playerStation.actionCards" class="card card-faceDown"/>
-                        <div v-if="holdingCard" @click="cardGhostClick('station-action')" class="card card-ghost"/>
+                        <div v-if="stationCardGhostVisible"
+                             @click="cardGhostClick('station-action')"
+                             class="card card-ghost"/>
                         <div v-else class="card card--placeholder"/>
                     </div>
                     <div class="field-stationRow">
                         <div v-for="card in playerStation.handSizeCards" class="card card-faceDown"/>
-                        <div v-if="holdingCard" @click="cardGhostClick('station-handSize')" class="card card-ghost"/>
+                        <div v-if="stationCardGhostVisible"
+                             @click="cardGhostClick('station-handSize')"
+                             class="card card-ghost"/>
                         <div v-else class="card card--placeholder"/>
                     </div>
                 </div>
@@ -108,6 +114,9 @@
         computed: {
             ...mapState([
                 'matchId',
+                'turn',
+                'currentPlayer',
+                'events',
                 'phase',
                 'actionPoints',
                 'opponentUser',
@@ -133,11 +142,28 @@
                     pointerEvents: 'none'
                 }
             },
+            playerZoneCardGhostVisible() {
+                return this.phase === 'action'
+                    && this.holdingCard
+                    && this.canAffordCard(this.holdingCard);
+            },
             opponentTopDiscardCard() {
                 return this.opponentDiscardedCards[this.opponentDiscardedCards.length - 1];
             },
             playerTopDiscardCard() {
                 return this.playerDiscardedCards[this.playerDiscardedCards.length - 1];
+            },
+            stationCardGhostVisible() {
+                const hasAlreadyPutDownStationCard = !this.events.some(e => {
+                    return e.turn === this.turn
+                        && e.type === 'putDownCard'
+                        && e.location.startsWith('station');
+                })
+                return this.holdingCard && hasAlreadyPutDownStationCard;
+            },
+            canPlaceCards() {
+                return this.phase === 'action'
+                    && this.currentPlayer === this.ownUser.id;
             }
         },
         methods: {
@@ -146,8 +172,11 @@
                 'putDownCard',
                 'discardCard'
             ]),
+            canAffordCard(card) {
+                return this.actionPoints >= card.cost;
+            },
             playerCardClick(card) {
-                if (this.actionPoints >= card.cost) {
+                if (this.canPlaceCards) {
                     this.holdingCard = card;
                 }
             },
@@ -217,7 +246,7 @@
             });
             this.$refs.match.addEventListener('click', event => {
                 const targetElementClasses = Array.from(event.target.classList)
-                if (!targetElementClasses.includes('card')) {
+                if (!targetElementClasses.includes('card') || targetElementClasses.includes('card--placeholder')) {
                     this.emptyClick();
                 }
             });

@@ -1,6 +1,10 @@
+const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
 const Deck = require('../deck/Deck.js');
 
 const PHASES = ['draw', 'action', 'discard', 'attack'];
+
+// TODO When putting down card, check so that station cards are not placed more than 1 per turn
+// TODO When putting down card, check so that the player is the turns current player
 
 module.exports = function (deps) {
 
@@ -8,6 +12,9 @@ module.exports = function (deps) {
     const players = deps.players;
 
     const state = {
+        turn: 1,
+        currentPlayer: players[0].id,
+        playerOrder: players.map(p => p.id),
         playersReady: 0,
         playerState: {},
         deckByPlayerId: {
@@ -47,25 +54,43 @@ module.exports = function (deps) {
 
     function nextPhase(playerId) {
         const state = getOwnState(playerId);
-        state.phase = PHASES[PHASES.indexOf(state.phase) + 1];
+        const currentPhaseIndex = PHASES.indexOf(state.phase);
+        if (currentPhaseIndex === PHASES.length - 1) {
+            state.phase = PHASES[0];
+            const isLastPlayerOfTurn = state.currentPlayer === state.playerOrder[state.playerOrder.length - 1]
+            if (isLastPlayerOfTurn) {
+                state.turn += 1;
+                state.currentPlayer = state.playerOrder[0];
+            }
+            else {
+                state.currentPlayer = state.playerOrder[1];
+            }
+
+            emitNextPlayer();
+        }
+        else {
+            state.phase = PHASES[currentPhaseIndex + 1];
+        }
     }
 
     function putDownCard(playerId, { location, cardId }) {
-        const state = getOwnState(playerId);
-        const cardIndexOnHand = state.cardsOnHand.findIndex(c => c.id === cardId);
-        const card = state.cardsOnHand[cardIndexOnHand];
-        const canAffordCard = state.actionPoints >= card.cost;
+        const playerState = getOwnState(playerId);
+        const cardIndexOnHand = playerState.cardsOnHand.findIndex(c => c.id === cardId);
+        const card = playerState.cardsOnHand[cardIndexOnHand];
+        const canAffordCard = playerState.actionPoints >= card.cost;
         if (!card || !canAffordCard) throw new Error('Invalid state - someone is cheating');
-        state.cardsOnHand.splice(cardIndexOnHand, 1);
-        state.actionPoints -= card.cost;
+        playerState.cardsOnHand.splice(cardIndexOnHand, 1);
+        playerState.actionPoints -= card.cost;
 
         if (location.startsWith('station')) {
             const stationLocation = location.split('-').pop();
-            state.stationCards.push({ place: stationLocation, card });
+            playerState.stationCards.push({ place: stationLocation, card });
         }
         else if (location === 'zone') {
-            state.cardsInZone.push(card);
+            playerState.cardsInZone.push(card);
         }
+
+        playerState.events.push(PutDownCardEvent({ turn: state.turn, location, cardId }));
 
         emitToOpponent(playerId, 'putDownOpponentCard', { location });
     }
@@ -106,9 +131,11 @@ module.exports = function (deps) {
     }
 
     function emitRestoreStateForPlayer(playerId) {
-        const data = state.playerState[playerId];
+        const playerState = state.playerState[playerId];
         emitToPlayer(playerId, 'restoreState', {
-            ...data,
+            ...playerState,
+            turn: state.turn,
+            currentPlayer: state.currentPlayer,
             opponentCardCount: getOpponentCardCount(playerId),
             opponentDiscardedCards: getOpponentDiscardedCards(playerId),
             opponentStationCards: getOpponentStationCards(playerId),
@@ -131,7 +158,9 @@ module.exports = function (deps) {
             cardsInZone: [],
             discardedCards: [],
             phase: 'draw',
-            actionPoints: getActionPointsFromStationCards(stationCards)
+            actionPoints: getActionPointsFromStationCards(stationCards),
+            events: [],
+            currentPlayer: state.currentPlayer
         };
     }
 
@@ -143,6 +172,15 @@ module.exports = function (deps) {
             opponentCardCount: getOpponentCardCount(playerId),
             opponentStationCards: getOpponentStationCards(playerId)
         });
+    }
+
+    function emitNextPlayer() {
+        for (const player of players) {
+            emitToPlayer(player, 'nextPlayer', {
+                turn: state.turn,
+                currentPlayer: state.currentPlayer
+            });
+        }
     }
 
     function emitToOpponent(playerId, action, value) {
