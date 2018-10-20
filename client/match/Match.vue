@@ -22,15 +22,15 @@
                 <div class="field-zone field-section">
                 </div>
                 <div class="field-piles field-section">
-                    <div class="field-drawPile">
-                        <div class="card card-faceDown"/>
-                    </div>
                     <div class="field-discardPile">
                         <div v-if="opponentDiscardedCards.length === 0"
                              class="card card--placeholder"/>
                         <div v-else
                              :style="getCardImageStyle(opponentTopDiscardCard)"
                              class="card card--turnedAround"/>
+                    </div>
+                    <div class="field-drawPile">
+                        <div class="card card-faceDown"/>
                     </div>
                 </div>
                 <div class="field-opponentCardsOnHand field-section">
