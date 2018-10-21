@@ -38,7 +38,8 @@ module.exports = function (deps) {
             events: []
         },
         getters: {
-            playerCardModels
+            playerCardModels,
+            nextPhaseButtonText
         },
         mutations: {
             setPlayerStationCards,
@@ -70,6 +71,15 @@ module.exports = function (deps) {
                 highlighted: false
             };
         });
+    }
+
+    function nextPhaseButtonText(state) {
+        if (state.phase === PHASES[PHASES.length - 1]) {
+            return '';
+        }
+        let nextPhase = PHASES[PHASES.indexOf(state.phase) + 1];
+        const nextPhaseCapitalizedText = nextPhase.substr(0, 1).toUpperCase() + nextPhase.substr(1)
+        return nextPhaseCapitalizedText;
     }
 
     function setPlayerStationCards(state, stationCards) {
@@ -175,8 +185,16 @@ module.exports = function (deps) {
     }
 
     function nextPhase({ state }) {
+        const nextPhaseIndex = PHASES.indexOf(state.phase) + 1
+        if (nextPhaseIndex >= PHASES.length) {
+            state.currentPlayer = null;
+            state.phase = 'draw';
+        }
+        else {
+            state.phase = PHASES[nextPhaseIndex];
+        }
+
         matchController.emit('nextPhase');
-        state.phase = PHASES[PHASES.indexOf(state.phase) + 1];
     }
 
     function putDownCard({ state, dispatch }, { location, cardId }) {

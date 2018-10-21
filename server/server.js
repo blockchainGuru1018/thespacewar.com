@@ -26,13 +26,14 @@ function run() {
         userRepository,
         matchRepository: MatchRepository({ socketRepository, userRepository })
     };
-    const controllers = wrapControllersWithRejectionProtection({
+    const controllers = {
         user: UserController(deps),
         match: MatchController(deps),
         card: CardController(deps)
-    });
+    };
+    const mappedControllers = wrapControllersWithRejectionProtection(controllers);
 
-    setupRoutes(controllers);
+    setupRoutes(mappedControllers);
     setupSocketHandler(deps, controllers);
 }
 

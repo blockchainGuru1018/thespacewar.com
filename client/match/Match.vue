@@ -95,6 +95,21 @@
                             :class="getPlayerCardClasses(card)"
                             @click="playerCardClick(card)"/>
                 </div>
+                <div class="field-playerHud">
+                    <div v-if="!isOwnTurn" class="playerHud-phaseText">Waiting for next player</div>
+                    <template v-else>
+                        <div class="playerHud-phaseText">{{ phaseText }} phase</div>
+                        <button v-if="nextPhaseButtonText"
+                                @click="nextPhaseClick"
+                                class="playerHud-nextPhaseButton playerHud-button">
+                            {{ nextPhaseButtonText }} phase
+                        </button>
+                        <button v-else
+                                @click="nextPhaseClick"
+                                class="playerHud-endTurnButton playerHud-button">End turn
+                        </button>
+                    </template>
+                </div>
             </div>
         </div>
         <div v-if="holdingCard" class="card holdingCard" :style="holdingCardStyle"/>
@@ -130,8 +145,15 @@
                 'opponentDiscardedCards'
             ]),
             ...mapGetters([
-                'playerCardModels'
+                'playerCardModels',
+                'nextPhaseButtonText'
             ]),
+            isOwnTurn() {
+                return this.ownUser.id === this.currentPlayer;
+            },
+            phaseText() {
+                return this.phase.substr(0, 1).toUpperCase() + this.phase.substr(1);
+            },
             holdingCardStyle() {
                 if (!this.holdingCard) return {};
 
@@ -163,17 +185,21 @@
             },
             canPlaceCards() {
                 return this.phase === 'action'
-                    && this.currentPlayer === this.ownUser.id;
+                    && this.isOwnTurn;
             }
         },
         methods: {
             ...mapActions([
                 'init',
                 'putDownCard',
-                'discardCard'
+                'discardCard',
+                'nextPhase'
             ]),
             canAffordCard(card) {
                 return this.actionPoints >= card.cost;
+            },
+            nextPhaseClick() {
+                this.nextPhase();
             },
             playerCardClick(card) {
                 if (this.canPlaceCards) {
@@ -503,5 +529,64 @@
 
     .holdingCard {
         position: absolute;
+    }
+
+    .field-playerHud {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 80px;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .playerHud-phaseText {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 18px;
+        font-family: Helvetica, sans-serif;
+        font-weight: bold;
+
+        background-color: #35A7FF;
+        box-shadow: inset 0 1px 10px 1px rgba(0, 0, 0, 0.18);
+        color: white;
+        margin: 0 10px 0 20px;
+    }
+
+    .playerHud-button {
+        box-shadow: 0px 1px 6px 1px rgba(0, 0, 0, 0.2);;
+        border: none;
+        font-size: 18px;
+        font-weight: bold;
+        padding: 10px 20px;
+
+        &:active {
+            outline: 2px solid rgba(0, 0, 0, .3);
+        }
+
+        &:focus, &:hover {
+            outline: 0;
+        }
+    }
+
+    .playerHud-nextPhaseButton {
+        background-color: #51c870;
+        color: white;
+
+        &:hover {
+            background-color: #68cc88;
+            outline: 0;
+        }
+    }
+
+    .playerHud-endTurnButton {
+        background-color: #ff3646;
+        color: white;
+
+        &:hover {
+            background-color: #ff6670;
+        }
     }
 </style>

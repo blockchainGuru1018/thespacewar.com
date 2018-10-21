@@ -53,10 +53,15 @@ module.exports = function (deps) {
     }
 
     function nextPhase(playerId) {
-        const state = getOwnState(playerId);
-        const currentPhaseIndex = PHASES.indexOf(state.phase);
+        if (playerId !== state.currentPlayer) {
+            throw CheatError('Switching phase when not your own turn');
+        }
+
+        const playerState = getOwnState(playerId);
+        const currentPhaseIndex = PHASES.indexOf(playerState.phase);
         if (currentPhaseIndex === PHASES.length - 1) {
-            state.phase = PHASES[0];
+            playerState.phase = PHASES[0];
+
             const isLastPlayerOfTurn = state.currentPlayer === state.playerOrder[state.playerOrder.length - 1]
             if (isLastPlayerOfTurn) {
                 state.turn += 1;
@@ -69,7 +74,7 @@ module.exports = function (deps) {
             emitNextPlayer();
         }
         else {
-            state.phase = PHASES[currentPhaseIndex + 1];
+            playerState.phase = PHASES[currentPhaseIndex + 1];
         }
     }
 
@@ -180,12 +185,15 @@ module.exports = function (deps) {
 
     function emitNextPlayer() {
         for (const player of players) {
-            emitToPlayer(player, 'nextPlayer', {
+            emitToPlayer(player.id, 'nextPlayer', {
                 turn: state.turn,
                 currentPlayer: state.currentPlayer
             });
         }
     }
+
+    //TODO Placing station card should not cost any action points
+    //TODO players should receive action points on the start of each turn
 
     function emitToOpponent(playerId, action, value) {
         const opponent = players.find(p => p.id !== playerId);
@@ -254,5 +262,7 @@ module.exports = function (deps) {
 
 function CheatError(reason) {
     const error = new Error(`Someone is trying to cheat - ${reason}`);
+    error.message = `Someone is trying to cheat - ${reason}`;
     error.type = 'cheatDetected';
+    return error;
 }
