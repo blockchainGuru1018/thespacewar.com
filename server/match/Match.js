@@ -1,5 +1,4 @@
 const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
-const Deck = require('../deck/Deck.js');
 
 const PHASES = ['draw', 'action', 'discard', 'attack'];
 
@@ -8,6 +7,7 @@ const PHASES = ['draw', 'action', 'discard', 'attack'];
 
 module.exports = function (deps) {
 
+    const deckFactory = deps.deckFactory;
     const matchId = deps.matchId;
     const players = deps.players;
 
@@ -18,8 +18,8 @@ module.exports = function (deps) {
         playersReady: 0,
         playerState: {},
         deckByPlayerId: {
-            [players[0].id]: Deck(),
-            [players[1].id]: Deck(),
+            [players[0].id]: deckFactory.create(),
+            [players[1].id]: deckFactory.create(),
         },
     };
 
@@ -82,9 +82,10 @@ module.exports = function (deps) {
         const playerState = getOwnState(playerId);
         const cardIndexOnHand = playerState.cardsOnHand.findIndex(c => c.id === cardId);
         const card = playerState.cardsOnHand[cardIndexOnHand];
+        if (!card) throw CheatError('Card is not on hand');
+
         const canAffordCard = playerState.actionPoints >= card.cost;
         const isStationCard = location.startsWith('station');
-        if (!card) throw CheatError('Card is not on hand');
         if (!isStationCard && !canAffordCard) {
             throw CheatError('Cannot afford card');
         }
@@ -261,8 +262,8 @@ module.exports = function (deps) {
 };
 
 function CheatError(reason) {
-    const error = new Error(`Someone is trying to cheat - ${reason}`);
-    error.message = `Someone is trying to cheat - ${reason}`;
-    error.type = 'cheatDetected';
+    const error = new Error(reason);
+    error.message = reason;
+    error.type = 'CheatDetected';
     return error;
 }

@@ -1,16 +1,8 @@
-const cards = require('../card/cards.json');
-const SIZE = 60;
+module.exports = function (deps) {
 
-module.exports = function () {
+    const cardFactory = deps.cardFactory;
 
-    let deck = [];
-    for (let cardJson of cards) {
-        const copies = cardJson.number_copies ? parseInt(cardJson.number_copies) : 1;
-        for (let i = 0; i < copies; i++) {
-            const card = Card(cardJson);
-            deck.push(card);
-        }
-    }
+    const deck = cardFactory.createAll();
     shuffle(deck);
 
     return {
@@ -32,18 +24,6 @@ module.exports = function () {
         return cards;
     }
 };
-
-function Card(cardJson) {
-    return {
-        id: cardJson.id,
-        type: cardJson.type_card,
-        name: cardJson.name,
-        description: cardJson.detail,
-        cost: cardJson.price,
-        attack: cardJson.attack,
-        defense: cardJson.defense
-    };
-}
 
 function shuffle(array) {
     let currentIndex = array.length;

@@ -65,10 +65,9 @@ module.exports = function (deps) {
 
     function playerCardModels(state) {
         return state.playerCardsOnHand.map(card => {
-            // const highlighted = state.actionPoints >= card.cost; // TODO Should cards be highlighted? Perhaps no, since at least 1 card can always be discarded etc.
             return {
                 ...card,
-                highlighted: false
+                highlighted: false // TODO Keep if we want to re-introduce card highlighting
             };
         });
     }
@@ -78,8 +77,7 @@ module.exports = function (deps) {
             return '';
         }
         let nextPhase = PHASES[PHASES.indexOf(state.phase) + 1];
-        const nextPhaseCapitalizedText = nextPhase.substr(0, 1).toUpperCase() + nextPhase.substr(1)
-        return nextPhaseCapitalizedText;
+        return capitalize(nextPhase);
     }
 
     function setPlayerStationCards(state, stationCards) {
@@ -181,7 +179,9 @@ module.exports = function (deps) {
         dispatch('persistOngoingMatch');
 
         state.actionPoints = state.playerStation.actionCards.length * 2;
-        dispatch('nextPhase');
+        if (currentPlayer === state.ownUser.id) {
+            dispatch('nextPhase');
+        }
     }
 
     function nextPhase({ state }) {
@@ -260,3 +260,7 @@ module.exports = function (deps) {
         localStorage.setItem('ongoing-match', JSON.stringify(matchData));
     }
 };
+
+function capitalize(word) {
+    return word.substr(0, 1).toUpperCase() + word.substr(1);
+}

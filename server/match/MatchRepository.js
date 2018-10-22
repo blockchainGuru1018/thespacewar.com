@@ -1,10 +1,16 @@
+const Player = require('../player/Player.js');
 const Match = require('./Match.js');
+const CardFactory = require('../card/CardFactory.js');
+const DeckFactory = require('../deck/DeckFactory.js');
 
 module.exports = function (deps) {
 
     const userRepository = deps.userRepository;
     const socketRepository = deps.socketRepository;
 
+    const deckFactory = DeckFactory({
+        cardFactory: CardFactory()
+    });
     const matchById = new Map();
     const matchByUserId = new Map();
 
@@ -25,15 +31,19 @@ module.exports = function (deps) {
             userRepository.getById(opponentId)
         ]);
         const players = playerUsers.map(user => {
-            return {
+            return Player({
                 id: user.id,
                 name: user.name,
                 connection: socketRepository.getForUser(user.id)
-            };
+            });
         });
 
         let matchId = createId();
-        let match = Match({ players, matchId });
+        let match = Match({
+            players,
+            matchId,
+            deckFactory
+        });
         matchById.set(matchId, match);
         matchByUserId.set(playerId, match);
         matchByUserId.set(opponentId, match);
