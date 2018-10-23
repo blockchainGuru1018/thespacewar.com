@@ -9,6 +9,7 @@ const UserController = require('./user/UserController.js');
 const MatchRepository = require('./match/MatchRepository.js');
 const MatchController = require('./match/MatchController.js');
 const CardController = require('./card/CardController.js');
+const GitController = require('./git/GitController.js');
 const http = require('http');
 const { port } = require('./settings.json');
 
@@ -31,7 +32,8 @@ function run() {
     const controllers = {
         user: UserController(deps),
         match: MatchController(deps),
-        card: CardController(deps)
+        card: CardController(deps),
+        git: GitController()
     };
     const mappedControllers = wrapControllersWithRejectionProtection(controllers);
 
@@ -51,6 +53,8 @@ function setupRoutes(controllers) {
     app.post('/match', controllers.match.create);
     app.get('/match/:matchId/player/:playerId/state', controllers.match.getOwnState);
     app.get('/card/:cardId/image', controllers.card.getImage);
+
+    app.post('/git/push', controllers.git.onPush);
 
     server.listen(port, () => {
         console.log(`\n\n --- Running on port ${port} ---`)
