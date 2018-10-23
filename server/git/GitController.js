@@ -7,7 +7,7 @@ module.exports = function () {
     };
 
     async function onPush(req, res) {
-        fs.writeFileSync(path.join(__dirname, '..', '.PUSH_AVAILABLE'));
+        fs.writeFileSync(path.join(__dirname, '..', '..', 'temp', '.PUSH_AVAILABLE'));
         res.end();
     }
 };
