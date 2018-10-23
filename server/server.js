@@ -22,6 +22,14 @@ const socketMaster = SocketIO(server);
 run();
 
 function run() {
+    const closeServer = () => {
+        server.close();
+        return new Promise(resolve => setTimeout(resolve, 1000));
+    };
+    const exitProcess = () => {
+        process.exit();
+    };
+
     const socketRepository = SocketRepository({ socketMaster });
     const userRepository = UserRepository({ socketMaster });
     const deps = {
@@ -33,7 +41,7 @@ function run() {
         user: UserController(deps),
         match: MatchController(deps),
         card: CardController(deps),
-        git: GitController()
+        git: GitController({ closeServer, exitProcess })
     };
     const mappedControllers = wrapControllersWithRejectionProtection(controllers);
 

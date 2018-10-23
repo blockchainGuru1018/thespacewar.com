@@ -1,13 +1,23 @@
-const path = require('path');
-const fs = require('fs');
+const serverStarter = require('../../shared/serverStarter.js');
 
-module.exports = function () {
+module.exports = function (deps) {
+
+    const closeServer = deps.closeServer;
+    const exitProcess = deps.exitProcess;
+
     return {
         onPush
     };
 
     async function onPush(req, res) {
-        fs.writeFileSync(path.join(__dirname, '..', '..', 'temp', '.PUSH_AVAILABLE'));
+        console.log('GitController: closing server');
+        await closeServer();
+        console.log('GitController: running start server script');
+        serverStarter.installNpmPackages();
+        serverStarter.startServer();
+
         res.end();
+
+        exitProcess();
     }
 };
