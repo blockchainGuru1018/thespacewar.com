@@ -2,6 +2,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const SocketIO = require('socket.io');
+const wrapControllersWithRejectionProtection = require('./utils/wrapControllersWithRejectionProtection.js');
 const SocketRepository = require('./user/SocketRepository.js');
 const UserRepository = require('./user/UserRepository.js');
 const UserController = require('./user/UserController.js');
@@ -13,6 +14,7 @@ const { port } = require('./settings.json');
 
 const app = express();
 app.use(bodyParser.json());
+
 const server = http.createServer(app);
 const socketMaster = SocketIO(server);
 
@@ -34,7 +36,7 @@ function run() {
     const mappedControllers = wrapControllersWithRejectionProtection(controllers);
 
     setupRoutes(mappedControllers);
-    setupSocketHandler(deps, controllers);
+    setupSocketConnectionHandler(deps, controllers);
 }
 
 function setupRoutes(controllers) {
@@ -55,7 +57,7 @@ function setupRoutes(controllers) {
     });
 }
 
-function setupSocketHandler(deps, controllers) {
+function setupSocketConnectionHandler(deps, controllers) {
     const socketRepository = deps.socketRepository;
     const matchRepository = deps.matchRepository;
 
@@ -78,6 +80,7 @@ function setupSocketHandler(deps, controllers) {
                 }
             }
         });
+
         connection.on('match', async data => {
             try {
                 await controllers.match.onAction(data);
@@ -88,25 +91,4 @@ function setupSocketHandler(deps, controllers) {
             }
         });
     });
-}
-
-function wrapControllersWithRejectionProtection(controllerMap) {
-    let wrappedControllerMap = {};
-    Object.keys(controllerMap).forEach(name => {
-        wrappedControllerMap[name] = {};
-        Object.keys(controllerMap[name]).forEach(methodName => {
-            wrappedControllerMap[name][methodName] = async (req, res, next) => {
-                try {
-                    await controllerMap[name][methodName](req, res);
-                }
-                catch (error) {
-                    console.error('ERROR: ' + error.message)
-                    console.info('Raw error:', error)
-                    res.status(500).end(error.message);
-                    next(error);
-                }
-            }
-        });
-    });
-    return wrappedControllerMap;
 }
