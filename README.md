@@ -1,6 +1,6 @@
 Not open source.
 
-Copyright and all rights reserved etc
+Copyright and all rights reserved etc.
 ________________________
 
 The server is pulling from this repo each minute.
