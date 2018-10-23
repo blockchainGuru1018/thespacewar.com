@@ -1,6 +1,11 @@
 const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
 
+const TEMPORARY_START_PHASE = 'start';
 const PHASES = ['draw', 'action', 'discard', 'attack'];
+PHASES.draw = 'draw';
+PHASES.action = 'action';
+PHASES.discard = 'discard';
+PHASES.attack = 'attack';
 
 // TODO When putting down card, check so that station cards are not placed more than 1 per turn
 // TODO When putting down card, check so that the player is the turns current player
@@ -11,16 +16,20 @@ module.exports = function (deps) {
     const matchId = deps.matchId;
     const players = deps.players;
 
+    const playerOrder = players.map(p => p.id);
+    const firstPlayer = players.find(p => p.id === playerOrder[0]);
+    const lastPlayer = players.find(p => p.id === playerOrder[1]);
+
     const state = {
         turn: 1,
         currentPlayer: players[0].id,
-        playerOrder: players.map(p => p.id),
+        playerOrder,
         playersReady: 0,
         playerState: {},
         deckByPlayerId: {
             [players[0].id]: deckFactory.create(),
             [players[1].id]: deckFactory.create(),
-        },
+        }
     };
 
     return {
@@ -28,7 +37,7 @@ module.exports = function (deps) {
         matchId, //TODO Remove all uses
         players,
         start,
-        getOwnState,
+        getOwnState: getPlayerState,
         nextPhase,
         putDownCard,
         discardCard,
@@ -57,29 +66,44 @@ module.exports = function (deps) {
             throw CheatError('Switching phase when not your own turn');
         }
 
-        const playerState = getOwnState(playerId);
-        const currentPhaseIndex = PHASES.indexOf(playerState.phase);
-        if (currentPhaseIndex === PHASES.length - 1) {
-            playerState.phase = PHASES[0];
-
-            const isLastPlayerOfTurn = state.currentPlayer === state.playerOrder[state.playerOrder.length - 1]
-            if (isLastPlayerOfTurn) {
-                state.turn += 1;
-                state.currentPlayer = state.playerOrder[0];
-            }
-            else {
-                state.currentPlayer = state.playerOrder[1];
-            }
-
-            emitNextPlayer();
+        const playerState = getPlayerState(playerId);
+        const isLastPhase = playerState.phase === PHASES.attack;
+        if (isLastPhase) {
+            endTurnForCurrentPlayer();
         }
         else {
-            playerState.phase = PHASES[currentPhaseIndex + 1];
+            playerState.phase = getNextPhase(playerState.phase);
+            if (playerState.phase === PHASES.draw) {
+                startDrawPhaseForPlayer(playerId);
+            }
         }
     }
 
+    function getNextPhase(currentPhase) {
+        return PHASES[(PHASES.indexOf(currentPhase) + 1)];
+    }
+
+    function endTurnForCurrentPlayer() {
+        let playerState = getPlayerState(state.currentPlayer);
+        playerState.phase = PHASES.draw;
+
+        const isLastPlayerOfTurn = state.currentPlayer === lastPlayer.id;
+        if (isLastPlayerOfTurn) {
+            state.turn += 1;
+            state.currentPlayer = firstPlayer.id;
+        }
+        else {
+            state.currentPlayer = lastPlayer.id;
+        }
+
+        let newCurrentPlayerState = getPlayerState(state.currentPlayer);
+        newCurrentPlayerState.phase = PHASES.draw;
+
+        emitNextPlayer();
+    }
+
     function putDownCard(playerId, { location, cardId }) {
-        const playerState = getOwnState(playerId);
+        const playerState = getPlayerState(playerId);
         const cardIndexOnHand = playerState.cardsOnHand.findIndex(c => c.id === cardId);
         const card = playerState.cardsOnHand[cardIndexOnHand];
         if (!card) throw CheatError('Card is not on hand');
@@ -106,7 +130,7 @@ module.exports = function (deps) {
     }
 
     function discardCard(playerId, cardId) {
-        const playerState = getOwnState(playerId);
+        const playerState = getPlayerState(playerId);
         const cardIndexOnHand = playerState.cardsOnHand.findIndex(c => c.id === cardId);
         const card = playerState.cardsOnHand[cardIndexOnHand];
         if (!card) throw new Error('Invalid state - someone is cheating');
@@ -127,7 +151,16 @@ module.exports = function (deps) {
         emitOpponentCardCount(playerId);
     }
 
-    function getOwnState(playerId) {
+    function startDrawPhaseForPlayer(playerId) {
+        const deck = getPlayerDeck(playerId);
+        const amountCardsToDraw = getStationDrawCardsCount(playerId);
+        let cards = deck.draw(amountCardsToDraw);
+        const playerState = getPlayerState(playerId);
+        playerState.cardsOnHand.push(...cards);
+        emitToPlayer(playerId, 'drawCards', cards);
+    }
+
+    function getPlayerState(playerId) {
         return state.playerState[playerId];
     }
 
@@ -167,7 +200,7 @@ module.exports = function (deps) {
             stationCards,
             cardsInZone: [],
             discardedCards: [],
-            phase: 'draw',
+            phase: TEMPORARY_START_PHASE,
             actionPoints: getActionPointsFromStationCards(stationCards),
             events: []
         };
@@ -204,6 +237,13 @@ module.exports = function (deps) {
     function emitToPlayer(playerId, action, value) {
         const player = players.find(p => p.id === playerId)
         player.connection.emit('match', { matchId, action, value });
+    }
+
+    function getStationDrawCardsCount(playerId) {
+        let stationCards = getPlayerStationCards(playerId);
+        return stationCards
+            .filter(card => card.place === 'draw')
+            .length;
     }
 
     function getActionPointsFromStationCards(stationCards) {
@@ -244,7 +284,11 @@ module.exports = function (deps) {
     }
 
     function getOpponentStationCards(playerId) {
-        const opponentState = state.playerState[getOpponentId(playerId)];
+        return getPlayerStationCards(getOpponentId(playerId));
+    }
+
+    function getPlayerStationCards(playerId) {
+        const opponentState = state.playerState[playerId];
         return opponentState.stationCards.map(s => ({ place: s.place }));
     }
 
@@ -256,8 +300,12 @@ module.exports = function (deps) {
         return state.playerState[getOpponentId(playerId)];
     }
 
+    function getPlayerDeck(playerId) {
+        return state.deckByPlayerId[playerId];
+    }
+
     function getOpponentDeck(playerId) {
-        return state.deckByPlayerId[getOpponentId(playerId)];
+        return getPlayerDeck(getOpponentId(playerId));
     }
 };
 

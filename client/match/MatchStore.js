@@ -48,18 +48,22 @@ module.exports = function (deps) {
             addOpponentStationCards
         },
         actions: {
+            // local & remote
             init,
+            putDownCard,
+            discardCard,
+            nextPhase,
+
+            // local
             restoreState,
             beginGame,
-            persistOngoingMatch,
-            nextPhase,
-            putDownCard,
-            putDownOpponentCard,
-            discardCard,
+            placeCardInZone,
             opponentDiscardedCard,
             setOpponentCardCount,
-            placeCardInZone,
-            nextPlayer
+            putDownOpponentCard,
+            nextPlayer,
+            persistOngoingMatch,
+            drawCards
         }
     };
 
@@ -258,6 +262,10 @@ module.exports = function (deps) {
         const playerIds = [state.ownUser.id, state.opponentUser.id]
         const matchData = { id: matchId, playerIds };
         localStorage.setItem('ongoing-match', JSON.stringify(matchData));
+    }
+
+    function drawCards({ state }, cards) {
+        state.playerCardsOnHand.push(...cards);
     }
 };
 

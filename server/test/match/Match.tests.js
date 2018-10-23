@@ -7,6 +7,7 @@ let {
 let FakeDeckFactory = require('../testUtils/FakeDeckFactory.js');
 let Match = require('../../match/Match.js');
 
+//Explain: "player of the turn" is the current player of the turn. Both players will be the current player of the turn, once.
 module.exports = testCase('Match', {
     'putDownCard:': {
         'when card is NOT in hand should throw error': async function () {
@@ -100,6 +101,109 @@ module.exports = testCase('Match', {
                     location: 'zone',
                     cardId: 'C1A'
                 });
+            }
+        }
+    },
+    'nextPhase:': {
+        'when is not own players turn should throw error': function () {
+            let match = createMatch({
+                players: [
+                    createPlayer({ id: 'P1A' }),
+                    createPlayer({ id: 'P2A' })
+                ]
+            });
+            match.start();
+            match.start();
+
+            let error = catchError(() => match.nextPhase('P2A'));
+
+            assert.equals(error.message, 'Switching phase when not your own turn');
+            assert.equals(error.type, 'CheatDetected');
+        },
+        'when player of the turn is player one and current phase is the last one and go to next phase': {
+            async setUp() {
+                this.nextPlayerForPlayerOne = stub();
+                this.nextPlayerForPlayerTwo = stub();
+                const playerOneConnection = FakeConnection({ nextPlayer: this.nextPlayerForPlayerOne });
+                const playerTwoConnection = FakeConnection({ nextPlayer: this.nextPlayerForPlayerTwo });
+                let match = createMatch({
+                    players: [
+                        createPlayer({ id: 'P1A', connection: playerOneConnection }),
+                        createPlayer({ id: 'P2A', connection: playerTwoConnection })
+                    ]
+                });
+                match.start();
+                match.start();
+                match.nextPhase('P1A');
+                match.nextPhase('P1A');
+                match.nextPhase('P1A');
+                match.nextPhase('P1A');
+
+                match.nextPhase('P1A');
+            },
+            'should broadcast next player of the turn and turn count of 1 to playerOne'() {
+                assert.calledWith(this.nextPlayerForPlayerOne, { turn: 1, currentPlayer: 'P2A' });
+            },
+            'should broadcast next player of the turn and turn count of 1 to playerTwo'() {
+                assert.calledWith(this.nextPlayerForPlayerTwo, { turn: 1, currentPlayer: 'P2A' });
+            }
+        },
+        'when player of the turn is player two and current phase is the last one': {
+            async setUp() {
+                this.nextPlayer = stub();
+                const connection = FakeConnection({ nextPlayer: this.nextPlayer });
+                let match = createMatch({
+                    players: [
+                        createPlayer({ id: 'P1A', connection }),
+                        createPlayer({ id: 'P2A' }),
+                    ]
+                });
+                match.start();
+                match.start();
+                match.nextPhase('P1A');
+                match.nextPhase('P1A');
+                match.nextPhase('P1A');
+                match.nextPhase('P1A');
+                match.nextPhase('P1A');
+
+                match.nextPhase('P2A');
+                match.nextPhase('P2A');
+                match.nextPhase('P2A');
+
+                match.nextPhase('P2A');
+            },
+            'should broadcast next player of the turn and turn count of 2'() {
+                assert.calledWith(this.nextPlayer, { turn: 2, currentPlayer: 'P1A' });
+            }
+        },
+        'when receive first next phase command from player of the turn': {
+            async setUp() {
+                this.drawCards = stub();
+                this.restoreState = stub();
+                const connection = FakeConnection({
+                    drawCards: this.drawCards,
+                    restoreState: this.restoreState
+                });
+                this.match = createMatch({
+                    deckFactory: FakeDeckFactory.fromCards([createCard({ id: 'C1A' })]),
+                    players: [createPlayer({ id: 'P1A', connection })]
+                });
+                this.match.start();
+                this.match.start();
+
+                this.match.nextPhase('P1A');
+            },
+            'should emit draw card with 1 card to the player of the turn': function () {
+                assert.calledOnce(this.drawCards);
+
+                const cards = this.drawCards.firstCall.args[0];
+                assert.equals(cards.length, 1);
+                assert.equals(cards[0].id, 'C1A');
+            },
+            'and get restore state should have added card on hand': function () {
+                this.match.start();
+                const { cardsOnHand } = this.restoreState.firstCall.args[0];
+                assert.equals(cardsOnHand.length, 8);
             }
         }
     }
