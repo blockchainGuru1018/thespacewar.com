@@ -176,12 +176,12 @@
                 return this.playerDiscardedCards[this.playerDiscardedCards.length - 1];
             },
             stationCardGhostVisible() {
-                const hasAlreadyPutDownStationCard = !this.events.some(e => {
+                const hasAlreadyPutDownStationCard = this.events.some(e => {
                     return e.turn === this.turn
                         && e.type === 'putDownCard'
                         && e.location.startsWith('station');
                 })
-                return this.holdingCard && hasAlreadyPutDownStationCard;
+                return this.holdingCard && !hasAlreadyPutDownStationCard;
             },
             canPlaceCards() {
                 return this.phase === 'action'
@@ -556,7 +556,7 @@
     }
 
     .playerHud-button {
-        box-shadow: 0px 1px 6px 1px rgba(0, 0, 0, 0.2);;
+        box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.2);;
         border: none;
         font-size: 18px;
         font-weight: bold;

@@ -7,9 +7,6 @@ PHASES.action = 'action';
 PHASES.discard = 'discard';
 PHASES.attack = 'attack';
 
-// TODO When putting down card, check so that station cards are not placed more than 1 per turn
-// TODO When putting down card, check so that the player is the turns current player
-
 module.exports = function (deps) {
 
     const deckFactory = deps.deckFactory;
@@ -79,6 +76,17 @@ module.exports = function (deps) {
         if (currentPlayerState.phase === PHASES.draw) {
             startDrawPhaseForPlayer(state.currentPlayer);
         }
+        else if (currentPlayerState.phase === PHASES.action) {
+            startActionPhaseForPlayer(state.currentPlayer);
+        }
+    }
+
+    function startActionPhaseForPlayer(playerId) {
+        const playerStationCards = getPlayerStationCards(playerId);
+        const actionPointsToAdd = getActionPointsFromStationCards(playerStationCards);
+        const playerState = getPlayerState(playerId);
+        playerState.actionPoints += actionPointsToAdd;
+        emitToPlayer(playerId, 'setActionPoints', playerState.actionPoints);
     }
 
     function getNextPhase(currentPhase) {
@@ -105,6 +113,10 @@ module.exports = function (deps) {
     }
 
     function putDownCard(playerId, { location, cardId }) {
+        if (playerId !== state.currentPlayer) {
+            throw CheatError('Cannot put down card when it is not your turn');
+        }
+
         const playerState = getPlayerState(playerId);
         const cardIndexOnHand = playerState.cardsOnHand.findIndex(c => c.id === cardId);
         const card = playerState.cardsOnHand[cardIndexOnHand];
@@ -112,6 +124,14 @@ module.exports = function (deps) {
 
         const canAffordCard = playerState.actionPoints >= card.cost;
         const isStationCard = location.startsWith('station');
+        const hasAlreadyPutDownStationCard = playerState.events.some(e => {
+            return e.turn === state.turn
+                && e.type === 'putDownCard'
+                && e.location.startsWith('station');
+        })
+        if (hasAlreadyPutDownStationCard) {
+            throw CheatError('Cannot put down more than one station card on the same turn');
+        }
         if (!isStationCard && !canAffordCard) {
             throw CheatError('Cannot afford card');
         }
@@ -206,7 +226,7 @@ module.exports = function (deps) {
             cardsInZone: [],
             discardedCards: [],
             phase: TEMPORARY_START_PHASE,
-            actionPoints: getActionPointsFromStationCards(stationCards),
+            actionPoints: 0,
             events: []
         };
     }

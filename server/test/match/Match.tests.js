@@ -59,8 +59,8 @@ module.exports = testCase('Match', {
                 assert.equals(this.state.stationCards.filter(c => c.place === 'action').length, 3);
                 assert.equals(this.state.stationCards.filter(c => c.place === 'handSize').length, 1);
             },
-            'should have 6 action points': function () {
-                assert.equals(this.state.actionPoints, 6);
+            'should have 0 action points': function () {
+                assert.equals(this.state.actionPoints, 0);
             },
             'should be first players turn': function () {
                 assert.equals(this.state.currentPlayer, 'P1A');
@@ -74,14 +74,10 @@ module.exports = testCase('Match', {
                 const card = createCard({ id: 'C1A', cost: 1 });
                 const restoreState = stub();
                 const connection = FakeConnection({ restoreState });
-                const player = createPlayer({ id: 'P1A', cost: 1, connection });
-                let match = createMatch({
+                const match = createMatchAndGoToFirstActionPhase({
                     deckFactory: FakeDeckFactory.fromCards([card]),
-                    players: [player]
+                    players: [createPlayer({ id: 'P1A', cost: 1, connection })]
                 });
-                match.start();
-                match.start();
-
                 match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
 
                 match.start();
@@ -91,7 +87,7 @@ module.exports = testCase('Match', {
                 assert.equals(this.state.cardsInZone, [{ id: 'C1A', cost: 1 }]);
             },
             'should remove card from hand': function () {
-                assert.equals(this.state.cardsOnHand.length, 6);
+                assert.equals(this.state.cardsOnHand.length, 7);
             },
             'should add event': function () {
                 assert.equals(this.state.events.length, 1);
@@ -102,6 +98,35 @@ module.exports = testCase('Match', {
                     cardId: 'C1A'
                 });
             }
+        },
+        'when put down station card and has already put down a station this turn should throw error': async function () {
+            let match = createMatchAndGoToFirstActionPhase({
+                deckFactory: FakeDeckFactory.fromCards([
+                    createCard({ id: 'C1A' }),
+                    createCard({ id: 'C2A' })
+                ]),
+                players: [createPlayer({ id: 'P1A' })]
+            });
+            match.putDownCard('P1A', { location: 'station-draw', cardId: 'C1A' });
+
+            let error = catchError(() => match.putDownCard('P1A', { location: 'station-draw', cardId: 'C2A' }));
+
+            assert.equals(error.message, 'Cannot put down more than one station card on the same turn');
+            assert.equals(error.type, 'CheatDetected');
+        },
+        'when put down card and is NOT your turn should throw error': async function () {
+            let match = createMatchAndGoToFirstActionPhase({
+                deckFactory: FakeDeckFactory.fromCards([
+                    createCard({ id: 'C1A' }),
+                    createCard({ id: 'C2A' })
+                ]),
+                players: [createPlayer({ id: 'P1A' })]
+            });
+
+            let error = catchError(() => match.putDownCard('P2A', { location: 'zone', cardId: 'C2A' }));
+
+            assert.equals(error.message, 'Cannot put down card when it is not your turn');
+            assert.equals(error.type, 'CheatDetected');
         }
     },
     'nextPhase:': {
@@ -311,6 +336,35 @@ module.exports = testCase('Match', {
                 assert.equals(cardsOnHand.length, 9);
             }
         }
+    },
+    'nextPhase action phase:': {
+        'when is first player in first turn': {
+            async setUp() {
+                this.playerConnection = FakeConnection2(['setActionPoints']);
+                this.match = createMatchAndGoToFirstActionPhase({
+                    players: [createPlayer({ id: 'P1A', connection: this.playerConnection })]
+                });
+            },
+            'should emit action points'() {
+                assert.calledOnce(this.playerConnection.setActionPoints);
+                assert.calledWith(this.playerConnection.setActionPoints, 6);
+            }
+        },
+        'when is second player in first turn': {
+            async setUp() {
+                this.playerConnection = FakeConnection2(['setActionPoints']);
+                this.match = createMatchAndGoToSecondActionPhase({
+                    players: [
+                        createPlayer({ id: 'P1A' }),
+                        createPlayer({ id: 'P2A', connection: this.playerConnection })
+                    ]
+                });
+            },
+            'should emit action points'() {
+                assert.calledOnce(this.playerConnection.setActionPoints);
+                assert.calledWith(this.playerConnection.setActionPoints, 6);
+            }
+        }
     }
 });
 
@@ -334,6 +388,31 @@ function createConnection() {
         emit() {
         }
     };
+}
+
+function createMatchAndGoToFirstActionPhase(deps = {}) {
+    const match = createMatch(deps);
+    match.start();
+    match.start();
+    match.nextPhase(match.players[0].id);
+    match.nextPhase(match.players[0].id);
+    return match;
+}
+
+function createMatchAndGoToSecondActionPhase(deps = {}) {
+    const match = createMatch(deps);
+    match.start();
+    match.start();
+
+    match.nextPhase(match.players[0].id);
+    match.nextPhase(match.players[0].id);
+    match.nextPhase(match.players[0].id);
+    match.nextPhase(match.players[0].id);
+    match.nextPhase(match.players[0].id);
+
+    match.nextPhase(match.players[1].id);
+
+    return match;
 }
 
 function createMatch(deps = {}) {
@@ -363,12 +442,27 @@ function catchError(callback) {
     }
 }
 
-function FakeConnection(listenerByActionName) {
+function FakeConnection(listenerByActionName) { // TODO Migrate this to the new and then rename the new one to this name
     return {
         emit(_, { action, value }) {
             if (listenerByActionName[action]) {
                 listenerByActionName[action](value);
             }
         }
+    };
+}
+
+function FakeConnection2(namesOfActionsToStub) {
+    const stubMap = {};
+    for (let name of namesOfActionsToStub) {
+        stubMap[name] = stub();
+    }
+    return {
+        emit(_, { action, value }) {
+            if (stubMap[action]) {
+                stubMap[action](value);
+            }
+        },
+        ...stubMap
     };
 }

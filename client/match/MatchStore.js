@@ -19,7 +19,7 @@ module.exports = function (deps) {
             matchId,
             opponentUser,
             ownUser: userRepository.getOwnUser(),
-            actionPoints: 15,
+            actionPoints: 0,
             playerCardsInZone: [],
             playerCardsOnHand: [],
             playerDiscardedCards: [],
@@ -53,6 +53,7 @@ module.exports = function (deps) {
             putDownCard,
             discardCard,
             nextPhase,
+            setActionPoints,
 
             // local
             restoreState,
@@ -176,15 +177,13 @@ module.exports = function (deps) {
         } = beginningState;
         commit('setPlayerStationCards', stationCards);
         commit('setPlayerCardsOnHand', cardsOnHand);
-        state.opponentCardCount = opponentCardCount;
         commit('setOpponentStationCards', opponentStationCards);
-
+        state.opponentCardCount = opponentCardCount;
         state.phase = phase;
         state.currentPlayer = currentPlayer;
 
         dispatch('persistOngoingMatch');
 
-        state.actionPoints = state.playerStation.actionCards.length * 2;
         if (currentPlayer === state.ownUser.id) {
             dispatch('nextPhase');
         }
@@ -240,6 +239,10 @@ module.exports = function (deps) {
         state.actionPoints += 2;
         state.playerDiscardedCards.push(card);
         matchController.emit('discardCard', cardId);
+    }
+
+    function setActionPoints({ state }, actionPoints) {
+        state.actionPoints = actionPoints;
     }
 
     function setOpponentCardCount({ state }, opponentCardCount) {
