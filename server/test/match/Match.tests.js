@@ -1,7 +1,9 @@
 let {
     testCase,
     stub,
+    sinon,
     assert,
+    refute,
     defaults
 } = require('bocha');
 let FakeDeckFactory = require('../testUtils/FakeDeckFactory.js');
@@ -147,63 +149,42 @@ module.exports = testCase('Match', {
         },
         'when player of the turn is player one and current phase is the last one and go to next phase': {
             async setUp() {
-                this.nextPlayerForPlayerOne = stub();
-                this.nextPlayerForPlayerTwo = stub();
-                const playerOneConnection = FakeConnection({ nextPlayer: this.nextPlayerForPlayerOne });
-                const playerTwoConnection = FakeConnection({ nextPlayer: this.nextPlayerForPlayerTwo });
-                let match = createMatch({
+                this.playerOneConnection = FakeConnection2(['nextPlayer']);
+                this.playerTwoConnection = FakeConnection2(['nextPlayer']);
+                let match = createMatchAndGoToFirstAttackPhase({
                     players: [
-                        createPlayer({ id: 'P1A', connection: playerOneConnection }),
-                        createPlayer({ id: 'P2A', connection: playerTwoConnection })
+                        createPlayer({ id: 'P1A', connection: this.playerOneConnection }),
+                        createPlayer({ id: 'P2A', connection: this.playerTwoConnection })
                     ]
                 });
-                match.start();
-                match.start();
-                match.nextPhase('P1A');
-                match.nextPhase('P1A');
-                match.nextPhase('P1A');
-                match.nextPhase('P1A');
 
                 match.nextPhase('P1A');
             },
             'should broadcast next player of the turn and turn count of 1 to playerOne'() {
-                assert.calledWith(this.nextPlayerForPlayerOne, { turn: 1, currentPlayer: 'P2A' });
+                assert.calledWith(this.playerOneConnection.nextPlayer, { turn: 1, currentPlayer: 'P2A' });
             },
             'should broadcast next player of the turn and turn count of 1 to playerTwo'() {
-                assert.calledWith(this.nextPlayerForPlayerTwo, { turn: 1, currentPlayer: 'P2A' });
+                assert.calledWith(this.playerTwoConnection.nextPlayer, { turn: 1, currentPlayer: 'P2A' });
             }
         },
         'when player of the turn is player two and current phase is the last one': {
             async setUp() {
-                this.nextPlayerForFirstPlayer = stub();
-                const firstPlayerConnection = FakeConnection({ nextPlayer: this.nextPlayerForFirstPlayer });
-                this.nextPlayerForSecondPlayer = stub();
-                const secondPlayerConnection = FakeConnection({ nextPlayer: this.nextPlayerForSecondPlayer });
-                let match = createMatch({
+                this.firstPlayerConnection = FakeConnection2(['nextPlayer']);
+                this.secondPlayerConnection = FakeConnection2(['nextPlayer']);
+                let match = createMatchAndGoToSecondAttackPhase({
                     players: [
-                        createPlayer({ id: 'P1A', connection: firstPlayerConnection }),
-                        createPlayer({ id: 'P2A', connection: secondPlayerConnection }),
+                        createPlayer({ id: 'P1A', connection: this.firstPlayerConnection }),
+                        createPlayer({ id: 'P2A', connection: this.secondPlayerConnection }),
                     ]
                 });
-                match.start();
-                match.start();
-                match.nextPhase('P1A');
-                match.nextPhase('P1A');
-                match.nextPhase('P1A');
-                match.nextPhase('P1A');
-                match.nextPhase('P1A');
-
-                match.nextPhase('P2A');
-                match.nextPhase('P2A');
-                match.nextPhase('P2A');
 
                 match.nextPhase('P2A');
             },
             'should broadcast next player of the turn and turn count of 2 to first player'() {
-                assert.calledWith(this.nextPlayerForFirstPlayer, { turn: 2, currentPlayer: 'P1A' });
+                assert.calledWith(this.firstPlayerConnection.nextPlayer, { turn: 2, currentPlayer: 'P1A' });
             },
             'should broadcast next player of the turn and turn count of 2 to second player'() {
-                assert.calledWith(this.nextPlayerForSecondPlayer, { turn: 2, currentPlayer: 'P1A' });
+                assert.calledWith(this.secondPlayerConnection.nextPlayer, { turn: 2, currentPlayer: 'P1A' });
             }
         },
         'when receive first next phase command from player of the turn': {
@@ -238,102 +219,66 @@ module.exports = testCase('Match', {
         },
         'when receive last next phase command from first player': {
             async setUp() {
-                this.firstPlayerDrawCards = stub();
-                this.firstPlayerSetOpponentCardCount = stub();
-                const firstPlayerConnection = FakeConnection({
-                    drawCards: this.firstPlayerDrawCards,
-                    setOpponentCardCount: this.firstPlayerSetOpponentCardCount
-                });
-                this.secondPlayerDrawCards = stub();
-                this.secondPlayerRestoreState = stub();
-                const secondPlayerConnection = FakeConnection({
-                    drawCards: this.secondPlayerDrawCards,
-                    restoreState: this.secondPlayerRestoreState
-                });
-                this.match = createMatch({
+                this.firstPlayerConnection = FakeConnection2(['drawCards', 'setOpponentCardCount']);
+                this.secondPlayerConnection = FakeConnection2(['drawCards', 'restoreState']);
+                this.match = createMatchAndGoToFirstAttackPhase({
                     deckFactory: FakeDeckFactory.fromCards([createCard({ id: 'C1A' })]),
                     players: [
-                        createPlayer({ id: 'P1A', connection: firstPlayerConnection }),
-                        createPlayer({ id: 'P2A', connection: secondPlayerConnection })
+                        createPlayer({ id: 'P1A', connection: this.firstPlayerConnection }),
+                        createPlayer({ id: 'P2A', connection: this.secondPlayerConnection })
                     ]
                 });
-                this.match.start();
-                this.match.start();
-                this.match.nextPhase('P1A');
-                this.match.nextPhase('P1A');
-                this.match.nextPhase('P1A');
-                this.match.nextPhase('P1A');
 
                 this.match.nextPhase('P1A');
             },
             'should NOT emit draw card again to first player'() {
-                assert.calledOnce(this.firstPlayerDrawCards);
+                assert.calledOnce(this.firstPlayerConnection.drawCards);
+            },
+            'should emit setOpponentCardCount to first player': function () {
+                assert.equals(this.firstPlayerConnection.setOpponentCardCount.lastCall.args[0], 8);
             },
             'should emit draw card with 1 card to second player': function () {
-                assert.calledOnce(this.secondPlayerDrawCards);
+                assert.calledOnce(this.secondPlayerConnection.drawCards);
 
-                const cards = this.secondPlayerDrawCards.firstCall.args[0];
+                const cards = this.secondPlayerConnection.drawCards.firstCall.args[0];
                 assert.equals(cards.length, 1);
                 assert.equals(cards[0].id, 'C1A');
             },
-            'should emit setOpponentCardCount as 8 to first player': function () {
-                assert.calledOnce(this.firstPlayerSetOpponentCardCount);
-                assert.calledWith(this.firstPlayerSetOpponentCardCount, 8);
-            },
             'and get restore state should have added card on hand': function () {
                 this.match.start();
-                const { cardsOnHand } = this.secondPlayerRestoreState.firstCall.args[0];
+                const { cardsOnHand } = this.secondPlayerConnection.restoreState.firstCall.args[0];
                 assert.equals(cardsOnHand.length, 8);
             }
         },
         'when second player emits next phase on last phase of first turn': {
             async setUp() {
-                this.firstPlayerDrawCards = stub();
-                this.firstPlayerRestoreState = stub();
-                const firstPlayerConnection = FakeConnection({
-                    drawCards: this.firstPlayerDrawCards,
-                    restoreState: this.firstPlayerRestoreState
-                });
-                this.secondPlayerDrawCards = stub();
-                const secondPlayerConnection = FakeConnection({
-                    drawCards: this.secondPlayerDrawCards
-                });
-                this.match = createMatch({
+                this.firstPlayerConnection = FakeConnection2(['drawCards', 'restoreState']);
+                this.secondPlayerConnection = FakeConnection2(['drawCards']);
+                this.match = createMatchAndGoToSecondAttackPhase({
                     deckFactory: FakeDeckFactory.fromCards([createCard({ id: 'C1A' })]),
                     players: [
-                        createPlayer({ id: 'P1A', connection: firstPlayerConnection }),
-                        createPlayer({ id: 'P2A', connection: secondPlayerConnection })
+                        createPlayer({ id: 'P1A', connection: this.firstPlayerConnection }),
+                        createPlayer({ id: 'P2A', connection: this.secondPlayerConnection })
                     ]
                 });
-                this.match.start();
-                this.match.start();
-                this.match.nextPhase('P1A');
-                this.match.nextPhase('P1A');
-                this.match.nextPhase('P1A');
-                this.match.nextPhase('P1A');
-                this.match.nextPhase('P1A');
-
-                this.match.nextPhase('P2A');
-                this.match.nextPhase('P2A');
-                this.match.nextPhase('P2A');
 
                 this.match.nextPhase('P2A');
             },
             'should NOT emit draw card again to second player'() {
-                assert.calledOnce(this.secondPlayerDrawCards);
+                assert.calledOnce(this.secondPlayerConnection.drawCards);
             },
             'should emit draw card with 1 card for the second time to the first player': function () {
-                assert.calledTwice(this.firstPlayerDrawCards);
+                assert.calledTwice(this.firstPlayerConnection.drawCards);
 
-                const cards = this.firstPlayerDrawCards.secondCall.args[0];
+                const cards = this.firstPlayerConnection.drawCards.secondCall.args[0];
                 assert.equals(cards.length, 1);
                 assert.equals(cards[0].id, 'C1A');
             },
-            'and get restore state should have added card on hand': function () {
+            'and get restore state should have added card on hand on top of the 3 remaining after last discard phase': function () {
                 this.match.start();
 
-                const { cardsOnHand } = this.firstPlayerRestoreState.firstCall.args[0];
-                assert.equals(cardsOnHand.length, 9);
+                const { cardsOnHand } = this.firstPlayerConnection.restoreState.firstCall.args[0];
+                assert.equals(cardsOnHand.length, 4);
             }
         }
     },
@@ -365,6 +310,72 @@ module.exports = testCase('Match', {
                 assert.calledWith(this.playerConnection.setActionPoints, 6);
             }
         }
+    },
+    'discard phase': {
+        'when has 8 cards entering discard phase of first turn and leaves without discarding should throw error': async function () {
+            let match = createMatchAndGoToFirstDiscardPhase({
+                deckFactory: FakeDeckFactory.fromCards([
+                    createCard({ id: 'C1A' })
+                ]),
+                players: [createPlayer({ id: 'P1A' })]
+            });
+
+            let error = catchError(() => match.nextPhase('P1A'));
+
+            assert.equals(error.message, 'Cannot leave the discard phase without discarding enough cards');
+            assert.equals(error.type, 'CheatDetected');
+        },
+        'when exit fist discard phase with 3 cards': {
+            async setUp() {
+                this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard']);
+                let match = createMatchAndGoToFirstDiscardPhase({
+                    deckFactory: FakeDeckFactory.fromCards([
+                        createCard({ id: 'C1A' }),
+                        createCard({ id: 'C2A' }),
+                        createCard({ id: 'C3A' }),
+                        createCard({ id: 'C4A' }),
+                        createCard({ id: 'C5A' })
+                    ]),
+                    players: [createPlayer({ id: 'P1A' }), createPlayer({
+                        id: 'P2A',
+                        connection: this.secondPlayerConnection
+                    })]
+                });
+                match.discardCard('P1A', 'C1A');
+                match.discardCard('P1A', 'C2A');
+                match.discardCard('P1A', 'C3A');
+                match.discardCard('P1A', 'C4A');
+                match.discardCard('P1A', 'C5A');
+
+                this.error = catchError(() => match.nextPhase('P1A'));
+            },
+            'should NOT throw an error'() {
+                refute(this.error);
+            },
+            'should emit opponentDiscardedCard to second player for each discarded card'() {
+                assert.equals(this.secondPlayerConnection.opponentDiscardedCard.callCount, 5);
+                assert.calledWith(this.secondPlayerConnection.opponentDiscardedCard, {
+                    discardedCard: sinon.match({ id: 'C1A' }),
+                    opponentCardCount: 7
+                });
+                assert.calledWith(this.secondPlayerConnection.opponentDiscardedCard, {
+                    discardedCard: sinon.match({ id: 'C2A' }),
+                    opponentCardCount: 6
+                });
+                assert.calledWith(this.secondPlayerConnection.opponentDiscardedCard, {
+                    discardedCard: sinon.match({ id: 'C3A' }),
+                    opponentCardCount: 5
+                });
+                assert.calledWith(this.secondPlayerConnection.opponentDiscardedCard, {
+                    discardedCard: sinon.match({ id: 'C4A' }),
+                    opponentCardCount: 4
+                });
+                assert.calledWith(this.secondPlayerConnection.opponentDiscardedCard, {
+                    discardedCard: sinon.match({ id: 'C5A' }),
+                    opponentCardCount: 3
+                });
+            }
+        }
     }
 });
 
@@ -379,15 +390,8 @@ function createPlayer(options = {}) {
     return defaults(options, {
         id: '007',
         name: 'James',
-        connection: createConnection()
+        connection: FakeConnection2()
     });
-}
-
-function createConnection() {
-    return {
-        emit() {
-        }
-    };
 }
 
 function createMatchAndGoToFirstActionPhase(deps = {}) {
@@ -399,20 +403,65 @@ function createMatchAndGoToFirstActionPhase(deps = {}) {
     return match;
 }
 
-function createMatchAndGoToSecondActionPhase(deps = {}) {
+function createMatchAndGoToFirstDiscardPhase(deps = {}) {
+    const match = createMatchAndGoToFirstActionPhase(deps);
+    match.nextPhase(match.players[0].id);
+    return match;
+}
+
+function createMatchAndGoToFirstAttackPhase(deps = {}) {
     const match = createMatch(deps);
     match.start();
     match.start();
 
+    const [firstPlayer, secondPlayer] = match.players;
+    match.nextPhase(firstPlayer.id);
+    match.nextPhase(firstPlayer.id);
+    match.nextPhase(firstPlayer.id);
+
+    let firstPlayerCards;
+    firstPlayer.connection.on('restoreState', state => {
+        firstPlayerCards = state.cardsOnHand;
+    });
+    match.start();
+    const cardsToDiscard = firstPlayerCards.slice(0, 5).map(card => card.id);
+    discardCardsAsPlayer(cardsToDiscard, firstPlayer.id, match);
+
+    match.nextPhase(firstPlayer.id);
+
+    return match;
+}
+
+function createMatchAndGoToSecondActionPhase(deps = {}) {
+    const match = createMatchAndGoToFirstAttackPhase(deps);
     match.nextPhase(match.players[0].id);
-    match.nextPhase(match.players[0].id);
-    match.nextPhase(match.players[0].id);
-    match.nextPhase(match.players[0].id);
-    match.nextPhase(match.players[0].id);
+
+    match.nextPhase(match.players[1].id);
+    return match;
+}
+
+function createMatchAndGoToSecondAttackPhase(deps = {}) {
+    const match = createMatchAndGoToSecondActionPhase(deps);
+    match.nextPhase(match.players[1].id);
+
+    const [_, secondPlayer] = match.players;
+    let secondPlayerCards;
+    secondPlayer.connection.on('restoreState', state => {
+        secondPlayerCards = state.cardsOnHand;
+    });
+    match.start();
+    const cardsToDiscard = secondPlayerCards.slice(0, 5).map(card => card.id);
+    discardCardsAsPlayer(cardsToDiscard, secondPlayer.id, match);
 
     match.nextPhase(match.players[1].id);
 
     return match;
+}
+
+function discardCardsAsPlayer(cardIds, playerId, match) {
+    for (let i = 0; i < cardIds.length; i++) {
+        match.discardCard(playerId, cardIds[i]);
+    }
 }
 
 function createMatch(deps = {}) {
@@ -452,16 +501,25 @@ function FakeConnection(listenerByActionName) { // TODO Migrate this to the new 
     };
 }
 
-function FakeConnection2(namesOfActionsToStub) {
+function FakeConnection2(namesOfActionsToStub = []) {
     const stubMap = {};
     for (let name of namesOfActionsToStub) {
         stubMap[name] = stub();
     }
+    const listenersByActionName = {};
+
     return {
         emit(_, { action, value }) {
             if (stubMap[action]) {
                 stubMap[action](value);
             }
+            if (listenersByActionName[action]) {
+                listenersByActionName[action].forEach(listener => listener(value));
+            }
+        },
+        on(action, callback) {
+            listenersByActionName[action] = listenersByActionName[action] || [];
+            listenersByActionName[action].push(callback);
         },
         ...stubMap
     };

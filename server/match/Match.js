@@ -42,7 +42,7 @@ module.exports = function (deps) {
         toClientModel
     };
 
-    function start() {
+    function start() { // TODO Should take player id and only restore game state for player responsible for event
         const gameHasAlreadyStarted = state.playersReady >= players.length;
         if (gameHasAlreadyStarted) {
             for (let player of players) {
@@ -64,6 +64,11 @@ module.exports = function (deps) {
         }
 
         const playerState = getPlayerState(playerId);
+
+        if (playerState.phase === PHASES.discard) {
+            leaveDiscardPhaseForPlayer(state.currentPlayer);
+        }
+
         const isLastPhase = playerState.phase === PHASES.attack;
         if (isLastPhase) {
             endTurnForCurrentPlayer();
@@ -81,6 +86,10 @@ module.exports = function (deps) {
         }
     }
 
+    function getNextPhase(currentPhase) {
+        return PHASES[(PHASES.indexOf(currentPhase) + 1)];
+    }
+
     function startActionPhaseForPlayer(playerId) {
         const playerStationCards = getPlayerStationCards(playerId);
         const actionPointsToAdd = getActionPointsFromStationCards(playerStationCards);
@@ -89,8 +98,13 @@ module.exports = function (deps) {
         emitToPlayer(playerId, 'setActionPoints', playerState.actionPoints);
     }
 
-    function getNextPhase(currentPhase) {
-        return PHASES[(PHASES.indexOf(currentPhase) + 1)];
+    function leaveDiscardPhaseForPlayer(playerId) {
+        const playerStationCards = getPlayerStationCards(playerId);
+        const maxHandSize = getMaxHandSizeFromStationCards(playerStationCards);
+        const playerState = getPlayerState(playerId);
+        if (playerState.cardsOnHand.length > maxHandSize) {
+            throw CheatError('Cannot leave the discard phase without discarding enough cards');
+        }
     }
 
     function endTurnForCurrentPlayer() {
@@ -154,22 +168,29 @@ module.exports = function (deps) {
     function discardCard(playerId, cardId) {
         const playerState = getPlayerState(playerId);
         const cardIndexOnHand = playerState.cardsOnHand.findIndex(c => c.id === cardId);
-        const card = playerState.cardsOnHand[cardIndexOnHand];
-        if (!card) throw new Error('Invalid state - someone is cheating');
+        const discardedCard = playerState.cardsOnHand[cardIndexOnHand];
+        if (!discardedCard) throw new Error('Invalid state - someone is cheating');
         playerState.cardsOnHand.splice(cardIndexOnHand, 1);
         playerState.actionPoints += getActionPointsFromDiscardingCard();
-        playerState.discardedCards.push(card);
+        playerState.discardedCards.push(discardedCard);
 
         const opponentId = getOpponentId(playerId);
         const opponentDeck = getOpponentDeck(playerId);
         const opponentState = getOpponentState(playerId);
-        const bonusCard = opponentDeck.drawSingle();
-        opponentState.cardsOnHand.push(bonusCard);
-        emitToPlayer(opponentId, 'opponentDiscardedCard', {
-            bonusCard,
-            discardedCard: card,
-            opponentCardCount: getPlayerCardCount(playerId)
-        });
+        const opponentCardCount = getPlayerCardCount(playerId)
+        if (playerState.phase === 'action') {
+            const bonusCard = opponentDeck.drawSingle();
+            opponentState.cardsOnHand.push(bonusCard);
+            emitToPlayer(opponentId, 'opponentDiscardedCard', {
+                bonusCard,
+                discardedCard,
+                opponentCardCount
+            });
+        }
+        else {
+            emitToPlayer(opponentId, 'opponentDiscardedCard', { discardedCard, opponentCardCount });
+        }
+
         emitOpponentCardCount(playerId);
     }
 
@@ -273,6 +294,12 @@ module.exports = function (deps) {
         return stationCards
             .filter(c => c.place === 'action')
             .length * 2;
+    }
+
+    function getMaxHandSizeFromStationCards(stationCards) {
+        return stationCards
+            .filter(c => c.place === 'handSize')
+            .length * 3;
     }
 
     function getActionPointsFromDiscardingCard() {
