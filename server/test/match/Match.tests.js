@@ -150,12 +150,14 @@ module.exports = testCase('Match', {
         },
         'when player of the turn is player two and current phase is the last one': {
             async setUp() {
-                this.nextPlayer = stub();
-                const connection = FakeConnection({ nextPlayer: this.nextPlayer });
+                this.nextPlayerForFirstPlayer = stub();
+                const firstPlayerConnection = FakeConnection({ nextPlayer: this.nextPlayerForFirstPlayer });
+                this.nextPlayerForSecondPlayer = stub();
+                const secondPlayerConnection = FakeConnection({ nextPlayer: this.nextPlayerForSecondPlayer });
                 let match = createMatch({
                     players: [
-                        createPlayer({ id: 'P1A', connection }),
-                        createPlayer({ id: 'P2A' }),
+                        createPlayer({ id: 'P1A', connection: firstPlayerConnection }),
+                        createPlayer({ id: 'P2A', connection: secondPlayerConnection }),
                     ]
                 });
                 match.start();
@@ -172,8 +174,11 @@ module.exports = testCase('Match', {
 
                 match.nextPhase('P2A');
             },
-            'should broadcast next player of the turn and turn count of 2'() {
-                assert.calledWith(this.nextPlayer, { turn: 2, currentPlayer: 'P1A' });
+            'should broadcast next player of the turn and turn count of 2 to first player'() {
+                assert.calledWith(this.nextPlayerForFirstPlayer, { turn: 2, currentPlayer: 'P1A' });
+            },
+            'should broadcast next player of the turn and turn count of 2 to second player'() {
+                assert.calledWith(this.nextPlayerForSecondPlayer, { turn: 2, currentPlayer: 'P1A' });
             }
         },
         'when receive first next phase command from player of the turn': {
@@ -204,6 +209,106 @@ module.exports = testCase('Match', {
                 this.match.start();
                 const { cardsOnHand } = this.restoreState.firstCall.args[0];
                 assert.equals(cardsOnHand.length, 8);
+            }
+        },
+        'when receive last next phase command from first player': {
+            async setUp() {
+                this.firstPlayerDrawCards = stub();
+                this.firstPlayerSetOpponentCardCount = stub();
+                const firstPlayerConnection = FakeConnection({
+                    drawCards: this.firstPlayerDrawCards,
+                    setOpponentCardCount: this.firstPlayerSetOpponentCardCount
+                });
+                this.secondPlayerDrawCards = stub();
+                this.secondPlayerRestoreState = stub();
+                const secondPlayerConnection = FakeConnection({
+                    drawCards: this.secondPlayerDrawCards,
+                    restoreState: this.secondPlayerRestoreState
+                });
+                this.match = createMatch({
+                    deckFactory: FakeDeckFactory.fromCards([createCard({ id: 'C1A' })]),
+                    players: [
+                        createPlayer({ id: 'P1A', connection: firstPlayerConnection }),
+                        createPlayer({ id: 'P2A', connection: secondPlayerConnection })
+                    ]
+                });
+                this.match.start();
+                this.match.start();
+                this.match.nextPhase('P1A');
+                this.match.nextPhase('P1A');
+                this.match.nextPhase('P1A');
+                this.match.nextPhase('P1A');
+
+                this.match.nextPhase('P1A');
+            },
+            'should NOT emit draw card again to first player'() {
+                assert.calledOnce(this.firstPlayerDrawCards);
+            },
+            'should emit draw card with 1 card to second player': function () {
+                assert.calledOnce(this.secondPlayerDrawCards);
+
+                const cards = this.secondPlayerDrawCards.firstCall.args[0];
+                assert.equals(cards.length, 1);
+                assert.equals(cards[0].id, 'C1A');
+            },
+            'should emit setOpponentCardCount as 8 to first player': function () {
+                assert.calledOnce(this.firstPlayerSetOpponentCardCount);
+                assert.calledWith(this.firstPlayerSetOpponentCardCount, 8);
+            },
+            'and get restore state should have added card on hand': function () {
+                this.match.start();
+                const { cardsOnHand } = this.secondPlayerRestoreState.firstCall.args[0];
+                assert.equals(cardsOnHand.length, 8);
+            }
+        },
+        'when second player emits next phase on last phase of first turn': {
+            async setUp() {
+                this.firstPlayerDrawCards = stub();
+                this.firstPlayerRestoreState = stub();
+                const firstPlayerConnection = FakeConnection({
+                    drawCards: this.firstPlayerDrawCards,
+                    restoreState: this.firstPlayerRestoreState
+                });
+                this.secondPlayerDrawCards = stub();
+                const secondPlayerConnection = FakeConnection({
+                    drawCards: this.secondPlayerDrawCards
+                });
+                this.match = createMatch({
+                    deckFactory: FakeDeckFactory.fromCards([createCard({ id: 'C1A' })]),
+                    players: [
+                        createPlayer({ id: 'P1A', connection: firstPlayerConnection }),
+                        createPlayer({ id: 'P2A', connection: secondPlayerConnection })
+                    ]
+                });
+                this.match.start();
+                this.match.start();
+                this.match.nextPhase('P1A');
+                this.match.nextPhase('P1A');
+                this.match.nextPhase('P1A');
+                this.match.nextPhase('P1A');
+                this.match.nextPhase('P1A');
+
+                this.match.nextPhase('P2A');
+                this.match.nextPhase('P2A');
+                this.match.nextPhase('P2A');
+
+                this.match.nextPhase('P2A');
+            },
+            'should NOT emit draw card again to second player'() {
+                assert.calledOnce(this.secondPlayerDrawCards);
+            },
+            'should emit draw card with 1 card for the second time to the first player': function () {
+                assert.calledTwice(this.firstPlayerDrawCards);
+
+                const cards = this.firstPlayerDrawCards.secondCall.args[0];
+                assert.equals(cards.length, 1);
+                assert.equals(cards[0].id, 'C1A');
+            },
+            'and get restore state should have added card on hand': function () {
+                this.match.start();
+
+                const { cardsOnHand } = this.firstPlayerRestoreState.firstCall.args[0];
+                assert.equals(cardsOnHand.length, 9);
             }
         }
     }

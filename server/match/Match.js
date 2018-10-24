@@ -73,9 +73,11 @@ module.exports = function (deps) {
         }
         else {
             playerState.phase = getNextPhase(playerState.phase);
-            if (playerState.phase === PHASES.draw) {
-                startDrawPhaseForPlayer(playerId);
-            }
+        }
+
+        const currentPlayerState = getPlayerState(state.currentPlayer);
+        if (currentPlayerState.phase === PHASES.draw) {
+            startDrawPhaseForPlayer(state.currentPlayer);
         }
     }
 
@@ -158,6 +160,9 @@ module.exports = function (deps) {
         const playerState = getPlayerState(playerId);
         playerState.cardsOnHand.push(...cards);
         emitToPlayer(playerId, 'drawCards', cards);
+
+        const opponentId = getOpponentId(playerId)
+        emitOpponentCardCount(opponentId);
     }
 
     function getPlayerState(playerId) {
@@ -207,10 +212,11 @@ module.exports = function (deps) {
     }
 
     function emitBeginGameForPlayer(playerId) {
-        const { stationCards, cardsOnHand } = state.playerState[playerId];
+        const { stationCards, cardsOnHand, phase } = state.playerState[playerId];
         emitToPlayer(playerId, 'beginGame', {
             stationCards,
             cardsOnHand,
+            phase,
             currentPlayer: state.currentPlayer,
             opponentCardCount: getOpponentCardCount(playerId),
             opponentStationCards: getOpponentStationCards(playerId)
@@ -225,9 +231,6 @@ module.exports = function (deps) {
             });
         }
     }
-
-    //TODO Placing station card should not cost any action points
-    //TODO players should receive action points on the start of each turn
 
     function emitToOpponent(playerId, action, value) {
         const opponent = players.find(p => p.id !== playerId);

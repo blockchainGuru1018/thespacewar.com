@@ -15,7 +15,7 @@ module.exports = function (deps) {
         state: {
             turn: 1,
             currentPlayer: null,
-            phase: 'draw',
+            phase: '',
             matchId,
             opponentUser,
             ownUser: userRepository.getOwnUser(),
@@ -171,6 +171,7 @@ module.exports = function (deps) {
             cardsOnHand,
             opponentCardCount,
             opponentStationCards,
+            phase,
             currentPlayer
         } = beginningState;
         commit('setPlayerStationCards', stationCards);
@@ -178,6 +179,7 @@ module.exports = function (deps) {
         state.opponentCardCount = opponentCardCount;
         commit('setOpponentStationCards', opponentStationCards);
 
+        state.phase = phase;
         state.currentPlayer = currentPlayer;
 
         dispatch('persistOngoingMatch');
@@ -189,7 +191,7 @@ module.exports = function (deps) {
     }
 
     function nextPhase({ state }) {
-        const nextPhaseIndex = PHASES.indexOf(state.phase) + 1
+        const nextPhaseIndex = PHASES.indexOf(state.phase) + 1;
         if (nextPhaseIndex >= PHASES.length) {
             state.currentPlayer = null;
             state.phase = 'draw';
