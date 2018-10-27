@@ -39,7 +39,8 @@ module.exports = function (deps) {
         },
         getters: {
             playerCardModels,
-            nextPhaseButtonText
+            nextPhaseButtonText,
+            maxHandSize
         },
         mutations: {
             setPlayerStationCards,
@@ -83,6 +84,10 @@ module.exports = function (deps) {
         }
         let nextPhase = PHASES[PHASES.indexOf(state.phase) + 1];
         return capitalize(nextPhase);
+    }
+
+    function maxHandSize(state) {
+        return state.playerStation.handSizeCards.length * 3;
     }
 
     function setPlayerStationCards(state, stationCards) {
@@ -250,7 +255,10 @@ module.exports = function (deps) {
     }
 
     function opponentDiscardedCard({ state }, { bonusCard, discardedCard, opponentCardCount }) {
-        state.playerCardsOnHand.unshift(bonusCard);
+        if (bonusCard) {
+            state.playerCardsOnHand.unshift(bonusCard);
+        }
+
         state.opponentCardCount = opponentCardCount;
         state.opponentDiscardedCards.push(discardedCard);
     }

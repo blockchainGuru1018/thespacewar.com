@@ -50,7 +50,9 @@
                         <div v-else
                              :style="getCardImageStyle(playerTopDiscardCard)"
                              class="card"/>
-                        <div v-if="holdingCard" @click="cardGhostClick('discard')" class="card card-ghost"/>
+                        <div v-if="discardPileCardGhostVisible"
+                             @click="cardGhostClick('discard')"
+                             class="card card-ghost"/>
                     </div>
                 </div>
                 <div class="field-zone field-section">
@@ -99,14 +101,19 @@
                     <div v-if="!isOwnTurn" class="playerHud-phaseText">Waiting for next player</div>
                     <template v-else>
                         <div class="playerHud-phaseText">{{ phaseText }} phase</div>
-                        <button v-if="nextPhaseButtonText"
+                        <div v-if="phase === 'discard' && playerCardModels.length > maxHandSize"
+                             class="playerHud-nextPhaseButton playerHud-phaseText">
+                            Discard {{ amountOfCardsToDiscard + (amountOfCardsToDiscard > 1 ? ' cards' : ' card')}} to continue
+                        </div>
+                        <button v-else-if="nextPhaseButtonText"
                                 @click="nextPhaseClick"
                                 class="playerHud-nextPhaseButton playerHud-button">
                             {{ nextPhaseButtonText }} phase
                         </button>
                         <button v-else
                                 @click="nextPhaseClick"
-                                class="playerHud-endTurnButton playerHud-button">End turn
+                                class="playerHud-endTurnButton playerHud-button">
+                            End turn
                         </button>
                     </template>
                 </div>
@@ -146,7 +153,8 @@
             ]),
             ...mapGetters([
                 'playerCardModels',
-                'nextPhaseButtonText'
+                'nextPhaseButtonText',
+                'maxHandSize'
             ]),
             isOwnTurn() {
                 return this.ownUser.id === this.currentPlayer;
@@ -175,17 +183,26 @@
             playerTopDiscardCard() {
                 return this.playerDiscardedCards[this.playerDiscardedCards.length - 1];
             },
+            discardPileCardGhostVisible() {
+                return this.holdingCard &&
+                    (this.phase === 'action'
+                        || this.phase === 'discard');
+            },
             stationCardGhostVisible() {
                 const hasAlreadyPutDownStationCard = this.events.some(e => {
                     return e.turn === this.turn
                         && e.type === 'putDownCard'
                         && e.location.startsWith('station');
                 })
-                return this.holdingCard && !hasAlreadyPutDownStationCard;
+                return this.phase === 'action'
+                    && this.holdingCard
+                    && !hasAlreadyPutDownStationCard;
             },
             canPlaceCards() {
-                return this.phase === 'action'
-                    && this.isOwnTurn;
+                return this.isOwnTurn;
+            },
+            amountOfCardsToDiscard() {
+                return this.playerCardModels.length - this.maxHandSize;
             }
         },
         methods: {
@@ -336,7 +353,7 @@
     }
 
     .field-playerStation {
-        flex-direction: column-reverse;
+        flex-direction: column;
         margin-right: 8px;
 
         .card {
