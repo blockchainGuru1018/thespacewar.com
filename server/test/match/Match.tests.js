@@ -14,7 +14,7 @@ let Match = require('../../match/Match.js');
 //Explain: "player of the turn" is the current player of the turn. Both players will be the current player of the turn, once.
 module.exports = testCase('Match', {
     'putDownCard:': {
-        'when card is NOT in hand should throw error': async function () {
+        'when card is NOT in hand should throw error': function () {
             let match = createMatch({
                 players: createPlayers([{ id: 'P1A' }])
             });
@@ -27,7 +27,7 @@ module.exports = testCase('Match', {
             assert.equals(error.message, 'Card is not on hand');
             assert.equals(error.type, 'CheatDetected');
         },
-        'when does NOT have enough action points to place card in zone': async function () {
+        'when does NOT have enough action points to place card in zone': function () {
             const card = createCard({ id: 'C1A', cost: 7 });
             let match = createMatch({
                 deckFactory: FakeDeckFactory.fromCards([card]),
@@ -104,7 +104,7 @@ module.exports = testCase('Match', {
                 });
             }
         },
-        'when put down station card and has already put down a station this turn should throw error': async function () {
+        'when put down station card and has already put down a station this turn should throw error': function () {
             let match = createMatchAndGoToFirstActionPhase({
                 deckFactory: FakeDeckFactory.fromCards([
                     createCard({ id: 'C1A' }),
@@ -119,7 +119,7 @@ module.exports = testCase('Match', {
             assert.equals(error.message, 'Cannot put down more than one station card on the same turn');
             assert.equals(error.type, 'CheatDetected');
         },
-        'when put down card and is NOT your turn should throw error': async function () {
+        'when put down card and is NOT your turn should throw error': function () {
             let match = createMatchAndGoToFirstActionPhase({
                 deckFactory: FakeDeckFactory.fromCards([
                     createCard({ id: 'C1A' }),
@@ -132,6 +132,112 @@ module.exports = testCase('Match', {
 
             assert.equals(error.message, 'Cannot put down card when it is not your turn');
             assert.equals(error.type, 'CheatDetected');
+        }
+    },
+    'discardCard:': {
+        'when is action phase and first player discards card': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['restoreState', 'setOpponentCardCount']);
+                this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard']);
+                this.cards = [
+                    createCard({ id: 'C1A' }), createCard({ id: 'C2A' }), createCard({ id: 'C3A' }),
+                    createCard({ id: 'C4A' }), createCard({ id: 'C5A' }), createCard({ id: 'C6A' }),
+                    createCard({ id: 'C7A' })
+                ]
+                this.match = createMatchAndGoToFirstActionPhase({
+                    deckFactory: FakeDeckFactory.fromCards(this.cards),
+                    players: [
+                        createPlayer({ id: 'P1A', connection: this.firstPlayerConnection }),
+                        createPlayer({ id: 'P2A', connection: this.secondPlayerConnection })
+                    ]
+                });
+
+                this.match.discardCard('P1A', 'C2A');
+            },
+            'should emit opponents new card count to first player'() {
+                assert.calledOnce(this.firstPlayerConnection.setOpponentCardCount);
+                assert.calledWith(this.firstPlayerConnection.setOpponentCardCount, 8);
+            },
+            'when restore state of first player should NOT have discarded card on hand'() {
+                this.match.start();
+                const { cardsOnHand } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+                assert.equals(cardsOnHand.length, 7);
+                const discardedCardIsOnHand = cardsOnHand.some(c => c.id === 'C2A')
+                refute(discardedCardIsOnHand);
+            },
+            'when restore state of first player should NOT have 2 additional action points'() {
+                this.match.start();
+                assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
+                    actionPoints: 8
+                }));
+            },
+            'should emit opponentDiscardedCard to second player'() {
+                assert.calledOnce(this.secondPlayerConnection.opponentDiscardedCard);
+                const {
+                    bonusCard,
+                    discardedCard,
+                    opponentCardCount
+                } = this.secondPlayerConnection.opponentDiscardedCard.lastCall.args[0];
+                assert.defined(bonusCard.id);
+                assert.equals(discardedCard.id, 'C2A');
+                assert.equals(opponentCardCount, 7);
+            }
+        },
+        'when discards a card and then puts down a card in the action phase and goes to next phase': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['restoreState', 'setOpponentCardCount']);
+                this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard']);
+                this.cards = [
+                    createCard({ id: 'C1A' }),
+                    createCard({ id: 'C2A', cost: 1 })
+                ]
+                this.match = createMatchAndGoToFirstActionPhase({
+                    deckFactory: FakeDeckFactory.fromCards(this.cards),
+                    players: [
+                        createPlayer({ id: 'P1A', connection: this.firstPlayerConnection }),
+                        createPlayer({ id: 'P2A', connection: this.secondPlayerConnection })
+                    ]
+                });
+                this.match.discardCard('P1A', 'C1A');
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C2A' });
+
+                this.match.nextPhase('P1A');
+            },
+            'and restore state should have correct amount of action points'() {
+                this.match.start();
+                assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
+                    actionPoints: 6
+                }));
+            }
+        },
+        'when in the action phase and discards a card, puts down a card in the zone, puts down a station card in the action row and goes to next phase': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['restoreState', 'setOpponentCardCount']);
+                this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard']);
+                this.cards = [
+                    createCard({ id: 'C1A' }),
+                    createCard({ id: 'C2A', cost: 1 }),
+                    createCard({ id: 'C3A' })
+                ]
+                this.match = createMatchAndGoToFirstActionPhase({
+                    deckFactory: FakeDeckFactory.fromCards(this.cards),
+                    players: [
+                        createPlayer({ id: 'P1A', connection: this.firstPlayerConnection }),
+                        createPlayer({ id: 'P2A', connection: this.secondPlayerConnection })
+                    ]
+                });
+                this.match.discardCard('P1A', 'C1A');
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C2A' });
+                this.match.putDownCard('P1A', { location: 'station-action', cardId: 'C3A' });
+
+                this.match.nextPhase('P1A');
+            },
+            'and restore state should have correct amount of action points'() {
+                this.match.start();
+                assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
+                    actionPoints: 8
+                }));
+            }
         }
     },
     'nextPhase:': {
@@ -439,7 +545,7 @@ module.exports = testCase('Match', {
         }
     },
     'discard phase': {
-        'when has 8 cards entering discard phase of first turn and leaves without discarding should throw error': async function () {
+        'when has 8 cards entering discard phase of first turn and leaves without discarding should throw error': function () {
             let match = createMatchAndGoToFirstDiscardPhase({
                 deckFactory: FakeDeckFactory.fromCards([
                     createCard({ id: 'C1A' })
@@ -541,12 +647,12 @@ function createMatchAndGoToFirstAttackPhase(deps = {}) {
     match.start();
     match.start();
 
-    const [firstPlayer, secondPlayer] = match.players;
+    const [firstPlayer, _] = match.players;
     match.nextPhase(firstPlayer.id);
     match.nextPhase(firstPlayer.id);
     match.nextPhase(firstPlayer.id);
 
-    let firstPlayerCards;
+    let firstPlayerCards = null;
     firstPlayer.connection.on('restoreState', state => {
         firstPlayerCards = state.cardsOnHand;
     });
@@ -572,7 +678,7 @@ function createMatchAndGoToSecondAttackPhase(deps = {}) {
     match.nextPhase(match.players[1].id);
 
     const [_, secondPlayer] = match.players;
-    let secondPlayerCards;
+    let secondPlayerCards = null;
     secondPlayer.connection.on('restoreState', state => {
         secondPlayerCards = state.cardsOnHand;
     });

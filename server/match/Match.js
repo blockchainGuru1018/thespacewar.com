@@ -1,4 +1,5 @@
 const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
+const DiscardCardEvent = require('../../shared/event/DiscardCardEvent.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
 
 const TEMPORARY_START_PHASE = 'start';
@@ -171,7 +172,6 @@ module.exports = function (deps) {
         const discardedCard = playerState.cardsOnHand[cardIndexOnHand];
         if (!discardedCard) throw new Error('Invalid state - someone is cheating');
         playerState.cardsOnHand.splice(cardIndexOnHand, 1);
-        playerState.actionPoints += getActionPointsFromDiscardingCard();
         playerState.discardedCards.push(discardedCard);
 
         const opponentId = getOpponentId(playerId);
@@ -191,7 +191,8 @@ module.exports = function (deps) {
             emitToPlayer(opponentId, 'opponentDiscardedCard', { discardedCard, opponentCardCount });
         }
 
-        emitOpponentCardCount(playerId);
+        playerState.events.push(DiscardCardEvent({ turn: state.turn, phase: playerState.phase, cardId }));
+        emitOpponentCardCountToPlayer(playerId);
     }
 
     function startDrawPhaseForPlayer(playerId) {
@@ -203,7 +204,7 @@ module.exports = function (deps) {
         emitToPlayer(playerId, 'drawCards', cards);
 
         const opponentId = getOpponentId(playerId)
-        emitOpponentCardCount(opponentId);
+        emitOpponentCardCountToPlayer(opponentId);
     }
 
     function getPlayerState(playerId) {
@@ -215,7 +216,7 @@ module.exports = function (deps) {
         Object.assign(player, mergeData);
     }
 
-    function emitOpponentCardCount(playerId) {
+    function emitOpponentCardCountToPlayer(playerId) {
         emitToPlayer(playerId, 'setOpponentCardCount', getOpponentCardCount(playerId));
     }
 
@@ -229,7 +230,7 @@ module.exports = function (deps) {
             currentPlayer: state.currentPlayer,
             opponentCardCount: getOpponentCardCount(playerId),
             opponentDiscardedCards: getOpponentDiscardedCards(playerId),
-            opponentStationCards: getOpponentStationCards(playerId),
+            opponentStationCards: getOpponentStationCards(playerId)
         });
     }
 
@@ -308,10 +309,6 @@ module.exports = function (deps) {
         return stationCards
             .filter(c => c.place === 'handSize')
             .length * 3;
-    }
-
-    function getActionPointsFromDiscardingCard() {
-        return 2;
     }
 
     function toClientModel() {

@@ -11,18 +11,23 @@ module.exports = function getActionPointsForPlayer(deps) {
         const playerIsPastActionPhase = phase === 'discard' || phase === 'attack';
         if (playerIsPastActionPhase) return actionPoints;
 
-        const cardEventsThisTurn = events.filter(e => e.turn === turn && e.type === 'putDownCard');
+        const eventsThisTurn = events.filter(e => e.turn === turn);
         let hasPutDownZoneCardThatIsNotFree = false;
-        for (let event of cardEventsThisTurn) {
-            if (event.location === 'zone') {
-                const cardCost = cardInfoRepository.getCost(event.cardId);
-                if (cardCost > 0) {
-                    actionPoints -= cardCost;
-                    hasPutDownZoneCardThatIsNotFree = true;
+        for (let event of eventsThisTurn) {
+            if (event.type === 'putDownCard') {
+                if (event.location === 'zone') {
+                    const cardCost = cardInfoRepository.getCost(event.cardId);
+                    if (cardCost > 0) {
+                        actionPoints -= cardCost;
+                        hasPutDownZoneCardThatIsNotFree = true;
+                    }
+                }
+                else if (event.location === 'station-action' && hasPutDownZoneCardThatIsNotFree) {
+                    actionPoints -= 2;
                 }
             }
-            else if (event.location === 'station-action' && hasPutDownZoneCardThatIsNotFree) {
-                actionPoints -= 2;
+            else if (event.type === 'discardCard' && event.phase === 'action') {
+                actionPoints += 2;
             }
         }
 
