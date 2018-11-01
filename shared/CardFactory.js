@@ -1,4 +1,4 @@
-const cardsJson = require('../card/cards.json');
+const cardsJson = require('../server/card/cards.json');
 
 module.exports = function () {
 

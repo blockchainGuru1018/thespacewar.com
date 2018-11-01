@@ -7,6 +7,8 @@ let {
     defaults
 } = require('bocha');
 let FakeDeckFactory = require('../testUtils/FakeDeckFactory.js');
+let FakeCardFactory = require('../testUtils/FakeCardFactory.js');
+let CardInfoRepository = require('../../../shared/CardInfoRepository.js');
 let Match = require('../../match/Match.js');
 
 //Explain: "player of the turn" is the current player of the turn. Both players will be the current player of the turn, once.
@@ -61,8 +63,8 @@ module.exports = testCase('Match', {
                 assert.equals(this.state.stationCards.filter(c => c.place === 'action').length, 3);
                 assert.equals(this.state.stationCards.filter(c => c.place === 'handSize').length, 1);
             },
-            'should have 0 action points': function () {
-                assert.equals(this.state.actionPoints, 0);
+            'should have 6 action points equal to the amound of station cards * 2': function () {
+                assert.equals(this.state.actionPoints, 6);
             },
             'should be first players turn': function () {
                 assert.equals(this.state.currentPlayer, 'P1A');
@@ -74,26 +76,27 @@ module.exports = testCase('Match', {
         'when can afford card:': {
             async setUp() {
                 const card = createCard({ id: 'C1A', cost: 1 });
-                const restoreState = stub();
-                const connection = FakeConnection({ restoreState });
+                this.connection = FakeConnection2(['restoreState']);
                 const match = createMatchAndGoToFirstActionPhase({
                     deckFactory: FakeDeckFactory.fromCards([card]),
-                    players: [createPlayer({ id: 'P1A', cost: 1, connection })]
+                    players: [createPlayer({ id: 'P1A', cost: 1, connection: this.connection })]
                 });
                 match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
 
                 match.start();
-                this.state = restoreState.firstCall.args[0];
             },
             'should put card in zone': function () {
-                assert.equals(this.state.cardsInZone, [{ id: 'C1A', cost: 1 }]);
+                let state = this.connection.restoreState.firstCall.args[0];
+                assert.equals(state.cardsInZone, [{ id: 'C1A', cost: 1 }]);
             },
             'should remove card from hand': function () {
-                assert.equals(this.state.cardsOnHand.length, 7);
+                let state = this.connection.restoreState.firstCall.args[0];
+                assert.equals(state.cardsOnHand.length, 7);
             },
             'should add event': function () {
-                assert.equals(this.state.events.length, 1);
-                assert.match(this.state.events[0], {
+                let state = this.connection.restoreState.firstCall.args[0];
+                assert.equals(state.events.length, 1);
+                assert.match(state.events[0], {
                     type: 'putDownCard',
                     turn: 1,
                     location: 'zone',
@@ -309,6 +312,130 @@ module.exports = testCase('Match', {
                 assert.calledOnce(this.playerConnection.setActionPoints);
                 assert.calledWith(this.playerConnection.setActionPoints, 6);
             }
+        },
+        'when leaves the action phase': {
+            async setUp() {
+                this.playerConnection = FakeConnection2(['setActionPoints', 'restoreState']);
+                this.match = createMatchAndGoToFirstActionPhase({
+                    players: [createPlayer({ id: 'P1A', connection: this.playerConnection })]
+                });
+
+                this.match.nextPhase('P1A');
+            },
+            'should reset action points'() {
+                let lastCallActionPoints = this.playerConnection.setActionPoints.lastCall.args[0];
+                assert.equals(lastCallActionPoints, 6);
+            },
+            'when restore state should get correct amount of action points': function () {
+                this.match.start();
+                assert.calledWith(this.playerConnection.restoreState, sinon.match({
+                    actionPoints: 6
+                }));
+            }
+        },
+        'when has put down 1 zero cost card in zone and then puts down station card in action row': {
+            async setUp() {
+                this.playerConnection = FakeConnection2(['restoreState']);
+                this.match = createMatchAndGoToFirstActionPhase({
+                    deckFactory: FakeDeckFactory.fromCards([
+                        createCard({ id: 'C1A', cost: 0 }),
+                        createCard({ id: 'C2A', cost: 0 })
+                    ]),
+                    players: [createPlayer({ id: 'P1A', connection: this.playerConnection })]
+                });
+
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
+                this.match.putDownCard('P1A', { location: 'station-action', cardId: 'C2A' });
+            },
+            'when restore state should have correct amount of action points': function () {
+                this.match.start();
+                assert.calledWith(this.playerConnection.restoreState, sinon.match({
+                    actionPoints: 8
+                }));
+            }
+        },
+        'when put down station card should NOT lose any action points': {
+            async setUp() {
+                this.playerConnection = FakeConnection2(['restoreState']);
+                this.match = createMatchAndGoToFirstActionPhase({
+                    deckFactory: FakeDeckFactory.fromCards([
+                        createCard({ id: 'C1A', cost: 1 }),
+                    ]),
+                    players: [createPlayer({ id: 'P1A', connection: this.playerConnection })]
+                });
+
+                this.match.putDownCard('P1A', { location: 'station-draw', cardId: 'C1A' });
+            },
+            'when restore state should have correct amount of action points': function () {
+                this.match.start();
+                assert.calledWith(this.playerConnection.restoreState, sinon.match({
+                    actionPoints: 6
+                }));
+            }
+        },
+        'when put card in zone and then put down a station card in action row': {
+            async setUp() {
+                this.playerConnection = FakeConnection2(['setActionPoints', 'restoreState']);
+                let cardFactory = FakeCardFactory.fromCards([createCard({ id: 'C1A', cost: 1 })]);
+                this.match = createMatchAndGoToFirstActionPhase({
+                    deckFactory: FakeDeckFactory({ cardFactory }),
+                    cardInfoRepository: CardInfoRepository({ cardFactory }),
+                    players: [createPlayer({ id: 'P1A', connection: this.playerConnection })]
+                });
+
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
+                this.match.putDownCard('P1A', { location: 'station-action', cardId: 'C1A' });
+            },
+            'when restore state should have correct amount of action points': function () {
+                this.match.start();
+                assert.calledWith(this.playerConnection.restoreState, sinon.match({
+                    actionPoints: 5
+                }));
+            },
+            'when go to next phase should gain action points from added station card': function () {
+                this.match.nextPhase('P1A');
+
+                this.match.start();
+                assert.calledWith(this.playerConnection.restoreState, sinon.match({
+                    actionPoints: 8
+                }));
+            }
+        },
+        'when put down a station card in action row and then put down card in zone': {
+            async setUp() {
+                this.card = createCard({ id: 'C1A', cost: 1 });
+                this.playerConnection = FakeConnection2(['setActionPoints', 'restoreState']);
+                let cardFactory = FakeCardFactory.fromCards([this.card]);
+                this.match = createMatchAndGoToFirstActionPhase({
+                    deckFactory: FakeDeckFactory({ cardFactory }),
+                    cardInfoRepository: CardInfoRepository({ cardFactory }),
+                    players: [createPlayer({ id: 'P1A', connection: this.playerConnection })]
+                });
+
+                this.match.putDownCard('P1A', { location: 'station-action', cardId: 'C1A' });
+                this.error = catchError(() => this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' }));
+            },
+            'should NOT give error'() {
+                refute(this.error);
+            },
+            'when restore state should have correct amount of action points': function () {
+                this.match.start();
+                assert.calledWith(this.playerConnection.restoreState, sinon.match({
+                    actionPoints: 7
+                }));
+            },
+            'when restore state should have card in zone': function () {
+                this.match.start();
+                assert.calledWith(this.playerConnection.restoreState, sinon.match({
+                    cardsInZone: [this.card]
+                }));
+            },
+            'when restore state should have 4 station cards in action row': function () {
+                this.match.start();
+                let { stationCards } = this.playerConnection.restoreState.lastCall.args[0];
+                const stationCardsInActionRow = stationCards.filter(s => s.place === 'action')
+                assert.equals(stationCardsInActionRow.length, 4);
+            }
         }
     },
     'discard phase': {
@@ -468,8 +595,11 @@ function createMatch(deps = {}) {
     if (deps.players && deps.players.length === 1) {
         deps.players.push(createPlayer());
     }
+    const deckFactory = deps.deckFactory || FakeDeckFactory.fromCards([createCard()]);
+    const cardFactory = deckFactory._getCardFactory();
     defaults(deps, {
-        deckFactory: FakeDeckFactory.fromCards([createCard()]),
+        deckFactory,
+        cardInfoRepository: CardInfoRepository({ cardFactory }),
         players: [createPlayer(), createPlayer()]
     });
     return Match(deps);
@@ -480,15 +610,6 @@ function createCard(options) {
         id: 'DEFAULT_TEST_CARD_ID',
         cost: 0
     });
-}
-
-function catchError(callback) {
-    try {
-        callback();
-    }
-    catch (error) {
-        return error;
-    }
 }
 
 function FakeConnection(listenerByActionName) { // TODO Migrate this to the new and then rename the new one to this name
@@ -523,4 +644,13 @@ function FakeConnection2(namesOfActionsToStub = []) {
         },
         ...stubMap
     };
+}
+
+function catchError(callback) {
+    try {
+        callback();
+    }
+    catch (error) {
+        return error;
+    }
 }

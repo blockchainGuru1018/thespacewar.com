@@ -1,4 +1,5 @@
 const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
+const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
 const PHASES = ['draw', 'action', 'discard', 'attack'];
 
 module.exports = function (deps) {
@@ -7,7 +8,9 @@ module.exports = function (deps) {
     const opponentUser = deps.opponentUser;
     const matchId = deps.matchId;
     const matchControllerFactory = deps.matchControllerFactory;
+    const cardInfoRepository = deps.cardInfoRepository;
 
+    const actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository });
     let matchController;
 
     return {
@@ -40,7 +43,9 @@ module.exports = function (deps) {
         getters: {
             playerCardModels,
             nextPhaseButtonText,
-            maxHandSize
+            maxHandSize,
+            hasPutDownNonFreeCardThisTurn,
+            actionPoints2
         },
         mutations: {
             setPlayerStationCards,
@@ -88,6 +93,23 @@ module.exports = function (deps) {
 
     function maxHandSize(state) {
         return state.playerStation.handSizeCards.length * 3;
+    }
+
+    function hasPutDownNonFreeCardThisTurn(state) {
+        return state.events.some(e =>
+            e.turn === state.turn
+            && e.type === 'putDownCard'
+            && e.location === 'zone'
+            && cardInfoRepository.getCost(e.cardId) > 0);
+    }
+
+    function actionPoints2(state) {
+        return actionPointsCalculator.calculate({
+            phase: state.phase,
+            turn: state.turn,
+            events: state.events,
+            actionStationCardsCount: state.playerStation.actionCards.length
+        });
     }
 
     function setPlayerStationCards(state, stationCards) {
@@ -188,10 +210,6 @@ module.exports = function (deps) {
         state.currentPlayer = currentPlayer;
 
         dispatch('persistOngoingMatch');
-
-        if (currentPlayer === state.ownUser.id) {
-            dispatch('nextPhase');
-        }
     }
 
     function nextPhase({ state }) {

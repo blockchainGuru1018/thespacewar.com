@@ -7,7 +7,8 @@ FakeDeckFactory.fromCards = cards => {
 
 function FakeDeckFactory({ cardFactory }) {
     return {
-        create: () => FakeDeck({ cardFactory })
+        create: () => FakeDeck({ cardFactory }),
+        _getCardFactory: () => cardFactory
     }
 }
 

@@ -1,6 +1,5 @@
 const Vue = require('vue');
 const Vuex = require('vuex');
-const SocketCommander = require('./SocketCommander.js');
 const Router = require('./Router.js');
 const RootStore = require('./RootStore.js');
 const UserRepository = require('./users/UserRepository.js');
@@ -9,11 +8,14 @@ const LobbyPage = require('./lobby/LobbyPage.js');
 const MatchPage = require('./match/MatchPage.js');
 const MatchRepository = require('./match/MatchRepository.js');
 const MatchControllerFactory = require('./match/MatchControllerFactory.js');
+const CardFactory = require('../shared/CardFactory.js');
+const CardInfoRepository = require('../shared/CardInfoRepository.js');
 
 let socket;
-let socketCommander;
 let userRepository;
 let matchRepository;
+let cardFactory;
+let cardInfoRepository;
 let rootStore;
 
 Vue.use(Vuex);
@@ -21,8 +23,9 @@ bootstrap();
 
 function bootstrap() {
     socket = io();
-    socketCommander = SocketCommander({ socket });
 
+    cardFactory = CardFactory();
+    cardInfoRepository = CardInfoRepository({ cardFactory });
     userRepository = UserRepository({ socket });
     matchRepository = MatchRepository({
         socket,
@@ -47,7 +50,7 @@ function initRouter() {
             socket,
             userRepository
         }),
-        socketCommander,
+        cardInfoRepository,
         rootStore
     };
     const router = Router({ pagesByName, pageDependencies });
@@ -56,5 +59,5 @@ function initRouter() {
 }
 
 function createStores() {
-    return RootStore({ socketCommander });
+    return RootStore();
 }

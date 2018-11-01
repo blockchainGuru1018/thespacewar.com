@@ -4,7 +4,10 @@
         <div>
             <span>Match ID: {{ matchId }}</span>
             <span>Phase: {{ phase }}</span>
-            <span>Actions: {{ actionPoints }}</span>
+            <span v-if="calculatedActionPointsForActionPhaseVisible">Actions: {{ actionPoints2 }}</span>
+            <span v-else>
+                Actions: 0 ({{ (actionPoints2)}})
+            </span>
         </div>
         <div class="field">
             <div class="field-opponent">
@@ -98,24 +101,31 @@
                             @click="playerCardClick(card)"/>
                 </div>
                 <div class="field-playerHud">
-                    <div v-if="!isOwnTurn" class="playerHud-phaseText">Waiting for next player</div>
-                    <template v-else>
-                        <div class="playerHud-phaseText">{{ phaseText }} phase</div>
-                        <div v-if="phase === 'discard' && playerCardModels.length > maxHandSize"
-                             class="playerHud-nextPhaseButton playerHud-phaseText">
-                            Discard {{ amountOfCardsToDiscard + (amountOfCardsToDiscard > 1 ? ' cards' : ' card')}} to continue
-                        </div>
-                        <button v-else-if="nextPhaseButtonText"
-                                @click="nextPhaseClick"
-                                class="playerHud-nextPhaseButton playerHud-button">
-                            {{ nextPhaseButtonText }} phase
+                    <template v-if="isOwnTurn">
+                        <button v-if="phase === 'start'"
+                                @click="startClick"
+                                class="playerHud-nextPhaseButton playerHud-button playerHud-item">
+                            START
                         </button>
-                        <button v-else
-                                @click="nextPhaseClick"
-                                class="playerHud-endTurnButton playerHud-button">
-                            End turn
-                        </button>
+                        <template v-else>
+                            <div class="playerHud-phaseText playerHud-item">{{ phaseText }} phase</div>
+                            <div v-if="phase === 'discard' && playerCardModels.length > maxHandSize"
+                                 class="playerHud-nextPhaseButton playerHud-phaseText playerHud-item">
+                                Discard {{ amountOfCardsToDiscard + (amountOfCardsToDiscard > 1 ? ' cards' : ' card')}} to continue
+                            </div>
+                            <button v-else-if="nextPhaseButtonText"
+                                    @click="nextPhaseClick"
+                                    class="playerHud-nextPhaseButton playerHud-button playerHud-item">
+                                {{ nextPhaseButtonText }} phase
+                            </button>
+                            <button v-else
+                                    @click="nextPhaseClick"
+                                    class="playerHud-endTurnButton playerHud-button playerHud-item">
+                                End turn
+                            </button>
+                        </template>
                     </template>
+                    <div v-else class="playerHud-phaseText playerHud-item">Waiting for next player</div>
                 </div>
             </div>
         </div>
@@ -154,7 +164,9 @@
             ...mapGetters([
                 'playerCardModels',
                 'nextPhaseButtonText',
-                'maxHandSize'
+                'maxHandSize',
+                'hasPutDownNonFreeCardThisTurn',
+                'actionPoints2'
             ]),
             isOwnTurn() {
                 return this.ownUser.id === this.currentPlayer;
@@ -203,6 +215,16 @@
             },
             amountOfCardsToDiscard() {
                 return this.playerCardModels.length - this.maxHandSize;
+            },
+            calculatedActionPointsForActionPhaseVisible() {
+                return this.phase === 'action'
+                    && this.hasPutDownNonFreeCardThisTurn;
+            },
+            nextActionPointsFromStationCards() {
+                if (this.phase === 'action') {
+                    return 0;
+                }
+                return this.playerStation.actionCards.length * 2;
             }
         },
         methods: {
@@ -212,6 +234,9 @@
                 'discardCard',
                 'nextPhase'
             ]),
+            startClick() {
+                this.nextPhase();
+            },
             canAffordCard(card) {
                 return this.actionPoints >= card.cost;
             },
@@ -557,27 +582,31 @@
         display: flex;
         justify-content: flex-start;
         align-items: center;
+        padding-left: 10px;
     }
 
-    .playerHud-phaseText {
-        display: inline-block;
+    .playerHud-item {
+        margin: 0 10px;
         padding: 10px 20px;
         font-size: 18px;
         font-family: Helvetica, sans-serif;
         font-weight: bold;
 
+        &:first-child {
+            margin-right: 0;
+        }
+    }
+
+    .playerHud-phaseText {
+        display: inline-block;
         background-color: #35A7FF;
         box-shadow: inset 0 1px 10px 1px rgba(0, 0, 0, 0.18);
         color: white;
-        margin: 0 10px 0 20px;
     }
 
     .playerHud-button {
         box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.2);;
         border: none;
-        font-size: 18px;
-        font-weight: bold;
-        padding: 10px 20px;
 
         &:active {
             outline: 2px solid rgba(0, 0, 0, .3);

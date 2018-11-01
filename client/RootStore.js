@@ -1,10 +1,6 @@
 const Vuex = require('vuex');
 
-module.exports = function (deps) {
+module.exports = function () {
 
-    return new Vuex.Store({
-        state: {
-            test: 'this_is_a_test'
-        }
-    });
+    return new Vuex.Store({});
 }

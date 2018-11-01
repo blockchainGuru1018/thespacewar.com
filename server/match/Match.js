@@ -1,4 +1,5 @@
 const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
+const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
 
 const TEMPORARY_START_PHASE = 'start';
 const PHASES = ['draw', 'action', 'discard', 'attack'];
@@ -10,8 +11,11 @@ PHASES.attack = 'attack';
 module.exports = function (deps) {
 
     const deckFactory = deps.deckFactory;
+    const cardInfoRepository = deps.cardInfoRepository;
     const matchId = deps.matchId;
     const players = deps.players;
+
+    const actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository });
 
     const playerOrder = players.map(p => p.id);
     const firstPlayer = players.find(p => p.id === playerOrder[0]);
@@ -91,11 +95,7 @@ module.exports = function (deps) {
     }
 
     function startActionPhaseForPlayer(playerId) {
-        const playerStationCards = getPlayerStationCards(playerId);
-        const actionPointsToAdd = getActionPointsFromStationCards(playerStationCards);
-        const playerState = getPlayerState(playerId);
-        playerState.actionPoints += actionPointsToAdd;
-        emitToPlayer(playerId, 'setActionPoints', playerState.actionPoints);
+        emitToPlayer(playerId, 'setActionPoints', getActionPointsForPlayer(playerId));
     }
 
     function leaveDiscardPhaseForPlayer(playerId) {
@@ -136,21 +136,20 @@ module.exports = function (deps) {
         const card = playerState.cardsOnHand[cardIndexOnHand];
         if (!card) throw CheatError('Card is not on hand');
 
-        const canAffordCard = playerState.actionPoints >= card.cost;
+        const playerActionPoints = getActionPointsForPlayer(playerId)
+        const canAffordCard = playerActionPoints >= card.cost;
         const isStationCard = location.startsWith('station');
         const hasAlreadyPutDownStationCard = playerState.events.some(e => {
             return e.turn === state.turn
                 && e.type === 'putDownCard'
                 && e.location.startsWith('station');
         })
-        if (hasAlreadyPutDownStationCard) {
+        if (isStationCard && hasAlreadyPutDownStationCard) {
             throw CheatError('Cannot put down more than one station card on the same turn');
         }
-        if (!isStationCard && !canAffordCard) {
+        if (!canAffordCard && !isStationCard) {
             throw CheatError('Cannot afford card');
         }
-        playerState.cardsOnHand.splice(cardIndexOnHand, 1);
-        playerState.actionPoints -= card.cost;
 
         if (isStationCard) {
             const stationLocation = location.split('-').pop();
@@ -160,6 +159,7 @@ module.exports = function (deps) {
             playerState.cardsInZone.push(card);
         }
 
+        playerState.cardsOnHand.splice(cardIndexOnHand, 1);
         playerState.events.push(PutDownCardEvent({ turn: state.turn, location, cardId }));
 
         emitToOpponent(playerId, 'putDownOpponentCard', { location });
@@ -221,8 +221,10 @@ module.exports = function (deps) {
 
     function emitRestoreStateForPlayer(playerId) {
         const playerState = state.playerState[playerId];
+        const actionPointsForPlayer = getActionPointsForPlayer(playerId)
         emitToPlayer(playerId, 'restoreState', {
             ...playerState,
+            actionPoints: actionPointsForPlayer,
             turn: state.turn,
             currentPlayer: state.currentPlayer,
             opponentCardCount: getOpponentCardCount(playerId),
@@ -283,17 +285,23 @@ module.exports = function (deps) {
         player.connection.emit('match', { matchId, action, value });
     }
 
+    function getActionPointsForPlayer(playerId) {
+        const playerState = getPlayerState(playerId);
+        const playerStationCards = getPlayerStationCards(playerId);
+        const actionStationCardsCount = playerStationCards.filter(s => s.place === 'action').length;
+        return actionPointsCalculator.calculate({
+            phase: playerState.phase,
+            events: playerState.events,
+            turn: state.turn,
+            actionStationCardsCount
+        });
+    }
+
     function getStationDrawCardsCount(playerId) {
         let stationCards = getPlayerStationCards(playerId);
         return stationCards
             .filter(card => card.place === 'draw')
             .length;
-    }
-
-    function getActionPointsFromStationCards(stationCards) {
-        return stationCards
-            .filter(c => c.place === 'action')
-            .length * 2;
     }
 
     function getMaxHandSizeFromStationCards(stationCards) {
