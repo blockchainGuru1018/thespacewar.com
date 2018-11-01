@@ -210,14 +210,16 @@ module.exports = testCase('Match', {
                 }));
             }
         },
-        'when in the action phase and discards a card, puts down a card in the zone, puts down a station card in the action row and goes to next phase': {
+        'when in the action phase and discards 3 cards, puts down a card in the zone, puts down a station card and go to next players turn': {
             setUp() {
                 this.firstPlayerConnection = FakeConnection2(['restoreState', 'setOpponentCardCount']);
                 this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard']);
                 this.cards = [
                     createCard({ id: 'C1A' }),
                     createCard({ id: 'C2A', cost: 1 }),
-                    createCard({ id: 'C3A' })
+                    createCard({ id: 'C3A' }),
+                    createCard({ id: 'C4A' }),
+                    createCard({ id: 'C5A' })
                 ]
                 this.match = createMatchAndGoToFirstActionPhase({
                     deckFactory: FakeDeckFactory.fromCards(this.cards),
@@ -227,15 +229,19 @@ module.exports = testCase('Match', {
                     ]
                 });
                 this.match.discardCard('P1A', 'C1A');
-                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C2A' });
-                this.match.putDownCard('P1A', { location: 'station-action', cardId: 'C3A' });
+                this.match.discardCard('P1A', 'C2A');
+                this.match.discardCard('P1A', 'C3A');
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C4A' });
+                this.match.putDownCard('P1A', { location: 'station-draw', cardId: 'C5A' });
 
+                this.match.nextPhase('P1A');
+                this.match.nextPhase('P1A');
                 this.match.nextPhase('P1A');
             },
             'and restore state should have correct amount of action points'() {
                 this.match.start();
                 assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
-                    actionPoints: 8
+                    actionPoints: 6
                 }));
             }
         }

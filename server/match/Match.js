@@ -8,6 +8,7 @@ PHASES.draw = 'draw';
 PHASES.action = 'action';
 PHASES.discard = 'discard';
 PHASES.attack = 'attack';
+PHASES.wait = 'wait';
 
 module.exports = function (deps) {
 
@@ -110,7 +111,7 @@ module.exports = function (deps) {
 
     function endTurnForCurrentPlayer() {
         let playerState = getPlayerState(state.currentPlayer);
-        playerState.phase = PHASES.draw;
+        playerState.phase = PHASES.wait;
 
         const isLastPlayerOfTurn = state.currentPlayer === lastPlayer.id;
         if (isLastPlayerOfTurn) {

@@ -160,7 +160,12 @@ module.exports = function (deps) {
     function nextPlayer({ state }, { turn, currentPlayer }) {
         state.currentPlayer = currentPlayer;
         state.turn = turn;
-        state.phase = 'draw';
+        if (currentPlayer === state.ownUser.id) {
+            state.phase = 'draw';
+        }
+        else {
+            state.phase = 'wait';
+        }
     }
 
     function restoreState({ state, commit }, restoreState) {

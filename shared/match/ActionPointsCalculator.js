@@ -1,3 +1,5 @@
+const PHASES_AFTER_ACTION_PHASE = ['discard', 'attack', 'wait'];
+
 module.exports = function getActionPointsForPlayer(deps) {
 
     const cardInfoRepository = deps.cardInfoRepository;
@@ -8,7 +10,7 @@ module.exports = function getActionPointsForPlayer(deps) {
 
     function calculate({ phase, turn, events, actionStationCardsCount }) {
         let actionPoints = actionStationCardsCount * 2;
-        const playerIsPastActionPhase = phase === 'discard' || phase === 'attack';
+        const playerIsPastActionPhase = PHASES_AFTER_ACTION_PHASE.includes(phase);
         if (playerIsPastActionPhase) return actionPoints;
 
         const eventsThisTurn = events.filter(e => e.turn === turn);
