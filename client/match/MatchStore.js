@@ -2,6 +2,9 @@ const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
 const PHASES = ['draw', 'action', 'discard', 'attack'];
 
+//TODO should recalculate action points when discard a card
+//TODO when moving card should show arrow to where the card is moving
+
 module.exports = function (deps) {
 
     const userRepository = deps.userRepository;
@@ -31,6 +34,7 @@ module.exports = function (deps) {
                 actionCards: [],
                 handSizeCards: []
             },
+            playerCardsInOpponentZone: [],
             opponentCardCount: 0,
             opponentDiscardedCards: [],
             opponentStation: {
@@ -38,6 +42,8 @@ module.exports = function (deps) {
                 actionCards: [],
                 handSizeCards: []
             },
+            opponentCardsInPlayerZone: [],
+            opponentCardsInZone: [],
             events: []
         },
         getters: {
@@ -60,14 +66,16 @@ module.exports = function (deps) {
             discardCard,
             nextPhase,
             setActionPoints,
+            moveCard,
 
             // local
             restoreState,
             beginGame,
             placeCardInZone,
             opponentDiscardedCard,
-            setOpponentCardCount,
             putDownOpponentCard,
+            opponentMovedCard,
+            setOpponentCardCount,
             nextPlayer,
             persistOngoingMatch,
             drawCards
@@ -173,10 +181,13 @@ module.exports = function (deps) {
             stationCards,
             cardsOnHand,
             cardsInZone,
+            cardsInOpponentZone,
             discardedCards,
             opponentCardCount,
             opponentDiscardedCards,
             opponentStationCards,
+            opponentCardsInZone,
+            opponentCardsInPlayerZone,
             events,
             phase,
             actionPoints,
@@ -187,8 +198,11 @@ module.exports = function (deps) {
         commit('setPlayerCardsOnHand', cardsOnHand);
         state.playerCardsInZone = cardsInZone;
         state.playerDiscardedCards = discardedCards;
+        state.playerCardsInOpponentZone = cardsInOpponentZone;
         state.opponentCardCount = opponentCardCount;
         state.opponentDiscardedCards = opponentDiscardedCards;
+        state.opponentCardsInZone = opponentCardsInZone;
+        state.opponentCardsInPlayerZone = opponentCardsInPlayerZone;
         commit('setOpponentStationCards', opponentStationCards);
 
         state.events = events;
@@ -273,6 +287,13 @@ module.exports = function (deps) {
         state.actionPoints = actionPoints;
     }
 
+    function moveCard({ state }, { id }) {
+        const cardIndex = state.playerCardsInZone.findIndex(c => c.id === id);
+        const [card] = state.playerCardsInZone.splice(cardIndex, 1);
+        state.playerCardsInOpponentZone.push(card);
+        matchController.emit('moveCard', id);
+    }
+
     function setOpponentCardCount({ state }, opponentCardCount) {
         state.opponentCardCount = opponentCardCount;
     }
@@ -286,12 +307,21 @@ module.exports = function (deps) {
         state.opponentDiscardedCards.push(discardedCard);
     }
 
-    function putDownOpponentCard({ state, commit }, { location }) {
+    function putDownOpponentCard({ state, commit }, { location, card = null }) {
         state.opponentCardCount -= 1;
         if (location.startsWith('station')) {
             const stationLocation = location.split('-').pop();
             commit('addOpponentStationCards', stationLocation);
         }
+        else if (location === 'zone') {
+            state.opponentCardsInZone.push(card);
+        }
+    }
+
+    function opponentMovedCard({ state }, cardId) {
+        let cardIndex = state.opponentCardsInZone.findIndex(c => c.id === cardId);
+        let [card] = state.opponentCardsInZone.splice(cardIndex, 1);
+        state.opponentCardsInPlayerZone.push(card);
     }
 
     function persistOngoingMatch({ state }) {

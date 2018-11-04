@@ -77,23 +77,29 @@ module.exports = testCase('Match', {
             async setUp() {
                 const card = createCard({ id: 'C1A', cost: 1 });
                 this.connection = FakeConnection2(['restoreState']);
-                const match = createMatchAndGoToFirstActionPhase({
+                this.secondPlayerConnection = FakeConnection2(['putDownOpponentCard', 'restoreState']);
+                this.match = createMatchAndGoToFirstActionPhase({
                     deckFactory: FakeDeckFactory.fromCards([card]),
-                    players: [createPlayer({ id: 'P1A', cost: 1, connection: this.connection })]
+                    players: [
+                        createPlayer({ id: 'P1A', connection: this.connection }),
+                        createPlayer({ id: 'P2A', connection: this.secondPlayerConnection })
+                    ]
                 });
-                match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
 
-                match.start();
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
             },
-            'should put card in zone': function () {
+            'should put card in zone'() {
+                this.match.start();
                 let state = this.connection.restoreState.firstCall.args[0];
                 assert.equals(state.cardsInZone, [{ id: 'C1A', cost: 1 }]);
             },
-            'should remove card from hand': function () {
+            'should remove card from hand'() {
+                this.match.start();
                 let state = this.connection.restoreState.firstCall.args[0];
                 assert.equals(state.cardsOnHand.length, 7);
             },
-            'should add event': function () {
+            'should add event'() {
+                this.match.start();
                 let state = this.connection.restoreState.firstCall.args[0];
                 assert.equals(state.events.length, 1);
                 assert.match(state.events[0], {
@@ -102,6 +108,18 @@ module.exports = testCase('Match', {
                     location: 'zone',
                     cardId: 'C1A'
                 });
+           },
+            'should emit zone card to other player'() {
+                let event = this.secondPlayerConnection.putDownOpponentCard.lastCall.args[0];
+                assert.equals(event.location, 'zone');
+                assert.match(event.card, { id: 'C1A' });
+            },
+            'when second player restore state should get zone card'() {
+                this.match.start();
+                const { opponentCardsInZone } = this.secondPlayerConnection.restoreState.lastCall.args[0];
+                assert(opponentCardsInZone);
+                assert.equals(opponentCardsInZone.length, 1);
+                assert.match(opponentCardsInZone[0], { id: 'C1A' });
             }
         },
         'when put down station card and has already put down a station this turn should throw error': function () {
@@ -615,6 +633,69 @@ module.exports = testCase('Match', {
                 });
             }
         }
+    },
+    'attack phase:': {
+        'when first player is in attack phase and moves card': {
+            async setUp() {
+                this.firstPlayerConnection = FakeConnection2(['restoreState']);
+                this.secondPlayerConnection = FakeConnection2(['opponentMovedCard', 'restoreState']);
+                this.match = createMatchAndGoToFirstActionPhase({
+                    deckFactory: FakeDeckFactory.fromCards([createCard({ id: 'C1A' })]),
+                    players: [
+                        createPlayer({ id: 'P1A', connection: this.firstPlayerConnection }),
+                        createPlayer({ id: 'P2A', connection: this.secondPlayerConnection })
+                    ]
+                });
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
+                this.match.nextPhase('P1A');
+                this.match.discardCard('P1A', 'C1A');
+                this.match.discardCard('P1A', 'C1A');
+                this.match.discardCard('P1A', 'C1A');
+                this.match.discardCard('P1A', 'C1A');
+                this.match.discardCard('P1A', 'C1A');
+                this.match.nextPhase('P1A');
+                this.match.nextPhase('P1A');
+
+                this.match.nextPhase('P2A');
+                this.match.nextPhase('P2A');
+                this.match.discardCard('P2A', 'C1A');
+                this.match.discardCard('P2A', 'C1A');
+                this.match.discardCard('P2A', 'C1A');
+                this.match.discardCard('P2A', 'C1A');
+                this.match.discardCard('P2A', 'C1A');
+                this.match.nextPhase('P2A');
+                this.match.nextPhase('P2A');
+
+                this.match.nextPhase('P1A');
+                this.match.nextPhase('P1A');
+                this.match.nextPhase('P1A');
+
+                this.match.moveCard('P1A', 'C1A');
+            },
+            'should emit opponentMovedCard'() {
+                assert.calledOnce(this.secondPlayerConnection.opponentMovedCard);
+                assert.calledWith(this.secondPlayerConnection.opponentMovedCard, 'C1A');
+            },
+            'when restore state for first player should NOT have moved card in own zone'() {
+                this.match.start();
+                let state = this.firstPlayerConnection.restoreState.lastCall.args[0];
+                assert.equals(state.cardsInZone.length, 0);
+            },
+            'when restore state for first player should have moved card in playerCardsInOpponentZone'() {
+                this.match.start();
+                let state = this.firstPlayerConnection.restoreState.lastCall.args[0];
+                assert.equals(state.cardsInOpponentZone.length, 1);
+                assert.match(state.cardsInOpponentZone[0], { id: 'C1A' });
+            },
+            'when restore state for second player should have card in opponentCardsInPlayerZone'() {
+                this.match.start();
+                let state = this.secondPlayerConnection.restoreState.lastCall.args[0];
+                assert.equals(state.opponentCardsInPlayerZone.length, 1);
+                assert.match(state.opponentCardsInPlayerZone[0], { id: 'C1A' });
+            }
+        },
+        //can NOT move card that is NOT in own zone
+        //can NOT move card on the same turn it was put into play
     }
 });
 

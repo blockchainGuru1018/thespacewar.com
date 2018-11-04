@@ -44,6 +44,7 @@ module.exports = function (deps) {
         nextPhase,
         putDownCard,
         discardCard,
+        moveCard,
         updatePlayer,
         toClientModel
     };
@@ -153,18 +154,21 @@ module.exports = function (deps) {
             throw CheatError('Cannot afford card');
         }
 
-        if (isStationCard) {
-            const stationLocation = location.split('-').pop();
-            playerState.stationCards.push({ place: stationLocation, card });
-        }
-        else if (location === 'zone') {
-            playerState.cardsInZone.push(card);
-        }
-
         playerState.cardsOnHand.splice(cardIndexOnHand, 1);
         playerState.events.push(PutDownCardEvent({ turn: state.turn, location, cardId }));
 
-        emitToOpponent(playerId, 'putDownOpponentCard', { location });
+        if (isStationCard) {
+            const stationLocation = location.split('-').pop();
+            playerState.stationCards.push({ place: stationLocation, card });
+            emitToOpponent(playerId, 'putDownOpponentCard', { location });
+        }
+        else if (location === 'zone') {
+            playerState.cardsInZone.push(card);
+            emitToOpponent(playerId, 'putDownOpponentCard', {
+                location,
+                card
+            });
+        }
     }
 
     function discardCard(playerId, cardId) {
@@ -196,6 +200,17 @@ module.exports = function (deps) {
         emitOpponentCardCountToPlayer(playerId);
     }
 
+    function moveCard(playerId, cardId) {
+        let playerState = getPlayerState(playerId);
+        let cardIndex = playerState.cardsInZone.findIndex(c => c.id === cardId);
+        let card = playerState.cardsInZone[cardIndex];
+        playerState.cardsInZone.splice(cardIndex, 1);
+
+        playerState.cardsInOpponentZone.push(card);
+
+        emitToOpponent(playerId, 'opponentMovedCard', cardId)
+    }
+
     function startDrawPhaseForPlayer(playerId) {
         const deck = getPlayerDeck(playerId);
         const amountCardsToDraw = getStationDrawCardsCount(playerId);
@@ -224,11 +239,14 @@ module.exports = function (deps) {
     function emitRestoreStateForPlayer(playerId) {
         const playerState = state.playerState[playerId];
         const actionPointsForPlayer = getActionPointsForPlayer(playerId)
+        const opponentState = getOpponentState(playerId);
         emitToPlayer(playerId, 'restoreState', {
             ...playerState,
             actionPoints: actionPointsForPlayer,
             turn: state.turn,
             currentPlayer: state.currentPlayer,
+            opponentCardsInZone: opponentState.cardsInZone,
+            opponentCardsInPlayerZone: opponentState.cardsInOpponentZone,
             opponentCardCount: getOpponentCardCount(playerId),
             opponentDiscardedCards: getOpponentDiscardedCards(playerId),
             opponentStationCards: getOpponentStationCards(playerId)
@@ -249,6 +267,7 @@ module.exports = function (deps) {
             cardsOnHand,
             stationCards,
             cardsInZone: [],
+            cardsInOpponentZone: [],
             discardedCards: [],
             phase: TEMPORARY_START_PHASE,
             actionPoints: 0,
@@ -257,7 +276,11 @@ module.exports = function (deps) {
     }
 
     function emitBeginGameForPlayer(playerId) {
-        const { stationCards, cardsOnHand, phase } = state.playerState[playerId];
+        const {
+            stationCards,
+            cardsOnHand,
+            phase,
+        } = state.playerState[playerId];
         emitToPlayer(playerId, 'beginGame', {
             stationCards,
             cardsOnHand,

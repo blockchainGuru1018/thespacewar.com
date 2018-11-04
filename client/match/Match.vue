@@ -23,6 +23,20 @@
                     </div>
                 </div>
                 <div class="field-zone field-section">
+                    <template v-for="n in 6">
+                        <div v-if="n <= opponentCardsInZone.length"
+                             class="card"
+                             :style="getCardInZoneStyle(opponentCardsInZone[n - 1])"/>
+                        <div class="card card--placeholder"/>
+                    </template>
+                </div>
+                <div class="field-zone field-section">
+                    <template v-for="n in 6">
+                        <div v-if="n <= playerCardsInOpponentZone.length"
+                             class="card"
+                             :style="getCardInZoneStyle(playerCardsInOpponentZone[n - 1])"/>
+                        <div class="card card--placeholder"/>
+                    </template>
                 </div>
                 <div class="field-piles field-section">
                     <div class="field-discardPile">
@@ -58,15 +72,27 @@
                              class="card card-ghost"/>
                     </div>
                 </div>
-                <div class="field-zone field-section">
+                <div class="field-playerZoneCards field-zone field-section">
                     <template v-for="n in 6">
-                        <div v-if="n <= playerCardsInZone.length"
-                             class="card"
-                             :style="getCardInZoneStyle(playerCardsInZone[n - 1])"/>
+                        <template v-if="n <= playerCardsInZone.length">
+                            <div v-if="phase === 'attack'"
+                                 class="card card-movable"
+                                 :style="getCardInZoneStyle(playerCardsInZone[n - 1])"
+                                 @click="moveCard(playerCardsInZone[n - 1])"/>
+                            <div v-else class="card" :style="getCardInZoneStyle(playerCardsInZone[n - 1])"/>
+                        </template>
                         <div v-else-if="playerZoneCardGhostVisible"
                              @click="cardGhostClick('zone')"
                              class="card card-ghost"/>
                         <div v-else class="card card--placeholder"/>
+                    </template>
+                </div>
+                <div class="field-zone field-section">
+                    <template v-for="n in 6">
+                        <div v-if="n <= opponentCardsInPlayerZone.length"
+                             class="card"
+                             :style="getCardInZoneStyle(opponentCardsInPlayerZone[n - 1])"/>
+                        <div class="card card--placeholder"/>
                     </template>
                 </div>
                 <div class="field-playerStation field-station field-section">
@@ -159,7 +185,10 @@
                 'opponentCardCount',
                 'playerCardsInZone',
                 'playerDiscardedCards',
-                'opponentDiscardedCards'
+                'playerCardsInOpponentZone',
+                'opponentDiscardedCards',
+                'opponentCardsInZone',
+                'opponentCardsInPlayerZone'
             ]),
             ...mapGetters([
                 'playerCardModels',
@@ -232,7 +261,8 @@
                 'init',
                 'putDownCard',
                 'discardCard',
-                'nextPhase'
+                'nextPhase',
+                'moveCard'
             ]),
             startClick() {
                 this.nextPhase();
@@ -463,6 +493,20 @@
             margin: 4px;
             box-sizing: border-box;
         }
+    }
+
+    .card-movable:hover::after {
+        content: 'Move';
+        background-color: rgba(0, 0, 0, .5);
+        color: white;
+        font-family: Helvetica, sans-serif;
+        font-size: 16px;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .field-opponentCardsOnHand {
