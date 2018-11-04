@@ -108,7 +108,7 @@ module.exports = testCase('Match', {
                     location: 'zone',
                     cardId: 'C1A'
                 });
-           },
+            },
             'should emit zone card to other player'() {
                 let event = this.secondPlayerConnection.putDownOpponentCard.lastCall.args[0];
                 assert.equals(event.location, 'zone');
@@ -694,8 +694,48 @@ module.exports = testCase('Match', {
                 assert.match(state.opponentCardsInPlayerZone[0], { id: 'C1A' });
             }
         },
-        //can NOT move card that is NOT in own zone
-        //can NOT move card on the same turn it was put into play
+        'when try to move card that is NOT in own zone should throw error': async function () {
+            let match = createMatchAndGoToFirstActionPhase({
+                deckFactory: FakeDeckFactory.fromCards([createCard({ id: 'C1A' })]),
+                players: [
+                    createPlayer({ id: 'P1A' }),
+                    createPlayer({ id: 'P2A' })
+                ]
+            });
+            match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
+            match.nextPhase('P1A');
+            repeat(5, () => match.discardCard('P1A', 'C1A'));
+            repeat(2, () => match.nextPhase('P1A'));
+
+            repeat(2, () => match.nextPhase('P2A'));
+            repeat(5, () => match.discardCard('P2A', 'C1A'));
+            repeat(2, () => match.nextPhase('P2A'));
+
+            repeat(3, () => match.nextPhase('P1A'));
+
+            let error = catchError(() => match.moveCard('P1A', 'C2A'));
+
+            assert(error);
+            assert.equals(error.message, 'Cannot move card that is not in your own zone');
+        },
+        'when try to move card on the same turn it was put down should throw error': async function () {
+            let match = createMatchAndGoToFirstActionPhase({
+                deckFactory: FakeDeckFactory.fromCards([createCard({ id: 'C1A' })]),
+                players: [
+                    createPlayer({ id: 'P1A' }),
+                    createPlayer({ id: 'P2A' })
+                ]
+            });
+            match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
+            match.nextPhase('P1A');
+            repeat(5, () => match.discardCard('P1A', 'C1A'));
+            match.nextPhase('P1A')
+
+            let error = catchError(() => match.moveCard('P1A', 'C1A'));
+
+            assert(error);
+            assert.equals(error.message, 'This card cannot be moved on the same turn it was put down');
+        }
     }
 });
 
@@ -845,5 +885,11 @@ function catchError(callback) {
     }
     catch (error) {
         return error;
+    }
+}
+
+function repeat(count, callback) {
+    for (let i = 0; i < count; i++) {
+        callback();
     }
 }

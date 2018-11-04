@@ -204,8 +204,15 @@ module.exports = function (deps) {
         let playerState = getPlayerState(playerId);
         let cardIndex = playerState.cardsInZone.findIndex(c => c.id === cardId);
         let card = playerState.cardsInZone[cardIndex];
-        playerState.cardsInZone.splice(cardIndex, 1);
+        if (!card) throw CheatError('Cannot move card that is not in your own zone');
 
+        let turnCardWasPutDonw = playerState.events
+            .find(e => e.type === 'putDownCard' && e.cardId === cardId)
+            .turn;
+        let turnsSinceCardWasPutDown = state.turn - turnCardWasPutDonw;
+        if(turnsSinceCardWasPutDown === 0) throw CheatError('This card cannot be moved on the same turn it was put down');
+
+        playerState.cardsInZone.splice(cardIndex, 1);
         playerState.cardsInOpponentZone.push(card);
 
         emitToOpponent(playerId, 'opponentMovedCard', cardId)
