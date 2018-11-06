@@ -22,6 +22,7 @@ module.exports = function (deps) {
             turn: 1,
             currentPlayer: null,
             phase: '',
+            events: [],
             matchId,
             opponentUser,
             ownUser: userRepository.getOwnUser(),
@@ -44,7 +45,7 @@ module.exports = function (deps) {
             },
             opponentCardsInPlayerZone: [],
             opponentCardsInZone: [],
-            events: []
+            attackerCardId: null
         },
         getters: {
             playerCardModels,
@@ -78,7 +79,10 @@ module.exports = function (deps) {
             setOpponentCardCount,
             nextPlayer,
             persistOngoingMatch,
-            drawCards
+            drawCards,
+            selectAsAttacker,
+            selectAsDefender,
+            opponentAttackedCard
         }
     };
 
@@ -332,6 +336,25 @@ module.exports = function (deps) {
 
     function drawCards({ state }, cards) {
         state.playerCardsOnHand.push(...cards);
+    }
+
+    function selectAsAttacker({ state }, card) {
+        state.attackerCardId = card.id;
+    }
+
+    function selectAsDefender({ state }, card) {
+        // let cardIndex = state.opponentCardsInZone.findIndex(c => c.id === card.id);
+        // state.opponentCardsInZone.splice(cardIndex, 1);
+        matchController.emit('attack', {
+            attackerCardId: state.attackerCardId,
+            defenderCardId: card.id
+        });
+    }
+
+    function opponentAttackedCard({ state }, { attackerCardId, defenderCardId, newDamage }) {
+        let defenderCard = state.playerCardsInZone.find(c => c.id === defenderCardId)
+            || state.playerCardsInOpponentZone.find(c => c.id === defenderCardId);
+        defenderCard.damage = newDamage;
     }
 };
 

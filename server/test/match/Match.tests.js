@@ -8,6 +8,8 @@ let {
 } = require('bocha');
 let FakeDeckFactory = require('../testUtils/FakeDeckFactory.js');
 let FakeCardFactory = require('../testUtils/FakeCardFactory.js');
+const createCard = FakeCardFactory.createCard;
+const createDeckFromCards = FakeDeckFactory.createDeckFromCards;
 let CardInfoRepository = require('../../../shared/CardInfoRepository.js');
 let Match = require('../../match/Match.js');
 
@@ -735,6 +737,195 @@ module.exports = testCase('Match', {
 
             assert(error);
             assert.equals(error.message, 'This card cannot be moved on the same turn it was put down');
+        },
+        'when first player attack card in opponents own zone': {
+            async setUp() {
+                this.secondPlayerConnection = FakeConnection2(['restoreState', 'opponentAttackedCard']);
+                this.match = createMatch({ players: [Player('P1A'), Player('P2A', this.secondPlayerConnection)] });
+                this.match.restoreFromState(createState({
+                    turn: 2,
+                    currentPlayer: 'P1A',
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInOpponentZone: [createCard({ id: 'C1A', attack: 1 })],
+                        },
+                        'P2A': {
+                            cardsInZone: [createCard({ id: 'C2A' })],
+                        }
+                    },
+                    deckByPlayerId: {
+                        'P1A': createDeckFromCards([{ id: 'C1A' }]),
+                        'P2A': createDeckFromCards([{ id: 'C2A' }])
+                    }
+                }));
+
+                this.match.attack('P1A', { attackerCardId: 'C1A', defenderCardId: 'C2A' });
+            },
+            'when second player restore state should have damaged card still in own zone'() {
+                this.match.start();
+                const { cardsInZone } = this.secondPlayerConnection.restoreState.lastCall.args[0];
+                const damagedCards = cardsInZone.filter(c => !!c.damage);
+                assert.equals(damagedCards.length, 1);
+                assert.equals(damagedCards[0].damage, 1);
+            },
+            'should emit opponentAttackedCard with card ids and damage amount'() {
+                assert.calledWith(this.secondPlayerConnection.opponentAttackedCard, {
+                    attackerCardId: 'C1A',
+                    defenderCardId: 'C2A',
+                    newDamage: 1
+                });
+            }
+        },
+        'when first player attack but is NOT in attack phase': {
+            async setUp() {
+                this.connection = FakeConnection2(['restoreState']);
+                this.match = createMatch({ players: [Player('P1A'), Player('P2A', this.connection)] });
+                this.match.restoreFromState(createState({
+                    turn: 2,
+                    currentPlayer: 'P1A',
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'discard',
+                            cardsInOpponentZone: [createCard({ id: 'C1A' })],
+                        },
+                        'P2A': {
+                            cardsInZone: [createCard({ id: 'C2A' })],
+                        }
+                    },
+                    deckByPlayerId: {
+                        'P1A': createDeckFromCards([{ id: 'C1A' }]),
+                        'P2A': createDeckFromCards([{ id: 'C2A' }])
+                    }
+                }));
+
+                const attackOptions = { attackerCardId: 'C1A', defenderCardId: 'C2A' }
+                this.error = catchError(() => this.match.attack('P1A', attackOptions));
+            },
+            'should throw error': function () {
+                assert(this.error);
+                assert.equals(this.error.message, 'Cannot attack when not in attack phase');
+            },
+            'when second player restore state should have card undamaged and still in own zone'() {
+                this.match.start();
+
+                const { cardsInZone } = this.connection.restoreState.lastCall.args[0];
+                assert(cardsInZone.some(c => c.id === 'C2A'));
+
+                const damagedCards = cardsInZone.filter(c => !!c.damage);
+                assert.equals(damagedCards.length, 0);
+            }
+        },
+        'when first player attack card in opponent zone from own zone': {
+            async setUp() {
+                this.connection = FakeConnection2(['restoreState']);
+                this.match = createMatch({ players: [Player('P1A'), Player('P2A', this.connection)] });
+                this.match.restoreFromState(createState({
+                    turn: 2,
+                    currentPlayer: 'P1A',
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInZone: [createCard({ id: 'C1A' })],
+                        },
+                        'P2A': {
+                            cardsInZone: [createCard({ id: 'C2A' })],
+                        }
+                    },
+                    deckByPlayerId: {
+                        'P1A': createDeckFromCards([{ id: 'C1A' }]),
+                        'P2A': createDeckFromCards([{ id: 'C2A' }])
+                    }
+                }));
+
+                const attackOptions = { attackerCardId: 'C1A', defenderCardId: 'C2A' }
+                this.error = catchError(() => this.match.attack('P1A', attackOptions));
+            },
+            'should throw error': function () {
+                assert(this.error);
+                assert.equals(this.error.message, 'Cannot attack card in another zone');
+            },
+            'when second player restore state should have card undamaged and still in own zone'() {
+                this.match.start();
+
+                const { cardsInZone } = this.connection.restoreState.lastCall.args[0];
+                assert(cardsInZone.some(c => c.id === 'C2A'));
+
+                const damagedCards = cardsInZone.filter(c => !!c.damage);
+                assert.equals(damagedCards.length, 0);
+            }
+        },
+        'when first player attack card in own zone from opponents zone': {
+            async setUp() {
+                this.connection = FakeConnection2(['restoreState']);
+                this.match = createMatch({ players: [Player('P1A'), Player('P2A', this.connection)] });
+                this.match.restoreFromState(createState({
+                    turn: 2,
+                    currentPlayer: 'P1A',
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInOpponentZone: [createCard({ id: 'C1A' })],
+                        },
+                        'P2A': {
+                            cardsInOpponentZone: [createCard({ id: 'C2A' })],
+                        }
+                    },
+                    deckByPlayerId: {
+                        'P1A': createDeckFromCards([{ id: 'C1A' }]),
+                        'P2A': createDeckFromCards([{ id: 'C2A' }])
+                    }
+                }));
+
+                const attackOptions = { attackerCardId: 'C1A', defenderCardId: 'C2A' }
+                this.error = catchError(() => this.match.attack('P1A', attackOptions));
+            },
+            'should throw error': function () {
+                assert(this.error);
+                assert.equals(this.error.message, 'Cannot attack card in another zone');
+            },
+            'when second player restore state should have card undamaged and still in own zone'() {
+                this.match.start();
+
+                const { cardsInOpponentZone } = this.connection.restoreState.lastCall.args[0];
+                assert(cardsInOpponentZone.some(c => c.id === 'C2A'));
+
+                const damagedCards = cardsInOpponentZone.filter(c => !!c.damage);
+                assert.equals(damagedCards.length, 0);
+            }
+        },
+        'when first player attack card in own zone': {
+            async setUp() {
+                this.connection = FakeConnection2(['restoreState']);
+                this.match = createMatch({ players: [Player('P1A'), Player('P2A', this.connection)] });
+                this.match.restoreFromState(createState({
+                    turn: 2,
+                    currentPlayer: 'P1A',
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInZone: [createCard({ id: 'C1A', attack: 1 })],
+                        },
+                        'P2A': {
+                            cardsInOpponentZone: [createCard({ id: 'C2A' })]
+                        }
+                    },
+                    deckByPlayerId: {
+                        'P1A': createDeckFromCards([{ id: 'C1A' }]),
+                        'P2A': createDeckFromCards([{ id: 'C2A' }])
+                    }
+                }));
+
+                const attackOptions = { attackerCardId: 'C1A', defenderCardId: 'C2A' }
+                this.match.attack('P1A', attackOptions);
+            },
+            'when second player restore state should have damaged card still in opponent zone'() {
+                this.match.start();
+                const { cardsInOpponentZone } = this.connection.restoreState.lastCall.args[0];
+                const damagedCards = cardsInOpponentZone.filter(c => !!c.damage);
+                assert.equals(damagedCards.length, 1);
+                assert.equals(damagedCards[0].damage, 1);
+            }
         }
     }
 });
@@ -746,7 +937,11 @@ function createPlayers(playerOptions) {
     ];
 }
 
-function createPlayer(options = {}) {
+function Player(id = '007', connection = FakeConnection2()) {
+    return createPlayer({ id, connection });
+}
+
+function createPlayer(options = {}) { // TODO Make "Player" be createPlayer and this be something else
     return defaults(options, {
         id: '007',
         name: 'James',
@@ -838,13 +1033,6 @@ function createMatch(deps = {}) {
     return Match(deps);
 }
 
-function createCard(options) {
-    return defaults(options, {
-        id: 'DEFAULT_TEST_CARD_ID',
-        cost: 0
-    });
-}
-
 function FakeConnection(listenerByActionName) { // TODO Migrate this to the new and then rename the new one to this name
     return {
         emit(_, { action, value }) {
@@ -892,4 +1080,38 @@ function repeat(count, callback) {
     for (let i = 0; i < count; i++) {
         callback();
     }
+}
+
+function createState(options) {
+    defaults(options, {
+        turn: 1,
+        currentPlayer: 'P1A',
+        playerOrder: ['P1A', 'P2A'],
+        playerStateById: {},
+        deckByPlayerId: {}
+    });
+    for (let key of Object.keys(options.playerStateById)) {
+        options.playerStateById[key] = createPlayerState(options.playerStateById[key]);
+    }
+    for (let playerId of options.playerOrder) {
+        if (!options.deckByPlayerId[playerId]) {
+            options.deckByPlayerId[playerId] = FakeDeckFactory.createDeckFromCards([FakeCardFactory.createCard()]);
+        }
+        if (!options.playerStateById[playerId]) {
+            options.playerStateById[playerId] = createPlayerState();
+        }
+    }
+
+    return options;
+}
+
+function createPlayerState(options = {}) {
+    return defaults(options, {
+        phase: 'wait',
+        cardsOnHand: [],
+        cardsInZone: [],
+        cardsInOpponentZone: [],
+        stationCards: [],
+        events: []
+    });
 }
