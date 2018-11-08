@@ -26,9 +26,8 @@
                     <template v-for="n in 6">
                         <zone-card v-if="n <= opponentCardsInZone.length"
                                    :card="opponentCardsInZone[n - 1]"
-                                   :attackable="!!attackerCardId"
-                                   @attack="selectAsDefender"
-                                   class="card-attackable"/>
+                                   :attackable="canAttackCardInOpponentZone"
+                                   @attack="selectAsDefender"/>
                         <div v-else class="card card--placeholder"/>
                     </template>
                 </div>
@@ -94,7 +93,7 @@
                     <template v-for="n in 6">
                         <zone-card v-if="n <= opponentCardsInPlayerZone.length"
                                    :card="opponentCardsInPlayerZone[n - 1]"
-                                   :attackable="!!attackerCardId"
+                                   :attackable="canAttackCardInHomeZone"
                                    @attack="selectAsDefender"/>
                         <div v-else class="card card--placeholder"/>
                     </template>
@@ -264,6 +263,14 @@
             canAttack() {
                 return this.phase === 'attack'
                     && !this.attackerCardId;
+            },
+            canAttackCardInOpponentZone() {
+                return !!this.attackerCardId
+                    && this.playerCardsInOpponentZone.some(c => c.id === this.attackerCardId);
+            },
+            canAttackCardInHomeZone() {
+                return !!this.attackerCardId
+                    && this.playerCardsInZone.some(c => c.id === this.attackerCardId);
             }
         },
         methods: {
