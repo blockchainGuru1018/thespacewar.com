@@ -224,28 +224,44 @@ module.exports = function (deps) {
         const playerState = getPlayerState(playerId);
         if (playerState.phase !== PHASES.attack) throw CheatError('Cannot attack when not in attack phase');
 
-        let opponentState = getOpponentState(playerId);
-        let defenderCardInOpponentZone = opponentState.cardsInZone.find(c => c.id === defenderCardId);
-        const defenderCardInOwnZone = opponentState.cardsInOpponentZone.find(c => c.id === defenderCardId)
+        const opponentState = getOpponentState(playerId);
+        const defenderCardInOpponentZone = opponentState.cardsInZone.find(c => c.id === defenderCardId);
+        const defenderCardInPlayerZone = opponentState.cardsInOpponentZone.find(c => c.id === defenderCardId)
 
-        let attackerCardInOwnZone = playerState.cardsInZone.find(c => c.id === attackerCardId);
-        let attackerCardInOpponentZone = playerState.cardsInOpponentZone.find(c => c.id === attackerCardId);
+        const attackerCardInPlayerZone = playerState.cardsInZone.find(c => c.id === attackerCardId);
+        const attackerCardInOpponentZone = playerState.cardsInOpponentZone.find(c => c.id === attackerCardId);
 
-        if (defenderCardInOpponentZone && attackerCardInOwnZone
-            || defenderCardInOwnZone && attackerCardInOpponentZone) {
+        if (defenderCardInOpponentZone && attackerCardInPlayerZone
+            || defenderCardInPlayerZone && attackerCardInOpponentZone) {
             throw CheatError('Cannot attack card in another zone');
         }
 
-        let defenderCard = defenderCardInOpponentZone || defenderCardInOwnZone;
-        let attackerCard = attackerCardInOpponentZone || attackerCardInOwnZone;
-        defenderCard.damage = attackerCard.attack;
-
+        const defenderCardZone = !!defenderCardInOpponentZone ? opponentState.cardsInZone : opponentState.cardsInOpponentZone;
+        const defenderCard = defenderCardInOpponentZone || defenderCardInPlayerZone;
+        const attackerCard = attackerCardInOpponentZone || attackerCardInPlayerZone;
         const opponentId = getOpponentId(playerId);
-        emitToPlayer(opponentId, 'opponentAttackedCard', {
-            attackerCardId,
-            defenderCardId,
-            newDamage: defenderCard.damage
-        });
+        const defenderCurrentDamage = defenderCard.damage || 0;
+        const defenderTotalDefense = defenderCard.defense - defenderCurrentDamage;
+
+        if (attackerCard.attack >= defenderTotalDefense) {
+            const defenderCardIndex = defenderCardZone.findIndex(c => c.id === defenderCardId);
+            defenderCardZone.splice(defenderCardIndex, 1);
+
+            emitToPlayer(opponentId, 'opponentAttackedCard', {
+                attackerCardId,
+                defenderCardId,
+                defenderCardWasDestroyed: true
+            });
+        }
+        else {
+            defenderCard.damage = defenderCurrentDamage + attackerCard.attack;
+
+            emitToPlayer(opponentId, 'opponentAttackedCard', {
+                attackerCardId,
+                defenderCardId,
+                newDamage: defenderCard.damage
+            });
+        }
     }
 
     function startDrawPhaseForPlayer(playerId) {

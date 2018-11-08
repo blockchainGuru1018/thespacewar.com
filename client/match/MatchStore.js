@@ -343,20 +343,45 @@ module.exports = function (deps) {
     }
 
     function selectAsDefender({ state }, card) {
-        // let cardIndex = state.opponentCardsInZone.findIndex(c => c.id === card.id);
-        // state.opponentCardsInZone.splice(cardIndex, 1);
-        matchController.emit('attack', {
-            attackerCardId: state.attackerCardId,
-            defenderCardId: card.id
-        });
+        const attackerCardId = state.attackerCardId
+        const defenderCardId = card.id
+        matchController.emit('attack', { attackerCardId, defenderCardId });
+
+        const defenderCardInOpponentZone = state.opponentCardsInZone.find(c => c.id === defenderCardId);
+        const defenderCardInPlayerZone = state.opponentCardsInPlayerZone.find(c => c.id === defenderCardId)
+
+        const attackerCardInPlayerZone = state.playerCardsInZone.find(c => c.id === attackerCardId);
+        const attackerCardInOpponentZone = state.playerCardsInOpponentZone.find(c => c.id === attackerCardId);
+
+        const defenderCardZone = !!defenderCardInOpponentZone ? state.opponentCardsInZone : state.opponentCardsInPlayerZone;
+        const defenderCard = defenderCardInOpponentZone || defenderCardInPlayerZone;
+        const attackerCard = attackerCardInOpponentZone || attackerCardInPlayerZone;
+        const defenderCurrentDamage = defenderCard.damage || 0;
+        const defenderTotalDefense = defenderCard.defense - defenderCurrentDamage;
+
+        if (attackerCard.attack >= defenderTotalDefense) {
+            const defenderCardIndex = defenderCardZone.findIndex(c => c.id === defenderCardId);
+            defenderCardZone.splice(defenderCardIndex, 1);
+        }
+        else {
+            defenderCard.damage = defenderCurrentDamage + attackerCard.attack;
+        }
     }
 
-    function opponentAttackedCard({ state }, { attackerCardId, defenderCardId, newDamage }) {
-        let defenderCard = state.playerCardsInZone.find(c => c.id === defenderCardId)
-            || state.playerCardsInOpponentZone.find(c => c.id === defenderCardId);
-        defenderCard.damage = newDamage;
+    function opponentAttackedCard({ state }, { attackerCardId, defenderCardId, newDamage, defenderCardWasDestroyed }) {
+        let defenderCardInPlayerZone = state.playerCardsInZone.find(c => c.id === defenderCardId);
+        let defenderCardInOpponentZone = state.playerCardsInOpponentZone.find(c => c.id === defenderCardId);
+        let defenderCard = defenderCardInPlayerZone || defenderCardInOpponentZone;
+        let defenderCardZone = defenderCardInPlayerZone ? state.playerCardsInZone : state.playerCardsInOpponentZone;
+        if (defenderCardWasDestroyed) {
+            let defenderCardIndex = defenderCardZone.findIndex(c => c.id === defenderCardId);
+            defenderCardZone.splice(defenderCardIndex, 1);
+        }
+        else {
+            defenderCard.damage = newDamage;
+        }
     }
-};
+}
 
 function capitalize(word) {
     return word.substr(0, 1).toUpperCase() + word.substr(1);

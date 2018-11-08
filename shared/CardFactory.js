@@ -26,8 +26,8 @@ function Card(cardJson) {
         type: cardJson.type_card,
         name: cardJson.name,
         description: cardJson.detail,
-        cost: cardJson.price,
-        attack: cardJson.attack,
-        defense: cardJson.defense
+        cost: parseInt(cardJson.price, 10),
+        attack: parseInt(cardJson.attack, 10),
+        defense: parseInt(cardJson.defense, 10)
     };
 }

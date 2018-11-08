@@ -24,27 +24,20 @@
                 </div>
                 <div class="field-zone field-section">
                     <template v-for="n in 6">
-                        <template v-if="n <= opponentCardsInZone.length">
-                            <zone-card
-                                    v-if="!!attackerCardId"
-                                    :card="opponentCardsInZone[n - 1]"
-                                    @click="selectAsDefender"
-                                    class="card-attackable"
-                            />
-                            <zone-card v-else :card="opponentCardsInZone[n - 1]"/>
-                        </template>
+                        <zone-card v-if="n <= opponentCardsInZone.length"
+                                   :card="opponentCardsInZone[n - 1]"
+                                   :attackable="!!attackerCardId"
+                                   @attack="selectAsDefender"
+                                   class="card-attackable"/>
                         <div v-else class="card card--placeholder"/>
                     </template>
                 </div>
                 <div class="field-zone field-section playerCardsInOpponentZone">
                     <template v-for="n in 6">
-                        <template v-if="n <= playerCardsInOpponentZone.length">
-                            <zone-card v-if="canAttack"
-                                       :card="playerCardsInOpponentZone[n - 1]"
-                                       @click="selectAsAttacker"
-                                       class="card card-attackReady"/>
-                            <zone-card v-else :card="playerCardsInOpponentZone[n - 1]"/>
-                        </template>
+                        <zone-card v-if="n <= playerCardsInOpponentZone.length"
+                                   :card="playerCardsInOpponentZone[n - 1]"
+                                   :readyToAttack="canAttack"
+                                   @readyToAttack="selectAsAttacker"/>
                         <div v-else class="card card--placeholder"/>
                     </template>
                 </div>
@@ -84,13 +77,13 @@
                 </div>
                 <div class="field-playerZoneCards field-zone field-section">
                     <template v-for="n in 6">
-                        <template v-if="n <= playerCardsInZone.length">
-                            <zone-card v-if="phase === 'attack'"
-                                       :card="(playerCardsInZone[n - 1])"
-                                       @click="moveCard(playerCardsInZone[n - 1])"
-                                       class="card-movable"/>
-                            <zone-card v-else :card="playerCardsInZone[n - 1]"/>
-                        </template>
+                        <zone-card v-if="n <= playerCardsInZone.length"
+                                   :card="(playerCardsInZone[n - 1])"
+                                   :movable="phase === 'attack'"
+                                   :readyToAttack="phase === 'attack'"
+                                   :selectedAsAttacker="attackerCardId === playerCardsInZone[n - 1].id"
+                                   @move="moveCard"
+                                   @readyToAttack="selectAsAttacker"/>
                         <div v-else-if="playerZoneCardGhostVisible"
                              @click="cardGhostClick('zone')"
                              class="card card-ghost"/>
@@ -100,7 +93,9 @@
                 <div class="field-zone field-section">
                     <template v-for="n in 6">
                         <zone-card v-if="n <= opponentCardsInPlayerZone.length"
-                                   :card="opponentCardsInPlayerZone[n - 1]"/>
+                                   :card="opponentCardsInPlayerZone[n - 1]"
+                                   :attackable="!!attackerCardId"
+                                   @attack="selectAsDefender"/>
                         <div v-else class="card card--placeholder"/>
                     </template>
                 </div>
@@ -513,48 +508,6 @@
             margin: 4px;
             box-sizing: border-box;
         }
-    }
-
-    .card-movable:hover::after {
-        content: 'Move';
-        background-color: rgba(0, 0, 0, .5);
-        color: white;
-        font-family: Helvetica, sans-serif;
-        font-size: 16px;
-        width: 100%;
-        height: 100%;
-        z-index: 1000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .card-attackReady:hover::after {
-        content: 'Ready for attack';
-        background-color: rgba(0, 0, 0, .5);
-        color: white;
-        font-family: Helvetica, sans-serif;
-        font-size: 16px;
-        width: 100%;
-        height: 100%;
-        z-index: 1000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .card-attackable:hover::after {
-        content: 'Attack';
-        background-color: rgba(255, 100, 100, .5);
-        color: white;
-        font-family: Helvetica, sans-serif;
-        font-size: 16px;
-        width: 100%;
-        height: 100%;
-        z-index: 1000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
     }
 
     .field-opponentCardsOnHand {
