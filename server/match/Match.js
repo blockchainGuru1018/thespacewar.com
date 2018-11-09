@@ -158,7 +158,7 @@ module.exports = function (deps) {
         }
 
         playerState.cardsOnHand.splice(cardIndexOnHand, 1);
-        playerState.events.push(PutDownCardEvent({ turn: state.turn, location, cardId }));
+        playerState.events.push(PutDownCardEvent({ turn: state.turn, location, cardId, cardCommonId: card.commonId }));
 
         if (isStationCard) {
             const stationLocation = location.split('-').pop();
@@ -199,7 +199,12 @@ module.exports = function (deps) {
             emitToPlayer(opponentId, 'opponentDiscardedCard', { discardedCard, opponentCardCount });
         }
 
-        playerState.events.push(DiscardCardEvent({ turn: state.turn, phase: playerState.phase, cardId }));
+        playerState.events.push(DiscardCardEvent({
+            turn: state.turn,
+            phase: playerState.phase,
+            cardId,
+            cardCommonId: discardedCard.commonId
+        }));
         emitOpponentCardCountToPlayer(playerId);
     }
 
@@ -267,7 +272,7 @@ module.exports = function (deps) {
             });
         }
 
-        playerState.events.push(AttackEvent({ turn: state.turn, attackerCardId }));
+        playerState.events.push(AttackEvent({ turn: state.turn, attackerCardId, cardCommonId: attackerCard.commonId }));
     }
 
     function startDrawPhaseForPlayer(playerId) {

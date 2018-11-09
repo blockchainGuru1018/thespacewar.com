@@ -8,9 +8,9 @@ module.exports = function (deps) {
         getCost
     }
 
-    function getCost(cardId) {
-        const card = cards.find(c => c.id === cardId);
-        if (!card) throw new Error(`Could not find card with id: ${cardId}`);
+    function getCost(cardCommonId) {
+        const card = cards.find(c => c.commonId === cardCommonId);
+        if (!card) throw new Error(`Could not find card with id: ${cardCommonId}`);
 
         return parseInt(card.cost, 10);
     }

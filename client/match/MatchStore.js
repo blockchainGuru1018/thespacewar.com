@@ -1,9 +1,7 @@
 const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
+const DiscardCardEvent = require('../../shared/event/DiscardCardEvent.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
 const PHASES = ['draw', 'action', 'discard', 'attack'];
-
-//TODO should recalculate action points when discard a card
-//TODO when moving card should show arrow to where the card is moving
 
 module.exports = function (deps) {
 
@@ -82,7 +80,8 @@ module.exports = function (deps) {
             drawCards,
             selectAsAttacker,
             selectAsDefender,
-            opponentAttackedCard
+            opponentAttackedCard,
+            addDiscardEvent
         }
     };
 
@@ -112,7 +111,7 @@ module.exports = function (deps) {
             e.turn === state.turn
             && e.type === 'putDownCard'
             && e.location === 'zone'
-            && cardInfoRepository.getCost(e.cardId) > 0);
+            && cardInfoRepository.getCost(e.cardCommonId) > 0);
     }
 
     function actionPoints2(state) {
@@ -254,8 +253,6 @@ module.exports = function (deps) {
         state.playerCardsOnHand.splice(cardIndexOnHand, 1);
         state.actionPoints -= card.cost;
 
-        matchController.emit('putDownCard', { location, cardId });
-
         if (location.startsWith('station')) {
             if (location === 'station-draw') {
                 state.playerStation.drawCards.push(card);
@@ -271,19 +268,22 @@ module.exports = function (deps) {
             dispatch('placeCardInZone', card);
         }
 
-        state.events.push(PutDownCardEvent({ turn: state.turn, location, cardId }));
+        state.events.push(PutDownCardEvent({ turn: state.turn, location, cardId, cardCommonId: card.commonId }));
+        matchController.emit('putDownCard', { location, cardId });
     }
 
     function placeCardInZone({ state }, card) {
         state.playerCardsInZone.push(card);
     }
 
-    function discardCard({ state }, cardId) {
+    function discardCard({ state, dispatch }, cardId) {
         const cardIndexOnHand = state.playerCardsOnHand.findIndex(c => c.id === cardId);
-        const card = state.playerCardsOnHand[cardIndexOnHand];
+        const discardedCard = state.playerCardsOnHand[cardIndexOnHand];
         state.playerCardsOnHand.splice(cardIndexOnHand, 1);
         state.actionPoints += 2;
-        state.playerDiscardedCards.push(card);
+        state.playerDiscardedCards.push(discardedCard);
+
+        dispatch('addDiscardEvent', discardedCard);
         matchController.emit('discardCard', cardId);
     }
 
@@ -380,6 +380,15 @@ module.exports = function (deps) {
         else {
             defenderCard.damage = newDamage;
         }
+    }
+
+    function addDiscardEvent({ state }, card) {
+        state.events.push(DiscardCardEvent({
+            turn: state.turn,
+            phase: state.phase,
+            cardId: card.id,
+            cardCommonId: card.commonId
+        }));
     }
 }
 

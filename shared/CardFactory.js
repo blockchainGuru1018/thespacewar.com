@@ -23,6 +23,7 @@ module.exports = function () {
 function Card(cardJson) {
     return {
         id: createUniqueCardId(cardJson.id),
+        commonId: cardJson.id,
         type: cardJson.type_card,
         name: cardJson.name,
         description: cardJson.detail,

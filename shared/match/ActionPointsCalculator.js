@@ -18,7 +18,7 @@ module.exports = function getActionPointsForPlayer(deps) {
         for (let event of eventsThisTurn) {
             if (event.type === 'putDownCard') {
                 if (event.location === 'zone') {
-                    const cardCost = cardInfoRepository.getCost(event.cardId);
+                    const cardCost = cardInfoRepository.getCost(event.cardCommonId);
                     if (cardCost > 0) {
                         actionPoints -= cardCost;
                         hasPutDownZoneCardThatIsNotFree = true;

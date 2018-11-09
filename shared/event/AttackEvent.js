@@ -6,12 +6,13 @@ AttackEvent.cardHasAlreadyAttackedThisTurn = (currentTurn, attackerCardId, event
     });
 };
 
-function AttackEvent({ turn, attackerCardId }) {
+function AttackEvent({ turn, attackerCardId, cardCommonId }) {
     return {
         type: 'attack',
         created: new Date().toISOString(),
         turn,
         attackerCardId,
+        cardCommonId
     };
 }
 

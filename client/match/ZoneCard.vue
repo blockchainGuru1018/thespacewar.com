@@ -48,7 +48,7 @@
             },
             cardStyle() {
                 return {
-                    backgroundImage: 'url(/card/' + this.card.id + '/image)'
+                    backgroundImage: 'url(/card/' + this.card.commonId + '/image)'
                 }
             },
             damageTextStyle() {

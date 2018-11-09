@@ -36,7 +36,7 @@
                         <zone-card v-if="n <= playerCardsInOpponentZone.length"
                                    :card="playerCardsInOpponentZone[n - 1]"
                                    :readyToAttack="canAttackThisTurn(playerCardsInOpponentZone[n - 1])"
-                                   :selectedAsAttacker="attackerCardId === playerCardsInZone[n - 1].id"
+                                   :selectedAsAttacker="attackerCardId === playerCardsInOpponentZone[n - 1].id"
                                    @readyToAttack="selectAsAttacker"/>
                         <div v-else class="card card--placeholder"/>
                     </template>
@@ -80,7 +80,7 @@
                         <zone-card v-if="n <= playerCardsInZone.length"
                                    :card="(playerCardsInZone[n - 1])"
                                    :movable="phase === 'attack'"
-                                   :readyToAttack="canAttackThisTurn(playerCardsInOpponentZone[n - 1])"
+                                   :readyToAttack="canAttackThisTurn(playerCardsInZone[n - 1])"
                                    :selectedAsAttacker="attackerCardId === playerCardsInZone[n - 1].id"
                                    @move="moveCard"
                                    @readyToAttack="selectAsAttacker"/>
@@ -166,6 +166,7 @@
     const Vuex = require('vuex');
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
     const ZoneCard = require('./ZoneCard.vue').default;
+    const AttackEvent = require('../../shared/event/AttackEvent.js');
 
     module.exports = {
         data() {
@@ -215,7 +216,7 @@
                 return {
                     left: this.mousePosition.x + 'px',
                     top: this.mousePosition.y + 'px',
-                    backgroundImage: 'url(/card/' + this.holdingCard.id + '/image)',
+                    backgroundImage: 'url(/card/' + this.holdingCard.commonId + '/image)',
                     pointerEvents: 'none'
                 }
             },
@@ -292,7 +293,7 @@
             },
             canAttackThisTurn(card) {
                 return this.canAttack
-                    && !AttackEvent.cardHasAlreadyAttackedThisTurn(this.turn, card.cardId, this.events);
+                    && !AttackEvent.cardHasAlreadyAttackedThisTurn(this.turn, card.commonId, this.events);
             },
             nextPhaseClick() {
                 this.nextPhase();
@@ -344,7 +345,7 @@
                 return {
                     transform: 'rotate(' + (startDegrees + degrees) + 'deg)',
                     transformOrigin: 'center 1600%',
-                    backgroundImage: 'url(/card/' + card.id + '/image)'
+                    backgroundImage: 'url(/card/' + card.commonId + '/image)'
                 }
             },
             getCardInZoneStyle(card) {
@@ -354,7 +355,7 @@
             },
             getCardImageStyle(card) {
                 return {
-                    backgroundImage: 'url(/card/' + card.id + '/image)'
+                    backgroundImage: 'url(/card/' + card.commonId + '/image)'
                 }
             }
         },
