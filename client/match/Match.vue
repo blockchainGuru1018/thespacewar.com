@@ -35,7 +35,8 @@
                     <template v-for="n in 6">
                         <zone-card v-if="n <= playerCardsInOpponentZone.length"
                                    :card="playerCardsInOpponentZone[n - 1]"
-                                   :readyToAttack="canAttack"
+                                   :readyToAttack="canAttackThisTurn(playerCardsInOpponentZone[n - 1])"
+                                   :selectedAsAttacker="attackerCardId === playerCardsInZone[n - 1].id"
                                    @readyToAttack="selectAsAttacker"/>
                         <div v-else class="card card--placeholder"/>
                     </template>
@@ -79,7 +80,7 @@
                         <zone-card v-if="n <= playerCardsInZone.length"
                                    :card="(playerCardsInZone[n - 1])"
                                    :movable="phase === 'attack'"
-                                   :readyToAttack="phase === 'attack'"
+                                   :readyToAttack="canAttackThisTurn(playerCardsInOpponentZone[n - 1])"
                                    :selectedAsAttacker="attackerCardId === playerCardsInZone[n - 1].id"
                                    @move="moveCard"
                                    @readyToAttack="selectAsAttacker"/>
@@ -288,6 +289,10 @@
             },
             canAffordCard(card) {
                 return this.actionPoints >= card.cost;
+            },
+            canAttackThisTurn(card) {
+                return this.canAttack
+                    && !AttackEvent.cardHasAlreadyAttackedThisTurn(this.turn, card.cardId, this.events);
             },
             nextPhaseClick() {
                 this.nextPhase();

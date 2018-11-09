@@ -960,7 +960,78 @@ module.exports = testCase('Match', {
                 });
             }
         },
-        'when defender has 2 in defense and attacker has 1 in attack and first player attacks twice': {
+        'when defender has 2 in defense and 1 in damage and first player attacks with card with 1 in attack': {
+            async setUp() {
+                this.connection = FakeConnection2(['restoreState', 'opponentAttackedCard']);
+                this.match = createMatch({ players: [Player('P1A'), Player('P2A', this.connection)] });
+                this.match.restoreFromState(createState({
+                    turn: 2,
+                    currentPlayer: 'P1A',
+                    playerOrder: ['P1A', 'P2A'],
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInZone: [createCard({ id: 'C1A', attack: 1 })],
+                        },
+                        'P2A': {
+                            cardsInOpponentZone: [createCard({ id: 'C2A', defense: 2, damage: 1 })]
+                        }
+                    }
+                }));
+
+                this.match.attack('P1A', { attackerCardId: 'C1A', defenderCardId: 'C2A' });
+            },
+            'when second player restore state should NOT have attacked card'() {
+                this.match.start();
+                const { cardsInOpponentZone } = this.connection.restoreState.lastCall.args[0];
+                assert.equals(cardsInOpponentZone.length, 0);
+            },
+            'should emit opponent attacked card and that defender card was destroyed'() {
+                assert.calledWith(this.connection.opponentAttackedCard, {
+                    attackerCardId: 'C1A',
+                    defenderCardId: 'C2A',
+                    defenderCardWasDestroyed: true
+                });
+            }
+        },
+        'when defender has 3 in defense and 1 in damage and first player attacks with card with 1 in attack': {
+            async setUp() {
+                this.connection = FakeConnection2(['restoreState', 'opponentAttackedCard']);
+                this.match = createMatch({ players: [Player('P1A'), Player('P2A', this.connection)] });
+                this.match.restoreFromState(createState({
+                    turn: 2,
+                    currentPlayer: 'P1A',
+                    playerOrder: ['P1A', 'P2A'],
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInZone: [createCard({ id: 'C1A', attack: 1 })],
+                        },
+                        'P2A': {
+                            cardsInOpponentZone: [createCard({ id: 'C2A', defense: 3, damage: 1 })]
+                        }
+                    }
+                }));
+
+                this.match.attack('P1A', { attackerCardId: 'C1A', defenderCardId: 'C2A' });
+            },
+            'when second player restore state should have damaged card still in opponent zone'() {
+                this.match.start();
+                const { cardsInOpponentZone } = this.connection.restoreState.lastCall.args[0];
+                const damagedCards = cardsInOpponentZone.filter(c => !!c.damage);
+                assert.equals(damagedCards.length, 1);
+                assert.equals(damagedCards[0].damage, 2);
+            },
+            'should emit opponent attacked card twice'() {
+                assert.calledOnce(this.connection.opponentAttackedCard);
+                assert.calledWith(this.connection.opponentAttackedCard, {
+                    attackerCardId: 'C1A',
+                    defenderCardId: 'C2A',
+                    newDamage: 2
+                });
+            }
+        },
+        'when attacks twice with same card in same turn': {
             async setUp() {
                 this.connection = FakeConnection2(['restoreState', 'opponentAttackedCard']);
                 this.match = createMatch({ players: [Player('P1A'), Player('P2A', this.connection)] });
@@ -979,68 +1050,26 @@ module.exports = testCase('Match', {
                     }
                 }));
 
-                this.match.attack('P1A', { attackerCardId: 'C1A', defenderCardId: 'C2A' });
-                this.match.attack('P1A', { attackerCardId: 'C1A', defenderCardId: 'C2A' });
+                const attackOptions = { attackerCardId: 'C1A', defenderCardId: 'C2A' }
+                this.match.attack('P1A', attackOptions);
+                this.error = catchError(() => this.match.attack('P1A', attackOptions));
             },
-            'when second player restore state should NOT have attacked card'() {
+            'should throw error'() {
+                assert(this.error);
+                assert.equals(this.error.message, 'Cannot attack twice in the same turn');
+            },
+            'when second player restore state should still have attacked card'() {
                 this.match.start();
                 const { cardsInOpponentZone } = this.connection.restoreState.lastCall.args[0];
-                assert.equals(cardsInOpponentZone.length, 0);
+                assert.equals(cardsInOpponentZone.length, 1);
+                assert.match(cardsInOpponentZone[0], { id: 'C2A' });
             },
-            'should emit opponent attacked card twice'() {
-                assert.calledTwice(this.connection.opponentAttackedCard);
+            'should emit opponent attacked card only once'() {
+                assert.calledOnce(this.connection.opponentAttackedCard);
                 assert.calledWith(this.connection.opponentAttackedCard, {
                     attackerCardId: 'C1A',
                     defenderCardId: 'C2A',
                     newDamage: 1
-                });
-                assert.calledWith(this.connection.opponentAttackedCard, {
-                    attackerCardId: 'C1A',
-                    defenderCardId: 'C2A',
-                    defenderCardWasDestroyed: true
-                });
-            }
-        },
-        'when defender has 3 in defense and attacker has 1 in attack and first player attacks twice': {
-            async setUp() {
-                this.connection = FakeConnection2(['restoreState', 'opponentAttackedCard']);
-                this.match = createMatch({ players: [Player('P1A'), Player('P2A', this.connection)] });
-                this.match.restoreFromState(createState({
-                    turn: 2,
-                    currentPlayer: 'P1A',
-                    playerOrder: ['P1A', 'P2A'],
-                    playerStateById: {
-                        'P1A': {
-                            phase: 'attack',
-                            cardsInZone: [createCard({ id: 'C1A', attack: 1 })],
-                        },
-                        'P2A': {
-                            cardsInOpponentZone: [createCard({ id: 'C2A', defense: 3 })]
-                        }
-                    }
-                }));
-
-                this.match.attack('P1A', { attackerCardId: 'C1A', defenderCardId: 'C2A' });
-                this.match.attack('P1A', { attackerCardId: 'C1A', defenderCardId: 'C2A' });
-            },
-            'when second player restore state should have damaged card still in opponent zone'() {
-                this.match.start();
-                const { cardsInOpponentZone } = this.connection.restoreState.lastCall.args[0];
-                const damagedCards = cardsInOpponentZone.filter(c => !!c.damage);
-                assert.equals(damagedCards.length, 1);
-                assert.equals(damagedCards[0].damage, 2);
-            },
-            'should emit opponent attacked card twice'() {
-                assert.calledTwice(this.connection.opponentAttackedCard);
-                assert.calledWith(this.connection.opponentAttackedCard, {
-                    attackerCardId: 'C1A',
-                    defenderCardId: 'C2A',
-                    newDamage: 1
-                });
-                assert.calledWith(this.connection.opponentAttackedCard, {
-                    attackerCardId: 'C1A',
-                    defenderCardId: 'C2A',
-                    newDamage: 2
                 });
             }
         }

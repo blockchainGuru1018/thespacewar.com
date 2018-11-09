@@ -1,5 +1,6 @@
 const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
 const DiscardCardEvent = require('../../shared/event/DiscardCardEvent.js');
+const AttackEvent = require('../../shared/event/AttackEvent.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
 
 const TEMPORARY_START_PHASE = 'start';
@@ -223,6 +224,9 @@ module.exports = function (deps) {
     function attack(playerId, { attackerCardId, defenderCardId }) {
         const playerState = getPlayerState(playerId);
         if (playerState.phase !== PHASES.attack) throw CheatError('Cannot attack when not in attack phase');
+        if (AttackEvent.cardHasAlreadyAttackedThisTurn(state.turn, attackerCardId, playerState.events)) {
+            throw CheatError('Cannot attack twice in the same turn');
+        }
 
         const opponentState = getOpponentState(playerId);
         const defenderCardInOpponentZone = opponentState.cardsInZone.find(c => c.id === defenderCardId);
@@ -262,6 +266,8 @@ module.exports = function (deps) {
                 newDamage: defenderCard.damage
             });
         }
+
+        playerState.events.push(AttackEvent({ turn: state.turn, attackerCardId }));
     }
 
     function startDrawPhaseForPlayer(playerId) {
