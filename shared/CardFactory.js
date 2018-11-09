@@ -22,7 +22,7 @@ module.exports = function () {
 
 function Card(cardJson) {
     return {
-        id: cardJson.id,
+        id: createUniqueCardId(cardJson.id),
         type: cardJson.type_card,
         name: cardJson.name,
         description: cardJson.detail,
@@ -30,4 +30,9 @@ function Card(cardJson) {
         attack: parseInt(cardJson.attack, 10),
         defense: parseInt(cardJson.defense, 10)
     };
+}
+
+function createUniqueCardId(cardCommonId) {
+    let uniqueId = Math.round(Date.now() * .1 * Math.random()).toString().substr(0, 5).padStart(5, '0');
+    return `${cardCommonId}:${uniqueId}`;
 }
