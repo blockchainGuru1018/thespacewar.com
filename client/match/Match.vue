@@ -1,13 +1,7 @@
 <template>
     <div ref="match" class="match">
-        <h1>{{ ownUser.name }} V.S. {{ opponentUser.name }}</h1>
-        <div>
-            <span>Match ID: {{ matchId }}</span>
-            <span>Phase: {{ phase }}</span>
-            <span v-if="calculatedActionPointsForActionPhaseVisible">Actions: {{ actionPoints2 }}</span>
-            <span v-else>
-                Actions: 0 ({{ (actionPoints2)}})
-            </span>
+        <div class="match-header">
+            <h1 :title="`Match ID: ${matchId}`">{{ ownUser.name }} v.s. {{ opponentUser.name }}</h1>
         </div>
         <div class="field">
             <div class="field-opponent">
@@ -62,6 +56,11 @@
             </div>
             <div class="field-player">
                 <div class="field-piles field-section">
+                    <div class="playerActionPointsContainer">
+                        <div class="playerActionPoints">
+                            {{ playerActionPointsText }}
+                        </div>
+                    </div>
                     <div class="field-drawPile">
                         <div class="card card-faceDown"/>
                     </div>
@@ -131,31 +130,33 @@
                             @click="playerCardClick(card)"/>
                 </div>
                 <div class="field-playerHud">
-                    <template v-if="isOwnTurn">
-                        <button v-if="phase === 'start'"
-                                @click="startClick"
-                                class="playerHud-nextPhaseButton playerHud-button playerHud-item">
-                            START
-                        </button>
-                        <template v-else>
-                            <div class="playerHud-phaseText playerHud-item">{{ phaseText }} phase</div>
-                            <div v-if="phase === 'discard' && playerCardModels.length > maxHandSize"
-                                 class="playerHud-nextPhaseButton playerHud-phaseText playerHud-item">
-                                Discard {{ amountOfCardsToDiscard + (amountOfCardsToDiscard > 1 ? ' cards' : ' card')}} to continue
-                            </div>
-                            <button v-else-if="nextPhaseButtonText"
-                                    @click="nextPhaseClick"
+                    <div class="field-playerHudRow">
+                        <template v-if="isOwnTurn">
+                            <button v-if="phase === 'start'"
+                                    @click="startClick"
                                     class="playerHud-nextPhaseButton playerHud-button playerHud-item">
-                                {{ nextPhaseButtonText }} phase
+                                START
                             </button>
-                            <button v-else
-                                    @click="nextPhaseClick"
-                                    class="playerHud-endTurnButton playerHud-button playerHud-item">
-                                End turn
-                            </button>
+                            <template v-else>
+                                <div class="playerHud-phaseText playerHud-item">{{ phaseText }} phase</div>
+                                <div v-if="phase === 'discard' && playerCardModels.length > maxHandSize"
+                                     class="playerHud-nextPhaseButton playerHud-phaseText playerHud-item">
+                                    Discard {{ amountOfCardsToDiscard + (amountOfCardsToDiscard > 1 ? ' cards' : ' card')}} to continue
+                                </div>
+                                <button v-else-if="nextPhaseButtonText"
+                                        @click="nextPhaseClick"
+                                        class="playerHud-nextPhaseButton playerHud-button playerHud-item">
+                                    {{ nextPhaseButtonText }} phase
+                                </button>
+                                <button v-else
+                                        @click="nextPhaseClick"
+                                        class="playerHud-endTurnButton playerHud-button playerHud-item">
+                                    End turn
+                                </button>
+                            </template>
                         </template>
-                    </template>
-                    <div v-else class="playerHud-phaseText playerHud-item">Waiting for next player</div>
+                        <div v-else class="playerHud-phaseText playerHud-item">Waiting for next player</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -273,6 +274,14 @@
             canAttackCardInHomeZone() {
                 return !!this.attackerCardId
                     && this.playerCardsInZone.some(c => c.id === this.attackerCardId);
+            },
+            playerActionPointsText() {
+                if (this.calculatedActionPointsForActionPhaseVisible) {
+                    return `Actions ${ this.actionPoints2 }`;
+                }
+                else {
+                    return `Actions 0 (${this.actionPoints2})`
+                }
             }
         },
         methods: {
@@ -399,6 +408,17 @@
         overflow: hidden;
     }
 
+    .match-header {
+        position: absolute;
+        left: 20px;
+        top: 0;
+        display: flex;
+        align-items: center;
+        z-index: 3;
+        font-family: Helvetica, sans-serif;
+        color: #BBB;
+    }
+
     .field {
         flex: 1 0;
         display: flex;
@@ -485,6 +505,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: space-evenly;
+        position: relative;
     }
 
     .field-drawPile {
@@ -631,10 +652,35 @@
         position: absolute;
     }
 
+    .playerActionPointsContainer {
+        position: absolute;
+        top: -30px;
+        right: 12px;
+    }
+
+    .playerActionPoints {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: bold;
+        font-family: Helvetica, sans-serif;
+        color: black;
+        border: 2px solid black;
+        background-color: white;
+        width: 60px;
+        height: 60px;
+        text-align: center;
+        border-radius: 4px;
+    }
+
     .field-playerHud {
         position: absolute;
         left: 0;
         bottom: 0;
+    }
+
+    .field-playerHudRow {
         height: 80px;
         box-sizing: border-box;
         display: flex;

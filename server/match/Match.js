@@ -52,7 +52,7 @@ module.exports = function (deps) {
         toClientModel
     };
 
-    function start() { // TODO Should take player id and only restore game state for player responsible for event
+    function start() {
         const gameHasAlreadyStarted = state.playersReady >= players.length;
         if (gameHasAlreadyStarted) {
             for (let player of players) {
