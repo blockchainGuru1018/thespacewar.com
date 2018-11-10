@@ -281,7 +281,7 @@
                     return `Actions ${ this.actionPoints2 }`;
                 }
                 else {
-                    return `Actions 0 (${this.actionPoints2})`
+                    return `Actions (${this.actionPoints2})`
                 }
             }
         },
