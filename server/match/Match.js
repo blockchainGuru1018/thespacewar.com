@@ -47,9 +47,11 @@ module.exports = function (deps) {
         discardCard,
         moveCard,
         attack,
+        retreat,
         updatePlayer,
         restoreFromState,
-        toClientModel
+        toClientModel,
+        hasEnded
     };
 
     function start() {
@@ -275,6 +277,14 @@ module.exports = function (deps) {
         playerState.events.push(AttackEvent({ turn: state.turn, attackerCardId, cardCommonId: attackerCard.commonId }));
     }
 
+    function retreat(playerId) {
+        const opponentId = getOpponentId(playerId);
+        emitToPlayer(opponentId, 'opponentRetreated');
+
+        state.ended = true;
+        state.playerRetreated = playerId;
+    }
+
     function startDrawPhaseForPlayer(playerId) {
         const deck = getPlayerDeck(playerId);
         const amountCardsToDraw = getStationDrawCardsCount(playerId);
@@ -312,6 +322,8 @@ module.exports = function (deps) {
         const playerState = getPlayerState(playerId);
         const actionPointsForPlayer = getActionPointsForPlayer(playerId)
         const opponentState = getOpponentState(playerId);
+        const playerRetreated = !!state.playerRetreated ? state.playerRetreated === playerId : false;
+        const opponentRetreated = !!state.playerRetreated ? state.playerRetreated !== playerId : false;
         emitToPlayer(playerId, 'restoreState', {
             ...playerState,
             actionPoints: actionPointsForPlayer,
@@ -321,7 +333,9 @@ module.exports = function (deps) {
             opponentCardsInPlayerZone: opponentState.cardsInOpponentZone,
             opponentCardCount: getOpponentCardCount(playerId),
             opponentDiscardedCards: getOpponentDiscardedCards(playerId),
-            opponentStationCards: getOpponentStationCards(playerId).map(s => ({ place: s.place }))
+            opponentStationCards: getOpponentStationCards(playerId).map(s => ({ place: s.place })),
+            opponentRetreated,
+            playerRetreated
         });
     }
 
@@ -412,6 +426,10 @@ module.exports = function (deps) {
             playerIds: players.map(p => p.id),
             id: matchId
         }
+    }
+
+    function hasEnded() {
+        return state.ended;
     }
 
     function getOpponentCardCount(playerId) {

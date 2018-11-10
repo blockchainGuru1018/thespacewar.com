@@ -1073,6 +1073,38 @@ module.exports = testCase('Match', {
                 });
             }
         }
+    },
+    'when first player retreats from match should emit opponentRetreated to second player': {
+        setUp() {
+            this.firstPlayerConnection = FakeConnection2(['restoreState']);
+            this.secondPlayerConnection = FakeConnection2(['opponentRetreated', 'restoreState']);
+            this.match = createMatchAndGoToFirstActionPhase({
+                players: [
+                    Player('P1A', this.firstPlayerConnection),
+                    Player('P2A', this.secondPlayerConnection)
+                ]
+            });
+
+            this.match.retreat('P1A');
+        },
+        'should emit opponentRetreated'() {
+            assert.calledOnce(this.secondPlayerConnection.opponentRetreated);
+        },
+        'when first player restore state should say opponent retreated'() {
+            this.match.start();
+            assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
+                playerRetreated: true
+            }));
+        },
+        'when second player restore state should say opponent retreated'() {
+            this.match.start();
+            assert.calledWith(this.secondPlayerConnection.restoreState, sinon.match({
+                opponentRetreated: true
+            }));
+        },
+        'when ask match if has ended should be true'() {
+            assert(this.match.hasEnded());
+        }
     }
 });
 

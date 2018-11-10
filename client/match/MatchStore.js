@@ -5,6 +5,7 @@ const PHASES = ['draw', 'action', 'discard', 'attack'];
 
 module.exports = function (deps) {
 
+    const route = deps.route;
     const userRepository = deps.userRepository;
     const opponentUser = deps.opponentUser;
     const matchId = deps.matchId;
@@ -66,6 +67,7 @@ module.exports = function (deps) {
             nextPhase,
             setActionPoints,
             moveCard,
+            retreat,
 
             // local
             restoreState,
@@ -81,7 +83,8 @@ module.exports = function (deps) {
             selectAsAttacker,
             selectAsDefender,
             opponentAttackedCard,
-            addDiscardEvent
+            addDiscardEvent,
+            opponentRetreated
         }
     };
 
@@ -195,8 +198,16 @@ module.exports = function (deps) {
             phase,
             actionPoints,
             turn,
-            currentPlayer
+            currentPlayer,
+            opponentRetreated,
+            playerRetreated
         } = restoreState;
+
+        if (opponentRetreated || playerRetreated) {
+            deleteMatchLocalDataAndReturnToLobby();
+            return;
+        }
+
         commit('setPlayerStationCards', stationCards);
         commit('setPlayerCardsOnHand', cardsOnHand);
         state.playerCardsInZone = cardsInZone;
@@ -389,6 +400,20 @@ module.exports = function (deps) {
             cardId: card.id,
             cardCommonId: card.commonId
         }));
+    }
+
+    function retreat() {
+        matchController.emit('retreat');
+        deleteMatchLocalDataAndReturnToLobby();
+    }
+
+    function opponentRetreated() {
+        deleteMatchLocalDataAndReturnToLobby();
+    }
+
+    function deleteMatchLocalDataAndReturnToLobby() {
+        localStorage.removeItem('ongoing-match');
+        route('lobby');
     }
 }
 

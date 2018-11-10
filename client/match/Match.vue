@@ -1,6 +1,7 @@
 <template>
     <div ref="match" class="match">
         <div class="match-header">
+            <button @click="retreat" class="match-retreatButton">Retreat</button>
             <h1 :title="`Match ID: ${matchId}`">{{ ownUser.name }} v.s. {{ opponentUser.name }}</h1>
         </div>
         <div class="field">
@@ -292,7 +293,8 @@
                 'nextPhase',
                 'moveCard',
                 'selectAsAttacker',
-                'selectAsDefender'
+                'selectAsDefender',
+                'retreat'
             ]),
             startClick() {
                 this.nextPhase();
@@ -410,13 +412,32 @@
 
     .match-header {
         position: absolute;
-        left: 20px;
+        left: 14px;
         top: 0;
         display: flex;
         align-items: center;
         z-index: 3;
         font-family: Helvetica, sans-serif;
-        color: #BBB;
+        color: #333;
+    }
+
+    .match-retreatButton {
+        background-color: #ff3646;
+        color: rgba(255, 255, 255, 1);
+        box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.2);;
+        border: none;
+        font-size: 14px;
+        padding: 3px 7px;
+        margin-right: 16px;
+
+        &:active {
+            outline: 2px solid rgba(0, 0, 0, .3);
+        }
+
+        &:focus, &:hover {
+            background-color: #ff6670;
+            outline: 0;
+        }
     }
 
     .field {
