@@ -17,24 +17,27 @@
                         <div v-for="card in opponentStation.handSizeCards" class="card card-faceDown"/>
                     </div>
                 </div>
-                <div class="field-zone field-section">
-                    <template v-for="n in 6">
-                        <zone-card v-if="n <= opponentCardsInZone.length"
-                                   :card="opponentCardsInZone[n - 1]"
-                                   :attackable="canAttackCardInOpponentZone"
-                                   @attack="selectAsDefender"/>
-                        <div v-else class="card card--placeholder"/>
-                    </template>
-                </div>
-                <div class="field-zone field-section playerCardsInOpponentZone">
-                    <template v-for="n in 6">
-                        <zone-card v-if="n <= playerCardsInOpponentZone.length"
-                                   :card="playerCardsInOpponentZone[n - 1]"
-                                   :readyToAttack="canAttackThisTurn(playerCardsInOpponentZone[n - 1])"
-                                   :selectedAsAttacker="attackerCardId === playerCardsInOpponentZone[n - 1].id"
-                                   @readyToAttack="selectAsAttacker"/>
-                        <div v-else class="card card--placeholder"/>
-                    </template>
+                <div class="field-zoneRows field-opponentZoneRows">
+                    <div class="field-zone field-section">
+                        <template v-for="n in 6">
+                            <zone-card v-if="n <= opponentCardsInZone.length"
+                                       :card="opponentCardsInZone[n - 1]"
+                                       :attackable="canAttackCardInOpponentZone"
+                                       @attack="selectAsDefender"
+                                       class="card--turnedAround"/>
+                            <div v-else class="card card--placeholder"/>
+                        </template>
+                    </div>
+                    <div class="field-zone field-section playerCardsInOpponentZone">
+                        <template v-for="n in 6">
+                            <zone-card v-if="n <= playerCardsInOpponentZone.length"
+                                       :card="playerCardsInOpponentZone[n - 1]"
+                                       :readyToAttack="canAttackThisTurn(playerCardsInOpponentZone[n - 1])"
+                                       :selectedAsAttacker="attackerCardId === playerCardsInOpponentZone[n - 1].id"
+                                       @readyToAttack="selectAsAttacker"/>
+                            <div v-else class="card card--placeholder"/>
+                        </template>
+                    </div>
                 </div>
                 <div class="field-piles field-section">
                     <div class="field-discardPile">
@@ -72,32 +75,35 @@
                              class="card"/>
                         <div v-if="discardPileCardGhostVisible"
                              @click="cardGhostClick('discard')"
-                             class="card card-ghost"/>
+                             class="discardPile-cardGhost card card-ghost"/>
                     </div>
                 </div>
-                <div class="field-playerZoneCards field-zone field-section">
-                    <template v-for="n in 6">
-                        <zone-card v-if="n <= playerCardsInZone.length"
-                                   :card="(playerCardsInZone[n - 1])"
-                                   :movable="phase === 'attack'"
-                                   :readyToAttack="canAttackThisTurn(playerCardsInZone[n - 1])"
-                                   :selectedAsAttacker="attackerCardId === playerCardsInZone[n - 1].id"
-                                   @move="moveCard"
-                                   @readyToAttack="selectAsAttacker"/>
-                        <div v-else-if="playerZoneCardGhostVisible"
-                             @click="cardGhostClick('zone')"
-                             class="card card-ghost"/>
-                        <div v-else class="card card--placeholder"/>
-                    </template>
-                </div>
-                <div class="field-zone field-section">
-                    <template v-for="n in 6">
-                        <zone-card v-if="n <= opponentCardsInPlayerZone.length"
-                                   :card="opponentCardsInPlayerZone[n - 1]"
-                                   :attackable="canAttackCardInHomeZone"
-                                   @attack="selectAsDefender"/>
-                        <div v-else class="card card--placeholder"/>
-                    </template>
+                <div class="field-zoneRows field-playerZoneRows">
+                    <div class="field-zone field-section">
+                        <template v-for="n in 6">
+                            <zone-card v-if="n <= opponentCardsInPlayerZone.length"
+                                       :card="opponentCardsInPlayerZone[n - 1]"
+                                       :attackable="canAttackCardInHomeZone"
+                                       @attack="selectAsDefender"
+                                       class="card--turnedAround"/>
+                            <div v-else class="card card--placeholder"/>
+                        </template>
+                    </div>
+                    <div class="field-playerZoneCards field-zone field-section">
+                        <template v-for="n in 6">
+                            <zone-card v-if="n <= playerCardsInZone.length"
+                                       :card="(playerCardsInZone[n - 1])"
+                                       :movable="phase === 'attack'"
+                                       :readyToAttack="canAttackThisTurn(playerCardsInZone[n - 1])"
+                                       :selectedAsAttacker="attackerCardId === playerCardsInZone[n - 1].id"
+                                       @move="moveCard"
+                                       @readyToAttack="selectAsAttacker"/>
+                            <div v-else-if="playerZoneCardGhostVisible"
+                                 @click="cardGhostClick('zone')"
+                                 class="card card-ghost"/>
+                            <div v-else class="card card--placeholder"/>
+                        </template>
+                    </div>
                 </div>
                 <div class="field-playerStation field-station field-section">
                     <div class="field-stationRow">
@@ -553,6 +559,17 @@
         }
     }
 
+    .discardPile-cardGhost::after {
+        content: "";
+        position: absolute;
+        width: 170%;
+        height: 170%;
+        top: 50%;
+        left: 20%;
+        z-index: 10000;
+        transform: translate(-50%, -50%);
+    }
+
     .field-zone {
         flex: 1 0;
         display: flex;
@@ -562,6 +579,15 @@
         .card {
             margin: 4px;
             box-sizing: border-box;
+        }
+    }
+
+    .field-zoneRows {
+        display: flex;
+        flex-direction: column;
+
+        &.field-opponentZoneRows {
+            padding-top: 80px;
         }
     }
 
