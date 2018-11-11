@@ -399,10 +399,25 @@
 <style scoped lang="scss">
     $cardWidth: 652px;
     $cardHeight: 916px;
-    $opponentCardWidth: calc(#{$cardWidth} / 12);
-    $opponentCardHeight: calc(#{$cardHeight} / 12);
+    $opponentCardWidth: calc(#{$cardWidth} / 8);
+    $opponentCardHeight: calc(#{$cardHeight} / 8);
+    $opponentCardOnHandWidth: calc(#{$cardWidth} / 12);
+    $opponentCardOnHandHeight: calc(#{$cardHeight} / 12);
+    $opponentStationCardWidth: calc(#{$cardWidth} / 12);
+    $opponentStationCardHeight: calc(#{$cardHeight} / 12);
+    $opponentDrawPileCardWidth: calc(#{$cardWidth} / 12);
+    $opponentDrawPileCardHeight: calc(#{$cardHeight} / 12);
+    $opponentDiscardPileCardWidth: calc(#{$cardWidth} / 12);
+    $opponentDiscardPileCardHeight: calc(#{$cardHeight} / 12);
+
     $playerCardWidth: calc(#{$cardWidth} / 5);
     $playerCardHeight: calc(#{$cardHeight} / 5);
+    $playerStationCardWidth: calc((#{$cardWidth} / 5) * .7);
+    $playerStationCardHeight: calc((#{$cardHeight} / 5) * .7);
+    $playerDiscardPileCardWidth: $playerCardWidth;
+    $playerDiscardPileCardHeight: $playerCardHeight;
+    $playerDrawPileCardWidth: $playerCardWidth;
+    $playerDrawPileCardHeight: $playerCardHeight;
 
     $cardHoverWidth: $cardWidth / 4;
     $cardHoverHeight: $cardHeight / 4;
@@ -462,6 +477,8 @@
     }
 
     .field-player {
+        flex: 0 0 60%;
+
         .card-faceDown {
             border-color: #E63946;
             background-color: #FF5964;
@@ -469,7 +486,7 @@
     }
 
     .field-opponent {
-        flex: 0 0 30%;
+        flex: 0 0 40%;
 
         .card {
             width: $opponentCardWidth;
@@ -487,8 +504,8 @@
         margin-right: 8px;
 
         .card {
-            width: $playerCardWidth;
-            height: $playerCardHeight;
+            width: $playerStationCardWidth;
+            height: $playerStationCardHeight;
 
             margin-right: 8px;
 
@@ -500,20 +517,20 @@
 
     .field-opponentStation {
         flex-direction: column;
-    }
-
-    .field-opponentStation .field-stationRow {
-        flex-direction: row-reverse;
 
         .card {
-            width: $opponentCardWidth;
-            height: $opponentCardHeight;
+            width: $opponentStationCardWidth;
+            height: $opponentStationCardHeight;
             margin-left: 8px;
 
             &:last-child {
                 margin-left: 0;
             }
         }
+    }
+
+    .field-opponentStation .field-stationRow {
+        flex-direction: row-reverse;
     }
 
     .field-station {
@@ -536,26 +553,41 @@
     }
 
     .field-drawPile {
+        .card {
+            width: 100%;
+            height: 100%;
+        }
 
+        .field-player & {
+            width: $playerDrawPileCardWidth;
+            height: $playerDrawPileCardHeight;
+        }
+
+        .field-opponent & {
+            width: $opponentDrawPileCardWidth;
+            height: $opponentDrawPileCardHeight;
+        }
     }
 
     .field-discardPile {
         position: relative;
 
         .field-player & {
-            width: $playerCardWidth;
-            height: $playerCardHeight;
+            width: $playerDiscardPileCardWidth;
+            height: $playerDiscardPileCardHeight;
         }
 
         .field-opponent & {
-            width: $opponentCardWidth;
-            height: $opponentCardHeight;
+            width: $opponentDiscardPileCardWidth;
+            height: $opponentDiscardPileCardHeight;
         }
 
         .card {
             position: absolute;
             left: 0;
             top: 0;
+            width: 100%;
+            height: 100%;
         }
     }
 
@@ -600,17 +632,17 @@
         flex: 1 0;
         justify-content: center;
         align-items: flex-start;
-    }
 
-    .field-opponentCardsOnHand .card {
-        width: $opponentCardWidth;
-        height: $opponentCardHeight;
-        position: absolute;
-        top: 0;
-        transition: bottom .2s ease-out;
+        .card {
+            width: $opponentCardOnHandWidth;
+            height: $opponentCardOnHandHeight;
+            position: absolute;
+            top: 0;
+            transition: bottom .2s ease-out;
 
-        &:last-child {
-            margin-right: 0;
+            &:last-child {
+                margin-right: 0;
+            }
         }
     }
 
@@ -702,7 +734,8 @@
     .playerActionPointsContainer {
         position: absolute;
         top: -30px;
-        right: 12px;
+        left: 51%;
+        transform: translateX(-50%);
     }
 
     .playerActionPoints {
