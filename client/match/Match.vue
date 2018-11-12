@@ -22,8 +22,10 @@
                         <template v-for="n in 6">
                             <zone-card v-if="n <= opponentCardsInZone.length"
                                        :card="opponentCardsInZone[n - 1]"
-                                       :attackable="canAttackCardInOpponentZone"
-                                       @attack="selectAsDefender"
+                                       :ownerId="opponentUser.id"
+                                       :zonePlayerRow="opponentCardsInZone"
+                                       :zoneOpponentRow="playerCardsInOpponentZone"
+                                       :key="opponentCardsInZone[n - 1].id"
                                        class="card--turnedAround"/>
                             <div v-else class="card card--placeholder"/>
                         </template>
@@ -32,9 +34,10 @@
                         <template v-for="n in 6">
                             <zone-card v-if="n <= playerCardsInOpponentZone.length"
                                        :card="playerCardsInOpponentZone[n - 1]"
-                                       :readyToAttack="canAttackThisTurn(playerCardsInOpponentZone[n - 1])"
-                                       :selectedAsAttacker="attackerCardId === playerCardsInOpponentZone[n - 1].id"
-                                       @readyToAttack="selectAsAttacker"/>
+                                       :ownerId="ownUser.id"
+                                       :zonePlayerRow="playerCardsInOpponentZone"
+                                       :zoneOpponentRow="opponentCardsInZone"
+                                       :key="playerCardsInOpponentZone[n - 1].id"/>
                             <div v-else class="card card--placeholder"/>
                         </template>
                     </div>
@@ -83,8 +86,10 @@
                         <template v-for="n in 6">
                             <zone-card v-if="n <= opponentCardsInPlayerZone.length"
                                        :card="opponentCardsInPlayerZone[n - 1]"
-                                       :attackable="canAttackCardInHomeZone"
-                                       @attack="selectAsDefender"
+                                       :ownerId="opponentUser.id"
+                                       :zonePlayerRow="opponentCardsInPlayerZone"
+                                       :zoneOpponentRow="playerCardsInZone"
+                                       :key="opponentCardsInPlayerZone[n - 1].id"
                                        class="card--turnedAround"/>
                             <div v-else class="card card--placeholder"/>
                         </template>
@@ -93,11 +98,11 @@
                         <template v-for="n in 6">
                             <zone-card v-if="n <= playerCardsInZone.length"
                                        :card="(playerCardsInZone[n - 1])"
+                                       :ownerId="ownUser.id"
                                        :movable="phase === 'attack'"
-                                       :readyToAttack="canAttackThisTurn(playerCardsInZone[n - 1])"
-                                       :selectedAsAttacker="attackerCardId === playerCardsInZone[n - 1].id"
-                                       @move="moveCard"
-                                       @readyToAttack="selectAsAttacker"/>
+                                       :zonePlayerRow="playerCardsInZone"
+                                       :zoneOpponentRow="opponentCardsInPlayerZone"
+                                       :key="playerCardsInZone[n - 1].id"/>
                             <div v-else-if="playerZoneCardGhostVisible"
                                  @click="cardGhostClick('zone')"
                                  class="card card-ghost"/>
@@ -174,7 +179,6 @@
     const Vuex = require('vuex');
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
     const ZoneCard = require('./ZoneCard.vue').default;
-    const AttackEvent = require('../../shared/event/AttackEvent.js');
 
     module.exports = {
         data() {
@@ -270,18 +274,6 @@
                 }
                 return this.playerStation.actionCards.length * 2;
             },
-            canAttack() {
-                return this.phase === 'attack'
-                    && !this.attackerCardId;
-            },
-            canAttackCardInOpponentZone() {
-                return !!this.attackerCardId
-                    && this.playerCardsInOpponentZone.some(c => c.id === this.attackerCardId);
-            },
-            canAttackCardInHomeZone() {
-                return !!this.attackerCardId
-                    && this.playerCardsInZone.some(c => c.id === this.attackerCardId);
-            },
             playerActionPointsText() {
                 if (this.calculatedActionPointsForActionPhaseVisible) {
                     return `Actions ${ this.actionPoints2 }`;
@@ -297,20 +289,15 @@
                 'putDownCard',
                 'discardCard',
                 'nextPhase',
-                'moveCard',
-                'selectAsAttacker',
                 'selectAsDefender',
-                'retreat'
+                'retreat',
+                'cancelAttack'
             ]),
             startClick() {
                 this.nextPhase();
             },
             canAffordCard(card) {
                 return this.actionPoints >= card.cost;
-            },
-            canAttackThisTurn(card) {
-                return this.canAttack
-                    && !AttackEvent.cardHasAlreadyAttackedThisTurn(this.turn, card.commonId, this.events);
             },
             nextPhaseClick() {
                 this.nextPhase();
@@ -332,6 +319,10 @@
             emptyClick() {
                 if (this.holdingCard) {
                     this.holdingCard = null;
+                }
+
+                if (!!this.attackerCardId) {
+                    this.cancelAttack();
                 }
             },
             getOpponentCardStyle(index) {
@@ -385,7 +376,7 @@
                 this.mousePosition.y = event.clientY;
             });
             this.$refs.match.addEventListener('click', event => {
-                const targetElementClasses = Array.from(event.target.classList)
+                const targetElementClasses = Array.from(event.target.classList);
                 if (!targetElementClasses.includes('card') || targetElementClasses.includes('card--placeholder')) {
                     this.emptyClick();
                 }

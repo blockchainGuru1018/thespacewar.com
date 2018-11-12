@@ -1,21 +1,21 @@
 <template>
     <div :style="cardStyle" @click="cardClick" ref="card" :class="classes">
         <div class="actionOverlays">
-            <div v-if="movable"
-                 @click="moveClick"
-                 class="movable">
-                Move
-            </div>
-            <div v-if="readyToAttack"
-                 @click="readyToAttackClick"
-                 class="readyToAttack">
-                Ready to attack
-            </div>
-            <div v-if="attackable"
-                 @click="attackClick"
-                 class="attackable">
-                Attack
-            </div>
+            <template v-if="canSelectAction">
+                <div v-if="canMove"
+                     @click.stop="moveClick"
+                     class="movable">
+                    Move
+                </div>
+                <div v-if="canAttackThisTurn"
+                     @click.stop="readyToAttackClick"
+                     class="readyToAttack">
+                    Attack
+                </div>
+            </template>
+            <div v-if="canBeSelectedAsDefender"
+                 @click.stop="selectAsDefender(card)"
+                 class="attackable"/>
         </div>
         <div class="indicatorOverlays">
             <div v-if="card.damage && card.damage > 0" class="card-damageIndicator" :style="damageTextStyle">
@@ -25,20 +25,32 @@
     </div>
 </template>
 <script>
+    const Vuex = require('vuex');
+    const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
+    const AttackEvent = require('../../shared/event/AttackEvent.js');
+
     module.exports = {
         props: [
             'card',
             'movable',
-            'readyToAttack',
-            'selectedAsAttacker',
-            'attackable'
+            'zonePlayerRow',
+            'zoneOpponentRow',
+            'ownerId'
         ],
         data() {
             return {
-                damageTextFontSize: 0
+                damageTextFontSize: 0,
+                wasPutDownTurn: null
             }
         },
         computed: {
+            ...mapState([
+                'phase',
+                'turn',
+                'events',
+                'attackerCardId',
+                'ownUser'
+            ]),
             classes() {
                 const classes = ['card'];
                 if (this.selectedAsAttacker) {
@@ -55,21 +67,59 @@
                 return {
                     fontSize: this.damageTextFontSize + 'px'
                 }
+            },
+            isPlayerCard() {
+                return this.ownerId === this.ownUser.id;
+            },
+            selectedAsAttacker() {
+                return this.attackerCardId === this.card.id;
+            },
+            canSelectAction() {
+                if (!this.isPlayerCard) return false;
+
+                return !this.attackerCardId;
+            },
+            canMove() {
+                return this.movable
+                    && this.wasPutDownTurn !== this.turn;
+            },
+            canAttack() {
+                return this.phase === 'attack'
+                    && !this.attackerCardId
+                    && this.zoneOpponentRow.length > 0;
+            },
+            canAttackThisTurn() {
+                return this.canAttack
+                    && !AttackEvent.cardHasAlreadyAttackedThisTurn(this.turn, this.card.id, this.events);
+            },
+            canBeSelectedAsDefender() {
+                return !this.isPlayerCard
+                    && this.attackerCardId
+                    && this.zoneOpponentRow.some(c => c.id === this.attackerCardId);
             }
         },
         methods: {
+            ...mapActions([
+                'selectAsAttacker',
+                'selectAsDefender',
+                'moveCard'
+            ]),
             cardClick() {
                 this.$emit('click', this.card);
             },
             moveClick() {
-                this.$emit('move', this.card);
+                this.moveCard(this.card);
             },
             readyToAttackClick() {
-                this.$emit('readyToAttack', this.card);
-            },
-            attackClick() {
-                this.$emit('attack', this.card);
+                this.selectAsAttacker(this.card);
             }
+        },
+        created() {
+            const putDownEventForThisCard = this.events.find(e => {
+                return e.type === 'putDownCard'
+                    && e.cardId === this.card.id;
+            });
+            this.wasPutDownTurn = putDownEventForThisCard ? putDownEventForThisCard.turn : 0;
         },
         mounted() {
             let cardWidth = this.$refs.card.offsetWidth;

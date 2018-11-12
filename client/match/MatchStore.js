@@ -1,5 +1,6 @@
 const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
 const DiscardCardEvent = require('../../shared/event/DiscardCardEvent.js');
+const AttackEvent = require('../../shared/event/AttackEvent.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
 const PHASES = ['draw', 'action', 'discard', 'attack'];
 
@@ -83,6 +84,7 @@ module.exports = function (deps) {
             selectAsAttacker,
             selectAsDefender,
             opponentAttackedCard,
+            cancelAttack,
             addDiscardEvent,
             opponentRetreated
         }
@@ -377,6 +379,9 @@ module.exports = function (deps) {
         else {
             defenderCard.damage = defenderCurrentDamage + attackerCard.attack;
         }
+
+        state.attackerCardId = null;
+        state.events.push(AttackEvent({ turn: state.turn, attackerCardId, cardCommonId: attackerCard.commonId }));
     }
 
     function opponentAttackedCard({ state }, { attackerCardId, defenderCardId, newDamage, defenderCardWasDestroyed }) {
@@ -391,6 +396,10 @@ module.exports = function (deps) {
         else {
             defenderCard.damage = newDamage;
         }
+    }
+
+    function cancelAttack({ state }) {
+        state.attackerCardId = null;
     }
 
     function addDiscardEvent({ state }, card) {
