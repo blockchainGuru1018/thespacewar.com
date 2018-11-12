@@ -1,5 +1,13 @@
 const cardsJson = require('../server/card/cards.json');
 
+const CARD_COLOR_TO_TYPE = {
+    'blue': 'spaceShip',
+    'violet': 'duration',
+    'orange': 'event',
+    'red': 'missile',
+    'green': 'defense'
+};
+
 module.exports = function () {
 
     return {
@@ -21,10 +29,12 @@ module.exports = function () {
 
 
 function Card(cardJson) {
+    const color = cardJson.type_card;
     return {
         id: createUniqueCardId(cardJson.id),
         commonId: cardJson.id,
-        type: cardJson.type_card,
+        color,
+        type: CARD_COLOR_TO_TYPE[color],
         name: cardJson.name,
         description: cardJson.detail,
         cost: parseInt(cardJson.price, 10),

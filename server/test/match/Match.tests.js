@@ -1072,6 +1072,28 @@ module.exports = testCase('Match', {
                     newDamage: 1
                 });
             }
+        },
+        'when first player try to move defense card': {
+            setUp() {
+                this.match = createMatch({ players: [Player('P1A')] });
+                this.match.restoreFromState(createState({
+                    turn: 2,
+                    currentPlayer: 'P1A',
+                    playerOrder: ['P1A', 'P2A'],
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInZone: [createCard({ id: 'C1A', type: 'defense' })]
+                        }
+                    }
+                }));
+
+                this.error = catchError(() => this.match.moveCard('P1A', 'C1A'));
+            },
+            'should throw error': function () {
+                assert(this.error);
+                assert.equals(this.error.message, 'Cannot move defense card');
+            }
         }
     },
     'when first player retreats from match should emit opponentRetreated to second player': {

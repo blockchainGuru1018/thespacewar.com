@@ -215,6 +215,7 @@ module.exports = function (deps) {
         let cardIndex = playerState.cardsInZone.findIndex(c => c.id === cardId);
         let card = playerState.cardsInZone[cardIndex];
         if (!card) throw CheatError('Cannot move card that is not in your own zone');
+        if (card.type === 'defense') throw CheatError('Cannot move defense card');
 
         let turnCardWasPutDonw = playerState.events
             .find(e => e.type === 'putDownCard' && e.cardId === cardId)

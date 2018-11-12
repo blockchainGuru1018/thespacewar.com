@@ -80,11 +80,14 @@
                 return !this.attackerCardId;
             },
             canMove() {
+                if (this.card.type === 'defense') return false;
+
                 return this.movable
                     && this.wasPutDownTurn !== this.turn;
             },
             canAttack() {
-                return this.phase === 'attack'
+                return this.card.attack > 0
+                    && this.phase === 'attack'
                     && !this.attackerCardId
                     && this.zoneOpponentRow.length > 0;
             },
