@@ -130,14 +130,11 @@ module.exports = function (deps) {
 
     function setPlayerStationCards(state, stationCards) {
         state.playerStation.drawCards = stationCards
-            .filter(s => s.place === 'draw')
-            .map(s => s.card);
+            .filter(s => s.place === 'draw');
         state.playerStation.actionCards = stationCards
-            .filter(s => s.place === 'action')
-            .map(s => s.card);
+            .filter(s => s.place === 'action');
         state.playerStation.handSizeCards = stationCards
-            .filter(s => s.place === 'handSize')
-            .map(s => s.card);
+            .filter(s => s.place === 'handSize');
     }
 
     function setPlayerCardsOnHand(state, cards) {
