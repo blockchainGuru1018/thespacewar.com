@@ -1,6 +1,7 @@
 const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
 const DiscardCardEvent = require('../../shared/event/DiscardCardEvent.js');
 const AttackEvent = require('../../shared/event/AttackEvent.js');
+const MoveCardEvent = require('../../shared/event/MoveCardEvent.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
 
 const TEMPORARY_START_PHASE = 'start';
@@ -226,6 +227,7 @@ module.exports = function (deps) {
 
         playerState.cardsInZone.splice(cardIndex, 1);
         playerState.cardsInOpponentZone.push(card);
+        playerState.events.push(MoveCardEvent({ turn: state.turn, cardId, cardCommonId: card.commonId }));
 
         emitToOpponent(playerId, 'opponentMovedCard', cardId)
     }

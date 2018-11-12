@@ -680,14 +680,21 @@ module.exports = testCase('Match', {
             },
             'when restore state for first player should NOT have moved card in own zone'() {
                 this.match.start();
-                let state = this.firstPlayerConnection.restoreState.lastCall.args[0];
+                const state = this.firstPlayerConnection.restoreState.lastCall.args[0];
                 assert.equals(state.cardsInZone.length, 0);
             },
             'when restore state for first player should have moved card in playerCardsInOpponentZone'() {
                 this.match.start();
-                let state = this.firstPlayerConnection.restoreState.lastCall.args[0];
+                const state = this.firstPlayerConnection.restoreState.lastCall.args[0];
                 assert.equals(state.cardsInOpponentZone.length, 1);
                 assert.match(state.cardsInOpponentZone[0], { id: 'C1A' });
+            },
+            'when restore state for first player should have a move card event'() {
+                this.match.start();
+                const state = this.firstPlayerConnection.restoreState.lastCall.args[0];
+                const moveCardEvents = state.events.filter(e => e.type === 'moveCard');
+                assert.equals(moveCardEvents.length, 1);
+                assert.match(moveCardEvents[0], { cardId: 'C1A' });
             },
             'when restore state for second player should have card in opponentCardsInPlayerZone'() {
                 this.match.start();
