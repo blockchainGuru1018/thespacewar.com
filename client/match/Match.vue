@@ -8,13 +8,28 @@
             <div class="field-opponent">
                 <div class="field-opponentStation field-station field-section">
                     <div class="field-stationRow">
-                        <div v-for="card in opponentStation.drawCards" class="card card-faceDown"/>
+                        <station-card
+                                v-for="card in opponentStation.drawCards"
+                                :stationCard="card"
+                                :isOpponentStationCard="true"
+                                :key="card.id"
+                        />
                     </div>
                     <div class="field-stationRow">
-                        <div v-for="card in opponentStation.actionCards" class="card card-faceDown"/>
+                        <station-card
+                                v-for="card in opponentStation.actionCards"
+                                :stationCard="card"
+                                :isOpponentStationCard="true"
+                                :key="card.id"
+                        />
                     </div>
                     <div class="field-stationRow">
-                        <div v-for="card in opponentStation.handSizeCards" class="card card-faceDown"/>
+                        <station-card
+                                v-for="card in opponentStation.handSizeCards"
+                                :stationCard="card"
+                                :isOpponentStationCard="true"
+                                :key="card.id"
+                        />
                     </div>
                 </div>
                 <div class="field-zoneRows field-opponentZoneRows">
@@ -179,6 +194,7 @@
     const Vuex = require('vuex');
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
     const ZoneCard = require('./ZoneCard.vue').default;
+    const StationCard = require('./StationCard.vue').default;
 
     module.exports = {
         data() {
@@ -382,9 +398,7 @@
                 }
             });
         },
-        components: {
-            ZoneCard
-        }
+        components: { ZoneCard, StationCard }
     };
 </script>
 <style scoped lang="scss">

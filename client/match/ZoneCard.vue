@@ -28,6 +28,7 @@
     const Vuex = require('vuex');
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
     const AttackEvent = require('../../shared/event/AttackEvent.js');
+    const MoveCardEvent = require('../../shared/event/MoveCardEvent.js');
 
     module.exports = {
         props: [
@@ -85,14 +86,19 @@
                 return this.movable
                     && this.wasPutDownTurn !== this.turn;
             },
-            canAttack() {
+            canAttackOtherCard() {
                 return this.card.attack > 0
                     && this.phase === 'attack'
                     && !this.attackerCardId
                     && this.zoneOpponentRow.length > 0;
             },
-            canAttackThisTurn() {
-                return this.canAttack
+            canAttackStationCards() {
+                const moveCardEvent = MoveCardEvent.hasMoved(this.card.id, this.events);
+                return !!moveCardEvent
+                    && MoveCardEvent.turnCountSinceMove(this.card.id, this.turn, this.events);
+            },
+            canAttackThisTurn() { // Seems that cards can always attack
+                return (this.canAttackOtherCard || this.canAttackStationCards)
                     && !AttackEvent.cardHasAlreadyAttackedThisTurn(this.turn, this.card.id, this.events);
             },
             canBeSelectedAsDefender() {

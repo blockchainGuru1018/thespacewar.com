@@ -166,8 +166,9 @@ module.exports = function (deps) {
 
         if (isStationCard) {
             const stationLocation = location.split('-').pop();
-            playerState.stationCards.push({ place: stationLocation, card });
-            emitToOpponent(playerId, 'putDownOpponentCard', { location });
+            const stationCard = { place: stationLocation, card };
+            playerState.stationCards.push(stationCard);
+            emitToOpponent(playerId, 'putDownOpponentStationCard', prepareStationCardForClient(stationCard));
         }
         else if (location === 'zone') {
             playerState.cardsInZone.push(card);
@@ -219,10 +220,10 @@ module.exports = function (deps) {
         if (!card) throw CheatError('Cannot move card that is not in your own zone');
         if (card.type === 'defense') throw CheatError('Cannot move defense card');
 
-        let turnCardWasPutDonw = playerState.events
+        let turnCardWasPutDown = playerState.events
             .find(e => e.type === 'putDownCard' && e.cardId === cardId)
             .turn;
-        let turnsSinceCardWasPutDown = state.turn - turnCardWasPutDonw;
+        let turnsSinceCardWasPutDown = state.turn - turnCardWasPutDown;
         if (turnsSinceCardWasPutDown === 0) throw CheatError('This card cannot be moved on the same turn it was put down');
 
         playerState.cardsInZone.splice(cardIndex, 1);
@@ -283,13 +284,17 @@ module.exports = function (deps) {
 
     function attackStationCard(playerId, { attackerCardId, targetStationCardId }) {
         const playerState = getPlayerState(playerId);
-        const moveCardEvent = playerState.events.find(e => e.type === 'moveCard' && e.cardId === attackerCardId);
-        if (!moveCardEvent) throw CheatError('Can only attack station card from enemy zone');
-        const turnsSinceMoved = state.turn - moveCardEvent.turn;
+        if (!MoveCardEvent.hasMoved(attackerCardId, playerState.events)) {
+            throw CheatError('Can only attack station card from enemy zone');
+        }
+        const turnsSinceMoved = MoveCardEvent.turnCountSinceMove(attackerCardId, state.turn, playerState.events);
         if (turnsSinceMoved < 2) throw CheatError('Cannot attack station when have not been in the zone for at least 1 turn');
+        if (AttackEvent.cardHasAlreadyAttackedThisTurn(state.turn, attackerCardId, playerState.events)) {
+            throw CheatError('Cannot attack twice in the same turn');
+        }
 
         const opponentState = getOpponentState(playerId);
-        const targetStationCard = opponentState.stationCards.find(s => s.id === targetStationCardId);
+        const targetStationCard = opponentState.stationCards.find(s => s.card.id === targetStationCardId);
         if (targetStationCard) {
             targetStationCard.flipped = true;
 
@@ -297,6 +302,13 @@ module.exports = function (deps) {
             const opponentStationCards = prepareStationCardsForClient(opponentState.stationCards)
             emitToPlayer(playerId, 'opponentStationCardsChanged', opponentStationCards);
             emitToPlayer(opponentId, 'stationCardsChanged', opponentStationCards);
+
+            const attackerCard = playerState.cardsInOpponentZone.find(c => c.id === attackerCardId);
+            playerState.events.push(AttackEvent({
+                turn: state.turn,
+                attackerCardId,
+                cardCommonId: attackerCard.commonId
+            }));
         }
     }
 
@@ -350,6 +362,7 @@ module.exports = function (deps) {
         const opponentStationCards = getOpponentStationCards(playerId);
         emitToPlayer(playerId, 'restoreState', {
             ...playerState,
+            stationCards: prepareStationCardsForClient(playerState.stationCards),
             actionPoints: actionPointsForPlayer,
             turn: state.turn,
             currentPlayer: state.currentPlayer,
@@ -391,13 +404,14 @@ module.exports = function (deps) {
             cardsOnHand,
             phase,
         } = getPlayerState(playerId);
+        const opponentStationCards = getOpponentStationCards(playerId)
         emitToPlayer(playerId, 'beginGame', {
             stationCards: prepareStationCardsForClient(stationCards),
             cardsOnHand,
             phase,
             currentPlayer: state.currentPlayer,
             opponentCardCount: getOpponentCardCount(playerId),
-            opponentStationCards: getOpponentStationCards(playerId).map(s => ({ place: s.place }))
+            opponentStationCards: prepareStationCardsForClient(opponentStationCards)
         });
     }
 
@@ -486,17 +500,19 @@ module.exports = function (deps) {
     }
 
     function prepareStationCardsForClient(stationCards) {
-        return stationCards.map(stationCard => {
-            let model = {
-                id: stationCard.card.id,
-                place: stationCard.place
-            };
-            if (stationCard.flipped) {
-                model.flipped = true;
-                model.card = stationCard.card;
-            }
-            return model;
-        });
+        return stationCards.map(prepareStationCardForClient);
+    }
+
+    function prepareStationCardForClient(stationCard) {
+        let model = {
+            id: stationCard.card.id,
+            place: stationCard.place
+        };
+        if (stationCard.flipped) {
+            model.flipped = true;
+            model.card = stationCard.card;
+        }
+        return model;
     }
 
     function getOpponentId(playerId) {

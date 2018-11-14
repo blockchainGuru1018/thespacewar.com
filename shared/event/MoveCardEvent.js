@@ -1,4 +1,13 @@
-module.exports = function MoveEvent({ turn, cardId, cardCommonId }) {
+MoveCardEvent.hasMoved = (cardId, events) => {
+    return events.some(e => e.type === 'moveCard' && e.cardId === cardId);
+};
+
+MoveCardEvent.turnCountSinceMove = (cardId, currentTurn, events) => {
+    const moveCardEvent = events.find(e => e.type === 'moveCard' && e.cardId === cardId);
+    return currentTurn - moveCardEvent.turn;
+}
+
+function MoveCardEvent({ turn, cardId, cardCommonId }) {
     return {
         type: 'moveCard',
         created: new Date().toISOString(),
@@ -7,3 +16,5 @@ module.exports = function MoveEvent({ turn, cardId, cardCommonId }) {
         cardCommonId
     };
 }
+
+module.exports = MoveCardEvent;

@@ -13,7 +13,6 @@ const createDeckFromCards = FakeDeckFactory.createDeckFromCards;
 let CardInfoRepository = require('../../../shared/CardInfoRepository.js');
 let Match = require('../../match/Match.js');
 
-//Explain: "player of the turn" is the current player of the turn. Both players will be the current player of the turn, once.
 module.exports = testCase('Match', {
     'putDownCard:': {
         'when card is NOT in hand should throw error': function () {
@@ -1119,13 +1118,13 @@ module.exports = testCase('Match', {
                     playerStateById: {
                         'P1A': {
                             phase: 'attack',
-                            cardsInZone: [createCard({ id: 'C1A', type: 'defense' })],
+                            cardsInOpponentZone: [createCard({ id: 'C1A' })],
                             events: [{ type: 'moveCard', turn: 1, cardId: 'C1A' }]
                         },
                         'P2A': {
                             stationCards: [
-                                { id: 'C2A', card: createCard({ id: 'C2A' }), place: 'action' },
-                                { id: 'C3A', card: createCard({ id: 'C3A' }), place: 'action' }
+                                { card: createCard({ id: 'C2A' }), place: 'action' },
+                                { card: createCard({ id: 'C3A' }), place: 'action' }
                             ]
                         }
                     }
@@ -1192,13 +1191,13 @@ module.exports = testCase('Match', {
                     playerStateById: {
                         'P1A': {
                             phase: 'attack',
-                            cardsInZone: [createCard({ id: 'C1A', type: 'defense' })],
+                            cardsInZone: [createCard({ id: 'C1A' })],
                             events: [{ type: 'moveCard', cardId: 'C1A', turn: 1 }]
                         },
                         'P2A': {
                             stationCards: [
-                                { id: 'C2A', card: createCard({ id: 'C2A' }), place: 'action' },
-                                { id: 'C3A', card: createCard({ id: 'C3A' }), place: 'action' }
+                                { card: createCard({ id: 'C2A' }), place: 'action' },
+                                { card: createCard({ id: 'C3A' }), place: 'action' }
                             ]
                         }
                     }
@@ -1229,13 +1228,13 @@ module.exports = testCase('Match', {
                     playerStateById: {
                         'P1A': {
                             phase: 'attack',
-                            cardsInZone: [createCard({ id: 'C1A', type: 'defense' })],
+                            cardsInZone: [createCard({ id: 'C1A' })],
                             events: []
                         },
                         'P2A': {
                             stationCards: [
-                                { id: 'C2A', card: createCard({ id: 'C2A' }), place: 'action' },
-                                { id: 'C3A', card: createCard({ id: 'C3A' }), place: 'action' }
+                                { card: createCard({ id: 'C2A' }), place: 'action' },
+                                { card: createCard({ id: 'C3A' }), place: 'action' }
                             ]
                         }
                     }
@@ -1247,6 +1246,125 @@ module.exports = testCase('Match', {
             'should throw error'() {
                 assert(this.error);
                 assert.equals(this.error.message, 'Can only attack station card from enemy zone');
+            }
+        },
+        'when attack station card twice': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['restoreState', 'opponentStationCardsChanged']);
+                this.secondPlayerConnection = FakeConnection2(['restoreState', 'stationCardsChanged']);
+                this.match = createMatch({
+                    players: [
+                        Player('P1A', this.firstPlayerConnection),
+                        Player('P2A', this.secondPlayerConnection),
+                    ]
+                });
+                this.match.restoreFromState(createState({
+                    turn: 3,
+                    currentPlayer: 'P1A',
+                    playerOrder: ['P1A', 'P2A'],
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInOpponentZone: [createCard({ id: 'C1A' })],
+                            events: [{ type: 'moveCard', turn: 1, cardId: 'C1A' }]
+                        },
+                        'P2A': {
+                            stationCards: [
+                                { card: createCard({ id: 'C2A' }), place: 'action' },
+                                { card: createCard({ id: 'C3A' }), place: 'action' },
+                                { card: createCard({ id: 'C4A' }), place: 'action' }
+                            ]
+                        }
+                    }
+                }));
+
+                this.match.attackStationCard('P1A', { attackerCardId: 'C1A', targetStationCardId: 'C2A' });
+                const attackOptions = { attackerCardId: 'C1A', targetStationCardId: 'C3A' };
+                this.error = catchError(() => this.match.attackStationCard('P1A', attackOptions));
+            },
+            'should throw error'() {
+                assert(this.error);
+                assert.equals(this.error.message, 'Cannot attack twice in the same turn');
+            }
+        },
+        'when attack 2 station cards with 2 different cards': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['restoreState', 'opponentStationCardsChanged']);
+                this.secondPlayerConnection = FakeConnection2(['restoreState', 'stationCardsChanged']);
+                this.match = createMatch({
+                    players: [
+                        Player('P1A', this.firstPlayerConnection),
+                        Player('P2A', this.secondPlayerConnection),
+                    ]
+                });
+                this.match.restoreFromState(createState({
+                    turn: 3,
+                    currentPlayer: 'P1A',
+                    playerOrder: ['P1A', 'P2A'],
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInOpponentZone: [createCard({ id: 'C1A' }), createCard({ id: 'C2A' })],
+                            events: [{ type: 'moveCard', turn: 1, cardId: 'C1A' }, { type: 'moveCard', turn: 1, cardId: 'C2A' }]
+                        },
+                        'P2A': {
+                            stationCards: [
+                                { card: createCard({ id: 'C3A' }), place: 'action' },
+                                { card: createCard({ id: 'C4A' }), place: 'handSize' },
+                                { card: createCard({ id: 'C5A' }), place: 'draw' },
+                            ]
+                        }
+                    }
+                }));
+
+                this.match.attackStationCard('P1A', { attackerCardId: 'C1A', targetStationCardId: 'C3A' });
+                this.match.attackStationCard('P1A', { attackerCardId: 'C2A', targetStationCardId: 'C5A' });
+            },
+            'when second player restore state should have 2 station cards flipped': function () {
+                this.match.start();
+                let { stationCards } = this.secondPlayerConnection.restoreState.lastCall.args[0];
+                assert.equals(stationCards.length, 3);
+
+                let flippedCards = stationCards.filter(s => s.flipped);
+                assert.equals(flippedCards.length, 2);
+                assert.match(flippedCards[0].card, { id: 'C3A' });
+                assert.match(flippedCards[0], { flipped: true, place: 'action' });
+                assert.match(flippedCards[1].card, { id: 'C5A' });
+                assert.match(flippedCards[1], { flipped: true, place: 'draw' });
+            },
+            'when first player restore state 2 of the opponent station cards should be flipped': function () {
+                this.match.start();
+                let { opponentStationCards } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+                assert.equals(opponentStationCards.length, 3);
+
+                let flippedCards = opponentStationCards.filter(s => s.flipped);
+                assert.equals(flippedCards.length, 2);
+                assert.match(flippedCards[0].card, { id: 'C3A' });
+                assert.match(flippedCards[0], { flipped: true, place: 'action' });
+                assert.match(flippedCards[1].card, { id: 'C5A' });
+                assert.match(flippedCards[1], { flipped: true, place: 'draw' });
+            },
+            'should emit flipped station card to second player': function () {
+                const stationCards = this.secondPlayerConnection.stationCardsChanged.lastCall.args[0];
+                assert.equals(stationCards.length, 3);
+
+                let flippedCards = stationCards.filter(s => s.flipped);
+                assert.equals(flippedCards.length, 2);
+                assert.match(flippedCards[0].card, { id: 'C3A' });
+                assert.match(flippedCards[0], { flipped: true, place: 'action' });
+                assert.match(flippedCards[1].card, { id: 'C5A' });
+                assert.match(flippedCards[1], { flipped: true, place: 'draw' });
+            },
+            'should emit flipped station card to first player': function () {
+                const stationCards = this.firstPlayerConnection.opponentStationCardsChanged.lastCall.args[0];
+                assert.equals(stationCards.length, 3);
+
+                let flippedCards = stationCards.filter(s => s.flipped);
+                assert.equals(flippedCards.length, 2);
+                assert.match(flippedCards[0].card, { id: 'C3A' });
+                assert.match(flippedCards[0], { flipped: true, place: 'action' });
+                assert.match(flippedCards[1].card, { id: 'C5A' });
+                assert.match(flippedCards[1], { flipped: true, place: 'draw' });
             }
         },
         'when attacking station card that does NOT exist': {
@@ -1271,8 +1389,8 @@ module.exports = testCase('Match', {
                         },
                         'P2A': {
                             stationCards: [
-                                { id: 'C2A', card: createCard({ id: 'C2A' }), place: 'action' },
-                                { id: 'C3A', card: createCard({ id: 'C3A' }), place: 'action' }
+                                { card: createCard({ id: 'C2A' }), place: 'action' },
+                                { card: createCard({ id: 'C3A' }), place: 'action' }
                             ]
                         }
                     }

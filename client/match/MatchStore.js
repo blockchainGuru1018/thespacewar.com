@@ -53,7 +53,8 @@ module.exports = function (deps) {
             nextPhaseButtonText,
             maxHandSize,
             hasPutDownNonFreeCardThisTurn,
-            actionPoints2
+            actionPoints2,
+            attackerCanAttackStationCards
         },
         mutations: {
             setPlayerStationCards,
@@ -70,6 +71,7 @@ module.exports = function (deps) {
             setActionPoints,
             moveCard,
             retreat,
+            selectStationCardAsDefender,
 
             // local
             restoreState,
@@ -77,6 +79,7 @@ module.exports = function (deps) {
             placeCardInZone,
             opponentDiscardedCard,
             putDownOpponentCard,
+            putDownOpponentStationCard,
             opponentMovedCard,
             setOpponentCardCount,
             nextPlayer,
@@ -87,7 +90,9 @@ module.exports = function (deps) {
             opponentAttackedCard,
             cancelAttack,
             addDiscardEvent,
-            opponentRetreated
+            opponentRetreated,
+            opponentStationCardsChanged,
+            stationCardsChanged
         }
     };
 
@@ -129,6 +134,14 @@ module.exports = function (deps) {
         });
     }
 
+    function attackerCanAttackStationCards(state) {
+        const moveCardEvent = MoveCardEvent.hasMoved(state.attackerCardId, state.events);
+        if (!moveCardEvent) return false;
+
+        const turnCountSinceMove = MoveCardEvent.turnCountSinceMove(state.attackerCardId, state.turn, state.events)
+        return turnCountSinceMove > 1;
+    }
+
     function setPlayerStationCards(state, stationCards) {
         state.playerStation.drawCards = stationCards
             .filter(s => s.place === 'draw');
@@ -145,24 +158,25 @@ module.exports = function (deps) {
     function setOpponentStationCards(state, stationCards) {
         state.opponentStation.drawCards = stationCards
             .filter(s => s.place === 'draw')
-            .map(s => ({}));
+            .sort(stationCardsByIsFlippedComparer);
         state.opponentStation.actionCards = stationCards
             .filter(s => s.place === 'action')
-            .map(s => ({}));
+            .sort(stationCardsByIsFlippedComparer);
         state.opponentStation.handSizeCards = stationCards
             .filter(s => s.place === 'handSize')
-            .map(s => ({}));
+            .sort(stationCardsByIsFlippedComparer);
     }
 
-    function addOpponentStationCards(state, location) {
+    function addOpponentStationCards(state, stationCard) {
+        const location = stationCard.place;
         if (location === 'draw') {
-            state.opponentStation.drawCards.push({});
+            state.opponentStation.drawCards.push(stationCard);
         }
         else if (location === 'action') {
-            state.opponentStation.actionCards.push({});
+            state.opponentStation.actionCards.push(stationCard);
         }
         else if (location === 'handSize') {
-            state.opponentStation.handSizeCards.push({});
+            state.opponentStation.handSizeCards.push(stationCard);
         }
     }
 
@@ -324,15 +338,16 @@ module.exports = function (deps) {
         state.opponentDiscardedCards.push(discardedCard);
     }
 
-    function putDownOpponentCard({ state, commit }, { location, card = null }) {
+    function putDownOpponentCard({ state }, { location, card }) {
         state.opponentCardCount -= 1;
-        if (location.startsWith('station')) {
-            const stationLocation = location.split('-').pop();
-            commit('addOpponentStationCards', stationLocation);
-        }
-        else if (location === 'zone') {
+        if (location === 'zone') {
             state.opponentCardsInZone.push(card);
         }
+    }
+
+    function putDownOpponentStationCard({ state, commit }, stationCard) {
+        state.opponentCardCount -= 1;
+        commit('addOpponentStationCards', stationCard);
     }
 
     function opponentMovedCard({ state }, cardId) {
@@ -416,8 +431,28 @@ module.exports = function (deps) {
         deleteMatchLocalDataAndReturnToLobby();
     }
 
+    function selectStationCardAsDefender({ state }, { id }) {
+        matchController.emit('attackStationCard', {
+            attackerCardId: state.attackerCardId,
+            targetStationCardId: id
+        });
+
+        const attackerCardId = state.attackerCardId;
+        const attackerCard = state.playerCardsInOpponentZone.find(c => c.id === attackerCardId);
+        state.events.push(AttackEvent({ turn: state.turn, attackerCardId, cardCommonId: attackerCard.commonId }));
+        state.attackerCardId = null;
+    }
+
     function opponentRetreated() {
         deleteMatchLocalDataAndReturnToLobby();
+    }
+
+    function opponentStationCardsChanged({ commit }, stationCards) {
+        commit('setOpponentStationCards', stationCards);
+    }
+
+    function stationCardsChanged({ commit }, stationCards) {
+        commit('setPlayerStationCards', stationCards);
     }
 
     function deleteMatchLocalDataAndReturnToLobby() {
@@ -428,4 +463,8 @@ module.exports = function (deps) {
 
 function capitalize(word) {
     return word.substr(0, 1).toUpperCase() + word.substr(1);
+}
+
+function stationCardsByIsFlippedComparer(a, b) {
+    return (a.flipped ? 1 : 0) - (b.flipped ? 1 : 0);
 }
