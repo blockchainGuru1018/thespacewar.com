@@ -295,7 +295,12 @@ module.exports = function (deps) {
 
         const opponentState = getOpponentState(playerId);
         const targetStationCard = opponentState.stationCards.find(s => s.card.id === targetStationCardId);
+
         if (targetStationCard) {
+            if (targetStationCard.flipped) {
+                throw Error('Cannot attack a flipped station card');
+            }
+
             targetStationCard.flipped = true;
 
             const opponentId = getOpponentId(playerId);

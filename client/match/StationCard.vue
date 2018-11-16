@@ -29,8 +29,8 @@
                 }
             },
             canBeSelectedAsDefender() {
-                console.log('this.isOpponentStationCard', this.isOpponentStationCard, !!this.attackerCardId, this.attackerCanAttackStationCards)
-                return this.isOpponentStationCard
+                return !this.stationCard.flipped
+                    && this.isOpponentStationCard
                     && this.attackerCardId
                     && this.attackerCanAttackStationCards;
             }

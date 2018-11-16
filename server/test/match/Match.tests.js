@@ -1305,7 +1305,10 @@ module.exports = testCase('Match', {
                         'P1A': {
                             phase: 'attack',
                             cardsInOpponentZone: [createCard({ id: 'C1A' }), createCard({ id: 'C2A' })],
-                            events: [{ type: 'moveCard', turn: 1, cardId: 'C1A' }, { type: 'moveCard', turn: 1, cardId: 'C2A' }]
+                            events: [
+                                { type: 'moveCard', turn: 1, cardId: 'C1A' },
+                                { type: 'moveCard', turn: 1, cardId: 'C2A' }
+                            ]
                         },
                         'P2A': {
                             stationCards: [
@@ -1413,6 +1416,45 @@ module.exports = testCase('Match', {
                 let { opponentStationCards } = this.firstPlayerConnection.restoreState.lastCall.args[0];
                 let flippedCards = opponentStationCards.filter(s => s.flipped);
                 assert.equals(flippedCards.length, 0);
+            },
+            'should NOT emit flipped station card to second player'() {
+                refute.called(this.secondPlayerConnection.stationCardsChanged);
+            },
+            'should NOT emit flipped station card to first player'() {
+                refute.called(this.firstPlayerConnection.opponentStationCardsChanged);
+            }
+        },
+        'when attacking station card that is flipped': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['opponentStationCardsChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stationCardsChanged']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    turn: 3,
+                    currentPlayer: 'P1A',
+                    playerOrder: ['P1A', 'P2A'],
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInZone: [createCard({ id: 'C1A', type: 'defense' })],
+                            events: [{ type: 'moveCard', cardId: 'C1A', turn: 1 }]
+                        },
+                        'P2A': {
+                            stationCards: [
+                                { card: createCard({ id: 'C2A' }), place: 'action' },
+                                { card: createCard({ id: 'C3A' }), place: 'action', flipped: true }
+                            ]
+                        }
+                    }
+                }));
+
+                const attackOptions = { attackerCardId: 'C1A', targetStationCardId: 'C3A' }
+                this.error = catchError(() => this.match.attackStationCard('P1A', attackOptions));
+            },
+            'should throw error'() {
+                assert(this.error);
+                assert.equals(this.error.message, 'Cannot attack a flipped station card');
             },
             'should NOT emit flipped station card to second player'() {
                 refute.called(this.secondPlayerConnection.stationCardsChanged);
