@@ -140,8 +140,14 @@ module.exports = function (deps) {
         if (playerId !== state.currentPlayer) {
             throw CheatError('Cannot put down card when it is not your turn');
         }
-
         const playerState = getPlayerState(playerId);
+        const puttingDownStationCard = location === 'zone' &&
+            playerState.stationCards.some(s => s.card.id === cardId);
+        if (puttingDownStationCard) {
+            moveStationCardToOwnZone(playerId, cardId);
+            return;
+        }
+
         const cardIndexOnHand = playerState.cardsOnHand.findIndex(c => c.id === cardId);
         const card = playerState.cardsOnHand[cardIndexOnHand];
         if (!card) throw CheatError('Card is not on hand');
@@ -172,11 +178,24 @@ module.exports = function (deps) {
         }
         else if (location === 'zone') {
             playerState.cardsInZone.push(card);
-            emitToOpponent(playerId, 'putDownOpponentCard', {
-                location,
-                card
-            });
+            emitToOpponent(playerId, 'putDownOpponentCard', { location, card });
         }
+    }
+
+    function moveStationCardToOwnZone(playerId, cardId) {
+        const playerState = getPlayerState(playerId);
+        const stationCard = playerState.stationCards.find(s => s.card.id === cardId);
+        const card = stationCard.card;
+
+        //TODO Check if can afford to move station card to zone
+
+        playerState.stationCards = playerState.stationCards.filter(s => s.card.id !== cardId);
+        playerState.cardsInZone.push(card);
+
+        const location = 'zone'
+        const putDownCardEvent = PutDownCardEvent({ turn: state.turn, location, cardId, cardCommonId: card.commonId })
+        playerState.events.push(putDownCardEvent);
+        emitToOpponent(playerId, 'putDownOpponentCard', { location, card });
     }
 
     function discardCard(playerId, cardId) {

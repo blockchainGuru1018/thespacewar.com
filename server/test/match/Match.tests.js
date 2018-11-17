@@ -29,16 +29,21 @@ module.exports = testCase('Match', {
             assert.equals(error.type, 'CheatDetected');
         },
         'when does NOT have enough action points to place card in zone': function () {
-            const card = createCard({ id: 'C1A', cost: 7 });
-            let match = createMatch({
-                deckFactory: FakeDeckFactory.fromCards([card]),
-                players: createPlayers([{ id: 'P1A' }])
-            });
-            match.start();
-            match.start();
-            const putDownCardOptions = { location: 'zone', cardId: 'C1A' };
+            this.match = createMatch({ players: [Player('P1A')] });
+            this.match.restoreFromState(createState({
+                turn: 2,
+                currentPlayer: 'P1A',
+                playerOrder: ['P1A', 'P2A'],
+                playerStateById: {
+                    'P1A': {
+                        phase: 'action',
+                        cardsOnHand: [createCard({ id: 'C1A', cost: 7 })]
+                    }
+                }
+            }));
 
-            let error = catchError(() => match.putDownCard('P1A', putDownCardOptions));
+            const putDownCardOptions = { location: 'zone', cardId: 'C1A' };
+            let error = catchError(() => this.match.putDownCard('P1A', putDownCardOptions));
 
             assert.equals(error.message, 'Cannot afford card');
             assert.equals(error.type, 'CheatDetected');
@@ -76,32 +81,43 @@ module.exports = testCase('Match', {
         },
         'when can afford card:': {
             async setUp() {
-                const card = createCard({ id: 'C1A', cost: 1 });
-                this.connection = FakeConnection2(['restoreState']);
+                this.firstPlayerConnection = FakeConnection2(['restoreState']);
                 this.secondPlayerConnection = FakeConnection2(['putDownOpponentCard', 'restoreState']);
-                this.match = createMatchAndGoToFirstActionPhase({
-                    deckFactory: FakeDeckFactory.fromCards([card]),
+                this.match = createMatch({
                     players: [
-                        createPlayer({ id: 'P1A', connection: this.connection }),
+                        createPlayer({ id: 'P1A', connection: this.firstPlayerConnection }),
                         createPlayer({ id: 'P2A', connection: this.secondPlayerConnection })
                     ]
                 });
+                this.match.restoreFromState(createState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    playerOrder: ['P1A', 'P2A'],
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'action',
+                            cardsOnHand: [createCard({ id: 'C1A', cost: 1 })],
+                            stationCards: [{ card: createCard({ id: 'C2A' }), place: 'action' }]
+                        }
+                    }
+                }));
 
                 this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
             },
             'should put card in zone'() {
                 this.match.start();
-                let state = this.connection.restoreState.firstCall.args[0];
-                assert.equals(state.cardsInZone, [{ id: 'C1A', cost: 1 }]);
+                let state = this.firstPlayerConnection.restoreState.firstCall.args[0];
+                assert.equals(state.cardsInZone.length, 1);
+                assert.equals(state.cardsInZone[0].id, 'C1A');
             },
             'should remove card from hand'() {
                 this.match.start();
-                let state = this.connection.restoreState.firstCall.args[0];
-                assert.equals(state.cardsOnHand.length, 7);
+                let state = this.firstPlayerConnection.restoreState.firstCall.args[0];
+                assert.equals(state.cardsOnHand.length, 0);
             },
             'should add event'() {
                 this.match.start();
-                let state = this.connection.restoreState.firstCall.args[0];
+                let state = this.firstPlayerConnection.restoreState.firstCall.args[0];
                 assert.equals(state.events.length, 1);
                 assert.match(state.events[0], {
                     type: 'putDownCard',
@@ -151,6 +167,60 @@ module.exports = testCase('Match', {
 
             assert.equals(error.message, 'Cannot put down card when it is not your turn');
             assert.equals(error.type, 'CheatDetected');
+        },
+        'when has 1 flipped action station card and put down that station card': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['restoreState']);
+                this.secondPlayerConnection = FakeConnection2(['restoreState', 'putDownOpponentCard']);
+                this.match = createMatch({
+                    players: [
+                        Player('P1A', this.firstPlayerConnection),
+                        Player('P2A', this.secondPlayerConnection),
+                    ]
+                });
+                this.match.restoreFromState(createState({
+                    currentPlayer: 'P1A',
+                    playerOrder: ['P1A', 'P2A'],
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'action',
+                            cardsInZone: [],
+                            stationCards: [
+                                { card: createCard({ id: 'C1A' }), place: 'action' },
+                                { flipped: true, card: createCard({ id: 'C2A' }), place: 'action' },
+                            ]
+                        },
+                        'P2A': {}
+                    }
+                }));
+
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C2A' });
+            },
+            'when restore state should have card on hand and not among station cards'() {
+                this.match.start();
+                const { stationCards, cardsInZone } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+
+                assert.equals(stationCards.length, 1);
+                assert.equals(stationCards[0].id, 'C1A');
+
+                assert.equals(cardsInZone.length, 1);
+                assert.equals(cardsInZone[0].id, 'C2A');
+            },
+            'when second player restore state the opponent should have 1 more card in play and 1 less action station card'() {
+                this.match.start();
+                const { opponentCardsInZone, opponentStationCards } = this.secondPlayerConnection.restoreState.lastCall.args[0];
+
+                assert.equals(opponentCardsInZone.length, 1);
+                assert.equals(opponentCardsInZone[0].id, 'C2A');
+
+                assert.equals(opponentStationCards.length, 1);
+                assert.equals(opponentStationCards[0].id, 'C1A');
+            },
+            'should emit put down opponent card'() {
+                const { location, card } = this.secondPlayerConnection.putDownOpponentCard.lastCall.args[0];
+                assert.equals(location, 'zone');
+                assert.equals(card.id, 'C2A');
+            }
         }
     },
     'discardCard:': {
@@ -200,68 +270,6 @@ module.exports = testCase('Match', {
                 assert.defined(bonusCard.id);
                 assert.equals(discardedCard.id, 'C2A');
                 assert.equals(opponentCardCount, 7);
-            }
-        },
-        'when discards a card and then puts down a card in the action phase and goes to next phase': {
-            setUp() {
-                this.firstPlayerConnection = FakeConnection2(['restoreState', 'setOpponentCardCount']);
-                this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard']);
-                this.cards = [
-                    createCard({ id: 'C1A' }),
-                    createCard({ id: 'C2A', cost: 1 })
-                ]
-                this.match = createMatchAndGoToFirstActionPhase({
-                    deckFactory: FakeDeckFactory.fromCards(this.cards),
-                    players: [
-                        createPlayer({ id: 'P1A', connection: this.firstPlayerConnection }),
-                        createPlayer({ id: 'P2A', connection: this.secondPlayerConnection })
-                    ]
-                });
-                this.match.discardCard('P1A', 'C1A');
-                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C2A' });
-
-                this.match.nextPhase('P1A');
-            },
-            'and restore state should have correct amount of action points'() {
-                this.match.start();
-                assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
-                    actionPoints: 6
-                }));
-            }
-        },
-        'when in the action phase and discards 3 cards, puts down a card in the zone, puts down a station card and go to next players turn': {
-            setUp() {
-                this.firstPlayerConnection = FakeConnection2(['restoreState', 'setOpponentCardCount']);
-                this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard']);
-                this.cards = [
-                    createCard({ id: 'C1A' }),
-                    createCard({ id: 'C2A', cost: 1 }),
-                    createCard({ id: 'C3A' }),
-                    createCard({ id: 'C4A' }),
-                    createCard({ id: 'C5A' })
-                ]
-                this.match = createMatchAndGoToFirstActionPhase({
-                    deckFactory: FakeDeckFactory.fromCards(this.cards),
-                    players: [
-                        createPlayer({ id: 'P1A', connection: this.firstPlayerConnection }),
-                        createPlayer({ id: 'P2A', connection: this.secondPlayerConnection })
-                    ]
-                });
-                this.match.discardCard('P1A', 'C1A');
-                this.match.discardCard('P1A', 'C2A');
-                this.match.discardCard('P1A', 'C3A');
-                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C4A' });
-                this.match.putDownCard('P1A', { location: 'station-draw', cardId: 'C5A' });
-
-                this.match.nextPhase('P1A');
-                this.match.nextPhase('P1A');
-                this.match.nextPhase('P1A');
-            },
-            'and restore state should have correct amount of action points'() {
-                this.match.start();
-                assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
-                    actionPoints: 6
-                }));
             }
         }
     },
@@ -464,27 +472,6 @@ module.exports = testCase('Match', {
                 }));
             }
         },
-        'when has put down 1 zero cost card in zone and then puts down station card in action row': {
-            async setUp() {
-                this.playerConnection = FakeConnection2(['restoreState']);
-                this.match = createMatchAndGoToFirstActionPhase({
-                    deckFactory: FakeDeckFactory.fromCards([
-                        createCard({ id: 'C1A', cost: 0 }),
-                        createCard({ id: 'C2A', cost: 0 })
-                    ]),
-                    players: [createPlayer({ id: 'P1A', connection: this.playerConnection })]
-                });
-
-                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
-                this.match.putDownCard('P1A', { location: 'station-action', cardId: 'C2A' });
-            },
-            'when restore state should have correct amount of action points': function () {
-                this.match.start();
-                assert.calledWith(this.playerConnection.restoreState, sinon.match({
-                    actionPoints: 8
-                }));
-            }
-        },
         'when put down station card should NOT lose any action points': {
             async setUp() {
                 this.playerConnection = FakeConnection2(['restoreState']);
@@ -504,68 +491,41 @@ module.exports = testCase('Match', {
                 }));
             }
         },
-        'when put card in zone and then put down a station card in action row': {
-            async setUp() {
-                this.playerConnection = FakeConnection2(['setActionPoints', 'restoreState']);
-                let cardFactory = FakeCardFactory.fromCards([createCard({ id: 'C1A', cost: 1 })]);
-                this.match = createMatchAndGoToFirstActionPhase({
-                    deckFactory: FakeDeckFactory({ cardFactory }),
-                    cardInfoRepository: CardInfoRepository({ cardFactory }),
-                    players: [createPlayer({ id: 'P1A', connection: this.playerConnection })]
-                });
-
-                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
-                this.match.putDownCard('P1A', { location: 'station-action', cardId: 'C1A' });
-            },
-            'when restore state should have correct amount of action points': function () {
-                this.match.start();
-                assert.calledWith(this.playerConnection.restoreState, sinon.match({
-                    actionPoints: 5
-                }));
-            },
-            'when go to next phase should gain action points from added station card': function () {
-                this.match.nextPhase('P1A');
-
-                this.match.start();
-                assert.calledWith(this.playerConnection.restoreState, sinon.match({
-                    actionPoints: 8
-                }));
-            }
-        },
         'when put down a station card in action row and then put down card in zone': {
             async setUp() {
-                this.card = createCard({ id: 'C1A', cost: 1 });
-                this.playerConnection = FakeConnection2(['setActionPoints', 'restoreState']);
-                let cardFactory = FakeCardFactory.fromCards([this.card]);
-                this.match = createMatchAndGoToFirstActionPhase({
-                    deckFactory: FakeDeckFactory({ cardFactory }),
-                    cardInfoRepository: CardInfoRepository({ cardFactory }),
-                    players: [createPlayer({ id: 'P1A', connection: this.playerConnection })]
-                });
+                this.firstPlayerConnection = FakeConnection2(['restoreState']);
+                this.match = createMatch({ players: [Player('P1A', this.firstPlayerConnection), Player('P2A')] });
+                this.match.restoreFromState(createState({
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'action',
+                            cardsOnHand: [
+                                createCard({ id: 'C1A', cost: 1 }),
+                                createCard({ id: 'C2A', cost: 1 })
+                            ],
+                            stationCards: []
+                        }
+                    }
+                }));
 
                 this.match.putDownCard('P1A', { location: 'station-action', cardId: 'C1A' });
-                this.error = catchError(() => this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' }));
+                this.error = catchError(() => this.match.putDownCard('P1A', { location: 'zone', cardId: 'C2A' }));
             },
             'should NOT give error'() {
                 refute(this.error);
             },
-            'when restore state should have correct amount of action points': function () {
-                this.match.start();
-                assert.calledWith(this.playerConnection.restoreState, sinon.match({
-                    actionPoints: 7
-                }));
-            },
             'when restore state should have card in zone': function () {
                 this.match.start();
-                assert.calledWith(this.playerConnection.restoreState, sinon.match({
-                    cardsInZone: [this.card]
-                }));
+                let { cardsInZone } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+                assert.equals(cardsInZone.length, 1);
+                assert.equals(cardsInZone[0].id, 'C2A');
             },
-            'when restore state should have 4 station cards in action row': function () {
+            'when restore state should have the new station card': function () {
                 this.match.start();
-                let { stationCards } = this.playerConnection.restoreState.lastCall.args[0];
-                const stationCardsInActionRow = stationCards.filter(s => s.place === 'action')
-                assert.equals(stationCardsInActionRow.length, 4);
+                let { stationCards } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+                assert.equals(stationCards.length, 1);
+                assert.equals(stationCards[0].id, 'C1A');
+                assert.equals(stationCards[0].place, 'action');
             }
         }
     },
@@ -640,36 +600,20 @@ module.exports = testCase('Match', {
             async setUp() {
                 this.firstPlayerConnection = FakeConnection2(['restoreState']);
                 this.secondPlayerConnection = FakeConnection2(['opponentMovedCard', 'restoreState']);
-                this.match = createMatchAndGoToFirstActionPhase({
-                    deckFactory: FakeDeckFactory.fromCards([createCard({ id: 'C1A' })]),
-                    players: [
-                        createPlayer({ id: 'P1A', connection: this.firstPlayerConnection }),
-                        createPlayer({ id: 'P2A', connection: this.secondPlayerConnection })
-                    ]
-                });
-                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
-                this.match.nextPhase('P1A');
-                this.match.discardCard('P1A', 'C1A');
-                this.match.discardCard('P1A', 'C1A');
-                this.match.discardCard('P1A', 'C1A');
-                this.match.discardCard('P1A', 'C1A');
-                this.match.discardCard('P1A', 'C1A');
-                this.match.nextPhase('P1A');
-                this.match.nextPhase('P1A');
-
-                this.match.nextPhase('P2A');
-                this.match.nextPhase('P2A');
-                this.match.discardCard('P2A', 'C1A');
-                this.match.discardCard('P2A', 'C1A');
-                this.match.discardCard('P2A', 'C1A');
-                this.match.discardCard('P2A', 'C1A');
-                this.match.discardCard('P2A', 'C1A');
-                this.match.nextPhase('P2A');
-                this.match.nextPhase('P2A');
-
-                this.match.nextPhase('P1A');
-                this.match.nextPhase('P1A');
-                this.match.nextPhase('P1A');
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    turn: 2,
+                    currentPlayer: 'P1A',
+                    playerOrder: ['P1A', 'P2A'],
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInZone: [createCard({ id: 'C1A' })],
+                            events: [{ type: 'putDownCard', cardId: 'C1A', turn: 1 }]
+                        }
+                    }
+                }));
 
                 this.match.moveCard('P1A', 'C1A');
             },
@@ -703,43 +647,41 @@ module.exports = testCase('Match', {
             }
         },
         'when try to move card that is NOT in own zone should throw error': async function () {
-            let match = createMatchAndGoToFirstActionPhase({
-                deckFactory: FakeDeckFactory.fromCards([createCard({ id: 'C1A' })]),
-                players: [
-                    createPlayer({ id: 'P1A' }),
-                    createPlayer({ id: 'P2A' })
-                ]
-            });
-            match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
-            match.nextPhase('P1A');
-            repeat(5, () => match.discardCard('P1A', 'C1A'));
-            repeat(2, () => match.nextPhase('P1A'));
+            this.match = createMatch({ players: [Player('P1A'), Player('P2A')] });
+            this.match.restoreFromState(createState({
+                turn: 2,
+                currentPlayer: 'P1A',
+                playerOrder: ['P1A', 'P2A'],
+                playerStateById: {
+                    'P1A': {
+                        phase: 'attack',
+                        cardsInZone: [],
+                        events: [{ type: 'putDownCard', cardId: 'C1A', turn: 1 }]
+                    }
+                }
+            }));
 
-            repeat(2, () => match.nextPhase('P2A'));
-            repeat(5, () => match.discardCard('P2A', 'C1A'));
-            repeat(2, () => match.nextPhase('P2A'));
-
-            repeat(3, () => match.nextPhase('P1A'));
-
-            let error = catchError(() => match.moveCard('P1A', 'C2A'));
+            let error = catchError(() => this.match.moveCard('P1A', 'C2A'));
 
             assert(error);
             assert.equals(error.message, 'Cannot move card that is not in your own zone');
         },
         'when try to move card on the same turn it was put down should throw error': async function () {
-            let match = createMatchAndGoToFirstActionPhase({
-                deckFactory: FakeDeckFactory.fromCards([createCard({ id: 'C1A' })]),
-                players: [
-                    createPlayer({ id: 'P1A' }),
-                    createPlayer({ id: 'P2A' })
-                ]
-            });
-            match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
-            match.nextPhase('P1A');
-            repeat(5, () => match.discardCard('P1A', 'C1A'));
-            match.nextPhase('P1A')
+            this.match = createMatch({ players: [Player('P1A'), Player('P2A')] });
+            this.match.restoreFromState(createState({
+                turn: 1,
+                currentPlayer: 'P1A',
+                playerOrder: ['P1A', 'P2A'],
+                playerStateById: {
+                    'P1A': {
+                        phase: 'attack',
+                        cardsInZone: [createCard({ id: 'C1A' })],
+                        events: [{ type: 'putDownCard', cardId: 'C1A', turn: 1 }]
+                    }
+                }
+            }));
 
-            let error = catchError(() => match.moveCard('P1A', 'C1A'));
+            let error = catchError(() => this.match.moveCard('P1A', 'C1A'));
 
             assert(error);
             assert.equals(error.message, 'This card cannot be moved on the same turn it was put down');
@@ -1658,9 +1600,15 @@ function createState(options) {
         playerStateById: {},
         deckByPlayerId: {}
     });
-    for (let key of Object.keys(options.playerStateById)) {
+
+    const playerStateIds = Object.keys(options.playerStateById);
+    if (playerStateIds.length < 2) {
+        playerStateIds.push(options.playerOrder[1]);
+    }
+    for (let key of playerStateIds) {
         options.playerStateById[key] = createPlayerState(options.playerStateById[key]);
     }
+
     for (let playerId of options.playerOrder) {
         if (!options.deckByPlayerId[playerId]) {
             options.deckByPlayerId[playerId] = FakeDeckFactory.createDeckFromCards([FakeCardFactory.createCard()]);
