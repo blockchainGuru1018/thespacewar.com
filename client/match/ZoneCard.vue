@@ -86,11 +86,14 @@
                 return this.movable
                     && this.wasPutDownTurn !== this.turn;
             },
-            canAttackOtherCard() {
+            canAttack() {
                 return this.card.attack > 0
                     && this.phase === 'attack'
                     && !this.attackerCardId
-                    && this.zoneOpponentRow.length > 0;
+                    && !AttackEvent.cardHasAlreadyAttackedThisTurn(this.turn, this.card.id, this.events);
+            },
+            canAttackCardInZone() {
+                return this.zoneOpponentRow.length > 0;
             },
             canAttackStationCards() {
                 const moveCardEvent = MoveCardEvent.hasMoved(this.card.id, this.events);
@@ -98,8 +101,8 @@
                     && MoveCardEvent.turnCountSinceMove(this.card.id, this.turn, this.events);
             },
             canAttackThisTurn() { // Seems that cards can always attack
-                return (this.canAttackOtherCard || this.canAttackStationCards)
-                    && !AttackEvent.cardHasAlreadyAttackedThisTurn(this.turn, this.card.id, this.events);
+                const canAttackSomeTarget = (this.canAttackCardInZone || this.canAttackStationCards)
+                return this.canAttack && canAttackSomeTarget;
             },
             canBeSelectedAsDefender() {
                 return !this.isPlayerCard

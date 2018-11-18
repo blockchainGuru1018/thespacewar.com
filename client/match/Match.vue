@@ -127,21 +127,33 @@
                 </div>
                 <div class="field-playerStation field-station field-section">
                     <div class="field-stationRow">
-                        <div v-for="card in playerStation.drawCards" class="card card-faceDown"/>
+                        <station-card
+                                v-for="card in playerStation.drawCards"
+                                :stationCard="card"
+                                :key="card.id"
+                        />
                         <div v-if="stationCardGhostVisible"
                              @click="cardGhostClick('station-draw')"
                              class="card card-ghost"/>
                         <div v-else class="card card--placeholder"/>
                     </div>
                     <div class="field-stationRow">
-                        <div v-for="card in playerStation.actionCards" class="card card-faceDown"/>
+                        <station-card
+                                v-for="card in playerStation.actionCards"
+                                :stationCard="card"
+                                :key="card.id"
+                        />
                         <div v-if="stationCardGhostVisible"
                              @click="cardGhostClick('station-action')"
                              class="card card-ghost"/>
                         <div v-else class="card card--placeholder"/>
                     </div>
                     <div class="field-stationRow">
-                        <div v-for="card in playerStation.handSizeCards" class="card card-faceDown"/>
+                        <station-card
+                                v-for="card in playerStation.handSizeCards"
+                                :stationCard="card"
+                                :key="card.id"
+                        />
                         <div v-if="stationCardGhostVisible"
                              @click="cardGhostClick('station-handSize')"
                              class="card card-ghost"/>
@@ -210,7 +222,6 @@
                 'currentPlayer',
                 'events',
                 'phase',
-                'actionPoints',
                 'opponentUser',
                 'ownUser',
                 'playerCardsOnHand',
@@ -313,7 +324,7 @@
                 this.nextPhase();
             },
             canAffordCard(card) {
-                return this.actionPoints >= card.cost;
+                return this.actionPoints2 >= card.cost;
             },
             nextPhaseClick() {
                 this.nextPhase();

@@ -1,5 +1,14 @@
 <template>
-    <div v-if="stationCard.flipped" :style="cardStyle" class="card"/>
+    <div v-if="stationCard.flipped" :style="cardStyle" class="card">
+        <div class="actionOverlays">
+            <div
+                    v-if="canMoveCardToZone"
+                    @click.stop="moveFlippedStationCardToZone(stationCard.id)"
+                    class="movable">
+                Move to zone
+            </div>
+        </div>
+    </div>
     <div v-else-if="canBeSelectedAsDefender" class="card card-faceDown">
         <div class="actionOverlays">
             <div @click.stop="selectStationCardAsDefender(stationCard)" class="attackable"/>
@@ -19,10 +28,16 @@
         computed: {
             ...mapState([
                 'attackerCardId',
+                'phase'
             ]),
             ...mapGetters([
-                'attackerCanAttackStationCards'
+                'attackerCanAttackStationCards',
+                'actionPoints2'
             ]),
+            canMoveCardToZone() {
+                return this.phase === 'action'
+                    && this.actionPoints2 >= this.stationCard.card.cost;
+            },
             cardStyle() {
                 return {
                     backgroundImage: 'url(/card/' + this.stationCard.card.commonId + '/image)'
@@ -37,7 +52,8 @@
         },
         methods: {
             ...mapActions([
-                'selectStationCardAsDefender'
+                'selectStationCardAsDefender',
+                'moveFlippedStationCardToZone'
             ])
         }
     };
@@ -61,8 +77,7 @@
         z-index: 2;
     }
 
-    .attackable {
-        background-color: rgba(255, 100, 100, .5);
+    .attackable, .movable {
         color: white;
         font-family: Helvetica, sans-serif;
         font-size: 16px;
@@ -71,6 +86,7 @@
         align-items: center;
         justify-content: center;
         visibility: hidden;
+        text-align: center;
         opacity: .5;
         cursor: pointer;
 
@@ -79,8 +95,16 @@
         }
     }
 
+    .attackable {
+        background-color: rgba(255, 100, 100, .5);
+    }
+
+    .movable {
+        background-color: rgba(0, 0, 0, .2);
+    }
+
     .actionOverlays:hover {
-        & .movable, & .readyToAttack, & .attackable {
+        & .movable, & .attackable {
             visibility: visible;
         }
     }

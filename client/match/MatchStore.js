@@ -27,7 +27,7 @@ module.exports = function (deps) {
             matchId,
             opponentUser,
             ownUser: userRepository.getOwnUser(),
-            actionPoints: 0,
+            actionPoints: 0, // TODO Remove, all action points should be calculated through events
             playerCardsInZone: [],
             playerCardsOnHand: [],
             playerDiscardedCards: [],
@@ -54,7 +54,8 @@ module.exports = function (deps) {
             maxHandSize,
             hasPutDownNonFreeCardThisTurn,
             actionPoints2,
-            attackerCanAttackStationCards
+            attackerCanAttackStationCards,
+            allPlayerStationCards
         },
         mutations: {
             setPlayerStationCards,
@@ -72,6 +73,7 @@ module.exports = function (deps) {
             moveCard,
             retreat,
             selectStationCardAsDefender,
+            moveFlippedStationCardToZone,
 
             // local
             restoreState,
@@ -142,13 +144,24 @@ module.exports = function (deps) {
         return turnCountSinceMove > 1;
     }
 
+    function allPlayerStationCards(state) {
+        return [
+            ...state.playerStation.drawCards,
+            ...state.playerStation.actionCards,
+            ...state.playerStation.handSizeCards
+        ];
+    }
+
     function setPlayerStationCards(state, stationCards) {
         state.playerStation.drawCards = stationCards
-            .filter(s => s.place === 'draw');
+            .filter(s => s.place === 'draw')
+            .sort(stationCardsByIsFlippedComparer);
         state.playerStation.actionCards = stationCards
-            .filter(s => s.place === 'action');
+            .filter(s => s.place === 'action')
+            .sort(stationCardsByIsFlippedComparer);
         state.playerStation.handSizeCards = stationCards
-            .filter(s => s.place === 'handSize');
+            .filter(s => s.place === 'handSize')
+            .sort(stationCardsByIsFlippedComparer);
     }
 
     function setPlayerCardsOnHand(state, cards) {
@@ -210,7 +223,7 @@ module.exports = function (deps) {
             opponentCardsInPlayerZone,
             events,
             phase,
-            actionPoints,
+            actionPoints, // TODO Remove, all action points should be calculated through events
             turn,
             currentPlayer,
             opponentRetreated,
@@ -237,7 +250,7 @@ module.exports = function (deps) {
         state.turn = turn;
         state.currentPlayer = currentPlayer;
         state.phase = phase;
-        state.actionPoints = actionPoints;
+        state.actionPoints = actionPoints; // TODO Remove, all action points should be calculated through events
     }
 
     async function beginGame({ state, commit, dispatch }, beginningState) {
@@ -272,11 +285,19 @@ module.exports = function (deps) {
         matchController.emit('nextPhase');
     }
 
-    function putDownCard({ state, dispatch }, { location, cardId }) {
+    function putDownCard({ state, getters, commit, dispatch }, { location, cardId }) {
         const cardIndexOnHand = state.playerCardsOnHand.findIndex(c => c.id === cardId);
-        const card = state.playerCardsOnHand[cardIndexOnHand];
-        state.playerCardsOnHand.splice(cardIndexOnHand, 1);
-        state.actionPoints -= card.cost;
+        const cardOnHand = state.playerCardsOnHand[cardIndexOnHand];
+        const stationCard = getters.allPlayerStationCards.find(s => s.id === cardId);
+        const card = cardOnHand || stationCard.card;
+
+        state.actionPoints -= card.cost; // TODO Remove, all action points should be calculated through events
+        if (cardOnHand) {
+            state.playerCardsOnHand.splice(cardIndexOnHand, 1);
+        }
+        else if (stationCard) {
+            commit('setPlayerStationCards', getters.allPlayerStationCards.filter(s => s.id !== cardId));
+        }
 
         if (location.startsWith('station')) {
             if (location === 'station-draw') {
@@ -305,14 +326,14 @@ module.exports = function (deps) {
         const cardIndexOnHand = state.playerCardsOnHand.findIndex(c => c.id === cardId);
         const discardedCard = state.playerCardsOnHand[cardIndexOnHand];
         state.playerCardsOnHand.splice(cardIndexOnHand, 1);
-        state.actionPoints += 2;
+        state.actionPoints += 2; // TODO Remove, all action points should be calculated through events
         state.playerDiscardedCards.push(discardedCard);
 
         dispatch('addDiscardEvent', discardedCard);
         matchController.emit('discardCard', cardId);
     }
 
-    function setActionPoints({ state }, actionPoints) {
+    function setActionPoints({ state }, actionPoints) { // TODO Should be removed, all action points should be calculated through events
         state.actionPoints = actionPoints;
     }
 
@@ -441,6 +462,10 @@ module.exports = function (deps) {
         const attackerCard = state.playerCardsInOpponentZone.find(c => c.id === attackerCardId);
         state.events.push(AttackEvent({ turn: state.turn, attackerCardId, cardCommonId: attackerCard.commonId }));
         state.attackerCardId = null;
+    }
+
+    function moveFlippedStationCardToZone({ dispatch }, stationCardId) {
+        dispatch('putDownCard', { location: 'zone', cardId: stationCardId });
     }
 
     function opponentRetreated() {

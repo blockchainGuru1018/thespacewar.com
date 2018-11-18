@@ -187,13 +187,17 @@ module.exports = function (deps) {
         const stationCard = playerState.stationCards.find(s => s.card.id === cardId);
         const card = stationCard.card;
 
-        //TODO Check if can afford to move station card to zone
+        const playerActionPoints = getActionPointsForPlayer(playerId)
+        const canAffordCard = playerActionPoints >= card.cost;
+        if (!canAffordCard) {
+            throw CheatError('Cannot afford card');
+        }
 
         playerState.stationCards = playerState.stationCards.filter(s => s.card.id !== cardId);
         playerState.cardsInZone.push(card);
 
         const location = 'zone'
-        const putDownCardEvent = PutDownCardEvent({ turn: state.turn, location, cardId, cardCommonId: card.commonId })
+        const putDownCardEvent = PutDownCardEvent({ turn: state.turn, location, cardId, cardCommonId: card.commonId });
         playerState.events.push(putDownCardEvent);
         emitToOpponent(playerId, 'putDownOpponentCard', { location, card });
     }
