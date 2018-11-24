@@ -1,5 +1,5 @@
 <template>
-    <div v-if="stationCard.flipped" :style="cardStyle" class="card">
+    <div v-if="stationCard.flipped" :style="cardStyle" :class="classes">
         <div class="actionOverlays">
             <div
                     v-if="canMoveCardToZone"
@@ -36,14 +36,21 @@
                 'attackerCanAttackStationCards',
                 'actionPoints2'
             ]),
-            canMoveCardToZone() {
-                return this.phase === 'action'
-                    && this.actionPoints2 >= this.stationCard.card.cost;
+            classes() {
+                const classes = ['card'];
+                if (this.isOpponentStationCard) {
+                    classes.push('card--turnedAround');
+                }
+                return classes;
             },
             cardStyle() {
                 return {
                     backgroundImage: 'url(/card/' + this.stationCard.card.commonId + '/image)'
                 }
+            },
+            canMoveCardToZone() {
+                return this.phase === 'action'
+                    && this.actionPoints2 >= this.stationCard.card.cost;
             },
             selectedAsDefender() {
                 return this.selectedDefendingStationCards.includes(this.stationCard.id);
