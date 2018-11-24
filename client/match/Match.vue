@@ -78,7 +78,7 @@
             </div>
             <div class="field-player">
                 <div class="field-piles field-section">
-                    <div class="playerActionPointsContainer">
+                    <div v-if="showActionPoints" class="playerActionPointsContainer">
                         <div class="playerActionPoints">
                             {{ playerActionPointsText }}
                         </div>
@@ -319,6 +319,9 @@
                 if (!this.attackerCard) return 0;
 
                 return this.attackerCard.attack - this.selectedDefendingStationCards.length;
+            },
+            showActionPoints() {
+                return ['draw', 'action'].includes(this.phase);
             }
         },
         methods: {
@@ -880,7 +883,7 @@
         top: 50%;
         transform: translate(-50%, -50%);
         font-size: 74px;
-        font-family: Consolas,serif;
+        font-family: Consolas, serif;
         width: 80vw;
         height: 30vh;
         display: flex;
@@ -889,7 +892,7 @@
         color: #ff3336;
         text-decoration: underline;
         font-weight: bold;
-        text-shadow: -1px 1px 10px rgba(255,255,255, 0.12),
-        1px 1px 10px rgba(255,255,255, 0.12)
+        text-shadow: -1px 1px 10px rgba(255, 255, 255, 0.12),
+        1px 1px 10px rgba(255, 255, 255, 0.12)
     }
 </style>

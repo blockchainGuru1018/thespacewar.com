@@ -4,10 +4,15 @@ const AttackEvent = require('../../shared/event/AttackEvent.js');
 const MoveCardEvent = require('../../shared/event/MoveCardEvent.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
 const CardFactory = require('../card/CardFactory.js');
-const PHASES = ['draw', 'action', 'discard', 'attack'];
-
+const PHASES = ['draw', 'action', 'discard', 'attack', 'wait'];
+PHASES.draw = 'draw';
+PHASES.action = 'action';
+PHASES.discard = 'discard';
+PHASES.attack = 'attack';
+PHASES.wait = 'wait';
 //TODO When move handsize station card to zone, a station card from draw station cards is removed.
 // But now always. Perhaps it filters on commonId? Or two cards had the same id somehow..?
+//TODO Sometimes when discarding a card in the discard phase an error is thrown in the console. Does not appear to affect gameplay.
 
 module.exports = function (deps) {
 
@@ -118,7 +123,7 @@ module.exports = function (deps) {
     }
 
     function nextPhaseButtonText(state) {
-        if (state.phase === PHASES[PHASES.length - 1]) {
+        if (state.phase === PHASES.attack || state.phase === PHASES.wait) {
             return '';
         }
         let nextPhase = PHASES[PHASES.indexOf(state.phase) + 1];
