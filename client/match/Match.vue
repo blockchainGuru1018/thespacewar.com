@@ -200,6 +200,10 @@
             </div>
         </div>
         <div v-if="holdingCard" class="card holdingCard" :style="holdingCardStyle"/>
+        <div v-if="numberOfStationCardsToSelect > 0" class="guideText">
+            Select {{ numberOfStationCardsToSelect}}
+            more station {{ numberOfStationCardsToSelect === 1 ? 'card' : 'cards' }}
+        </div>
     </div>
 </template>
 <script>
@@ -234,14 +238,16 @@
                 'opponentDiscardedCards',
                 'opponentCardsInZone',
                 'opponentCardsInPlayerZone',
-                'attackerCardId'
+                'attackerCardId',
+                'selectedDefendingStationCards'
             ]),
             ...mapGetters([
                 'playerCardModels',
                 'nextPhaseButtonText',
                 'maxHandSize',
                 'hasPutDownNonFreeCardThisTurn',
-                'actionPoints2'
+                'actionPoints2',
+                'attackerCard'
             ]),
             isOwnTurn() {
                 return this.ownUser.id === this.currentPlayer;
@@ -308,6 +314,11 @@
                 else {
                     return `Actions (${this.actionPoints2})`
                 }
+            },
+            numberOfStationCardsToSelect() {
+                if (!this.attackerCard) return 0;
+
+                return this.attackerCard.attack - this.selectedDefendingStationCards.length;
             }
         },
         methods: {
@@ -861,5 +872,24 @@
         &:hover {
             background-color: #ff6670;
         }
+    }
+
+    .guideText {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 74px;
+        font-family: Consolas,serif;
+        width: 80vw;
+        height: 30vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ff3336;
+        text-decoration: underline;
+        font-weight: bold;
+        text-shadow: -1px 1px 10px rgba(255,255,255, 0.12),
+        1px 1px 10px rgba(255,255,255, 0.12)
     }
 </style>
