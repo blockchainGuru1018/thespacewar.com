@@ -3,6 +3,7 @@ const MatchInfoRepository = require('../../shared/match/MatchInfoRepository.js')
 const EventRepository = require('../../shared/event/EventRepository.js');
 
 module.exports = function CardFactory() {
+
     return {
         createFromData
     };

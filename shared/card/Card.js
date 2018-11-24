@@ -22,6 +22,7 @@ module.exports = function Card(deps) {
         const events = eventRepository.getAll();
         const moveCardEvent = hasMoved(card.id, events);
         if (!moveCardEvent) return false;
+        if (card.type === 'missile') return true;
 
         const turn = matchInfoRepository.getTurn();
         return turnCountSinceMove(card.id, turn, events) > 0;

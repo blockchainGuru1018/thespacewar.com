@@ -317,6 +317,7 @@
             },
             numberOfStationCardsToSelect() {
                 if (!this.attackerCard) return 0;
+                if (this.selectedDefendingStationCards.length === 0) return 0;
 
                 return this.attackerCard.attack - this.selectedDefendingStationCards.length;
             },
