@@ -11,7 +11,8 @@ const CARD_COLOR_TO_TYPE = {
 module.exports = function () {
 
     return {
-        createAll
+        createAll,
+        createFromCommonId
     };
 
     function createAll() {
@@ -24,6 +25,11 @@ module.exports = function () {
             }
         }
         return cards;
+    }
+
+    function createFromCommonId(commonId) {
+        const cardJson = cardsJson.find(c => c.id === commonId);
+        return Card(cardJson);
     }
 };
 

@@ -7,7 +7,7 @@ const CardFactory = require('../card/CardFactory.js');
 const PHASES = ['draw', 'action', 'discard', 'attack'];
 
 //TODO When move handsize station card to zone, a station card from draw station cards is removed.
-    // But now always. Perhaps it filters on commonId? Or two cards had the same id somehow..?
+// But now always. Perhaps it filters on commonId? Or two cards had the same id somehow..?
 
 module.exports = function (deps) {
 
@@ -51,7 +51,8 @@ module.exports = function (deps) {
             },
             opponentCardsInPlayerZone: [],
             opponentCardsInZone: [],
-            attackerCardId: null
+            attackerCardId: null,
+            selectedDefendingStationCards: []
         },
         getters: {
             playerCardModels,
@@ -59,7 +60,9 @@ module.exports = function (deps) {
             maxHandSize,
             hasPutDownNonFreeCardThisTurn,
             actionPoints2,
+            attackerCard,
             attackerCanAttackStationCards,
+            allPlayerCardsInOwnAndOpponentZone,
             allPlayerStationCards,
             allOpponentStationCards,
             createCard
@@ -149,9 +152,22 @@ module.exports = function (deps) {
         };
     }
 
+    function attackerCard(state, getters) {
+        if (!state.attackerCardId) return null;
+
+        const attackerCard = getters.allPlayerCardsInOwnAndOpponentZone.find(c => c.id === state.attackerCardId);
+        return getters.createCard(attackerCard);
+    }
+
     function attackerCanAttackStationCards(state, getters) {
-        return getters.createCard({ id: state.attackerCardId })
-            .canAttackStationCards();
+        return getters.attackerCard.canAttackStationCards();
+    }
+
+    function allPlayerCardsInOwnAndOpponentZone(state) {
+        return [
+            ...state.playerCardsInZone,
+            ...state.playerCardsInOpponentZone
+        ];
     }
 
     function allPlayerStationCards(state) {
@@ -377,7 +393,7 @@ module.exports = function (deps) {
         state.opponentDiscardedCards.push(discardedCard);
     }
 
-    function putDownOpponentCard({ state, getters }, { location, card }) {
+    function putDownOpponentCard({ state, getters, commit }, { location, card }) {
         const stationCard = getters.allOpponentStationCards.find(s => s.id === card.id);
         if (!!stationCard) {
             commit('setOpponentStationCards', getters.allOpponentStationCards.filter(s => s.id !== card.id));
@@ -416,8 +432,8 @@ module.exports = function (deps) {
         state.attackerCardId = card.id;
     }
 
-    function selectAsDefender({ state }, card) {
-        const attackerCardId = state.attackerCardId
+    function selectAsDefender({ state, dispatch }, card) {
+        const attackerCardId = state.attackerCardId;
         const defenderCardId = card.id
         matchController.emit('attack', { attackerCardId, defenderCardId });
 
@@ -441,7 +457,7 @@ module.exports = function (deps) {
             defenderCard.damage = defenderCurrentDamage + attackerCard.attack;
         }
 
-        state.attackerCardId = null;
+        dispatch('cancelAttack');
         state.events.push(AttackEvent({ turn: state.turn, attackerCardId, cardCommonId: attackerCard.commonId }));
     }
 
@@ -461,6 +477,7 @@ module.exports = function (deps) {
 
     function cancelAttack({ state }) {
         state.attackerCardId = null;
+        state.selectedDefendingStationCards = [];
     }
 
     function addDiscardEvent({ state }, card) {
@@ -477,16 +494,23 @@ module.exports = function (deps) {
         deleteMatchLocalDataAndReturnToLobby();
     }
 
-    function selectStationCardAsDefender({ state }, { id }) {
-        matchController.emit('attackStationCard', {
-            attackerCardId: state.attackerCardId,
-            targetStationCardId: id
-        });
+    function selectStationCardAsDefender({ state, getters, dispatch }, { id }) {
+        const attackerCard = getters.attackerCard;
+        state.selectedDefendingStationCards.push(id);
 
-        const attackerCardId = state.attackerCardId;
-        const attackerCard = state.playerCardsInOpponentZone.find(c => c.id === attackerCardId);
-        state.events.push(AttackEvent({ turn: state.turn, attackerCardId, cardCommonId: attackerCard.commonId }));
-        state.attackerCardId = null;
+        if (state.selectedDefendingStationCards.length >= attackerCard.attack) {
+            matchController.emit('attackStationCard', {
+                attackerCardId: state.attackerCardId,
+                targetStationCardIds: state.selectedDefendingStationCards
+            });
+
+            state.events.push(AttackEvent({
+                turn: state.turn,
+                attackerCardId: attackerCard.id,
+                cardCommonId: attackerCard.commonId
+            }));
+            dispatch('cancelAttack');
+        }
     }
 
     function moveFlippedStationCardToZone({ dispatch }, stationCardId) {

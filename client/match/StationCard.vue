@@ -9,6 +9,7 @@
             </div>
         </div>
     </div>
+    <div v-else-if="selectedAsDefender" class="card card-faceDown selectedAsDefender"/>
     <div v-else-if="canBeSelectedAsDefender" class="card card-faceDown">
         <div class="actionOverlays">
             <div @click.stop="selectStationCardAsDefender(stationCard)" class="attackable"/>
@@ -28,7 +29,8 @@
         computed: {
             ...mapState([
                 'attackerCardId',
-                'phase'
+                'phase',
+                'selectedDefendingStationCards'
             ]),
             ...mapGetters([
                 'attackerCanAttackStationCards',
@@ -43,8 +45,12 @@
                     backgroundImage: 'url(/card/' + this.stationCard.card.commonId + '/image)'
                 }
             },
+            selectedAsDefender() {
+                return this.selectedDefendingStationCards.includes(this.stationCard.id);
+            },
             canBeSelectedAsDefender() {
-                return !this.stationCard.flipped
+                return !this.selectedAsDefender
+                    && !this.stationCard.flipped
                     && this.isOpponentStationCard
                     && this.attackerCardId
                     && this.attackerCanAttackStationCards;
@@ -107,5 +113,9 @@
         & .movable, & .attackable {
             visibility: visible;
         }
+    }
+
+    .card.card-faceDown.selectedAsDefender {
+        outline: 3px solid red;
     }
 </style>

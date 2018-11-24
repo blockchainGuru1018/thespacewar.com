@@ -5,6 +5,15 @@ module.exports = function Card(deps) {
     const card = deps.card;
 
     return {
+        get attack() {
+            return card.attack;
+        },
+        get id() {
+            return card.id;
+        },
+        get commonId() {
+            return card.commonId;
+        },
         canAttackStationCards,
         hasAttackedThisTurn
     };
