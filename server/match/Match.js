@@ -313,16 +313,17 @@ module.exports = function (deps) {
 
     function attackStationCard(playerId, { attackerCardId, targetStationCardId }) {
         const playerState = getPlayerState(playerId);
-        if (!MoveCardEvent.hasMoved(attackerCardId, playerState.events)) {
-            throw CheatError('Can only attack station card from enemy zone');
-        }
+        const attackerCardData = playerState.cardsInOpponentZone.find(c => c.id === attackerCardId);
+        if (!attackerCardData) throw CheatError('Can only attack station card from enemy zone');
 
-        const cardData = { id: attackerCardId };
-        const card = cardFactory.createFromData(cardData, { turn: state.turn, events: playerState.events });
-        if (!card.canAttackStationCards()) {
+        const attackCard = cardFactory.createFromData(
+            attackerCardData,
+            { turn: state.turn, events: playerState.events }
+        );
+        if (!attackCard.canAttackStationCards()) {
             throw CheatError('Cannot attack station before turn after card has moved to zone');
         }
-        if (card.hasAttackedThisTurn()) {
+        if (attackCard.hasAttackedThisTurn()) {
             throw CheatError('Cannot attack twice in the same turn');
         }
 
@@ -341,11 +342,10 @@ module.exports = function (deps) {
             emitToPlayer(playerId, 'opponentStationCardsChanged', opponentStationCards);
             emitToPlayer(opponentId, 'stationCardsChanged', opponentStationCards);
 
-            const attackerCard = playerState.cardsInOpponentZone.find(c => c.id === attackerCardId);
             playerState.events.push(AttackEvent({
                 turn: state.turn,
                 attackerCardId,
-                cardCommonId: attackerCard.commonId
+                cardCommonId: attackerCardData.commonId
             }));
         }
     }

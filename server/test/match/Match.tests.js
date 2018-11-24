@@ -1177,8 +1177,8 @@ module.exports = testCase('Match', {
                     playerStateById: {
                         'P1A': {
                             phase: 'attack',
-                            cardsInZone: [createCard({ id: 'C1A' })],
-                            events: [{ type: 'moveCard', cardId: 'C1A', turn: 1 }]
+                            cardsInOpponentZone: [createCard({ id: 'C1A' })],
+                            events: [{ type: 'moveCard', cardId: 'C1A', turn: 2 }]
                         },
                         'P2A': {
                             stationCards: [
@@ -1373,7 +1373,7 @@ module.exports = testCase('Match', {
                     playerStateById: {
                         'P1A': {
                             phase: 'attack',
-                            cardsInZone: [createCard({ id: 'C1A', type: 'defense' })],
+                            cardsInOpponentZone: [createCard({ id: 'C1A', type: 'action' })],
                             events: [{ type: 'moveCard', cardId: 'C1A', turn: 1 }]
                         },
                         'P2A': {
@@ -1423,7 +1423,7 @@ module.exports = testCase('Match', {
                     playerStateById: {
                         'P1A': {
                             phase: 'attack',
-                            cardsInZone: [createCard({ id: 'C1A', type: 'defense' })],
+                            cardsInOpponentZone: [createCard({ id: 'C1A', type: 'defense' })],
                             events: [{ type: 'moveCard', cardId: 'C1A', turn: 1 }]
                         },
                         'P2A': {
