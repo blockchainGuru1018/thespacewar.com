@@ -311,10 +311,16 @@ module.exports = function (deps) {
         playerState.events.push(AttackEvent({ turn: state.turn, attackerCardId, cardCommonId: attackerCard.commonId }));
     }
 
-    function attackStationCard(playerId, { attackerCardId, targetStationCardId }) {
+    function attackStationCard(playerId, { attackerCardId, targetStationCardIds }) { // TODO rename attackStation
         const playerState = getPlayerState(playerId);
         const attackerCardData = playerState.cardsInOpponentZone.find(c => c.id === attackerCardId);
         if (!attackerCardData) throw CheatError('Can only attack station card from enemy zone');
+
+        const opponentStationCards = getOpponentState(playerId).stationCards;
+        if (opponentStationCards.length > targetStationCardIds.length
+            && attackerCardData.attack > targetStationCardIds.length) {
+            throw CheatError('Need more target station cards to attack');
+        }
 
         const attackCard = cardFactory.createFromData(
             attackerCardData,
@@ -327,20 +333,19 @@ module.exports = function (deps) {
             throw CheatError('Cannot attack twice in the same turn');
         }
 
-        const opponentState = getOpponentState(playerId);
-        const targetStationCard = opponentState.stationCards.find(s => s.card.id === targetStationCardId);
-
-        if (targetStationCard) {
-            if (targetStationCard.flipped) {
+        const targetStationCards = opponentStationCards.filter(s => targetStationCardIds.includes(s.card.id));
+        if (targetStationCards.length) {
+            if (targetStationCards.some(c => c.flipped)) {
                 throw Error('Cannot attack a flipped station card');
             }
-
-            targetStationCard.flipped = true;
+            for (let stationCard of targetStationCards) {
+                stationCard.flipped = true;
+            }
 
             const opponentId = getOpponentId(playerId);
-            const opponentStationCards = prepareStationCardsForClient(opponentState.stationCards)
-            emitToPlayer(playerId, 'opponentStationCardsChanged', opponentStationCards);
-            emitToPlayer(opponentId, 'stationCardsChanged', opponentStationCards);
+            const obfuscatedStationCards = prepareStationCardsForClient(opponentStationCards);
+            emitToPlayer(playerId, 'opponentStationCardsChanged', obfuscatedStationCards);
+            emitToPlayer(opponentId, 'stationCardsChanged', obfuscatedStationCards);
 
             playerState.events.push(AttackEvent({
                 turn: state.turn,
