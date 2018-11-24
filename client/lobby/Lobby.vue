@@ -2,7 +2,7 @@
     <div class="lobby">
         <div class="users-container">
             <div class="users-header">
-                <div class="users-headerTitle user-name">Name</div>
+                <div class="users-headerTitle">Name</div>
             </div>
             <div class="users">
                 <div class="user">

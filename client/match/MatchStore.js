@@ -55,7 +55,8 @@ module.exports = function (deps) {
             hasPutDownNonFreeCardThisTurn,
             actionPoints2,
             attackerCanAttackStationCards,
-            allPlayerStationCards
+            allPlayerStationCards,
+            allOpponentStationCards
         },
         mutations: {
             setPlayerStationCards,
@@ -149,6 +150,14 @@ module.exports = function (deps) {
             ...state.playerStation.drawCards,
             ...state.playerStation.actionCards,
             ...state.playerStation.handSizeCards
+        ];
+    }
+
+    function allOpponentStationCards(state) {
+        return [
+            ...state.opponentStation.drawCards,
+            ...state.opponentStation.actionCards,
+            ...state.opponentStation.handSizeCards
         ];
     }
 
@@ -359,8 +368,15 @@ module.exports = function (deps) {
         state.opponentDiscardedCards.push(discardedCard);
     }
 
-    function putDownOpponentCard({ state }, { location, card }) {
-        state.opponentCardCount -= 1;
+    function putDownOpponentCard({ state, getters }, { location, card }) {
+        const stationCard = getters.allOpponentStationCards.find(s => s.id === card.id);
+        if (!!stationCard) {
+            commit('setOpponentStationCards', getters.allOpponentStationCards.filter(s => s.id !== card.id));
+        }
+        else {
+            state.opponentCardCount -= 1;
+        }
+
         if (location === 'zone') {
             state.opponentCardsInZone.push(card);
         }

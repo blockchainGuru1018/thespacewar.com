@@ -52,6 +52,9 @@
                 'attackerCardId',
                 'ownUser'
             ]),
+            ...mapGetters([
+                'allOpponentStationCards'
+            ]),
             classes() {
                 const classes = ['card'];
                 if (this.selectedAsAttacker) {
@@ -98,9 +101,10 @@
             canAttackStationCards() {
                 const moveCardEvent = MoveCardEvent.hasMoved(this.card.id, this.events);
                 return !!moveCardEvent
-                    && MoveCardEvent.turnCountSinceMove(this.card.id, this.turn, this.events);
+                    && MoveCardEvent.turnCountSinceMove(this.card.id, this.turn, this.events) > 1
+                    && this.allOpponentStationCards.length > 0;
             },
-            canAttackThisTurn() { // Seems that cards can always attack
+            canAttackThisTurn() {
                 const canAttackSomeTarget = (this.canAttackCardInZone || this.canAttackStationCards)
                 return this.canAttack && canAttackSomeTarget;
             },

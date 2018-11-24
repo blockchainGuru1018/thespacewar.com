@@ -494,11 +494,6 @@
 
     .field-player {
         flex: 0 0 60%;
-
-        .card-faceDown {
-            border-color: #E63946;
-            background-color: #FF5964;
-        }
     }
 
     .field-opponent {
@@ -507,11 +502,6 @@
         .card {
             width: $opponentCardWidth;
             height: $opponentCardHeight;
-        }
-
-        .card-faceDown {
-            background-color: #35A7FF;
-            border-color: #38618C;
         }
     }
 
@@ -732,8 +722,29 @@
     }
 
     .card-faceDown {
-        border-width: 3px;
-        border-style: solid;
+        background-image: url("/card/back/image");
+        position: relative;
+
+        .field-opponent & {
+            transform: rotate(180deg);
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+
+            .field-opponent & {
+                background-color: rgba(53, 167, 255, .3);
+            }
+
+            .field-player & {
+                background-color: rgba(255, 0, 0, 0.25);
+            }
+        }
     }
 
     .card-ghost {

@@ -185,8 +185,9 @@ module.exports = function (deps) {
     function moveStationCardToOwnZone(playerId, cardId) {
         const playerState = getPlayerState(playerId);
         const stationCard = playerState.stationCards.find(s => s.card.id === cardId);
-        const card = stationCard.card;
+        if (!stationCard.flipped) throw CheatError('Cannot move station card that is not flipped to zone');
 
+        const card = stationCard.card;
         const playerActionPoints = getActionPointsForPlayer(playerId)
         const canAffordCard = playerActionPoints >= card.cost;
         if (!canAffordCard) {

@@ -17,7 +17,8 @@ function installNpmPackages() {
 }
 
 function startServer() {
-    const serverFilePath = path.join(__dirname, '..', 'server', 'server.js');
+    const startServerFileName = process.env.production ? 'startInProduction.js' : 'startInDevelopment.js';
+    const serverFilePath = path.join(__dirname, '..', 'scripts', startServerFileName);
     console.log(' (2/2) - Starting server using ' + (USING_PM2 ? 'pm2' : 'node'));
     if (USING_PM2) {
         spawnIndependently('pm2', ['start', serverFilePath]);

@@ -13,40 +13,71 @@ const GitController = require('./git/GitController.js');
 const http = require('http');
 const { port } = require('./settings.json');
 
-const app = express();
-app.use(bodyParser.json());
+let app;
+let server;
+let socketMaster;
 
-const server = http.createServer(app);
-const socketMaster = SocketIO(server);
+module.exports = {
+    start: startServer,
+    restart: restartServer
+};
 
-run();
-
-function run() {
-    const closeServer = () => {
-        server.close();
-        return new Promise(resolve => setTimeout(resolve, 1000));
-    };
-    const exitProcess = () => {
-        process.exit();
-    };
-
+function run({ closeServer, exitProcess }) {
     const socketRepository = SocketRepository({ socketMaster });
     const userRepository = UserRepository({ socketMaster });
-    const deps = {
-        socketRepository,
-        userRepository,
-        matchRepository: MatchRepository({ socketRepository, userRepository })
-    };
+    const deps = {};
+    deps.socketRepository = socketRepository;
+    deps.userRepository = userRepository;
+    deps.matchRepository = MatchRepository(deps);
+
     const controllers = {
         user: UserController(deps),
         match: MatchController(deps),
         card: CardController(deps),
         git: GitController({ closeServer, exitProcess })
     };
+    deps.controllers = controllers;
     const mappedControllers = wrapControllersWithRejectionProtection(controllers);
 
     setupRoutes(mappedControllers);
     setupSocketConnectionHandler(deps, controllers);
+}
+
+function exitProcess() {
+    process.exit();
+}
+
+function closeServer() {
+    server.close();
+    server = null;
+
+    socketMaster.close();
+    socketMaster = null;
+
+    return new Promise(resolve => setTimeout(resolve, 1000));
+}
+
+function startServer({ production }) {
+    process.env.production = production;
+
+    return new Promise(resolve => {
+        app = express();
+        app.use(bodyParser.json());
+
+        server = http.createServer(app);
+        socketMaster = SocketIO(server);
+
+        run({ closeServer, exitProcess });
+        server.listen(port, () => {
+            console.log(`\n\n --- Running on port ${port} ---`)
+            resolve();
+        });
+    });
+}
+
+async function restartServer() {
+    await closeServer();
+    await startServer();
 }
 
 function setupRoutes(controllers) {
@@ -64,9 +95,12 @@ function setupRoutes(controllers) {
 
     app.post('/git/push', controllers.git.onPush);
 
-    server.listen(port, () => {
-        console.log(`\n\n --- Running on port ${port} ---`)
-    });
+    if (process.env.production = false) {
+        app.post('/restart', async (req, res) => {
+            await restartServer()
+            res.end();
+        });
+    }
 }
 
 function setupSocketConnectionHandler(deps, controllers) {

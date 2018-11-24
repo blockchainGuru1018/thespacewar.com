@@ -243,6 +243,28 @@ module.exports = testCase('Match', {
 
             assert(error);
             assert.equals(error.message, 'Cannot afford card');
+        },
+        'when try to move station card that is NOT flipped to zone should throw'() {
+            this.match = createMatch({ players: [Player('P1A'), Player('P2A')] });
+            this.match.restoreFromState(createState({
+                currentPlayer: 'P1A',
+                playerOrder: ['P1A', 'P2A'],
+                playerStateById: {
+                    'P1A': {
+                        phase: 'action',
+                        cardsInZone: [],
+                        stationCards: [
+                            { card: createCard({ id: 'C1A' }), place: 'action' },
+                            { flipped: false, card: createCard({ id: 'C2A' }), place: 'action' },
+                        ]
+                    }
+                }
+            }));
+
+            let error = catchError(() => this.match.putDownCard('P1A', { location: 'zone', cardId: 'C2A' }));
+
+            assert(error);
+            assert.equals(error.message, 'Cannot move station card that is not flipped to zone');
         }
     },
     'discardCard:': {

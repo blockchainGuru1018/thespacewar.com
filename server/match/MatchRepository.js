@@ -12,6 +12,7 @@ module.exports = function (deps) {
     const cardFactory = CardFactory();
     const deckFactory = DeckFactory({ cardFactory });
     const cardInfoRepository = CardInfoRepository({ cardFactory });
+
     const matchById = new Map();
     const matchByUserId = new Map();
 
