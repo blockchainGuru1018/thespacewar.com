@@ -27,8 +27,6 @@
 <script>
     const Vuex = require('vuex');
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
-    const AttackEvent = require('../../shared/event/AttackEvent.js');
-    const MoveCardEvent = require('../../shared/event/MoveCardEvent.js');
 
     module.exports = {
         props: [
@@ -53,7 +51,8 @@
                 'ownUser'
             ]),
             ...mapGetters([
-                'allOpponentStationCards'
+                'allOpponentStationCards',
+                'createCard'
             ]),
             classes() {
                 const classes = ['card'];
@@ -93,15 +92,13 @@
                 return this.card.attack > 0
                     && this.phase === 'attack'
                     && !this.attackerCardId
-                    && !AttackEvent.cardHasAlreadyAttackedThisTurn(this.turn, this.card.id, this.events);
+                    && !this.createCard(this.card).hasAttackedThisTurn();
             },
             canAttackCardInZone() {
                 return this.zoneOpponentRow.length > 0;
             },
             canAttackStationCards() {
-                const moveCardEvent = MoveCardEvent.hasMoved(this.card.id, this.events);
-                return !!moveCardEvent
-                    && MoveCardEvent.turnCountSinceMove(this.card.id, this.turn, this.events) > 1
+                return this.createCard(this.card).canAttackStationCards()
                     && this.allOpponentStationCards.length > 0;
             },
             canAttackThisTurn() {

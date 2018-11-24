@@ -1194,7 +1194,7 @@ module.exports = testCase('Match', {
             },
             'should throw error'() {
                 assert(this.error);
-                assert.equals(this.error.message, 'Cannot attack station when have not been in the zone for at least 1 turn');
+                assert.equals(this.error.message, 'Cannot attack station before turn after card has moved to zone');
             }
         },
         'when card has never been moved': {

@@ -3,6 +3,7 @@ const DiscardCardEvent = require('../../shared/event/DiscardCardEvent.js');
 const AttackEvent = require('../../shared/event/AttackEvent.js');
 const MoveCardEvent = require('../../shared/event/MoveCardEvent.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
+const CardFactory = require('../card/CardFactory.js');
 
 const TEMPORARY_START_PHASE = 'start';
 const PHASES = ['draw', 'action', 'discard', 'attack'];
@@ -36,6 +37,7 @@ module.exports = function (deps) {
     };
 
     const actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository });
+    const cardFactory = CardFactory();
 
     return {
         id: matchId,
@@ -260,7 +262,10 @@ module.exports = function (deps) {
     function attack(playerId, { attackerCardId, defenderCardId }) {
         const playerState = getPlayerState(playerId);
         if (playerState.phase !== PHASES.attack) throw CheatError('Cannot attack when not in attack phase');
-        if (AttackEvent.cardHasAlreadyAttackedThisTurn(state.turn, attackerCardId, playerState.events)) {
+        const attackerHasAlreadyAttackedThisTurn = cardFactory
+            .createFromData({ id: attackerCardId }, { turn: state.turn, events: playerState.events })
+            .hasAttackedThisTurn();
+        if (attackerHasAlreadyAttackedThisTurn) {
             throw CheatError('Cannot attack twice in the same turn');
         }
 
@@ -311,9 +316,13 @@ module.exports = function (deps) {
         if (!MoveCardEvent.hasMoved(attackerCardId, playerState.events)) {
             throw CheatError('Can only attack station card from enemy zone');
         }
-        const turnsSinceMoved = MoveCardEvent.turnCountSinceMove(attackerCardId, state.turn, playerState.events);
-        if (turnsSinceMoved < 2) throw CheatError('Cannot attack station when have not been in the zone for at least 1 turn');
-        if (AttackEvent.cardHasAlreadyAttackedThisTurn(state.turn, attackerCardId, playerState.events)) {
+
+        const cardData = { id: attackerCardId };
+        const card = cardFactory.createFromData(cardData, { turn: state.turn, events: playerState.events });
+        if (!card.canAttackStationCards()) {
+            throw CheatError('Cannot attack station before turn after card has moved to zone');
+        }
+        if (card.hasAttackedThisTurn()) {
             throw CheatError('Cannot attack twice in the same turn');
         }
 

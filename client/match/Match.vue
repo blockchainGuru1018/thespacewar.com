@@ -722,11 +722,27 @@
     }
 
     .card-faceDown {
-        background-image: url("/card/back/image");
         position: relative;
+        overflow: hidden;
+        background-color: transparent;
 
-        .field-opponent & {
-            transform: rotate(180deg);
+        &::before {
+            content: "";
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            background-image: url("/card/back/image");
+            background-size: cover;
+
+            .field-opponent & {
+                transform: rotate(180deg);
+            }
+
+            .field-opponentCardsOnHand & {
+                transform: rotate(180deg);
+            }
         }
 
         &::after {

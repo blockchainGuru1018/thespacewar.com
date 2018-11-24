@@ -3,7 +3,11 @@ const DiscardCardEvent = require('../../shared/event/DiscardCardEvent.js');
 const AttackEvent = require('../../shared/event/AttackEvent.js');
 const MoveCardEvent = require('../../shared/event/MoveCardEvent.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
+const CardFactory = require('../card/CardFactory.js');
 const PHASES = ['draw', 'action', 'discard', 'attack'];
+
+//TODO When move handsize station card to zone, a station card from draw station cards is removed.
+    // But now always. Perhaps it filters on commonId? Or two cards had the same id somehow..?
 
 module.exports = function (deps) {
 
@@ -15,6 +19,7 @@ module.exports = function (deps) {
     const cardInfoRepository = deps.cardInfoRepository;
 
     const actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository });
+    const cardFactory = CardFactory();
     let matchController;
 
     return {
@@ -56,7 +61,8 @@ module.exports = function (deps) {
             actionPoints2,
             attackerCanAttackStationCards,
             allPlayerStationCards,
-            allOpponentStationCards
+            allOpponentStationCards,
+            createCard
         },
         mutations: {
             setPlayerStationCards,
@@ -137,12 +143,15 @@ module.exports = function (deps) {
         });
     }
 
-    function attackerCanAttackStationCards(state) {
-        const moveCardEvent = MoveCardEvent.hasMoved(state.attackerCardId, state.events);
-        if (!moveCardEvent) return false;
+    function createCard(state) {
+        return cardData => {
+            return cardFactory.createFromVuexStore(cardData, state);
+        };
+    }
 
-        const turnCountSinceMove = MoveCardEvent.turnCountSinceMove(state.attackerCardId, state.turn, state.events)
-        return turnCountSinceMove > 1;
+    function attackerCanAttackStationCards(state, getters) {
+        return getters.createCard({ id: state.attackerCardId })
+            .canAttackStationCards();
     }
 
     function allPlayerStationCards(state) {
