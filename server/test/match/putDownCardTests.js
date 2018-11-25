@@ -2,7 +2,8 @@ const {
     bocha: {
         stub,
         assert,
-        refute
+        refute,
+        sinon
     },
     FakeDeckFactory,
     createCard,
@@ -269,7 +270,73 @@ module.exports = {
         assert(error);
         assert.equals(error.message, 'Cannot move station card that is not flipped to zone');
     },
-    'when put down event card in zone': {
+    'when has 1 flipped event station card and put down that station card': {
+        setUp() {
+            this.firstPlayerConnection = FakeConnection2(['restoreState']);
+            this.secondPlayerConnection = FakeConnection2(['restoreState', 'opponentDiscardedCard', 'putDownOpponentCard']);
+            this.match = createMatch({
+                players: [
+                    Player('P1A', this.firstPlayerConnection),
+                    Player('P2A', this.secondPlayerConnection),
+                ]
+            });
+            this.match.restoreFromState(createState({
+                currentPlayer: 'P1A',
+                playerOrder: ['P1A', 'P2A'],
+                playerStateById: {
+                    'P1A': {
+                        phase: 'action',
+                        cardsInZone: [],
+                        stationCards: [
+                            { card: createCard({ id: 'C1A' }), place: 'action' },
+                            { flipped: true, card: createCard({ id: 'C2A', type: 'event' }), place: 'action' },
+                        ]
+                    }
+                }
+            }));
+
+            this.match.putDownCard('P1A', { location: 'zone', cardId: 'C2A' });
+        },
+        'first player should NOT have card among station cards'() {
+            this.match.start();
+            const { stationCards } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            assert.equals(stationCards.length, 1);
+            assert.equals(stationCards[0].id, 'C1A');
+        },
+        'first player should NOT have card in zone'() {
+            this.match.start();
+            const { cardsInZone } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            assert.equals(cardsInZone.length, 0);
+        },
+        'first player should have card in discard pile'() {
+            this.match.start();
+            const { discardedCards } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            assert.equals(discardedCards.length, 1);
+            assert.equals(discardedCards[0].id, 'C2A');
+        },
+        'when second player restore state the opponent should have 0 cards in play and 1 less action station card and 1 more card in discarded pile'() {
+            this.match.start();
+            const { opponentDiscardedCards, opponentCardsInZone, opponentStationCards } = this.secondPlayerConnection.restoreState.lastCall.args[0];
+
+            assert.equals(opponentDiscardedCards.length, 1);
+            assert.equals(opponentDiscardedCards[0].id, 'C2A');
+
+            assert.equals(opponentCardsInZone.length, 0);
+            assert.equals(opponentStationCards.length, 1);
+            assert.equals(opponentStationCards[0].id, 'C1A');
+        },
+        'should NOT emit put down opponent card'() {
+            refute.called(this.secondPlayerConnection.putDownOpponentCard);
+        },
+        'should emit opponent discarded card'() {
+            assert.calledOnce(this.secondPlayerConnection.opponentDiscardedCard);
+            assert.calledWith(this.secondPlayerConnection.opponentDiscardedCard, sinon.match({
+                discardedCard: sinon.match({ id: 'C2A' }),
+                opponentCardCount: 0
+            }));
+        }
+    },
+    'when put down event card from hand to own zone': {
         setUp() {
             this.firstPlayerConnection = FakeConnection2(['restoreState']);
             this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard', 'putDownOpponentCard']);
