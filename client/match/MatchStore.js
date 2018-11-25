@@ -353,7 +353,12 @@ module.exports = function (deps) {
             }
         }
         else if (location === 'zone') {
-            dispatch('placeCardInZone', card);
+            if (card.type === 'event') {
+                state.playerDiscardedCards.push(card);
+            }
+            else {
+                dispatch('placeCardInZone', card);
+            }
         }
 
         state.events.push(PutDownCardEvent({ turn: state.turn, location, cardId, cardCommonId: card.commonId }));
