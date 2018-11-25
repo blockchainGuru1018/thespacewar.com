@@ -172,15 +172,25 @@ module.exports = function (deps) {
         playerState.cardsOnHand.splice(cardIndexOnHand, 1);
         playerState.events.push(PutDownCardEvent({ turn: state.turn, location, cardId, cardCommonId: card.commonId }));
 
+        const opponentId = getOpponentId(playerId);
         if (isStationCard) {
             const stationLocation = location.split('-').pop();
             const stationCard = { place: stationLocation, card };
             playerState.stationCards.push(stationCard);
-            emitToOpponent(playerId, 'putDownOpponentStationCard', prepareStationCardForClient(stationCard));
+            emitToPlayer(opponentId, 'putDownOpponentStationCard', prepareStationCardForClient(stationCard));
         }
         else if (location === 'zone') {
-            playerState.cardsInZone.push(card);
-            emitToOpponent(playerId, 'putDownOpponentCard', { location, card });
+            if (card.type === 'event') {
+                playerState.discardedCards.push(card);
+                emitToPlayer(opponentId, 'opponentDiscardedCard', {
+                    discardedCard: card,
+                    opponentCardCount: playerState.cardsOnHand.length
+                });
+            }
+            else {
+                playerState.cardsInZone.push(card);
+                emitToPlayer(opponentId, 'putDownOpponentCard', { location, card });
+            }
         }
     }
 

@@ -2,6 +2,7 @@ const {
     bocha: {
         stub,
         assert,
+        refute
     },
     FakeDeckFactory,
     createCard,
@@ -267,5 +268,53 @@ module.exports = {
 
         assert(error);
         assert.equals(error.message, 'Cannot move station card that is not flipped to zone');
+    },
+    'when put down event card in zone': {
+        setUp() {
+            this.firstPlayerConnection = FakeConnection2(['restoreState']);
+            this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard', 'putDownOpponentCard']);
+            const players = [
+                Player('P1A', this.firstPlayerConnection),
+                Player('P2A', this.secondPlayerConnection)
+            ]
+            this.match = createMatch({ players });
+            this.match.restoreFromState(createState({
+                playerStateById: {
+                    'P1A': {
+                        phase: 'action',
+                        cardsOnHand: [
+                            createCard({ id: 'C1A', type: 'event' })
+                        ]
+                    }
+                }
+            }));
+
+            this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
+        },
+        'first player should have card in discard pile'() {
+            this.match.start();
+            const { discardedCards } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            assert.equals(discardedCards.length, 1);
+            assert.match(discardedCards[0], { id: 'C1A' });
+        },
+        'first player should NOT have card in zone'() {
+            this.match.start();
+            const { cardsInZone } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            assert.equals(cardsInZone.length, 0);
+        },
+        'first player should NOT have card on hand'() {
+            this.match.start();
+            const { cardsOnHand } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            assert.equals(cardsOnHand.length, 0);
+        },
+        'should emit opponentDiscardedCard to second player'() {
+            assert.calledOnce(this.secondPlayerConnection.opponentDiscardedCard);
+            const { discardedCard, opponentCardCount } = this.secondPlayerConnection.opponentDiscardedCard.lastCall.args[0];
+            assert.match(discardedCard, { id: 'C1A' });
+            assert.equals(opponentCardCount, 0);
+        },
+        'should NOT emit putDownOpponentCard to second player'() {
+            refute.called(this.secondPlayerConnection.putDownOpponentCard);
+        }
     }
 }

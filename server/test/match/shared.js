@@ -238,6 +238,7 @@ function createPlayerState(options = {}) {
         cardsInZone: [],
         cardsInOpponentZone: [],
         stationCards: [],
+        discardedCards: [],
         events: []
     });
 }
