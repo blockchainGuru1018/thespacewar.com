@@ -464,7 +464,7 @@
 
     .match-header {
         position: absolute;
-        left: 14px;
+        right: 14px;
         top: 0;
         display: flex;
         align-items: center;
@@ -538,6 +538,7 @@
 
     .field-opponentStation {
         flex-direction: column;
+        margin-top: 5px;
 
         .card {
             width: $opponentStationCardWidth;

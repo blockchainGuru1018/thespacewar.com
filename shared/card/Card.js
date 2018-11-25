@@ -2,20 +2,40 @@ module.exports = function Card(deps) {
 
     const eventRepository = deps.eventRepository;
     const matchInfoRepository = deps.matchInfoRepository;
-    const card = deps.card;
+    const card = { ...deps.card };
 
     return {
-        get attack() {
-            return card.attack;
-        },
         get id() {
             return card.id;
         },
         get commonId() {
             return card.commonId;
         },
+        get type() {
+            return card.type;
+        },
+        get attack() {
+            return card.attack;
+        },
+        get defense() {
+            return card.defense;
+        },
+        get destroyed() {
+            return !!card.destroyed;
+        },
+        set destroyed(wasDestroyed) {
+            card.destroyed = wasDestroyed;
+        },
+        get damage() {
+            return card.damage || 0;
+        },
+        set damage(newDamage) {
+            card.damage = newDamage;
+        },
         canAttackStationCards,
-        hasAttackedThisTurn
+        hasAttackedThisTurn,
+        isInOpponentZone,
+        attackCard
     };
 
     function canAttackStationCards() {
@@ -36,6 +56,23 @@ module.exports = function Card(deps) {
                 && event.type === 'attack'
                 && event.attackerCardId === card.id
         });
+    }
+
+    function isInOpponentZone() {
+        return hasMoved(card.id, eventRepository.getAll());
+    }
+
+    function attackCard(defenderCard) {
+        const defenderCurrentDamage = defenderCard.damage;
+        const defenderTotalDefense = defenderCard.defense - defenderCurrentDamage;
+        if (card.attack >= defenderTotalDefense) {
+            defenderCard.destroyed = true;
+        }
+        defenderCard.damage = defenderCurrentDamage + card.attack;
+
+        if(card.type === 'missile') {
+            card.destroyed = true;
+        }
     }
 }
 

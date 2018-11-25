@@ -262,53 +262,51 @@ module.exports = function (deps) {
     function attack(playerId, { attackerCardId, defenderCardId }) {
         const playerState = getPlayerState(playerId);
         if (playerState.phase !== PHASES.attack) throw CheatError('Cannot attack when not in attack phase');
-        const attackerHasAlreadyAttackedThisTurn = cardFactory
-            .createFromData({ id: attackerCardId }, { turn: state.turn, events: playerState.events })
-            .hasAttackedThisTurn();
+
+        const attackerCardData = findPlayerCard(playerId, attackerCardId);
+        const attackerCard = cardFactory.createFromData(attackerCardData, {
+            turn: state.turn,
+            events: playerState.events
+        });
+        const attackerHasAlreadyAttackedThisTurn = attackerCard.hasAttackedThisTurn();
         if (attackerHasAlreadyAttackedThisTurn) {
             throw CheatError('Cannot attack twice in the same turn');
         }
 
+        const opponentId = getOpponentId(playerId);
         const opponentState = getOpponentState(playerId);
-        const defenderCardInOpponentZone = opponentState.cardsInZone.find(c => c.id === defenderCardId);
-        const defenderCardInPlayerZone = opponentState.cardsInOpponentZone.find(c => c.id === defenderCardId)
-
-        const attackerCardInPlayerZone = playerState.cardsInZone.find(c => c.id === attackerCardId);
-        const attackerCardInOpponentZone = playerState.cardsInOpponentZone.find(c => c.id === attackerCardId);
-
-        if (defenderCardInOpponentZone && attackerCardInPlayerZone
-            || defenderCardInPlayerZone && attackerCardInOpponentZone) {
+        const defenderCardData = findPlayerCard(opponentId, defenderCardId);
+        const defenderCard = cardFactory.createFromData(defenderCardData, {
+            turn: state.turn,
+            events: opponentState.events
+        });
+        if (defenderCard.isInOpponentZone() === attackerCard.isInOpponentZone()) {
             throw CheatError('Cannot attack card in another zone');
         }
 
-        const defenderCardZone = !!defenderCardInOpponentZone ? opponentState.cardsInZone : opponentState.cardsInOpponentZone;
-        const defenderCard = defenderCardInOpponentZone || defenderCardInPlayerZone;
-        const attackerCard = attackerCardInOpponentZone || attackerCardInPlayerZone;
-        const opponentId = getOpponentId(playerId);
-        const defenderCurrentDamage = defenderCard.damage || 0;
-        const defenderTotalDefense = defenderCard.defense - defenderCurrentDamage;
+        attackerCard.attackCard(defenderCard);
 
-        if (attackerCard.attack >= defenderTotalDefense) {
-            const defenderCardIndex = defenderCardZone.findIndex(c => c.id === defenderCardId);
-            defenderCardZone.splice(defenderCardIndex, 1);
+        emitToPlayer(opponentId, 'opponentAttackedCard', {
+            attackerCardId,
+            defenderCardId,
+            newDamage: defenderCard.damage,
+            defenderCardWasDestroyed: defenderCard.destroyed,
+            attackerCardWasDestroyed: attackerCard.destroyed
+        });
+        registerAttack(playerId, attackerCardId);
 
-            emitToPlayer(opponentId, 'opponentAttackedCard', {
-                attackerCardId,
-                defenderCardId,
-                defenderCardWasDestroyed: true
-            });
+        if (defenderCard.destroyed) {
+            removePlayerCard(opponentId, defenderCardId);
         }
         else {
-            defenderCard.damage = defenderCurrentDamage + attackerCard.attack;
-
-            emitToPlayer(opponentId, 'opponentAttackedCard', {
-                attackerCardId,
-                defenderCardId,
-                newDamage: defenderCard.damage
+            updatePlayerCard(opponentId, defenderCardId, card => {
+                card.damage = defenderCard.damage;
             });
         }
 
-        playerState.events.push(AttackEvent({ turn: state.turn, attackerCardId, cardCommonId: attackerCard.commonId }));
+        if (attackerCard.destroyed) {
+            removePlayerCard(playerId, attackerCardId);
+        }
     }
 
     function attackStationCard(playerId, { attackerCardId, targetStationCardIds }) { // TODO rename attackStation
@@ -322,14 +320,14 @@ module.exports = function (deps) {
             throw CheatError('Need more target station cards to attack');
         }
 
-        const attackCard = cardFactory.createFromData(
+        const attackerCard = cardFactory.createFromData(
             attackerCardData,
             { turn: state.turn, events: playerState.events }
         );
-        if (!attackCard.canAttackStationCards()) {
+        if (!attackerCard.canAttackStationCards()) {
             throw CheatError('Cannot attack station before turn after card has moved to zone');
         }
-        if (attackCard.hasAttackedThisTurn()) {
+        if (attackerCard.hasAttackedThisTurn()) {
             throw CheatError('Cannot attack twice in the same turn');
         }
 
@@ -347,12 +345,51 @@ module.exports = function (deps) {
             emitToPlayer(playerId, 'opponentStationCardsChanged', obfuscatedStationCards);
             emitToPlayer(opponentId, 'stationCardsChanged', obfuscatedStationCards);
 
-            playerState.events.push(AttackEvent({
-                turn: state.turn,
-                attackerCardId,
-                cardCommonId: attackerCardData.commonId
-            }));
+            registerAttack(playerId, attackerCardId);
         }
+    }
+
+    function registerAttack(playerId, attackerCardId) {
+        const playerState = getPlayerState(playerId);
+        const cardData = findPlayerCard(playerId, attackerCardId);
+        if (cardData.type === 'missile') {
+            removePlayerCard(playerId, attackerCardId);
+        }
+        playerState.events.push(AttackEvent({
+            turn: state.turn,
+            attackerCardId,
+            cardCommonId: cardData.commonId
+        }));
+    }
+
+    function findPlayerCard(playerId, cardId) {
+        const playerState = getPlayerState(playerId);
+        return playerState.cardsInZone.find(c => c.id === cardId)
+            || playerState.cardsInOpponentZone.find(c => c.id === cardId)
+            || null;
+    }
+
+    function removePlayerCard(playerId, cardId) {
+        const playerState = getPlayerState(playerId);
+
+        const cardInZoneIndex = playerState.cardsInZone.findIndex(c => c.id === cardId);
+        if (cardInZoneIndex >= 0) {
+            playerState.cardsInZone.splice(cardInZoneIndex, 1);
+        }
+        else {
+            const cardInOpponentZoneIndex = playerState.cardsInOpponentZone.findIndex(c => c.id === cardId);
+            if (cardInOpponentZoneIndex >= 0) {
+                playerState.cardsInOpponentZone.splice(cardInOpponentZoneIndex, 1);
+            }
+        }
+    }
+
+    function updatePlayerCard(playerId, cardId, updateFn) {
+        const playerState = getPlayerState(playerId);
+        let card = playerState.cardsInZone.find(c => c.id === cardId)
+            || playerState.cardsInOpponentZone.find(c => c.id === cardId);
+        if (!card) throw Error('Could not find card when trying to update it. ID: ' + cardId);
+        updateFn(card);
     }
 
     function retreat(playerId) {

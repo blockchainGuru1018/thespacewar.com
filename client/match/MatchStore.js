@@ -105,11 +105,14 @@ module.exports = function (deps) {
             selectAsAttacker,
             selectAsDefender,
             opponentAttackedCard,
-            cancelAttack,
             addDiscardEvent,
             opponentRetreated,
             opponentStationCardsChanged,
-            stationCardsChanged
+            stationCardsChanged,
+            registerAttack,
+            removePlayerCard,
+            cancelAttack,
+            endAttack
         }
     };
 
@@ -462,8 +465,7 @@ module.exports = function (deps) {
             defenderCard.damage = defenderCurrentDamage + attackerCard.attack;
         }
 
-        dispatch('cancelAttack');
-        state.events.push(AttackEvent({ turn: state.turn, attackerCardId, cardCommonId: attackerCard.commonId }));
+        dispatch('registerAttack', state.attackerCardId);
     }
 
     function opponentAttackedCard({ state }, { attackerCardId, defenderCardId, newDamage, defenderCardWasDestroyed }) {
@@ -480,7 +482,11 @@ module.exports = function (deps) {
         }
     }
 
-    function cancelAttack({ state }) {
+    function cancelAttack({ dispatch }) {
+        dispatch('endAttack');
+    }
+
+    function endAttack({ state }) {
         state.attackerCardId = null;
         state.selectedDefendingStationCards = [];
     }
@@ -509,12 +515,34 @@ module.exports = function (deps) {
                 targetStationCardIds: state.selectedDefendingStationCards
             });
 
-            state.events.push(AttackEvent({
-                turn: state.turn,
-                attackerCardId: attackerCard.id,
-                cardCommonId: attackerCard.commonId
-            }));
-            dispatch('cancelAttack');
+            dispatch('registerAttack', state.attackerCardId);
+        }
+    }
+
+    function registerAttack({ state, getters, dispatch }, attackerCardId) {
+        const cardData = getters.allPlayerCardsInOwnAndOpponentZone.find(c => c.id === attackerCardId);
+        if (cardData.type === 'missile') {
+            dispatch('removePlayerCard', attackerCardId);
+        }
+        state.events.push(AttackEvent({
+            turn: state.turn,
+            attackerCardId,
+            cardCommonId: cardData.commonId
+        }));
+
+        dispatch('endAttack');
+    }
+
+    function removePlayerCard({ state }, cardId) {
+        const cardInZoneIndex = state.playerCardsInZone.findIndex(c => c.id === cardId);
+        if (cardInZoneIndex >= 0) {
+            state.playerCardsInZone.splice(cardInZoneIndex, 1);
+        }
+        else {
+            const cardInOpponentZoneIndex = state.playerCardsInOpponentZone.findIndex(c => c.id === cardId);
+            if (cardInOpponentZoneIndex >= 0) {
+                state.playerCardsInOpponentZone.splice(cardInOpponentZoneIndex, 1);
+            }
         }
     }
 

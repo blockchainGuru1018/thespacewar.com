@@ -2,6 +2,7 @@ const {
     bocha: {
         assert,
         refute,
+        sinon
     },
     createCard,
     createDeckFromCards,
@@ -115,6 +116,7 @@ module.exports = {
                     'P1A': {
                         phase: 'attack',
                         cardsInOpponentZone: [createCard({ id: 'C1A', attack: 1 })],
+                        events: [MoveCardEvent({ turn: 1, cardId: 'C1A' })]
                     },
                     'P2A': {
                         cardsInZone: [createCard({ id: 'C2A' })],
@@ -136,11 +138,11 @@ module.exports = {
             assert.equals(damagedCards[0].damage, 1);
         },
         'should emit opponentAttackedCard with card ids and damage amount'() {
-            assert.calledWith(this.secondPlayerConnection.opponentAttackedCard, {
+            assert.calledWith(this.secondPlayerConnection.opponentAttackedCard, sinon.match({
                 attackerCardId: 'C1A',
                 defenderCardId: 'C2A',
                 newDamage: 1
-            });
+            }));
         }
     },
     'when first player attack card in own zone from opponents zone': {
@@ -273,7 +275,8 @@ module.exports = {
                         cardsInZone: [createCard({ id: 'C1A', attack: 1 })],
                     },
                     'P2A': {
-                        cardsInOpponentZone: [createCard({ id: 'C2A' })]
+                        cardsInOpponentZone: [createCard({ id: 'C2A' })],
+                        events: [MoveCardEvent({ turn: 1, cardId: 'C2A' })]
                     }
                 },
                 deckByPlayerId: {
@@ -303,10 +306,11 @@ module.exports = {
                 playerStateById: {
                     'P1A': {
                         phase: 'attack',
-                        cardsInZone: [createCard({ id: 'C1A', attack: 2 })],
+                        cardsInZone: [createCard({ id: 'C1A', attack: 2 })]
                     },
                     'P2A': {
-                        cardsInOpponentZone: [createCard({ id: 'C2A', defense: 1 })]
+                        cardsInOpponentZone: [createCard({ id: 'C2A', defense: 1 })],
+                        events: [MoveCardEvent({ turn: 1, cardId: 'C2A' })]
                     }
                 }
             }));
@@ -319,11 +323,11 @@ module.exports = {
             assert.equals(cardsInOpponentZone.length, 0);
         },
         'should emit opponent attacked card'() {
-            assert.calledWith(this.connection.opponentAttackedCard, {
+            assert.calledWith(this.connection.opponentAttackedCard, sinon.match({
                 attackerCardId: 'C1A',
                 defenderCardId: 'C2A',
                 defenderCardWasDestroyed: true
-            });
+            }));
         }
     },
     'when defender has 2 in defense and 1 in damage and first player attacks with card with 1 in attack': {
@@ -340,7 +344,8 @@ module.exports = {
                         cardsInZone: [createCard({ id: 'C1A', attack: 1 })],
                     },
                     'P2A': {
-                        cardsInOpponentZone: [createCard({ id: 'C2A', defense: 2, damage: 1 })]
+                        cardsInOpponentZone: [createCard({ id: 'C2A', defense: 2, damage: 1 })],
+                        events: [MoveCardEvent({ turn: 1, cardId: 'C2A' })]
                     }
                 }
             }));
@@ -353,11 +358,11 @@ module.exports = {
             assert.equals(cardsInOpponentZone.length, 0);
         },
         'should emit opponent attacked card and that defender card was destroyed'() {
-            assert.calledWith(this.connection.opponentAttackedCard, {
+            assert.calledWith(this.connection.opponentAttackedCard, sinon.match({
                 attackerCardId: 'C1A',
                 defenderCardId: 'C2A',
                 defenderCardWasDestroyed: true
-            });
+            }));
         }
     },
     'when defender has 3 in defense and 1 in damage and first player attacks with card with 1 in attack': {
@@ -374,7 +379,8 @@ module.exports = {
                         cardsInZone: [createCard({ id: 'C1A', attack: 1 })],
                     },
                     'P2A': {
-                        cardsInOpponentZone: [createCard({ id: 'C2A', defense: 3, damage: 1 })]
+                        cardsInOpponentZone: [createCard({ id: 'C2A', defense: 3, damage: 1 })],
+                        events: [MoveCardEvent({ turn: 1, cardId: 'C2A' })]
                     }
                 }
             }));
@@ -388,13 +394,13 @@ module.exports = {
             assert.equals(damagedCards.length, 1);
             assert.equals(damagedCards[0].damage, 2);
         },
-        'should emit opponent attacked card twice'() {
+        'should emit opponent attacked card'() {
             assert.calledOnce(this.connection.opponentAttackedCard);
-            assert.calledWith(this.connection.opponentAttackedCard, {
+            assert.calledWith(this.connection.opponentAttackedCard, sinon.match({
                 attackerCardId: 'C1A',
                 defenderCardId: 'C2A',
                 newDamage: 2
-            });
+            }));
         }
     },
     'when attacks twice with same card in same turn': {
@@ -411,7 +417,8 @@ module.exports = {
                         cardsInZone: [createCard({ id: 'C1A', attack: 1 })],
                     },
                     'P2A': {
-                        cardsInOpponentZone: [createCard({ id: 'C2A', defense: 2 })]
+                        cardsInOpponentZone: [createCard({ id: 'C2A', defense: 2 })],
+                        events: [MoveCardEvent({ turn: 1, cardId: 'C2A' })]
                     }
                 }
             }));
@@ -432,11 +439,11 @@ module.exports = {
         },
         'should emit opponent attacked card only once'() {
             assert.calledOnce(this.connection.opponentAttackedCard);
-            assert.calledWith(this.connection.opponentAttackedCard, {
+            assert.calledWith(this.connection.opponentAttackedCard, sinon.match({
                 attackerCardId: 'C1A',
                 defenderCardId: 'C2A',
                 newDamage: 1
-            });
+            }));
         }
     },
     'when first player try to move defense card': {
@@ -462,6 +469,51 @@ module.exports = {
         }
     },
     'missile cards:': {
+        'when first player makes deadly attack with missile card': {
+            async setUp() {
+                this.firstPlayerConnection = FakeConnection2(['restoreState']);
+                this.secondPlayerConnection = FakeConnection2(['restoreState', 'opponentAttackedCard']);
+                this.match = createMatch({
+                    players: [
+                        Player('P1A', this.firstPlayerConnection),
+                        Player('P2A', this.secondPlayerConnection)
+                    ]
+                });
+                this.match.restoreFromState(createState({
+                    turn: 1,
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInZone: [createCard({ id: 'C1A', attack: 2, type: 'missile' })]
+                        },
+                        'P2A': {
+                            cardsInOpponentZone: [createCard({ id: 'C2A', defense: 1 })],
+                            events: [MoveCardEvent({ turn: 1, cardId: 'C2A' })]
+                        }
+                    }
+                }));
+
+                this.match.attack('P1A', { attackerCardId: 'C1A', defenderCardId: 'C2A' });
+            },
+            'when first player restore state should NOT have missile card'() {
+                this.match.start();
+                const { cardsInZone } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+                assert.equals(cardsInZone.length, 0);
+            },
+            'when second player restore state should NOT have attacked card'() {
+                this.match.start();
+                const { cardsInOpponentZone } = this.secondPlayerConnection.restoreState.lastCall.args[0];
+                assert.equals(cardsInOpponentZone.length, 0);
+            },
+            'should emit opponent attacked card'() {
+                assert.calledWith(this.secondPlayerConnection.opponentAttackedCard, sinon.match({
+                    attackerCardId: 'C1A',
+                    defenderCardId: 'C2A',
+                    attackerCardWasDestroyed: true,
+                    defenderCardWasDestroyed: true
+                }));
+            }
+        },
         'when player attacks opponent station with missile card from own zone': {
             setUp() {
                 this.match = createMatch({ players: [Player('P1A'), Player('P2A')] });
@@ -520,6 +572,11 @@ module.exports = {
             },
             'should NOT throw an error'() {
                 refute.defined(this.error);
+            },
+            'when restore first player state should NOT have missile card'() {
+                this.match.start();
+                const { cardsInOpponentZone } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+                assert.equals(cardsInOpponentZone.length, 0);
             },
             'should flip attacked station card': function () {
                 this.match.start();
