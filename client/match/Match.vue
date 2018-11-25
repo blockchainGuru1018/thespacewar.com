@@ -114,9 +114,9 @@
                             <zone-card v-if="n <= playerCardsInZone.length"
                                        :card="(playerCardsInZone[n - 1])"
                                        :ownerId="ownUser.id"
-                                       :movable="phase === 'attack'"
                                        :zonePlayerRow="playerCardsInZone"
                                        :zoneOpponentRow="opponentCardsInPlayerZone"
+                                       :isHomeZone="true"
                                        :key="playerCardsInZone[n - 1].id"/>
                             <div v-else-if="playerZoneCardGhostVisible"
                                  @click="cardGhostClick('zone')"

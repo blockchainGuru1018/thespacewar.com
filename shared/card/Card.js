@@ -1,5 +1,6 @@
 module.exports = function Card(deps) {
 
+    const playerId = deps.playerId;
     const eventRepository = deps.eventRepository;
     const matchInfoRepository = deps.matchInfoRepository;
     const card = { ...deps.card };
@@ -33,9 +34,12 @@ module.exports = function Card(deps) {
             card.damage = newDamage;
         },
         canAttackStationCards,
+        canAttack,
+        canAttackCard,
         hasAttackedThisTurn,
         isInOpponentZone,
-        attackCard
+        attackCard,
+        canMove
     };
 
     function canAttackStationCards() {
@@ -46,6 +50,17 @@ module.exports = function Card(deps) {
 
         const turn = matchInfoRepository.getTurn();
         return turnCountSinceMove(card.id, turn, events) > 0;
+    }
+
+    function canAttack() {
+        if (!card.attack) return false;
+        if (card.type === 'duration') return false;
+        return matchInfoRepository.getPlayerPhase(playerId) === 'attack';
+    }
+
+    function canAttackCard(otherCard) {
+        if (otherCard.type === 'duration') return false;
+        return true;
     }
 
     function hasAttackedThisTurn() {
@@ -70,10 +85,28 @@ module.exports = function Card(deps) {
         }
         defenderCard.damage = defenderCurrentDamage + card.attack;
 
-        if(card.type === 'missile') {
+        if (card.type === 'missile') {
             card.destroyed = true;
         }
     }
+
+    function canMove() {
+        if (card.type === 'defense') return false;
+        if (card.type === 'duration') return false;
+
+        const putDownOnTurn = getTurnWhenWasPutDown(eventRepository.getAll(), card.id);
+        return putDownOnTurn !== matchInfoRepository.getTurn()
+            && matchInfoRepository.getPlayerPhase(playerId) === 'attack';
+    }
+}
+
+function getTurnWhenWasPutDown(events, cardId) {
+    const putDownEventForThisCard = events.find(e => {
+        return e.type === 'putDownCard'
+            && e.cardId === cardId;
+    });
+    if (!putDownEventForThisCard) throw new Error(`Asking when card (${cardId}) was put down. Put card has not been put down.`);
+    return putDownEventForThisCard.turn;
 }
 
 function hasMoved(cardId, events) {

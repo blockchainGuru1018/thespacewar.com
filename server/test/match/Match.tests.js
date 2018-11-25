@@ -17,6 +17,7 @@ module.exports = testCase('Match', {
     'nextPhase action phase:': require('./nextPhaseActionPhaseTests.js'),
     'discard phase': require('./discardPhaseTests.js'),
     'attack phase:': require('./attackPhaseTests.js'),
+    'duration card': require('./durationCardTests.js'),
     'when first player retreats from match should emit opponentRetreated to second player': {
         setUp() {
             this.firstPlayerConnection = FakeConnection2(['restoreState']);

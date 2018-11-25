@@ -18,8 +18,16 @@ module.exports = function () {
 
         return Card({
             card: cardData,
-            eventRepository: EventRepository(state),
-            matchInfoRepository: MatchInfoRepository(state)
+            playerId: state.ownUser.id,
+            eventRepository: EventRepository({ events: state.events }),
+            matchInfoRepository: MatchInfoRepository({
+                turn: state.turn,
+                playerStateById: {
+                    [state.ownUser.id]: {
+                        phase: state.phase
+                    }
+                }
+            })
         });
     }
 }

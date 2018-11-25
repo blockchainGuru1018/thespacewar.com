@@ -37,7 +37,7 @@ module.exports = function (deps) {
     };
 
     const actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository });
-    const cardFactory = CardFactory();
+    const cardFactory = CardFactory({ getState: () => state });
 
     return {
         id: matchId,
@@ -269,19 +269,14 @@ module.exports = function (deps) {
     function moveCard(playerId, cardId) {
         let playerState = getPlayerState(playerId);
         let cardIndex = playerState.cardsInZone.findIndex(c => c.id === cardId);
-        let card = playerState.cardsInZone[cardIndex];
-        if (!card) throw CheatError('Cannot move card that is not in your own zone');
-        if (card.type === 'defense') throw CheatError('Cannot move defense card');
-
-        let turnCardWasPutDown = playerState.events
-            .find(e => e.type === 'putDownCard' && e.cardId === cardId)
-            .turn;
-        let turnsSinceCardWasPutDown = state.turn - turnCardWasPutDown;
-        if (turnsSinceCardWasPutDown === 0) throw CheatError('This card cannot be moved on the same turn it was put down');
+        let cardData = playerState.cardsInZone[cardIndex];
+        if (!cardData) throw CheatError('Cannot move card that is not in your own zone');
+        const card = cardFactory.createCardForPlayer(cardData, playerId);
+        if (!card.canMove()) throw CheatError('Cannot move card');
 
         playerState.cardsInZone.splice(cardIndex, 1);
-        playerState.cardsInOpponentZone.push(card);
-        playerState.events.push(MoveCardEvent({ turn: state.turn, cardId, cardCommonId: card.commonId }));
+        playerState.cardsInOpponentZone.push(cardData);
+        playerState.events.push(MoveCardEvent({ turn: state.turn, cardId, cardCommonId: cardData.commonId }));
 
         emitToOpponent(playerId, 'opponentMovedCard', cardId)
     }
@@ -291,22 +286,17 @@ module.exports = function (deps) {
         if (playerState.phase !== PHASES.attack) throw CheatError('Cannot attack when not in attack phase');
 
         const attackerCardData = findPlayerCard(playerId, attackerCardId);
-        const attackerCard = cardFactory.createFromData(attackerCardData, {
-            turn: state.turn,
-            events: playerState.events
-        });
+        const attackerCard = cardFactory.createCardForPlayer(attackerCardData, playerId);
+        if (!attackerCard.canAttack()) throw CheatError('Cannot attack with card');
         const attackerHasAlreadyAttackedThisTurn = attackerCard.hasAttackedThisTurn();
         if (attackerHasAlreadyAttackedThisTurn) {
             throw CheatError('Cannot attack twice in the same turn');
         }
 
         const opponentId = getOpponentId(playerId);
-        const opponentState = getOpponentState(playerId);
         const defenderCardData = findPlayerCard(opponentId, defenderCardId);
-        const defenderCard = cardFactory.createFromData(defenderCardData, {
-            turn: state.turn,
-            events: opponentState.events
-        });
+        const defenderCard = cardFactory.createCardForPlayer(defenderCardData, opponentId);
+        if (!attackerCard.canAttackCard(defenderCard)) throw CheatError('Cannot attack that card');
         if (defenderCard.isInOpponentZone() === attackerCard.isInOpponentZone()) {
             throw CheatError('Cannot attack card in another zone');
         }
@@ -347,10 +337,7 @@ module.exports = function (deps) {
             throw CheatError('Need more target station cards to attack');
         }
 
-        const attackerCard = cardFactory.createFromData(
-            attackerCardData,
-            { turn: state.turn, events: playerState.events }
-        );
+        const attackerCard = cardFactory.createCardForPlayer(attackerCardData, playerId);
         if (!attackerCard.canAttackStationCards()) {
             throw CheatError('Cannot attack station before turn after card has moved to zone');
         }

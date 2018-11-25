@@ -31,10 +31,10 @@
     module.exports = {
         props: [
             'card',
-            'movable',
             'zonePlayerRow',
             'zoneOpponentRow',
-            'ownerId'
+            'ownerId',
+            'isHomeZone'
         ],
         data() {
             return {
@@ -52,7 +52,8 @@
             ]),
             ...mapGetters([
                 'allOpponentStationCards',
-                'createCard'
+                'createCard',
+                'attackerCard'
             ]),
             classes() {
                 const classes = ['card'];
@@ -83,16 +84,14 @@
                 return !this.attackerCardId;
             },
             canMove() {
-                if (this.card.type === 'defense') return false;
-
-                return this.movable
-                    && this.wasPutDownTurn !== this.turn;
+                const card = this.createCard(this.card);
+                return card.canMove() && this.isHomeZone;
             },
             canAttack() {
-                return this.card.attack > 0
-                    && this.phase === 'attack'
-                    && !this.attackerCardId
-                    && !this.createCard(this.card).hasAttackedThisTurn();
+                const card = this.createCard(this.card);
+                return !this.attackerCardId
+                    && card.canAttack()
+                    && !card.hasAttackedThisTurn();
             },
             canAttackCardInZone() {
                 return this.zoneOpponentRow.length > 0;
@@ -106,9 +105,11 @@
                 return this.canAttack && canAttackSomeTarget;
             },
             canBeSelectedAsDefender() {
+                const card = this.createCard(this.card);
                 return !this.isPlayerCard
                     && this.attackerCardId
-                    && this.zoneOpponentRow.some(c => c.id === this.attackerCardId);
+                    && this.zoneOpponentRow.some(c => c.id === this.attackerCardId)
+                    && this.attackerCard.canAttackCard(card);
             }
         },
         methods: {

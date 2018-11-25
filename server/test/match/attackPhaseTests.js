@@ -23,8 +23,6 @@ module.exports = {
             this.match = createMatch({ players });
             this.match.restoreFromState(createState({
                 turn: 2,
-                currentPlayer: 'P1A',
-                playerOrder: ['P1A', 'P2A'],
                 playerStateById: {
                     'P1A': {
                         phase: 'attack',
@@ -103,7 +101,7 @@ module.exports = {
         let error = catchError(() => this.match.moveCard('P1A', 'C1A'));
 
         assert(error);
-        assert.equals(error.message, 'This card cannot be moved on the same turn it was put down');
+        assert.equals(error.message, 'Cannot move card');
     },
     'when first player attack card in opponents own zone': {
         async setUp() {
@@ -155,7 +153,7 @@ module.exports = {
                 playerStateById: {
                     'P1A': {
                         phase: 'attack',
-                        cardsInOpponentZone: [createCard({ id: 'C1A' })],
+                        cardsInOpponentZone: [createCard({ id: 'C1A', attack: 1 })],
                     },
                     'P2A': {
                         cardsInOpponentZone: [createCard({ id: 'C2A' })],
@@ -233,7 +231,7 @@ module.exports = {
                 playerStateById: {
                     'P1A': {
                         phase: 'attack',
-                        cardsInZone: [createCard({ id: 'C1A' })],
+                        cardsInZone: [createCard({ id: 'C1A', attack: 1 })],
                     },
                     'P2A': {
                         cardsInZone: [createCard({ id: 'C2A' })],
@@ -465,7 +463,7 @@ module.exports = {
         },
         'should throw error': function () {
             assert(this.error);
-            assert.equals(this.error.message, 'Cannot move defense card');
+            assert.equals(this.error.message, 'Cannot move card');
         }
     },
     'missile cards:': {
@@ -1027,7 +1025,7 @@ module.exports = {
                         'P1A': {
                             phase: 'attack',
                             cardsInOpponentZone: [createCard({ id: 'C1A', attack: 2 })],
-                            events: [{ type: 'moveCard', cardId: 'C1A', turn: 1 }]
+                            events: [MoveCardEvent({ turn: 1, cardId: 'C1A' })]
                         },
                         'P2A': {
                             stationCards: [

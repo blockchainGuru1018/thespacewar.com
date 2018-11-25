@@ -123,6 +123,51 @@ module.exports = testCase('ActionPointCalculator', {
         });
 
         assert.equals(actionPoints, 7);
+    },
+    'when has duration card in zone since previous turn should include card cost'() {
+        const calculator = ActionPointCalculator({
+            cardInfoRepository: FakeCardInfoRepository([{ commonId: 'C1A', type: 'duration', cost: 1 }])
+        });
+
+        const actionPoints = calculator.calculate({
+            events: [PutDownCardEvent({ turn: 1, location: 'zone', cardCommonId: 'C1A' })],
+            turn: 2,
+            phase: 'action',
+            actionStationCardsCount: 1
+        });
+
+        assert.equals(actionPoints, 1);
+    },
+    'when has duration card in station since previous turn should NOT include card cost'() {
+        const calculator = ActionPointCalculator({
+            cardInfoRepository: FakeCardInfoRepository([{ commonId: 'C1A', type: 'duration', cost: 1 }])
+        });
+
+        const actionPoints = calculator.calculate({
+            events: [PutDownCardEvent({ turn: 1, location: 'station-draw', cardCommonId: 'C1A' })],
+            turn: 2,
+            phase: 'action',
+            actionStationCardsCount: 1
+        });
+
+        assert.equals(actionPoints, 2);
+    },
+    'when have discarded a duration card in previous turn should NOT include card cost'() {
+        const calculator = ActionPointCalculator({
+            cardInfoRepository: FakeCardInfoRepository([{ commonId: 'C1A', type: 'duration', cost: 1 }])
+        });
+
+        const actionPoints = calculator.calculate({
+            events: [
+                PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A:1', cardCommonId: 'C1A' }),
+                DiscardCardEvent({ turn: 2, cardId: 'C1A:1', cardCommonId: 'C1A' })
+            ],
+            turn: 3,
+            phase: 'action',
+            actionStationCardsCount: 1
+        });
+
+        assert.equals(actionPoints, 2);
     }
 });
 

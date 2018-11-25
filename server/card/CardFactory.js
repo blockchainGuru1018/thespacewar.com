@@ -2,17 +2,23 @@ const Card = require('../../shared/card/Card.js');
 const MatchInfoRepository = require('../../shared/match/MatchInfoRepository.js');
 const EventRepository = require('../../shared/event/EventRepository.js');
 
-module.exports = function CardFactory() {
+module.exports = function CardFactory(deps) {
+
+    const getState = deps.getState;
 
     return {
-        createFromData
+        createCardForPlayer
     };
 
-    function createFromData(card, { turn, events }) {
+    function createCardForPlayer(cardData, playerId) {
+        const state = getState();
         return Card({
-            card,
-            eventRepository: EventRepository({ events }),
-            matchInfoRepository: MatchInfoRepository({ turn })
+            card: cardData,
+            playerId,
+            eventRepository: EventRepository({
+                events: state.playerStateById[playerId].events
+            }),
+            matchInfoRepository: MatchInfoRepository(state)
         });
     }
 }
