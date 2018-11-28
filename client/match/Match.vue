@@ -90,6 +90,7 @@
                         <div v-if="playerDiscardedCards.length === 0" class="card card--placeholder"/>
                         <div v-else
                              :style="getCardImageStyle(playerTopDiscardCard)"
+                             :data-cardId="playerTopDiscardCard.id"
                              class="card"/>
                         <div v-if="discardPileCardGhostVisible"
                              @click="cardGhostClick('discard')"
@@ -177,7 +178,7 @@
                                 START
                             </button>
                             <template v-else>
-                                <div class="playerHud-phaseText playerHud-item">{{ phaseText }} phase</div>
+                                <div class="playerHud-phaseText playerHud-item">{{ currentPhaseText }}</div>
                                 <div v-if="phase === 'discard' && playerCardModels.length > maxHandSize"
                                      class="playerHud-nextPhaseButton playerHud-phaseText playerHud-item">
                                     Discard {{ amountOfCardsToDiscard + (amountOfCardsToDiscard > 1 ? ' cards' : ' card')}} to continue
@@ -185,7 +186,7 @@
                                 <button v-else-if="nextPhaseButtonText"
                                         @click="nextPhaseClick"
                                         class="playerHud-nextPhaseButton playerHud-button playerHud-item">
-                                    {{ nextPhaseButtonText }} phase
+                                    {{ nextPhaseButtonText }}
                                 </button>
                                 <button v-else
                                         @click="nextPhaseClick"
@@ -211,6 +212,7 @@
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
     const ZoneCard = require('./ZoneCard.vue').default;
     const StationCard = require('./StationCard.vue').default;
+    const { PHASES } = require('./phases.js');
 
     module.exports = {
         data() {
@@ -243,7 +245,7 @@
             ]),
             ...mapGetters([
                 'playerCardModels',
-                'nextPhaseButtonText',
+                'nextPhase',
                 'maxHandSize',
                 'hasPutDownNonFreeCardThisTurn',
                 'actionPoints2',
@@ -252,8 +254,23 @@
             isOwnTurn() {
                 return this.ownUser.id === this.currentPlayer;
             },
-            phaseText() {
-                return this.phase.substr(0, 1).toUpperCase() + this.phase.substr(1);
+            currentPhaseText() {
+                if (this.phase === 'preparation') {
+                    return 'Prepare for turn';
+                }
+
+                const nameOfCurrentPhase = this.phase.substr(0, 1).toUpperCase() + this.phase.substr(1);
+                return `${nameOfCurrentPhase} phase`;
+            },
+            nextPhaseButtonText() {
+                if (this.phase === PHASES.preparation) {
+                    return 'Start turn';
+                }
+                if (this.phase === PHASES.attack || this.phase === PHASES.wait) {
+                    return '';
+                }
+
+                return `${capitalize(this.nextPhase)} phase`;
             },
             holdingCardStyle() {
                 if (!this.holdingCard) return {};
@@ -330,19 +347,19 @@
                 'init',
                 'putDownCard',
                 'discardCard',
-                'nextPhase',
+                'goToNextPhase',
                 'selectAsDefender',
                 'retreat',
                 'cancelAttack'
             ]),
             startClick() {
-                this.nextPhase();
+                this.goToNextPhase();
             },
             canAffordCard(card) {
                 return this.actionPoints2 >= card.cost;
             },
             nextPhaseClick() {
-                this.nextPhase();
+                this.goToNextPhase();
             },
             playerCardClick(card) {
                 if (this.canPlaceCards) {
@@ -426,6 +443,10 @@
         },
         components: { ZoneCard, StationCard }
     };
+
+    function capitalize(word) {
+        return word.substr(0, 1).toUpperCase() + word.substr(1);
+    }
 </script>
 <style scoped lang="scss">
     $cardWidth: 652px;

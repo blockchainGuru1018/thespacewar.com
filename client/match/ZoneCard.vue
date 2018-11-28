@@ -1,5 +1,5 @@
 <template>
-    <div :style="cardStyle" @click="cardClick" ref="card" :class="classes">
+    <div :style="cardStyle" @click="cardClick" ref="card" :data-type="card.type" :class="classes">
         <div class="actionOverlays">
             <template v-if="canSelectAction">
                 <div v-if="canMove"
@@ -116,10 +116,16 @@
             ...mapActions([
                 'selectAsAttacker',
                 'selectAsDefender',
-                'moveCard'
+                'moveCard',
+                'discardDurationCard'
             ]),
             cardClick() {
-                this.$emit('click', this.card);
+                if (this.phase === 'preparation' && this.card.type === 'duration') {
+                    this.discardDurationCard(this.card);
+                }
+                else {
+                    this.$emit('click', this.card);
+                }
             },
             moveClick() {
                 this.moveCard(this.card);

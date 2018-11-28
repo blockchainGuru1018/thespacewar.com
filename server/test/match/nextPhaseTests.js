@@ -2,17 +2,21 @@ const {
     bocha: {
         stub,
         assert,
+        refute
     },
     FakeDeckFactory,
     createCard,
     createPlayer,
+    Player,
     createMatchAndGoToFirstAttackPhase,
     createMatchAndGoToSecondAttackPhase,
     createMatch,
     FakeConnection,
     FakeConnection2,
     catchError,
+    createState
 } = require('./shared.js');
+const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
 
 module.exports = {
     'when is not own players turn should throw error': function () {
@@ -162,6 +166,64 @@ module.exports = {
 
             const { cardsOnHand } = this.firstPlayerConnection.restoreState.firstCall.args[0];
             assert.equals(cardsOnHand.length, 4);
+        }
+    },
+    'when first player has duration card in play and starting next turn': {
+        async setUp() {
+            this.firstPlayerConnection = FakeConnection2(['drawCards', 'restoreState']);
+            this.match = createMatch({
+                players: [Player('P1A', this.firstPlayerConnection), Player('P2A')]
+            });
+            this.match.restoreFromState(createState({
+                turn: 1,
+                currentPlayer: 'P2A',
+                playerStateById: {
+                    'P1A': {
+                        phase: 'wait',
+                        cardsInZone: [createCard({ id: 'C1A', type: 'duration' })],
+                        events: [PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A' })]
+                    },
+                    'P2A': {
+                        phase: 'attack'
+                    }
+                }
+            }));
+
+            this.match.nextPhase('P2A');
+        },
+        'should NOT emit draw card to the first player': function () {
+            refute.called(this.firstPlayerConnection.drawCards);
+        },
+        'first player should NOT have any cards on hand': function () {
+            this.match.start();
+            const { cardsOnHand } = this.firstPlayerConnection.restoreState.firstCall.args[0];
+            assert.equals(cardsOnHand.length, 0);
+        }
+    },
+    'when first player is in the preparation phase and goes to next phase': {
+        async setUp() {
+            this.firstPlayerConnection = FakeConnection2(['drawCards', 'restoreState']);
+            this.match = createMatch({
+                players: [Player('P1A', this.firstPlayerConnection), Player('P2A')]
+            });
+            this.match.restoreFromState(createState({
+                turn: 2,
+                currentPlayer: 'P1A',
+                playerStateById: {
+                    'P1A': {
+                        phase: 'preparation',
+                        cardsInZone: [createCard({ id: 'C1A', type: 'duration' })],
+                        events: [PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A' })]
+                    }
+                }
+            }));
+
+            this.match.nextPhase('P1A');
+        },
+        'should be in draw phase': function () {
+            this.match.start();
+            const { phase } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            assert.equals(phase, 'draw');
         }
     }
 };

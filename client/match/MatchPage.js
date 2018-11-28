@@ -1,4 +1,4 @@
-const Vue = require('vue');
+const Vue = require('vue').default;
 const MatchStore = require('./MatchStore.js');
 const MatchView = require('./Match.vue').default;
 

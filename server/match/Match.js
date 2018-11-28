@@ -4,14 +4,7 @@ const AttackEvent = require('../../shared/event/AttackEvent.js');
 const MoveCardEvent = require('../../shared/event/MoveCardEvent.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
 const CardFactory = require('../card/CardFactory.js');
-
-const TEMPORARY_START_PHASE = 'start';
-const PHASES = ['draw', 'action', 'discard', 'attack'];
-PHASES.draw = 'draw';
-PHASES.action = 'action';
-PHASES.discard = 'discard';
-PHASES.attack = 'attack';
-PHASES.wait = 'wait';
+const { COMMON_PHASE_ORDER, PHASES, TEMPORARY_START_PHASE } = require('../../shared/phases.js');
 
 module.exports = function (deps) {
 
@@ -47,7 +40,8 @@ module.exports = function (deps) {
         getOwnState: getPlayerState,
         nextPhase,
         putDownCard,
-        discardCard,
+        discardCard, //TODO Rename discardFromHand
+        discardDurationCard,
         moveCard,
         attack,
         attackStationCard,
@@ -103,7 +97,7 @@ module.exports = function (deps) {
     }
 
     function getNextPhase(currentPhase) {
-        return PHASES[(PHASES.indexOf(currentPhase) + 1)];
+        return COMMON_PHASE_ORDER[(COMMON_PHASE_ORDER.indexOf(currentPhase) + 1)];
     }
 
     function startActionPhaseForPlayer(playerId) {
@@ -133,7 +127,13 @@ module.exports = function (deps) {
         }
 
         let newCurrentPlayerState = getPlayerState(state.currentPlayer);
-        newCurrentPlayerState.phase = PHASES.draw;
+        const hasDurationCardInPlay = newCurrentPlayerState.cardsInZone.some(c => c.type === 'duration');
+        if (hasDurationCardInPlay) {
+            newCurrentPlayerState.phase = PHASES.preparation;
+        }
+        else {
+            newCurrentPlayerState.phase = PHASES.draw;
+        }
 
         emitNextPlayer();
     }
@@ -237,6 +237,7 @@ module.exports = function (deps) {
         const cardIndexOnHand = playerState.cardsOnHand.findIndex(c => c.id === cardId);
         const discardedCard = playerState.cardsOnHand[cardIndexOnHand];
         if (!discardedCard) throw new Error('Invalid state - someone is cheating');
+
         playerState.cardsOnHand.splice(cardIndexOnHand, 1);
         playerState.discardedCards.push(discardedCard);
 
@@ -264,6 +265,16 @@ module.exports = function (deps) {
             cardCommonId: discardedCard.commonId
         }));
         emitOpponentCardCountToPlayer(playerId);
+    }
+
+    function discardDurationCard(playerId, cardId) {
+        const playerState = getPlayerState(playerId);
+        const cardData = playerState.cardsInZone.find(c => c.id === cardId);
+        removePlayerCard(playerId, cardId);
+        playerState.discardedCards.push(cardData);
+
+        const opponentId = getOpponentId(playerId);
+        emitToPlayer(opponentId, 'opponentDiscardedDurationCard', { card: cardData })
     }
 
     function moveCard(playerId, cardId) {

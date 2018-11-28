@@ -4,15 +4,15 @@ const AttackEvent = require('../../shared/event/AttackEvent.js');
 const MoveCardEvent = require('../../shared/event/MoveCardEvent.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
 const CardFactory = require('../card/CardFactory.js');
-const PHASES = ['draw', 'action', 'discard', 'attack', 'wait'];
-PHASES.draw = 'draw';
-PHASES.action = 'action';
-PHASES.discard = 'discard';
-PHASES.attack = 'attack';
-PHASES.wait = 'wait';
+const {
+    COMMON_PHASE_ORDER,
+    PHASES
+} = require('./phases.js');
+
 //TODO When move handsize station card to zone, a station card from draw station cards is removed.
 // But now always. Perhaps it filters on commonId? Or two cards had the same id somehow..?
 //TODO Sometimes when discarding a card in the discard phase an error is thrown in the console. Does not appear to affect gameplay.
+//TODO Fix: Naively creates a Card with ownUser.id. But the createCard method is also used to created opponent card in ZoneCard.vue.
 
 module.exports = function (deps) {
 
@@ -61,7 +61,7 @@ module.exports = function (deps) {
         },
         getters: {
             playerCardModels,
-            nextPhaseButtonText,
+            nextPhase,
             maxHandSize,
             hasPutDownNonFreeCardThisTurn,
             actionPoints2,
@@ -83,12 +83,13 @@ module.exports = function (deps) {
             init,
             putDownCard,
             discardCard,
-            nextPhase,
+            goToNextPhase,
             setActionPoints,
             moveCard,
             retreat,
             selectStationCardAsDefender,
             moveFlippedStationCardToZone,
+            discardDurationCard,
 
             // local
             restoreState,
@@ -125,12 +126,9 @@ module.exports = function (deps) {
         });
     }
 
-    function nextPhaseButtonText(state) {
-        if (state.phase === PHASES.attack || state.phase === PHASES.wait) {
-            return '';
-        }
-        let nextPhase = PHASES[PHASES.indexOf(state.phase) + 1];
-        return capitalize(nextPhase);
+    function nextPhase(state) {
+        const nextPhaseInOrder = COMMON_PHASE_ORDER[COMMON_PHASE_ORDER.indexOf(state.phase) + 1]
+        return nextPhaseInOrder || 'wait';
     }
 
     function maxHandSize(state) {
@@ -243,11 +241,13 @@ module.exports = function (deps) {
     function nextPlayer({ state }, { turn, currentPlayer }) {
         state.currentPlayer = currentPlayer;
         state.turn = turn;
+
         if (currentPlayer === state.ownUser.id) {
-            state.phase = 'draw';
+            const hasDurationCardInPlay = state.playerCardsInZone.some(c => c.type === 'duration');
+            state.phase = hasDurationCardInPlay ? PHASES.preparation : PHASES.draw;
         }
         else {
-            state.phase = 'wait';
+            state.phase = PHASES.wait;
         }
     }
 
@@ -314,15 +314,12 @@ module.exports = function (deps) {
         dispatch('persistOngoingMatch');
     }
 
-    function nextPhase({ state }) {
-        const nextPhaseIndex = PHASES.indexOf(state.phase) + 1;
-        if (nextPhaseIndex >= PHASES.length) {
+    function goToNextPhase({ state, getters }) {
+        const nextPhase = getters.nextPhase;
+        if (nextPhase === PHASES.wait) {
             state.currentPlayer = null;
-            state.phase = 'draw';
         }
-        else {
-            state.phase = PHASES[nextPhaseIndex];
-        }
+        state.phase = nextPhase;
 
         matchController.emit('nextPhase');
     }
@@ -555,6 +552,13 @@ module.exports = function (deps) {
         dispatch('putDownCard', { location: 'zone', cardId: stationCardId });
     }
 
+    function discardDurationCard({ state }, cardData) {
+        matchController.emit('discardDurationCard', cardData.id);
+        state.playerDiscardedCards.push(cardData);
+        const cardIndexInZone = state.playerCardsInZone.findIndex(c => c.id === cardData.id);
+        state.playerCardsInZone.splice(cardIndexInZone, 1);
+    }
+
     function opponentRetreated() {
         deleteMatchLocalDataAndReturnToLobby();
     }
@@ -571,10 +575,6 @@ module.exports = function (deps) {
         localStorage.removeItem('ongoing-match');
         route('lobby');
     }
-}
-
-function capitalize(word) {
-    return word.substr(0, 1).toUpperCase() + word.substr(1);
 }
 
 function stationCardsByIsFlippedComparer(a, b) {

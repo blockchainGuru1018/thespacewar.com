@@ -79,5 +79,44 @@ module.exports = {
 
         assert(error);
         assert.equals(error.message, 'Cannot attack that card');
-    }
+    },
+    'when player is in the preparation phase and discards duration card': {
+        setUp() {
+            this.firstPlayerConnection = FakeConnection2(['restoreState']);
+            this.secondPlayerConnection = FakeConnection2(['opponentDiscardedDurationCard']);
+            this.match = createMatch({
+                players: [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+            });
+            this.match.restoreFromState(createState({
+                turn: 2,
+                playerStateById: {
+                    'P1A': {
+                        phase: 'preparation',
+                        cardsInZone: [createCard({ id: 'C1A', type: 'duration' })],
+                        events: [PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A' })]
+                    }
+                }
+            }));
+
+            this.match.discardDurationCard('P1A', 'C1A');
+        },
+        'first player should NOT have card in zone'() {
+            this.match.start();
+            const { cardsInZone } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            assert.equals(cardsInZone.length, 0);
+        },
+        'first player should have card among discarded cards'() {
+            this.match.start();
+            const { discardedCards } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            assert.equals(discardedCards.length, 1);
+            assert.match(discardedCards[0], { id: 'C1A' });
+        },
+        'should emit opponentDiscardedDurationCard to second player'() {
+            assert.calledOnce(this.secondPlayerConnection.opponentDiscardedDurationCard);
+            assert.calledWith(this.secondPlayerConnection.opponentDiscardedDurationCard, sinon.match({
+                card: sinon.match({ id: 'C1A' })
+            }));
+        }
+    },
+    //when player is NOT in preparation phase but discards duration card should throw error
 };
