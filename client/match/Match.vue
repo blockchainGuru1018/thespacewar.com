@@ -63,6 +63,7 @@
                              class="card card--placeholder"/>
                         <div v-else
                              :style="getCardImageStyle(opponentTopDiscardCard)"
+                             :data-cardId="opponentTopDiscardCard.id"
                              class="card card--turnedAround"/>
                     </div>
                     <div class="field-drawPile">

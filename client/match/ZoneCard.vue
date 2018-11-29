@@ -1,21 +1,24 @@
 <template>
-    <div :style="cardStyle" @click="cardClick" ref="card" :data-type="card.type" :class="classes">
+    <div :style="cardStyle" @click="cardClick" ref="card" :data-type="card.type || ''" :class="classes">
         <div class="actionOverlays">
             <template v-if="canSelectAction">
                 <div v-if="canMove"
                      @click.stop="moveClick"
-                     class="movable">
+                     class="movable actionOverlay">
                     Move
                 </div>
                 <div v-if="canAttackThisTurn"
                      @click.stop="readyToAttackClick"
-                     class="readyToAttack">
+                     class="readyToAttack actionOverlay">
                     Attack
+                </div>
+                <div v-if="canBeDiscarded" class="canBeDiscarded actionOverlay">
+                    Discard
                 </div>
             </template>
             <div v-if="canBeSelectedAsDefender"
                  @click.stop="selectAsDefender(card)"
-                 class="attackable"/>
+                 class="attackable actionOverlay"/>
         </div>
         <div class="indicatorOverlays">
             <div v-if="card.damage && card.damage > 0" class="card-damageIndicator" :style="damageTextStyle">
@@ -110,6 +113,10 @@
                     && this.attackerCardId
                     && this.zoneOpponentRow.some(c => c.id === this.attackerCardId)
                     && this.attackerCard.canAttackCard(card);
+            },
+            canBeDiscarded() {
+                return this.card.type === 'duration'
+                    && this.phase === 'preparation';
             }
         },
         methods: {
@@ -120,7 +127,7 @@
                 'discardDurationCard'
             ]),
             cardClick() {
-                if (this.phase === 'preparation' && this.card.type === 'duration') {
+                if (this.canBeDiscarded) {
                     this.discardDurationCard(this.card);
                 }
                 else {
@@ -170,8 +177,7 @@
         z-index: 1;
     }
 
-    .movable {
-        background-color: rgba(0, 0, 0, .5);
+    .actionOverlay {
         color: white;
         font-family: Helvetica, sans-serif;
         font-size: 16px;
@@ -188,22 +194,16 @@
         }
     }
 
+    .movable {
+        background-color: rgba(0, 0, 0, .5);
+    }
+
+    .canBeDiscarded {
+        background-color: rgba(0, 1, 51, .5);
+    }
+
     .readyToAttack, .attackable {
         background-color: rgba(255, 100, 100, .5);
-        color: white;
-        font-family: Helvetica, sans-serif;
-        font-size: 16px;
-        flex: 1 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        visibility: hidden;
-        opacity: .5;
-        cursor: pointer;
-
-        &:hover {
-            opacity: 1;
-        }
     }
 
     .selectedAsAttacker {
@@ -211,7 +211,7 @@
     }
 
     .actionOverlays:hover {
-        & .movable, & .readyToAttack, & .attackable {
+        & .movable, & .readyToAttack, & .attackable, & .canBeDiscarded {
             visibility: visible;
         }
     }

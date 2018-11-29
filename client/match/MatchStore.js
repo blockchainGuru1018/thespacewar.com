@@ -96,6 +96,7 @@ module.exports = function (deps) {
             beginGame,
             placeCardInZone,
             opponentDiscardedCard,
+            opponentDiscardedDurationCard,
             putDownOpponentCard,
             putDownOpponentStationCard,
             opponentMovedCard,
@@ -401,6 +402,12 @@ module.exports = function (deps) {
 
         state.opponentCardCount = opponentCardCount;
         state.opponentDiscardedCards.push(discardedCard);
+    }
+
+    function opponentDiscardedDurationCard({ state }, { card }) {
+        state.opponentDiscardedCards.push(card);
+        const cardIndexInZone = state.opponentCardsInZone.findIndex(c => c.id === card.id);
+        state.opponentCardsInZone.splice(cardIndexInZone, 1);
     }
 
     function putDownOpponentCard({ state, getters, commit }, { location, card }) {
