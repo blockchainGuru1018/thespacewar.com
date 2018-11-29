@@ -340,7 +340,7 @@
                 return this.attackerCard.attack - this.selectedDefendingStationCards.length;
             },
             showActionPoints() {
-                return ['draw', 'action'].includes(this.phase);
+                return ['preparation', 'draw', 'action'].includes(this.phase);
             }
         },
         methods: {

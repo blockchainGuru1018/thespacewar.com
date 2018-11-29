@@ -274,7 +274,7 @@ module.exports = function (deps) {
         playerState.discardedCards.push(cardData);
 
         const opponentId = getOpponentId(playerId);
-        emitToPlayer(opponentId, 'opponentDiscardedDurationCard', { card: cardData })
+        emitToPlayer(opponentId, 'opponentDiscardedDurationCard', { card: cardData });
     }
 
     function moveCard(playerId, cardId) {
