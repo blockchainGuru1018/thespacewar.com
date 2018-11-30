@@ -275,6 +275,13 @@ module.exports = function (deps) {
 
         const opponentId = getOpponentId(playerId);
         emitToPlayer(opponentId, 'opponentDiscardedDurationCard', { card: cardData });
+
+        playerState.events.push(DiscardCardEvent({
+            turn: state.turn,
+            phase: playerState.phase,
+            cardId,
+            cardCommonId: cardData.commonId
+        }));
     }
 
     function moveCard(playerId, cardId) {

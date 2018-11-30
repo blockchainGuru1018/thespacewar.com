@@ -564,6 +564,13 @@ module.exports = function (deps) {
         state.playerDiscardedCards.push(cardData);
         const cardIndexInZone = state.playerCardsInZone.findIndex(c => c.id === cardData.id);
         state.playerCardsInZone.splice(cardIndexInZone, 1);
+
+        state.events.push(DiscardCardEvent({
+            turn: state.turn,
+            phase: state.phase,
+            cardId: cardData.id,
+            cardCommonId: cardData.commonId
+        }));
     }
 
     function opponentRetreated() {
