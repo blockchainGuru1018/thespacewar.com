@@ -1,0 +1,1 @@
+cd C:\Users\August\WebstormProjects\TheSpaceWarOnline\client && webpack --watch
