@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "portal-vue": "^1.5.0",
+    "v-click-outside": "^2.0.1",
     "vue": "^2.5.17",
     "vuex": "^3.0.1"
   },

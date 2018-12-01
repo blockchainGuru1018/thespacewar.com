@@ -10,6 +10,7 @@ const MatchRepository = require('./match/MatchRepository.js');
 const MatchController = require('./match/MatchController.js');
 const CardController = require('./card/CardController.js');
 const GitController = require('./git/GitController.js');
+const AssetsController = require('./assets/AssetsController.js');
 const http = require('http');
 const { port } = require('./settings.json');
 
@@ -34,7 +35,8 @@ function run({ closeServer, exitProcess }) {
         user: UserController(deps),
         match: MatchController(deps),
         card: CardController(deps),
-        git: GitController({ closeServer, exitProcess })
+        git: GitController({ closeServer, exitProcess }),
+        assets: AssetsController(deps)
     };
     deps.controllers = controllers;
     const mappedControllers = wrapControllersWithRejectionProtection(controllers);
@@ -94,6 +96,8 @@ function setupRoutes(controllers) {
     app.get('/card/:cardId/image', controllers.card.getImage);
 
     app.post('/git/push', controllers.git.onPush);
+
+    app.get('/icon/:iconName', controllers.assets.getIcon);
 
     if (process.env.production = false) {
         app.post('/restart', async (req, res) => {

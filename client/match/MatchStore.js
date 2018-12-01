@@ -22,8 +22,8 @@ module.exports = function (deps) {
     const matchId = deps.matchId;
     const matchControllerFactory = deps.matchControllerFactory;
     const cardInfoRepository = deps.cardInfoRepository;
+    const actionPointsCalculator = deps.actionPointsCalculator || ActionPointsCalculator({ cardInfoRepository });
 
-    const actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository });
     const cardFactory = CardFactory();
     let matchController;
 

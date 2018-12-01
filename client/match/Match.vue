@@ -170,42 +170,11 @@
                             :class="getPlayerCardClasses(card)"
                             @click="playerCardClick(card)"/>
                 </div>
-                <div class="field-playerHud">
-                    <div class="field-playerHudRow">
-                        <template v-if="isOwnTurn">
-                            <button v-if="phase === 'start'"
-                                    @click="startClick"
-                                    class="playerHud-nextPhaseButton playerHud-button playerHud-item">
-                                START
-                            </button>
-                            <template v-else>
-                                <div class="playerHud-phaseText playerHud-item">{{ currentPhaseText }}</div>
-                                <div v-if="phase === 'discard' && playerCardModels.length > maxHandSize"
-                                     class="playerHud-nextPhaseButton playerHud-phaseText playerHud-item">
-                                    Discard {{ amountOfCardsToDiscard + (amountOfCardsToDiscard > 1 ? ' cards' : ' card')}} to continue
-                                </div>
-                                <button v-else-if="nextPhaseButtonText"
-                                        @click="nextPhaseClick"
-                                        class="playerHud-nextPhaseButton playerHud-button playerHud-item">
-                                    {{ nextPhaseButtonText }}
-                                </button>
-                                <button v-else
-                                        @click="nextPhaseClick"
-                                        class="playerHud-endTurnButton playerHud-button playerHud-item">
-                                    End turn
-                                </button>
-                            </template>
-                        </template>
-                        <div v-else class="playerHud-phaseText playerHud-item">Waiting for next player</div>
-                    </div>
-                </div>
+                <player-hud/>
             </div>
         </div>
         <div v-if="holdingCard" class="card holdingCard" :style="holdingCardStyle"/>
-        <div v-if="numberOfStationCardsToSelect > 0" class="guideText">
-            Select {{ numberOfStationCardsToSelect}}
-            more station {{ numberOfStationCardsToSelect === 1 ? 'card' : 'cards' }}
-        </div>
+        <portal-target name="match" multiple/>
     </div>
 </template>
 <script>
@@ -213,7 +182,7 @@
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
     const ZoneCard = require('./ZoneCard.vue').default;
     const StationCard = require('./StationCard.vue').default;
-    const { PHASES } = require('./phases.js');
+    const PlayerHud = require('./PlayerHud.vue').default;
 
     module.exports = {
         data() {
@@ -241,37 +210,15 @@
                 'opponentDiscardedCards',
                 'opponentCardsInZone',
                 'opponentCardsInPlayerZone',
-                'attackerCardId',
-                'selectedDefendingStationCards'
+                'attackerCardId'
             ]),
             ...mapGetters([
                 'playerCardModels',
-                'nextPhase',
-                'maxHandSize',
                 'hasPutDownNonFreeCardThisTurn',
-                'actionPoints2',
-                'attackerCard'
+                'actionPoints2'
             ]),
             isOwnTurn() {
                 return this.ownUser.id === this.currentPlayer;
-            },
-            currentPhaseText() {
-                if (this.phase === 'preparation') {
-                    return 'Prepare for turn';
-                }
-
-                const nameOfCurrentPhase = this.phase.substr(0, 1).toUpperCase() + this.phase.substr(1);
-                return `${nameOfCurrentPhase} phase`;
-            },
-            nextPhaseButtonText() {
-                if (this.phase === PHASES.preparation) {
-                    return 'Start turn';
-                }
-                if (this.phase === PHASES.attack || this.phase === PHASES.wait) {
-                    return '';
-                }
-
-                return `${capitalize(this.nextPhase)} phase`;
             },
             holdingCardStyle() {
                 if (!this.holdingCard) return {};
@@ -312,9 +259,6 @@
             canPlaceCards() {
                 return this.isOwnTurn;
             },
-            amountOfCardsToDiscard() {
-                return this.playerCardModels.length - this.maxHandSize;
-            },
             calculatedActionPointsForActionPhaseVisible() {
                 return this.phase === 'action'
                     && this.hasPutDownNonFreeCardThisTurn;
@@ -333,12 +277,6 @@
                     return `Actions (${this.actionPoints2})`
                 }
             },
-            numberOfStationCardsToSelect() {
-                if (!this.attackerCard) return 0;
-                if (this.selectedDefendingStationCards.length === 0) return 0;
-
-                return this.attackerCard.attack - this.selectedDefendingStationCards.length;
-            },
             showActionPoints() {
                 return ['preparation', 'draw', 'action'].includes(this.phase);
             }
@@ -348,19 +286,12 @@
                 'init',
                 'putDownCard',
                 'discardCard',
-                'goToNextPhase',
                 'selectAsDefender',
                 'retreat',
                 'cancelAttack'
             ]),
-            startClick() {
-                this.goToNextPhase();
-            },
             canAffordCard(card) {
                 return this.actionPoints2 >= card.cost;
-            },
-            nextPhaseClick() {
-                this.goToNextPhase();
             },
             playerCardClick(card) {
                 if (this.canPlaceCards) {
@@ -442,12 +373,8 @@
                 }
             });
         },
-        components: { ZoneCard, StationCard }
+        components: { ZoneCard, StationCard, PlayerHud }
     };
-
-    function capitalize(word) {
-        return word.substr(0, 1).toUpperCase() + word.substr(1);
-    }
 </script>
 <style scoped lang="scss">
     $cardWidth: 652px;

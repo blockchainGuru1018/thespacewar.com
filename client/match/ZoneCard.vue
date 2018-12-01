@@ -1,5 +1,6 @@
 <template>
-    <div :style="cardStyle" @click="cardClick" ref="card" :data-type="card.type || ''" :class="classes">
+    <div :style="cardStyle" :data-type="card.type || ''" :class="classes" ref="card">
+        <div @click="enlargeClick" class="enlargeIcon"/>
         <div class="actionOverlays">
             <template v-if="canSelectAction">
                 <div v-if="canMove"
@@ -12,7 +13,9 @@
                      class="readyToAttack actionOverlay">
                     Attack
                 </div>
-                <div v-if="canBeDiscarded" class="canBeDiscarded actionOverlay">
+                <div v-if="canBeDiscarded"
+                     @click.stop="discardClick"
+                     class="discard actionOverlay">
                     Discard
                 </div>
             </template>
@@ -25,11 +28,16 @@
                 -{{ card.damage }}
             </div>
         </div>
+        <portal to="match" v-if="showEnlargedCard">
+            <div class="dimOverlay"/>
+            <div class="card card--enlarged" :style="cardStyle" v-click-outside="hideEnlargedCard"/>
+        </portal>
     </div>
 </template>
 <script>
     const Vuex = require('vuex');
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
+    const vClickOutside = require('v-click-outside');
 
     module.exports = {
         props: [
@@ -42,7 +50,8 @@
         data() {
             return {
                 damageTextFontSize: 0,
-                wasPutDownTurn: null
+                wasPutDownTurn: null,
+                showEnlargedCard: false
             }
         },
         computed: {
@@ -68,7 +77,7 @@
             cardStyle() {
                 return {
                     backgroundImage: 'url(/card/' + this.card.commonId + '/image)'
-                }
+                };
             },
             damageTextStyle() {
                 return {
@@ -97,7 +106,9 @@
                     && !card.hasAttackedThisTurn();
             },
             canAttackCardInZone() {
-                return this.zoneOpponentRow.length > 0;
+                return this.zoneOpponentRow
+                    .filter(c => c.type !== 'duration')
+                    .length > 0;
             },
             canAttackStationCards() {
                 return this.createCard(this.card).canAttackStationCards()
@@ -126,19 +137,20 @@
                 'moveCard',
                 'discardDurationCard'
             ]),
-            cardClick() {
-                if (this.canBeDiscarded) {
-                    this.discardDurationCard(this.card);
-                }
-                else {
-                    this.$emit('click', this.card);
-                }
-            },
             moveClick() {
                 this.moveCard(this.card);
             },
             readyToAttackClick() {
                 this.selectAsAttacker(this.card);
+            },
+            discardClick() {
+                this.discardDurationCard(this.card);
+            },
+            enlargeClick() {
+                this.showEnlargedCard = true;
+            },
+            hideEnlargedCard() {
+                this.showEnlargedCard = false;
             }
         },
         created() {
@@ -151,10 +163,40 @@
         mounted() {
             let cardWidth = this.$refs.card.offsetWidth;
             this.damageTextFontSize = Math.round(cardWidth * .25);
+        },
+        directives: {
+            clickOutside: vClickOutside.directive
         }
     };
 </script>
 <style scoped lang="scss">
+    //Sync with Match.vue variables
+    //TODO Move to common file
+    $cardWidth: 652px;
+    $cardHeight: 916px;
+    $opponentCardWidth: calc(#{$cardWidth} / 8);
+    $opponentCardHeight: calc(#{$cardHeight} / 8);
+    $opponentCardOnHandWidth: calc(#{$cardWidth} / 12);
+    $opponentCardOnHandHeight: calc(#{$cardHeight} / 12);
+    $opponentStationCardWidth: calc(#{$cardWidth} / 12);
+    $opponentStationCardHeight: calc(#{$cardHeight} / 12);
+    $opponentDrawPileCardWidth: calc(#{$cardWidth} / 12);
+    $opponentDrawPileCardHeight: calc(#{$cardHeight} / 12);
+    $opponentDiscardPileCardWidth: calc(#{$cardWidth} / 12);
+    $opponentDiscardPileCardHeight: calc(#{$cardHeight} / 12);
+
+    $playerCardWidth: calc(#{$cardWidth} / 5);
+    $playerCardHeight: calc(#{$cardHeight} / 5);
+    $playerStationCardWidth: calc((#{$cardWidth} / 5) * .7);
+    $playerStationCardHeight: calc((#{$cardHeight} / 5) * .7);
+    $playerDiscardPileCardWidth: $playerCardWidth;
+    $playerDiscardPileCardHeight: $playerCardHeight;
+    $playerDrawPileCardWidth: $playerCardWidth;
+    $playerDrawPileCardHeight: $playerCardHeight;
+
+    $cardHoverWidth: $cardWidth / 4;
+    $cardHoverHeight: $cardHeight / 4;
+
     .card {
         position: relative;
     }
@@ -198,7 +240,7 @@
         background-color: rgba(0, 0, 0, .5);
     }
 
-    .canBeDiscarded {
+    .discard {
         background-color: rgba(0, 1, 51, .5);
     }
 
@@ -211,7 +253,7 @@
     }
 
     .actionOverlays:hover {
-        & .movable, & .readyToAttack, & .attackable, & .canBeDiscarded {
+        & .movable, & .readyToAttack, & .attackable, & .discard {
             visibility: visible;
         }
     }
@@ -229,5 +271,46 @@
         text-shadow: 1px 1px #333;
         font-weight: bold;
         font-family: Arial, sans-serif;
+    }
+
+    .enlargeIcon {
+        opacity: 0;
+        background-image: url(/icon/enlarge-red.svg);
+        background-size: contain;
+        fill: red;
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        width: 20px;
+        height: 20px;
+        z-index: 3;
+        transition: opacity .1s ease-in;
+
+        .card:hover & {
+            opacity: 1;
+        }
+    }
+
+    .card--enlarged {
+        $ratio: $cardWidth / $cardHeight;
+
+        background-size: contain;
+        width: 80vh * $ratio;
+        height: 80vh;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 4;
+    }
+
+    .dimOverlay {
+        background-color: rgba(0, 0, 0, .4);
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 4;
     }
 </style>

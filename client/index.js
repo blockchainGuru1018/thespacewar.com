@@ -1,5 +1,7 @@
 const Vue = require('vue');
 const Vuex = require('vuex');
+const PortalVue = require('portal-vue');
+const vClickOutside = require('v-click-outside');
 const Router = require('./Router.js');
 const RootStore = require('./RootStore.js');
 const UserRepository = require('./users/UserRepository.js');
@@ -19,6 +21,8 @@ let cardInfoRepository;
 let rootStore;
 
 Vue.use(Vuex);
+Vue.use(PortalVue);
+Vue.use(vClickOutside);
 bootstrap();
 
 function bootstrap() {

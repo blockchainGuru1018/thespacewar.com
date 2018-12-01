@@ -105,7 +105,7 @@ function getTurnWhenWasPutDown(events, cardId) {
         return e.type === 'putDownCard'
             && e.cardId === cardId;
     });
-    if (!putDownEventForThisCard) throw new Error(`Asking when card (${cardId}) was put down. Put card has not been put down.`);
+    if (!putDownEventForThisCard) throw new Error(`Asking when card (${cardId}) was put down. But card has not been put down.`);
     return putDownEventForThisCard.turn;
 }
 

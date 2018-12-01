@@ -118,5 +118,11 @@ module.exports = {
             }));
         }
     },
+    //when in preparation phase and has less than 0 action points and go to the next phase
+    // 'should throw error'() {
+    //     assert(this.error);
+    //     assert.equals(this.error.message, 'Cannot go to next phase with less than 0 action points');
+    // },
+
     //when player is NOT in preparation phase but discards duration card should throw error
 };
