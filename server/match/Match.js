@@ -12,6 +12,7 @@ module.exports = function (deps) {
     const cardInfoRepository = deps.cardInfoRepository;
     const matchId = deps.matchId;
     const players = deps.players;
+    const actionPointsCalculator = deps.actionPointsCalculator || ActionPointsCalculator({ cardInfoRepository });
 
     const playerOrder = players.map(p => p.id);
     const firstPlayer = players.find(p => p.id === playerOrder[0]);
@@ -29,7 +30,6 @@ module.exports = function (deps) {
         }
     };
 
-    const actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository });
     const cardFactory = CardFactory({ getState: () => state });
 
     return {
@@ -72,8 +72,14 @@ module.exports = function (deps) {
         if (playerId !== state.currentPlayer) {
             throw CheatError('Switching phase when not your own turn');
         }
-
         const playerState = getPlayerState(playerId);
+        if (playerState.phase === PHASES.preparation) {
+            const actionPoints = getActionPointsForPlayer(playerId);
+            if (actionPoints < 0) {
+                throw CheatError('Cannot go to next phase with less than 0 action points');
+            }
+        }
+
 
         if (playerState.phase === PHASES.discard) {
             leaveDiscardPhaseForPlayer(state.currentPlayer);
@@ -269,6 +275,10 @@ module.exports = function (deps) {
 
     function discardDurationCard(playerId, cardId) {
         const playerState = getPlayerState(playerId);
+        if (playerState.phase !== PHASES.preparation) {
+            throw CheatError('Cannot discard duration cards after turn your has started');
+        }
+        
         const cardData = playerState.cardsInZone.find(c => c.id === cardId);
         removePlayerCard(playerId, cardId);
         playerState.discardedCards.push(cardData);

@@ -118,11 +118,60 @@ module.exports = {
             }));
         }
     },
-    //when in preparation phase and has less than 0 action points and go to the next phase
-    // 'should throw error'() {
-    //     assert(this.error);
-    //     assert.equals(this.error.message, 'Cannot go to next phase with less than 0 action points');
-    // },
+    'when in preparation phase and has less than 0 action points and go to the next phase': {
+        setUp() {
+            this.firstPlayerConnection = FakeConnection2(['restoreState']);
+            this.secondPlayerConnection = FakeConnection2(['opponentDiscardedDurationCard']);
+            this.match = createMatch({
+                actionPointsCalculator: {
+                    calculate: () => -1
+                },
+                players: [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+            });
+            this.match.restoreFromState(createState({
+                turn: 2,
+                playerStateById: {
+                    'P1A': {
+                        phase: 'preparation',
+                        cardsInZone: [createCard({ id: 'C1A', type: 'duration' })],
+                        events: [PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A' })]
+                    }
+                }
+            }));
 
-    //when player is NOT in preparation phase but discards duration card should throw error
+            this.error = catchError(() => this.match.nextPhase('P1A'));
+        },
+        'should throw error'() {
+            assert(this.error);
+            assert.equals(this.error.message, 'Cannot go to next phase with less than 0 action points');
+        },
+    },
+    'when player is NOT in preparation phase but discards duration card should throw error': {
+        setUp() {
+            this.firstPlayerConnection = FakeConnection2(['restoreState']);
+            this.secondPlayerConnection = FakeConnection2(['opponentDiscardedDurationCard']);
+            this.match = createMatch({
+                actionPointsCalculator: {
+                    calculate: () => -1
+                },
+                players: [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+            });
+            this.match.restoreFromState(createState({
+                turn: 2,
+                playerStateById: {
+                    'P1A': {
+                        phase: 'discard',
+                        cardsInZone: [createCard({ id: 'C1A', type: 'duration' })],
+                        events: [PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A' })]
+                    }
+                }
+            }));
+
+            this.error = catchError(() => this.match.discardDurationCard('P1A', 'C1A'));
+        },
+        'should throw error'() {
+            assert(this.error);
+            assert.equals(this.error.message, 'Cannot discard duration cards after turn your has started');
+        },
+    }
 };
