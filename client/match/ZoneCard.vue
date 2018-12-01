@@ -284,9 +284,23 @@
         width: 20px;
         height: 20px;
         z-index: 3;
-        transition: opacity .1s ease-in;
 
         .card:hover & {
+            animation: fullOpacityOnIntentionalHover .14s;
+            opacity: 1;
+        }
+    }
+
+    @keyframes fullOpacityOnIntentionalHover {
+        0% {
+            opacity: 0;
+        }
+
+        99% {
+            opacity: 0;
+        }
+
+        100% {
             opacity: 1;
         }
     }
