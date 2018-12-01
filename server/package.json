@@ -4,18 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.3",
-    "cypress": "^3.1.2",
     "express": "^4.16.3",
     "socket.io": "^2.1.1"
   },
   "devDependencies": {
-    "bocha": "^1.6.9",
-    "nightwatch": "^0.9.21"
+    "bocha": "^1.6.9"
   }
 }
