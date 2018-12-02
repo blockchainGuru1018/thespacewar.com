@@ -543,8 +543,8 @@ module.exports = {
         },
         'when missile card attack station on the same turn it moved to zone': {
             setUp() {
-                this.firstPlayerConnection = FakeConnection2(['restoreState', 'opponentStationCardsChanged']);
-                this.secondPlayerConnection = FakeConnection2(['restoreState', 'stationCardsChanged']);
+                this.firstPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
                 const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
                 this.match = createMatch({ players });
                 this.match.restoreFromState(createState({
@@ -587,7 +587,7 @@ module.exports = {
                 assert.match(flippedCards[0], { flipped: true, place: 'action' });
             },
             'should emit flipped station card to second player': function () {
-                const stationCards = this.secondPlayerConnection.stationCardsChanged.lastCall.args[0];
+                const { stationCards } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
                 assert.equals(stationCards.length, 2);
 
                 let flippedCards = stationCards.filter(s => s.flipped);
@@ -596,10 +596,10 @@ module.exports = {
                 assert.match(flippedCards[0], { flipped: true, place: 'action' });
             },
             'should emit flipped station card to first player': function () {
-                const stationCards = this.firstPlayerConnection.opponentStationCardsChanged.lastCall.args[0];
-                assert.equals(stationCards.length, 2);
+                const { opponentStationCards } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
+                assert.equals(opponentStationCards.length, 2);
 
-                let flippedCards = stationCards.filter(s => s.flipped);
+                let flippedCards = opponentStationCards.filter(s => s.flipped);
                 assert.equals(flippedCards.length, 1);
                 assert.match(flippedCards[0].card, { id: 'C2A' });
                 assert.match(flippedCards[0], { flipped: true, place: 'action' });
@@ -609,8 +609,8 @@ module.exports = {
     'station cards:': {
         'when attack station with a card with 2 in attack': {
             setUp() {
-                this.firstPlayerConnection = FakeConnection2(['restoreState', 'opponentStationCardsChanged']);
-                this.secondPlayerConnection = FakeConnection2(['restoreState', 'stationCardsChanged']);
+                this.firstPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
                 this.match = createMatch({
                     players: [
                         Player('P1A', this.firstPlayerConnection),
@@ -667,7 +667,7 @@ module.exports = {
                 assert.match(flippedCards[1], { flipped: true, place: 'action' });
             },
             'should emit flipped station card to second player': function () {
-                const stationCards = this.secondPlayerConnection.stationCardsChanged.lastCall.args[0];
+                const { stationCards } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
                 assert.equals(stationCards.length, 3);
 
                 let flippedCards = stationCards.filter(s => s.flipped);
@@ -678,10 +678,10 @@ module.exports = {
                 assert.match(flippedCards[1], { flipped: true, place: 'action' });
             },
             'should emit flipped station card to first player': function () {
-                const stationCards = this.firstPlayerConnection.opponentStationCardsChanged.lastCall.args[0];
-                assert.equals(stationCards.length, 3);
+                const { opponentStationCards } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
+                assert.equals(opponentStationCards.length, 3);
 
-                let flippedCards = stationCards.filter(s => s.flipped);
+                let flippedCards = opponentStationCards.filter(s => s.flipped);
                 assert.equals(flippedCards.length, 2);
                 assert.match(flippedCards[0].card, { id: 'C2A' });
                 assert.match(flippedCards[0], { flipped: true, place: 'action' });
@@ -691,14 +691,7 @@ module.exports = {
         },
         'when card has NOT been in enemy zone for 1 turn': {
             setUp() {
-                this.firstPlayerConnection = FakeConnection2(['restoreState', 'opponentStationCardsChanged']);
-                this.secondPlayerConnection = FakeConnection2(['restoreState', 'stationCardsChanged']);
-                this.match = createMatch({
-                    players: [
-                        Player('P1A', this.firstPlayerConnection),
-                        Player('P2A', this.secondPlayerConnection),
-                    ]
-                });
+                this.match = createMatch({ players: [Player('P1A'), Player('P2A')] });
                 this.match.restoreFromState(createState({
                     turn: 2,
                     currentPlayer: 'P1A',
@@ -728,12 +721,10 @@ module.exports = {
         },
         'when card has never been moved': {
             setUp() {
-                this.firstPlayerConnection = FakeConnection2(['restoreState', 'opponentStationCardsChanged']);
-                this.secondPlayerConnection = FakeConnection2(['restoreState', 'stationCardsChanged']);
                 this.match = createMatch({
                     players: [
-                        Player('P1A', this.firstPlayerConnection),
-                        Player('P2A', this.secondPlayerConnection),
+                        Player('P1A'),
+                        Player('P2A'),
                     ]
                 });
                 this.match.restoreFromState(createState({
@@ -765,14 +756,7 @@ module.exports = {
         },
         'when attack station card twice': {
             setUp() {
-                this.firstPlayerConnection = FakeConnection2(['restoreState', 'opponentStationCardsChanged']);
-                this.secondPlayerConnection = FakeConnection2(['restoreState', 'stationCardsChanged']);
-                this.match = createMatch({
-                    players: [
-                        Player('P1A', this.firstPlayerConnection),
-                        Player('P2A', this.secondPlayerConnection),
-                    ]
-                });
+                this.match = createMatch({ players: [Player('P1A'), Player('P2A')] });
                 this.match.restoreFromState(createState({
                     turn: 3,
                     currentPlayer: 'P1A',
@@ -804,8 +788,8 @@ module.exports = {
         },
         'when attack 2 station cards with 2 different cards': {
             setUp() {
-                this.firstPlayerConnection = FakeConnection2(['restoreState', 'opponentStationCardsChanged']);
-                this.secondPlayerConnection = FakeConnection2(['restoreState', 'stationCardsChanged']);
+                this.firstPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
                 this.match = createMatch({
                     players: [
                         Player('P1A', this.firstPlayerConnection),
@@ -863,7 +847,7 @@ module.exports = {
                 assert.match(flippedCards[1], { flipped: true, place: 'draw' });
             },
             'should emit flipped station card to second player': function () {
-                const stationCards = this.secondPlayerConnection.stationCardsChanged.lastCall.args[0];
+                const { stationCards } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
                 assert.equals(stationCards.length, 3);
 
                 let flippedCards = stationCards.filter(s => s.flipped);
@@ -874,10 +858,10 @@ module.exports = {
                 assert.match(flippedCards[1], { flipped: true, place: 'draw' });
             },
             'should emit flipped station card to first player': function () {
-                const stationCards = this.firstPlayerConnection.opponentStationCardsChanged.lastCall.args[0];
-                assert.equals(stationCards.length, 3);
+                const { opponentStationCards } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
+                assert.equals(opponentStationCards.length, 3);
 
-                let flippedCards = stationCards.filter(s => s.flipped);
+                let flippedCards = opponentStationCards.filter(s => s.flipped);
                 assert.equals(flippedCards.length, 2);
                 assert.match(flippedCards[0].card, { id: 'C3A' });
                 assert.match(flippedCards[0], { flipped: true, place: 'action' });

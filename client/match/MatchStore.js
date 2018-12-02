@@ -9,6 +9,12 @@ const {
     PHASES
 } = require('./phases.js');
 
+const storeItemNameByServerItemName = {
+    cardsInZone: 'playerCardsInZone',
+    discardedCards: 'playerDiscardedCards',
+    cardsOnHand: 'playerCardsOnHand'
+};
+
 //TODO When move handsize station card to zone, a station card from draw station cards is removed.
 // But now always. Perhaps it filters on commonId? Or two cards had the same id somehow..?
 //TODO Sometimes when discarding a card in the discard phase an error is thrown in the console. Does not appear to affect gameplay.
@@ -79,6 +85,9 @@ module.exports = function (deps) {
             addOpponentStationCards
         },
         actions: {
+            // remote
+            stateChanged,
+
             // local & remote
             init,
             putDownCard,
@@ -109,8 +118,6 @@ module.exports = function (deps) {
             opponentAttackedCard,
             addDiscardEvent,
             opponentRetreated,
-            opponentStationCardsChanged,
-            stationCardsChanged,
             registerAttack,
             removePlayerCard,
             cancelAttack,
@@ -231,6 +238,21 @@ module.exports = function (deps) {
         }
         else if (location === 'handSize') {
             state.opponentStation.handSizeCards.push(stationCard);
+        }
+    }
+
+    function stateChanged({ state, commit }, data) {
+        for (let key of Object.keys(data)) {
+            if (key === 'stationCards') {
+                commit('setPlayerStationCards', data[key]);
+            }
+            else if (key === 'opponentStationCards') {
+                commit('setOpponentStationCards', data[key]);
+            }
+            else {
+                const localKey = storeItemNameByServerItemName[key] || key;
+                state[localKey] = data[key];
+            }
         }
     }
 
@@ -575,14 +597,6 @@ module.exports = function (deps) {
 
     function opponentRetreated() {
         deleteMatchLocalDataAndReturnToLobby();
-    }
-
-    function opponentStationCardsChanged({ commit }, stationCards) {
-        commit('setOpponentStationCards', stationCards);
-    }
-
-    function stationCardsChanged({ commit }, stationCards) {
-        commit('setPlayerStationCards', stationCards);
     }
 
     function deleteMatchLocalDataAndReturnToLobby() {

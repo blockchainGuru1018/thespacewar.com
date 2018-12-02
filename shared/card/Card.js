@@ -1,4 +1,10 @@
-module.exports = function Card(deps) {
+module.exports = Card;
+
+Card.names = {
+    energyShield: 'Energy Shield'
+};
+
+function Card(deps) {
 
     const playerId = deps.playerId;
     const eventRepository = deps.eventRepository;
@@ -11,6 +17,9 @@ module.exports = function Card(deps) {
         },
         get commonId() {
             return card.commonId;
+        },
+        get name() {
+            return card.name;
         },
         get type() {
             return card.type;
