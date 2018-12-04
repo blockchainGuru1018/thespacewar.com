@@ -9,6 +9,30 @@ const DONE = [
         "attack": "0",
         "number_copies": "3",
     },
+    {
+        group: 'Can attack 2 times per turn',
+        items: [{
+            "id": "23",
+            "name": "Small Cannon",
+            "price": "1",
+            "type_card": "green",
+            "detail": "Can attack 2 times per turn.",
+            "defense": "1",
+            "attack": "2",
+            "number_copies": "0",
+        },
+            {
+                "id": "24",
+                "name": "Trigger-Happy Joe",
+                "price": "2",
+                "type_card": "blue",
+                "detail": "Can attack 2 times per turn.",
+                "defense": "2",
+                "attack": "1",
+                "number_copies": "1",
+            },
+        ]
+    },
 ];
 
 const COUNTERS = [
@@ -251,30 +275,6 @@ const NO_GUI = [
         "defense": "0",
         "attack": "0",
         "number_copies": "2",
-    },
-    {
-        group: 'Can attack 2 times per turn',
-        items: [{
-            "id": "23",
-            "name": "Small Cannon",
-            "price": "1",
-            "type_card": "green",
-            "detail": "Can attack 2 times per turn.",
-            "defense": "1",
-            "attack": "2",
-            "number_copies": "0",
-        },
-            {
-                "id": "24",
-                "name": "Trigger-Happy Joe",
-                "price": "2",
-                "type_card": "blue",
-                "detail": "Can attack 2 times per turn.",
-                "defense": "2",
-                "attack": "1",
-                "number_copies": "1",
-            },
-        ]
     },
     {
         "id": "28",

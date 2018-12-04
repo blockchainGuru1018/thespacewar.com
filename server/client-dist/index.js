@@ -130,6 +130,28 @@ eval("module.exports = function ({\n  turn,\n  location,\n  cardId,\n  cardCommo
 
 /***/ }),
 
+/***/ "../shared/card sync recursive":
+/*!***************************!*\
+  !*** ../shared/card sync ***!
+  \***************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("function webpackEmptyContext(req) {\n\tvar e = new Error(\"Cannot find module '\" + req + \"'\");\n\te.code = 'MODULE_NOT_FOUND';\n\tthrow e;\n}\nwebpackEmptyContext.keys = function() { return []; };\nwebpackEmptyContext.resolve = webpackEmptyContext;\nmodule.exports = webpackEmptyContext;\nwebpackEmptyContext.id = \"../shared/card sync recursive\";\n\n//# sourceURL=webpack:///../shared/card_sync?");
+
+/***/ }),
+
+/***/ "../shared/card sync recursive ^\\.\\/.*\\.js$":
+/*!****************************************!*\
+  !*** ../shared/card sync ^\.\/.*\.js$ ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("var map = {\n\t\"./BaseCard.js\": \"../shared/card/BaseCard.js\",\n\t\"./CardFactory.js\": \"../shared/card/CardFactory.js\",\n\t\"./EnergyShield.js\": \"../shared/card/EnergyShield.js\",\n\t\"./FastMissile.js\": \"../shared/card/FastMissile.js\",\n\t\"./Neutral.js\": \"../shared/card/Neutral.js\",\n\t\"./SmallCannon.js\": \"../shared/card/SmallCannon.js\",\n\t\"./TriggerHappyJoe.js\": \"../shared/card/TriggerHappyJoe.js\",\n\t\"./classByCardCommonId.js\": \"../shared/card/classByCardCommonId.js\",\n\t\"./index.js\": \"../shared/card/index.js\",\n\t\"./mixins/CanAttackTwice.js\": \"../shared/card/mixins/CanAttackTwice.js\",\n\t\"./staticIndex.js\": \"../shared/card/staticIndex.js\"\n};\n\n\nfunction webpackContext(req) {\n\tvar id = webpackContextResolve(req);\n\treturn __webpack_require__(id);\n}\nfunction webpackContextResolve(req) {\n\tvar id = map[req];\n\tif(!(id + 1)) { // check for number or string\n\t\tvar e = new Error(\"Cannot find module '\" + req + \"'\");\n\t\te.code = 'MODULE_NOT_FOUND';\n\t\tthrow e;\n\t}\n\treturn id;\n}\nwebpackContext.keys = function webpackContextKeys() {\n\treturn Object.keys(map);\n};\nwebpackContext.resolve = webpackContextResolve;\nmodule.exports = webpackContext;\nwebpackContext.id = \"../shared/card sync recursive ^\\\\.\\\\/.*\\\\.js$\";\n\n//# sourceURL=webpack:///../shared/card_sync_^\\.\\/.*\\.js$?");
+
+/***/ }),
+
 /***/ "../shared/card/BaseCard.js":
 /*!**********************************!*\
   !*** ../shared/card/BaseCard.js ***!
@@ -148,7 +170,7 @@ eval("const QueryEvents = __webpack_require__(/*! ../event/QueryEvents.js */ \".
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("const BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nconst cardIndex = __webpack_require__(/*! ./staticIndex.js */ \"../shared/card/staticIndex.js\");\n\nconst MatchInfoRepository = __webpack_require__(/*! ../match/MatchInfoRepository.js */ \"../shared/match/MatchInfoRepository.js\");\n\nconst EventRepository = __webpack_require__(/*! ../event/EventRepository.js */ \"../shared/event/EventRepository.js\");\n\nmodule.exports = class CardFactory {\n  constructor(deps) {\n    this._matchService = deps.matchService;\n  }\n\n  createCardForPlayer(cardData, playerId) {\n    const state = this._matchService.getState();\n\n    const Constructor = getCardConstructor(cardData);\n    return new Constructor({\n      card: cardData,\n      playerId,\n      eventRepository: EventRepository({\n        events: state.playerStateById[playerId].events\n      }),\n      matchInfoRepository: MatchInfoRepository(state),\n      matchService: this._matchService\n    });\n  }\n\n};\n\nfunction getCardConstructor({\n  name\n}) {\n  return cardIndex[name] || BaseCard;\n}\n\n//# sourceURL=webpack:///../shared/card/CardFactory.js?");
+eval("const BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nconst classByCardCommonId = __webpack_require__(/*! ./classByCardCommonId.js */ \"../shared/card/classByCardCommonId.js\");\n\nconst MatchInfoRepository = __webpack_require__(/*! ../match/MatchInfoRepository.js */ \"../shared/match/MatchInfoRepository.js\");\n\nconst EventRepository = __webpack_require__(/*! ../event/EventRepository.js */ \"../shared/event/EventRepository.js\");\n\nmodule.exports = class CardFactory {\n  constructor(deps) {\n    this._matchService = deps.matchService;\n  }\n\n  createCardForPlayer(cardData, playerId) {\n    const state = this._matchService.getState();\n\n    const Constructor = getCardConstructor(cardData);\n    return new Constructor({\n      card: cardData,\n      playerId,\n      eventRepository: EventRepository({\n        events: state.playerStateById[playerId].events\n      }),\n      matchInfoRepository: MatchInfoRepository(state),\n      matchService: this._matchService\n    });\n  }\n\n};\n\nfunction getCardConstructor({\n  commonId\n}) {\n  return classByCardCommonId[commonId] || BaseCard;\n}\n\n//# sourceURL=webpack:///../shared/card/CardFactory.js?");
 
 /***/ }),
 
@@ -160,6 +182,28 @@ eval("const BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card
 /***/ (function(module, exports, __webpack_require__) {
 
 eval("const BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nconst DiscardCardEvent = __webpack_require__(/*! ../event/DiscardCardEvent.js */ \"../shared/event/DiscardCardEvent.js\");\n\nconst AttackEvent = __webpack_require__(/*! ../event/AttackEvent.js */ \"../shared/event/AttackEvent.js\");\n\nmodule.exports = class EnergyShield extends BaseCard {\n  constructor(deps) {\n    super(deps);\n    this._playerId = deps.playerId;\n    this._matchService = deps.matchService;\n  }\n\n  hasEffectOnStationAttack() {\n    return true;\n  }\n\n  getImportanceOnStationAttack() {\n    return 1;\n  }\n\n  applyEffectOnStationAttack({\n    attackerCard,\n    targetStationCardIds\n  }) {\n    const defenseBeforeAttack = this.defense - this.damage;\n    attackerCard.attackCard(this);\n    const defendedTargetsCount = this.destroyed ? defenseBeforeAttack : defenseBeforeAttack - (this.defense - this.damage);\n    const targetIdsNotProtected = targetStationCardIds.slice(defendedTargetsCount);\n    const playerId = this._playerId;\n\n    const playerState = this._matchService.getPlayerState(playerId);\n\n    const state = this._matchService.getState();\n\n    if (this.destroyed) {\n      const cardIndex = playerState.cardsInZone.findIndex(c => c.id === this.id);\n      const [cardData] = playerState.cardsInZone.splice(cardIndex);\n      playerState.discardedCards.push(cardData);\n\n      this._matchService.emitEvent(playerId, DiscardCardEvent({\n        //TODO Will this result in more action points..? Or should this event be a \"CardDestroyedEvent\"?\n        turn: state.turn,\n        phase: playerState.phase,\n        cardId: this.id,\n        cardCommonId: this.commonId\n      }));\n    } else {\n      this._matchService.updatePlayerCard(playerId, this.id, card => {\n        card.damage = this.damage;\n      });\n    }\n\n    let affectedItems = new Set(['cardsInZone']);\n\n    if (this.destroyed) {\n      affectedItems.add('discardedCards');\n      affectedItems.add('events');\n    }\n\n    if (targetIdsNotProtected.length) {\n      affectedItems.add('stationCards');\n    }\n\n    return {\n      targetStationCardIds: targetIdsNotProtected,\n      affectedItems\n    };\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/EnergyShield.js?");
+
+/***/ }),
+
+/***/ "../shared/card/FastMissile.js":
+/*!*************************************!*\
+  !*** ../shared/card/FastMissile.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("const BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nmodule.exports = class FastMissile extends BaseCard {\n  constructor(deps) {\n    super(deps);\n  }\n\n  canMove() {\n    return this._matchInfoRepository.getPlayerPhase(this._playerId) === 'attack';\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/FastMissile.js?");
+
+/***/ }),
+
+/***/ "../shared/card/Neutral.js":
+/*!*********************************!*\
+  !*** ../shared/card/Neutral.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("module.exports = function Neutral(deps) {\n  const baseCard = deps.card;\n  return {\n    hasEffectOnStationAttack: () => {\n      return false;\n    },\n    getImportanceOnStationAttack: () => {\n      return 0;\n    },\n    applyEffectOnStationAttack: args => {\n      return args;\n    }\n  };\n};\n\n//# sourceURL=webpack:///../shared/card/Neutral.js?");
 
 /***/ }),
 
@@ -182,6 +226,28 @@ eval("const BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card
 /***/ (function(module, exports, __webpack_require__) {
 
 eval("const BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nconst CanAttackTwice = __webpack_require__(/*! ./mixins/CanAttackTwice.js */ \"../shared/card/mixins/CanAttackTwice.js\");\n\nmodule.exports = class TriggerHappyJoe extends CanAttackTwice(BaseCard) {\n  constructor(deps) {\n    super(deps);\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/TriggerHappyJoe.js?");
+
+/***/ }),
+
+/***/ "../shared/card/classByCardCommonId.js":
+/*!*********************************************!*\
+  !*** ../shared/card/classByCardCommonId.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("const cardsJson = __webpack_require__(/*! ../../server/card/cards.json */ \"../server/card/cards.json\");\n\nconst filesById = {};\n\nfor (let cardJson of cardsJson) {\n  try {\n    filesById[cardJson.id] = __webpack_require__(\"../shared/card sync recursive ^\\\\.\\\\/.*\\\\.js$\")(`./${toPascalCase(cardJson.name)}.js`);\n  } catch (err) {}\n}\n\nmodule.exports = filesById;\n\nfunction toPascalCase(word) {\n  return word.match(/[a-z]+/gi).map(word => word.charAt(0).toUpperCase() + word.substr(1).toLowerCase()).join('');\n}\n\n//# sourceURL=webpack:///../shared/card/classByCardCommonId.js?");
+
+/***/ }),
+
+/***/ "../shared/card/index.js":
+/*!*******************************!*\
+  !*** ../shared/card/index.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("const BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nconst names = BaseCard.names;\nmodule.exports = getCardConstructorsByName();\n\nfunction getCardConstructorsByName() {\n  let constructorsByName = {};\n\n  for (let name of Object.values(names)) {\n    const filePath = getFilePathForName(name);\n    constructorsByName[name] = __webpack_require__(\"../shared/card sync recursive\")(filePath);\n  }\n\n  return constructorsByName;\n}\n\nfunction getFilePathForName(name) {\n  const fileName = toPascalCase(name) + '.js';\n  return `./${fileName}`;\n}\n\nfunction toPascalCase(word) {\n  return word.match(/[a-z]+/gi).map(word => word.charAt(0).toUpperCase() + word.substr(1).toLowerCase()).join('');\n}\n\n//# sourceURL=webpack:///../shared/card/index.js?");
 
 /***/ }),
 

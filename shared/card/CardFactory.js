@@ -1,5 +1,5 @@
 const BaseCard = require('./BaseCard.js');
-const cardIndex = require('./staticIndex.js');
+const classByCardCommonId = require('./classByCardCommonId.js');
 const MatchInfoRepository = require('../match/MatchInfoRepository.js');
 const EventRepository = require('../event/EventRepository.js');
 
@@ -24,6 +24,6 @@ module.exports = class CardFactory {
     }
 }
 
-function getCardConstructor({ name }) {
-    return cardIndex[name] || BaseCard;
+function getCardConstructor({ commonId }) {
+    return classByCardCommonId[commonId] || BaseCard;
 }
