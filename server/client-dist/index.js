@@ -148,7 +148,7 @@ eval("function webpackEmptyContext(req) {\n\tvar e = new Error(\"Cannot find mod
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("var map = {\n\t\"./BaseCard.js\": \"../shared/card/BaseCard.js\",\n\t\"./CardFactory.js\": \"../shared/card/CardFactory.js\",\n\t\"./EnergyShield.js\": \"../shared/card/EnergyShield.js\",\n\t\"./FastMissile.js\": \"../shared/card/FastMissile.js\",\n\t\"./Neutral.js\": \"../shared/card/Neutral.js\",\n\t\"./SmallCannon.js\": \"../shared/card/SmallCannon.js\",\n\t\"./TriggerHappyJoe.js\": \"../shared/card/TriggerHappyJoe.js\",\n\t\"./classByCardCommonId.js\": \"../shared/card/classByCardCommonId.js\",\n\t\"./index.js\": \"../shared/card/index.js\",\n\t\"./mixins/CanAttackTwice.js\": \"../shared/card/mixins/CanAttackTwice.js\",\n\t\"./staticIndex.js\": \"../shared/card/staticIndex.js\"\n};\n\n\nfunction webpackContext(req) {\n\tvar id = webpackContextResolve(req);\n\treturn __webpack_require__(id);\n}\nfunction webpackContextResolve(req) {\n\tvar id = map[req];\n\tif(!(id + 1)) { // check for number or string\n\t\tvar e = new Error(\"Cannot find module '\" + req + \"'\");\n\t\te.code = 'MODULE_NOT_FOUND';\n\t\tthrow e;\n\t}\n\treturn id;\n}\nwebpackContext.keys = function webpackContextKeys() {\n\treturn Object.keys(map);\n};\nwebpackContext.resolve = webpackContextResolve;\nmodule.exports = webpackContext;\nwebpackContext.id = \"../shared/card sync recursive ^\\\\.\\\\/.*\\\\.js$\";\n\n//# sourceURL=webpack:///../shared/card_sync_^\\.\\/.*\\.js$?");
+eval("var map = {\n\t\"./BaseCard.js\": \"../shared/card/BaseCard.js\",\n\t\"./CardFactory.js\": \"../shared/card/CardFactory.js\",\n\t\"./EnergyShield.js\": \"../shared/card/EnergyShield.js\",\n\t\"./FastMissile.js\": \"../shared/card/FastMissile.js\",\n\t\"./Hunter.js\": \"../shared/card/Hunter.js\",\n\t\"./Neutral.js\": \"../shared/card/Neutral.js\",\n\t\"./SmallCannon.js\": \"../shared/card/SmallCannon.js\",\n\t\"./TriggerHappyJoe.js\": \"../shared/card/TriggerHappyJoe.js\",\n\t\"./classByCardCommonId.js\": \"../shared/card/classByCardCommonId.js\",\n\t\"./index.js\": \"../shared/card/index.js\",\n\t\"./mixins/CanAttackTwice.js\": \"../shared/card/mixins/CanAttackTwice.js\",\n\t\"./mixins/CanMoveFirstTurn.js\": \"../shared/card/mixins/CanMoveFirstTurn.js\",\n\t\"./staticIndex.js\": \"../shared/card/staticIndex.js\"\n};\n\n\nfunction webpackContext(req) {\n\tvar id = webpackContextResolve(req);\n\treturn __webpack_require__(id);\n}\nfunction webpackContextResolve(req) {\n\tvar id = map[req];\n\tif(!(id + 1)) { // check for number or string\n\t\tvar e = new Error(\"Cannot find module '\" + req + \"'\");\n\t\te.code = 'MODULE_NOT_FOUND';\n\t\tthrow e;\n\t}\n\treturn id;\n}\nwebpackContext.keys = function webpackContextKeys() {\n\treturn Object.keys(map);\n};\nwebpackContext.resolve = webpackContextResolve;\nmodule.exports = webpackContext;\nwebpackContext.id = \"../shared/card sync recursive ^\\\\.\\\\/.*\\\\.js$\";\n\n//# sourceURL=webpack:///../shared/card_sync_^\\.\\/.*\\.js$?");
 
 /***/ }),
 
@@ -192,7 +192,18 @@ eval("const BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("const BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nmodule.exports = class FastMissile extends BaseCard {\n  constructor(deps) {\n    super(deps);\n  }\n\n  canMove() {\n    return this._matchInfoRepository.getPlayerPhase(this._playerId) === 'attack';\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/FastMissile.js?");
+eval("const BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nconst CanMoveFirstTurn = __webpack_require__(/*! ./mixins/CanMoveFirstTurn.js */ \"../shared/card/mixins/CanMoveFirstTurn.js\");\n\nmodule.exports = class FastMissile extends CanMoveFirstTurn(BaseCard) {\n  constructor(deps) {\n    super(deps);\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/FastMissile.js?");
+
+/***/ }),
+
+/***/ "../shared/card/Hunter.js":
+/*!********************************!*\
+  !*** ../shared/card/Hunter.js ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("const BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nconst CanMoveFirstTurn = __webpack_require__(/*! ./mixins/CanMoveFirstTurn.js */ \"../shared/card/mixins/CanMoveFirstTurn.js\");\n\nmodule.exports = class Hunter extends CanMoveFirstTurn(BaseCard) {\n  constructor(deps) {\n    super(deps);\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/Hunter.js?");
 
 /***/ }),
 
@@ -259,6 +270,17 @@ eval("const BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card
 /***/ (function(module, exports) {
 
 eval("module.exports = superclass => class extends superclass {\n  canAttack() {\n    const turn = this._matchInfoRepository.getTurn();\n\n    const attacks = this._queryEvents.getAttacksOnTurn(this._card.id, turn);\n\n    const currentPlayerPhase = this._matchInfoRepository.getPlayerPhase(this._playerId);\n\n    return currentPlayerPhase === 'attack' && attacks.length < 2;\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/mixins/CanAttackTwice.js?");
+
+/***/ }),
+
+/***/ "../shared/card/mixins/CanMoveFirstTurn.js":
+/*!*************************************************!*\
+  !*** ../shared/card/mixins/CanMoveFirstTurn.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("module.exports = superclass => class extends superclass {\n  canMove() {\n    return this._matchInfoRepository.getPlayerPhase(this._playerId) === 'attack';\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/mixins/CanMoveFirstTurn.js?");
 
 /***/ }),
 
