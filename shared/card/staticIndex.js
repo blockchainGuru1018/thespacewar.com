@@ -3,5 +3,6 @@ const names = BaseCard.names;
 
 module.exports = {
     [names.energyShield]: require('./EnergyShield.js'),
-    [names.smallCannon]: require('./SmallCannon.js')
+    [names.smallCannon]: require('./SmallCannon.js'),
+    [names.triggerHappyJoe]: require('./TriggerHappyJoe.js')
 };

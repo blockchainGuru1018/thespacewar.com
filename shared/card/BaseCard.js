@@ -123,7 +123,8 @@ module.exports = BaseCard;
 
 BaseCard.names = {
     energyShield: 'Energy Shield',
-    smallCannon: 'Small Cannon'
+    smallCannon: 'Small Cannon',
+    triggerHappyJoe: 'Trigger-Happy Joe'
 };
 
 function getTurnWhenWasPutDown(events, cardId) {
