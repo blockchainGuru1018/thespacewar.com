@@ -10,13 +10,13 @@ const LobbyPage = require('./lobby/LobbyPage.js');
 const MatchPage = require('./match/MatchPage.js');
 const MatchRepository = require('./match/MatchRepository.js');
 const MatchControllerFactory = require('./match/MatchControllerFactory.js');
-const CardFactory = require('../shared/CardFactory.js');
+const CardDataAssembler = require('../shared/CardDataAssembler.js');
 const CardInfoRepository = require('../shared/CardInfoRepository.js');
 
 let socket;
 let userRepository;
 let matchRepository;
-let cardFactory;
+let cardDataAssembler;
 let cardInfoRepository;
 let rootStore;
 
@@ -28,8 +28,8 @@ bootstrap();
 function bootstrap() {
     socket = io();
 
-    cardFactory = CardFactory();
-    cardInfoRepository = CardInfoRepository({ cardFactory });
+    cardDataAssembler = CardDataAssembler();
+    cardInfoRepository = CardInfoRepository({ cardDataAssembler });
     userRepository = UserRepository({ socket });
     matchRepository = MatchRepository({
         socket,

@@ -3,7 +3,7 @@ const DiscardCardEvent = require('../../shared/event/DiscardCardEvent.js');
 const AttackEvent = require('../../shared/event/AttackEvent.js');
 const MoveCardEvent = require('../../shared/event/MoveCardEvent.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
-const CardFactory = require('../card/CardFactory.js');
+const CardFactory = require('../../shared/card/CardFactory.js');
 const { COMMON_PHASE_ORDER, PHASES, TEMPORARY_START_PHASE } = require('../../shared/phases.js');
 
 const itemNamesForOpponentByItemNameForPlayer = {
@@ -37,7 +37,7 @@ module.exports = function (deps) {
         }
     };
 
-    const cardFactory = CardFactory({
+    const cardFactory = new CardFactory({
         matchService: {
             getState: () => state,
             updatePlayerCard,
@@ -334,10 +334,6 @@ module.exports = function (deps) {
         const attackerCardData = findPlayerCard(playerId, attackerCardId);
         const attackerCard = cardFactory.createCardForPlayer(attackerCardData, playerId);
         if (!attackerCard.canAttack()) throw CheatError('Cannot attack with card');
-        const attackerHasAlreadyAttackedThisTurn = attackerCard.hasAttackedThisTurn();
-        if (attackerHasAlreadyAttackedThisTurn) {
-            throw CheatError('Cannot attack twice in the same turn');
-        }
 
         const opponentId = getOpponentId(playerId);
         const defenderCardData = findPlayerCard(opponentId, defenderCardId);
@@ -385,10 +381,7 @@ module.exports = function (deps) {
 
         const attackerCard = cardFactory.createCardForPlayer(attackerCardData, playerId);
         if (!attackerCard.canAttackStationCards()) {
-            throw CheatError('Cannot attack station before turn after card has moved to zone');
-        }
-        if (attackerCard.hasAttackedThisTurn()) {
-            throw CheatError('Cannot attack twice in the same turn');
+            throw CheatError('Cannot attack station');
         }
         if (targetStationCardIds.length > attackerCard.attack) {
             throw CheatError('Cannot attack that many station cards with card');
@@ -402,9 +395,7 @@ module.exports = function (deps) {
 
         const opponentId = getOpponentId(playerId);
         const opponentState = getPlayerState(opponentId);
-        const opponentCardsInHomeZone = opponentState.cardsInZone
-            .map(cardData => cardFactory.createCardForPlayer(cardData, opponentId))
-            .map(card => cardFactory.createBehaviourCard(card, opponentId));
+        const opponentCardsInHomeZone = opponentState.cardsInZone.map(cardData => cardFactory.createCardForPlayer(cardData, opponentId));
 
         let opponentAffectedItems = new Set();
         let finalTargetStationCardIds = targetStationCardIds;

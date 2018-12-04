@@ -1,64 +1,57 @@
-const Card = require('./Card.js');
+const BaseCard = require('./BaseCard.js');
 const DiscardCardEvent = require('../event/DiscardCardEvent.js');
 const AttackEvent = require('../event/AttackEvent.js');
 
-module.exports = function EnergyShield(deps) {
+module.exports = class EnergyShield extends BaseCard {
 
-    const {
-        getState,
-        getPlayerState,
-        emitEvent,
-        emitToPlayer,
-        getOpponentId,
-        updatePlayerCard,
-        updatePlayerStationCard,
-        prepareStationCardsForClient
-    } = deps.matchService;
-    const playerId = deps.playerId;
-    const baseCard = deps.card;
+    constructor(deps) {
+        super(deps);
 
-    return {
-        hasEffectOnStationAttack: () => {
-            return true
-        },
-        getImportanceOnStationAttack: () => {
-            return 1
-        },
-        applyEffectOnStationAttack
-    };
+        this._playerId = deps.playerId;
+        this._matchService = deps.matchService;
+    }
 
-    function applyEffectOnStationAttack({ attackerCard, targetStationCardIds }) {
-        const defenseBeforeAttack = baseCard.defense - baseCard.damage;
+    hasEffectOnStationAttack() {
+        return true
+    }
 
-        attackerCard.attackCard(baseCard);
+    getImportanceOnStationAttack() {
+        return 1
+    }
 
-        const defendedTargetsCount = baseCard.destroyed
+    applyEffectOnStationAttack({ attackerCard, targetStationCardIds }) {
+        const defenseBeforeAttack = this.defense - this.damage;
+
+        attackerCard.attackCard(this);
+
+        const defendedTargetsCount = this.destroyed
             ? defenseBeforeAttack
-            : defenseBeforeAttack - (baseCard.defense - baseCard.damage);
+            : defenseBeforeAttack - (this.defense - this.damage);
 
         const targetIdsNotProtected = targetStationCardIds.slice(defendedTargetsCount);
-        const playerState = getPlayerState(playerId);
-        const state = getState();
+        const playerId = this._playerId;
+        const playerState = this._matchService.getPlayerState(playerId);
+        const state = this._matchService.getState();
 
-        if (baseCard.destroyed) {
-            const cardIndex = playerState.cardsInZone.findIndex(c => c.id === baseCard.id);
+        if (this.destroyed) {
+            const cardIndex = playerState.cardsInZone.findIndex(c => c.id === this.id);
             const [cardData] = playerState.cardsInZone.splice(cardIndex);
             playerState.discardedCards.push(cardData);
-            emitEvent(playerId, DiscardCardEvent({ //TODO Will this result in more action points..? Or should this event be a "CardDestroyedEvent"?
+            this._matchService.emitEvent(playerId, DiscardCardEvent({ //TODO Will this result in more action points..? Or should this event be a "CardDestroyedEvent"?
                 turn: state.turn,
                 phase: playerState.phase,
-                cardId: baseCard.id,
-                cardCommonId: baseCard.commonId
+                cardId: this.id,
+                cardCommonId: this.commonId
             }));
         }
         else {
-            updatePlayerCard(playerId, baseCard.id, card => {
-                card.damage = baseCard.damage;
+            this._matchService.updatePlayerCard(playerId, this.id, card => {
+                card.damage = this.damage;
             });
         }
 
         let affectedItems = new Set(['cardsInZone']);
-        if (baseCard.destroyed) {
+        if (this.destroyed) {
             affectedItems.add('discardedCards');
             affectedItems.add('events');
         }

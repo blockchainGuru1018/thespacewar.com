@@ -3,7 +3,8 @@ const DiscardCardEvent = require('../../shared/event/DiscardCardEvent.js');
 const AttackEvent = require('../../shared/event/AttackEvent.js');
 const MoveCardEvent = require('../../shared/event/MoveCardEvent.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
-const CardFactory = require('../card/CardFactory.js');
+const CardDataAssembler = require('../../shared/CardDataAssembler.js');
+const CardFactory = require('../card/ClientCardFactory.js');
 const {
     COMMON_PHASE_ORDER,
     PHASES
@@ -29,8 +30,8 @@ module.exports = function (deps) {
     const matchControllerFactory = deps.matchControllerFactory;
     const cardInfoRepository = deps.cardInfoRepository;
     const actionPointsCalculator = deps.actionPointsCalculator || ActionPointsCalculator({ cardInfoRepository });
+    const cardFactory = deps.cardFactory || new CardFactory();
 
-    const cardFactory = CardFactory();
     let matchController;
 
     return {

@@ -20,7 +20,7 @@ module.exports = function () {
         for (let cardJson of cardsJson) {
             const copies = cardJson.number_copies ? parseInt(cardJson.number_copies) : 1;
             for (let i = 0; i < copies; i++) {
-                const card = Card(cardJson);
+                const card = CardData(cardJson);
                 cards.push(card);
             }
         }
@@ -29,12 +29,12 @@ module.exports = function () {
 
     function createFromCommonId(commonId) {
         const cardJson = cardsJson.find(c => c.id === commonId);
-        return Card(cardJson);
+        return CardData(cardJson);
     }
 };
 
 
-function Card(cardJson) {
+function CardData(cardJson) {
     const color = cardJson.type_card;
     return {
         id: createUniqueCardId(cardJson.id),

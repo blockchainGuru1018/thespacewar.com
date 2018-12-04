@@ -427,7 +427,7 @@ module.exports = {
         },
         'should throw error'() {
             assert(this.error);
-            assert.equals(this.error.message, 'Cannot attack twice in the same turn');
+            assert.equals(this.error.message, 'Cannot attack with card');
         },
         'when second player restore state should still have attacked card'() {
             this.match.start();
@@ -716,7 +716,7 @@ module.exports = {
             },
             'should throw error'() {
                 assert(this.error);
-                assert.equals(this.error.message, 'Cannot attack station before turn after card has moved to zone');
+                assert.equals(this.error.message, 'Cannot attack station');
             }
         },
         'when card has never been moved': {
@@ -783,7 +783,7 @@ module.exports = {
             },
             'should throw error'() {
                 assert(this.error);
-                assert.equals(this.error.message, 'Cannot attack twice in the same turn');
+                assert.equals(this.error.message, 'Cannot attack station');
             }
         },
         'when attack 2 station cards with 2 different cards': {

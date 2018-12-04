@@ -1,8 +1,8 @@
 module.exports = function (deps) {
 
-    const cardFactory = deps.cardFactory;
+    const cardDataAssembler = deps.cardDataAssembler;
 
-    const deck = cardFactory.createAll();
+    const deck = cardDataAssembler.createAll();
     shuffle(deck);
 
     return {

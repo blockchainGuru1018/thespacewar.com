@@ -1,5 +1,5 @@
-const Card = require('./Card.js');
-const names = Card.names;
+const BaseCard = require('./BaseCard.js');
+const names = BaseCard.names;
 
 module.exports = getCardConstructorsByName();
 

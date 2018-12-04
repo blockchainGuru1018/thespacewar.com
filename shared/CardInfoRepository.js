@@ -1,8 +1,8 @@
 module.exports = function (deps) {
 
-    const cardFactory = deps.cardFactory;
+    const cardDataAssembler = deps.cardDataAssembler;
 
-    const cards = cardFactory.createAll();
+    const cards = cardDataAssembler.createAll();
 
     return {
         getCost,

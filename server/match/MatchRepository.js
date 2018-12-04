@@ -1,6 +1,6 @@
 const Player = require('../player/Player.js');
 const Match = require('./Match.js');
-const CardFactory = require('../../shared/CardFactory.js');
+const CardDataAssembler = require('../../shared/CardDataAssembler.js');
 const CardInfoRepository = require('../../shared/CardInfoRepository.js');
 const DeckFactory = require('../deck/DeckFactory.js');
 
@@ -9,9 +9,9 @@ module.exports = function (deps) {
     const userRepository = deps.userRepository;
     const socketRepository = deps.socketRepository;
 
-    const cardFactory = CardFactory();
-    const deckFactory = DeckFactory({ cardFactory });
-    const cardInfoRepository = CardInfoRepository({ cardFactory });
+    const cardDataAssembler = CardDataAssembler();
+    const deckFactory = DeckFactory({ cardDataAssembler });
+    const cardInfoRepository = CardInfoRepository({ cardDataAssembler });
 
     const matchById = new Map();
     const matchByUserId = new Map();

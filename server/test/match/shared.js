@@ -7,8 +7,8 @@ let {
     defaults
 } = require('bocha');
 let FakeDeckFactory = require('../testUtils/FakeDeckFactory.js');
-let FakeCardFactory = require('../testUtils/FakeCardFactory.js');
-const createCard = FakeCardFactory.createCard;
+let FakeCardDataAssembler = require('../testUtils/FakeCardDataAssembler.js');
+const createCard = FakeCardDataAssembler.createCard;
 const createDeckFromCards = FakeDeckFactory.createDeckFromCards;
 let CardInfoRepository = require('../../../shared/CardInfoRepository.js');
 let Match = require('../../match/Match.js');
@@ -24,7 +24,7 @@ module.exports = {
     },
     ...{
         FakeDeckFactory,
-        FakeCardFactory,
+        FakeCardDataAssembler,
         createCard,
         createDeckFromCards,
         CardInfoRepository,
@@ -144,10 +144,10 @@ function createMatch(deps = {}) {
         deps.players.push(createPlayer());
     }
     const deckFactory = deps.deckFactory || FakeDeckFactory.fromCards([createCard()]);
-    const cardFactory = deckFactory._getCardFactory();
+    const cardDataAssembler = deckFactory._getCardDataAssembler();
     defaults(deps, {
         deckFactory,
-        cardInfoRepository: CardInfoRepository({ cardFactory }),
+        cardInfoRepository: CardInfoRepository({ cardDataAssembler }),
         players: [createPlayer(), createPlayer()]
     });
     return Match(deps);
@@ -221,7 +221,7 @@ function createState(options) {
 
     for (let playerId of options.playerOrder) {
         if (!options.deckByPlayerId[playerId]) {
-            options.deckByPlayerId[playerId] = FakeDeckFactory.createDeckFromCards([FakeCardFactory.createCard()]);
+            options.deckByPlayerId[playerId] = FakeDeckFactory.createDeckFromCards([FakeCardDataAssembler.createCard()]);
         }
         if (!options.playerStateById[playerId]) {
             options.playerStateById[playerId] = createPlayerState();

@@ -101,9 +101,7 @@
             },
             canAttack() {
                 const card = this.createCard(this.card);
-                return !this.attackerCardId
-                    && card.canAttack()
-                    && !card.hasAttackedThisTurn();
+                return !this.attackerCardId && card.canAttack();
             },
             canAttackCardInZone() {
                 return this.zoneOpponentRow

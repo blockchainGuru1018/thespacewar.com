@@ -1,29 +1,29 @@
-const FakeCardFactory = require('../testUtils/FakeCardFactory.js');
+const FakeCardDataAssembler = require('../testUtils/FakeCardDataAssembler.js');
 
 module.exports = FakeDeckFactory;
 
 FakeDeckFactory.fromCards = cards => {
-    let cardFactory = { createAll: () => [...cards] };
-    return FakeDeckFactory({ cardFactory });
+    let cardDataAssembler = { createAll: () => [...cards] };
+    return FakeDeckFactory({ cardDataAssembler });
 };
 
 FakeDeckFactory.createDeckFromCards = cards => {
-    let cardFactory = { createAll: () => [cards.map(c => FakeCardFactory.createCard(c))] };
-    return FakeDeck({ cardFactory });
+    let cardDataAssembler = { createAll: () => [cards.map(c => FakeCardDataAssembler.createCard(c))] };
+    return FakeDeck({ cardDataAssembler });
 };
 
-function FakeDeckFactory({ cardFactory }) {
+function FakeDeckFactory({ cardDataAssembler }) {
     return {
-        create: () => FakeDeck({ cardFactory }),
-        _getCardFactory: () => cardFactory
+        create: () => FakeDeck({ cardDataAssembler }),
+        _getCardDataAssembler: () => cardDataAssembler
     }
 }
 
 function FakeDeck(deps) {
 
-    const cardFactory = deps.cardFactory;
+    const cardDataAssembler = deps.cardDataAssembler;
 
-    let cards = cardFactory.createAll();
+    let cards = cardDataAssembler.createAll();
 
     return {
         draw,
@@ -33,7 +33,7 @@ function FakeDeck(deps) {
     function drawSingle() {
         const card = cards.shift();
         if (cards.length === 0) {
-            cards = cardFactory.createAll();
+            cards = cardDataAssembler.createAll();
         }
         return card;
     }

@@ -3,8 +3,8 @@ let sinon = bocha.sinon;
 let testCase = bocha.testCase;
 let assert = bocha.assert;
 let refute = bocha.refute;
-let FakeCardFactory = require('../testUtils/FakeCardFactory.js');
-const createCard = FakeCardFactory.createCard;
+let FakeCardDataAssembler = require('../testUtils/FakeCardDataAssembler.js');
+const createCard = FakeCardDataAssembler.createCard;
 let CardInfoRepository = require('../../../shared/CardInfoRepository.js');
 let ActionPointCalculator = require('../../../shared/match/ActionPointsCalculator.js');
 let DiscardCardEvent = require('../../../shared/event/DiscardCardEvent.js');
@@ -172,8 +172,8 @@ module.exports = testCase('ActionPointCalculator', {
 });
 
 function FakeCardInfoRepository(cards) {
-    let cardFactory = {
+    let cardDataAssembler = {
         createAll: () => cards.map(c => createCard(c))
     };
-    return CardInfoRepository({ cardFactory });
+    return CardInfoRepository({ cardDataAssembler });
 }
