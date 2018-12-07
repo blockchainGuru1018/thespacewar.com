@@ -2,7 +2,13 @@
     <div :style="cardStyle" :data-type="card.type || ''" :class="classes" ref="card">
         <div @click="enlargeClick" class="enlargeIcon"/>
         <div class="actionOverlays">
-            <template v-if="canSelectAction">
+            <div v-if="canBeSelectedAsDefender"
+                 @click.stop="selectAsDefender(card)"
+                 class="attackable actionOverlay"/>
+            <div v-else-if="canBeSelectedForRepair"
+                 @click.stop="selectForRepair(card)"
+                 class="selectForRepair actionOverlay"/>
+            <template v-else-if="canSelectAction">
                 <div v-if="canMove"
                      @click.stop="moveClick"
                      class="movable actionOverlay">
@@ -13,15 +19,17 @@
                      class="readyToAttack actionOverlay">
                     Attack
                 </div>
+                <div v-if="canRepair"
+                     @click="selectAsRepairer(card.id)"
+                     class="repair actionOverlay">
+                    Repair
+                </div>
                 <div v-if="canBeDiscarded"
                      @click.stop="discardClick"
                      class="discard actionOverlay">
                     Discard
                 </div>
             </template>
-            <div v-if="canBeSelectedAsDefender"
-                 @click.stop="selectAsDefender(card)"
-                 class="attackable actionOverlay"/>
         </div>
         <div class="indicatorOverlays">
             <div v-if="card.damage && card.damage > 0" class="card-damageIndicator" :style="damageTextStyle">
@@ -60,7 +68,8 @@
                 'turn',
                 'events',
                 'attackerCardId',
-                'ownUser'
+                'ownUser',
+                'repairerCardId'
             ]),
             ...mapGetters([
                 'allOpponentStationCards',
@@ -93,7 +102,8 @@
             canSelectAction() {
                 if (!this.isPlayerCard) return false;
 
-                return !this.attackerCardId;
+                return !this.attackerCardId
+                    && !this.repairerCardId;
             },
             canMove() {
                 const card = this.createCard(this.card);
@@ -126,6 +136,16 @@
             canBeDiscarded() {
                 return this.card.type === 'duration'
                     && this.phase === 'preparation';
+            },
+            canRepair() {
+                return this
+                    .createCard(this.card)
+                    .canRepair();
+            },
+            canBeSelectedForRepair() {
+                if (!this.repairerCardId || this.repairerCardId === this.card.id) return false;
+
+                return this.createCard(this.card).canBeRepaired();
             }
         },
         methods: {
@@ -133,7 +153,9 @@
                 'selectAsAttacker',
                 'selectAsDefender',
                 'moveCard',
-                'discardDurationCard'
+                'discardDurationCard',
+                'selectAsRepairer',
+                'selectForRepair'
             ]),
             moveClick() {
                 this.moveCard(this.card);
@@ -159,8 +181,13 @@
             this.wasPutDownTurn = putDownEventForThisCard ? putDownEventForThisCard.turn : 0;
         },
         mounted() {
-            let cardWidth = this.$refs.card.offsetWidth;
-            this.damageTextFontSize = Math.round(cardWidth * .25);
+            if (!this.$refs.card) {
+                throw Error(`Failed to render ZoneCard component with card data: ${JSON.stringify(this.card)}`);
+            }
+            else {
+                let cardWidth = this.$refs.card.offsetWidth;
+                this.damageTextFontSize = Math.round(cardWidth * .25);
+            }
         },
         directives: {
             clickOutside: vClickOutside.directive
@@ -234,7 +261,7 @@
         }
     }
 
-    .movable {
+    .movable, .repair, .selectForRepair {
         background-color: rgba(0, 0, 0, .5);
     }
 
@@ -246,12 +273,21 @@
         background-color: rgba(255, 100, 100, .5);
     }
 
+    .selectForRepair {
+        background-color: rgba(100, 100, 255, .5);
+    }
+
     .selectedAsAttacker {
         outline: 2px solid red;
     }
 
     .actionOverlays:hover {
-        & .movable, & .readyToAttack, & .attackable, & .discard {
+        & .movable,
+        & .readyToAttack,
+        & .attackable,
+        & .discard,
+        & .repair,
+        & .selectForRepair {
             visibility: visible;
         }
     }

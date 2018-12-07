@@ -12,4 +12,13 @@ module.exports = class QueryEvents {
                 && event.attackerCardId === cardId
         });
     }
+
+    getRepairsOnTurn(cardId, turn) {
+        const events = this._eventRepository.getAll();
+        return events.filter(event => {
+            return event.turn === turn
+                && event.type === 'repairCard'
+                && event.cardId === cardId;
+        });
+    }
 }

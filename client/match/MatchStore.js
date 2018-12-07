@@ -2,6 +2,7 @@ const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
 const DiscardCardEvent = require('../../shared/event/DiscardCardEvent.js');
 const AttackEvent = require('../../shared/event/AttackEvent.js');
 const MoveCardEvent = require('../../shared/event/MoveCardEvent.js');
+const RepairCardEvent = require('../../shared/event/RepairCardEvent.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
 const CardDataAssembler = require('../../shared/CardDataAssembler.js');
 const CardFactory = require('../card/ClientCardFactory.js');
@@ -64,7 +65,8 @@ module.exports = function (deps) {
             opponentCardsInPlayerZone: [],
             opponentCardsInZone: [],
             attackerCardId: null,
-            selectedDefendingStationCards: []
+            selectedDefendingStationCards: [],
+            repairerCardId: null
         },
         getters: {
             playerCardModels,
@@ -77,7 +79,8 @@ module.exports = function (deps) {
             allPlayerCardsInOwnAndOpponentZone,
             allPlayerStationCards,
             allOpponentStationCards,
-            createCard
+            createCard,
+            findPlayerCard
         },
         mutations: {
             setPlayerStationCards,
@@ -121,8 +124,12 @@ module.exports = function (deps) {
             opponentRetreated,
             registerAttack,
             removePlayerCard,
+            updatePlayerCard,
             cancelAttack,
-            endAttack
+            endAttack,
+            selectAsRepairer,
+            selectForRepair,
+            cancelCurrentAction
         }
     };
 
@@ -165,6 +172,14 @@ module.exports = function (deps) {
         return cardData => {
             return cardFactory.createFromVuexStore(cardData, state);
         };
+    }
+
+    function findPlayerCard(state) {
+        return cardId => {
+            return state.playerCardsInZone.find(c => c.id === cardId)
+                || state.playerCardsInOpponentZone.find(c => c.id === cardId)
+                || null;
+        }
     }
 
     function attackerCard(state, getters) {
@@ -362,6 +377,9 @@ module.exports = function (deps) {
             commit('setPlayerStationCards', getters.allPlayerStationCards.filter(s => s.id !== cardId));
         }
 
+        state.events.push(PutDownCardEvent({ turn: state.turn, location, cardId, cardCommonId: card.commonId }));
+        matchController.emit('putDownCard', { location, cardId });
+
         if (location.startsWith('station')) {
             if (location === 'station-draw') {
                 state.playerStation.drawCards.push(card);
@@ -381,9 +399,6 @@ module.exports = function (deps) {
                 dispatch('placeCardInZone', card);
             }
         }
-
-        state.events.push(PutDownCardEvent({ turn: state.turn, location, cardId, cardCommonId: card.commonId }));
-        matchController.emit('putDownCard', { location, cardId });
     }
 
     function placeCardInZone({ state }, card) {
@@ -523,6 +538,46 @@ module.exports = function (deps) {
         state.selectedDefendingStationCards = [];
     }
 
+    function selectAsRepairer({ state }, repairerCardId) {
+        state.repairerCardId = repairerCardId;
+    }
+
+    function selectForRepair({ state, getters, dispatch }, cardData) {
+        let repairCardData = getters.findPlayerCard(state.repairerCardId);
+        let repairerCard = getters.createCard(repairCardData);
+        let cardToRepair = getters.createCard(cardData);
+        repairerCard.repairCard(cardToRepair);
+        state.events.push(RepairCardEvent({
+            turn: state.turn,
+            cardId: repairerCard.id,
+            cardCommonId: repairerCard.commonId,
+            repairedCardId: cardToRepair.id,
+            repairedCardCommonId: cardToRepair.commonId
+        }));
+        state.repairerCardId = null;
+
+        dispatch('updatePlayerCard', {
+            cardId: cardToRepair.id,
+            updateFn: card => {
+                card.damage = cardToRepair.damage;
+            }
+        });
+
+        matchController.emit('repairCard', {
+            repairerCardId: repairerCard.id,
+            cardToRepairId: cardToRepair.id
+        });
+    }
+
+    function cancelCurrentAction({ state, dispatch }) {
+        if (state.attackerCardId) {
+            dispatch('cancelAttack');
+        }
+        else if (state.repairerCardId) {
+            state.repairerCardId = null;
+        }
+    }
+
     function addDiscardEvent({ state }, card) {
         state.events.push(DiscardCardEvent({
             turn: state.turn,
@@ -576,6 +631,14 @@ module.exports = function (deps) {
                 state.playerCardsInOpponentZone.splice(cardInOpponentZoneIndex, 1);
             }
         }
+    }
+
+    function updatePlayerCard({ state }, { cardId, updateFn }) {
+        let card = state.playerCardsInZone.find(c => c.id === cardId)
+            || state.playerCardsInOpponentZone.find(c => c.id === cardId);
+        if (!card) throw Error('Could not find card when trying to update it. ID: ' + cardId);
+
+        updateFn(card);
     }
 
     function moveFlippedStationCardToZone({ dispatch }, stationCardId) {

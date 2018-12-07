@@ -33,6 +33,36 @@ const DONE = [
             },
         ]
     },
+    {
+        "id": "6",
+        "name": "Fast Missile",
+        "price": "2",
+        "type_card": "red",
+        "detail": "Can move the first turn.",
+        "defense": "1",
+        "attack": "2",
+        "number_copies": "1",
+    },
+    {
+        "id": "28",
+        "name": "Hunter",
+        "price": "3",
+        "type_card": "blue",
+        "detail": "Can move the first turn.",
+        "defense": "1",
+        "attack": "2",
+        "number_copies": "2",
+    },
+    {
+        "id": "29",
+        "name": "New Hope",
+        "price": "2",
+        "type_card": "blue",
+        "detail": "Can repair 3 damage instead of attacking. Can move the first turn.",
+        "defense": "3",
+        "attack": "1",
+        "number_copies": "1",
+    },
 ];
 
 const COUNTERS = [
@@ -227,16 +257,6 @@ const EASY_GUI = [
 
 const NO_GUI = [
     {
-        "id": "6",
-        "name": "Fast Missile",
-        "price": "2",
-        "type_card": "red",
-        "detail": "Can move the first turn.",
-        "defense": "1",
-        "attack": "2",
-        "number_copies": "1",
-    },
-    {
         "id": "9",
         "name": "Full Force Forward",
         "price": "3",
@@ -275,26 +295,6 @@ const NO_GUI = [
         "defense": "0",
         "attack": "0",
         "number_copies": "2",
-    },
-    {
-        "id": "28",
-        "name": "Hunter",
-        "price": "3",
-        "type_card": "blue",
-        "detail": "Can move the first turn.",
-        "defense": "1",
-        "attack": "2",
-        "number_copies": "2",
-    },
-    {
-        "id": "29",
-        "name": "New Hope",
-        "price": "2",
-        "type_card": "blue",
-        "detail": "Can repair 3 damage instead of attacking. Can move the first turn.",
-        "defense": "3",
-        "attack": "1",
-        "number_copies": "1",
     },
     {
         "id": "30",

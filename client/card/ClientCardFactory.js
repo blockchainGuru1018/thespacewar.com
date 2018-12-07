@@ -1,17 +1,16 @@
 const CardFactory = require('../../shared/card/CardFactory.js');
-const ClientMatchService = require('./ClientMatchService.js');
+const MatchService = require('../../shared/match/MatchService.js');
 const CardDataAssembler = require('../../shared/CardDataAssembler.js');
+const mapFromClientToServerState = require('./mapFromClientToServerState.js');
 
 module.exports = class ClientCardFactory extends CardFactory {
 
     constructor() {
-        const clientMatchService = new ClientMatchService();
         super({
-            matchService: clientMatchService
+            matchService: new MatchService()
         });
 
         this._cardDataAssembler = CardDataAssembler();
-        this._matchService = clientMatchService;
     }
 
     createFromVuexStore(cardInfo, state) {
@@ -20,7 +19,8 @@ module.exports = class ClientCardFactory extends CardFactory {
             ? { ...cardDataAssembler.createFromCommonId(cardInfo.commonId), ...cardInfo }
             : { ...cardInfo };
 
-        this._matchService.setState(state);
+        const mappedState = mapFromClientToServerState(state);
+        this._matchService.setState(mappedState);
         return super.createCardForPlayer(cardData, state.ownUser.id);
     }
 }

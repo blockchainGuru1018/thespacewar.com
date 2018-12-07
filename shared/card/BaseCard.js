@@ -1,3 +1,4 @@
+const phases = require('../phases.js');
 const QueryEvents = require('../event/QueryEvents.js');
 
 class BaseCard {
@@ -65,7 +66,8 @@ class BaseCard {
     canAttack() {
         if (!this._card.attack) return false;
         if (this._card.type === 'duration') return false;
-        return this._matchInfoRepository.getPlayerPhase(this._playerId) === 'attack'
+
+        return this._matchInfoRepository.getPlayerPhase(this._playerId) === phases.PHASES.attack
             && !this.hasAttackedThisTurn();
     }
 
@@ -104,6 +106,14 @@ class BaseCard {
         const putDownOnTurn = getTurnWhenWasPutDown(this._eventRepository.getAll(), this._card.id);
         return putDownOnTurn !== this._matchInfoRepository.getTurn()
             && this._matchInfoRepository.getPlayerPhase(this._playerId) === 'attack';
+    }
+
+    canRepair() {
+        return false;
+    }
+
+    canBeRepaired() {
+        return !!this.damage;
     }
 
     hasEffectOnStationAttack() {

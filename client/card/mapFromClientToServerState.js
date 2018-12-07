@@ -4,7 +4,9 @@ module.exports = function (clientState) {
         playerStateById: {
             [clientState.ownUser.id]: {
                 phase: clientState.phase,
-                events: clientState.events
+                events: clientState.events,
+                cardsInZone: clientState.playerCardsInZone,
+                cardsInOpponentZone: clientState.playerCardsInOpponentZone
             }
         }
     };

@@ -2,8 +2,10 @@ const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
 const DiscardCardEvent = require('../../shared/event/DiscardCardEvent.js');
 const AttackEvent = require('../../shared/event/AttackEvent.js');
 const MoveCardEvent = require('../../shared/event/MoveCardEvent.js');
+const RepairCardEvent = require('../../shared/event/RepairCardEvent.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
-const CardFactory = require('../../shared/card/CardFactory.js');
+const MatchService = require('../../shared/match/MatchService.js');
+const CardFactory = require('../card/ServerCardFactory.js');
 const { COMMON_PHASE_ORDER, PHASES, TEMPORARY_START_PHASE } = require('../../shared/phases.js');
 
 const itemNamesForOpponentByItemNameForPlayer = {
@@ -37,18 +39,9 @@ module.exports = function (deps) {
         }
     };
 
-    const cardFactory = new CardFactory({
-        matchService: {
-            getState: () => state,
-            updatePlayerCard,
-            updatePlayerStationCard,
-            getPlayerState,
-            emitEvent,
-            emitToPlayer,
-            getOpponentId,
-            prepareStationCardsForClient
-        }
-    });
+    const matchService = new MatchService();
+    matchService.setState(state);
+    const cardFactory = new CardFactory({ getFreshState: () => state });
 
     return {
         id: matchId,
@@ -63,6 +56,7 @@ module.exports = function (deps) {
         moveCard,
         attack,
         attackStationCard, // TODO Rename attackStationCards (pluralized)
+        repairCard,
         retreat,
         updatePlayer,
         restoreFromState,
@@ -503,6 +497,35 @@ module.exports = function (deps) {
         updateFn(stationCard);
     }
 
+    function repairCard(playerId, { repairerCardId, cardToRepairId }) {
+        const repairerCardData = findPlayerCard(playerId, repairerCardId);
+        const repairerCard = cardFactory.createCardForPlayer(repairerCardData, playerId);
+        if (!repairerCard.canRepair()) throw CheatError('Cannot repair');
+
+        const cardToRepairData = findPlayerCard(playerId, cardToRepairId);
+        const cardToRepair = cardFactory.createCardForPlayer(cardToRepairData, playerId);
+        repairerCard.repairCard(cardToRepair);
+        updatePlayerCard(playerId, cardToRepair.id, card => {
+            card.damage = cardToRepair.damage;
+        });
+
+        const playerState = getPlayerState(playerId);
+        playerState.events.push(RepairCardEvent({
+            turn: state.turn,
+            cardId: repairerCard.id,
+            cardCommonId: repairerCard.commonId,
+            repairedCardId: cardToRepair.id,
+            repairedCardCommonId: cardToRepair.commonId
+        }));
+        let zoneName = playerState.cardsInZone.some(c => c.id === cardToRepair.id)
+            ? 'cardsInZone'
+            : 'cardsInOpponentZone';
+        emitToOpponent(playerId, 'stateChanged', {
+            [zoneName]: playerState[zoneName],
+            events: playerState.events
+        });
+    }
+
     function retreat(playerId) {
         const opponentId = getOpponentId(playerId);
         emitToPlayer(opponentId, 'opponentRetreated');
@@ -720,10 +743,6 @@ module.exports = function (deps) {
 
     function getOpponentDeck(playerId) {
         return getPlayerDeck(getOpponentId(playerId));
-    }
-
-    function emitEvent(playerId, event) {
-        getPlayerState(playerId).events.push(event);
     }
 };
 

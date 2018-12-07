@@ -28,7 +28,7 @@ module.exports = function () {
     }
 
     function createFromCommonId(commonId) {
-        const cardJson = cardsJson.find(c => c.id === commonId);
+        const cardJson = cardsJson.find(c => c.id === commonId.toString());
         return CardData(cardJson);
     }
 };

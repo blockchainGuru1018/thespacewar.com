@@ -209,8 +209,7 @@
                 'playerCardsInOpponentZone',
                 'opponentDiscardedCards',
                 'opponentCardsInZone',
-                'opponentCardsInPlayerZone',
-                'attackerCardId'
+                'opponentCardsInPlayerZone'
             ]),
             ...mapGetters([
                 'playerCardModels',
@@ -288,7 +287,7 @@
                 'discardCard',
                 'selectAsDefender',
                 'retreat',
-                'cancelAttack'
+                'cancelCurrentAction'
             ]),
             canAffordCard(card) {
                 return this.actionPoints2 >= card.cost;
@@ -311,9 +310,8 @@
                 if (this.holdingCard) {
                     this.holdingCard = null;
                 }
-
-                if (!!this.attackerCardId) {
-                    this.cancelAttack();
+                else {
+                    this.cancelCurrentAction();
                 }
             },
             getOpponentCardStyle(index) {
@@ -368,7 +366,10 @@
             });
             this.$refs.match.addEventListener('click', event => {
                 const targetElementClasses = Array.from(event.target.classList);
-                if (!targetElementClasses.includes('card') || targetElementClasses.includes('card--placeholder')) {
+                const isNotCardOrCardActionOverlay = (!targetElementClasses.includes('card')
+                    && !targetElementClasses.includes('actionOverlay'))
+                if (isNotCardOrCardActionOverlay
+                    || targetElementClasses.includes('card--placeholder')) {
                     this.emptyClick();
                 }
             });
