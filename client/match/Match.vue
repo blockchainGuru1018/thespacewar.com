@@ -1,7 +1,9 @@
 <template>
     <div ref="match" class="match">
         <div class="match-header">
-            <button @click="retreat" class="match-retreatButton">Retreat</button>
+            <button @click="restoreSavedMatch" class="match-smallButton">Restore match</button>
+            <button @click="saveMatch" class="match-smallButton--success match-smallButton">Save match</button>
+            <button @click="retreat" class="match-retreatButton match-smallButton">Retreat</button>
             <h1 :title="`Match ID: ${matchId}`">{{ ownUser.name }} v.s. {{ opponentUser.name }}</h1>
         </div>
         <div class="field">
@@ -305,7 +307,9 @@
                 'retreat',
                 'cancelCurrentAction',
                 'askToDrawCard',
-                'askToDiscardOpponentTopTwoCards'
+                'askToDiscardOpponentTopTwoCards',
+                'saveMatch',
+                'restoreSavedMatch'
             ]),
             canAffordCard(card) {
                 return this.actionPoints2 >= card.cost;
@@ -447,22 +451,39 @@
         color: #333;
     }
 
-    .match-retreatButton {
-        background-color: #ff3646;
+    .match-smallButton {
+        background-color: #35A7FF;
         color: rgba(255, 255, 255, 1);
         box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.2);;
         border: none;
         font-size: 14px;
-        padding: 3px 7px;
+        padding: 8px 12px;
         margin-right: 16px;
+        letter-spacing: .11em;
 
         &:active {
             outline: 2px solid rgba(0, 0, 0, .3);
         }
 
         &:focus, &:hover {
-            background-color: #ff6670;
+            background-color: #66bdff;
             outline: 0;
+        }
+    }
+
+    .match-smallButton--success {
+        background-color: #51c870;
+
+        &:focus, &:hover {
+            background-color: #68cc88;
+        }
+    }
+
+    .match-retreatButton {
+        background-color: #ff3646;
+
+        &:focus, &:hover {
+            background-color: #ff6670;
         }
     }
 

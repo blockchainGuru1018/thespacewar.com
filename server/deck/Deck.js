@@ -2,12 +2,14 @@ module.exports = function (deps) {
 
     const cardDataAssembler = deps.cardDataAssembler;
 
-    const deck = cardDataAssembler.createAll();
+    let deck = cardDataAssembler.createAll();
     shuffle(deck);
 
     return {
         drawSingle,
-        draw
+        draw,
+        _getDeck: () => [...deck],
+        _restoreDeck: previousDeck => deck = [...previousDeck]
     };
 
     function drawSingle() {

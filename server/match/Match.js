@@ -5,6 +5,7 @@ const RepairCardEvent = require('../../shared/event/RepairCardEvent.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
 const DrawPhaseController = require('./DrawPhaseController.js');
 const AttackController = require('./AttackController.js');
+const DebugController = require('./DebugController.js');
 const MatchComService = require('./MatchComService.js');
 const MatchService = require('../../shared/match/MatchService.js');
 const ServerQueryEvents = require('./ServerQueryEvents.js');
@@ -66,8 +67,10 @@ module.exports = function (deps) {
         matchService,
         matchComService,
         playerStateServiceById,
-        cardFactory
+        cardFactory,
+        restoreFromState
     };
+    const debugController = DebugController(controllerDeps);
     const drawPhaseController = DrawPhaseController(controllerDeps);
     const attackController = AttackController(controllerDeps);
 
@@ -89,6 +92,8 @@ module.exports = function (deps) {
         repairCard,
         retreat,
         updatePlayer,
+        saveMatch: debugController.onSaveMatch,
+        restoreSavedMatch: debugController.onRestoreSavedMatch,
         restoreFromState,
         toClientModel,
         hasEnded

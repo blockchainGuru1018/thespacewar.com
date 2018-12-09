@@ -92,6 +92,8 @@ module.exports = function (deps) {
             // remote
             askToDrawCard,
             askToDiscardOpponentTopTwoCards,
+            saveMatch,
+            restoreSavedMatch,
 
             // local & remote
             init,
@@ -270,6 +272,21 @@ module.exports = function (deps) {
 
     function askToDiscardOpponentTopTwoCards() {
         matchController.emit('discardOpponentTopTwoCards');
+    }
+
+    function saveMatch() {
+        let name = prompt('Name match save:');
+        matchController.emit('saveMatch', name);
+    }
+
+    function restoreSavedMatch({ state }) {
+        let saveName = prompt('Restore match with name:');
+        matchController.emit('restoreSavedMatch', {
+            saveName,
+            opponentId: state.opponentUser.id
+        });
+        document.body.innerHTML = '<marquee><h1>Loading...</h1></marquee>';
+        setTimeout(() => window.location.reload(), 3000);
     }
 
     function stateChanged({ state, commit }, data) {
