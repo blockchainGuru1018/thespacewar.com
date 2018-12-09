@@ -18,7 +18,7 @@
                             class="playerHud-nextPhaseButton playerHud-button playerHud-item">
                         {{ nextPhaseButtonText }}
                     </button>
-                    <button v-else
+                    <button v-else-if="shouldEndTurnButton"
                             @click="nextPhaseClick"
                             class="playerHud-endTurnButton playerHud-button playerHud-item">
                         End turn
@@ -31,6 +31,9 @@
             <div v-if="numberOfStationCardsToSelect > 0" class="guideText">
                 Select {{ numberOfStationCardsToSelect}}
                 more station {{ numberOfStationCardsToSelect === 1 ? 'card' : 'cards' }}
+            </div>
+            <div v-if="phase === 'draw'" to="match" class="guideText guideText--small guideText-drawCard">
+                Draw more cards
             </div>
         </portal>
     </div>
@@ -66,11 +69,15 @@
                 const nameOfCurrentPhase = this.phase.substr(0, 1).toUpperCase() + this.phase.substr(1);
                 return `${nameOfCurrentPhase} phase`;
             },
+            shouldEndTurnButton() {
+                return this.phase === PHASES.attack;
+            },
             nextPhaseButtonText() {
+                if (this.shouldEndTurnButton) return '';
                 if (this.phase === PHASES.preparation) {
                     return 'Start turn';
                 }
-                if (this.phase === PHASES.attack || this.phase === PHASES.wait) {
+                if (this.phase === PHASES.draw || this.phase === PHASES.wait) {
                     return '';
                 }
 
@@ -190,5 +197,9 @@
         font-weight: bold;
         text-shadow: -1px 1px 10px rgba(255, 255, 255, 0.12),
         1px 1px 10px rgba(255, 255, 255, 0.12)
+    }
+
+    .guideText--small {
+        font-size: 64px;
     }
 </style>

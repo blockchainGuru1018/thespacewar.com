@@ -26,7 +26,7 @@ module.exports = {
         assert.equals(error.message, 'Cannot leave the discard phase without discarding enough cards');
         assert.equals(error.type, 'CheatDetected');
     },
-    'when exit fist discard phase with 3 cards': {
+    'when exit first discard phase with 3 cards': {
         async setUp() {
             this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard']);
             let match = createMatchAndGoToFirstDiscardPhase({

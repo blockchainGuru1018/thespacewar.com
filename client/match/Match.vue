@@ -67,7 +67,14 @@
                              class="card card--turnedAround"/>
                     </div>
                     <div class="field-drawPile">
-                        <div class="card card-faceDown"/>
+                        <div v-if="phase === PHASES.draw" class="card card-faceDown">
+                            <div class="actionOverlays">
+                                <div @click="opponentDrawPileClick" class="drawPile-discardTopTwo actionOverlay">
+                                    Discard 2
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else class="card card-faceDown"/>
                     </div>
                 </div>
                 <div class="field-opponentCardsOnHand field-section">
@@ -85,7 +92,14 @@
                         </div>
                     </div>
                     <div class="field-drawPile">
-                        <div class="card card-faceDown"/>
+                        <div v-if="phase === PHASES.draw" class="card card-faceDown">
+                            <div class="actionOverlays">
+                                <div @click="playerDrawPileClick" class="drawPile-draw actionOverlay">
+                                    Draw
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else class="card card-faceDown"/>
                     </div>
                     <div class="field-discardPile">
                         <div v-if="playerDiscardedCards.length === 0" class="card card--placeholder"/>
@@ -183,12 +197,14 @@
     const ZoneCard = require('./ZoneCard.vue').default;
     const StationCard = require('./StationCard.vue').default;
     const PlayerHud = require('./PlayerHud.vue').default;
+    const { PHASES } = require('./phases.js');
 
     module.exports = {
         data() {
             return {
                 holdingCard: null,
-                mousePosition: { x: 0, y: 0 }
+                mousePosition: { x: 0, y: 0 },
+                PHASES
             }
         },
         computed: {
@@ -287,7 +303,9 @@
                 'discardCard',
                 'selectAsDefender',
                 'retreat',
-                'cancelCurrentAction'
+                'cancelCurrentAction',
+                'askToDrawCard',
+                'askToDiscardOpponentTopTwoCards'
             ]),
             canAffordCard(card) {
                 return this.actionPoints2 >= card.cost;
@@ -354,6 +372,12 @@
                 return {
                     backgroundImage: 'url(/card/' + card.commonId + '/image)'
                 }
+            },
+            playerDrawPileClick() {
+                this.askToDrawCard();
+            },
+            opponentDrawPileClick() {
+                this.askToDiscardOpponentTopTwoCards();
             }
         },
         created() {
@@ -846,5 +870,46 @@
         font-weight: bold;
         text-shadow: -1px 1px 10px rgba(255, 255, 255, 0.12),
         1px 1px 10px rgba(255, 255, 255, 0.12)
+    }
+
+    .actionOverlays, .indicatorOverlays {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .actionOverlays {
+        z-index: 2;
+
+        &:hover {
+            & .drawPile-draw {
+                visibility: visible;
+            }
+        }
+    }
+
+    .actionOverlay {
+        color: white;
+        font-family: Helvetica, sans-serif;
+        font-size: 16px;
+        flex: 1 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        visibility: hidden;
+        opacity: .5;
+        cursor: pointer;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+
+    .drawPile-draw {
+        background-color: rgba(0, 0, 0, .5);
     }
 </style>

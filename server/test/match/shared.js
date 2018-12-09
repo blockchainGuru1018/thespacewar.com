@@ -6,6 +6,7 @@ let {
     refute,
     defaults
 } = require('bocha');
+let FakeDeck = require('../testUtils/FakeDeck.js');
 let FakeDeckFactory = require('../testUtils/FakeDeckFactory.js');
 let FakeCardDataAssembler = require('../testUtils/FakeCardDataAssembler.js');
 const createCard = FakeCardDataAssembler.createCard;
@@ -23,6 +24,7 @@ module.exports = {
         defaults
     },
     ...{
+        FakeDeck,
         FakeDeckFactory,
         FakeCardDataAssembler,
         createCard,
@@ -74,6 +76,7 @@ function createMatchAndGoToFirstActionPhase(deps = {}) {
     match.start();
     match.start();
     match.nextPhase(match.players[0].id);
+    match.drawCard(match.players[0].id);
     match.nextPhase(match.players[0].id);
     return match;
 }

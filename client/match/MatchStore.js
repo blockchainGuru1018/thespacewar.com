@@ -90,7 +90,8 @@ module.exports = function (deps) {
         },
         actions: {
             // remote
-            stateChanged,
+            askToDrawCard,
+            askToDiscardOpponentTopTwoCards,
 
             // local & remote
             init,
@@ -105,6 +106,7 @@ module.exports = function (deps) {
             discardDurationCard,
 
             // local
+            stateChanged,
             restoreState,
             beginGame,
             placeCardInZone,
@@ -257,6 +259,19 @@ module.exports = function (deps) {
         }
     }
 
+    async function init({ dispatch }) {
+        matchController = matchControllerFactory.create({ dispatch, matchId });
+        matchController.start();
+    }
+
+    function askToDrawCard() {
+        matchController.emit('drawCard');
+    }
+
+    function askToDiscardOpponentTopTwoCards() {
+        matchController.emit('discardOpponentTopTwoCards');
+    }
+
     function stateChanged({ state, commit }, data) {
         for (let key of Object.keys(data)) {
             if (key === 'stationCards') {
@@ -270,11 +285,6 @@ module.exports = function (deps) {
                 state[localKey] = data[key];
             }
         }
-    }
-
-    async function init({ dispatch }) {
-        matchController = matchControllerFactory.create({ dispatch, matchId });
-        matchController.start();
     }
 
     function nextPlayer({ state }, { turn, currentPlayer }) {
@@ -479,8 +489,12 @@ module.exports = function (deps) {
         localStorage.setItem('ongoing-match', JSON.stringify(matchData));
     }
 
-    function drawCards({ state }, cards) {
+    function drawCards({ state, dispatch }, { cards, moreCardsCanBeDrawn }) {
         state.playerCardsOnHand.push(...cards);
+
+        if (!moreCardsCanBeDrawn) {
+            dispatch('goToNextPhase');
+        }
     }
 
     function selectAsAttacker({ state }, card) {

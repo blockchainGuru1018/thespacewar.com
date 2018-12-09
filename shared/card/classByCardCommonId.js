@@ -1,18 +1,13 @@
-const cardsJson = require('../../server/card/cards.json');
+const BaseCard = require('./BaseCard.js');
 
 const filesById = {};
-for (let cardJson of cardsJson) {
+for (let cardCommonId of Object.keys(BaseCard.classNameByCommonId)) {
     try {
-        filesById[cardJson.id] = require(`./${toPascalCase(cardJson.name)}.js`);
+        filesById[cardCommonId] = require(`./${BaseCard.classNameByCommonId[cardCommonId]}`);
     }
     catch (err) {
+        console.error('Could not load Class file of card with common id: ' + cardCommonId + '! Got error: ' + err);
     }
 }
 
 module.exports = filesById;
-
-function toPascalCase(word) {
-    return word.match(/[a-z]+/gi)
-        .map(word => word.charAt(0).toUpperCase() + word.substr(1).toLowerCase())
-        .join('');
-}

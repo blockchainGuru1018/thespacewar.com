@@ -1,4 +1,4 @@
-module.exports = class QueryEvents {
+class QueryEvents {
 
     constructor(eventRepository) {
         this._eventRepository = eventRepository;
@@ -21,4 +21,14 @@ module.exports = class QueryEvents {
                 && event.cardId === cardId;
         });
     }
+
+    getCardDrawsOnTurn(turn) {
+        const events = this._eventRepository.getAll();
+        return events.filter(event => {
+            return event.turn === turn
+                && event.type === 'drawCard';
+        });
+    }
 }
+
+module.exports = QueryEvents;

@@ -1,4 +1,4 @@
-module.exports = class MatchService {
+class MatchService {
 
     constructor(deps) {
         this._state = {};
@@ -10,6 +10,10 @@ module.exports = class MatchService {
 
     getState() {
         return this._state;
+    }
+
+    getTurn() {
+        return this._state.turn;
     }
 
     getZoneWhereCardIs(cardId) {
@@ -34,11 +38,35 @@ module.exports = class MatchService {
         updateFn(card);
     }
 
+    updatePlayerState(playerId, updateFn) {
+        const playerState = this.getPlayerState(playerId);
+        updateFn(playerState);
+        return playerState;
+    }
+
     getPlayerState(playerId) {
         return this._state.playerStateById[playerId];
     }
 
-    emitEvent(playerId, event) {
-        getPlayerState(playerId).events.push(event);
+    getPlayerDeck(playerId) {
+        return this._state.deckByPlayerId[playerId];
+    }
+
+    getStationDrawCardsCount(playerId) {
+        let stationCards = this.getPlayerStationCards(playerId);
+        return stationCards
+            .filter(card => card.place === 'draw')
+            .length;
+    }
+
+    getPlayerStationCards(playerId) {
+        const playerState = this.getPlayerState(playerId);
+        return playerState.stationCards;
+    }
+
+    storeEvent(playerId, event) {
+        this.getPlayerState(playerId).events.push(event);
     }
 }
+
+module.exports = MatchService;

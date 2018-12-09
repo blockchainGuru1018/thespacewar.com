@@ -137,6 +137,15 @@ BaseCard.names = {
     triggerHappyJoe: 'Trigger-Happy Joe'
 };
 
+BaseCard.classNameByCommonId = {
+    21: 'EnergyShield',
+    23: 'SmallCannon',
+    24: 'TriggerHappyJoe',
+    28: 'Hunter',
+    29: 'NewHope',
+    6: 'FastMissile'
+};
+
 function getTurnWhenWasPutDown(events, cardId) {
     const putDownEventForThisCard = events.find(e => {
         return e.type === 'putDownCard'

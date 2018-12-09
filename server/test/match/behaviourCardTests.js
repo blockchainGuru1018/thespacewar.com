@@ -44,7 +44,7 @@ module.exports = {
                                 createCard({
                                     id: 'C2A',
                                     type: 'defense',
-                                    name: BaseCard.names.energyShield,
+                                    commonId: getCommonIdForClass('EnergyShield'),
                                     defense: 5
                                 })
                             ],
@@ -139,8 +139,8 @@ module.exports = {
                             cardsInZone: [
                                 createCard({
                                     id: 'C2A',
+                                    commonId: getCommonIdForClass('EnergyShield'),
                                     type: 'defense',
-                                    name: BaseCard.names.energyShield,
                                     defense: 5
                                 })
                             ],
@@ -227,7 +227,7 @@ module.exports = {
                                     {
                                         id: 'C2A',
                                         type: 'defense',
-                                        name: BaseCard.names.energyShield,
+                                        commonId: getCommonIdForClass('EnergyShield'),
                                         defense: 5,
                                         damage: 1
                                     }
@@ -319,3 +319,11 @@ module.exports = {
     },
     'Small Cannon:': {}
 };
+
+function getCommonIdForClass(className) {
+    const classNameByCommonId = BaseCard.classNameByCommonId
+    for (let key of Object.keys(classNameByCommonId)) {
+        if (classNameByCommonId[key] === className) return key;
+    }
+    throw new Error('Could not find common ID for class name ' + className);
+}

@@ -37,7 +37,7 @@ module.exports = class EnergyShield extends BaseCard {
             const cardIndex = playerState.cardsInZone.findIndex(c => c.id === this.id);
             const [cardData] = playerState.cardsInZone.splice(cardIndex);
             playerState.discardedCards.push(cardData);
-            this._matchService.emitEvent(playerId, DiscardCardEvent({ //TODO Will this result in more action points..? Or should this event be a "CardDestroyedEvent"?
+            this._matchService.storeEvent(playerId, DiscardCardEvent({ //TODO Will this result in more action points..? Or should this event be a "CardDestroyedEvent"?
                 turn: state.turn,
                 phase: playerState.phase,
                 cardId: this.id,

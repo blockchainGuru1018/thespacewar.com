@@ -1,10 +1,14 @@
 const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
 const DiscardCardEvent = require('../../shared/event/DiscardCardEvent.js');
-const AttackEvent = require('../../shared/event/AttackEvent.js');
 const MoveCardEvent = require('../../shared/event/MoveCardEvent.js');
 const RepairCardEvent = require('../../shared/event/RepairCardEvent.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
+const DrawPhaseController = require('./DrawPhaseController.js');
+const AttackController = require('./AttackController.js');
+const MatchComService = require('./MatchComService.js');
 const MatchService = require('../../shared/match/MatchService.js');
+const ServerQueryEvents = require('./ServerQueryEvents.js');
+const PlayerStateService = require('../../shared/match/PlayerStateService.js');
 const CardFactory = require('../card/ServerCardFactory.js');
 const { COMMON_PHASE_ORDER, PHASES, TEMPORARY_START_PHASE } = require('../../shared/phases.js');
 
@@ -42,6 +46,30 @@ module.exports = function (deps) {
     const matchService = new MatchService();
     matchService.setState(state);
     const cardFactory = new CardFactory({ getFreshState: () => state });
+    const matchComService = new MatchComService({
+        matchId,
+        playerIds: players.map(p => p.id),
+        connectionsByPlayerId: {
+            [players[0].id]: players[0].connection,
+            [players[1].id]: players[1].connection
+        }
+    });
+    const playerStateServiceById = {};
+    for (let player of players) {
+        playerStateServiceById[player.id] = new PlayerStateService({
+            playerId: player.id,
+            matchService,
+            queryEvents: new ServerQueryEvents({ playerId: player.id, matchService })
+        });
+    }
+    const controllerDeps = {
+        matchService,
+        matchComService,
+        playerStateServiceById,
+        cardFactory
+    };
+    const drawPhaseController = DrawPhaseController(controllerDeps);
+    const attackController = AttackController(controllerDeps);
 
     return {
         id: matchId,
@@ -51,11 +79,13 @@ module.exports = function (deps) {
         getOwnState: getPlayerState,
         nextPhase,
         putDownCard,
+        drawCard: drawPhaseController.onDrawCard,
+        discardOpponentTopTwoCards: drawPhaseController.onDiscardOpponentTopTwoCards,
         discardCard, //TODO Rename discardFromHand
         discardDurationCard,
         moveCard,
-        attack,
-        attackStationCard, // TODO Rename attackStationCards (pluralized)
+        attack: attackController.onAttack,
+        attackStationCard: attackController.onAttackStationCards, // TODO Rename attackStationCards (pluralized)
         repairCard,
         retreat,
         updatePlayer,
@@ -106,10 +136,7 @@ module.exports = function (deps) {
         }
 
         const currentPlayerState = getPlayerState(state.currentPlayer);
-        if (currentPlayerState.phase === PHASES.draw) {
-            startDrawPhaseForPlayer(state.currentPlayer);
-        }
-        else if (currentPlayerState.phase === PHASES.action) {
+        if (currentPlayerState.phase === PHASES.action) {
             startActionPhaseForPlayer(state.currentPlayer);
         }
     }
@@ -259,21 +286,22 @@ module.exports = function (deps) {
         playerState.cardsOnHand.splice(cardIndexOnHand, 1);
         playerState.discardedCards.push(discardedCard);
 
+        const playerCardCount = getPlayerCardCount(playerId)
         const opponentId = getOpponentId(playerId);
         const opponentDeck = getOpponentDeck(playerId);
         const opponentState = getOpponentState(playerId);
-        const opponentCardCount = getPlayerCardCount(playerId)
+
         if (playerState.phase === 'action') {
             const bonusCard = opponentDeck.drawSingle();
             opponentState.cardsOnHand.push(bonusCard);
             emitToPlayer(opponentId, 'opponentDiscardedCard', {
                 bonusCard,
                 discardedCard,
-                opponentCardCount
+                opponentCardCount: playerCardCount
             });
         }
         else {
-            emitToPlayer(opponentId, 'opponentDiscardedCard', { discardedCard, opponentCardCount });
+            emitToPlayer(opponentId, 'opponentDiscardedCard', { discardedCard, opponentCardCount: playerCardCount });
         }
 
         playerState.events.push(DiscardCardEvent({
@@ -321,145 +349,6 @@ module.exports = function (deps) {
         emitToOpponent(playerId, 'opponentMovedCard', cardId)
     }
 
-    function attack(playerId, { attackerCardId, defenderCardId }) {
-        const playerState = getPlayerState(playerId);
-        if (playerState.phase !== PHASES.attack) throw CheatError('Cannot attack when not in attack phase');
-
-        const attackerCardData = findPlayerCard(playerId, attackerCardId);
-        const attackerCard = cardFactory.createCardForPlayer(attackerCardData, playerId);
-        if (!attackerCard.canAttack()) throw CheatError('Cannot attack with card');
-
-        const opponentId = getOpponentId(playerId);
-        const defenderCardData = findPlayerCard(opponentId, defenderCardId);
-        const defenderCard = cardFactory.createCardForPlayer(defenderCardData, opponentId);
-        if (!attackerCard.canAttackCard(defenderCard)) throw CheatError('Cannot attack that card');
-        if (defenderCard.isInOpponentZone() === attackerCard.isInOpponentZone()) {
-            throw CheatError('Cannot attack card in another zone');
-        }
-
-        attackerCard.attackCard(defenderCard);
-
-        emitToPlayer(opponentId, 'opponentAttackedCard', {
-            attackerCardId,
-            defenderCardId,
-            newDamage: defenderCard.damage,
-            defenderCardWasDestroyed: defenderCard.destroyed,
-            attackerCardWasDestroyed: attackerCard.destroyed
-        });
-        registerAttack(playerId, attackerCardId);
-
-        if (defenderCard.destroyed) {
-            removePlayerCard(opponentId, defenderCardId);
-        }
-        else {
-            updatePlayerCard(opponentId, defenderCardId, card => {
-                card.damage = defenderCard.damage;
-            });
-        }
-
-        if (attackerCard.destroyed) {
-            removePlayerCard(playerId, attackerCardId);
-        }
-    }
-
-    function attackStationCard(playerId, { attackerCardId, targetStationCardIds }) { // TODO rename attackStation
-        const playerState = getPlayerState(playerId);
-        const attackerCardData = playerState.cardsInOpponentZone.find(c => c.id === attackerCardId);
-        if (!attackerCardData) throw CheatError('Can only attack station card from enemy zone');
-
-        const opponentStationCards = getOpponentState(playerId).stationCards;
-        if (opponentStationCards.length > targetStationCardIds.length
-            && attackerCardData.attack > targetStationCardIds.length) {
-            throw CheatError('Need more target station cards to attack');
-        }
-
-        const attackerCard = cardFactory.createCardForPlayer(attackerCardData, playerId);
-        if (!attackerCard.canAttackStationCards()) {
-            throw CheatError('Cannot attack station');
-        }
-        if (targetStationCardIds.length > attackerCard.attack) {
-            throw CheatError('Cannot attack that many station cards with card');
-        }
-
-        const targetStationCards = opponentStationCards.filter(s => targetStationCardIds.includes(s.card.id));
-        if (!targetStationCards.length) return;
-        if (targetStationCards.some(c => c.flipped)) {
-            throw Error('Cannot attack a flipped station card');
-        }
-
-        const opponentId = getOpponentId(playerId);
-        const opponentState = getPlayerState(opponentId);
-        const opponentCardsInHomeZone = opponentState.cardsInZone.map(cardData => cardFactory.createCardForPlayer(cardData, opponentId));
-
-        let opponentAffectedItems = new Set();
-        let finalTargetStationCardIds = targetStationCardIds;
-        const cardsWithEffectOnAttack = opponentCardsInHomeZone.filter(card => card.hasEffectOnStationAttack({ targetStationCards }));
-        if (cardsWithEffectOnAttack.length) {
-            cardsWithEffectOnAttack.sort((a, b) => a.getImportanceOnStationAttack() - b.getImportanceOnStationAttack());
-            for (let card of cardsWithEffectOnAttack) {
-                const outcome = card.applyEffectOnStationAttack({
-                    attackerCard,
-                    targetStationCardIds
-                });
-                outcome.affectedItems.forEach(item => opponentAffectedItems.add(item));
-                finalTargetStationCardIds = outcome.targetStationCardIds;
-            }
-        }
-        else {
-            opponentAffectedItems.add('stationCards');
-        }
-
-        performAttackOnStation({
-            playerId,
-            opponentId,
-            attackerCardId,
-            targetStationCardIds: finalTargetStationCardIds,
-            opponentAffectedItems: Array.from(opponentAffectedItems)
-        });
-    }
-
-    function performAttackOnStation({ playerId, opponentId, attackerCardId, targetStationCardIds, opponentAffectedItems }) {
-        for (let targetCardId of targetStationCardIds) {
-            updatePlayerStationCard(opponentId, targetCardId, card => {
-                card.flipped = true;
-            });
-        }
-
-        const opponentState = getPlayerState(opponentId);
-        const opponentEvent = {};
-        const playerEvent = {};
-        for (let itemName of opponentAffectedItems) {
-            const item = opponentState[itemName];
-            const itemNameForOtherPlayer = itemNamesForOpponentByItemNameForPlayer[itemName];
-            if (itemName === 'stationCards') {
-                const stationCards = prepareStationCardsForClient(item);
-                opponentEvent[itemName] = stationCards;
-                playerEvent[itemNameForOtherPlayer] = stationCards;
-            }
-            else {
-                opponentEvent[itemName] = item;
-                playerEvent[itemNameForOtherPlayer] = item;
-            }
-        }
-        emitToPlayer(opponentId, 'stateChanged', opponentEvent);
-        emitToPlayer(playerId, 'stateChanged', playerEvent);
-
-        registerAttack(playerId, attackerCardId);
-    }
-
-    function registerAttack(playerId, attackerCardId) {
-        const playerState = getPlayerState(playerId);
-        const cardData = findPlayerCard(playerId, attackerCardId);
-        if (cardData.type === 'missile') {
-            removePlayerCard(playerId, attackerCardId);
-        }
-        playerState.events.push(AttackEvent({
-            turn: state.turn,
-            attackerCardId,
-            cardCommonId: cardData.commonId
-        }));
-    }
-
     function findPlayerCard(playerId, cardId) {
         const playerState = getPlayerState(playerId);
         return playerState.cardsInZone.find(c => c.id === cardId)
@@ -490,13 +379,6 @@ module.exports = function (deps) {
         updateFn(card);
     }
 
-    function updatePlayerStationCard(playerId, cardId, updateFn) {
-        const playerState = getPlayerState(playerId);
-        let stationCard = playerState.stationCards.find(s => s.card.id === cardId);
-        if (!stationCard) throw Error('Could not find station card when trying to update it. ID: ' + cardId);
-        updateFn(stationCard);
-    }
-
     function repairCard(playerId, { repairerCardId, cardToRepairId }) {
         const repairerCardData = findPlayerCard(playerId, repairerCardId);
         const repairerCard = cardFactory.createCardForPlayer(repairerCardData, playerId);
@@ -521,7 +403,7 @@ module.exports = function (deps) {
             ? 'cardsInZone'
             : 'cardsInOpponentZone';
         emitToOpponent(playerId, 'stateChanged', {
-            [zoneName]: playerState[zoneName],
+            [itemNamesForOpponentByItemNameForPlayer[zoneName]]: playerState[zoneName],
             events: playerState.events
         });
     }
@@ -532,18 +414,6 @@ module.exports = function (deps) {
 
         state.ended = true;
         state.playerRetreated = playerId;
-    }
-
-    function startDrawPhaseForPlayer(playerId) {
-        const deck = getPlayerDeck(playerId);
-        const amountCardsToDraw = getStationDrawCardsCount(playerId);
-        let cards = deck.draw(amountCardsToDraw);
-        const playerState = getPlayerState(playerId);
-        playerState.cardsOnHand.push(...cards);
-        emitToPlayer(playerId, 'drawCards', cards);
-
-        const opponentId = getOpponentId(playerId)
-        emitOpponentCardCountToPlayer(opponentId);
     }
 
     function getPlayerState(playerId) {
