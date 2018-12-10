@@ -532,7 +532,8 @@
     }
 
     .field-opponentStation {
-        flex-direction: column;
+        flex-direction: column-reverse;
+        justify-content: flex-start;
         margin-top: 5px;
 
         .card {
