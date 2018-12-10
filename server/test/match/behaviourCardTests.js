@@ -249,12 +249,11 @@ module.exports = {
                     targetStationCardIds: ['S1A', 'S2A', 'S3A', 'S4A', 'S5A',]
                 });
             },
-            'opponent should have 1 station card flipped'() {
+            'opponent should NOT have any station card flipped'() {
                 this.match.start();
                 const { stationCards } = this.secondPlayerConnection.restoreState.lastCall.args[0];
                 const flippedCards = stationCards.filter(s => s.flipped);
-                assert.equals(flippedCards.length, 1);
-                assert.match(flippedCards[0], { card: { id: 'S5A' }, flipped: true });
+                assert.equals(flippedCards.length, 0);
             },
             'opponent should NOT have energy shield in zone'() {
                 this.match.start();
@@ -279,17 +278,9 @@ module.exports = {
                 assert.equals(discardedCards.length, 1);
                 assert.match(discardedCards[0], { id: 'C2A' });
             },
-            'should emit stateChanged to second player with station cards'() {
+            'should emit stateChanged to second player without station cards'() {
                 const { stationCards } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
-                assert.equals(stationCards.length, 5);
-                assert.equals(stationCards[0].id, 'S1A');
-                assert.equals(stationCards[1].id, 'S2A');
-                assert.equals(stationCards[2].id, 'S3A');
-                assert.equals(stationCards[3].id, 'S4A');
-
-                assert.equals(stationCards[4].id, 'S5A');
-                assert.equals(stationCards[4].card.id, 'S5A');
-                assert(stationCards[4].flipped);
+                refute.defined(stationCards);
             },
             'should emit stateChanged to first player once'() {
                 assert.calledOnce(this.firstPlayerConnection.stateChanged);
@@ -303,17 +294,9 @@ module.exports = {
                 assert.equals(opponentDiscardedCards.length, 1);
                 assert.match(opponentDiscardedCards[0], { id: 'C2A' });
             },
-            'should emit stateChanged to first player with opponentStationCards'() {
+            'should emit stateChanged to first player without opponentStationCards'() {
                 const { opponentStationCards } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
-                assert.equals(opponentStationCards.length, 5);
-                assert.equals(opponentStationCards[0].id, 'S1A');
-                assert.equals(opponentStationCards[1].id, 'S2A');
-                assert.equals(opponentStationCards[2].id, 'S3A');
-                assert.equals(opponentStationCards[3].id, 'S4A');
-
-                assert.equals(opponentStationCards[4].id, 'S5A');
-                assert.equals(opponentStationCards[4].card.id, 'S5A');
-                assert(opponentStationCards[4].flipped);
+                refute.defined(opponentStationCards);
             }
         }
     },

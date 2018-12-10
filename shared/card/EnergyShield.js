@@ -12,23 +12,16 @@ module.exports = class EnergyShield extends BaseCard {
     }
 
     hasEffectOnStationAttack() {
-        return true
+        return true;
     }
 
     getImportanceOnStationAttack() {
-        return 1
+        return 1;
     }
 
     applyEffectOnStationAttack({ attackerCard, targetStationCardIds }) {
-        const defenseBeforeAttack = this.defense - this.damage;
-
         attackerCard.attackCard(this);
 
-        const defendedTargetsCount = this.destroyed
-            ? defenseBeforeAttack
-            : defenseBeforeAttack - (this.defense - this.damage);
-
-        const targetIdsNotProtected = targetStationCardIds.slice(defendedTargetsCount);
         const playerId = this._playerId;
         const playerState = this._matchService.getPlayerState(playerId);
         const state = this._matchService.getState();
@@ -55,10 +48,7 @@ module.exports = class EnergyShield extends BaseCard {
             affectedItems.add('discardedCards');
             affectedItems.add('events');
         }
-        if (targetIdsNotProtected.length) {
-            affectedItems.add('stationCards');
-        }
 
-        return { targetStationCardIds: targetIdsNotProtected, affectedItems }
+        return { targetStationCardIds: [], affectedItems }
     }
 }
