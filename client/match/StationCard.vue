@@ -28,13 +28,15 @@
         ],
         computed: {
             ...mapState([
+                'opponentCardsInZone',
                 'attackerCardId',
                 'phase',
                 'selectedDefendingStationCards'
             ]),
             ...mapGetters([
                 'attackerCanAttackStationCards',
-                'actionPoints2'
+                'actionPoints2',
+                'createCard'
             ]),
             classes() {
                 const classes = ['card'];
@@ -60,7 +62,8 @@
                     && !this.stationCard.flipped
                     && this.isOpponentStationCard
                     && this.attackerCardId
-                    && this.attackerCanAttackStationCards;
+                    && this.attackerCanAttackStationCards
+                    && !this.opponentCardsInZone.some(c => this.createCard(c).stopsStationAttack());
             }
         },
         methods: {

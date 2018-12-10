@@ -120,6 +120,10 @@ class BaseCard {
         return false
     }
 
+    stopsStationAttack() {
+        return false
+    }
+
     getImportanceOnStationAttack() {
         return 0
     }

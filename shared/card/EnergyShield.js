@@ -19,6 +19,10 @@ module.exports = class EnergyShield extends BaseCard {
         return 1;
     }
 
+    stopsStationAttack() {
+        return true;
+    }
+
     applyEffectOnStationAttack({ attackerCard, targetStationCardIds }) {
         attackerCard.attackCard(this);
 
