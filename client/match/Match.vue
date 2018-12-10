@@ -35,7 +35,7 @@
                     </div>
                 </div>
                 <div class="field-zoneRows field-opponentZoneRows">
-                    <div class="field-zone field-section">
+                    <div class="field-opponentZoneRow field-zone field-section">
                         <template v-for="n in 6">
                             <zone-card v-if="n <= opponentCardsInZone.length"
                                        :card="opponentCardsInZone[n - 1]"
@@ -47,7 +47,7 @@
                             <div v-else class="card card--placeholder"/>
                         </template>
                     </div>
-                    <div class="field-zone field-section playerCardsInOpponentZone">
+                    <div class="field-opponentZoneRow field-zone field-section playerCardsInOpponentZone">
                         <template v-for="n in 6">
                             <zone-card v-if="n <= playerCardsInOpponentZone.length"
                                        :card="playerCardsInOpponentZone[n - 1]"
@@ -508,6 +508,8 @@
 
     .field-opponent {
         flex: 0 0 40%;
+        width: 62%;
+        margin: 0 auto;
 
         .card {
             width: $opponentCardWidth;
@@ -533,7 +535,7 @@
 
     .field-opponentStation {
         flex-direction: column-reverse;
-        justify-content: flex-start;
+        justify-content: flex-end;
         margin-top: 5px;
 
         .card {
@@ -568,6 +570,10 @@
         align-items: center;
         justify-content: space-evenly;
         position: relative;
+
+        .field-opponent & {
+            flex: 0 0 10%;
+        }
     }
 
     .field-drawPile {
@@ -623,7 +629,6 @@
     .field-zone {
         flex: 1 0;
         display: flex;
-        justify-content: center;
         flex-wrap: wrap;
 
         .card {
@@ -638,6 +643,11 @@
 
         &.field-opponentZoneRows {
             padding-top: 80px;
+            flex: 1 0;
+        }
+
+        .field-opponentZoneRow {
+            flex-direction: row-reverse;
         }
     }
 
