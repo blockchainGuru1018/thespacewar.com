@@ -907,7 +907,7 @@
         z-index: 2;
 
         &:hover {
-            & .drawPile-draw {
+            & .actionOverlay {
                 visibility: visible;
             }
         }

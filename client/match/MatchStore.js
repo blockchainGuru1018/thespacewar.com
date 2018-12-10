@@ -4,7 +4,6 @@ const AttackEvent = require('../../shared/event/AttackEvent.js');
 const MoveCardEvent = require('../../shared/event/MoveCardEvent.js');
 const RepairCardEvent = require('../../shared/event/RepairCardEvent.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
-const CardDataAssembler = require('../../shared/CardDataAssembler.js');
 const CardFactory = require('../card/ClientCardFactory.js');
 const {
     COMMON_PHASE_ORDER,
@@ -508,7 +507,6 @@ module.exports = function (deps) {
 
     function drawCards({ state, dispatch }, { cards, moreCardsCanBeDrawn }) {
         state.playerCardsOnHand.push(...cards);
-
         if (!moreCardsCanBeDrawn) {
             dispatch('goToNextPhase');
         }
