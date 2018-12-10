@@ -52,7 +52,8 @@
             },
             canMoveCardToZone() {
                 return this.phase === 'action'
-                    && this.actionPoints2 >= this.stationCard.card.cost;
+                    && this.actionPoints2 >= this.stationCard.card.cost
+                    && !this.isOpponentStationCard;
             },
             selectedAsDefender() {
                 return this.selectedDefendingStationCards.includes(this.stationCard.id);
