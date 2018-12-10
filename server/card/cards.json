@@ -227,7 +227,7 @@
     "detail": "Protects base station. (You can only have one Energy Shield in play at the same time.)",
     "defense": "5",
     "attack": "0",
-    "number_copies": "3",
+    "number_copies": "10",
     "image_card": "https:\/\/admin.thespacewar.com\/source\/services\/generate_card_md_21.png"
   },
   {

@@ -181,7 +181,7 @@ module.exports = {
                     sinon.match({ id: 'C2A' }),
                     sinon.match({ id: 'C3A' })
                 ],
-                events: [sinon.match({ type: 'discardCard' }), sinon.match({ type: 'discardCard' })]
+                events: [sinon.match({ type: 'drawCard' })]
             }));
         },
         'should emit stateChanged to second player'() {
@@ -191,7 +191,7 @@ module.exports = {
                     sinon.match({ id: 'C2A' }),
                     sinon.match({ id: 'C3A' })
                 ],
-                events: [sinon.match({ type: 'drawCard' })]
+                events: [sinon.match({ type: 'discardCard' }), sinon.match({ type: 'discardCard' })]
             }));
         }
     }

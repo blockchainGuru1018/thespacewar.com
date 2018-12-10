@@ -59,11 +59,11 @@ function DrawPhaseController(deps) {
         const opponentDiscardedCards = opponentStateService.getDiscardedCards();
         matchComService.emitToPlayer(playerId, 'stateChanged', {
             [itemNamesForOpponentByItemNameForPlayer['discardedCards']]: opponentDiscardedCards,
-            events: opponentStateService.getEvents()
+            events: playerStateService.getEvents()
         });
         matchComService.emitToOpponentOf(playerId, 'stateChanged', {
             discardedCards: opponentDiscardedCards,
-            events: playerStateService.getEvents()
+            events: opponentStateService.getEvents()
         });
     }
 }

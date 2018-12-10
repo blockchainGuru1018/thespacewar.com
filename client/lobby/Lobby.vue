@@ -8,7 +8,11 @@
                 <div class="user">
                     <div class="user-name">{{ ownUser.name }} (you)</div>
                 </div>
-                <div v-for="user in users" class="user" @click="userClick(user)">
+                <div v-for="user in users"
+                     @keydown.enter="userClick(user)"
+                     @click="userClick(user)"
+                     class="user"
+                     tabindex="0">
                     <span class="user-name">{{ user.name }}</span>
                 </div>
             </div>

@@ -420,7 +420,7 @@ module.exports = function (deps) {
     function getPlayerState(playerId) {
         return state.playerStateById[playerId];
     }
-
+    
     function restoreFromState(restoreState) {
         for (let key of Object.keys(restoreState)) {
             state[key] = restoreState[key];
