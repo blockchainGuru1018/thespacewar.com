@@ -91,67 +91,19 @@ function AttackController(deps) {
             throw new CheatError('Cannot attack a flipped station card');
         }
 
-        const opponentCardsInHomeZone = opponentState.cardsInZone.map(cardData => cardFactory.createCardForPlayer(cardData, opponentId));
-
-        let opponentAffectedItems = new Set();
-        let finalTargetStationCardIds = targetStationCardIds;
-        const cardsWithEffectOnAttack = opponentCardsInHomeZone.filter(card => card.hasEffectOnStationAttack({ targetStationCards }));
-        if (cardsWithEffectOnAttack.length) {
-            cardsWithEffectOnAttack.sort((a, b) => a.getImportanceOnStationAttack() - b.getImportanceOnStationAttack());
-            for (let card of cardsWithEffectOnAttack) {
-                const outcome = card.applyEffectOnStationAttack({
-                    attackerCard,
-                    targetStationCardIds
-                });
-                outcome.affectedItems.forEach(item => opponentAffectedItems.add(item));
-                finalTargetStationCardIds = outcome.targetStationCardIds;
-            }
-        }
-        else {
-            opponentAffectedItems.add('stationCards');
-        }
-
-        performAttackOnStation({
-            playerId,
-            opponentId,
-            attackerCardId,
-            targetStationCardIds: finalTargetStationCardIds,
-            opponentAffectedItems: Array.from(opponentAffectedItems)
-        });
-
-    }
-
-    function performAttackOnStation({ playerId, opponentId, attackerCardId, targetStationCardIds, opponentAffectedItems }) {
-        let playerStateService = playerStateServiceById[playerId];
-        let opponentStateService = playerStateServiceById[opponentId];
-
         for (let targetCardId of targetStationCardIds) {
             opponentStateService.updateStationCard(targetCardId, card => {
                 card.flipped = true;
             });
         }
 
-        const opponentState = matchService.getPlayerState(opponentId);
-        const opponentEvent = {};
-        const playerEvent = {};
-        for (let itemName of opponentAffectedItems) {
-            const item = opponentState[itemName];
-            const itemNameForOtherPlayer = itemNamesForOpponentByItemNameForPlayer[itemName];
-            if (itemName === 'stationCards') {
-                const stationCards = matchComService.prepareStationCardsForClient(item);
-                opponentEvent[itemName] = stationCards;
-                playerEvent[itemNameForOtherPlayer] = stationCards;
-            }
-            else {
-                opponentEvent[itemName] = item;
-                playerEvent[itemNameForOtherPlayer] = item;
-            }
-        }
-
-        matchComService.emitToPlayer(opponentId, 'stateChanged', opponentEvent);
-        matchComService.emitToPlayer(playerId, 'stateChanged', playerEvent);
-
         playerStateService.registerAttack(attackerCardId);
+        matchComService.emitToPlayer(opponentId, 'stateChanged', {
+            stationCards: matchComService.prepareStationCardsForClient(opponentStateService.getStationCards())
+        });
+        matchComService.emitToPlayer(playerId, 'stateChanged', {
+            opponentStationCards: matchComService.prepareStationCardsForClient(opponentStateService.getStationCards())
+        });
     }
 }
 
