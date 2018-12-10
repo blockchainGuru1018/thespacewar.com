@@ -1,9 +1,31 @@
 class MatchComService {
 
-    constructor({ matchId, playerIds, connectionsByPlayerId }) {
+    constructor({ matchId, players }) {
         this._matchId = matchId;
-        this._playerIds = playerIds;
-        this._connectionsByPlayerId = connectionsByPlayerId;
+        this._players = players;
+    }
+
+    getPlayers() {
+        return [...this._players];
+    }
+
+    getPlayerIds() {
+        return this._players.map(p => p.id);
+    }
+
+    getPlayerConnection(playerId) {
+        return this._getPlayer(playerId).connection;
+    }
+
+    updatePlayer(playerId, mergeData) {
+        const player = this._players.find(p => p.id === playerId);
+        Object.assign(player, mergeData);
+    }
+
+    getOpponentId(playerId) {
+        return this
+            .getPlayerIds()
+            .find(id => id !== playerId);
     }
 
     emitToOpponentOf(playerId, action, value) {
@@ -11,12 +33,8 @@ class MatchComService {
         this.emitToPlayer(opponentId, action, value);
     }
 
-    getOpponentId(playerId) {
-        return this._playerIds.find(id => id !== playerId);
-    }
-
     emitToPlayer(playerId, action, value) {
-        const playerConnection = this._connectionsByPlayerId[playerId]
+        const playerConnection = this.getPlayerConnection(playerId);
         playerConnection.emit('match', {
             matchId: this._matchId,
             action,
@@ -38,6 +56,10 @@ class MatchComService {
             model.card = stationCard.card;
         }
         return model;
+    }
+
+    _getPlayer(playerId) {
+        return this._players.find(p => p.id === playerId);
     }
 
 }

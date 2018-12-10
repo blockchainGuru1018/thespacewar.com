@@ -47,14 +47,7 @@ module.exports = function (deps) {
     const matchService = new MatchService();
     matchService.setState(state);
     const cardFactory = new CardFactory({ getFreshState: () => state });
-    const matchComService = new MatchComService({
-        matchId,
-        playerIds: players.map(p => p.id),
-        connectionsByPlayerId: {
-            [players[0].id]: players[0].connection,
-            [players[1].id]: players[1].connection
-        }
-    });
+    const matchComService = new MatchComService({ matchId, players });
     const playerStateServiceById = {};
     for (let player of players) {
         playerStateServiceById[player.id] = new PlayerStateService({
@@ -77,7 +70,9 @@ module.exports = function (deps) {
     return {
         id: matchId,
         matchId, //TODO Remove all uses
-        players,
+        get players() {
+            return matchComService.getPlayers();
+        },
         start,
         getOwnState: getPlayerState,
         nextPhase,
@@ -91,7 +86,7 @@ module.exports = function (deps) {
         attackStationCard: attackController.onAttackStationCards, // TODO Rename attackStationCards (pluralized)
         repairCard,
         retreat,
-        updatePlayer,
+        updatePlayer: matchComService.updatePlayer.bind(matchComService),
         saveMatch: debugController.onSaveMatch,
         restoreSavedMatch: debugController.onRestoreSavedMatch,
         restoreFromState,
@@ -100,6 +95,7 @@ module.exports = function (deps) {
     };
 
     function start() {
+        const players = matchComService.getPlayers();
         const gameHasAlreadyStarted = state.playersReady >= players.length;
         if (gameHasAlreadyStarted) {
             for (let player of players) {
@@ -425,11 +421,6 @@ module.exports = function (deps) {
         return state.playerStateById[playerId];
     }
 
-    function updatePlayer(playerId, mergeData) {
-        const player = players.find(p => p.id === playerId);
-        Object.assign(player, mergeData);
-    }
-
     function restoreFromState(restoreState) {
         for (let key of Object.keys(restoreState)) {
             state[key] = restoreState[key];
@@ -505,6 +496,7 @@ module.exports = function (deps) {
     }
 
     function emitNextPlayer() {
+        const players = matchComService.getPlayers();
         for (const player of players) {
             emitToPlayer(player.id, 'nextPlayer', {
                 turn: state.turn,
@@ -514,11 +506,13 @@ module.exports = function (deps) {
     }
 
     function emitToOpponent(playerId, action, value) {
+        const players = matchComService.getPlayers();
         const opponent = players.find(p => p.id !== playerId);
         emitToPlayer(opponent.id, action, value);
     }
 
     function emitToPlayer(playerId, action, value) {
+        const players = matchComService.getPlayers();
         const player = players.find(p => p.id === playerId)
         player.connection.emit('match', { matchId, action, value });
     }
@@ -549,6 +543,7 @@ module.exports = function (deps) {
     }
 
     function toClientModel() {
+        const players = matchComService.getPlayers();
         return {
             playerIds: players.map(p => p.id),
             id: matchId
@@ -605,6 +600,7 @@ module.exports = function (deps) {
     }
 
     function getOpponentId(playerId) {
+        const players = matchComService.getPlayers();
         return players.find(p => p.id !== playerId).id;
     }
 
