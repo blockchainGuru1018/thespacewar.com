@@ -591,7 +591,7 @@ module.exports = function (deps) {
         dispatch('registerAttack', state.attackerCardId);
     }
 
-    function opponentAttackedCard({ state }, { attackerCardId, defenderCardId, newDamage, defenderCardWasDestroyed }) {
+    function opponentAttackedCard({ state }, { attackerCardId, defenderCardId, newDamage, attackerCardWasDestroyed, defenderCardWasDestroyed }) {
         let defenderCardInPlayerZone = state.playerCardsInZone.find(c => c.id === defenderCardId);
         let defenderCardInOpponentZone = state.playerCardsInOpponentZone.find(c => c.id === defenderCardId);
         let defenderCard = defenderCardInPlayerZone || defenderCardInOpponentZone;
@@ -602,6 +602,13 @@ module.exports = function (deps) {
         }
         else {
             defenderCard.damage = newDamage;
+        }
+
+        if (attackerCardWasDestroyed) {
+            let attackerCardInPlayerZone = state.opponentCardsInZone.find(c => c.id === attackerCardId);
+            let attackerCardZone = attackerCardInPlayerZone ? state.opponentCardsInZone : state.opponentCardsInPlayerZone;
+            let attackerCardIndex = attackerCardZone.findIndex(c => c.id === attackerCardId);
+            attackerCardZone.splice(attackerCardIndex, 1);
         }
     }
 

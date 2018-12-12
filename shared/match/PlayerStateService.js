@@ -70,17 +70,17 @@ class PlayerStateService {
         }
     }
 
-    discardCard(card) {
+    discardCard(cardData) {
         const phase = this.getPhase().phase;
         const turn = this._matchService.getTurn();
-        this.update(playerStae => {
-            playerStae.discardedCards.push(card);
+        this.update(playerState => {
+            playerState.discardedCards.push(cardData);
         });
         this.storeEvent(DiscardCardEvent({
             turn,
             phase,
-            cardId: card.id,
-            cardCommonId: card.commonId
+            cardId: cardData.id,
+            cardCommonId: cardData.commonId
         }));
     }
 
@@ -93,10 +93,6 @@ class PlayerStateService {
         const turn = this._matchService.getTurn();
         const attackEvent = AttackEvent({ turn, attackerCardId, cardCommonId: cardData.commonId })
         this.storeEvent(attackEvent);
-    }
-
-    storeEvent(event) {
-        this.update(state => state.events.push(event));
     }
 
     removeCard(cardId) {
@@ -131,6 +127,10 @@ class PlayerStateService {
 
         updateFn(stationCard);
         return playerState;
+    }
+
+    storeEvent(event) {
+        this.update(state => state.events.push(event));
     }
 
     update(updateFn) {

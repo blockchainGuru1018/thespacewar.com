@@ -46,8 +46,16 @@ function AttackController(deps) {
         });
         playerStateService.registerAttack(attackerCardId);
 
+        const opponentStateChangedEvent = {}
+        const playerStateChangedEvent = {};
         if (defenderCard.destroyed) {
             opponentStateService.removeCard(defenderCardId);
+            opponentStateService.discardCard(defenderCardData);
+
+            const opponentDiscardedCards = opponentStateService.getDiscardedCards();
+            opponentStateChangedEvent.discardedCards = opponentDiscardedCards;
+            opponentStateChangedEvent.events = opponentStateService.getEvents();
+            playerStateChangedEvent[itemNamesForOpponentByItemNameForPlayer.discardedCards] = opponentDiscardedCards;
         }
         else {
             opponentStateService.updateCard(defenderCardId, card => {
@@ -57,7 +65,16 @@ function AttackController(deps) {
 
         if (attackerCard.destroyed) {
             playerStateService.removeCard(attackerCardId);
+            playerStateService.discardCard(attackerCardData);
+
+            let discardedCards = playerStateService.getDiscardedCards();
+            playerStateChangedEvent.discardedCards = discardedCards;
+            playerStateChangedEvent.events = playerStateService.getEvents();
+            opponentStateChangedEvent[itemNamesForOpponentByItemNameForPlayer.discardedCards] = discardedCards;
         }
+
+        matchComService.emitToPlayer(playerId, 'stateChanged', playerStateChangedEvent);
+        matchComService.emitToPlayer(opponentId, 'stateChanged', opponentStateChangedEvent);
     }
 
     function onAttackStationCards(playerId, { attackerCardId, targetStationCardIds }) {

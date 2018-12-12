@@ -295,8 +295,10 @@ module.exports = {
     },
     'when first player makes deadly attack should remove defending card from play': {
         async setUp() {
-            this.connection = FakeConnection2(['restoreState', 'opponentAttackedCard']);
-            this.match = createMatch({ players: [Player('P1A'), Player('P2A', this.connection)] });
+            this.firstPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['restoreState', 'stateChanged', 'opponentAttackedCard']);
+            const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
+            this.match = createMatch({ players });
             this.match.restoreFromState(createState({
                 turn: 2,
                 currentPlayer: 'P1A',
@@ -317,11 +319,37 @@ module.exports = {
         },
         'when second player restore state should NOT have attacked card'() {
             this.match.start();
-            const { cardsInOpponentZone } = this.connection.restoreState.lastCall.args[0];
+            const { cardsInOpponentZone } = this.secondPlayerConnection.restoreState.lastCall.args[0];
             assert.equals(cardsInOpponentZone.length, 0);
         },
-        'should emit opponent attacked card'() {
-            assert.calledWith(this.connection.opponentAttackedCard, sinon.match({
+        'when second player restore state should have attacked card in discard pile'() {
+            this.match.start();
+            const { discardedCards } = this.secondPlayerConnection.restoreState.lastCall.args[0];
+            assert.equals(discardedCards.length, 1);
+            assert.equals(discardedCards[0].id, 'C2A');
+        },
+        'when first player restore state should have attacked card in opponents discard pile'() {
+            this.match.start();
+            const { opponentDiscardedCards } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            assert.equals(opponentDiscardedCards.length, 1);
+            assert.equals(opponentDiscardedCards[0].id, 'C2A');
+        },
+        'should emit state changed to second player'() {
+            assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                discardedCards: [sinon.match({ id: 'C2A' })],
+                events: [
+                    sinon.match({ type: 'moveCard', cardId: 'C2A' }),
+                    sinon.match({ type: 'discardCard', cardId: 'C2A' })
+                ]
+            }));
+        },
+        'should emit state changed to first player'() {
+            assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                opponentDiscardedCards: [sinon.match({ id: 'C2A' })]
+            }));
+        },
+        'should emit opponent attacked card to second player'() {
+            assert.calledWith(this.secondPlayerConnection.opponentAttackedCard, sinon.match({
                 attackerCardId: 'C1A',
                 defenderCardId: 'C2A',
                 defenderCardWasDestroyed: true
@@ -469,8 +497,8 @@ module.exports = {
     'missile cards:': {
         'when first player makes deadly attack with missile card': {
             async setUp() {
-                this.firstPlayerConnection = FakeConnection2(['restoreState']);
-                this.secondPlayerConnection = FakeConnection2(['restoreState', 'opponentAttackedCard']);
+                this.firstPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['restoreState', 'opponentAttackedCard', 'stateChanged']);
                 this.match = createMatch({
                     players: [
                         Player('P1A', this.firstPlayerConnection),
@@ -509,6 +537,26 @@ module.exports = {
                     defenderCardId: 'C2A',
                     attackerCardWasDestroyed: true,
                     defenderCardWasDestroyed: true
+                }));
+            },
+            'should emit state changed to first player'() {
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                    opponentDiscardedCards: [sinon.match({ id: 'C2A' })],
+                    discardedCards: [sinon.match({ id: 'C1A' })],
+                    events: [
+                        sinon.match({ type: 'attack', attackerCardId: 'C1A' }),
+                        sinon.match({ type: 'discardCard', cardId: 'C1A' })
+                    ]
+                }));
+            },
+            'should emit state changed to second player'() {
+                assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                    opponentDiscardedCards: [sinon.match({ id: 'C1A' })],
+                    discardedCards: [sinon.match({ id: 'C2A' })],
+                    events: [
+                        sinon.match({ type: 'moveCard', cardId: 'C2A' }),
+                        sinon.match({ type: 'discardCard', cardId: 'C2A' })
+                    ]
                 }));
             }
         },

@@ -17,7 +17,7 @@ const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
 const MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
 
 module.exports = {
-    'Energy Shield:': {
+    '//Energy Shield:': { //TODO Implement so that energy shield stops an station attack if in zone (is only implemented in GUI)
         'when player is attacking station with attack level of 5 and opponent has an Energy Shield': {
             setUp() {
                 this.firstPlayerConnection = FakeConnection2(['stateChanged']);
