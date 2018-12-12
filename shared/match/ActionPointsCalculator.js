@@ -1,6 +1,6 @@
 const PHASES_AFTER_ACTION_PHASE = ['discard', 'attack', 'wait'];
 
-module.exports = function getActionPointsForPlayer(deps) {
+module.exports = function (deps) {
 
     const cardInfoRepository = deps.cardInfoRepository;
 

@@ -99,13 +99,13 @@ class BaseCard {
         }
     }
 
-    canMove() {
+    canMove(alternativeConditions = {}) {
         if (this._card.type === 'defense') return false;
         if (this._card.type === 'duration') return false;
 
         const putDownOnTurn = getTurnWhenWasPutDown(this._eventRepository.getAll(), this._card.id);
-        return putDownOnTurn !== this._matchInfoRepository.getTurn()
-            && this._matchInfoRepository.getPlayerPhase(this._playerId) === 'attack';
+        const phase = alternativeConditions.phase || this._matchInfoRepository.getPlayerPhase(this._playerId);
+        return putDownOnTurn !== this._matchInfoRepository.getTurn() && phase === 'attack';
     }
 
     canRepair() {

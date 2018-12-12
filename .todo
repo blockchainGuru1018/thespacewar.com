@@ -1,0 +1,5 @@
+
+ - Doesnt have checks for "cardStopsStationAttack" when attacking station card on server
+ - Missiles doesnt dissepear on opponents browser after attack
+
+ - Now takes "alternateConditions" for canMove method in different cards. Perhaps only use this instead of matchService? Or not.

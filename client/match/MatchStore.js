@@ -3,6 +3,7 @@ const DiscardCardEvent = require('../../shared/event/DiscardCardEvent.js');
 const AttackEvent = require('../../shared/event/AttackEvent.js');
 const MoveCardEvent = require('../../shared/event/MoveCardEvent.js');
 const RepairCardEvent = require('../../shared/event/RepairCardEvent.js');
+const QueryEvents = require('../../shared/event/QueryEvents.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
 const CardFactory = require('../card/ClientCardFactory.js');
 const {
@@ -70,7 +71,10 @@ module.exports = function (deps) {
         getters: {
             playerCardModels,
             nextPhase,
+            nextPhaseWithAction,
+            cardsToDrawInDrawPhase,
             maxHandSize,
+            amountOfCardsToDiscard,
             hasPutDownNonFreeCardThisTurn,
             actionPoints2,
             attackerCard,
@@ -79,7 +83,8 @@ module.exports = function (deps) {
             allPlayerStationCards,
             allOpponentStationCards,
             createCard,
-            findPlayerCard
+            findPlayerCard,
+            queryEvents
         },
         mutations: {
             setPlayerStationCards,
@@ -146,12 +151,43 @@ module.exports = function (deps) {
     }
 
     function nextPhase(state) {
-        const nextPhaseInOrder = COMMON_PHASE_ORDER[COMMON_PHASE_ORDER.indexOf(state.phase) + 1]
-        return nextPhaseInOrder || 'wait';
+        let nextPhase = getNextPhaseValue(state.phase);
+        return nextPhase || 'wait';
+    }
+
+    function nextPhaseWithAction(state, getters) {
+        let nextPhase = getters.nextPhase;
+        if (nextPhase === PHASES.action && getters.actionPoints2 === 0) {
+            nextPhase = getNextPhaseValue(PHASES.action);
+        }
+        if (nextPhase === PHASES.discard && getters.amountOfCardsToDiscard === 0) {
+            nextPhase = getNextPhaseValue(PHASES.discard);
+        }
+        if (nextPhase === PHASES.attack) {
+            const someCardCanMove = state.playerCardsInZone
+                .map(c => getters.createCard(c))
+                .some(c => c.canMove({ phase: 'attack' }))
+            const noEnemiesAndNoCardsCanMove = state.opponentCardsInPlayerZone.length === 0 && !someCardCanMove;
+            const noActionsInAttackPhase =
+                (state.playerCardsInZone.length === 0 || noEnemiesAndNoCardsCanMove)
+                && state.playerCardsInOpponentZone.length === 0;
+            if (noActionsInAttackPhase) {
+                nextPhase = getNextPhaseValue(PHASES.attack);
+            }
+        }
+        return nextPhase || PHASES.wait;
+    }
+
+    function cardsToDrawInDrawPhase(state) {
+        return state.playerStation.drawCards.length;
     }
 
     function maxHandSize(state) {
         return state.playerStation.handSizeCards.length * 3;
+    }
+
+    function amountOfCardsToDiscard(state, getters) {
+        return Math.max(0, getters.playerCardModels.length - getters.maxHandSize);
     }
 
     function hasPutDownNonFreeCardThisTurn(state) {
@@ -183,6 +219,13 @@ module.exports = function (deps) {
                 || state.playerCardsInOpponentZone.find(c => c.id === cardId)
                 || null;
         }
+    }
+
+    function queryEvents(state) {
+        const eventRepository = {
+            getAll: () => state.events
+        };
+        return new QueryEvents(eventRepository);
     }
 
     function attackerCard(state, getters) {
@@ -381,11 +424,15 @@ module.exports = function (deps) {
 
     function goToNextPhase({ state, getters }) {
         const nextPhase = getters.nextPhase;
-        if (nextPhase === PHASES.wait) {
+        const nextPhaseWithAction = getters.nextPhaseWithAction;
+        const phasesToSkip = Math.max(0, getNumberOfPhasesBetween(nextPhase, nextPhaseWithAction));
+        for (let i = 0; i < phasesToSkip; i++) {
+            matchController.emit('nextPhase');
+        }
+        state.phase = nextPhaseWithAction;
+        if (nextPhaseWithAction === PHASES.wait) {
             state.currentPlayer = null;
         }
-        state.phase = nextPhase;
-
         matchController.emit('nextPhase');
     }
 
@@ -695,6 +742,15 @@ module.exports = function (deps) {
     function deleteMatchLocalDataAndReturnToLobby() {
         localStorage.removeItem('ongoing-match');
         route('lobby');
+    }
+
+    function getNextPhaseValue(currentPhase) {
+        return COMMON_PHASE_ORDER[COMMON_PHASE_ORDER.indexOf(currentPhase) + 1]
+    }
+
+    function getNumberOfPhasesBetween(a, b) {
+        const phasesIncludingWaitInOrder = [...COMMON_PHASE_ORDER, PHASES.wait];
+        return phasesIncludingWaitInOrder.indexOf(b) - phasesIncludingWaitInOrder.indexOf(a);
     }
 }
 

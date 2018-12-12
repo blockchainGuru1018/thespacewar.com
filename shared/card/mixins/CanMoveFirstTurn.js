@@ -1,5 +1,6 @@
 module.exports = superclass => class extends superclass {
-    canMove() {
-        return this._matchInfoRepository.getPlayerPhase(this._playerId) === 'attack';
+    canMove(alternativeConditions = {}) {
+        const phase = alternativeConditions.phase || this._matchInfoRepository.getPlayerPhase(this._playerId);
+        return phase === 'attack';
     }
 };

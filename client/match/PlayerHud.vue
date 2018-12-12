@@ -32,7 +32,12 @@
                 Select {{ numberOfStationCardsToSelect}}
                 more station {{ numberOfStationCardsToSelect === 1 ? 'card' : 'cards' }}
             </div>
-            <div v-if="phase === 'draw'" to="match" class="guideText guideText--small guideText-drawCard">
+            <div v-if="phase === PHASES.preparation"
+                 to="match"
+                 class="guideText guideText--small guideText-discardDurationCards">
+                Discard any duration card you don't want to pay for
+            </div>
+            <div v-if="phase === PHASES.draw" to="match" class="guideText guideText--small guideText-drawCard">
                 Draw more cards
             </div>
         </portal>
@@ -53,11 +58,17 @@
             ]),
             ...mapGetters([
                 'playerCardModels',
-                'nextPhase',
+                'nextPhaseWithAction',
                 'maxHandSize',
+                'cardsToDrawInDrawPhase',
                 'actionPoints2',
                 'attackerCard',
+                'amountOfCardsToDiscard',
+                'queryEvents'
             ]),
+            PHASES() {
+                return PHASES;
+            },
             isOwnTurn() {
                 return this.ownUser.id === this.currentPlayer;
             },
@@ -70,21 +81,19 @@
                 return `${nameOfCurrentPhase} phase`;
             },
             shouldEndTurnButton() {
-                return this.phase === PHASES.attack;
+                return !this.nextPhaseWithAction || this.nextPhaseWithAction === PHASES.wait;
             },
             nextPhaseButtonText() {
                 if (this.shouldEndTurnButton) return '';
+                if (this.phase === PHASES.wait) return '';
                 if (this.phase === PHASES.preparation) {
                     return 'Start turn';
                 }
-                if (this.phase === PHASES.draw || this.phase === PHASES.wait) {
-                    return '';
-                }
+                const cardDrawsOnTurn = this.queryEvents.getCardDrawsOnTurn(this.turn);
+                const hasDrawnEnoughCards = cardDrawsOnTurn.length === this.cardsToDrawInDrawPhase
+                if (this.phase === PHASES.draw && !hasDrawnEnoughCards) return '';
 
-                return `${capitalize(this.nextPhase)} phase`;
-            },
-            amountOfCardsToDiscard() {
-                return this.playerCardModels.length - this.maxHandSize;
+                return `${capitalize(this.nextPhaseWithAction)} phase`;
             },
             canGoToNextTurn() {
                 return this.actionPoints2 >= 0;
@@ -185,9 +194,10 @@
         left: 50%;
         top: 50%;
         transform: translate(-50%, -50%);
+        text-align: center;
         font-size: 74px;
         font-family: Consolas, serif;
-        width: 80vw;
+        width: 65vw;
         height: 30vh;
         display: flex;
         align-items: center;
