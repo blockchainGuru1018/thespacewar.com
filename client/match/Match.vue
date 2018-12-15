@@ -625,7 +625,7 @@
     }
 
     .field-zone {
-        flex: 1 0;
+        flex: 0 0 auto;
         display: flex;
         flex-wrap: wrap;
 
@@ -638,6 +638,8 @@
     .field-zoneRows {
         display: flex;
         flex-direction: column;
+        align-items: center;
+        justify-content: center;
 
         &.field-opponentZoneRows {
             padding-top: 80px;
