@@ -82,6 +82,7 @@ module.exports = function (deps) {
             attackerCanAttackStationCards,
             allPlayerCardsInOwnAndOpponentZone,
             allPlayerStationCards,
+            allPlayerDurationCards,
             allOpponentStationCards,
             createCard,
             findPlayerCard,
@@ -257,6 +258,10 @@ module.exports = function (deps) {
             ...state.playerStation.actionCards,
             ...state.playerStation.handSizeCards
         ];
+    }
+
+    function allPlayerDurationCards(state) {
+        return state.playerCardsInZone.filter(c => c.type === 'duration');
     }
 
     function allOpponentStationCards(state) {
@@ -733,7 +738,7 @@ module.exports = function (deps) {
         dispatch('putDownCard', { location: 'zone', cardId: stationCardId });
     }
 
-    function discardDurationCard({ state }, cardData) {
+    function discardDurationCard({ state, getters, dispatch }, cardData) {
         matchController.emit('discardDurationCard', cardData.id);
         state.playerDiscardedCards.push(cardData);
         const cardIndexInZone = state.playerCardsInZone.findIndex(c => c.id === cardData.id);
@@ -745,6 +750,10 @@ module.exports = function (deps) {
             cardId: cardData.id,
             cardCommonId: cardData.commonId
         }));
+
+        if (getters.allPlayerDurationCards.length === 0) {
+            dispatch('goToNextPhase');
+        }
     }
 
     function opponentRetreated() {
