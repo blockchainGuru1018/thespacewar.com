@@ -1043,6 +1043,36 @@ module.exports = {
                 assert.equals(this.error.message, 'Need more target station cards to attack');
             }
         },
+        'when enemy has 1 unflipped station card left and attacker has 2 in attack but only gives 1 target station card id': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['opponentStationCardsChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stationCardsChanged']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    turn: 3,
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInOpponentZone: [createCard({ id: 'C1A', attack: 2 })],
+                            events: [{ type: 'moveCard', cardId: 'C1A', turn: 1 }]
+                        },
+                        'P2A': {
+                            stationCards: [
+                                { card: createCard({ id: 'C2A' }), place: 'action' },
+                                { card: createCard({ id: 'C3A' }), flipped: true, place: 'action' },
+                            ]
+                        }
+                    }
+                }));
+
+                const attackOptions = { attackerCardId: 'C1A', targetStationCardIds: ['C2A'] }
+                this.error = catchError(() => this.match.attackStationCard('P1A', attackOptions));
+            },
+            'should NOT throw error'() {
+                refute(this.error);
+            }
+        },
         'when enemy has only 1 station card and attacker has 2 in attack but only gives 1 target station card id': {
             setUp() {
                 this.firstPlayerConnection = FakeConnection2(['opponentStationCardsChanged']);

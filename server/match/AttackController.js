@@ -89,7 +89,8 @@ function AttackController(deps) {
         if (!attackerCardData) throw new CheatError('Can only attack station card from enemy zone');
 
         const opponentStationCards = opponentState.stationCards;
-        if (opponentStationCards.length > targetStationCardIds.length
+        const unflippedOpponentStationCards = opponentState.stationCards.filter(s => !s.flipped);
+        if (unflippedOpponentStationCards.length > targetStationCardIds.length
             && attackerCardData.attack > targetStationCardIds.length) {
             throw new CheatError('Need more target station cards to attack');
         }

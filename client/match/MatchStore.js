@@ -689,7 +689,10 @@ module.exports = function (deps) {
         const attackerCard = getters.attackerCard;
         state.selectedDefendingStationCards.push(id);
 
-        if (state.selectedDefendingStationCards.length >= attackerCard.attack) {
+        const unflippedStationCards = getters.allOpponentStationCards.filter(s => !s.flipped).length;
+        const selectedLastStationCard = unflippedStationCards === state.selectedDefendingStationCards.length;
+        const selectedMaxTargetCount = state.selectedDefendingStationCards.length >= attackerCard.attack;
+        if (selectedMaxTargetCount || selectedLastStationCard) {
             matchController.emit('attackStationCard', {
                 attackerCardId: state.attackerCardId,
                 targetStationCardIds: state.selectedDefendingStationCards
