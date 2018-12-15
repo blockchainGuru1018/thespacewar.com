@@ -143,7 +143,7 @@
                     .canRepair();
             },
             canBeSelectedForRepair() {
-                if (!this.repairerCardId || this.repairerCardId === this.card.id) return false;
+                if (!this.repairerCardId) return false;
 
                 return this.createCard(this.card).canBeRepaired();
             }
