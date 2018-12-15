@@ -145,6 +145,7 @@
                 </div>
                 <div class="field-playerStation field-station field-section">
                     <div class="field-stationRow">
+                        <portal-target name="stationDrawRow"/>
                         <station-card
                                 v-for="card in playerStation.drawCards"
                                 :stationCard="card"
@@ -156,6 +157,7 @@
                         <div v-else class="card card--placeholder"/>
                     </div>
                     <div class="field-stationRow">
+                        <portal-target name="stationActionRow"/>
                         <station-card
                                 v-for="card in playerStation.actionCards"
                                 :stationCard="card"
@@ -167,6 +169,7 @@
                         <div v-else class="card card--placeholder"/>
                     </div>
                     <div class="field-stationRow">
+                        <portal-target name="stationHandSizeRow"/>
                         <station-card
                                 v-for="card in playerStation.handSizeCards"
                                 :stationCard="card"
@@ -279,12 +282,6 @@
             calculatedActionPointsForActionPhaseVisible() {
                 return this.phase === 'action'
                     && this.hasPutDownNonFreeCardThisTurn;
-            },
-            nextActionPointsFromStationCards() {
-                if (this.phase === 'action') {
-                    return 0;
-                }
-                return this.playerStation.actionCards.length * 2;
             },
             playerActionPointsText() {
                 if (this.calculatedActionPointsForActionPhaseVisible) {
@@ -559,6 +556,7 @@
     }
 
     .field-stationRow {
+        position: relative;
         display: flex;
         margin-bottom: 8px;
     }

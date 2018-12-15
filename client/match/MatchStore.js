@@ -73,6 +73,7 @@ module.exports = function (deps) {
             nextPhase,
             nextPhaseWithAction,
             cardsToDrawInDrawPhase,
+            actionPointsFromStationCards,
             maxHandSize,
             amountOfCardsToDiscard,
             hasPutDownNonFreeCardThisTurn,
@@ -180,6 +181,10 @@ module.exports = function (deps) {
 
     function cardsToDrawInDrawPhase(state) {
         return state.playerStation.drawCards.length;
+    }
+
+    function actionPointsFromStationCards(state) {
+        return state.playerStation.actionCards.length * 2;
     }
 
     function maxHandSize(state) {

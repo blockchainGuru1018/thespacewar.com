@@ -41,6 +41,21 @@
                 Draw more cards
             </div>
         </portal>
+        <portal to="stationDrawRow">
+            <span class="stationRowDescription">
+                Draw {{ cardsToDrawInDrawPhase }} card{{cardsToDrawInDrawPhase > 1 ? 's' : ''}} each turn
+            </span>
+        </portal>
+        <portal to="stationActionRow">
+            <span class="stationRowDescription">
+                Gives {{ actionPointsFromStationCards }} action point{{actionPointsFromStationCards > 1 ? 's' : ''}}
+            </span>
+        </portal>
+        <portal to="stationHandSizeRow">
+            <span class="stationRowDescription">
+                Max {{ maxHandSize }} card{{maxHandSize > 1 ? 's' : ''}} on hand
+            </span>
+        </portal>
     </div>
 </template>
 <script>
@@ -59,12 +74,13 @@
             ...mapGetters([
                 'playerCardModels',
                 'nextPhaseWithAction',
-                'maxHandSize',
                 'cardsToDrawInDrawPhase',
+                'actionPointsFromStationCards',
+                'maxHandSize',
                 'actionPoints2',
                 'attackerCard',
                 'amountOfCardsToDiscard',
-                'queryEvents'
+                'queryEvents',
             ]),
             PHASES() {
                 return PHASES;
@@ -211,5 +227,21 @@
 
     .guideText--small {
         font-size: 64px;
+    }
+
+    .stationRowDescription {
+        position: absolute;
+        left: 0;
+        transform: translate(-100%, 0);
+        display: flex;
+        text-align: right;
+        justify-content: flex-end;
+        align-items: center;
+        width: 220px;
+        height: 100%;
+        padding: 0 10px;
+        font-family: sans-serif;
+        font-weight: bold;
+        color: #AAA;
     }
 </style>
