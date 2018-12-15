@@ -38,22 +38,32 @@
                 Discard any duration card you don't want to pay for
             </div>
             <div v-if="phase === PHASES.draw" to="match" class="guideText guideText--small guideText-drawCard">
-                Draw more cards
+                Draw card or Mill opponent
             </div>
         </portal>
         <portal to="stationDrawRow">
-            <span class="stationRowDescription">
+            <span class="stationRowDescription descriptionText">
                 Draw {{ cardsToDrawInDrawPhase }} card{{cardsToDrawInDrawPhase > 1 ? 's' : ''}} each turn
             </span>
         </portal>
         <portal to="stationActionRow">
-            <span class="stationRowDescription">
+            <span class="stationRowDescription descriptionText">
                 Gives {{ actionPointsFromStationCards }} action point{{actionPointsFromStationCards > 1 ? 's' : ''}}
             </span>
         </portal>
         <portal to="stationHandSizeRow">
-            <span class="stationRowDescription">
+            <span class="stationRowDescription descriptionText">
                 Max {{ maxHandSize }} card{{maxHandSize > 1 ? 's' : ''}} on hand
+            </span>
+        </portal>
+        <portal to="playerDrawPile">
+            <span v-if="phase === PHASES.draw" class="playerDrawPileDescription descriptionText">
+                Click on draw pile to draw a card
+            </span>
+        </portal>
+        <portal to="opponentDrawPile">
+            <span v-if="phase === PHASES.draw" class="opponentDrawPileDescription descriptionText">
+                Click on draw pile to mill 2 cards
             </span>
         </portal>
     </div>
@@ -229,6 +239,12 @@
         font-size: 64px;
     }
 
+    .descriptionText {
+        font-family: sans-serif;
+        font-weight: bold;
+        color: #AAA;
+    }
+
     .stationRowDescription {
         position: absolute;
         left: 0;
@@ -240,8 +256,34 @@
         width: 220px;
         height: 100%;
         padding: 0 10px;
-        font-family: sans-serif;
-        font-weight: bold;
-        color: #AAA;
+    }
+
+    .opponentDrawPileDescription,
+    .playerDrawPileDescription {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        height: 100%;
+        padding: 0 10px;
+        font-size: 20px;
+    }
+
+    .opponentDrawPileDescription {
+        position: absolute;
+        left: 100%;
+        justify-content: flex-end;
+        width: 120px;
+    }
+
+    .playerDrawPileDescription {
+        position: absolute;
+        left: 100%;
+        width: 180px;
+    }
+
+    .match:not(.currentPhase--draw) {
+        .playerDrawPileDescription, .opponentDrawPileDescription {
+            display: none;
+        }
     }
 </style>

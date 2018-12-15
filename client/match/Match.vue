@@ -1,5 +1,5 @@
 <template>
-    <div ref="match" class="match">
+    <div ref="match" :class="['match', `currentPhase--${phase}`]">
         <div class="match-header">
             <button @click="restoreSavedMatch" class="match-smallButton">Restore match</button>
             <button @click="saveMatch" class="match-smallButton--success match-smallButton">Save match</button>
@@ -69,10 +69,11 @@
                              class="card card--turnedAround"/>
                     </div>
                     <div class="field-drawPile">
+                        <portal-target name="opponentDrawPile"/>
                         <div v-if="phase === PHASES.draw" class="card card-faceDown">
                             <div class="actionOverlays">
                                 <div @click="opponentDrawPileClick" class="drawPile-discardTopTwo actionOverlay">
-                                    Discard 2
+                                    Mill 2
                                 </div>
                             </div>
                         </div>
@@ -94,6 +95,7 @@
                         </div>
                     </div>
                     <div class="field-drawPile">
+                        <portal-target name="playerDrawPile"/>
                         <div v-if="phase === PHASES.draw" class="card card-faceDown">
                             <div class="actionOverlays">
                                 <div @click="playerDrawPileClick" class="drawPile-draw actionOverlay">
@@ -575,6 +577,8 @@
     }
 
     .field-drawPile {
+        position: relative;
+
         .card {
             width: 100%;
             height: 100%;
