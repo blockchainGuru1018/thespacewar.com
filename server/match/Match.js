@@ -27,6 +27,7 @@ module.exports = function (deps) {
     const matchId = deps.matchId;
     const players = deps.players;
     const actionPointsCalculator = deps.actionPointsCalculator || ActionPointsCalculator({ cardInfoRepository });
+    const endMatch = deps.endMatch;
 
     const playerOrder = players.map(p => p.id);
     const firstPlayer = players.find(p => p.id === playerOrder[0]);
@@ -44,7 +45,7 @@ module.exports = function (deps) {
         }
     };
 
-    const matchService = new MatchService();
+    const matchService = new MatchService({ matchId, endMatch });
     matchService.setState(state);
     const cardFactory = new CardFactory({ getFreshState: () => state });
     const matchComService = new MatchComService({ matchId, players });
@@ -420,7 +421,7 @@ module.exports = function (deps) {
     function getPlayerState(playerId) {
         return state.playerStateById[playerId];
     }
-    
+
     function restoreFromState(restoreState) {
         for (let key of Object.keys(restoreState)) {
             state[key] = restoreState[key];

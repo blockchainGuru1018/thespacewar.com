@@ -706,7 +706,6 @@ module.exports = testCase('MatchPage', {
                 this.matchController = FakeMatchController({ emit: stub() });
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
-
                 dispatch('restoreState', FakeState({
                     turn: 3,
                     currentPlayer: 'P1A',
@@ -731,6 +730,56 @@ module.exports = testCase('MatchPage', {
                     attackerCardId: 'C1A',
                     targetStationCardIds: ['C2A']
                 });
+            }
+        },
+        'when opponent has 0 unflipped station cards': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+
+                dispatch('restoreState', FakeState({
+                    turn: 3,
+                    currentPlayer: 'P1A',
+                    phase: 'attack',
+                    stationCards: [{ id: 'C1A', place: 'action', card: createCard({ id: 'C1A' }) }],
+                    opponentStationCards: [
+                        { id: 'C2A', place: 'action', flipped: true, card: createCard({ id: 'C2A' }) }
+                    ]
+                }));
+                await timeout();
+            },
+            'should show victory text'() {
+                assert.elementCount('.victoryText', 1);
+            },
+            'should show end game overlay'() {
+                assert.elementCount('.endGameOverlay', 1);
+            }
+        },
+        'when you have 0 unflipped station cards': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+
+                dispatch('restoreState', FakeState({
+                    turn: 3,
+                    currentPlayer: 'P1A',
+                    phase: 'attack',
+                    stationCards: [
+                        { id: 'C1A', place: 'action', flipped: true, card: createCard({ id: 'C1A' }) }
+                    ]
+                }));
+                await timeout();
+            },
+            'should NOT show victory text'() {
+                assert.elementCount('.victoryText', 0);
+            },
+            'should show defeat text'() {
+                assert.elementCount('.defeatText', 1);
+            },
+            'should show end game overlay'() {
+                assert.elementCount('.endGameOverlay', 1);
             }
         }
     }

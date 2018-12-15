@@ -222,6 +222,8 @@
     $cardHoverWidth: $cardWidth / 4;
     $cardHoverHeight: $cardHeight / 4;
 
+    $overlayColor: rgba(0, 0, 0, .4);
+
     .card {
         position: relative;
     }
@@ -353,7 +355,7 @@
     }
 
     .dimOverlay {
-        background-color: rgba(0, 0, 0, .4);
+        background-color: $overlayColor;
         position: fixed;
         top: 0;
         left: 0;

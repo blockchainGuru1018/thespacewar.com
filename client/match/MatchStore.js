@@ -112,6 +112,7 @@ module.exports = function (deps) {
             selectStationCardAsDefender,
             moveFlippedStationCardToZone,
             discardDurationCard,
+            endGame,
 
             // local
             stateChanged,
@@ -760,6 +761,10 @@ module.exports = function (deps) {
     }
 
     function opponentRetreated() {
+        deleteMatchLocalDataAndReturnToLobby();
+    }
+
+    function endGame() {
         deleteMatchLocalDataAndReturnToLobby();
     }
 

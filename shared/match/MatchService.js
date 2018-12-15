@@ -1,7 +1,8 @@
 class MatchService {
 
-    constructor(deps) {
+    constructor({ endMatch = () => {}} = {}) {
         this._state = {};
+        this.endMatch = endMatch;
     }
 
     setState(state) {

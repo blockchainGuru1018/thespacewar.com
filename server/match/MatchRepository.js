@@ -45,7 +45,8 @@ module.exports = function (deps) {
             players,
             matchId,
             deckFactory,
-            cardInfoRepository
+            cardInfoRepository,
+            endMatch: () => end(matchId)
         });
         matchById.set(matchId, match);
         matchByUserId.set(playerId, match);
@@ -62,6 +63,17 @@ module.exports = function (deps) {
         const match = await getById(matchId);
         const connection = socketRepository.getForUser(playerId);
         match.updatePlayer(playerId, { connection });
+    }
+
+    function end(matchId) {
+        matchById.delete(matchId);
+        let idsToRemove = [];
+        matchByUserId.forEach((match, userId) => {
+            if (match.id === matchId) {
+                idsToRemove.push(userId);
+            }
+        });
+        idsToRemove.forEach(id => matchByUserId.delete(id));
     }
 
     function getById(id) {

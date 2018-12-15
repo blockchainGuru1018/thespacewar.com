@@ -28,6 +28,17 @@
             <div v-else class="playerHud-phaseText playerHud-item">Waiting for next player</div>
         </div>
         <portal to="match">
+            <div v-if="gameHasEnded" class="endGameOverlay">
+                <div v-if="hasLostGame" class="defeatText endGameText">
+                    DEFEAT
+                </div>
+                <div v-else-if="hasWonGame" class="victoryText endGameText">
+                    VICTORY
+                </div>
+                <button @click="endGame" class="endGameButton">
+                    End game
+                </button>
+            </div>
             <div v-if="numberOfStationCardsToSelect > 0" class="guideText">
                 Select {{ numberOfStationCardsToSelect}}
                 more station {{ numberOfStationCardsToSelect === 1 ? 'card' : 'cards' }}
@@ -91,7 +102,18 @@
                 'attackerCard',
                 'amountOfCardsToDiscard',
                 'queryEvents',
+                'allOpponentStationCards',
+                'allPlayerStationCards'
             ]),
+            gameHasEnded() {
+                return this.hasWonGame || this.hasLostGame;
+            },
+            hasWonGame() {
+                return this.allOpponentStationCards.filter(s => !s.flipped).length === 0;
+            },
+            hasLostGame() {
+                return this.allPlayerStationCards.filter(s => !s.flipped).length === 0;
+            },
             PHASES() {
                 return PHASES;
             },
@@ -134,6 +156,7 @@
         methods: {
             ...mapActions([
                 'goToNextPhase',
+                'endGame'
             ]),
             startClick() {
                 this.goToNextPhase();
@@ -149,6 +172,8 @@
     }
 </script>
 <style scoped lang="scss">
+    $overlayColor: rgba(0, 0, 0, .4);
+
     .field-playerHud {
         position: absolute;
         left: 0;
@@ -284,6 +309,48 @@
     .match:not(.currentPhase--draw) {
         .playerDrawPileDescription, .opponentDrawPileDescription {
             display: none;
+        }
+    }
+
+    .endGameOverlay {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background-color: $overlayColor;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .endGameText {
+        font-size: 128px;
+        font-family: sans-serif;
+        font-weight: bold;
+        letter-spacing: .2em;
+    }
+
+    .victoryText {
+        color: #66fa8b;
+    }
+
+    .defeatText {
+        color: #ff3646;
+    }
+
+    .endGameButton {
+        margin-top: 100px;
+        background-color: #ff3646;
+        color: white;
+        font-size: 32px;
+        padding: 8px 15px;
+        box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.2);;
+        border: none;
+
+        &:hover {
+            background-color: #ff6670;
         }
     }
 </style>

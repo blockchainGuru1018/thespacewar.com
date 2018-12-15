@@ -122,6 +122,12 @@ function AttackController(deps) {
         matchComService.emitToPlayer(playerId, 'stateChanged', {
             opponentStationCards: matchComService.prepareStationCardsForClient(opponentStateService.getStationCards())
         });
+
+        const gameOver = opponentStateService.getStationCards.filter(s => !s.flipped) === 0
+            || playerStateService.getStationCards().filter(s => !s.flipped).length === 0;
+        if (gameOver) {
+            matchService.endMatch();
+        }
     }
 }
 
