@@ -23,6 +23,10 @@ module.exports = class EnergyShield extends BaseCard {
         return true;
     }
 
+    canOnlyHaveOneInHomeZone() {
+        return true;
+    }
+
     applyEffectOnStationAttack({ attackerCard, targetStationCardIds }) {
         attackerCard.attackCard(this);
 

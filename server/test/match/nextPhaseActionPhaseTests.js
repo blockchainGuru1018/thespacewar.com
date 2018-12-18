@@ -15,6 +15,7 @@ const {
     catchError,
     createState,
 } = require('./shared.js');
+const energyShieldId = 21;
 
 module.exports = {
     'when is first player in first turn': {
@@ -118,6 +119,71 @@ module.exports = {
             assert.equals(stationCards.length, 1);
             assert.equals(stationCards[0].id, 'C1A');
             assert.equals(stationCards[0].place, 'action');
+        }
+    },
+    'when has Energy shield in home zone and put down another Energy shield': {
+        async setUp() {
+            this.firstPlayerConnection = FakeConnection2(['restoreState']);
+            this.match = createMatch({ players: [Player('P1A', this.firstPlayerConnection), Player('P2A')] });
+            this.match.restoreFromState(createState({
+                playerStateById: {
+                    'P1A': {
+                        phase: 'action',
+                        cardsOnHand: [
+                            createCard({ id: 'C2A', cost: 1, commonId: energyShieldId })
+                        ],
+                        cardsInZone: [
+                            createCard({ id: 'C1A', cost: 1, commonId: energyShieldId })
+                        ],
+                        stationCards: [{ card: createCard({ id: 'C3A' }), place: 'action' }]
+                    }
+                }
+            }));
+
+            this.error = catchError(() => this.match.putDownCard('P1A', { location: 'zone', cardId: 'C2A' }));
+        },
+        'should throw'() {
+            assert(this.error);
+            assert.equals(this.error.message, 'Cannot put down card');
+        },
+    },
+    'when has Energy shield in home zone and put down another Energy shield as station card': {
+        async setUp() {
+            this.firstPlayerConnection = FakeConnection2(['restoreState']);
+            this.match = createMatch({ players: [Player('P1A', this.firstPlayerConnection), Player('P2A')] });
+            this.match.restoreFromState(createState({
+                playerStateById: {
+                    'P1A': {
+                        phase: 'action',
+                        cardsOnHand: [createCard({ id: 'C2A', commonId: energyShieldId })],
+                        cardsInZone: [createCard({ id: 'C1A', commonId: energyShieldId })]
+                    }
+                }
+            }));
+
+            this.error = catchError(() => this.match.putDownCard('P1A', { location: 'station-action', cardId: 'C2A' }));
+        },
+        'should NOT throw'() {
+            refute(this.error);
+        }
+    },
+    'when does NOT have Energy shield in home zone and put down an Energy shield in zone': {
+        async setUp() {
+            this.firstPlayerConnection = FakeConnection2(['restoreState']);
+            this.match = createMatch({ players: [Player('P1A', this.firstPlayerConnection), Player('P2A')] });
+            this.match.restoreFromState(createState({
+                playerStateById: {
+                    'P1A': {
+                        phase: 'action',
+                        cardsOnHand: [createCard({ id: 'C2A', commonId: energyShieldId })]
+                    }
+                }
+            }));
+
+            this.error = catchError(() => this.match.putDownCard('P1A', { location: 'zone', cardId: 'C2A' }));
+        },
+        'should NOT throw'() {
+            refute(this.error);
         }
     }
 };

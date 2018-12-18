@@ -237,7 +237,8 @@
             ...mapGetters([
                 'playerCardModels',
                 'hasPutDownNonFreeCardThisTurn',
-                'actionPoints2'
+                'actionPoints2',
+                'canPutDownCard'
             ]),
             isOwnTurn() {
                 return this.ownUser.id === this.currentPlayer;
@@ -255,13 +256,8 @@
             playerZoneCardGhostVisible() {
                 return this.phase === 'action'
                     && this.holdingCard
+                    && this.canPutDownCard(this.holdingCard.id)
                     && this.canAffordCard(this.holdingCard);
-            },
-            opponentTopDiscardCard() {
-                return this.opponentDiscardedCards[this.opponentDiscardedCards.length - 1];
-            },
-            playerTopDiscardCard() {
-                return this.playerDiscardedCards[this.playerDiscardedCards.length - 1];
             },
             discardPileCardGhostVisible() {
                 return this.holdingCard &&
@@ -277,6 +273,12 @@
                 return this.phase === 'action'
                     && this.holdingCard
                     && !hasAlreadyPutDownStationCard;
+            },
+            opponentTopDiscardCard() {
+                return this.opponentDiscardedCards[this.opponentDiscardedCards.length - 1];
+            },
+            playerTopDiscardCard() {
+                return this.playerDiscardedCards[this.playerDiscardedCards.length - 1];
             },
             canPlaceCards() {
                 return this.isOwnTurn;

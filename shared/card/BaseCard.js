@@ -116,20 +116,12 @@ class BaseCard {
         return !!this.damage;
     }
 
-    hasEffectOnStationAttack() {
-        return false
-    }
-
     stopsStationAttack() {
         return false
     }
 
-    getImportanceOnStationAttack() {
-        return 0
-    }
-
-    applyEffectOnStationAttack(args) {
-        return args;
+    canOnlyHaveOneInHomeZone() {
+        return false;
     }
 }
 

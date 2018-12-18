@@ -195,13 +195,12 @@ module.exports = function (deps) {
             moveStationCardToOwnZone(playerId, cardId);
             return;
         }
-
         const cardIndexOnHand = playerState.cardsOnHand.findIndex(c => c.id === cardId);
-        const cardOnHand = playerState.cardsOnHand[cardIndexOnHand];
-        if (!cardOnHand) throw CheatError('Card is not on hand');
+        const cardData = playerState.cardsOnHand[cardIndexOnHand];
+        if (!cardData) throw CheatError('Card is not on hand');
 
         const playerActionPoints = getActionPointsForPlayer(playerId)
-        const canAffordCard = playerActionPoints >= cardOnHand.cost;
+        const canAffordCard = playerActionPoints >= cardData.cost;
         const isStationCard = location.startsWith('station');
         const hasAlreadyPutDownStationCard = playerState.events.some(e => {
             return e.turn === state.turn
@@ -215,32 +214,39 @@ module.exports = function (deps) {
             throw CheatError('Cannot afford card');
         }
 
+        const canOnlyHaveOneOfCardInZone = cardFactory
+            .createCardForPlayer(cardData, playerId)
+            .canOnlyHaveOneInHomeZone();
+        if (!isStationCard && canOnlyHaveOneOfCardInZone && playerState.cardsInZone.some(c => c.commonId === cardData.commonId)) {
+            throw CheatError('Cannot put down card');
+        }
+
         playerState.cardsOnHand.splice(cardIndexOnHand, 1);
         playerState.events.push(PutDownCardEvent({
             turn: state.turn,
             location,
             cardId,
-            cardCommonId: cardOnHand.commonId
+            cardCommonId: cardData.commonId
         }));
 
         const opponentId = getOpponentId(playerId);
         if (isStationCard) {
             const stationLocation = location.split('-').pop();
-            const stationCard = { place: stationLocation, card: cardOnHand };
+            const stationCard = { place: stationLocation, card: cardData };
             playerState.stationCards.push(stationCard);
             emitToPlayer(opponentId, 'putDownOpponentStationCard', prepareStationCardForClient(stationCard));
         }
         else if (location === 'zone') {
-            if (cardOnHand.type === 'event') {
-                playerState.discardedCards.push(cardOnHand);
+            if (cardData.type === 'event') {
+                playerState.discardedCards.push(cardData);
                 emitToPlayer(opponentId, 'opponentDiscardedCard', {
-                    discardedCard: cardOnHand,
+                    discardedCard: cardData,
                     opponentCardCount: playerState.cardsOnHand.length
                 });
             }
             else {
-                playerState.cardsInZone.push(cardOnHand);
-                emitToPlayer(opponentId, 'putDownOpponentCard', { location, card: cardOnHand });
+                playerState.cardsInZone.push(cardData);
+                emitToPlayer(opponentId, 'putDownOpponentCard', { location, card: cardData });
             }
         }
     }

@@ -86,7 +86,8 @@ module.exports = function (deps) {
             allOpponentStationCards,
             createCard,
             findPlayerCard,
-            queryEvents
+            queryEvents,
+            canPutDownCard
         },
         mutations: {
             setPlayerStationCards,
@@ -220,7 +221,7 @@ module.exports = function (deps) {
         };
     }
 
-    function findPlayerCard(state) {
+    function findPlayerCard(state) { // TODO Rename => findPlayerCardInZones
         return cardId => {
             return state.playerCardsInZone.find(c => c.id === cardId)
                 || state.playerCardsInOpponentZone.find(c => c.id === cardId)
@@ -233,6 +234,17 @@ module.exports = function (deps) {
             getAll: () => state.events
         };
         return new QueryEvents(eventRepository);
+    }
+
+    function canPutDownCard(state, getters) {
+        return cardId => {
+            let card = state.playerCardsOnHand.find(c => c.id === cardId);
+            const canOnlyHaveOneInHomeZone = getters.createCard(card).canOnlyHaveOneInHomeZone();
+            if (canOnlyHaveOneInHomeZone) {
+                return !state.playerCardsInZone.some(c => c.commonId === card.commonId);
+            }
+            return true;
+        };
     }
 
     function attackerCard(state, getters) {
