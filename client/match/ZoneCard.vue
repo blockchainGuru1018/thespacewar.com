@@ -107,7 +107,7 @@
             },
             canMove() {
                 const card = this.createCard(this.card);
-                return card.canMove() && this.isHomeZone;
+                return card.canMove();
             },
             canAttack() {
                 const card = this.createCard(this.card);

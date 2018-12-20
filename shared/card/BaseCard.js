@@ -9,7 +9,7 @@ class BaseCard {
         this._eventRepository = deps.eventRepository;
         this._matchInfoRepository = deps.matchInfoRepository;
 
-        this._queryEvents = new QueryEvents(this._eventRepository); //TODO Only use QueryEvents and take it in as a dependency instead of event repository
+        this._queryEvents = new QueryEvents(this._eventRepository); //TODO Use QueryEvents and take it in as a dependency instead of event repository
     }
 
     get id() {
@@ -83,7 +83,8 @@ class BaseCard {
     }
 
     isInOpponentZone() {
-        return hasMoved(this._card.id, this._eventRepository.getAll());
+        let moves = this._queryEvents.getAllMoves(this._card.id);
+        return moves.length % 2 === 1;
     }
 
     attackCard(defenderCard) {
@@ -102,10 +103,20 @@ class BaseCard {
     canMove(alternativeConditions = {}) {
         if (this._card.type === 'defense') return false;
         if (this._card.type === 'duration') return false;
+        const phase = alternativeConditions.phase || this._matchInfoRepository.getPlayerPhase(this._playerId);
+        if (phase !== 'attack') return false;
+
+        if (this.hasMovedThisTurn()) return false;
 
         const putDownOnTurn = getTurnWhenWasPutDown(this._eventRepository.getAll(), this._card.id);
-        const phase = alternativeConditions.phase || this._matchInfoRepository.getPlayerPhase(this._playerId);
-        return putDownOnTurn !== this._matchInfoRepository.getTurn() && phase === 'attack';
+        const turn = this._matchInfoRepository.getTurn();
+        return putDownOnTurn !== turn;
+    }
+
+    hasMovedThisTurn() {
+        const turn = this._matchInfoRepository.getTurn();
+        const movesOnTurn = this._queryEvents.getMovesOnTurn(this._card.id, turn);
+        return movesOnTurn.length > 0;
     }
 
     canRepair() {

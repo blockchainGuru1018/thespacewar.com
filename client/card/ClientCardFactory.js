@@ -1,7 +1,7 @@
 const CardFactory = require('../../shared/card/CardFactory.js');
 const MatchService = require('../../shared/match/MatchService.js');
 const CardDataAssembler = require('../../shared/CardDataAssembler.js');
-const mapFromClientToServerState = require('./mapFromClientToServerState.js');
+const mapFromClientToServerState = require('../match/mapFromClientToServerState.js');
 
 module.exports = class ClientCardFactory extends CardFactory {
 

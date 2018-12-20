@@ -1,11 +1,13 @@
 const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
 const DiscardCardEvent = require('../../shared/event/DiscardCardEvent.js');
 const AttackEvent = require('../../shared/event/AttackEvent.js');
-const MoveCardEvent = require('../../shared/event/MoveCardEvent.js');
 const RepairCardEvent = require('../../shared/event/RepairCardEvent.js');
 const QueryEvents = require('../../shared/event/QueryEvents.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
 const CardFactory = require('../card/ClientCardFactory.js');
+const MatchService = require("../../shared/match/MatchService");
+const ClientPlayerStateService = require("./ClientPlayerStateService");
+const mapFromClientToServerState = require('./mapFromClientToServerState.js');
 const {
     COMMON_PHASE_ORDER,
     PHASES
@@ -87,7 +89,8 @@ module.exports = function (deps) {
             createCard,
             findPlayerCard,
             queryEvents,
-            canPutDownCard
+            canPutDownCard,
+            playerStateService
         },
         mutations: {
             setPlayerStationCards,
@@ -171,10 +174,16 @@ module.exports = function (deps) {
             const someCardCanMove = state.playerCardsInZone
                 .map(c => getters.createCard(c))
                 .some(c => c.canMove({ phase: 'attack' }))
-            const noEnemiesAndNoCardsCanMove = state.opponentCardsInPlayerZone.length === 0 && !someCardCanMove;
+            const noEnemiesAndNoCardsCanMoveInHomeZone = state.opponentCardsInPlayerZone.length === 0 && !someCardCanMove;
+
+            const someCardCanMoveInOpponentZone = state.playerCardsInOpponentZone
+                .map(c => getters.createCard(c))
+                .some(c => c.canMove({ phase: 'attack' }))
+            const noEnemiesAndNoCardsCanMoveInOpponentZone = state.opponentCardsInZone.length === 0 && !someCardCanMoveInOpponentZone;
+
             const noActionsInAttackPhase =
-                (state.playerCardsInZone.length === 0 || noEnemiesAndNoCardsCanMove)
-                && state.playerCardsInOpponentZone.length === 0;
+                (state.playerCardsInZone.length === 0 || noEnemiesAndNoCardsCanMoveInHomeZone)
+                && (state.playerCardsInOpponentZone.length === 0 || noEnemiesAndNoCardsCanMoveInOpponentZone);
             if (noActionsInAttackPhase) {
                 nextPhase = getNextPhaseValue(PHASES.attack);
             }
@@ -245,6 +254,24 @@ module.exports = function (deps) {
             }
             return true;
         };
+    }
+
+    function playerStateService(state) {
+        const matchService = new MatchService();
+        const mappedState = mapFromClientToServerState(state);
+        matchService.setState(mappedState);
+        const updateStore = (clientState) => {
+            let changedProperties = Object.keys(clientState);
+            for (let property of changedProperties) {
+                state[property] = clientState[property];
+            }
+        }
+        return new ClientPlayerStateService({
+            playerId: state.ownUser.id,
+            matchService,
+            queryEvents,
+            updateStore
+        });
     }
 
     function attackerCard(state, getters) {
@@ -516,12 +543,8 @@ module.exports = function (deps) {
         state.actionPoints = actionPoints;
     }
 
-    function moveCard({ state }, { id }) {
-        const cardIndex = state.playerCardsInZone.findIndex(c => c.id === id);
-        const [card] = state.playerCardsInZone.splice(cardIndex, 1);
-        state.playerCardsInOpponentZone.push(card);
-        state.events.push(MoveCardEvent({ turn: state.turn, cardId: id, cardCommonId: card.commonId }));
-
+    function moveCard({ getters }, { id }) {
+        getters.playerStateService.moveCard(id);
         matchController.emit('moveCard', id);
     }
 

@@ -1,11 +1,11 @@
 const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
 const DiscardCardEvent = require('../../shared/event/DiscardCardEvent.js');
-const MoveCardEvent = require('../../shared/event/MoveCardEvent.js');
 const RepairCardEvent = require('../../shared/event/RepairCardEvent.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
 const DrawPhaseController = require('./DrawPhaseController.js');
 const AttackController = require('./AttackController.js');
 const DebugController = require('./DebugController.js');
+const MoveCardController = require('./MoveCardController.js');
 const MatchComService = require('./MatchComService.js');
 const MatchService = require('../../shared/match/MatchService.js');
 const ServerQueryEvents = require('./ServerQueryEvents.js');
@@ -67,6 +67,7 @@ module.exports = function (deps) {
     const debugController = DebugController(controllerDeps);
     const drawPhaseController = DrawPhaseController(controllerDeps);
     const attackController = AttackController(controllerDeps);
+    const moveCardController = MoveCardController(controllerDeps);
 
     return {
         id: matchId,
@@ -82,7 +83,7 @@ module.exports = function (deps) {
         discardOpponentTopTwoCards: drawPhaseController.onDiscardOpponentTopTwoCards,
         discardCard, //TODO Rename discardFromHand
         discardDurationCard,
-        moveCard,
+        moveCard: moveCardController.onMoveCard,
         attack: attackController.onAttack,
         attackStationCard: attackController.onAttackStationCards, // TODO Rename attackStationCards (pluralized)
         repairCard,
@@ -342,21 +343,6 @@ module.exports = function (deps) {
         }));
     }
 
-    function moveCard(playerId, cardId) {
-        let playerState = getPlayerState(playerId);
-        let cardIndex = playerState.cardsInZone.findIndex(c => c.id === cardId);
-        let cardData = playerState.cardsInZone[cardIndex];
-        if (!cardData) throw CheatError('Cannot move card that is not in your own zone');
-        const card = cardFactory.createCardForPlayer(cardData, playerId);
-        if (!card.canMove()) throw CheatError('Cannot move card');
-
-        playerState.cardsInZone.splice(cardIndex, 1);
-        playerState.cardsInOpponentZone.push(cardData);
-        playerState.events.push(MoveCardEvent({ turn: state.turn, cardId, cardCommonId: cardData.commonId }));
-
-        emitToOpponent(playerId, 'opponentMovedCard', cardId)
-    }
-
     function findPlayerCard(playerId, cardId) {
         const playerState = getPlayerState(playerId);
         return playerState.cardsInZone.find(c => c.id === cardId)
@@ -534,13 +520,6 @@ module.exports = function (deps) {
             turn: state.turn,
             actionStationCardsCount
         });
-    }
-
-    function getStationDrawCardsCount(playerId) {
-        let stationCards = getPlayerStationCards(playerId);
-        return stationCards
-            .filter(card => card.place === 'draw')
-            .length;
     }
 
     function getMaxHandSizeFromStationCards(stationCards) {

@@ -1,6 +1,9 @@
 class MatchService {
 
-    constructor({ endMatch = () => {}} = {}) {
+    constructor({
+                    endMatch = () => {
+                    } //TODO Fix so that WebStorm does not put curly braces on new line
+                } = {}) {
         this._state = {};
         this.endMatch = endMatch;
     }

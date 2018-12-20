@@ -71,8 +71,6 @@ module.exports = {
             assert.calledWith(this.secondPlayerConnection.nextPlayer, { turn: 2, currentPlayer: 'P1A' });
         }
     },
-    //TODO TEST IRL
-    //TODO COMMIT THE CODE AND MOVE THE TASK IN KF
     'when first player has duration card in play and starting next turn': {
         async setUp() {
             this.firstPlayerConnection = FakeConnection2(['drawCards', 'restoreState']);

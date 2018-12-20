@@ -672,6 +672,50 @@ module.exports = testCase('MatchPage', {
                 assert.elementText('.playerHud-nextPhaseButton', 'Attack phase');
             }
         },
+        'when in action phase with no cards to discard and 1 in play in opponent zone that can move': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+
+                dispatch('restoreState', FakeState({
+                    turn: 3,
+                    currentPlayer: 'P1A',
+                    phase: 'action',
+                    cardsInOpponentZone: [createCard({ id: 'C1A', commonId: CommonShipId })],
+                    events: [
+                        PutDownCardEvent({ turn: 1, cardId: 'C1A', location: 'zone', cardCommonId: CommonShipId }),
+                        MoveCardEvent({ turn: 2, cardId: 'C1A', cardCommonId: CommonShipId })
+                    ]
+                }));
+                await timeout();
+            },
+            'should see next phase as "Attack phase"'() {
+                assert.elementText('.playerHud-nextPhaseButton', 'Attack phase');
+            }
+        },
+        'when in action phase with no cards to discard and 1 in play in opponent zone that can NOT move': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+
+                dispatch('restoreState', FakeState({
+                    turn: 2,
+                    currentPlayer: 'P1A',
+                    phase: 'action',
+                    cardsInOpponentZone: [createCard({ id: 'C1A', commonId: CommonShipId })],
+                    events: [
+                        PutDownCardEvent({ turn: 1, cardId: 'C1A', location: 'zone', cardCommonId: CommonShipId }),
+                        MoveCardEvent({ turn: 2, cardId: 'C1A', cardCommonId: CommonShipId })
+                    ]
+                }));
+                await timeout();
+            },
+            'should see "End turn" button'() {
+                assert.elementCount('.playerHud-endTurnButton', 1);
+            }
+        },
         'when in action phase with no cards to discard and has 1 fast missile in play': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
@@ -780,6 +824,72 @@ module.exports = testCase('MatchPage', {
             },
             'should show end game overlay'() {
                 assert.elementCount('.endGameOverlay', 1);
+            }
+        },
+        'when moved card to opponent zone last turn': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+
+                dispatch('restoreState', FakeState({
+                    turn: 3,
+                    currentPlayer: 'P1A',
+                    phase: 'attack',
+                    cardsInOpponentZone: [{ id: 'C1A' }],
+                    events: [
+                        PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
+                        MoveCardEvent({ turn: 2, cardId: 'C1A' })
+                    ]
+                }));
+                await timeout();
+            },
+            'should be able to select card to move back'() {
+                assert.elementCount('.playerCardsInOpponentZone .card .movable', 1);
+            }
+        },
+        'when moved card to opponent zone this turn': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+
+                dispatch('restoreState', FakeState({
+                    turn: 2,
+                    currentPlayer: 'P1A',
+                    phase: 'attack',
+                    cardsInOpponentZone: [{ id: 'C1A' }],
+                    events: [
+                        PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
+                        MoveCardEvent({ turn: 2, cardId: 'C1A' })
+                    ]
+                }));
+                await timeout();
+            },
+            'should NOT be able to select card to move back'() {
+                assert.elementCount('.playerCardsInOpponentZone .card .movable', 0);
+            }
+        },
+        'when moved Fast Missile to opponent zone THIS turn': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+
+                dispatch('restoreState', FakeState({
+                    turn: 2,
+                    currentPlayer: 'P1A',
+                    phase: 'attack',
+                    cardsInOpponentZone: [{ id: 'C1A', commonId: FastMissileId }],
+                    events: [
+                        PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
+                        MoveCardEvent({ turn: 2, cardId: 'C1A' })
+                    ]
+                }));
+                await timeout();
+            },
+            'should NOT be able to select card to move back'() {
+                assert.elementCount('.playerCardsInOpponentZone .card .movable', 0);
             }
         }
     }

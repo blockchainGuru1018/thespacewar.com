@@ -1,4 +1,4 @@
-class QueryEvents {
+class QueryEvents { // TODO rename QueryCardEvents?
 
     constructor(eventRepository) {
         this._eventRepository = eventRepository;
@@ -18,6 +18,23 @@ class QueryEvents {
         return events.filter(event => {
             return event.turn === turn
                 && event.type === 'repairCard'
+                && event.cardId === cardId;
+        });
+    }
+
+    getMovesOnTurn(cardId, turn) {
+        const events = this._eventRepository.getAll();
+        return events.filter(event => {
+            return event.turn === turn
+                && event.type === 'moveCard'
+                && event.cardId === cardId;
+        });
+    }
+
+    getAllMoves(cardId) {
+        const events = this._eventRepository.getAll();
+        return events.filter(event => {
+            return event.type === 'moveCard'
                 && event.cardId === cardId;
         });
     }

@@ -1,5 +1,6 @@
 const AttackEvent = require('../event/AttackEvent.js');
 const DiscardCardEvent = require('../event/DiscardCardEvent.js');
+const MoveCardEvent = require('../event/MoveCardEvent.js');
 
 class PlayerStateService {
 
@@ -93,6 +94,25 @@ class PlayerStateService {
         const turn = this._matchService.getTurn();
         const attackEvent = AttackEvent({ turn, attackerCardId, cardCommonId: cardData.commonId })
         this.storeEvent(attackEvent);
+    }
+
+    moveCard(cardId) {
+        this.update(playerState => {
+            const cardIsInHomeZone = playerState.cardsInZone.some(c => c.id === cardId)
+            const cardZone = cardIsInHomeZone ? playerState.cardsInZone : playerState.cardsInOpponentZone;
+            const cardZoneIndex = cardZone.findIndex(c => c.id === cardId);
+            if (cardZoneIndex >= 0) {
+                const [cardData] = cardZone.splice(cardZoneIndex, 1);
+                const targetZone = cardIsInHomeZone ? playerState.cardsInOpponentZone : playerState.cardsInZone;
+                targetZone.push(cardData);
+
+                const turn = this._matchService.getTurn();
+                this.storeEvent(MoveCardEvent({ turn, cardId, cardCommonId: cardData.commonId }));
+            }
+            else {
+                throw new Error(`Failed to move card with ID: ${cardId}`);
+            }
+        });
     }
 
     removeCard(cardId) {

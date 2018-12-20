@@ -12,6 +12,7 @@ const {
     catchError,
     createState,
 } = require('./shared.js');
+let PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
 let MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
 
 module.exports = {
@@ -62,26 +63,6 @@ module.exports = {
             assert.equals(state.opponentCardsInPlayerZone.length, 1);
             assert.match(state.opponentCardsInPlayerZone[0], { id: 'C1A' });
         }
-    },
-    'when try to move card that is NOT in own zone should throw error': async function () {
-        this.match = createMatch({ players: [Player('P1A'), Player('P2A')] });
-        this.match.restoreFromState(createState({
-            turn: 2,
-            currentPlayer: 'P1A',
-            playerOrder: ['P1A', 'P2A'],
-            playerStateById: {
-                'P1A': {
-                    phase: 'attack',
-                    cardsInZone: [],
-                    events: [{ type: 'putDownCard', cardId: 'C1A', turn: 1 }]
-                }
-            }
-        }));
-
-        let error = catchError(() => this.match.moveCard('P1A', 'C2A'));
-
-        assert(error);
-        assert.equals(error.message, 'Cannot move card that is not in your own zone');
     },
     'when try to move card on the same turn it was put down should throw error': async function () {
         this.match = createMatch({ players: [Player('P1A'), Player('P2A')] });
@@ -1102,6 +1083,44 @@ module.exports = {
             },
             'should NOT throw error'() {
                 refute(this.error);
+            }
+        }
+    },
+    'move:': { //TODO Move all "move" tests here
+        'when card can move and move from opponent zone to home zone': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['restoreState']);
+                this.secondPlayerConnection = FakeConnection2(['opponentMovedCard']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    turn: 3,
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInOpponentZone: [createCard({ id: 'C1A' })],
+                            events: [
+                                PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
+                                MoveCardEvent({ turn: 2, cardId: 'C1A' })
+                            ]
+                        }
+                    }
+                }));
+
+                this.match.moveCard('P1A', 'C1A');
+            },
+            'should emit "opponentMovedCard"'() {
+                assert.calledOnce(this.secondPlayerConnection.opponentMovedCard);
+                assert.calledWith(this.secondPlayerConnection.opponentMovedCard, 'C1A');
+            },
+            'when restore state first player should have card in home zone'() {
+                this.match.start();
+                const { cardsInZone, cardsInOpponentZone } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+
+                assert.equals(cardsInZone.length, 1);
+                assert.match(cardsInZone[0], { id: 'C1A' });
+
+                assert.equals(cardsInOpponentZone.length, 0);
             }
         }
     }
