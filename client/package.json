@@ -10,24 +10,24 @@
   "license": "ISC",
   "dependencies": {
     "portal-vue": "^1.5.0",
-    "v-click-outside": "^2.0.1",
-    "vue": "^2.5.17",
+    "v-click-outside": "^2.0.2",
+    "vue": "^2.5.21",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.1.2",
+    "@babel/core": "^7.2.2",
     "babel-loader": "^8.0.4",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-polyfill": "^6.26.0",
     "bocha": "^1.7.1",
-    "css-loader": "^1.0.0",
+    "css-loader": "^1.0.1",
     "express": "^4.16.4",
     "find": "^0.2.9",
-    "node-sass": "^4.9.3",
+    "node-sass": "^4.11.0",
     "sass-loader": "^7.1.0",
     "vue-loader": "^15.4.2",
-    "vue-template-compiler": "^2.5.17",
-    "webpack": "^4.20.2",
+    "vue-template-compiler": "^2.5.21",
+    "webpack": "^4.28.2",
     "webpack-cli": "^3.1.2"
   }
 }

@@ -108,7 +108,7 @@ module.exports = {
     'when can draw 1 card and draws 2 cards': {
         setUp() {
             this.firstPlayerConnection = FakeConnection2(['drawCards']);
-            const players = [Player('P1A', this.firstPlayerConnection)]
+            const players = [Player('P1A', this.firstPlayerConnection), Player('P2A')]
             this.match = createMatch({ players });
             this.match.restoreFromState(createState({
                 playerStateById: {

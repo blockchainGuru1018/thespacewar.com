@@ -138,19 +138,14 @@ class BaseCard {
 
 module.exports = BaseCard;
 
-BaseCard.names = {
-    energyShield: 'Energy Shield',
-    smallCannon: 'Small Cannon',
-    triggerHappyJoe: 'Trigger-Happy Joe'
-};
-
 BaseCard.classNameByCommonId = {
     21: 'EnergyShield',
     23: 'SmallCannon',
     24: 'TriggerHappyJoe',
     28: 'Hunter',
     29: 'NewHope',
-    6: 'FastMissile'
+    6: 'FastMissile',
+    15: 'Supernova'
 };
 
 function getTurnWhenWasPutDown(events, cardId) {

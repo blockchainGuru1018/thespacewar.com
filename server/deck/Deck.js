@@ -16,7 +16,7 @@ module.exports = function (deps) {
         return draw(1)[0];
     }
 
-    function draw(count) {
+    function draw(count = 1) {
         let cards = [];
         for (let i = 0; i < count; i++) {
             let topCard = deck.pop();

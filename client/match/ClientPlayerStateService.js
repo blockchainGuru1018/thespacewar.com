@@ -21,7 +21,7 @@ class ClientPlayerStateService extends PlayerStateService {
     }
 
     update(updateFn) {
-        const playerState = this._getPlayerState();
+        const playerState = this.getPlayerState();
         updateFn(playerState);
         const clientState = mapFromServerToClientState(this._matchService.getState(), this._playerId);
         this._updateStore(clientState);

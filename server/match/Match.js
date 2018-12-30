@@ -1,4 +1,3 @@
-const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
 const DiscardCardEvent = require('../../shared/event/DiscardCardEvent.js');
 const RepairCardEvent = require('../../shared/event/RepairCardEvent.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
@@ -6,10 +5,13 @@ const DrawPhaseController = require('./DrawPhaseController.js');
 const AttackController = require('./AttackController.js');
 const DebugController = require('./DebugController.js');
 const MoveCardController = require('./MoveCardController.js');
+const PutDownCardController = require('./PutDownCardController.js');
+const DiscardCardController = require('./DiscardCardController.js');
 const MatchComService = require('./MatchComService.js');
 const MatchService = require('../../shared/match/MatchService.js');
 const ServerQueryEvents = require('./ServerQueryEvents.js');
 const PlayerStateService = require('../../shared/match/PlayerStateService.js');
+const PlayerRequirementService = require('../../shared/match/PlayerRequirementService.js');
 const CardFactory = require('../card/ServerCardFactory.js');
 const { COMMON_PHASE_ORDER, PHASES, TEMPORARY_START_PHASE } = require('../../shared/phases.js');
 
@@ -47,27 +49,38 @@ module.exports = function (deps) {
 
     const matchService = new MatchService({ matchId, endMatch });
     matchService.setState(state);
-    const cardFactory = new CardFactory({ getFreshState: () => state });
     const matchComService = new MatchComService({ matchId, players });
+    const cardFactory = new CardFactory({ getFreshState: () => state });
     const playerStateServiceById = {};
+    const playerRequirementServiceById = {};
     for (let player of players) {
-        playerStateServiceById[player.id] = new PlayerStateService({
+        const playerStateService = new PlayerStateService({
             playerId: player.id,
             matchService,
-            queryEvents: new ServerQueryEvents({ playerId: player.id, matchService })
-        });
+            queryEvents: new ServerQueryEvents({ playerId: player.id, matchService }),
+            actionPointsCalculator
+        })
+        playerStateServiceById[player.id] = playerStateService;
+        playerRequirementServiceById[player.id] = new PlayerRequirementService({ playerStateService });
     }
+    const playerServiceProvider = {
+        getStateServiceById: playerId => playerStateServiceById[playerId],
+        getRequirementServiceById: playerId => playerRequirementServiceById[playerId]
+    };
     const controllerDeps = {
         matchService,
         matchComService,
         playerStateServiceById,
         cardFactory,
-        restoreFromState
+        restoreFromState,
+        playerServiceProvider
     };
     const debugController = DebugController(controllerDeps);
     const drawPhaseController = DrawPhaseController(controllerDeps);
     const attackController = AttackController(controllerDeps);
     const moveCardController = MoveCardController(controllerDeps);
+    const putDownCardController = PutDownCardController(controllerDeps);
+    const discardCardController = DiscardCardController(controllerDeps);
 
     return {
         id: matchId,
@@ -78,10 +91,10 @@ module.exports = function (deps) {
         start,
         getOwnState: getPlayerState,
         nextPhase,
-        putDownCard,
+        putDownCard: putDownCardController.onPutDownCard,
         drawCard: drawPhaseController.onDrawCard,
         discardOpponentTopTwoCards: drawPhaseController.onDiscardOpponentTopTwoCards,
-        discardCard, //TODO Rename discardFromHand
+        discardCard: discardCardController.onDiscardCard, //TODO Rename discardFromHand
         discardDurationCard,
         moveCard: moveCardController.onMoveCard,
         attack: attackController.onAttack,
@@ -186,142 +199,6 @@ module.exports = function (deps) {
         emitNextPlayer();
     }
 
-    function putDownCard(playerId, { location, cardId }) {
-        if (playerId !== state.currentPlayer) {
-            throw CheatError('Cannot put down card when it is not your turn');
-        }
-        const playerState = getPlayerState(playerId);
-        const puttingDownStationCard = location === 'zone' && playerState.stationCards.some(s => s.card.id === cardId);
-        if (puttingDownStationCard) {
-            moveStationCardToOwnZone(playerId, cardId);
-            return;
-        }
-        const cardIndexOnHand = playerState.cardsOnHand.findIndex(c => c.id === cardId);
-        const cardData = playerState.cardsOnHand[cardIndexOnHand];
-        if (!cardData) throw CheatError('Card is not on hand');
-
-        const playerActionPoints = getActionPointsForPlayer(playerId)
-        const canAffordCard = playerActionPoints >= cardData.cost;
-        const isStationCard = location.startsWith('station');
-        const hasAlreadyPutDownStationCard = playerState.events.some(e => {
-            return e.turn === state.turn
-                && e.type === 'putDownCard'
-                && e.location.startsWith('station');
-        })
-        if (isStationCard && hasAlreadyPutDownStationCard) {
-            throw CheatError('Cannot put down more than one station card on the same turn');
-        }
-        if (!canAffordCard && !isStationCard) {
-            throw CheatError('Cannot afford card');
-        }
-
-        const canOnlyHaveOneOfCardInZone = cardFactory
-            .createCardForPlayer(cardData, playerId)
-            .canOnlyHaveOneInHomeZone();
-        if (!isStationCard && canOnlyHaveOneOfCardInZone && playerState.cardsInZone.some(c => c.commonId === cardData.commonId)) {
-            throw CheatError('Cannot put down card');
-        }
-
-        playerState.cardsOnHand.splice(cardIndexOnHand, 1);
-        playerState.events.push(PutDownCardEvent({
-            turn: state.turn,
-            location,
-            cardId,
-            cardCommonId: cardData.commonId
-        }));
-
-        const opponentId = getOpponentId(playerId);
-        if (isStationCard) {
-            const stationLocation = location.split('-').pop();
-            const stationCard = { place: stationLocation, card: cardData };
-            playerState.stationCards.push(stationCard);
-            emitToPlayer(opponentId, 'putDownOpponentStationCard', prepareStationCardForClient(stationCard));
-        }
-        else if (location === 'zone') {
-            if (cardData.type === 'event') {
-                playerState.discardedCards.push(cardData);
-                emitToPlayer(opponentId, 'opponentDiscardedCard', {
-                    discardedCard: cardData,
-                    opponentCardCount: playerState.cardsOnHand.length
-                });
-            }
-            else {
-                playerState.cardsInZone.push(cardData);
-                emitToPlayer(opponentId, 'putDownOpponentCard', { location, card: cardData });
-            }
-        }
-    }
-
-    function moveStationCardToOwnZone(playerId, cardId) {
-        const playerState = getPlayerState(playerId);
-        const stationCard = playerState.stationCards.find(s => s.card.id === cardId);
-        if (!stationCard.flipped) throw CheatError('Cannot move station card that is not flipped to zone');
-
-        const card = stationCard.card;
-        const playerActionPoints = getActionPointsForPlayer(playerId)
-        const canAffordCard = playerActionPoints >= card.cost;
-        if (!canAffordCard) {
-            throw CheatError('Cannot afford card');
-        }
-
-        playerState.stationCards = playerState.stationCards.filter(s => s.card.id !== cardId);
-        playerState.events.push(PutDownCardEvent({
-            turn: state.turn,
-            location: 'zone',
-            cardId,
-            cardCommonId: card.commonId
-        }));
-
-        const opponentId = getOpponentId(playerId);
-        if (card.type === 'event') {
-            playerState.discardedCards.push(card);
-            emitToPlayer(opponentId, 'opponentDiscardedCard', {
-                discardedCard: card,
-                opponentCardCount: playerState.cardsOnHand.length
-            });
-        }
-        else {
-            playerState.cardsInZone.push(card);
-            emitToPlayer(opponentId, 'putDownOpponentCard', { location: 'zone', card });
-        }
-    }
-
-    function discardCard(playerId, cardId) {
-        const playerState = getPlayerState(playerId);
-        const cardIndexOnHand = playerState.cardsOnHand.findIndex(c => c.id === cardId);
-        const discardedCard = playerState.cardsOnHand[cardIndexOnHand];
-        if (!discardedCard) throw new Error('Invalid state - someone is cheating');
-
-        playerState.cardsOnHand.splice(cardIndexOnHand, 1);
-        playerState.discardedCards.push(discardedCard);
-
-        const playerCardCount = getPlayerCardCount(playerId)
-        const opponentId = getOpponentId(playerId);
-        const opponentDeck = getOpponentDeck(playerId);
-        const opponentState = getOpponentState(playerId);
-
-        if (playerState.phase === 'action') {
-            const bonusCard = opponentDeck.drawSingle();
-            opponentState.cardsOnHand.push(bonusCard);
-            emitToPlayer(opponentId, 'opponentDiscardedCard', {
-                bonusCard,
-                discardedCard,
-                opponentCardCount: playerCardCount
-            });
-        }
-        else {
-            emitToPlayer(opponentId, 'opponentDiscardedCard', { discardedCard, opponentCardCount: playerCardCount });
-        }
-
-        playerState.events.push(DiscardCardEvent({
-            turn: state.turn,
-            phase: playerState.phase,
-            cardId,
-            cardCommonId: discardedCard.commonId
-        }));
-        emitOpponentCardCountToPlayer(playerId);
-    }
-
     function discardDurationCard(playerId, cardId) {
         const playerState = getPlayerState(playerId);
         if (playerState.phase !== PHASES.preparation) {
@@ -422,10 +299,6 @@ module.exports = function (deps) {
         state.playersReady = 2;
     }
 
-    function emitOpponentCardCountToPlayer(playerId) {
-        emitToPlayer(playerId, 'setOpponentCardCount', getOpponentCardCount(playerId));
-    }
-
     function emitRestoreStateForPlayer(playerId) {
         const playerState = getPlayerState(playerId);
         const actionPointsForPlayer = getActionPointsForPlayer(playerId)
@@ -467,7 +340,8 @@ module.exports = function (deps) {
             discardedCards: [],
             phase: TEMPORARY_START_PHASE,
             actionPoints: 0,
-            events: []
+            events: [],
+            requirements: []
         };
     }
 
@@ -592,14 +466,6 @@ module.exports = function (deps) {
 
     function getOpponentState(playerId) {
         return getPlayerState(getOpponentId(playerId));
-    }
-
-    function getPlayerDeck(playerId) {
-        return state.deckByPlayerId[playerId];
-    }
-
-    function getOpponentDeck(playerId) {
-        return getPlayerDeck(getOpponentId(playerId));
     }
 };
 

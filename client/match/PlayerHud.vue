@@ -39,16 +39,23 @@
                     End game
                 </button>
             </div>
-            <div v-if="numberOfStationCardsToSelect > 0" class="guideText">
+            <div v-if="waitingForOtherPlayerToFinishRequirements"
+                 class="guideText-waitingForOtherPlayer guideText guideText--small">
+                Waiting for other player...
+            </div>
+            <div v-else-if="requirementGuideText"
+                 class="guideText-discardCard guideText guideText--small">
+                {{ requirementGuideText }}
+            </div>
+            <div v-else-if="numberOfStationCardsToSelect > 0" class="guideText">
                 Select {{ numberOfStationCardsToSelect}}
                 more station {{ numberOfStationCardsToSelect === 1 ? 'card' : 'cards' }}
             </div>
-            <div v-if="phase === PHASES.preparation"
-                 to="match"
-                 class="guideText guideText--small guideText-discardDurationCards">
+            <div v-else-if="phase === PHASES.preparation"
+                 class="guideText-discardDurationCards guideText guideText--small">
                 Discard any duration card you don't want to pay for
             </div>
-            <div v-if="phase === PHASES.draw" to="match" class="guideText guideText--small guideText-drawCard">
+            <div v-else-if="phase === PHASES.draw" class="guideText-drawCard guideText guideText--small">
                 Draw card or Mill opponent
             </div>
         </portal>
@@ -82,6 +89,12 @@
 <script>
     const Vuex = require('vuex');
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
+    const {
+        mapState: mapRequirementState,
+        mapGetters: mapRequirementGetters,
+        mapMutations: mapRequirementMutations,
+        mapActions: mapRequirementActions
+    } = Vuex.createNamespacedHelpers('requirement');
     const { PHASES } = require('./phases.js');
 
     module.exports = {
@@ -90,7 +103,8 @@
                 'currentPlayer',
                 'phase',
                 'ownUser',
-                'selectedDefendingStationCards'
+                'selectedDefendingStationCards',
+                'requirements'
             ]),
             ...mapGetters([
                 'playerCardModels',
@@ -104,6 +118,11 @@
                 'queryEvents',
                 'allOpponentStationCards',
                 'allPlayerStationCards'
+            ]),
+            ...mapRequirementGetters([
+                'waitingForOtherPlayerToFinishRequirements',
+                'latestRequirement',
+                'latestRequirementIsDiscardCard',
             ]),
             gameHasEnded() {
                 return this.hasWonGame || this.hasLostGame;
@@ -144,13 +163,21 @@
                 return `${capitalize(this.nextPhaseWithAction)} phase`;
             },
             canGoToNextTurn() {
-                return this.actionPoints2 >= 0;
+                return this.actionPoints2 >= 0
+                    && !this.latestRequirement;
             },
             numberOfStationCardsToSelect() {
                 if (!this.attackerCard) return 0;
                 if (this.selectedDefendingStationCards.length === 0) return 0;
 
                 return this.attackerCard.attack - this.selectedDefendingStationCards.length;
+            },
+            requirementGuideText() {
+                if (this.latestRequirement && this.latestRequirementIsDiscardCard) {
+                    const cardsToDiscard = this.latestRequirement.count;
+                    return `Discard ${cardsToDiscard} ${cardsToDiscard === 1 ? 'card' : 'cards'}`;
+                }
+                return '';
             }
         },
         methods: {

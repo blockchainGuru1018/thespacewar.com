@@ -892,6 +892,61 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.playerCardsInOpponentZone .card .movable', 0);
             }
         }
+    },
+    'requirements': {
+        'when have discard card requirement': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'draw',
+                    playerStationCards: [{ place: 'draw' }],
+                    opponentStationCards: [{ id: 'C2A', place: 'action' }],
+                    requirements: [{ type: 'discardCard', count: 2 }]
+                }));
+                await timeout();
+            },
+            'should NOT show next phase button'() {
+                assert.elementCount('.playerHud-nextPhaseButton', 0);
+            },
+            'should NOT show end turn button'() {
+                assert.elementCount('.playerHud-endTurnButton', 0);
+            },
+            'should show guide text'() {
+                assert.elementText('.guideText', 'Discard 2 cards');
+            }
+        },
+        'when have card requirement with "waiting" set to true': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'draw',
+                    playerStationCards: [{ place: 'draw' }],
+                    opponentStationCards: [{ id: 'C2A', place: 'action' }],
+                    requirements: [{ waiting: true }]
+                }));
+                await timeout();
+            },
+            'should NOT show next phase button'() {
+                assert.elementCount('.playerHud-nextPhaseButton', 0);
+            },
+            'should NOT show end turn button'() {
+                assert.elementCount('.playerHud-endTurnButton', 0);
+            },
+            'should show guide text'() {
+                assert.elementCount('.guideText', 1);
+                assert.elementCount('.guideText-waitingForOtherPlayer', 1);
+            }
+        },
     }
 });
 
@@ -963,6 +1018,7 @@ function FakeState(options) {
         opponentCardsInZone: [],
         opponentCardsInPlayerZone: [],
         events: [],
+        requirements: [],
         phase: 'wait',
         turn: 1,
         currentPlayer: 'P2A',

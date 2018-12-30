@@ -80,7 +80,7 @@ function AttackController(deps) {
     function onAttackStationCards(playerId, { attackerCardId, targetStationCardIds }) {
         let opponentId = matchComService.getOpponentId(playerId);
         let opponentStateService = playerStateServiceById[opponentId];
-        let opponentState = opponentStateService._getPlayerState();
+        let opponentState = opponentStateService.getPlayerState();
 
         let playerStateService = playerStateServiceById[playerId];
         const attackerCardData = playerStateService

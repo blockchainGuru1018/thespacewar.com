@@ -20,6 +20,10 @@ class MatchService {
         return this._state.turn;
     }
 
+    getCurrentPlayer() {
+        return this._state.currentPlayer;
+    }
+
     getZoneWhereCardIs(cardId) {
         for (let playerId of Object.keys(this._state.playerStateById)) {
             const playerState = this._state.playerStateById[playerId];

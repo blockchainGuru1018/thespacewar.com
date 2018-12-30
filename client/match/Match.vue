@@ -201,6 +201,12 @@
 <script>
     const Vuex = require('vuex');
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
+    const {
+        mapState: mapPermissionState,
+        mapGetters: mapPermissionGetters,
+        mapMutations: mapPermissionMutations,
+        mapActions: mapPermissionActions
+    } = Vuex.createNamespacedHelpers('permission');
     const ZoneCard = require('./ZoneCard.vue').default;
     const StationCard = require('./StationCard.vue').default;
     const PlayerHud = require('./PlayerHud.vue').default;
@@ -218,7 +224,6 @@
             ...mapState([
                 'matchId',
                 'turn',
-                'currentPlayer',
                 'events',
                 'phase',
                 'opponentUser',
@@ -240,9 +245,11 @@
                 'actionPoints2',
                 'canPutDownCard'
             ]),
-            isOwnTurn() {
-                return this.ownUser.id === this.currentPlayer;
-            },
+            ...mapPermissionGetters([
+                'canMoveCardsFromHand',
+                'canDiscardCards',
+                'canPutDownCards'
+            ]),
             holdingCardStyle() {
                 if (!this.holdingCard) return {};
 
@@ -254,15 +261,13 @@
                 }
             },
             playerZoneCardGhostVisible() {
-                return this.phase === 'action'
-                    && this.holdingCard
+                return this.holdingCard
+                    && this.canPutDownCards
                     && this.canPutDownCard(this.holdingCard.id)
                     && this.canAffordCard(this.holdingCard);
             },
             discardPileCardGhostVisible() {
-                return this.holdingCard &&
-                    (this.phase === 'action'
-                        || this.phase === 'discard');
+                return this.holdingCard && this.canDiscardCards;
             },
             stationCardGhostVisible() {
                 const hasAlreadyPutDownStationCard = this.events.some(e => {
@@ -279,9 +284,6 @@
             },
             playerTopDiscardCard() {
                 return this.playerDiscardedCards[this.playerDiscardedCards.length - 1];
-            },
-            canPlaceCards() {
-                return this.isOwnTurn;
             },
             calculatedActionPointsForActionPhaseVisible() {
                 return this.phase === 'action'
@@ -316,7 +318,7 @@
                 return this.actionPoints2 >= card.cost;
             },
             playerCardClick(card) {
-                if (this.canPlaceCards) {
+                if (this.canMoveCardsFromHand) {
                     this.holdingCard = card;
                 }
             },
@@ -431,6 +433,10 @@
 
     $cardHoverWidth: $cardWidth / 4;
     $cardHoverHeight: $cardHeight / 4;
+
+    $cardGhostZIndex: 1;
+    $playerCardsOnHandZIndex: 2;
+    $holdingCardZIndex: 3;
 
     .match {
         display: flex;
@@ -682,6 +688,7 @@
 
     .field-playerCardsOnHand {
         position: absolute;
+        z-index: $playerCardsOnHandZIndex;
         bottom: 0;
         left: 50%;
         transform: translateX(-50%);
@@ -796,10 +803,13 @@
         height: $playerCardHeight;
         border: 4px solid #8ae68a;
         background: transparent;
+        position: relative;
+        z-index: $cardGhostZIndex;
     }
 
     .holdingCard {
         position: absolute;
+        z-index: $holdingCardZIndex;
     }
 
     .playerActionPointsContainer {

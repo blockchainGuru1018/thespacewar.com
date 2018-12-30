@@ -15,6 +15,7 @@ const {
 
 const storeItemNameByServerItemName = {
     cardsInZone: 'playerCardsInZone',
+    cardsInOpponentZone: 'playerCardsInOpponentZone',
     discardedCards: 'playerDiscardedCards',
     cardsOnHand: 'playerCardsOnHand'
 };
@@ -44,10 +45,10 @@ module.exports = function (deps) {
             currentPlayer: null,
             phase: '',
             events: [],
+            requirements: [],
             matchId,
             opponentUser,
             ownUser: userRepository.getOwnUser(),
-            actionPoints: 0, // TODO Remove, all action points should be calculated through events
             playerCardsInZone: [],
             playerCardsOnHand: [],
             playerDiscardedCards: [],
@@ -423,7 +424,7 @@ module.exports = function (deps) {
             opponentCardsInPlayerZone,
             events,
             phase,
-            actionPoints, // TODO Remove, all action points should be calculated through events
+            requirements,
             turn,
             currentPlayer,
             opponentRetreated,
@@ -447,10 +448,10 @@ module.exports = function (deps) {
         commit('setOpponentStationCards', opponentStationCards);
 
         state.events = events;
+        state.requirements = requirements;
         state.turn = turn;
         state.currentPlayer = currentPlayer;
         state.phase = phase;
-        state.actionPoints = actionPoints; // TODO Remove, all action points should be calculated through events
     }
 
     async function beginGame({ state, commit, dispatch }, beginningState) {
@@ -492,7 +493,6 @@ module.exports = function (deps) {
         const stationCard = getters.allPlayerStationCards.find(s => s.id === cardId);
         const card = cardOnHand || stationCard.card;
 
-        state.actionPoints -= card.cost; // TODO Remove, all action points should be calculated through events
         if (cardOnHand) {
             state.playerCardsOnHand.splice(cardIndexOnHand, 1);
         }
@@ -532,7 +532,6 @@ module.exports = function (deps) {
         const cardIndexOnHand = state.playerCardsOnHand.findIndex(c => c.id === cardId);
         const discardedCard = state.playerCardsOnHand[cardIndexOnHand];
         state.playerCardsOnHand.splice(cardIndexOnHand, 1);
-        state.actionPoints += 2; // TODO Remove, all action points should be calculated through events
         state.playerDiscardedCards.push(discardedCard);
 
         dispatch('addDiscardEvent', discardedCard);
@@ -540,7 +539,6 @@ module.exports = function (deps) {
     }
 
     function setActionPoints({ state }, actionPoints) { // TODO Should be removed, all action points should be calculated through events
-        state.actionPoints = actionPoints;
     }
 
     function moveCard({ getters }, { id }) {
