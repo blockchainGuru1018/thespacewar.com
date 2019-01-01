@@ -30,7 +30,7 @@ module.exports = function (deps) {
                     actionPoints -= 2;
                 }
             }
-            else if (event.type === 'discardCard' && event.phase === 'action') {
+            else if (event.type === 'discardCard' && event.phase === 'action' && event.isSacrifice) {
                 actionPoints += 2;
             }
         }

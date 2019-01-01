@@ -196,7 +196,7 @@ class PlayerStateService {
         }
     }
 
-    discardCard(cardData) { //TODO must say if is sacrifice as they gain bonus card to the opponent
+    discardCard(cardData, { isSacrifice = false } = {}) { //TODO must say if is sacrifice as they gain bonus card to the opponent
         const turn = this._matchService.getTurn();
         this.update(playerState => {
             playerState.discardedCards.push(cardData);
@@ -205,7 +205,8 @@ class PlayerStateService {
             turn,
             phase: this.getPhase(),
             cardId: cardData.id,
-            cardCommonId: cardData.commonId
+            cardCommonId: cardData.commonId,
+            isSacrifice
         }));
     }
 

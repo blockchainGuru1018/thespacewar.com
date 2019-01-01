@@ -17,20 +17,20 @@ function DiscardCardController(deps) {
         const discardedCard = playerStateService.findCardFromHand(cardId);
         if (!discardedCard) throw new CheatError('Invalid state - someone is cheating');
 
-        playerStateService.removeCardFromHand(cardId);
-        playerStateService.discardCard(discardedCard);
-
         const playerPhase = playerStateService.getPhase();
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
         const isRequiredDiscard = !!playerRequirementService.getLatestMatchingRequirement({ type: 'discardCard' });
-        const isVoluntaryDiscard = playerPhase === 'action' && !isRequiredDiscard;
+        const isSacrificialDiscard = playerPhase === 'action' && !isRequiredDiscard;
         const discardAsPartOfDiscardPhase = playerPhase === 'discard';
+
+        playerStateService.removeCardFromHand(cardId);
+        playerStateService.discardCard(discardedCard, { isSacrifice: isSacrificialDiscard });
 
         if (isRequiredDiscard) {
             onRequiredDiscard({ playerId, discardedCard });
         }
-        else if (isVoluntaryDiscard) {
-            onVoluntaryDiscard({ playerId, discardedCard });
+        else if (isSacrificialDiscard) {
+            onSacrificialDiscard({ playerId, discardedCard });
         }
         else if (discardAsPartOfDiscardPhase) {
             emitOpponentDiscardedCardToOpponentOf({ playerId, discardedCard });
@@ -40,7 +40,7 @@ function DiscardCardController(deps) {
         }
     }
 
-    function onVoluntaryDiscard({ playerId, discardedCard }) {
+    function onSacrificialDiscard({ playerId, discardedCard }) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         const playerCardCount = playerStateService.getCardsOnHand().length;
         const opponentId = matchComService.getOpponentId(playerId);

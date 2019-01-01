@@ -42,9 +42,11 @@ module.exports = function (deps) {
         }
     }
 
-    function canPutDownCards(state, getters) {
+    function canPutDownCards(state, getters, rootState) {
         const hasRequirement = !!getFrom('latestRequirement', 'requirement');
+        const isActionPhase = rootState.match.phase === 'action'
         return getters.isOwnTurn
+            && isActionPhase
             && !hasRequirement;
     }
 

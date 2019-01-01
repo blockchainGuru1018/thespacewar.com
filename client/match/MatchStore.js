@@ -136,7 +136,6 @@ module.exports = function (deps) {
             selectAsAttacker,
             selectAsDefender,
             opponentAttackedCard,
-            addDiscardEvent,
             opponentRetreated,
             registerAttack,
             removePlayerCard,
@@ -535,7 +534,13 @@ module.exports = function (deps) {
         state.playerCardsOnHand.splice(cardIndexOnHand, 1);
         state.playerDiscardedCards.push(discardedCard);
 
-        dispatch('addDiscardEvent', discardedCard);
+        state.events.push(DiscardCardEvent({
+            turn: state.turn,
+            phase: state.phase,
+            cardId: cardId,
+            cardCommonId: discardedCard.commonId,
+            isSacrifice: true
+        }));
         matchController.emit('discardCard', cardId);
     }
 
@@ -708,15 +713,6 @@ module.exports = function (deps) {
 
     function damageOwnStationCards({}, targetIds) {
         matchController.emit('damageOwnStationCards', { targetIds });
-    }
-
-    function addDiscardEvent({ state }, card) {
-        state.events.push(DiscardCardEvent({
-            turn: state.turn,
-            phase: state.phase,
-            cardId: card.id,
-            cardCommonId: card.commonId
-        }));
     }
 
     function retreat() {

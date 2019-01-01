@@ -55,6 +55,50 @@ module.exports = testCase('MatchPage', {
         delete this.vm;
         delete this.store;
     },
+    'misc': {
+        'when in "start" phase and click card on hand': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'start',
+                    cardsOnHand: [createCard({ id: 'C1A' })],
+                    stationCards: [{ place: 'draw' }]
+                }));
+                await timeout();
+
+                await click('.field-playerCardsOnHand .card');
+            },
+            'should NOT see ANY card ghosts'() {
+                assert.elementCount('.card-ghost', 0);
+            }
+        }
+    },
+    'action phase': {
+        'when in action phase and click card on hand': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'action',
+                    cardsOnHand: [createCard({ id: 'C1A' })],
+                    stationCards: [{ place: 'draw' }]
+                }));
+                await timeout();
+
+                await click('.field-playerCardsOnHand .card');
+            },
+            'should see station card ghosts'() {
+                assert.elementCount('.field-playerStation .card-ghost', 3);
+            }
+        }
+    },
     'attack': {
         'when player has card in opponent zone and opponent has 1 defense card': {
             async setUp() {
