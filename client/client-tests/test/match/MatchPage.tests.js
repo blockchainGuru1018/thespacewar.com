@@ -893,7 +893,7 @@ module.exports = testCase('MatchPage', {
             }
         }
     },
-    'requirements': {
+    'discard card requirement': {
         'when have discard card requirement': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
@@ -904,8 +904,7 @@ module.exports = testCase('MatchPage', {
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'draw',
-                    playerStationCards: [{ place: 'draw' }],
-                    opponentStationCards: [{ id: 'C2A', place: 'action' }],
+                    stationCards: [{ place: 'draw' }],
                     requirements: [{ type: 'discardCard', count: 2 }]
                 }));
                 await timeout();
@@ -918,6 +917,9 @@ module.exports = testCase('MatchPage', {
             },
             'should show guide text'() {
                 assert.elementText('.guideText', 'Discard 2 cards');
+            },
+            'should NOT be able to select any station card'() {
+                assert.elementCount('.stationCard .selectable', 0);
             }
         },
         'when have card requirement with "waiting" set to true': {
@@ -930,8 +932,7 @@ module.exports = testCase('MatchPage', {
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'draw',
-                    playerStationCards: [{ place: 'draw' }],
-                    opponentStationCards: [{ id: 'C2A', place: 'action' }],
+                    stationCards: [{ place: 'draw' }],
                     requirements: [{ waiting: true }]
                 }));
                 await timeout();
@@ -946,7 +947,172 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.guideText', 1);
                 assert.elementCount('.guideText-waitingForOtherPlayer', 1);
             }
+        }
+    },
+    'damage own station card requirement': {
+        'when have damageOwnStationCard requirement': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'draw',
+                    stationCards: [{ place: 'draw' }, { place: 'draw' }, { place: 'draw' }],
+                    opponentStationCards: [{ place: 'draw' }],
+                    requirements: [{ type: 'damageOwnStationCard', count: 2 }]
+                }));
+                await timeout();
+            },
+            'should NOT show next phase button'() {
+                assert.elementCount('.playerHud-nextPhaseButton', 0);
+            },
+            'should NOT show end turn button'() {
+                assert.elementCount('.playerHud-endTurnButton', 0);
+            },
+            'should show guide text'() {
+                assert.elementText('.guideText', 'Select 2 of your own station cards to damage');
+            },
+            'should NOT be able to select opponent station card'() {
+                assert.elementCount('.field-opponent .stationCard .selectable', 0);
+            }
         },
+        'when in action phase with damageOwnStationCard requirement and a flipped station card and click on card in hand': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'action',
+                    cardsOnHand: [createCard({ id: 'C1A' })],
+                    stationCards: [
+                        { place: 'draw' },
+                        { card: createCard({ id: 'C2A' }), place: 'draw', flipped: true }
+                    ],
+                    requirements: [{ type: 'damageOwnStationCard', count: 1 }]
+                }));
+                await timeout();
+
+                await click('.field-playerCardsOnHand .card');
+            },
+            'should NOT be able to move station cards to zone'() {
+                assert.elementCount('.stationCard .movable', 0);
+            }
+        },
+        'when in action phase with damageOwnStationCard requirement and an affordable card on hand and click on card in hand': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'action',
+                    cardsOnHand: [createCard({ id: 'C1A' })],
+                    stationCards: [
+                        { place: 'action' },
+                        { card: createCard({ id: 'C2A' }), place: 'action', flipped: true }
+                    ],
+                    requirements: [{ type: 'damageOwnStationCard', count: 1 }]
+                }));
+                await timeout();
+
+                await click('.field-playerCardsOnHand .card');
+            },
+            'should NOT show ANY card ghosts'() {
+                assert.elementCount('.card-ghost', 0);
+            }
+        },
+        'when have damageOwnStationCard requirement and 1 of 2 station cards is flipped': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'draw',
+                    stationCards: [
+                        { place: 'draw' },
+                        { card: createCard({ id: 'C2A' }), place: 'draw', flipped: true }
+                    ],
+                    requirements: [{ type: 'damageOwnStationCard', count: 1 }]
+                }));
+                await timeout();
+            },
+            'should NOT be able to select flipped station card'() {
+                assert.elementCount('.field-player .stationCard--flipped', 1);
+                assert.elementCount('.field-player .stationCard--flipped .selectable', 0);
+            }
+        },
+        'when have damageOwnStationCard requirement and click on station card ': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'draw',
+                    stationCards: [{ place: 'draw' }, { place: 'draw' }, { place: 'draw' }],
+                    requirements: [{ type: 'damageOwnStationCard', count: 2 }]
+                }));
+                await timeout();
+
+                await click('.field-player .stationCard:eq(0) .selectable');
+            },
+            'should NOT show next phase button'() {
+                assert.elementCount('.playerHud-nextPhaseButton', 0);
+            },
+            'should NOT show end turn button'() {
+                assert.elementCount('.playerHud-endTurnButton', 0);
+            },
+            'should show guide text'() {
+                assert.elementText('.guideText', 'Select 1 of your own station cards to damage');
+            },
+            'should have clicked station card selected'() {
+                assert.elementCount('.field-player .stationCard:eq(0).selected--danger', 1);
+            }
+        },
+        'when have damageOwnStationCard requirement with count of 1 and click on station card': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'action',
+                    stationCards: [{ id: 'S1A', place: 'draw' }, { id: 'S2A', place: 'draw' }],
+                    requirements: [{ type: 'damageOwnStationCard', count: 1 }]
+                }));
+                await timeout();
+
+                await click('.field-player .stationCard:eq(0) .selectable');
+            },
+            'should NOT show next phase button'() {
+                assert.elementCount('.playerHud-nextPhaseButton', 0);
+            },
+            'should NOT show end turn button'() {
+                assert.elementCount('.playerHud-endTurnButton', 0);
+            },
+            'should NOT show guide text'() {
+                assert.elementCount('.guideText', 0);
+            },
+            'should NOT be able to select any station card'() {
+                assert.elementCount('.stationCard .selectable', 0);
+            },
+            'should emit "damageOwnStationCards"'() {
+                assert.calledWith(this.matchController.emit, 'damageOwnStationCards', {
+                    targetIds: ['S1A']
+                });
+            }
+        }
     }
 });
 
@@ -1033,13 +1199,4 @@ function FakeUserRepository({ ownUser }) {
             return ownUser;
         }
     }
-}
-
-function FakeBaseCard({ id, playerId = 'P1A', turn = 1, phase = 'attack', events = [] }) {
-    return new BaseCard({
-        eventRepository: { getAll: () => events },
-        matchInfoRepository: { getTurn: () => turn, getPlayerPhase: () => phase },
-        playerId,
-        card: { id }
-    });
 }

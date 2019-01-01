@@ -98,7 +98,8 @@ module.exports = function (deps) {
         discardDurationCard,
         moveCard: moveCardController.onMoveCard,
         attack: attackController.onAttack,
-        attackStationCard: attackController.onAttackStationCards, // TODO Rename attackStationCards (pluralized)
+        attackStationCard: attackController.onAttackStationCards, // TODO Rename attackStationCards (pluralized),
+        damageOwnStationCards: attackController.onDamageOwnStationCard,
         repairCard,
         retreat,
         updatePlayer: matchComService.updatePlayer.bind(matchComService),

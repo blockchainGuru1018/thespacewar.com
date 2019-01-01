@@ -8,12 +8,14 @@ function AttackController(deps) {
         matchService,
         matchComService,
         playerStateServiceById,
-        cardFactory
+        cardFactory,
+        playerServiceProvider
     } = deps;
 
     return {
         onAttack,
-        onAttackStationCards
+        onAttackStationCards,
+        onDamageOwnStationCard
     }
 
     function onAttack(playerId, { attackerCardId, defenderCardId }) {
@@ -110,9 +112,7 @@ function AttackController(deps) {
         }
 
         for (let targetCardId of targetStationCardIds) {
-            opponentStateService.updateStationCard(targetCardId, card => {
-                card.flipped = true;
-            });
+            opponentStateService.flipStationCard(targetCardId);
         }
 
         playerStateService.registerAttack(attackerCardId);
@@ -128,6 +128,47 @@ function AttackController(deps) {
         if (gameOver) {
             matchService.endMatch();
         }
+    }
+
+    function onDamageOwnStationCard(playerId, { targetIds }) {
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
+
+        const damageOwnStationCardRequirement = playerRequirementService.getLatestMatchingRequirement({ type: 'damageOwnStationCard' });
+        if (!damageOwnStationCardRequirement) {
+            throw new CheatError('Cannot damage station card');
+        }
+        if (damageOwnStationCardRequirement.count < targetIds.length) {
+            throw new CheatError('Cannot damage station card');
+        }
+
+        for (const targetId of targetIds) {
+            if (!playerStateService.hasCardInStationCards(targetId)) {
+                throw new CheatError('Cannot damage station card');
+            }
+        }
+
+        for (const targetId of targetIds) {
+            playerStateService.flipStationCard(targetId);
+        }
+
+        const newRequirementCount = damageOwnStationCardRequirement.count - targetIds.length;
+        if (newRequirementCount > 1) {
+            playerRequirementService.updateLatestMatchingRequirement({ type: 'damageOwnStationCard' }, requirement => {
+                requirement.count = requirement.count - targetIds.length;
+            });
+        }
+        else {
+            playerRequirementService.removeLatestMatchingRequirement({ type: 'damageOwnStationCard' });
+        }
+
+        matchComService.emitToPlayer(playerId, 'stateChanged', {
+            stationCards: playerStateService.getStationCards(),
+            requirements: playerRequirementService.getRequirements()
+        });
+        matchComService.emitToOpponentOf(playerId, 'stateChanged', {
+            opponentStationCards: playerStateService.getStationCards()
+        });
     }
 }
 

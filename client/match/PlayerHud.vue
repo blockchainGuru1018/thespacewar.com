@@ -123,6 +123,8 @@
                 'waitingForOtherPlayerToFinishRequirements',
                 'latestRequirement',
                 'latestRequirementIsDiscardCard',
+                'latestRequirementIsDamageOwnStationCard',
+                'selectedCardsCount'
             ]),
             gameHasEnded() {
                 return this.hasWonGame || this.hasLostGame;
@@ -173,11 +175,22 @@
                 return this.attackerCard.attack - this.selectedDefendingStationCards.length;
             },
             requirementGuideText() {
-                if (this.latestRequirement && this.latestRequirementIsDiscardCard) {
+                if (this.latestRequirementIsDiscardCard) {
                     const cardsToDiscard = this.latestRequirement.count;
-                    return `Discard ${cardsToDiscard} ${cardsToDiscard === 1 ? 'card' : 'cards'}`;
+                    return `Discard ${cardsToDiscard} ${pluralize('card', cardsToDiscard)}`;
                 }
-                return '';
+                else if (this.latestRequirementIsDamageOwnStationCard) {
+                    const cardsToSelect = this.latestRequirement.count - this.selectedCardsCount;
+                    if (cardsToSelect === 0) {
+                        return '';
+                    }
+                    else {
+                        return `Select ${cardsToSelect} of your own station cards to damage`;
+                    }
+                }
+                else {
+                    return '';
+                }
             }
         },
         methods: {
@@ -193,6 +206,10 @@
             }
         }
     };
+
+    function pluralize(word, count) {
+        return count > 1 ? word + 's' : word;
+    }
 
     function capitalize(word) {
         return word.substr(0, 1).toUpperCase() + word.substr(1);

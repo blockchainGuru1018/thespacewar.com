@@ -12,7 +12,10 @@ module.exports = function (deps) {
             isOwnTurn,
             canMoveCardsFromHand,
             canDiscardCards,
-            canPutDownCards
+            canPutDownCards,
+            canPutDownStationCards,
+            canSelectStationCards,
+            canMoveStationCards
         },
         actions: {}
     }
@@ -29,16 +32,43 @@ module.exports = function (deps) {
     }
 
     function canDiscardCards(state, getters, rootState) {
-        const phase = rootState.match.phase;
-        const inActionOrDiscardPhase = phase === 'action' || phase === 'discard';
-        const latestRequirementIsDiscardCard = getFrom('latestRequirementIsDiscardCard', 'requirement');
-        return inActionOrDiscardPhase
-            || !!latestRequirementIsDiscardCard;
+        const hasRequirement = !!getFrom('latestRequirement', 'requirement');
+        if (hasRequirement) {
+            return getFrom('latestRequirementIsDiscardCard', 'requirement');
+        }
+        else {
+            const phase = rootState.match.phase;
+            return phase === 'action' || phase === 'discard';
+        }
     }
 
     function canPutDownCards(state, getters) {
-        const latestRequirementIsDiscardCard = getFrom('latestRequirementIsDiscardCard', 'requirement');
+        const hasRequirement = !!getFrom('latestRequirement', 'requirement');
         return getters.isOwnTurn
-            && !latestRequirementIsDiscardCard;
+            && !hasRequirement;
+    }
+
+    function canPutDownStationCards(state, getters, rootState) {
+        const matchState = rootState.match;
+        const hasAlreadyPutDownStationCard = matchState.events.some(e => {
+            return e.turn === matchState.turn
+                && e.type === 'putDownCard'
+                && e.location.startsWith('station');
+        })
+        const hasRequirement = !!getFrom('latestRequirement', 'requirement');
+        return matchState.phase === 'action'
+            && !hasAlreadyPutDownStationCard
+            && !hasRequirement;
+    }
+
+    function canMoveStationCards(state, getters, rootState) {
+        const hasRequirement = !!getFrom('latestRequirement', 'requirement');
+        return !hasRequirement;
+    }
+
+    function canSelectStationCards() {
+        const latestRequirementIsDamageOwnStationCard = getFrom('latestRequirementIsDamageOwnStationCard', 'requirement');
+        const cardsLeftToSelect = getFrom('cardsLeftToSelect', 'requirement');
+        return latestRequirementIsDamageOwnStationCard && cardsLeftToSelect > 0;
     }
 }

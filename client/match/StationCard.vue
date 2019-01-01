@@ -1,25 +1,40 @@
 <template>
     <div v-if="stationCard.flipped" :style="cardStyle" :class="classes">
         <div class="actionOverlays">
-            <div
-                    v-if="canMoveCardToZone"
-                    @click.stop="moveFlippedStationCardToZone(stationCard.id)"
-                    class="movable">
+            <div v-if="canMoveCardToZone"
+                 @click.stop="moveFlippedStationCardToZone(stationCard.id)"
+                 class="movable">
                 Move to zone
             </div>
         </div>
     </div>
-    <div v-else-if="selectedAsDefender" class="card card-faceDown selectedAsDefender"/>
-    <div v-else-if="canBeSelectedAsDefender" class="card card-faceDown">
+    <div v-else-if="selectedWithDanger" :class="classes"/>
+    <div v-else :class="classes">
         <div class="actionOverlays">
-            <div @click.stop="selectStationCardAsDefender(stationCard)" class="attackable"/>
+            <div v-if="canBeSelectedAsDefender"
+                 @click.stop="selectStationCardAsDefender(stationCard)"
+                 class="attackable"/>
+            <div v-if="canBeSelectedForRequirement"
+                 @click.stop="selectStationCardForRequirement(stationCard)"
+                 class="selectable"/>
         </div>
     </div>
-    <div v-else class="card card-faceDown"/>
 </template>
 <script>
     const Vuex = require('vuex');
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
+    const {
+        mapState: mapPermissionState,
+        mapGetters: mapPermissionGetters,
+        mapMutations: mapPermissionMutations,
+        mapActions: mapPermissionActions
+    } = Vuex.createNamespacedHelpers('permission');
+    const {
+        mapState: mapRequirementState,
+        mapGetters: mapRequirementGetters,
+        mapMutations: mapRequirementMutations,
+        mapActions: mapRequirementActions
+    } = Vuex.createNamespacedHelpers('requirement');
 
     module.exports = {
         props: [
@@ -33,16 +48,37 @@
                 'phase',
                 'selectedDefendingStationCards'
             ]),
+            ...mapRequirementState([
+                'selectedStationCardIdsForRequirement',
+            ]),
             ...mapGetters([
                 'attackerCanAttackStationCards',
                 'actionPoints2',
                 'createCard'
             ]),
+            ...mapPermissionGetters([
+                'canSelectStationCards',
+                'canMoveStationCards'
+            ]),
             classes() {
-                const classes = ['card'];
+                const classes = ['stationCard', 'card'];
                 if (this.isOpponentStationCard) {
                     classes.push('card--turnedAround');
                 }
+                if (this.selectedWithDanger) {
+                    classes.push('selected--danger');
+                }
+                if (this.selectedAsDefender) {
+                    classes.push('selectedAsDefender');
+                }
+
+                if (this.stationCard.flipped) {
+                    classes.push('stationCard--flipped');
+                }
+                else {
+                    classes.push('card-faceDown');
+                }
+
                 return classes;
             },
             cardStyle() {
@@ -53,7 +89,12 @@
             canMoveCardToZone() {
                 return this.phase === 'action'
                     && this.actionPoints2 >= this.stationCard.card.cost
-                    && !this.isOpponentStationCard;
+                    && !this.isOpponentStationCard
+                    && this.canMoveStationCards;
+            },
+            selectedWithDanger() {
+                return this.selectedAsDefender
+                    || this.selectedForRequirement;
             },
             selectedAsDefender() {
                 return this.selectedDefendingStationCards.includes(this.stationCard.id);
@@ -65,68 +106,31 @@
                     && this.attackerCardId
                     && this.attackerCanAttackStationCards
                     && !this.opponentCardsInZone.some(c => this.createCard(c).stopsStationAttack());
+            },
+            selectedForRequirement() {
+                return this.selectedStationCardIdsForRequirement.includes(this.stationCard.id);
+            },
+            canBeSelectedForRequirement() {
+                return !this.isOpponentStationCard
+                    && !this.stationCard.flipped
+                    && this.canSelectStationCards;
             }
         },
         methods: {
             ...mapActions([
                 'selectStationCardAsDefender',
                 'moveFlippedStationCardToZone'
+            ]),
+            ...mapRequirementActions([
+                'selectStationCardForRequirement',
             ])
         }
     };
 </script>
 <style scoped lang="scss">
+    @import "card";
+
     .card {
         position: relative;
-    }
-
-    .actionOverlays {
-        position: absolute;
-        left: 0;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .actionOverlays {
-        z-index: 2;
-    }
-
-    .attackable, .movable {
-        color: white;
-        font-family: Helvetica, sans-serif;
-        font-size: 16px;
-        flex: 1 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        visibility: hidden;
-        text-align: center;
-        opacity: .5;
-        cursor: pointer;
-
-        &:hover {
-            opacity: 1;
-        }
-    }
-
-    .attackable {
-        background-color: rgba(255, 100, 100, .5);
-    }
-
-    .movable {
-        background-color: rgba(0, 0, 0, .2);
-    }
-
-    .actionOverlays:hover {
-        & .movable, & .attackable {
-            visibility: visible;
-        }
-    }
-
-    .card.card-faceDown.selectedAsDefender {
-        outline: 3px solid red;
     }
 </style>

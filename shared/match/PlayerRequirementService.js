@@ -25,13 +25,25 @@ class PlayerRequirementService {
         return this._findMatchingRequirement(requirements, { type, common, waiting });
     }
 
-    updateLatestMatchingRequirement({ type, common = null, waiting = null }, mergeData) {
+    mergeLatestMatchingRequirement({ type, common = null, waiting = null }, mergeData) {
         this._playerStateService
             .update(playerState => {
                 const requirements = playerState.requirements.slice().reverse();
                 const requirement = this._findMatchingRequirement(requirements, { type, common, waiting });
                 Object.assign(requirement, mergeData);
             });
+    }
+
+    updateLatestMatchingRequirement({ type, common = null, waiting = null }, updateFn) {
+        const updatedState = this._playerStateService
+            .update(playerState => {
+                const requirements = playerState.requirements.slice().reverse();
+                const requirement = this._findMatchingRequirement(requirements, { type, common, waiting });
+                updateFn(requirement);
+            });
+
+        const requirements = updatedState.requirements.slice().reverse();
+        return this._findMatchingRequirement(requirements, { type, common, waiting });
     }
 
     removeLatestMatchingRequirement({ type, common = null, waiting = null }) {

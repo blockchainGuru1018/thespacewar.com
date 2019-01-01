@@ -7,13 +7,21 @@ module.exports = function (deps) {
     return {
         name: 'requirement',
         namespaced: true,
-        state: {},
+        state: {
+            selectedStationCardIdsForRequirement: []
+        },
         getters: {
             waitingForOtherPlayerToFinishRequirements,
             latestRequirement,
-            latestRequirementIsDiscardCard
+            latestRequirementIsDiscardCard,
+            latestRequirementIsDamageOwnStationCard,
+            countInLatestRequirement,
+            selectedCardsCount,
+            cardsLeftToSelect
         },
-        actions: {}
+        actions: {
+            selectStationCardForRequirement
+        }
     }
 
     function waitingForOtherPlayerToFinishRequirements(state, getters, rootState) {
@@ -28,6 +36,35 @@ module.exports = function (deps) {
     }
 
     function latestRequirementIsDiscardCard(state, getters) {
-        return getters.latestRequirement && getters.latestRequirement.type === 'discardCard';
+        return getters.latestRequirement
+            && getters.latestRequirement.type === 'discardCard';
+    }
+
+    function latestRequirementIsDamageOwnStationCard(state, getters) {
+        return getters.latestRequirement
+            && getters.latestRequirement.type === 'damageOwnStationCard';
+    }
+
+    function countInLatestRequirement(state, getters) {
+        return getters.latestRequirement
+            && getters.latestRequirement.count;
+    }
+
+    function selectedCardsCount(state, getters) {
+        return getters.latestRequirementIsDamageOwnStationCard
+            ? state.selectedStationCardIdsForRequirement.length
+            : 0;
+    }
+
+    function cardsLeftToSelect(state, getters) {
+        return getters.countInLatestRequirement - getters.selectedCardsCount;
+    }
+
+    function selectStationCardForRequirement({ state, getters, dispatch }, stationCard) {
+        state.selectedStationCardIdsForRequirement.push(stationCard.id);
+        if (getters.cardsLeftToSelect === 0) {
+            const targetIds = state.selectedStationCardIdsForRequirement.slice();
+            rootStore.dispatch('match/damageOwnStationCards', targetIds);
+        }
     }
 }

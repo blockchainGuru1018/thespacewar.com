@@ -239,6 +239,12 @@ class PlayerStateService {
         });
     }
 
+    flipStationCard(cardId) {
+        this.updateStationCard(cardId, card => {
+            card.flipped = true;
+        });
+    }
+
     removeCard(cardId) { // TODO Rename removeFromZones/removeFromAllZones/removeFromPlay
         this.update(playerState => {
             const cardInZoneIndex = playerState.cardsInZone.findIndex(c => c.id === cardId);

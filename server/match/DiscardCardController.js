@@ -65,7 +65,7 @@ function DiscardCardController(deps) {
 
         if (discardCardRequirement.count > 1) {
             const newCount = discardCardRequirement.count - 1;
-            playerRequirementService.updateLatestMatchingRequirement({ type: 'discardCard' }, { count: newCount });
+            playerRequirementService.mergeLatestMatchingRequirement({ type: 'discardCard' }, { count: newCount });
         }
         else if (discardCardRequirement.common) {
             const opponentWaitingCommonRequirement = opponentRequirementService.getLatestMatchingRequirement({
@@ -82,7 +82,7 @@ function DiscardCardController(deps) {
                 })
             }
             else {
-                playerRequirementService.updateLatestMatchingRequirement({ type: 'discardCard', common: true }, {
+                playerRequirementService.mergeLatestMatchingRequirement({ type: 'discardCard', common: true }, {
                     count: 0,
                     waiting: true
                 });

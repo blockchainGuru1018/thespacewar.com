@@ -190,15 +190,14 @@ function PutDownCardController(deps) {
             });
         }
 
-        //TODO Implement in Front-end before turning on this
-        // const stationCardsToDamage = Math.min(3, playerStateService.getUnflippedStationCardsCount());
-        // if (stationCardsToDamage > 0) {
-        //     playerRequirementService.addRequirement({
-        //         type: 'damageOwnStationCard',
-        //         count: stationCardsToDamage,
-        //         common: true
-        //     });
-        // }
+        const stationCardsToDamage = Math.min(3, playerStateService.getUnflippedStationCardsCount());
+        if (stationCardsToDamage > 0) {
+            playerRequirementService.addRequirement({
+                type: 'damageOwnStationCard',
+                count: stationCardsToDamage,
+                common: true
+            });
+        }
     }
 
     function putDownCardInZone({ playerId, cardData }) {

@@ -21,6 +21,7 @@ module.exports = testCase('Match', {
     'duration card:': require('./durationCardTests.js'),
     'behaviour card': require('./behaviourCardTests.js'),
     'repair card': require('./repairCardTests.js'),
+    'damage own station cards': require('./damageOwnStationCardsTests.js'),
     'when first player retreats from match should emit opponentRetreated to second player': {
         setUp() {
             this.firstPlayerConnection = FakeConnection2(['restoreState']);

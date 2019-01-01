@@ -248,7 +248,8 @@
             ...mapPermissionGetters([
                 'canMoveCardsFromHand',
                 'canDiscardCards',
-                'canPutDownCards'
+                'canPutDownCards',
+                'canPutDownStationCards'
             ]),
             holdingCardStyle() {
                 if (!this.holdingCard) return {};
@@ -270,14 +271,7 @@
                 return this.holdingCard && this.canDiscardCards;
             },
             stationCardGhostVisible() {
-                const hasAlreadyPutDownStationCard = this.events.some(e => {
-                    return e.turn === this.turn
-                        && e.type === 'putDownCard'
-                        && e.location.startsWith('station');
-                })
-                return this.phase === 'action'
-                    && this.holdingCard
-                    && !hasAlreadyPutDownStationCard;
+                return this.holdingCard && this.canPutDownStationCards;
             },
             opponentTopDiscardCard() {
                 return this.opponentDiscardedCards[this.opponentDiscardedCards.length - 1];

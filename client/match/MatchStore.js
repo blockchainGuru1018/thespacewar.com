@@ -23,7 +23,7 @@ const storeItemNameByServerItemName = {
 //TODO When move handsize station card to zone, a station card from draw station cards is removed.
 // But now always. Perhaps it filters on commonId? Or two cards had the same id somehow..?
 //TODO Sometimes when discarding a card in the discard phase an error is thrown in the console. Does not appear to affect gameplay.
-//TODO Fix: Naively creates a Card with ownUser.id. But the createCard method is also used to created opponent card in ZoneCard.vue.
+//TODO Fix: createCard method creates card for your OWN player, and not cards for the opponent. Yet they are used even for opponent cards in ZoneCard.vue.
 
 module.exports = function (deps) {
 
@@ -145,7 +145,8 @@ module.exports = function (deps) {
             endAttack,
             selectAsRepairer,
             selectForRepair,
-            cancelCurrentAction
+            cancelCurrentAction,
+            damageOwnStationCards
         }
     };
 
@@ -216,7 +217,7 @@ module.exports = function (deps) {
             && cardInfoRepository.getCost(e.cardCommonId) > 0);
     }
 
-    function actionPoints2(state) {
+    function actionPoints2(state) { //TODO Rename "actionPoints"
         return actionPointsCalculator.calculate({
             phase: state.phase,
             turn: state.turn,
@@ -703,6 +704,10 @@ module.exports = function (deps) {
         else if (state.repairerCardId) {
             state.repairerCardId = null;
         }
+    }
+
+    function damageOwnStationCards({}, targetIds) {
+        matchController.emit('damageOwnStationCards', { targetIds });
     }
 
     function addDiscardEvent({ state }, card) {
