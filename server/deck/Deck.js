@@ -8,6 +8,7 @@ module.exports = function (deps) {
     return {
         drawSingle,
         draw,
+        getCardCount,
         _getDeck: () => [...deck],
         _restoreDeck: previousDeck => deck = [...previousDeck]
     };
@@ -24,6 +25,10 @@ module.exports = function (deps) {
         }
         cards.reverse();
         return cards;
+    }
+
+    function getCardCount() {
+        return deck.length;
     }
 };
 

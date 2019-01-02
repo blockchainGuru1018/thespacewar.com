@@ -15,6 +15,7 @@ module.exports = function (deps) {
             latestRequirement,
             latestRequirementIsDiscardCard,
             latestRequirementIsDamageOwnStationCard,
+            latestRequirementIsDrawCard,
             countInLatestRequirement,
             selectedCardsCount,
             cardsLeftToSelect
@@ -43,6 +44,11 @@ module.exports = function (deps) {
     function latestRequirementIsDamageOwnStationCard(state, getters) {
         return getters.latestRequirement
             && getters.latestRequirement.type === 'damageOwnStationCard';
+    }
+
+    function latestRequirementIsDrawCard(state, getters) {
+        return getters.latestRequirement
+            && getters.latestRequirement.type === 'drawCard';
     }
 
     function countInLatestRequirement(state, getters) {

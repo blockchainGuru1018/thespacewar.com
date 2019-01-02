@@ -2,12 +2,13 @@ const DrawCardEvent = require('../../shared/event/DrawCardEvent.js');
 const CheatError = require('./CheatError.js');
 const itemNamesForOpponentByItemNameForPlayer = require('./itemNamesForOpponentByItemNameForPlayer.js');
 
-function DrawPhaseController(deps) {
+function DrawCardController(deps) {
 
     const {
         matchService,
         matchComService,
-        playerStateServiceById
+        playerStateServiceById,
+        playerServiceProvider
     } = deps;
 
     return {
@@ -16,8 +17,37 @@ function DrawPhaseController(deps) {
     }
 
     function onDrawCard(playerId) {
-        const playerStateService = playerStateServiceById[playerId];
-        const cannotDrawMoreCards = !playerStateService.moreCardsCanBeDrawn();
+        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
+        const drawCardRequirement = playerRequirementService.getLatestMatchingRequirement({ type: 'drawCard' });
+        if (drawCardRequirement) {
+            onDrawCardForRequirement({ playerId });
+        }
+        else {
+            onDrawCardBecauseOfDrawPhase({ playerId });
+        }
+    }
+
+    function onDrawCardForRequirement({ playerId }) {
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
+
+        playerStateService.drawCard({ byEvent: true });
+
+        PlayerRequirementUpdater(playerId, { type: 'drawCard' }).decrementCount();
+
+        matchComService.emitToPlayer(playerId, 'stateChanged', {
+            events: playerStateService.getEvents(),
+            cardsOnHand: playerStateService.getCardsOnHand(),
+            requirements: playerRequirementService.getRequirements()
+        });
+        matchComService.emitToOpponentOf(playerId, 'stateChanged', {
+            opponentCardCount: playerStateService.getCardsOnHand().length,
+        });
+    }
+
+    function onDrawCardBecauseOfDrawPhase({ playerId }) {
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const cannotDrawMoreCards = !playerStateService.moreCardsCanBeDrawnForDrawPhase();
         if (cannotDrawMoreCards) {
             matchComService.emitToPlayer(playerId, 'drawCards', { moreCardsCanBeDrawn: false, cards: [] });
             return;
@@ -25,23 +55,23 @@ function DrawPhaseController(deps) {
 
         const deck = playerStateService.getDeck();
         const card = deck.drawSingle();
-
         const updatedPlayerState = playerStateService.update(state => {
             state.cardsOnHand.push(card);
         });
+
         const cardsOnHandCount = updatedPlayerState.cardsOnHand.length;
         matchComService.emitToOpponentOf(playerId, 'setOpponentCardCount', cardsOnHandCount);
 
         const turn = matchService.getTurn();
-        playerStateService.storeEvent(new DrawCardEvent({ turn }));
-        const moreCardsCanBeDrawn = playerStateService.moreCardsCanBeDrawn();
+        playerStateService.storeEvent(DrawCardEvent({ turn }));
+        const moreCardsCanBeDrawn = playerStateService.moreCardsCanBeDrawnForDrawPhase();
 
         matchComService.emitToPlayer(playerId, 'drawCards', { moreCardsCanBeDrawn, cards: [card] });
     }
 
     function onDiscardOpponentTopTwoCards(playerId) {
         const playerStateService = playerStateServiceById[playerId];
-        const cannotDrawMoreCards = !playerStateService.moreCardsCanBeDrawn();
+        const cannotDrawMoreCards = !playerStateService.moreCardsCanBeDrawnForDrawPhase();
         if (cannotDrawMoreCards) {
             matchComService.emitToPlayer(playerId, 'drawCards', { moreCardsCanBeDrawn: false, cards: [] });
             return;
@@ -50,7 +80,7 @@ function DrawPhaseController(deps) {
         const turn = matchService.getTurn();
         playerStateService.storeEvent(new DrawCardEvent({ turn }));
 
-        const moreCardsCanBeDrawn = playerStateService.moreCardsCanBeDrawn();
+        const moreCardsCanBeDrawn = playerStateService.moreCardsCanBeDrawnForDrawPhase();
         matchComService.emitToPlayer(playerId, 'drawCards', { moreCardsCanBeDrawn, cards: [] });
 
         const opponentStateService = playerStateServiceById[matchComService.getOpponentId(playerId)];
@@ -66,6 +96,18 @@ function DrawPhaseController(deps) {
             events: opponentStateService.getEvents()
         });
     }
+
+    function PlayerRequirementUpdater(playerId, { type, common = null, waiting = null }) {
+        const service = playerServiceProvider.getRequirementServiceById(playerId);
+
+        return {
+            decrementCount
+        };
+
+        function decrementCount() {
+            service.decrementCountOnLatestMatchingRequirement({ type, common, waiting });
+        }
+    }
 }
 
-module.exports = DrawPhaseController;
+module.exports = DrawCardController;

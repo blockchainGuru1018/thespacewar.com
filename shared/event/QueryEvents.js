@@ -47,11 +47,12 @@ class QueryEvents { // TODO rename QueryCardEvents?
         });
     }
 
-    getCardDrawsOnTurn(turn) {
+    getCardDrawsOnTurn(turn, { byEvent = false } = {}) {
         const events = this._eventRepository.getAll();
         return events.filter(event => {
             return event.turn === turn
-                && event.type === 'drawCard';
+                && event.type === 'drawCard'
+                && event.byEvent === byEvent;
         });
     }
 }

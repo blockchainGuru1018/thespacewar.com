@@ -96,14 +96,15 @@
                     </div>
                     <div class="field-drawPile">
                         <portal-target name="playerDrawPile"/>
-                        <div v-if="phase === PHASES.draw" class="card card-faceDown">
+                        <div class="card card-faceDown">
                             <div class="actionOverlays">
-                                <div @click="playerDrawPileClick" class="drawPile-draw actionOverlay">
+                                <div v-if="canDrawCards"
+                                     @click="playerDrawPileClick"
+                                     class="drawPile-draw actionOverlay">
                                     Draw
                                 </div>
                             </div>
                         </div>
-                        <div v-else class="card card-faceDown"/>
                     </div>
                     <div class="field-discardPile">
                         <div v-if="playerDiscardedCards.length === 0" class="card card--placeholder"/>
@@ -249,7 +250,8 @@
                 'canMoveCardsFromHand',
                 'canDiscardCards',
                 'canPutDownCards',
-                'canPutDownStationCards'
+                'canPutDownStationCards',
+                'canDrawCards'
             ]),
             holdingCardStyle() {
                 if (!this.holdingCard) return {};

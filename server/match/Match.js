@@ -1,7 +1,7 @@
 const DiscardCardEvent = require('../../shared/event/DiscardCardEvent.js');
 const RepairCardEvent = require('../../shared/event/RepairCardEvent.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
-const DrawPhaseController = require('./DrawPhaseController.js');
+const DrawCardController = require('./DrawCardController.js');
 const AttackController = require('./AttackController.js');
 const DebugController = require('./DebugController.js');
 const MoveCardController = require('./MoveCardController.js');
@@ -76,7 +76,7 @@ module.exports = function (deps) {
         playerServiceProvider
     };
     const debugController = DebugController(controllerDeps);
-    const drawPhaseController = DrawPhaseController(controllerDeps);
+    const drawCardController = DrawCardController(controllerDeps);
     const attackController = AttackController(controllerDeps);
     const moveCardController = MoveCardController(controllerDeps);
     const putDownCardController = PutDownCardController(controllerDeps);
@@ -92,8 +92,8 @@ module.exports = function (deps) {
         getOwnState: getPlayerState,
         nextPhase,
         putDownCard: putDownCardController.onPutDownCard,
-        drawCard: drawPhaseController.onDrawCard,
-        discardOpponentTopTwoCards: drawPhaseController.onDiscardOpponentTopTwoCards,
+        drawCard: drawCardController.onDrawCard,
+        discardOpponentTopTwoCards: drawCardController.onDiscardOpponentTopTwoCards,
         discardCard: discardCardController.onDiscardCard, //TODO Rename discardFromHand
         discardDurationCard,
         moveCard: moveCardController.onMoveCard,

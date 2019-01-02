@@ -573,10 +573,10 @@ module.exports = testCase('MatchPage', {
             'should NOT show guide text'() {
                 assert.elementCount('.guideText-drawCard', 0);
             },
-            'should show draw pile action overlay'() {
+            'should NOT show draw pile action overlay'() {
                 assert.elementCount('.drawPile-draw', 0);
             },
-            'should show opponent draw pile action overlay'() {
+            'should NOT show opponent draw pile action overlay'() {
                 assert.elementCount('.drawPile-discardTopTwo', 0);
             }
         },
@@ -1155,6 +1155,30 @@ module.exports = testCase('MatchPage', {
                 assert.calledWith(this.matchController.emit, 'damageOwnStationCards', {
                     targetIds: ['S1A']
                 });
+            }
+        }
+    },
+    'draw card requirement': {
+        'when have draw card requirement': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'action',
+                    opponentStationCards: [{ place: 'draw' }],
+                    requirements: [{ type: 'drawCard', count: 2 }]
+                }));
+                await timeout();
+            },
+            'should show guide text'() {
+                assert.elementText('.guideText', 'Draw 2 cards');
+            },
+            'should show draw pile action overlay'() {
+                assert.elementCount('.drawPile-draw', 1);
             }
         }
     }

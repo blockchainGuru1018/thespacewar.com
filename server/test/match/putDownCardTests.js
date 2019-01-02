@@ -16,8 +16,10 @@ const {
     FakeConnection2,
     catchError,
     createState,
+    FakeDeck
 } = require('./shared.js');
 
+const excellentWorkCommonId = '14';
 const supernovaCommonId = '15';
 
 module.exports = {
@@ -384,140 +386,217 @@ module.exports = {
             refute.called(this.secondPlayerConnection.putDownOpponentCard);
         }
     },
-    'when first player put down Supernova': {
-        setUp() {
-            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
-            this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard', 'stateChanged']);
-            const players = [
-                Player('P1A', this.firstPlayerConnection),
-                Player('P2A', this.secondPlayerConnection)
-            ]
-            this.match = createMatch({ players });
-            this.match.restoreFromState(createState({
-                playerStateById: {
-                    'P1A': {
-                        phase: 'action',
-                        cardsInZone: [createCard({ id: 'C1A' })],
-                        cardsInOpponentZone: [createCard({ id: 'C2A' })],
-                        cardsOnHand: [
-                            createCard({ id: 'C3A', type: 'event', commonId: supernovaCommonId }),
-                            createCard({ id: 'A' }),
-                            createCard({ id: 'B' }),
-                            createCard({ id: 'C' })
-                        ],
-                        stationCards: [
-                            { card: createCard({ id: 'S1A' }), place: 'action' },
-                            { card: createCard({ id: 'S2A' }), place: 'action' },
-                            { card: createCard({ id: 'S3A' }), place: 'action' }
-                        ]
+    'Supernova:': {
+        'when first player put down Supernova': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard', 'stateChanged']);
+                const players = [
+                    Player('P1A', this.firstPlayerConnection),
+                    Player('P2A', this.secondPlayerConnection)
+                ]
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'action',
+                            cardsInZone: [createCard({ id: 'C1A' })],
+                            cardsInOpponentZone: [createCard({ id: 'C2A' })],
+                            cardsOnHand: [
+                                createCard({ id: 'C3A', type: 'event', commonId: supernovaCommonId }),
+                                createCard({ id: 'A' }),
+                                createCard({ id: 'B' }),
+                                createCard({ id: 'C' })
+                            ],
+                            stationCards: [
+                                { card: createCard({ id: 'S1A' }), place: 'action' },
+                                { card: createCard({ id: 'S2A' }), place: 'action' },
+                                { card: createCard({ id: 'S3A' }), place: 'action' }
+                            ]
+                        },
+                        'P2A': {
+                            phase: 'wait',
+                            cardsInZone: [createCard({ id: 'C4A' })],
+                            cardsInOpponentZone: [createCard({ id: 'C5A' })],
+                            cardsOnHand: [
+                                createCard({ id: 'D' }),
+                                createCard({ id: 'E' }),
+                                createCard({ id: 'F' })
+                            ],
+                            stationCards: [
+                                { card: createCard({ id: 'S4A' }), place: 'action' },
+                                { card: createCard({ id: 'S5A' }), place: 'action' },
+                                { card: createCard({ id: 'S6A' }), place: 'action' }
+                            ]
+                        }
+                    }
+                }));
+
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C3A' });
+            },
+            'should emit stateChanged to first player'() {
+                assert.calledOnce(this.firstPlayerConnection.stateChanged);
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                    cardsInZone: [],
+                    cardsInOpponentZone: [],
+                    opponentCardsInZone: [],
+                    opponentCardsInPlayerZone: [],
+                    discardedCards: [
+                        sinon.match({ id: 'C1A' }),
+                        sinon.match({ id: 'C2A' }),
+                        sinon.match({ id: 'C3A' })
+                    ],
+                    opponentDiscardedCards: [
+                        sinon.match({ id: 'C4A' }),
+                        sinon.match({ id: 'C5A' })
+                    ],
+                    requirements: [
+                        { type: 'discardCard', common: true, count: 3 },
+                        { type: 'damageOwnStationCard', common: true, count: 3 }
+                    ],
+                    events: [
+                        sinon.match({ type: 'discardCard', cardId: 'C1A' }),
+                        sinon.match({ type: 'discardCard', cardId: 'C2A' }),
+                        sinon.match({ type: 'putDownCard', cardId: 'C3A' }),
+                        sinon.match({ type: 'discardCard', cardId: 'C3A' }),
+                    ]
+                }));
+            },
+            'should emit stateChanged to second player'() {
+                assert.calledOnce(this.secondPlayerConnection.stateChanged);
+                assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                    cardsInZone: [],
+                    cardsInOpponentZone: [],
+                    opponentCardsInZone: [],
+                    opponentCardsInPlayerZone: [],
+                    discardedCards: [
+                        sinon.match({ id: 'C4A' }),
+                        sinon.match({ id: 'C5A' })
+                    ],
+                    opponentDiscardedCards: [
+                        sinon.match({ id: 'C1A' }),
+                        sinon.match({ id: 'C2A' }),
+                        sinon.match({ id: 'C3A' })
+                    ],
+                    opponentCardCount: 3,
+                    events: [
+                        sinon.match({ type: 'discardCard', cardId: 'C4A' }),
+                        sinon.match({ type: 'discardCard', cardId: 'C5A' })
+                    ],
+                    requirements: [
+                        { type: 'discardCard', common: true, count: 3 },
+                        { type: 'damageOwnStationCard', common: true, count: 3 }
+                    ]
+                }));
+            },
+            'should NOT emit opponentDiscardedCard to second player'() {
+                refute.called(this.secondPlayerConnection.opponentDiscardedCard);
+            }
+        },
+        'when first player put down Supernova and both players has NO station cards and NO cards on hand': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stateChanged']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'action',
+                            cardsOnHand: [createCard({ id: 'C3A', type: 'event', commonId: supernovaCommonId })],
+                        }
+                    }
+                }));
+
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C3A' });
+            },
+            'should emit stateChanged with NO requirements to first player'() {
+                assert.calledOnce(this.firstPlayerConnection.stateChanged);
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                    requirements: []
+                }));
+            },
+            'should emit stateChanged with NO requirements to second player'() {
+                assert.calledOnce(this.secondPlayerConnection.stateChanged);
+                assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                    requirements: []
+                }));
+            }
+        }
+    },
+    'Excellent work': {
+        'when first player put down Excellent work': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard', 'stateChanged']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'action',
+                            cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: excellentWorkCommonId })],
+                        }
                     },
-                    'P2A': {
-                        phase: 'wait',
-                        cardsInZone: [createCard({ id: 'C4A' })],
-                        cardsInOpponentZone: [createCard({ id: 'C5A' })],
-                        cardsOnHand: [
-                            createCard({ id: 'D' }),
-                            createCard({ id: 'E' }),
-                            createCard({ id: 'F' })
-                        ],
-                        stationCards: [
-                            { card: createCard({ id: 'S4A' }), place: 'action' },
-                            { card: createCard({ id: 'S5A' }), place: 'action' },
-                            { card: createCard({ id: 'S6A' }), place: 'action' }
-                        ]
+                    deckByPlayerId: {
+                        'P1A': FakeDeck.realDeckFromCards([
+                            createCard({ id: 'C2A' }),
+                            createCard({ id: 'C3A' }),
+                            createCard({ id: 'C4A' })
+                        ])
                     }
-                }
-            }));
+                }));
 
-            this.match.putDownCard('P1A', { location: 'zone', cardId: 'C3A' });
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
+            },
+            'should emit stateChanged to first player'() {
+                assert.calledOnce(this.firstPlayerConnection.stateChanged);
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                    discardedCards: [sinon.match({ id: 'C1A' })],
+                    requirements: [{ type: 'drawCard', count: 3 },],
+                    events: [
+                        sinon.match({ type: 'putDownCard', cardId: 'C1A' }),
+                        sinon.match({ type: 'discardCard', cardId: 'C1A' })
+                    ]
+                }));
+            },
+            'should emit stateChanged to second player'() {
+                assert.calledOnce(this.secondPlayerConnection.stateChanged);
+                assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                    opponentDiscardedCards: [sinon.match({ id: 'C1A' })],
+                    opponentCardCount: 0
+                }));
+            },
+            'should NOT emit opponentDiscardedCard to second player'() {
+                refute.called(this.secondPlayerConnection.opponentDiscardedCard);
+            }
         },
-        'should emit stateChanged to first player'() {
-            assert.calledOnce(this.firstPlayerConnection.stateChanged);
-            assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
-                cardsInZone: [],
-                cardsInOpponentZone: [],
-                opponentCardsInZone: [],
-                opponentCardsInPlayerZone: [],
-                discardedCards: [
-                    sinon.match({ id: 'C1A' }),
-                    sinon.match({ id: 'C2A' }),
-                    sinon.match({ id: 'C3A' })
-                ],
-                opponentDiscardedCards: [
-                    sinon.match({ id: 'C4A' }),
-                    sinon.match({ id: 'C5A' })
-                ],
-                requirements: [
-                    { type: 'discardCard', common: true, count: 3 },
-                    { type: 'damageOwnStationCard', common: true, count: 3 }
-                ],
-                events: [
-                    sinon.match({ type: 'discardCard', cardId: 'C1A' }),
-                    sinon.match({ type: 'discardCard', cardId: 'C2A' }),
-                    sinon.match({ type: 'putDownCard', cardId: 'C3A' }),
-                    sinon.match({ type: 'discardCard', cardId: 'C3A' }),
-                ]
-            }));
-        },
-        'should emit stateChanged to second player'() {
-            assert.calledOnce(this.secondPlayerConnection.stateChanged);
-            assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
-                cardsInZone: [],
-                cardsInOpponentZone: [],
-                opponentCardsInZone: [],
-                opponentCardsInPlayerZone: [],
-                discardedCards: [
-                    sinon.match({ id: 'C4A' }),
-                    sinon.match({ id: 'C5A' })
-                ],
-                opponentDiscardedCards: [
-                    sinon.match({ id: 'C1A' }),
-                    sinon.match({ id: 'C2A' }),
-                    sinon.match({ id: 'C3A' })
-                ],
-                opponentCardCount: 3,
-                events: [
-                    sinon.match({ type: 'discardCard', cardId: 'C4A' }),
-                    sinon.match({ type: 'discardCard', cardId: 'C5A' })
-                ],
-                requirements: [
-                    { type: 'discardCard', common: true, count: 3 },
-                    { type: 'damageOwnStationCard', common: true, count: 3 }
-                ]
-            }));
-        },
-        'should NOT emit opponentDiscardedCard to second player'() {
-            refute.called(this.secondPlayerConnection.opponentDiscardedCard);
-        }
-    },
-    'when first player put down Supernova and both players has NO station cards and NO cards on hand': {
-        setUp() {
-            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
-            this.secondPlayerConnection = FakeConnection2(['stateChanged']);
-            const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
-            this.match = createMatch({ players });
-            this.match.restoreFromState(createState({
-                playerStateById: {
-                    'P1A': {
-                        phase: 'action',
-                        cardsOnHand: [createCard({ id: 'C3A', type: 'event', commonId: supernovaCommonId })],
+        'when first player put down Excellent work but only has 1 card left in deck': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard', 'stateChanged']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'action',
+                            cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: excellentWorkCommonId })],
+                        }
+                    },
+                    deckByPlayerId: {
+                        'P1A': FakeDeck.realDeckFromCards([createCard({ id: 'C2A' })])
                     }
-                }
-            }));
+                }));
 
-            this.match.putDownCard('P1A', { location: 'zone', cardId: 'C3A' });
-        },
-        'should emit stateChanged with NO requirements to first player'() {
-            assert.calledOnce(this.firstPlayerConnection.stateChanged);
-            assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
-                requirements: []
-            }));
-        },
-        'should emit stateChanged with NO requirements to second player'() {
-            assert.calledOnce(this.secondPlayerConnection.stateChanged);
-            assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
-                requirements: []
-            }));
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
+            },
+            'should emit stateChanged to first player with requirement count of 1'() {
+                assert.calledOnce(this.firstPlayerConnection.stateChanged);
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                    requirements: [{ type: 'drawCard', count: 1 },],
+                }));
+            }
         }
-    },
+    }
 }

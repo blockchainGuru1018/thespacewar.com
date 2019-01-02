@@ -1,4 +1,5 @@
 const AttackEvent = require('../event/AttackEvent.js');
+const DrawCardEvent = require('../event/DrawCardEvent.js');
 const DiscardCardEvent = require('../event/DiscardCardEvent.js');
 const MoveCardEvent = require('../event/MoveCardEvent.js');
 const PutDownCardEvent = require('../PutDownCardEvent.js');
@@ -16,7 +17,7 @@ class PlayerStateService {
         return this.getPlayerState().phase;
     }
 
-    moreCardsCanBeDrawn() {
+    moreCardsCanBeDrawnForDrawPhase() {
         let currentTurn = this._matchService.getTurn();
         let cardDrawEvents = this._queryEvents.getCardDrawsOnTurn(currentTurn);
         let cardsToDrawOnTurnCount = this.getStationDrawCardsCount();
@@ -208,6 +209,19 @@ class PlayerStateService {
             cardCommonId: cardData.commonId,
             isSacrifice
         }));
+    }
+
+    drawCard({ byEvent = false } = {}) {
+        const deck = this.getDeck();
+        const card = deck.drawSingle();
+        this.update(state => {
+            state.cardsOnHand.push(card);
+        });
+
+        const turn = this._matchService.getTurn();
+        this.storeEvent(DrawCardEvent({ turn, byEvent }));
+
+        return card;
     }
 
     registerAttack(attackerCardId) {

@@ -63,6 +63,29 @@ const DONE = [
         "attack": "1",
         "number_copies": "1",
     },
+    {
+        "id": "15",
+        "name": "Supernova",
+        "price": "10",
+        "type_card": "orange",
+        "detail": "All cards except station cards are destroyed. Each player receives 3 station damage and discards 3 cards. Your turn is ended.",
+        "defense": "0",
+        "attack": "0",
+        "number_copies": "1",
+    },
+];
+
+const SKIP = [
+    {
+        "id": "57",
+        "name": "* Station *",
+        "price": "0",
+        "type_card": "orange",
+        "detail": "Draw 1 card. (normally used as a station card)",
+        "defense": "0",
+        "attack": "0",
+        "number_copies": "0"
+    }
 ];
 
 const COUNTERS = [
@@ -119,16 +142,6 @@ const HEAVY_GUI = [
         "defense": "0",
         "attack": "0",
         "number_copies": "2",
-    },
-    {
-        "id": "15",
-        "name": "Supernova",
-        "price": "10",
-        "type_card": "orange",
-        "detail": "All cards except station cards are destroyed. Each player receives 3 station damage and discards 3 cards. Your turn is ended.",
-        "defense": "0",
-        "attack": "0",
-        "number_copies": "1",
     },
     {
         "id": "17",
@@ -242,16 +255,6 @@ const EASY_GUI = [
         "defense": "0",
         "attack": "0",
         "number_copies": "2",
-    },
-    {
-        "id": "57",
-        "name": "* Station *",
-        "price": "0",
-        "type_card": "orange",
-        "detail": "Draw 1 card. (normally used as a station card)",
-        "defense": "0",
-        "attack": "0",
-        "number_copies": "0"
     }
 ];
 

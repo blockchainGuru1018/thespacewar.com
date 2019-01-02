@@ -15,7 +15,8 @@ module.exports = function (deps) {
             canPutDownCards,
             canPutDownStationCards,
             canSelectStationCards,
-            canMoveStationCards
+            canMoveStationCards,
+            canDrawCards
         },
         actions: {}
     }
@@ -72,5 +73,10 @@ module.exports = function (deps) {
         const latestRequirementIsDamageOwnStationCard = getFrom('latestRequirementIsDamageOwnStationCard', 'requirement');
         const cardsLeftToSelect = getFrom('cardsLeftToSelect', 'requirement');
         return latestRequirementIsDamageOwnStationCard && cardsLeftToSelect > 0;
+    }
+
+    function canDrawCards(state, getters, rootState) {
+        return rootState.match.phase === 'draw'
+            || getFrom('latestRequirementIsDrawCard', 'requirement');
     }
 }

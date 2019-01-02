@@ -1,5 +1,6 @@
 const CheatError = require('./CheatError.js');
 const itemNamesForOpponentByItemNameForPlayer = require('./itemNamesForOpponentByItemNameForPlayer.js');
+const EXCELLENT_WORK_COMMON_ID = '14';
 const SUPERNOVA_COMMON_ID = '15';
 
 function PutDownCardController(deps) {
@@ -115,6 +116,9 @@ function PutDownCardController(deps) {
         if (cardData.commonId === SUPERNOVA_COMMON_ID) {
             applySupernova({ playerId, cardData });
         }
+        else if (cardData.commonId === EXCELLENT_WORK_COMMON_ID) {
+            applyExcellentWork({ playerId, cardData });
+        }
         else {
             playerStateService.putDownEventCardInZone(cardData);
             matchComService.emitToOpponentOf(playerId, 'opponentDiscardedCard', {
@@ -174,6 +178,27 @@ function PutDownCardController(deps) {
             [itemNamesForOpponentByItemNameForPlayer.cardsInZone]: playerStateService.getCardsInZone(),
             [itemNamesForOpponentByItemNameForPlayer.cardsInOpponentZone]: playerStateService.getCardsInOpponentZone(),
             [itemNamesForOpponentByItemNameForPlayer.discardedCards]: playerStateService.getDiscardedCards()
+        });
+    }
+
+    function applyExcellentWork({ playerId, cardData }) {
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
+
+        playerStateService.putDownEventCardInZone(cardData);
+
+        const playerDeck = playerStateService.getDeck();
+        const drawCardCount = Math.min(3, playerDeck.getCardCount());
+        playerRequirementService.addRequirement({ type: 'drawCard', count: drawCardCount });
+
+        matchComService.emitToPlayer(playerId, 'stateChanged', {
+            discardedCards: playerStateService.getDiscardedCards(),
+            events: playerStateService.getEvents(),
+            requirements: playerRequirementService.getRequirements()
+        });
+        matchComService.emitToOpponentOf(playerId, 'stateChanged', {
+            [itemNamesForOpponentByItemNameForPlayer.discardedCards]: playerStateService.getDiscardedCards(),
+            opponentCardCount: playerStateService.getCardsOnHand().length
         });
     }
 

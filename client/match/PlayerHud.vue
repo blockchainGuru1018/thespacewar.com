@@ -124,7 +124,10 @@
                 'latestRequirement',
                 'latestRequirementIsDiscardCard',
                 'latestRequirementIsDamageOwnStationCard',
-                'selectedCardsCount'
+                'latestRequirementIsDrawCard',
+                'cardsLeftToSelect',
+                'selectedCardsCount',
+                'countInLatestRequirement'
             ]),
             gameHasEnded() {
                 return this.hasWonGame || this.hasLostGame;
@@ -176,17 +179,21 @@
             },
             requirementGuideText() {
                 if (this.latestRequirementIsDiscardCard) {
-                    const cardsToDiscard = this.latestRequirement.count;
+                    const cardsToDiscard = this.countInLatestRequirement;
                     return `Discard ${cardsToDiscard} ${pluralize('card', cardsToDiscard)}`;
                 }
                 else if (this.latestRequirementIsDamageOwnStationCard) {
-                    const cardsToSelect = this.latestRequirement.count - this.selectedCardsCount;
+                    const cardsToSelect = this.cardsLeftToSelect;
                     if (cardsToSelect === 0) {
                         return '';
                     }
                     else {
                         return `Select ${cardsToSelect} of your own station cards to damage`;
                     }
+                }
+                else if (this.latestRequirementIsDrawCard) {
+                    const cardsToDraw = this.countInLatestRequirement;
+                    return `Draw ${cardsToDraw} ${pluralize('card', cardsToDraw)}`;
                 }
                 else {
                     return '';

@@ -9,7 +9,7 @@ FakeDeckFactory.fromCards = cards => {
 };
 
 FakeDeckFactory.createDeckFromCards = cards => {
-    let cardDataAssembler = { createAll: () => [cards.map(c => FakeCardDataAssembler.createCard(c))] };
+    let cardDataAssembler = { createAll: () => cards.map(c => FakeCardDataAssembler.createCard(c)) };
     return FakeDeck({ cardDataAssembler });
 };
 

@@ -25,6 +25,18 @@ class PlayerRequirementService {
         return this._findMatchingRequirement(requirements, { type, common, waiting });
     }
 
+    decrementCountOnLatestMatchingRequirement({ type, common = null, waiting = null }) {
+        const requirement = this.getLatestMatchingRequirement({ type, common, waiting });
+        if (requirement.count === 1) {
+            this.removeLatestMatchingRequirement({ type, common, waiting });
+        }
+        else {
+            this.updateLatestMatchingRequirement({ type, common, waiting }, requirement => {
+                requirement.count -= 1;
+            });
+        }
+    }
+
     mergeLatestMatchingRequirement({ type, common = null, waiting = null }, mergeData) {
         this._playerStateService
             .update(playerState => {

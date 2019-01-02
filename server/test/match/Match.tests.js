@@ -11,7 +11,7 @@ const {
 } = require('./shared.js');
 
 module.exports = testCase('Match', {
-    'draw phase:': require('./drawPhaseTests.js'),
+    'draw card:': require('./drawCardTests.js'),
     'putDownCard:': require('./putDownCardTests.js'),
     'discardCard:': require('./discardCardTests.js'),
     'nextPhase:': require('./nextPhaseTests.js'),

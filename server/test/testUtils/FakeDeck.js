@@ -1,7 +1,17 @@
+const Deck = require('../../deck/Deck.js');
+
 module.exports = FakeDeck;
 
 FakeDeck.fromCards = cards => {
     return FakeDeck({
+        cardDataAssembler: {
+            createAll: () => [...cards]
+        }
+    });
+};
+
+FakeDeck.realDeckFromCards = cards => {
+    return Deck({
         cardDataAssembler: {
             createAll: () => [...cards]
         }
@@ -16,7 +26,8 @@ function FakeDeck(deps) {
 
     return {
         draw,
-        drawSingle
+        drawSingle,
+        getCardCount: () => cards.length
     }
 
     function drawSingle() {

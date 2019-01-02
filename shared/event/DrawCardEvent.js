@@ -1,8 +1,9 @@
-function DrawCardEvent({ turn }) {
+function DrawCardEvent({ turn, byEvent = false }) {
     return {
         type: 'drawCard',
         created: new Date().toISOString(),
-        turn
+        turn,
+        byEvent
     };
 }
 
