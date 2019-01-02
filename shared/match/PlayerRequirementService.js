@@ -13,7 +13,9 @@ class PlayerRequirementService {
     getRequirements() {
         return this._playerStateService
             .getPlayerState()
-            .requirements;
+            .requirements
+            .slice()
+            .reverse();
     }
 
     getLatestMatchingRequirement({ type, common = null, waiting = null }) {

@@ -73,6 +73,26 @@ const DONE = [
         "attack": "0",
         "number_copies": "1",
     },
+    {
+        "id": "14",
+        "name": "Excellent work",
+        "price": "2",
+        "type_card": "orange",
+        "detail": "Put down this card as an extra station card.\r\n[ OR ] Draw 3 cards.",
+        "defense": "0",
+        "attack": "0",
+        "number_copies": "3",
+    },
+    {
+        "id": "20",
+        "name": "Grand Oppurtunity",
+        "price": "5",
+        "type_card": "orange",
+        "detail": "Draw 6 cards and then discard 2 cards from your hand.",
+        "defense": "0",
+        "attack": "0",
+        "number_copies": "1",
+    }
 ];
 
 const SKIP = [
@@ -197,16 +217,6 @@ const EASY_GUI = [
         "number_copies": "2",
     },
     {
-        "id": "14",
-        "name": "Excellent work",
-        "price": "2",
-        "type_card": "orange",
-        "detail": "Put down this card as an extra station card.\r\n[ OR ] Draw 3 cards.",
-        "defense": "0",
-        "attack": "0",
-        "number_copies": "3",
-    },
-    {
         "id": "19",
         "name": "Pursuiter",
         "price": "1",
@@ -215,16 +225,6 @@ const EASY_GUI = [
         "defense": "1",
         "attack": "2",
         "number_copies": "2",
-    },
-    {
-        "id": "20",
-        "name": "Grand Oppurtunity",
-        "price": "5",
-        "type_card": "orange",
-        "detail": "Draw 6 cards and then discard 2 cards from your hand.",
-        "defense": "0",
-        "attack": "0",
-        "number_copies": "1",
     },
     {
         "id": "38",

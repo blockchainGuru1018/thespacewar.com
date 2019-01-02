@@ -1,7 +1,13 @@
 const CheatError = require('./CheatError.js');
 const itemNamesForOpponentByItemNameForPlayer = require('./itemNamesForOpponentByItemNameForPlayer.js');
 const EXCELLENT_WORK_COMMON_ID = '14';
+const GRAND_OPPORTUNITY_COMMON_ID = '20';
 const SUPERNOVA_COMMON_ID = '15';
+const IMPLEMENTED_EVENT_CARDS = [
+    EXCELLENT_WORK_COMMON_ID,
+    GRAND_OPPORTUNITY_COMMON_ID,
+    SUPERNOVA_COMMON_ID
+];
 
 function PutDownCardController(deps) {
 
@@ -113,11 +119,19 @@ function PutDownCardController(deps) {
     function putDownEventCardInZone({ playerId, cardData }) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
 
-        if (cardData.commonId === SUPERNOVA_COMMON_ID) {
-            applySupernova({ playerId, cardData });
-        }
-        else if (cardData.commonId === EXCELLENT_WORK_COMMON_ID) {
-            applyExcellentWork({ playerId, cardData });
+        if (IMPLEMENTED_EVENT_CARDS.includes(cardData.commonId)) {
+            if (cardData.commonId === SUPERNOVA_COMMON_ID) {
+                applySupernova({ playerId, cardData });
+            }
+            else if (cardData.commonId === EXCELLENT_WORK_COMMON_ID) {
+                applyExcellentWork({ playerId, cardData });
+            }
+            else if (cardData.commonId === GRAND_OPPORTUNITY_COMMON_ID) {
+                applyGrandOpportunity({ playerId, cardData });
+            }
+
+            emitGenerousStateChangedEventToPlayer(playerId);
+            emitGenerousStateChangedEventToPlayer(matchComService.getOpponentId(playerId));
         }
         else {
             playerStateService.putDownEventCardInZone(cardData);
@@ -155,30 +169,6 @@ function PutDownCardController(deps) {
 
         addPlayerRequirementsFromSupernova(playerId);
         addPlayerRequirementsFromSupernova(opponentId);
-
-        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
-        matchComService.emitToPlayer(playerId, 'stateChanged', {
-            cardsInZone: playerStateService.getCardsInZone(),
-            cardsInOpponentZone: playerStateService.getCardsInOpponentZone(),
-            discardedCards: playerStateService.getDiscardedCards(),
-            requirements: playerRequirementService.getRequirements(),
-            events: playerStateService.getEvents(),
-            [itemNamesForOpponentByItemNameForPlayer.cardsInZone]: opponentStateService.getCardsInZone(),
-            [itemNamesForOpponentByItemNameForPlayer.cardsInOpponentZone]: opponentStateService.getCardsInOpponentZone(),
-            [itemNamesForOpponentByItemNameForPlayer.discardedCards]: opponentStateService.getDiscardedCards()
-        });
-        const opponentRequirementService = playerServiceProvider.getRequirementServiceById(opponentId);
-        matchComService.emitToOpponentOf(playerId, 'stateChanged', {
-            cardsInZone: opponentStateService.getCardsInZone(),
-            cardsInOpponentZone: opponentStateService.getCardsInOpponentZone(),
-            discardedCards: opponentStateService.getDiscardedCards(),
-            requirements: opponentRequirementService.getRequirements(),
-            events: opponentStateService.getEvents(),
-            opponentCardCount: playerStateService.getCardsOnHand().length,
-            [itemNamesForOpponentByItemNameForPlayer.cardsInZone]: playerStateService.getCardsInZone(),
-            [itemNamesForOpponentByItemNameForPlayer.cardsInOpponentZone]: playerStateService.getCardsInOpponentZone(),
-            [itemNamesForOpponentByItemNameForPlayer.discardedCards]: playerStateService.getDiscardedCards()
-        });
     }
 
     function applyExcellentWork({ playerId, cardData }) {
@@ -189,17 +179,27 @@ function PutDownCardController(deps) {
 
         const playerDeck = playerStateService.getDeck();
         const drawCardCount = Math.min(3, playerDeck.getCardCount());
-        playerRequirementService.addRequirement({ type: 'drawCard', count: drawCardCount });
+        if (drawCardCount > 0) {
+            playerRequirementService.addRequirement({ type: 'drawCard', count: drawCardCount });
+        }
+    }
 
-        matchComService.emitToPlayer(playerId, 'stateChanged', {
-            discardedCards: playerStateService.getDiscardedCards(),
-            events: playerStateService.getEvents(),
-            requirements: playerRequirementService.getRequirements()
-        });
-        matchComService.emitToOpponentOf(playerId, 'stateChanged', {
-            [itemNamesForOpponentByItemNameForPlayer.discardedCards]: playerStateService.getDiscardedCards(),
-            opponentCardCount: playerStateService.getCardsOnHand().length
-        });
+    function applyGrandOpportunity({ playerId, cardData }) {
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
+
+        playerStateService.putDownEventCardInZone(cardData);
+
+        const deck = playerStateService.getDeck();
+        const deckCardCount = deck.getCardCount();
+        if (deckCardCount > 0) {
+            playerRequirementService.addRequirement({ type: 'drawCard', count: Math.min(6, deckCardCount) });
+        }
+
+        const handCardCount = playerStateService.getCardsOnHand().length;
+        if (handCardCount) {
+            playerRequirementService.addRequirement({ type: 'discardCard', count: Math.min(2, handCardCount) });
+        }
     }
 
     function addPlayerRequirementsFromSupernova(playerId) {
@@ -229,6 +229,28 @@ function PutDownCardController(deps) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         playerStateService.putDownCardInZone(cardData);
         matchComService.emitToOpponentOf(playerId, 'putDownOpponentCard', { location: 'zone', card: cardData });
+    }
+
+    function emitGenerousStateChangedEventToPlayer(playerId) {
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
+
+        const opponentId = matchComService.getOpponentId(playerId);
+        const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
+        matchComService.emitToPlayer(playerId, 'stateChanged', {
+            discardedCards: playerStateService.getDiscardedCards(),
+            cardsInZone: playerStateService.getCardsInZone(),
+            cardsInOpponentZone: playerStateService.getCardsInOpponentZone(),
+            stationCards: playerStateService.getStationCards(),
+            cardsOnHand: playerStateService.getCardsOnHand(),
+            events: playerStateService.getEvents(),
+            requirements: playerRequirementService.getRequirements(),
+            opponentCardCount: opponentStateService.getCardsOnHand().length,
+            [itemNamesForOpponentByItemNameForPlayer.discardedCards]: opponentStateService.getDiscardedCards(),
+            [itemNamesForOpponentByItemNameForPlayer.stationCards]: matchComService.prepareStationCardsForClient(opponentStateService.getStationCards()),
+            [itemNamesForOpponentByItemNameForPlayer.cardsInOpponentZone]: opponentStateService.getCardsInOpponentZone(),
+            [itemNamesForOpponentByItemNameForPlayer.cardsInZone]: opponentStateService.getCardsInZone()
+        });
     }
 }
 

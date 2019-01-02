@@ -19,6 +19,7 @@ const {
     FakeDeck
 } = require('./shared.js');
 
+const grandOpportunityCommonId = '20';
 const excellentWorkCommonId = '14';
 const supernovaCommonId = '15';
 
@@ -574,9 +575,7 @@ module.exports = {
         'when first player put down Excellent work but only has 1 card left in deck': {
             setUp() {
                 this.firstPlayerConnection = FakeConnection2(['stateChanged']);
-                this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard', 'stateChanged']);
-                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
-                this.match = createMatch({ players });
+                this.match = createMatch({ players: [Player('P1A', this.firstPlayerConnection), Player('P2A')] });
                 this.match.restoreFromState(createState({
                     playerStateById: {
                         'P1A': {
@@ -595,6 +594,173 @@ module.exports = {
                 assert.calledOnce(this.firstPlayerConnection.stateChanged);
                 assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                     requirements: [{ type: 'drawCard', count: 1 },],
+                }));
+            }
+        },
+        'when first player put down Excellent work but has NO card left in deck': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.match = createMatch({ players: [Player('P1A', this.firstPlayerConnection), Player('P2A')] });
+                this.match.restoreFromState(createState({
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'action',
+                            cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: excellentWorkCommonId })],
+                        }
+                    },
+                    deckByPlayerId: {
+                        'P1A': FakeDeck.realDeckFromCards([])
+                    }
+                }));
+
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
+            },
+            'should emit stateChanged to first player WITHOUT requirements'() {
+                assert.calledOnce(this.firstPlayerConnection.stateChanged);
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                    requirements: [],
+                }));
+            }
+        }
+    },
+    'Grand Opportunity': {
+        'when first player put down Grand Opportunity': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard', 'stateChanged']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'action',
+                            cardsOnHand: [
+                                createCard({ id: 'C1A', type: 'event', commonId: grandOpportunityCommonId }),
+                                createCard({ id: 'C2A', type: 'event', commonId: grandOpportunityCommonId }),
+                                createCard({ id: 'C3A', type: 'event', commonId: grandOpportunityCommonId })
+                            ],
+                        }
+                    },
+                    deckByPlayerId: {
+                        'P1A': FakeDeck.realDeckFromCards([
+                            createCard({ id: 'C4A' }),
+                            createCard({ id: 'C5A' }),
+                            createCard({ id: 'C6A' }),
+                            createCard({ id: 'C7A' }),
+                            createCard({ id: 'C8A' }),
+                            createCard({ id: 'C9A' }),
+                        ])
+                    }
+                }));
+
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
+            },
+            'should emit stateChanged to first player'() {
+                assert.calledOnce(this.firstPlayerConnection.stateChanged);
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                    discardedCards: [sinon.match({ id: 'C1A' })],
+                    requirements: [
+                        { type: 'drawCard', count: 6 },
+                        { type: 'discardCard', count: 2 }
+                    ],
+                    events: [
+                        sinon.match({ type: 'putDownCard', cardId: 'C1A' }),
+                        sinon.match({ type: 'discardCard', cardId: 'C1A' })
+                    ]
+                }));
+            },
+            'should emit stateChanged to second player'() {
+                assert.calledOnce(this.secondPlayerConnection.stateChanged);
+                assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                    opponentDiscardedCards: [sinon.match({ id: 'C1A' })],
+                    opponentCardCount: 2
+                }));
+            },
+            'should NOT emit opponentDiscardedCard to second player'() {
+                refute.called(this.secondPlayerConnection.opponentDiscardedCard);
+            }
+        },
+        'when first player put down Grand Opportunity but only has 1 card left in deck and 1 more on hand': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.match = createMatch({ players: [Player('P1A', this.firstPlayerConnection), Player('P2A')] });
+                this.match.restoreFromState(createState({
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'action',
+                            cardsOnHand: [
+                                createCard({ id: 'C1A', type: 'event', commonId: grandOpportunityCommonId }),
+                                createCard({ id: 'C2A' })
+                            ],
+                        }
+                    },
+                    deckByPlayerId: {
+                        'P1A': FakeDeck.realDeckFromCards([createCard({ id: 'C3A' })])
+                    }
+                }));
+
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
+            },
+            'should emit stateChanged to first player with draw card of count of 1 and discard card of count 1'() {
+                assert.calledOnce(this.firstPlayerConnection.stateChanged);
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                    requirements: [
+                        { type: 'drawCard', count: 1 },
+                        { type: 'discardCard', count: 1 }
+                    ],
+                }));
+            }
+        },
+        'when first player put down Grand Opportunity but only has NO card left in deck and 1 more on hand': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.match = createMatch({ players: [Player('P1A', this.firstPlayerConnection), Player('P2A')] });
+                this.match.restoreFromState(createState({
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'action',
+                            cardsOnHand: [
+                                createCard({ id: 'C1A', type: 'event', commonId: grandOpportunityCommonId }),
+                                createCard({ id: 'C2A' })
+                            ],
+                        }
+                    },
+                    deckByPlayerId: {
+                        'P1A': FakeDeck.realDeckFromCards([])
+                    }
+                }));
+
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
+            },
+            'should emit stateChanged to first player with ONLY discard card'() {
+                assert.calledOnce(this.firstPlayerConnection.stateChanged);
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                    requirements: [{ type: 'discardCard', count: 1 }],
+                }));
+            }
+        },
+        'when first player put down Grand Opportunity but only has 1 card left in deck and NO more on hand': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.match = createMatch({ players: [Player('P1A', this.firstPlayerConnection), Player('P2A')] });
+                this.match.restoreFromState(createState({
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'action',
+                            cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: grandOpportunityCommonId })]
+                        }
+                    },
+                    deckByPlayerId: {
+                        'P1A': FakeDeck.realDeckFromCards([createCard({ id: 'C2A' })])
+                    }
+                }));
+
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
+            },
+            'should emit stateChanged to first player with ONLY draw card'() {
+                assert.calledOnce(this.firstPlayerConnection.stateChanged);
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                    requirements: [{ type: 'drawCard', count: 1 }],
                 }));
             }
         }
