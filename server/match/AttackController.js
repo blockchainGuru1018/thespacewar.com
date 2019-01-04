@@ -7,9 +7,9 @@ function AttackController(deps) {
     const {
         matchService,
         matchComService,
-        playerStateServiceById,
         cardFactory,
-        playerServiceProvider
+        playerServiceProvider,
+        playerRequirementUpdaterFactory
     } = deps;
 
     return {
@@ -19,7 +19,7 @@ function AttackController(deps) {
     }
 
     function onAttack(playerId, { attackerCardId, defenderCardId }) {
-        const playerStateService = playerStateServiceById[playerId];
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         const playerPhase = playerStateService.getPhase();
         if (playerPhase !== PHASES.attack) throw new CheatError('Cannot attack when not in attack phase');
 
@@ -29,7 +29,7 @@ function AttackController(deps) {
         if (!attackerCard.canAttack()) throw new CheatError('Cannot attack with card');
 
         const opponentId = matchComService.getOpponentId(playerId);
-        const opponentStateService = playerStateServiceById[opponentId];
+        const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
         const defenderCardData = opponentStateService.findCard(defenderCardId);
         const defenderCard = cardFactory.createCardForPlayer(defenderCardData, opponentId);
         if (!attackerCard.canAttackCard(defenderCard)) throw new CheatError('Cannot attack that card');
@@ -81,10 +81,10 @@ function AttackController(deps) {
 
     function onAttackStationCards(playerId, { attackerCardId, targetStationCardIds }) {
         let opponentId = matchComService.getOpponentId(playerId);
-        let opponentStateService = playerStateServiceById[opponentId];
+        let opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
         let opponentState = opponentStateService.getPlayerState();
 
-        let playerStateService = playerStateServiceById[playerId];
+        let playerStateService = playerServiceProvider.getStateServiceById(playerId);
         const attackerCardData = playerStateService
             .getCardsInOpponentZone()
             .find(c => c.id === attackerCardId);
@@ -134,7 +134,7 @@ function AttackController(deps) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
 
-        const damageOwnStationCardRequirement = playerRequirementService.getLatestMatchingRequirement({ type: 'damageOwnStationCard' });
+        const damageOwnStationCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'damageOwnStationCard' });
         if (!damageOwnStationCardRequirement) {
             throw new CheatError('Cannot damage station card');
         }
@@ -152,16 +152,9 @@ function AttackController(deps) {
             playerStateService.flipStationCard(targetId);
         }
 
-        const newRequirementCount = damageOwnStationCardRequirement.count - targetIds.length;
-        if (newRequirementCount > 1) {
-            playerRequirementService.updateLatestMatchingRequirement({ type: 'damageOwnStationCard' }, requirement => {
-                requirement.count = requirement.count - targetIds.length;
-            });
-        }
-        else {
-            playerRequirementService.removeLatestMatchingRequirement({ type: 'damageOwnStationCard' });
-        }
-
+        const requirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'damageOwnStationCard' });
+        requirementUpdater.progressRequirementByCount(targetIds.length);
+        
         matchComService.emitToPlayer(playerId, 'stateChanged', {
             stationCards: playerStateService.getStationCards(),
             requirements: playerRequirementService.getRequirements()

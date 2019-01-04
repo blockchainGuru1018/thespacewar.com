@@ -50,10 +50,7 @@ function initRouter() {
     const pageDependencies = {
         userRepository,
         matchRepository,
-        matchControllerFactory: MatchControllerFactory({
-            socket,
-            userRepository
-        }),
+        matchControllerFactory: MatchControllerFactory({ socket, userRepository }),
         cardInfoRepository,
         rootStore
     };

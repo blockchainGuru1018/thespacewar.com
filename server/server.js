@@ -11,25 +11,29 @@ const MatchController = require('./match/MatchController.js');
 const CardController = require('./card/CardController.js');
 const GitController = require('./git/GitController.js');
 const AssetsController = require('./assets/AssetsController.js');
+const Logger = require('./utils/Logger.js');
 const http = require('http');
 const { port } = require('./settings.json');
 
 let app;
 let server;
 let socketMaster;
+let logger = new Logger();
 
 module.exports = {
     start: startServer,
     restart: restartServer
 };
 
-function run({ closeServer, exitProcess }) {
+function run({ closeServer, exitProcess, inProduction = false }) {
     const socketRepository = SocketRepository({ socketMaster });
     const userRepository = UserRepository({ socketMaster });
     const deps = {};
     deps.socketRepository = socketRepository;
     deps.userRepository = userRepository;
     deps.matchRepository = MatchRepository(deps);
+    deps.logger = logger;
+    deps.inProduction = inProduction;
 
     const controllers = {
         user: UserController(deps),
@@ -41,7 +45,7 @@ function run({ closeServer, exitProcess }) {
     deps.controllers = controllers;
     const mappedControllers = wrapControllersWithRejectionProtection(controllers);
 
-    setupRoutes(mappedControllers);
+    setupRoutes(deps, mappedControllers);
     setupSocketConnectionHandler(deps, controllers);
 }
 
@@ -56,6 +60,8 @@ function closeServer() {
     socketMaster.close();
     socketMaster = null;
 
+    logger.clear();
+
     return new Promise(resolve => setTimeout(resolve, 1000));
 }
 
@@ -69,7 +75,7 @@ function startServer({ production }) {
         server = http.createServer(app);
         socketMaster = SocketIO(server);
 
-        run({ closeServer, exitProcess });
+        run({ closeServer, exitProcess, inProduction: !!production });
         server.listen(port, () => {
             console.log(`\n\n --- Running on port ${port} ---`)
             resolve();
@@ -82,7 +88,7 @@ async function restartServer() {
     await startServer();
 }
 
-function setupRoutes(controllers) {
+function setupRoutes(deps, controllers) {
     app.get('/', (req, res) => {
         res.sendFile(path.join(__dirname, 'client-dist', 'index.html'));
     });
@@ -99,10 +105,18 @@ function setupRoutes(controllers) {
 
     app.get('/icon/:iconName', controllers.assets.getIcon);
 
-    if (process.env.production = false) {
+    if (!deps.inProduction) {
         app.post('/restart', async (req, res) => {
             await restartServer()
             res.end();
+        });
+        app.get('/logs', async (req, res) => {
+            const matchLogs = deps.logger.readAll();
+            res.end(matchLogs);
+        });
+        app.get('/logs/:type', async (req, res) => {
+            const matchLogs = deps.logger.read(type);
+            res.end(matchLogs);
         });
     }
 }
@@ -136,8 +150,10 @@ function setupSocketConnectionHandler(deps, controllers) {
                 await controllers.match.onAction(data);
             }
             catch (error) {
-                console.error('Error in action to match: ' + error.message);
-                console.info('Raw error:', error);
+                const errorMessage = 'Error in action to match: ' + error.message
+                const rawErrorMessage = `Raw error: ${JSON.stringify(error, null, 4)}`;
+                deps.logger.log(errorMessage, 'error');
+                deps.logger.log(rawErrorMessage, 'raw-error');
             }
         });
     });

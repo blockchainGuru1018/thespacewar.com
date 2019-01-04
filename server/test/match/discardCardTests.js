@@ -134,7 +134,7 @@ module.exports = {
 
             this.match.discardCard('P1A', 'C1A');
         },
-        'should emit requirements list without latest discard card requirement to first player'() {
+        'should emit requirements list without discard card requirement to first player'() {
             assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                 requirements: [{ type: 'otherType', count: 3 }]
             }));
@@ -167,7 +167,7 @@ module.exports = {
 
             this.match.discardCard('P1A', 'C1A');
         },
-        'should emit requirements list without latest discard card requirement to first player'() {
+        'should emit requirements list without first discard card requirement to first player'() {
             assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                 requirements: [{ type: 'discardCard' }, { type: 'third' }, { type: 'fourth' }]
             }));

@@ -10,6 +10,7 @@ module.exports = function (deps) {
         state: {},
         getters: {
             isOwnTurn,
+            waitingForOtherPlayerToFinishRequirements,
             canMoveCardsFromHand,
             canDiscardCards,
             canPutDownCards,
@@ -26,16 +27,24 @@ module.exports = function (deps) {
         return matchState.ownUser.id === matchState.currentPlayer;
     }
 
-    function canMoveCardsFromHand(state, getters, rootState) {
-        const hasActiveRequirement = !!getFrom('latestRequirement', 'requirement');
+    function waitingForOtherPlayerToFinishRequirements() {
+        return getFrom('waitingForOtherPlayerToFinishRequirements', 'requirement');
+    }
+
+    function canMoveCardsFromHand(state, getters) {
+        if (getters.waitingForOtherPlayerToFinishRequirements) return false;
+
+        const hasActiveRequirement = !!getFrom('firstRequirement', 'requirement');
         return getters.isOwnTurn
             || hasActiveRequirement;
     }
 
     function canDiscardCards(state, getters, rootState) {
-        const hasRequirement = !!getFrom('latestRequirement', 'requirement');
+        if (getters.waitingForOtherPlayerToFinishRequirements) return false;
+
+        const hasRequirement = !!getFrom('firstRequirement', 'requirement');
         if (hasRequirement) {
-            return getFrom('latestRequirementIsDiscardCard', 'requirement');
+            return getFrom('firstRequirementIsDiscardCard', 'requirement');
         }
         else {
             const phase = rootState.match.phase;
@@ -44,7 +53,9 @@ module.exports = function (deps) {
     }
 
     function canPutDownCards(state, getters, rootState) {
-        const hasRequirement = !!getFrom('latestRequirement', 'requirement');
+        if (getters.waitingForOtherPlayerToFinishRequirements) return false;
+
+        const hasRequirement = !!getFrom('firstRequirement', 'requirement');
         const isActionPhase = rootState.match.phase === 'action'
         return getters.isOwnTurn
             && isActionPhase
@@ -52,31 +63,39 @@ module.exports = function (deps) {
     }
 
     function canPutDownStationCards(state, getters, rootState) {
+        if (getters.waitingForOtherPlayerToFinishRequirements) return false;
+
         const matchState = rootState.match;
         const hasAlreadyPutDownStationCard = matchState.events.some(e => {
             return e.turn === matchState.turn
                 && e.type === 'putDownCard'
                 && e.location.startsWith('station');
         })
-        const hasRequirement = !!getFrom('latestRequirement', 'requirement');
+        const hasRequirement = !!getFrom('firstRequirement', 'requirement');
         return matchState.phase === 'action'
             && !hasAlreadyPutDownStationCard
             && !hasRequirement;
     }
 
-    function canMoveStationCards(state, getters, rootState) {
-        const hasRequirement = !!getFrom('latestRequirement', 'requirement');
+    function canMoveStationCards(state, getters) {
+        if (getters.waitingForOtherPlayerToFinishRequirements) return false;
+
+        const hasRequirement = !!getFrom('firstRequirement', 'requirement');
         return !hasRequirement;
     }
 
-    function canSelectStationCards() {
-        const latestRequirementIsDamageOwnStationCard = getFrom('latestRequirementIsDamageOwnStationCard', 'requirement');
+    function canSelectStationCards(state, getters) {
+        if (getters.waitingForOtherPlayerToFinishRequirements) return false;
+
+        const firstRequirementIsDamageOwnStationCard = getFrom('firstRequirementIsDamageOwnStationCard', 'requirement');
         const cardsLeftToSelect = getFrom('cardsLeftToSelect', 'requirement');
-        return latestRequirementIsDamageOwnStationCard && cardsLeftToSelect > 0;
+        return firstRequirementIsDamageOwnStationCard && cardsLeftToSelect > 0;
     }
 
     function canDrawCards(state, getters, rootState) {
+        if (getters.waitingForOtherPlayerToFinishRequirements) return false;
+
         return rootState.match.phase === 'draw'
-            || getFrom('latestRequirementIsDrawCard', 'requirement');
+            || getFrom('firstRequirementIsDrawCard', 'requirement');
     }
 }

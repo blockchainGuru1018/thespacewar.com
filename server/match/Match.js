@@ -12,6 +12,7 @@ const MatchService = require('../../shared/match/MatchService.js');
 const ServerQueryEvents = require('./ServerQueryEvents.js');
 const PlayerStateService = require('../../shared/match/PlayerStateService.js');
 const PlayerRequirementService = require('../../shared/match/PlayerRequirementService.js');
+const PlayerRequirementUpdaterFactory = require('./PlayerRequirementUpdaterFactory.js');
 const CardFactory = require('../card/ServerCardFactory.js');
 const { COMMON_PHASE_ORDER, PHASES, TEMPORARY_START_PHASE } = require('../../shared/phases.js');
 
@@ -73,7 +74,8 @@ module.exports = function (deps) {
         playerStateServiceById,
         cardFactory,
         restoreFromState,
-        playerServiceProvider
+        playerServiceProvider,
+        playerRequirementUpdaterFactory: new PlayerRequirementUpdaterFactory({ playerServiceProvider, matchComService })
     };
     const debugController = DebugController(controllerDeps);
     const drawCardController = DrawCardController(controllerDeps);
@@ -138,7 +140,6 @@ module.exports = function (deps) {
                 throw CheatError('Cannot go to next phase with less than 0 action points');
             }
         }
-
 
         if (playerState.phase === PHASES.discard) {
             leaveDiscardPhaseForPlayer(state.currentPlayer);

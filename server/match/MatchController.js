@@ -1,6 +1,7 @@
 module.exports = function (deps) {
 
     const matchRepository = deps.matchRepository;
+    const logger = deps.logger;
 
     return {
         create,
@@ -29,6 +30,14 @@ module.exports = function (deps) {
             throw new Error('Cannot find ongoing match with id');
         }
 
+        logger.log(matchActionLogMessage(data), 'match');
         match[data.action](data.playerId, data.value);
     }
+
+    function matchActionLogMessage({ action, value, playerId }) {
+        const actionValueJson = JSON.stringify(value, null, 4);
+        return `Match action: ${action} - To player: ${playerId} - With value: ${actionValueJson}`;
+    }
+
+    //TODO Increase z-index of game buttons ("Current phase"/"next phase"/"end game")
 }

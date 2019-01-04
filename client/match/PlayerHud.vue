@@ -9,7 +9,7 @@
                 </button>
                 <template v-else-if="canGoToNextTurn">
                     <div class="playerHud-phaseText playerHud-item">{{ currentPhaseText }}</div>
-                    <div v-if="phase === 'discard' && playerCardModels.length > maxHandSize"
+                    <div v-if="phase === 'discard' && playerCardsOnHand.length > maxHandSize"
                          class="playerHud-nextPhaseButton playerHud-phaseText playerHud-item">
                         Discard {{ amountOfCardsToDiscard + (amountOfCardsToDiscard > 1 ? ' cards' : ' card')}} to continue
                     </div>
@@ -104,10 +104,10 @@
                 'phase',
                 'ownUser',
                 'selectedDefendingStationCards',
-                'requirements'
+                'requirements',
+                'playerCardsOnHand'
             ]),
             ...mapGetters([
-                'playerCardModels',
                 'nextPhaseWithAction',
                 'cardsToDrawInDrawPhase',
                 'actionPointsFromStationCards',
@@ -121,13 +121,13 @@
             ]),
             ...mapRequirementGetters([
                 'waitingForOtherPlayerToFinishRequirements',
-                'latestRequirement',
-                'latestRequirementIsDiscardCard',
-                'latestRequirementIsDamageOwnStationCard',
-                'latestRequirementIsDrawCard',
+                'firstRequirement',
+                'firstRequirementIsDiscardCard',
+                'firstRequirementIsDamageOwnStationCard',
+                'firstRequirementIsDrawCard',
                 'cardsLeftToSelect',
                 'selectedCardsCount',
-                'countInLatestRequirement'
+                'countInFirstRequirement'
             ]),
             gameHasEnded() {
                 return this.hasWonGame || this.hasLostGame;
@@ -169,7 +169,7 @@
             },
             canGoToNextTurn() {
                 return this.actionPoints2 >= 0
-                    && !this.latestRequirement;
+                    && !this.firstRequirement;
             },
             numberOfStationCardsToSelect() {
                 if (!this.attackerCard) return 0;
@@ -178,11 +178,11 @@
                 return this.attackerCard.attack - this.selectedDefendingStationCards.length;
             },
             requirementGuideText() {
-                if (this.latestRequirementIsDiscardCard) {
-                    const cardsToDiscard = this.countInLatestRequirement;
+                if (this.firstRequirementIsDiscardCard) {
+                    const cardsToDiscard = this.countInFirstRequirement;
                     return `Discard ${cardsToDiscard} ${pluralize('card', cardsToDiscard)}`;
                 }
-                else if (this.latestRequirementIsDamageOwnStationCard) {
+                else if (this.firstRequirementIsDamageOwnStationCard) {
                     const cardsToSelect = this.cardsLeftToSelect;
                     if (cardsToSelect === 0) {
                         return '';
@@ -191,8 +191,8 @@
                         return `Select ${cardsToSelect} of your own station cards to damage`;
                     }
                 }
-                else if (this.latestRequirementIsDrawCard) {
-                    const cardsToDraw = this.countInLatestRequirement;
+                else if (this.firstRequirementIsDrawCard) {
+                    const cardsToDraw = this.countInFirstRequirement;
                     return `Draw ${cardsToDraw} ${pluralize('card', cardsToDraw)}`;
                 }
                 else {

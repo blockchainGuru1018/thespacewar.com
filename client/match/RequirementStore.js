@@ -12,11 +12,11 @@ module.exports = function (deps) {
         },
         getters: {
             waitingForOtherPlayerToFinishRequirements,
-            latestRequirement,
-            latestRequirementIsDiscardCard,
-            latestRequirementIsDamageOwnStationCard,
-            latestRequirementIsDrawCard,
-            countInLatestRequirement,
+            firstRequirement,
+            firstRequirementIsDiscardCard,
+            firstRequirementIsDamageOwnStationCard,
+            firstRequirementIsDrawCard,
+            countInFirstRequirement,
             selectedCardsCount,
             cardsLeftToSelect
         },
@@ -29,44 +29,44 @@ module.exports = function (deps) {
         return rootState.match.requirements.some(r => r.waiting);
     }
 
-    function latestRequirement(state, getters, rootState) {
-        const requirements = rootState.match.requirements;
+    function firstRequirement(state, getters, rootState) {
+        const requirements = rootState.match.requirements.slice().reverse();
 
         if (requirements.length === 0) return null;
         return requirements[requirements.length - 1];
     }
 
-    function latestRequirementIsDiscardCard(state, getters) {
-        return getters.latestRequirement
-            && getters.latestRequirement.type === 'discardCard';
+    function firstRequirementIsDiscardCard(state, getters) {
+        return getters.firstRequirement
+            && getters.firstRequirement.type === 'discardCard';
     }
 
-    function latestRequirementIsDamageOwnStationCard(state, getters) {
-        return getters.latestRequirement
-            && getters.latestRequirement.type === 'damageOwnStationCard';
+    function firstRequirementIsDamageOwnStationCard(state, getters) {
+        return getters.firstRequirement
+            && getters.firstRequirement.type === 'damageOwnStationCard';
     }
 
-    function latestRequirementIsDrawCard(state, getters) {
-        return getters.latestRequirement
-            && getters.latestRequirement.type === 'drawCard';
+    function firstRequirementIsDrawCard(state, getters) {
+        return getters.firstRequirement
+            && getters.firstRequirement.type === 'drawCard';
     }
 
-    function countInLatestRequirement(state, getters) {
-        return getters.latestRequirement
-            && getters.latestRequirement.count;
+    function countInFirstRequirement(state, getters) {
+        return getters.firstRequirement
+            && getters.firstRequirement.count;
     }
 
     function selectedCardsCount(state, getters) {
-        return getters.latestRequirementIsDamageOwnStationCard
+        return getters.firstRequirementIsDamageOwnStationCard
             ? state.selectedStationCardIdsForRequirement.length
             : 0;
     }
 
     function cardsLeftToSelect(state, getters) {
-        return getters.countInLatestRequirement - getters.selectedCardsCount;
+        return getters.countInFirstRequirement - getters.selectedCardsCount;
     }
 
-    function selectStationCardForRequirement({ state, getters, dispatch }, stationCard) {
+    function selectStationCardForRequirement({ state, getters }, stationCard) {
         state.selectedStationCardIdsForRequirement.push(stationCard.id);
         if (getters.cardsLeftToSelect === 0) {
             const targetIds = state.selectedStationCardIdsForRequirement.slice();

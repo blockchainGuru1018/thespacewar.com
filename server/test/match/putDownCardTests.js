@@ -19,9 +19,10 @@ const {
     FakeDeck
 } = require('./shared.js');
 
-const grandOpportunityCommonId = '20';
-const excellentWorkCommonId = '14';
-const supernovaCommonId = '15';
+const GrandOpportunityCommonId = '20';
+const ExcellentWorkCommonId = '14';
+const SupernovaCommonId = '15';
+const DiscoveryCommonId = '42';
 
 module.exports = {
     'when does NOT have card should throw error': function () {
@@ -404,7 +405,7 @@ module.exports = {
                             cardsInZone: [createCard({ id: 'C1A' })],
                             cardsInOpponentZone: [createCard({ id: 'C2A' })],
                             cardsOnHand: [
-                                createCard({ id: 'C3A', type: 'event', commonId: supernovaCommonId }),
+                                createCard({ id: 'C3A', type: 'event', commonId: SupernovaCommonId }),
                                 createCard({ id: 'A' }),
                                 createCard({ id: 'B' }),
                                 createCard({ id: 'C' })
@@ -504,7 +505,7 @@ module.exports = {
                     playerStateById: {
                         'P1A': {
                             phase: 'action',
-                            cardsOnHand: [createCard({ id: 'C3A', type: 'event', commonId: supernovaCommonId })],
+                            cardsOnHand: [createCard({ id: 'C3A', type: 'event', commonId: SupernovaCommonId })],
                         }
                     }
                 }));
@@ -536,7 +537,7 @@ module.exports = {
                     playerStateById: {
                         'P1A': {
                             phase: 'action',
-                            cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: excellentWorkCommonId })],
+                            cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: ExcellentWorkCommonId })],
                         }
                     },
                     deckByPlayerId: {
@@ -580,7 +581,7 @@ module.exports = {
                     playerStateById: {
                         'P1A': {
                             phase: 'action',
-                            cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: excellentWorkCommonId })],
+                            cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: ExcellentWorkCommonId })],
                         }
                     },
                     deckByPlayerId: {
@@ -605,7 +606,7 @@ module.exports = {
                     playerStateById: {
                         'P1A': {
                             phase: 'action',
-                            cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: excellentWorkCommonId })],
+                            cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: ExcellentWorkCommonId })],
                         }
                     },
                     deckByPlayerId: {
@@ -635,9 +636,9 @@ module.exports = {
                         'P1A': {
                             phase: 'action',
                             cardsOnHand: [
-                                createCard({ id: 'C1A', type: 'event', commonId: grandOpportunityCommonId }),
-                                createCard({ id: 'C2A', type: 'event', commonId: grandOpportunityCommonId }),
-                                createCard({ id: 'C3A', type: 'event', commonId: grandOpportunityCommonId })
+                                createCard({ id: 'C1A', type: 'event', commonId: GrandOpportunityCommonId }),
+                                createCard({ id: 'C2A', type: 'event', commonId: GrandOpportunityCommonId }),
+                                createCard({ id: 'C3A', type: 'event', commonId: GrandOpportunityCommonId })
                             ],
                         }
                     },
@@ -689,7 +690,7 @@ module.exports = {
                         'P1A': {
                             phase: 'action',
                             cardsOnHand: [
-                                createCard({ id: 'C1A', type: 'event', commonId: grandOpportunityCommonId }),
+                                createCard({ id: 'C1A', type: 'event', commonId: GrandOpportunityCommonId }),
                                 createCard({ id: 'C2A' })
                             ],
                         }
@@ -720,7 +721,7 @@ module.exports = {
                         'P1A': {
                             phase: 'action',
                             cardsOnHand: [
-                                createCard({ id: 'C1A', type: 'event', commonId: grandOpportunityCommonId }),
+                                createCard({ id: 'C1A', type: 'event', commonId: GrandOpportunityCommonId }),
                                 createCard({ id: 'C2A' })
                             ],
                         }
@@ -747,7 +748,7 @@ module.exports = {
                     playerStateById: {
                         'P1A': {
                             phase: 'action',
-                            cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: grandOpportunityCommonId })]
+                            cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: GrandOpportunityCommonId })]
                         }
                     },
                     deckByPlayerId: {
@@ -761,6 +762,104 @@ module.exports = {
                 assert.calledOnce(this.firstPlayerConnection.stateChanged);
                 assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                     requirements: [{ type: 'drawCard', count: 1 }],
+                }));
+            }
+        }
+    },
+    'Discovery:': {
+        'when put down Discovery with choice "draw"': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard', 'stateChanged']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'action',
+                            cardsOnHand: [
+                                createCard({ id: 'C1A', type: 'event', commonId: DiscoveryCommonId }),
+                            ],
+                        }
+                    },
+                    deckByPlayerId: {
+                        'P1A': FakeDeck.realDeckFromCards([
+                            createCard({ id: 'C4A' }),
+                            createCard({ id: 'C5A' }),
+                            createCard({ id: 'C6A' }),
+                            createCard({ id: 'C6A' })
+                        ]),
+                        'P2A': FakeDeck.realDeckFromCards([
+                            createCard({ id: 'C7A' }),
+                            createCard({ id: 'C8A' }),
+                            createCard({ id: 'C9A' }),
+                            createCard({ id: 'C10A' })
+                        ])
+                    }
+                }));
+
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A', choice: 'draw' });
+            },
+            'should emit stateChanged to first player'() {
+                assert.calledOnce(this.firstPlayerConnection.stateChanged);
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                    discardedCards: [sinon.match({ id: 'C1A' })],
+                    requirements: [{ type: 'drawCard', count: 4, common: true }],
+                    events: [
+                        sinon.match({ type: 'putDownCard', cardId: 'C1A' }),
+                        sinon.match({ type: 'discardCard', cardId: 'C1A' })
+                    ]
+                }));
+            },
+            'should emit stateChanged to second player'() {
+                assert.calledOnce(this.secondPlayerConnection.stateChanged);
+                assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                    opponentDiscardedCards: [sinon.match({ id: 'C1A' })],
+                    opponentCardCount: 0,
+                    requirements: [{ type: 'drawCard', count: 4, common: true }]
+                }));
+            },
+            'should NOT emit opponentDiscardedCard to second player'() {
+                refute.called(this.secondPlayerConnection.opponentDiscardedCard);
+            }
+        },
+        'when put down Discovery with choice "discard"': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard', 'stateChanged']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'action',
+                            cardsOnHand: [
+                                createCard({ id: 'C1A', type: 'event', commonId: DiscoveryCommonId }),
+                                createCard({ id: 'C2A' }),
+                                createCard({ id: 'C3A' })
+                            ]
+                        },
+                        'P2A': {
+                            cardsOnHand: [
+                                createCard({ id: 'C4A' }),
+                                createCard({ id: 'C5A' })
+                            ]
+                        }
+                    }
+                }));
+
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A', choice: 'discard' });
+            },
+            'should emit stateChanged to first player'() {
+                assert.calledOnce(this.firstPlayerConnection.stateChanged);
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                    requirements: [{ type: 'discardCard', count: 2, common: true }],
+                }));
+            },
+            'should emit stateChanged to second player'() {
+                assert.calledOnce(this.secondPlayerConnection.stateChanged);
+                assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                    requirements: [{ type: 'discardCard', count: 2, common: true }]
                 }));
             }
         }

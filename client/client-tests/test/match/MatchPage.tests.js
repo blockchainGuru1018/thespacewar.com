@@ -1,5 +1,4 @@
 let {
-    sinon,
     stub,
     assert,
     refute,
@@ -17,9 +16,9 @@ const PutDownCardEvent = require('../../../../shared/PutDownCardEvent.js');
 const MoveCardEvent = require('../../../../shared/event/MoveCardEvent.js');
 const RepairCardEvent = require('../../../../shared/event/RepairCardEvent.js');
 const AttackEvent = require('../../../../shared/event/AttackEvent.js');
-const BaseCard = require('../../../../shared/card/BaseCard.js');
 const SmallCannon = require('../../../../shared/card/SmallCannon.js');
 
+const DiscoveryCommonId = 42;
 const CommonShipId = 25;
 const FastMissileId = 6;
 
@@ -624,7 +623,8 @@ module.exports = testCase('MatchPage', {
                 await timeout();
 
                 await click('.drawPile-discardTopTwo');
-                dispatch('stateChanged', { opponentDiscardedCards: [createCard({ id: 'C2A' }), createCard({ id: 'C3A' })] });
+                dispatch('stateChanged',
+                    { opponentDiscardedCards: [createCard({ id: 'C2A' }), createCard({ id: 'C3A' })] });
                 dispatch('drawCards', { cards: [], moreCardsCanBeDrawn: true });
                 await timeout();
             },
@@ -966,7 +966,7 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.stationCard .selectable', 0);
             }
         },
-        'when have card requirement with "waiting" set to true': {
+        'when have draw card requirement with "waiting" set to true': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
                 const { dispatch } = this.createController({ matchController: this.matchController });
@@ -977,7 +977,7 @@ module.exports = testCase('MatchPage', {
                     currentPlayer: 'P1A',
                     phase: 'draw',
                     stationCards: [{ place: 'draw' }],
-                    requirements: [{ waiting: true }]
+                    requirements: [{ type: 'drawCard', waiting: true }]
                 }));
                 await timeout();
             },
@@ -990,6 +990,9 @@ module.exports = testCase('MatchPage', {
             'should show guide text'() {
                 assert.elementCount('.guideText', 1);
                 assert.elementCount('.guideText-waitingForOtherPlayer', 1);
+            },
+            'should NOT be able to draw card'() {
+                assert.elementCount('.drawPile-draw', 0);
             }
         }
     },
@@ -1180,6 +1183,144 @@ module.exports = testCase('MatchPage', {
             'should show draw pile action overlay'() {
                 assert.elementCount('.drawPile-draw', 1);
             }
+        },
+        'when have discard card requirement but a draw card requirement is the first': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'action',
+                    requirements: [{ type: 'drawCard', count: 2 }, { type: 'discardCard', count: 2 }]
+                }));
+                await timeout();
+            },
+            'should show draw card guide text'() {
+                assert.elementText('.guideText', 'Draw 2 cards');
+            }
+        }
+    },
+    'Discovery:': {
+        'when place down card "Discovery"': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'action',
+                    cardsOnHand: [{ id: 'C1A', commonId: DiscoveryCommonId }]
+                }));
+                await timeout();
+
+                await click('.field-playerCardsOnHand .card');
+                await click('.field-playerZoneCards .card-ghost:eq(0)');
+            },
+            'should put down card in zone'() {
+                assert.elementCount('.field-playerZoneCards .card:not(.card--placeholder)', 1);
+            },
+            'should NOT have card on hand'() {
+                assert.elementCount('.field-playerCardsOnHand .card', 0);
+            },
+            'should NOT discard card'() {
+                assert.elementCount('.field-discardPile .card-faceDown', 0);
+            },
+            'should show choice dialog'() {
+                assert.elementCount('.putDownCardChoiceDialog', 1);
+            }
+        },
+        'when place down card "Discovery" and choose "Each player draws 4 cards"': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'action',
+                    cardsOnHand: [{ id: 'C1A', commonId: DiscoveryCommonId }]
+                }));
+                await timeout();
+                await click('.field-playerCardsOnHand .card');
+                await click('.field-playerZoneCards .card-ghost:eq(0)');
+
+                await click('.putDownCardChoiceDialog-choice:contains("Each player draws 4 cards")');
+            },
+            'should emit "putDownCard"'() {
+                assert.calledOnceWith(this.matchController.emit, 'putDownCard', {
+                    location: 'zone',
+                    cardId: 'C1A',
+                    choice: 'draw'
+                });
+            },
+            'should NOT show choice dialog'() {
+                assert.elementCount('.putDownCardChoiceDialog', 0);
+            },
+            'should NOT show card in zone'() {
+                assert.elementCount('.field-playerZoneCards .card:not(.card--placeholder)', 0);
+            },
+            'should NOT show card on hand'() {
+                assert.elementCount('.field-playerCardsOnHand .card', 0);
+            },
+            'should show card in discard pile'() {
+                assert.elementCount('.field-player .field-discardPile .card[data-cardId="C1A"]', 1);
+            }
+        },
+        'when place down card "Discovery" and choose "Each player discards 2 cards"': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'action',
+                    cardsOnHand: [{ id: 'C1A', commonId: DiscoveryCommonId }]
+                }));
+                await timeout();
+                await click('.field-playerCardsOnHand .card');
+                await click('.field-playerZoneCards .card-ghost:eq(0)');
+
+                await click('.putDownCardChoiceDialog-choice:contains("Each player discards 2 cards")');
+            },
+            'should emit "putDownCard"'() {
+                assert.calledOnceWith(this.matchController.emit, 'putDownCard', {
+                    location: 'zone',
+                    cardId: 'C1A',
+                    choice: 'discard'
+                });
+            },
+            'should NOT show choice dialog'() {
+                assert.elementCount('.putDownCardChoiceDialog', 0);
+            }
+        },
+        'when place down card "Discovery" and choose "Cancel"': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'action',
+                    cardsOnHand: [{ id: 'C1A', commonId: DiscoveryCommonId }]
+                }));
+                await timeout();
+                await click('.field-playerCardsOnHand .card');
+                await click('.field-playerZoneCards .card-ghost:eq(0)');
+
+                await click('.putDownCardChoiceDialog-choice:contains("Cancel")');
+            },
+            'should NOT emit "putDownCard"'() {
+                refute.calledWith(this.matchController.emit, 'putDownCard');
+            },
+            'should NOT show choice dialog'() {
+                assert.elementCount('.putDownCardChoiceDialog', 0);
+            }
         }
     }
 });
@@ -1239,6 +1380,7 @@ function FakeState(options) {
     options.cardsInZone = cardsInZone.map(c => createCard(c));
     options.cardsInOpponentZone = (options.cardsInOpponentZone || []).map(c => createCard(c));
     options.opponentCardsInZone = (options.opponentCardsInZone || []).map(c => createCard(c));
+    options.cardsOnHand = (options.cardsOnHand || []).map(c => createCard(c));
 
     return defaults(options, {
         stationCards: [],

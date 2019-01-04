@@ -5,7 +5,8 @@ function DiscardCardController(deps) {
     const {
         matchComService,
         playerStateServiceById,
-        playerServiceProvider
+        playerServiceProvider,
+        playerRequirementUpdaterFactory
     } = deps;
 
     return {
@@ -19,7 +20,7 @@ function DiscardCardController(deps) {
 
         const playerPhase = playerStateService.getPhase();
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
-        const isRequiredDiscard = !!playerRequirementService.getLatestMatchingRequirement({ type: 'discardCard' });
+        const isRequiredDiscard = !!playerRequirementService.getFirstMatchingRequirement({ type: 'discardCard' });
         const isSacrificialDiscard = playerPhase === 'action' && !isRequiredDiscard;
         const discardAsPartOfDiscardPhase = playerPhase === 'discard';
 
@@ -61,40 +62,16 @@ function DiscardCardController(deps) {
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
         const opponentId = matchComService.getOpponentId(playerId);
         const opponentRequirementService = playerServiceProvider.getRequirementServiceById(opponentId);
-        const discardCardRequirement = playerRequirementService.getLatestMatchingRequirement({ type: 'discardCard' });
 
-        if (discardCardRequirement.count > 1) {
-            const newCount = discardCardRequirement.count - 1;
-            playerRequirementService.mergeLatestMatchingRequirement({ type: 'discardCard' }, { count: newCount });
-        }
-        else if (discardCardRequirement.common) {
-            const opponentWaitingCommonRequirement = opponentRequirementService.getLatestMatchingRequirement({
-                type: 'discardCard',
-                common: true,
-                waiting: true
-            });
-            if (opponentWaitingCommonRequirement) {
-                playerRequirementService.removeLatestMatchingRequirement({ type: 'discardCard', common: true });
-                opponentRequirementService.removeLatestMatchingRequirement({
-                    type: 'discardCard',
-                    common: true,
-                    waiting: true
-                })
-            }
-            else {
-                playerRequirementService.mergeLatestMatchingRequirement({ type: 'discardCard', common: true }, {
-                    count: 0,
-                    waiting: true
-                });
-            }
-        }
-        else {
-            playerRequirementService.removeLatestMatchingRequirement({ type: 'discardCard' });
-        }
+        const requirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'discardCard' });
+        requirementUpdater.progressRequirementByCount(1);
 
-        matchComService.emitToPlayer(playerId, 'stateChanged', { requirements: playerRequirementService.getRequirements() });
-        matchComService.emitToOpponentOf(playerId, 'stateChanged', { requirements: opponentRequirementService.getRequirements() });
-
+        matchComService.emitToPlayer(playerId, 'stateChanged', {
+            requirements: playerRequirementService.getRequirements()
+        });
+        matchComService.emitToOpponentOf(playerId, 'stateChanged', {
+            requirements: opponentRequirementService.getRequirements()
+        });
         emitOpponentDiscardedCardToOpponentOf({ playerId, discardedCard });
     }
 

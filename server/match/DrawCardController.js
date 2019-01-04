@@ -8,7 +8,8 @@ function DrawCardController(deps) {
         matchService,
         matchComService,
         playerStateServiceById,
-        playerServiceProvider
+        playerServiceProvider,
+        playerRequirementUpdaterFactory
     } = deps;
 
     return {
@@ -18,7 +19,7 @@ function DrawCardController(deps) {
 
     function onDrawCard(playerId) {
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
-        const drawCardRequirement = playerRequirementService.getLatestMatchingRequirement({ type: 'drawCard' });
+        const drawCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'drawCard' });
         if (drawCardRequirement) {
             onDrawCardForRequirement({ playerId });
         }
@@ -30,10 +31,12 @@ function DrawCardController(deps) {
     function onDrawCardForRequirement({ playerId }) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
+        const opponentId = matchComService.getOpponentId(playerId);
+        const opponentRequirementService = playerServiceProvider.getRequirementServiceById(opponentId);
 
         playerStateService.drawCard({ byEvent: true });
-
-        PlayerRequirementUpdater(playerId, { type: 'drawCard' }).decrementCount();
+        const requirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'drawCard' });
+        requirementUpdater.progressRequirementByCount(1);
 
         matchComService.emitToPlayer(playerId, 'stateChanged', {
             events: playerStateService.getEvents(),
@@ -42,6 +45,7 @@ function DrawCardController(deps) {
         });
         matchComService.emitToOpponentOf(playerId, 'stateChanged', {
             opponentCardCount: playerStateService.getCardsOnHand().length,
+            requirements: opponentRequirementService.getRequirements()
         });
     }
 
@@ -95,18 +99,6 @@ function DrawCardController(deps) {
             discardedCards: opponentDiscardedCards,
             events: opponentStateService.getEvents()
         });
-    }
-
-    function PlayerRequirementUpdater(playerId, { type, common = null, waiting = null }) {
-        const service = playerServiceProvider.getRequirementServiceById(playerId);
-
-        return {
-            decrementCount
-        };
-
-        function decrementCount() {
-            service.decrementCountOnLatestMatchingRequirement({ type, common, waiting });
-        }
     }
 }
 

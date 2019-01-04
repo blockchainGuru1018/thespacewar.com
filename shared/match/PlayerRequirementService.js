@@ -1,24 +1,17 @@
-class PlayerRequirementService {
+class PlayerRequirementService { //TODO Rename PlayerRequirements
 
     constructor(deps) {
         this._playerStateService = deps.playerStateService;
-    }
-
-    addRequirement(requirement) {
-        this._playerStateService.update(playerState => {
-            playerState.requirements.push(requirement);
-        });
     }
 
     getRequirements() {
         return this._playerStateService
             .getPlayerState()
             .requirements
-            .slice()
-            .reverse();
+            .slice();
     }
 
-    getLatestMatchingRequirement({ type, common = null, waiting = null }) {
+    getFirstMatchingRequirement({ type, common = null, waiting = null }) {
         const requirements = this._playerStateService
             .getPlayerState()
             .requirements
@@ -27,28 +20,49 @@ class PlayerRequirementService {
         return this._findMatchingRequirement(requirements, { type, common, waiting });
     }
 
-    decrementCountOnLatestMatchingRequirement({ type, common = null, waiting = null }) {
-        const requirement = this.getLatestMatchingRequirement({ type, common, waiting });
-        if (requirement.count === 1) {
-            this.removeLatestMatchingRequirement({ type, common, waiting });
-        }
-        else {
-            this.updateLatestMatchingRequirement({ type, common, waiting }, requirement => {
-                requirement.count -= 1;
-            });
+    addDiscardCardRequirement({ count, common = false }) {
+        const cardsOnHandCount = this._playerStateService.getCardsOnHand().length;
+        const availableCount = Math.min(cardsOnHandCount, count);
+        if (availableCount > 0) {
+            const requirement = { type: 'discardCard', count: availableCount };
+            if (common) {
+                requirement.common = true;
+            }
+            this.addRequirement(requirement);
         }
     }
 
-    mergeLatestMatchingRequirement({ type, common = null, waiting = null }, mergeData) {
-        this._playerStateService
-            .update(playerState => {
-                const requirements = playerState.requirements.slice().reverse();
-                const requirement = this._findMatchingRequirement(requirements, { type, common, waiting });
-                Object.assign(requirement, mergeData);
-            });
+    addDrawCardRequirement({ count, common = false }) {
+        const deckCardCount = this._playerStateService.getDeck().getCardCount();
+        const availableCount = Math.min(deckCardCount, count);
+        if (availableCount > 0) {
+            const requirement = { type: 'drawCard', count: availableCount };
+            if (common) {
+                requirement.common = true;
+            }
+            this.addRequirement(requirement);
+        }
     }
 
-    updateLatestMatchingRequirement({ type, common = null, waiting = null }, updateFn) {
+    addDamageOwnStationCardRequirement({ count, common = false }) {
+        const stationCardCount = this._playerStateService.getStationCards().length;
+        const availableCount = Math.min(stationCardCount, count);
+        if (availableCount > 0) {
+            const requirement = { type: 'damageOwnStationCard', count: availableCount };
+            if (common) {
+                requirement.common = true;
+            }
+            this.addRequirement(requirement);
+        }
+    }
+
+    addRequirement(requirement) {
+        this._playerStateService.update(playerState => {
+            playerState.requirements.push(requirement);
+        });
+    }
+
+    updateFirstMatchingRequirement({ type, common = null, waiting = null }, updateFn) {
         const updatedState = this._playerStateService
             .update(playerState => {
                 const requirements = playerState.requirements.slice().reverse();
@@ -60,7 +74,7 @@ class PlayerRequirementService {
         return this._findMatchingRequirement(requirements, { type, common, waiting });
     }
 
-    removeLatestMatchingRequirement({ type, common = null, waiting = null }) {
+    removeFirstMatchingRequirement({ type, common = null, waiting = null }) {
         this._playerStateService
             .update(playerState => {
                 const requirements = playerState.requirements.slice().reverse();

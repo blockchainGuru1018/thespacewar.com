@@ -256,5 +256,66 @@ module.exports = {
                 requirements: [{ type: 'drawCard', count: 1 }]
             }));
         }
+    },
+    'when has COMMON draw card requirement with count 1 and draw card and second player is NOT waiting': {
+        setUp() {
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+            const players = [Player('P1A', this.firstPlayerConnection), Player('P2A')]
+            this.match = createMatch({ players });
+            this.match.restoreFromState(createState({
+                playerStateById: {
+                    'P1A': {
+                        phase: 'draw',
+                        requirements: [{ type: 'drawCard', count: 1, common: true }]
+                    },
+                    'P2A': {
+                        phase: 'wait',
+                        requirements: [{ type: 'drawCard', count: 1, common: true }]
+                    }
+                }
+            }));
+
+            this.match.drawCard('P1A');
+        },
+        'should emit state changed with requirement updated to first player'() {
+            assert.calledOnce(this.firstPlayerConnection.stateChanged);
+            assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                requirements: [{ type: 'drawCard', count: 0, common: true, waiting: true }]
+            }));
+        }
+    },
+    'when has COMMON draw card requirement with count 1 and draw card and second player is waiting': {
+        setUp() {
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['stateChanged']);
+            const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+            this.match = createMatch({ players });
+            this.match.restoreFromState(createState({
+                playerStateById: {
+                    'P1A': {
+                        phase: 'draw',
+                        requirements: [{ type: 'drawCard', count: 1, common: true }]
+                    },
+                    'P2A': {
+                        phase: 'wait',
+                        requirements: [{ type: 'drawCard', count: 0, common: true, waiting: true }]
+                    }
+                }
+            }));
+
+            this.match.drawCard('P1A');
+        },
+        'should emit state changed WITHOUT requirement to first player'() {
+            assert.calledOnce(this.firstPlayerConnection.stateChanged);
+            assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                requirements: []
+            }));
+        },
+        'should emit state changed WITHOUT requirement to second player'() {
+            assert.calledOnce(this.secondPlayerConnection.stateChanged);
+            assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                requirements: []
+            }));
+        }
     }
 }

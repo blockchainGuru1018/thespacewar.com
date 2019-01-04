@@ -31,12 +31,10 @@ module.exports = function (deps) {
     const userRepository = deps.userRepository;
     const opponentUser = deps.opponentUser;
     const matchId = deps.matchId;
-    const matchControllerFactory = deps.matchControllerFactory;
     const cardInfoRepository = deps.cardInfoRepository;
     const actionPointsCalculator = deps.actionPointsCalculator || ActionPointsCalculator({ cardInfoRepository });
+    const matchController = deps.matchController;
     const cardFactory = deps.cardFactory || new CardFactory();
-
-    let matchController;
 
     return {
         namespaced: true,
@@ -72,7 +70,6 @@ module.exports = function (deps) {
             repairerCardId: null
         },
         getters: {
-            playerCardModels,
             nextPhase,
             nextPhaseWithAction,
             cardsToDrawInDrawPhase,
@@ -89,6 +86,7 @@ module.exports = function (deps) {
             allOpponentStationCards,
             createCard,
             findPlayerCard,
+            findPlayerCardFromAllSources,
             queryEvents,
             canPutDownCard,
             playerStateService
@@ -107,7 +105,6 @@ module.exports = function (deps) {
             restoreSavedMatch,
 
             // local & remote
-            init,
             putDownCard,
             discardCard,
             goToNextPhase,
@@ -148,15 +145,6 @@ module.exports = function (deps) {
             damageOwnStationCards
         }
     };
-
-    function playerCardModels(state) {
-        return state.playerCardsOnHand.map(card => {
-            return {
-                ...card,
-                highlighted: false // TODO Keep if we want to re-introduce card highlighting
-            };
-        });
-    }
 
     function nextPhase(state) {
         let nextPhase = getNextPhaseValue(state.phase);
@@ -205,7 +193,7 @@ module.exports = function (deps) {
     }
 
     function amountOfCardsToDiscard(state, getters) {
-        return Math.max(0, getters.playerCardModels.length - getters.maxHandSize);
+        return Math.max(0, state.playerCardsOnHand.length - getters.maxHandSize);
     }
 
     function hasPutDownNonFreeCardThisTurn(state) {
@@ -235,6 +223,15 @@ module.exports = function (deps) {
         return cardId => {
             return state.playerCardsInZone.find(c => c.id === cardId)
                 || state.playerCardsInOpponentZone.find(c => c.id === cardId)
+                || null;
+        }
+    }
+
+    function findPlayerCardFromAllSources(state) { // TODO Rename => findPlayerCardInZones
+        return cardId => {
+            return state.playerCardsInZone.find(c => c.id === cardId)
+                || state.playerCardsInOpponentZone.find(c => c.id === cardId)
+                || state.playerCardsOnHand.find(c => c.id === cardId)
                 || null;
         }
     }
@@ -352,11 +349,6 @@ module.exports = function (deps) {
         else if (location === 'handSize') {
             state.opponentStation.handSizeCards.push(stationCard);
         }
-    }
-
-    async function init({ dispatch }) {
-        matchController = matchControllerFactory.create({ dispatch, matchId });
-        matchController.start();
     }
 
     function askToDrawCard() {
@@ -528,7 +520,7 @@ module.exports = function (deps) {
         state.playerCardsInZone.push(card);
     }
 
-    function discardCard({ state, dispatch }, cardId) {
+    function discardCard({ state }, cardId) {
         const cardIndexOnHand = state.playerCardsOnHand.findIndex(c => c.id === cardId);
         const discardedCard = state.playerCardsOnHand[cardIndexOnHand];
         state.playerCardsOnHand.splice(cardIndexOnHand, 1);
@@ -641,7 +633,13 @@ module.exports = function (deps) {
         dispatch('registerAttack', state.attackerCardId);
     }
 
-    function opponentAttackedCard({ state }, { attackerCardId, defenderCardId, newDamage, attackerCardWasDestroyed, defenderCardWasDestroyed }) {
+    function opponentAttackedCard({ state }, {
+        attackerCardId,
+        defenderCardId,
+        newDamage,
+        attackerCardWasDestroyed,
+        defenderCardWasDestroyed
+    }) {
         let defenderCardInPlayerZone = state.playerCardsInZone.find(c => c.id === defenderCardId);
         let defenderCardInOpponentZone = state.playerCardsInOpponentZone.find(c => c.id === defenderCardId);
         let defenderCard = defenderCardInPlayerZone || defenderCardInOpponentZone;

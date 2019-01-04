@@ -131,6 +131,13 @@
                         </template>
                     </div>
                     <div class="field-playerZoneCards field-zone field-section">
+                        <zone-card v-if="putDownCardChoiceDialogCardData"
+                                   :card="putDownCardChoiceDialogCardData"
+                                   :ownerId="ownUser.id"
+                                   :zonePlayerRow="playerCardsInZone"
+                                   :zoneOpponentRow="opponentCardsInPlayerZone"
+                                   :isHomeZone="true"
+                                   :key="putDownCardChoiceDialogCardData.id"/>
                         <template v-for="n in 6">
                             <zone-card v-if="n <= playerCardsInZone.length"
                                        :card="(playerCardsInZone[n - 1])"
@@ -186,13 +193,14 @@
                 </div>
                 <div class="field-playerCardsOnHand field-section">
                     <div
-                            v-for="card, index in playerCardModels"
+                            v-for="card, index in playerVisibleCardsOnHand"
                             v-if="card !== holdingCard"
                             :style="getCardOnHandStyle(card, index)"
                             :class="getPlayerCardClasses(card)"
                             @click="playerCardClick(card)"/>
                 </div>
                 <player-hud/>
+                <put-down-card-choice-dialog/>
             </div>
         </div>
         <div v-if="holdingCard" class="card holdingCard" :style="holdingCardStyle"/>
@@ -208,9 +216,16 @@
         mapMutations: mapPermissionMutations,
         mapActions: mapPermissionActions
     } = Vuex.createNamespacedHelpers('permission');
+    const {
+        mapState: mapPutDownCardState,
+        mapGetters: mapPutDownCardGetters,
+        mapMutations: mapPutDownCardMutations,
+        mapActions: mapPutDownCardActions
+    } = Vuex.createNamespacedHelpers('putDownCard');
     const ZoneCard = require('./ZoneCard.vue').default;
     const StationCard = require('./StationCard.vue').default;
     const PlayerHud = require('./PlayerHud.vue').default;
+    const PutDownCardChoiceDialog = require('./PutDownCardChoiceDialog.vue').default;
     const { PHASES } = require('./phases.js');
 
     module.exports = {
@@ -241,11 +256,14 @@
                 'opponentCardsInPlayerZone'
             ]),
             ...mapGetters([
-                'playerCardModels',
                 'hasPutDownNonFreeCardThisTurn',
                 'actionPoints2',
-                'canPutDownCard'
+                'canPutDownCard',
+                'createCard'
             ]),
+            ...mapPutDownCardGetters({
+                putDownCardChoiceDialogCardData: 'choiceCardData'
+            }),
             ...mapPermissionGetters([
                 'canMoveCardsFromHand',
                 'canDiscardCards',
@@ -253,6 +271,14 @@
                 'canPutDownStationCards',
                 'canDrawCards'
             ]),
+            playerVisibleCardsOnHand() {
+                if (!this.putDownCardChoiceDialogCardData) {
+                    return this.playerCardsOnHand.slice();
+                }
+                else {
+                    return this.playerCardsOnHand.filter(c => c.id !== this.putDownCardChoiceDialogCardData.id);
+                }
+            },
             holdingCardStyle() {
                 if (!this.holdingCard) return {};
 
@@ -299,7 +325,6 @@
         },
         methods: {
             ...mapActions([
-                'init',
                 'putDownCard',
                 'discardCard',
                 'selectAsDefender',
@@ -310,6 +335,9 @@
                 'saveMatch',
                 'restoreSavedMatch'
             ]),
+            ...mapPutDownCardActions({
+                showPutDownCardChoiceDialog: 'showChoiceDialog'
+            }),
             canAffordCard(card) {
                 return this.actionPoints2 >= card.cost;
             },
@@ -319,12 +347,17 @@
                 }
             },
             cardGhostClick(location) {
+                const cardData = this.holdingCard;
                 if (location === 'discard') {
                     this.discardCard(this.holdingCard.id);
+                }
+                else if (location === 'zone' && this.createCard(cardData).choicesWhenPutDownInHomeZone) {
+                    this.showPutDownCardChoiceDialog(cardData.id);
                 }
                 else {
                     this.putDownCard({ location, cardId: this.holdingCard.id });
                 }
+
                 this.holdingCard = null;
             },
             emptyClick() {
@@ -383,9 +416,6 @@
                 this.askToDiscardOpponentTopTwoCards();
             }
         },
-        created() {
-            this.init();
-        },
         mounted() {
             this.$refs.match.addEventListener('mousemove', event => {
                 this.mousePosition.x = event.clientX;
@@ -401,7 +431,7 @@
                 }
             });
         },
-        components: { ZoneCard, StationCard, PlayerHud }
+        components: { ZoneCard, StationCard, PlayerHud, PutDownCardChoiceDialog }
     };
 </script>
 <style scoped lang="scss">
