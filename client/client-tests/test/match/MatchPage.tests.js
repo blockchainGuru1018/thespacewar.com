@@ -1492,14 +1492,14 @@ function FakeState(options) {
     options.cardsOnHand = (options.cardsOnHand || []).map(c => createCard(c));
 
     return defaults(options, {
-        stationCards: [],
+        stationCards: [{ place: 'draw' }], //Needed to not always show a Defeated screen
         cardsOnHand: [],
         cardsInZone: [],
         cardsInOpponentZone: [],
         discardedCards: [],
         opponentCardCount: 0,
         opponentDiscardedCards: [],
-        opponentStationCards: [],
+        opponentStationCards: [{ place: 'draw' }], //Needed to not always show a Defeated screen
         opponentCardsInZone: [],
         opponentCardsInPlayerZone: [],
         events: [],
