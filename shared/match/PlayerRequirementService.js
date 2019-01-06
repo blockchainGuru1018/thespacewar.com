@@ -33,7 +33,7 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
     }
 
     addDiscardCardRequirement({ count, common = false }) {
-        const cardsOnHandCount = this._playerStateService.getCardsOnHand().length;
+        const cardsOnHandCount = this._playerStateService.getCardsOnHandCount();
         const availableCount = Math.min(cardsOnHandCount, count);
         if (availableCount > 0) {
             const requirement = { type: 'discardCard', count: availableCount };

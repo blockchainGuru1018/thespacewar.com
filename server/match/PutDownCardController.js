@@ -154,7 +154,7 @@ function PutDownCardController(deps) {
             playerStateService.putDownEventCardInZone(cardData);
             matchComService.emitToOpponentOf(playerId, 'opponentDiscardedCard', {
                 discardedCard: cardData,
-                opponentCardCount: playerStateService.getCardsOnHand().length
+                opponentCardCount: playerStateService.getCardsOnHandCount()
             });
         }
     }

@@ -18,53 +18,6 @@ const {
 const energyShieldId = 21;
 
 module.exports = {
-    'when is first player in first turn': {
-        async setUp() {
-            this.playerConnection = FakeConnection2(['setActionPoints']);
-            this.match = createMatchAndGoToFirstActionPhase({
-                players: [createPlayer({ id: 'P1A', connection: this.playerConnection })]
-            });
-        },
-        'should emit action points'() {
-            assert.calledOnce(this.playerConnection.setActionPoints);
-            assert.calledWith(this.playerConnection.setActionPoints, 6);
-        }
-    },
-    'when is second player in first turn': {
-        async setUp() {
-            this.playerConnection = FakeConnection2(['setActionPoints']);
-            this.match = createMatchAndGoToSecondActionPhase({
-                players: [
-                    createPlayer({ id: 'P1A' }),
-                    createPlayer({ id: 'P2A', connection: this.playerConnection })
-                ]
-            });
-        },
-        'should emit action points'() {
-            assert.calledOnce(this.playerConnection.setActionPoints);
-            assert.calledWith(this.playerConnection.setActionPoints, 6);
-        }
-    },
-    'when leaves the action phase': {
-        async setUp() {
-            this.playerConnection = FakeConnection2(['setActionPoints', 'restoreState']);
-            this.match = createMatchAndGoToFirstActionPhase({
-                players: [createPlayer({ id: 'P1A', connection: this.playerConnection })]
-            });
-
-            this.match.nextPhase('P1A');
-        },
-        'should reset action points'() {
-            let lastCallActionPoints = this.playerConnection.setActionPoints.lastCall.args[0];
-            assert.equals(lastCallActionPoints, 6);
-        },
-        'when restore state should get correct amount of action points': function () {
-            this.match.start();
-            assert.calledWith(this.playerConnection.restoreState, sinon.match({
-                actionPoints: 6
-            }));
-        }
-    },
     'when put down station card should NOT lose any action points': {
         async setUp() {
             this.playerConnection = FakeConnection2(['restoreState']);

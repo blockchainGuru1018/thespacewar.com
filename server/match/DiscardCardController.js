@@ -43,7 +43,7 @@ function DiscardCardController(deps) {
 
     function onSacrificialDiscard({ playerId, discardedCard }) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        const playerCardCount = playerStateService.getCardsOnHand().length;
+        const playerCardCount = playerStateService.getCardsOnHandCount();
         const opponentId = matchComService.getOpponentId(playerId);
         const opponentStateService = playerStateServiceById[opponentId];
 
@@ -77,7 +77,7 @@ function DiscardCardController(deps) {
 
     function emitOpponentDiscardedCardToOpponentOf({ playerId, discardedCard }) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        const opponentCardCount = playerStateService.getCardsOnHand().length;
+        const opponentCardCount = playerStateService.getCardsOnHandCount();
         matchComService.emitToOpponentOf(playerId, 'opponentDiscardedCard', { discardedCard, opponentCardCount });
     }
 

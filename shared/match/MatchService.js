@@ -1,9 +1,9 @@
 class MatchService {
 
     constructor({
-                    endMatch = () => {
-                    } //TODO Fix so that WebStorm does not put curly braces on new line
-                } = {}) {
+        endMatch = () => {
+        } //TODO Fix so that WebStorm does not put curly braces on new line
+    } = {}) {
         this._state = {};
         this.endMatch = endMatch;
     }
@@ -24,6 +24,19 @@ class MatchService {
         return this._state.currentPlayer;
     }
 
+    getPlayerOrder() {
+        return this._state.playerOrder;
+    }
+
+    getFirstPlayerId() {
+        return this._state.playerOrder[0];
+    }
+
+    getLastPlayerId() {
+        const playerOrder = this.getPlayerOrder();
+        return playerOrder[playerOrder.length - 1];
+    }
+
     getZoneWhereCardIs(cardId) {
         for (let playerId of Object.keys(this._state.playerStateById)) {
             const playerState = this._state.playerStateById[playerId];
@@ -35,6 +48,30 @@ class MatchService {
             }
         }
         return null;
+    }
+
+    goToNextTurn() {
+        this.update(state => {
+            state.turn += 1;
+            state.currentPlayer = this.getFirstPlayerId();
+        });
+    }
+
+    goToNextPlayer() {
+        const playerOrder = this.getPlayerOrder();
+        const currentPlayerId = this.getCurrentPlayer()
+        const currentPlayerIndex = playerOrder.indexOf(currentPlayerId);
+        if (currentPlayerIndex === playerOrder.length - 1) {
+            throw new Error('Cannot go to next player. There are no more players for this turn.');
+        }
+
+        this.update(state => {
+            state.currentPlayer = playerOrder[currentPlayerIndex + 1];
+        });
+    }
+
+    update(updateFn) {
+        return updateFn(this._state);
     }
 
     updatePlayerCard(playerId, cardId, updateFn) {

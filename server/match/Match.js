@@ -7,6 +7,7 @@ const DebugController = require('./DebugController.js');
 const MoveCardController = require('./MoveCardController.js');
 const PutDownCardController = require('./PutDownCardController.js');
 const DiscardCardController = require('./DiscardCardController.js');
+const NextPhaseController = require('./NextPhaseController.js');
 const MatchComService = require('./MatchComService.js');
 const MatchService = require('../../shared/match/MatchService.js');
 const ServerQueryEvents = require('./ServerQueryEvents.js');
@@ -14,7 +15,7 @@ const PlayerStateService = require('../../shared/match/PlayerStateService.js');
 const PlayerRequirementService = require('../../shared/match/PlayerRequirementService.js');
 const PlayerRequirementUpdaterFactory = require('./PlayerRequirementUpdaterFactory.js');
 const CardFactory = require('../card/ServerCardFactory.js');
-const { COMMON_PHASE_ORDER, PHASES, TEMPORARY_START_PHASE } = require('../../shared/phases.js');
+const { PHASES, TEMPORARY_START_PHASE } = require('../../shared/phases.js');
 
 const itemNamesForOpponentByItemNameForPlayer = {
     stationCards: 'opponentStationCards',
@@ -33,8 +34,6 @@ module.exports = function (deps) {
     const endMatch = deps.endMatch;
 
     const playerOrder = players.map(p => p.id);
-    const firstPlayer = players.find(p => p.id === playerOrder[0]);
-    const lastPlayer = players.find(p => p.id === playerOrder[1]);
 
     const state = {
         turn: 1,
@@ -83,6 +82,7 @@ module.exports = function (deps) {
     const moveCardController = MoveCardController(controllerDeps);
     const putDownCardController = PutDownCardController(controllerDeps);
     const discardCardController = DiscardCardController(controllerDeps);
+    const nextPhaseController = NextPhaseController(controllerDeps);
 
     return {
         id: matchId,
@@ -92,7 +92,7 @@ module.exports = function (deps) {
         },
         start,
         getOwnState: getPlayerState,
-        nextPhase,
+        nextPhase: nextPhaseController.onNextPhase,
         putDownCard: putDownCardController.onPutDownCard,
         drawCard: drawCardController.onDrawCard,
         discardOpponentTopTwoCards: drawCardController.onDiscardOpponentTopTwoCards,
@@ -127,78 +127,6 @@ module.exports = function (deps) {
                 players.forEach(player => emitBeginGameForPlayer(player.id));
             }
         }
-    }
-
-    function nextPhase(playerId) {
-        if (playerId !== state.currentPlayer) {
-            throw CheatError('Switching phase when not your own turn');
-        }
-        const playerState = getPlayerState(playerId);
-        if (playerState.phase === PHASES.preparation) {
-            const actionPoints = getActionPointsForPlayer(playerId);
-            if (actionPoints < 0) {
-                throw CheatError('Cannot go to next phase with less than 0 action points');
-            }
-        }
-
-        if (playerState.phase === PHASES.discard) {
-            leaveDiscardPhaseForPlayer(state.currentPlayer);
-        }
-
-        const isLastPhase = playerState.phase === PHASES.attack;
-        if (isLastPhase) {
-            endTurnForCurrentPlayer();
-        }
-        else {
-            playerState.phase = getNextPhase(playerState.phase);
-        }
-
-        const currentPlayerState = getPlayerState(state.currentPlayer);
-        if (currentPlayerState.phase === PHASES.action) {
-            startActionPhaseForPlayer(state.currentPlayer);
-        }
-    }
-
-    function getNextPhase(currentPhase) {
-        return COMMON_PHASE_ORDER[(COMMON_PHASE_ORDER.indexOf(currentPhase) + 1)];
-    }
-
-    function startActionPhaseForPlayer(playerId) {
-        emitToPlayer(playerId, 'setActionPoints', getActionPointsForPlayer(playerId));
-    }
-
-    function leaveDiscardPhaseForPlayer(playerId) {
-        const playerStationCards = getPlayerStationCards(playerId);
-        const maxHandSize = getMaxHandSizeFromStationCards(playerStationCards);
-        const playerState = getPlayerState(playerId);
-        if (playerState.cardsOnHand.length > maxHandSize) {
-            throw CheatError('Cannot leave the discard phase without discarding enough cards');
-        }
-    }
-
-    function endTurnForCurrentPlayer() {
-        let playerState = getPlayerState(state.currentPlayer);
-        playerState.phase = PHASES.wait;
-
-        const isLastPlayerOfTurn = state.currentPlayer === lastPlayer.id;
-        if (isLastPlayerOfTurn) {
-            state.turn += 1;
-            state.currentPlayer = firstPlayer.id;
-        }
-        else {
-            state.currentPlayer = lastPlayer.id;
-        }
-
-        let newCurrentPlayerState = getPlayerState(state.currentPlayer);
-        const hasDurationCardInPlay = newCurrentPlayerState.cardsInZone.some(c => c.type === 'duration');
-        if (hasDurationCardInPlay) {
-            newCurrentPlayerState.phase = PHASES.preparation;
-        }
-        else {
-            newCurrentPlayerState.phase = PHASES.draw;
-        }
-
-        emitNextPlayer();
     }
 
     function discardDurationCard(playerId, cardId) {
@@ -364,16 +292,6 @@ module.exports = function (deps) {
         });
     }
 
-    function emitNextPlayer() {
-        const players = matchComService.getPlayers();
-        for (const player of players) {
-            emitToPlayer(player.id, 'nextPlayer', {
-                turn: state.turn,
-                currentPlayer: state.currentPlayer
-            });
-        }
-    }
-
     function emitToOpponent(playerId, action, value) {
         const players = matchComService.getPlayers();
         const opponent = players.find(p => p.id !== playerId);
@@ -396,12 +314,6 @@ module.exports = function (deps) {
             turn: state.turn,
             actionStationCardsCount
         });
-    }
-
-    function getMaxHandSizeFromStationCards(stationCards) {
-        return stationCards
-            .filter(c => c.place === 'handSize')
-            .length * 3;
     }
 
     function toClientModel() {

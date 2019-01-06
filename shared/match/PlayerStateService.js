@@ -17,6 +17,12 @@ class PlayerStateService {
         return this.getPlayerState().phase;
     }
 
+    setPhase(phase) {
+        this.update(playerState => {
+            playerState.phase = phase;
+        });
+    }
+
     moreCardsCanBeDrawnForDrawPhase() {
         let currentTurn = this._matchService.getTurn();
         let cardDrawEvents = this._queryEvents.getCardDrawsOnTurn(currentTurn);
@@ -49,6 +55,10 @@ class PlayerStateService {
         return this
             .getPlayerState()
             .cardsOnHand;
+    }
+
+    getCardsOnHandCount() {
+        return this.getCardsOnHand().length;
     }
 
     hasCardOnHand(cardId) {

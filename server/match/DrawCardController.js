@@ -44,7 +44,7 @@ function DrawCardController(deps) {
             requirements: playerRequirementService.getRequirements()
         });
         matchComService.emitToOpponentOf(playerId, 'stateChanged', {
-            opponentCardCount: playerStateService.getCardsOnHand().length,
+            opponentCardCount: playerStateService.getCardsOnHandCount(),
             requirements: opponentRequirementService.getRequirements()
         });
     }
