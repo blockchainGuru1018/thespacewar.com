@@ -17,6 +17,9 @@
             <div v-if="canBeSelectedForRequirement"
                  @click.stop="selectStationCardForRequirement(stationCard)"
                  class="selectable"/>
+            <div v-if="canBeSelectedForAction"
+                 @click.stop="selectCardForActiveAction(stationCard.id)"
+                 class="selectable"/>
         </div>
     </div>
 </template>
@@ -35,6 +38,12 @@
         mapMutations: mapRequirementMutations,
         mapActions: mapRequirementActions
     } = Vuex.createNamespacedHelpers('requirement');
+    const {
+        mapState: mapPutDownCardState,
+        mapGetters: mapPutDownCardGetters,
+        mapMutations: mapPutDownCardMutations,
+        mapActions: mapPutDownCardActions
+    } = Vuex.createNamespacedHelpers('putDownCard');
 
     module.exports = {
         props: [
@@ -58,7 +67,8 @@
             ]),
             ...mapPermissionGetters([
                 'canSelectStationCards',
-                'canMoveStationCards'
+                'canMoveStationCards',
+                'canSelectCardsForActiveAction',
             ]),
             classes() {
                 const classes = ['stationCard', 'card'];
@@ -114,6 +124,9 @@
                 return !this.isOpponentStationCard
                     && !this.stationCard.flipped
                     && this.canSelectStationCards;
+            },
+            canBeSelectedForAction() {
+                return this.canSelectCardsForActiveAction;
             }
         },
         methods: {
@@ -123,7 +136,10 @@
             ]),
             ...mapRequirementActions([
                 'selectStationCardForRequirement',
-            ])
+            ]),
+            ...mapPutDownCardActions([
+                'selectCardForActiveAction',
+            ]),
         }
     };
 </script>

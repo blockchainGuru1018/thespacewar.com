@@ -244,10 +244,12 @@ function PutDownCardController(deps) {
 
         const opponentId = matchComService.getOpponentId(playerId);
         const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
-        const targetCardData = opponentStateService.findCardFromAnySource(targetCardId);
-        if (targetCardData) {
-            opponentStateService.removeCardFromStationOrZones(targetCardId);
-            opponentStateService.discardCard(targetCardData);
+
+        if (opponentStateService.hasCard(targetCardId)) {
+            opponentStateService.removeAndDiscardCardFromStationOrZone(targetCardId);
+        }
+        else if (playerStateService.hasCard(targetCardId)) {
+            playerStateService.removeAndDiscardCardFromStationOrZone(targetCardId);
         }
     }
 

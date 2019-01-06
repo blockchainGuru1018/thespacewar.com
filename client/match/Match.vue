@@ -35,7 +35,7 @@
                     </div>
                 </div>
                 <div class="field-zoneRows field-opponentZoneRows">
-                    <div class="field-opponentZoneRow field-zone field-section">
+                    <div class="opponentCardsInZone field-opponentZoneRow field-zone field-section">
                         <template v-for="n in 6">
                             <zone-card v-if="n <= opponentCardsInZone.length"
                                        :card="opponentCardsInZone[n - 1]"
@@ -47,7 +47,7 @@
                             <div v-else class="card card--placeholder"/>
                         </template>
                     </div>
-                    <div class="field-opponentZoneRow field-zone field-section playerCardsInOpponentZone">
+                    <div class="playerCardsInOpponentZone field-opponentZoneRow field-zone field-section">
                         <template v-for="n in 6">
                             <zone-card v-if="n <= playerCardsInOpponentZone.length"
                                        :card="playerCardsInOpponentZone[n - 1]"
@@ -118,7 +118,7 @@
                     </div>
                 </div>
                 <div class="field-zoneRows field-playerZoneRows">
-                    <div class="field-zone field-section">
+                    <div class="opponentCardsInPlayerZone field-zone field-section">
                         <template v-for="n in 6">
                             <zone-card v-if="n <= opponentCardsInPlayerZone.length"
                                        :card="opponentCardsInPlayerZone[n - 1]"
@@ -130,22 +130,15 @@
                             <div v-else class="card card--placeholder"/>
                         </template>
                     </div>
-                    <div class="field-playerZoneCards field-zone field-section">
-                        <zone-card v-if="putDownCardChoiceDialogCardData"
-                                   :card="putDownCardChoiceDialogCardData"
-                                   :ownerId="ownUser.id"
-                                   :zonePlayerRow="playerCardsInZone"
-                                   :zoneOpponentRow="opponentCardsInPlayerZone"
-                                   :isHomeZone="true"
-                                   :key="putDownCardChoiceDialogCardData.id"/>
+                    <div class="playerCardsInZone field-playerZoneCards field-zone field-section">
                         <template v-for="n in 6">
-                            <zone-card v-if="n <= playerCardsInZone.length"
-                                       :card="(playerCardsInZone[n - 1])"
+                            <zone-card v-if="n <= visiblePlayerCards.length"
+                                       :card="(visiblePlayerCards[n - 1])"
                                        :ownerId="ownUser.id"
-                                       :zonePlayerRow="playerCardsInZone"
+                                       :zonePlayerRow="visiblePlayerCards"
                                        :zoneOpponentRow="opponentCardsInPlayerZone"
                                        :isHomeZone="true"
-                                       :key="playerCardsInZone[n - 1].id"/>
+                                       :key="visiblePlayerCards[n - 1].id"/>
                             <div v-else-if="playerZoneCardGhostVisible"
                                  @click="cardGhostClick('zone')"
                                  class="card card-ghost"/>
@@ -261,6 +254,10 @@
                 'canPutDownCard',
                 'createCard'
             ]),
+            ...mapPutDownCardState([
+                'transientPlayerCardsInHomeZone',
+                'hiddenCardIdsOnHand',
+            ]),
             ...mapPutDownCardGetters({
                 putDownCardChoiceDialogCardData: 'choiceCardData'
             }),
@@ -271,14 +268,6 @@
                 'canPutDownStationCards',
                 'canDrawCards'
             ]),
-            playerVisibleCardsOnHand() {
-                if (!this.putDownCardChoiceDialogCardData) {
-                    return this.playerCardsOnHand.slice();
-                }
-                else {
-                    return this.playerCardsOnHand.filter(c => c.id !== this.putDownCardChoiceDialogCardData.id);
-                }
-            },
             holdingCardStyle() {
                 if (!this.holdingCard) return {};
 
@@ -321,6 +310,12 @@
             },
             showActionPoints() {
                 return ['preparation', 'draw', 'action'].includes(this.phase);
+            },
+            visiblePlayerCards() {
+                return [...this.playerCardsInZone, ...this.transientPlayerCardsInHomeZone];
+            },
+            playerVisibleCardsOnHand() {
+                return this.playerCardsOnHand.filter(card => !this.hiddenCardIdsOnHand.some(id => id === card.id));
             }
         },
         methods: {
@@ -336,7 +331,8 @@
                 'restoreSavedMatch'
             ]),
             ...mapPutDownCardActions({
-                showPutDownCardChoiceDialog: 'showChoiceDialog'
+                showPutDownCardChoiceDialog: 'showChoiceDialog',
+                showPutDownCardAction: 'showCardAction'
             }),
             canAffordCard(card) {
                 return this.actionPoints2 >= card.cost;
@@ -347,12 +343,18 @@
                 }
             },
             cardGhostClick(location) {
+                if (!this.holdingCard) throw Error('Should not be able to click on card ghost without holding a card');
+
                 const cardData = this.holdingCard;
+
                 if (location === 'discard') {
                     this.discardCard(this.holdingCard.id);
                 }
                 else if (location === 'zone' && this.createCard(cardData).choicesWhenPutDownInHomeZone) {
-                    this.showPutDownCardChoiceDialog(cardData.id);
+                    this.showPutDownCardChoiceDialog(cardData);
+                }
+                else if (location === 'zone' && this.createCard(cardData).actionWhenPutDownInHomeZone) {
+                    this.showPutDownCardAction(cardData);
                 }
                 else {
                     this.putDownCard({ location, cardId: this.holdingCard.id });
@@ -928,6 +930,7 @@
     }
 
     .guideText {
+        pointer-events: none;
         position: absolute;
         left: 50%;
         top: 50%;
@@ -943,7 +946,7 @@
         text-decoration: underline;
         font-weight: bold;
         text-shadow: -1px 1px 10px rgba(255, 255, 255, 0.12),
-        1px 1px 10px rgba(255, 255, 255, 0.12)
+        1px 1px 10px rgba(255, 255, 255, 0.12);
     }
 
     .actionOverlays, .indicatorOverlays {

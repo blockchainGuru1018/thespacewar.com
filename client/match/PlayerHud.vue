@@ -39,9 +39,13 @@
                     End game
                 </button>
             </div>
-            <div v-if="waitingForOtherPlayerToFinishRequirements"
+            <div v-else-if="waitingForOtherPlayerToFinishRequirements"
                  class="guideText-waitingForOtherPlayer guideText guideText--small">
                 Waiting for other player...
+            </div>
+            <div v-else-if="actionGuideText"
+                 class="guideText guideText--small">
+                {{ actionGuideText }}
             </div>
             <div v-else-if="requirementGuideText"
                  class="guideText-discardCard guideText guideText--small">
@@ -95,6 +99,12 @@
         mapMutations: mapRequirementMutations,
         mapActions: mapRequirementActions
     } = Vuex.createNamespacedHelpers('requirement');
+    const {
+        mapState: mapPutDownCardState,
+        mapGetters: mapPutDownCardGetters,
+        mapMutations: mapPutDownCardMutations,
+        mapActions: mapPutDownCardActions
+    } = Vuex.createNamespacedHelpers('putDownCard');
     const { PHASES } = require('./phases.js');
 
     module.exports = {
@@ -128,6 +138,9 @@
                 'cardsLeftToSelect',
                 'selectedCardsCount',
                 'countInFirstRequirement'
+            ]),
+            ...mapPutDownCardGetters([
+                'activeAction',
             ]),
             gameHasEnded() {
                 return this.hasWonGame || this.hasLostGame;
@@ -198,6 +211,11 @@
                 else {
                     return '';
                 }
+            },
+            actionGuideText() {
+                return this.activeAction
+                    ? this.activeAction.text
+                    : '';
             }
         },
         methods: {

@@ -77,6 +77,10 @@ class PlayerStateService {
         return this.getStationCards().some(s => s.card.id === cardId);
     }
 
+    hasCard(cardId) {
+        return !!this.findCardFromAnySource(cardId);
+    }
+
     getEvents() {
         return this
             .getPlayerState()
@@ -209,6 +213,12 @@ class PlayerStateService {
             cardCommonId: cardData.commonId,
             isSacrifice
         }));
+    }
+
+    removeAndDiscardCardFromStationOrZone(cardId, discardCardOptions) {
+        const cardData = this.findCardFromAnySource(cardId);
+        this.removeCardFromStationOrZones(cardId);
+        this.discardCard(cardData, discardCardOptions);
     }
 
     drawCard({ byEvent = false } = {}) {

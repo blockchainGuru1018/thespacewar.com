@@ -21,6 +21,7 @@ const SmallCannon = require('../../../../shared/card/SmallCannon.js');
 const DiscoveryCommonId = 42;
 const CommonShipId = 25;
 const FastMissileId = 6;
+const FatalErrorCommonId = 38;
 
 const Vue = require('vue').default;
 const Vuex = require('vuex').default;
@@ -1242,7 +1243,7 @@ module.exports = testCase('MatchPage', {
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'action',
-                    cardsOnHand: [{ id: 'C1A', commonId: DiscoveryCommonId }]
+                    cardsOnHand: [{ id: 'C1A', type: 'event', commonId: DiscoveryCommonId }]
                 }));
                 await timeout();
                 await click('.field-playerCardsOnHand .card');
@@ -1320,6 +1321,114 @@ module.exports = testCase('MatchPage', {
             },
             'should NOT show choice dialog'() {
                 assert.elementCount('.putDownCardChoiceDialog', 0);
+            }
+        },
+        'Fatal Error:': {
+            'when put down card Fatal Error': {
+                async setUp() {
+                    this.matchController = FakeMatchController({ emit: stub() });
+                    const { dispatch } = this.createController({ matchController: this.matchController });
+                    this.controller.showPage();
+                    dispatch('restoreState', FakeState({
+                        turn: 1,
+                        currentPlayer: 'P1A',
+                        phase: 'action',
+                        cardsOnHand: [{ id: 'C1A', commonId: FatalErrorCommonId }],
+                        cardsInZone: [{ id: 'C2A' }],
+                        cardsInOpponentZone: [{ id: 'C3A' }],
+                        stationCards: [{ place: 'draw', id: 'S1A' }],
+                        opponentCardsInZone: [{ id: 'C3A' }],
+                        opponentCardsInPlayerZone: [{ id: 'C3A' }],
+                        opponentStationCards: [{ place: 'draw', id: 'S2A' }]
+                    }));
+                    await timeout();
+                    await click('.field-playerCardsOnHand .card');
+
+                    await click('.field-playerZoneCards .card-ghost:eq(0)');
+                },
+                'should have card in zone'() {
+                    assert.elementCount('.field-playerZoneCards .card:not(.card--placeholder)', 2);
+                },
+                'should NOT have card in hand'() {
+                    assert.elementCount('.field-playerCardsOnHand .card', 0);
+                },
+                'should NOT have discarded card'() {
+                    assert.elementCount('.field-discardPile .card-faceDown', 0);
+                },
+                'should show guide text'() {
+                    assert.elementText('.guideText', 'Select any card to destroy');
+                },
+                'should be able to select opponent card in home zone'() {
+                    assert.elementCount('.opponentCardsInPlayerZone .selectable', 1);
+                },
+                'should be able to select opponent card in opponent zone'() {
+                    assert.elementCount('.opponentCardsInZone .selectable', 1);
+                },
+                'should be able to select opponent station card'() {
+                    assert.elementCount('.field-opponent .stationCard .selectable', 1);
+                },
+                'should be able to select first player card in home zone'() {
+                    assert.elementCount('.playerCardsInZone .card:eq(0) .selectable', 1);
+                },
+                'should NOT be able to select second player card in home zone'() {
+                    assert.elementCount('.playerCardsInZone .card:eq(1) .selectable', 0);
+                },
+                'should be able to select player card in opponent zone'() {
+                    assert.elementCount('.playerCardsInOpponentZone .selectable', 1);
+                },
+                'should be able to select player station card'() {
+                    assert.elementCount('.field-player .stationCard .selectable', 1);
+                }
+            },
+            'when put down card Fatal Error and then select opponent card in player zone': {
+                async setUp() {
+                    this.matchController = FakeMatchController({ emit: stub() });
+                    const { dispatch } = this.createController({ matchController: this.matchController });
+                    this.controller.showPage();
+                    dispatch('restoreState', FakeState({
+                        turn: 1,
+                        currentPlayer: 'P1A',
+                        phase: 'action',
+                        cardsOnHand: [{ id: 'C1A', type: 'event', commonId: FatalErrorCommonId }],
+                        cardsInZone: [{ id: 'C2A' }],
+                        cardsInOpponentZone: [{ id: 'C3A' }],
+                        stationCards: [{ place: 'draw', id: 'S1A' }],
+                        opponentCardsInZone: [{ id: 'C4A' }],
+                        opponentCardsInPlayerZone: [{ id: 'C5A' }],
+                        opponentStationCards: [{ place: 'draw', id: 'S2A' }],
+                        events: [
+                            PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C2A' }),
+                            PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C3A' })
+                        ]
+                    }));
+                    await timeout();
+                    await click('.field-playerCardsOnHand .card');
+                    await click('.field-playerZoneCards .card-ghost:eq(0)');
+
+                    await click('.opponentCardsInPlayerZone .card:eq(0) .selectable');
+                },
+                'should NOT have card in zone'() {
+                    assert.elementCount('.field-playerZoneCards .card:not(.card--placeholder)', 1);
+                },
+                'should NOT have card in hand'() {
+                    assert.elementCount('.field-playerCardsOnHand .card', 0);
+                },
+                'should have discarded card'() {
+                    assert.elementCount('.field-player .field-discardPile .card[data-cardId="C1A"]', 1);
+                },
+                'should NOT show guide text'() {
+                    assert.elementCount('.guideText', 0);
+                },
+                'should NOT be able to select ANY card'() {
+                    assert.elementCount('.selectable', 0);
+                },
+                'should emit put down card with opponent card id as "choice"'() {
+                    assert.calledWith(this.matchController.emit, 'putDownCard', {
+                        location: 'zone',
+                        cardId: 'C1A',
+                        choice: 'C5A'
+                    });
+                }
             }
         }
     }

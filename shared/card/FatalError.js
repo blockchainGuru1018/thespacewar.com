@@ -11,4 +11,11 @@ module.exports = class FatalError extends BaseCard {
             forPlayer: []
         };
     }
+
+    get actionWhenPutDownInHomeZone() {
+        return {
+            name: 'destroyAnyCard',
+            text: 'Select any card to destroy'
+        }
+    }
 };

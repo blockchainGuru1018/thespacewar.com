@@ -30,6 +30,9 @@
                     Discard
                 </div>
             </template>
+            <div v-if="canSelectCardForAction"
+                 @click.stop="selectCardForActiveAction(card.id)"
+                 class="selectable"/>
         </div>
         <div class="indicatorOverlays">
             <div v-if="card.damage && card.damage > 0" class="card-damageIndicator" :style="damageTextStyle">
@@ -45,6 +48,18 @@
 <script>
     const Vuex = require('vuex');
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
+    const {
+        mapState: mapPutDownCardState,
+        mapGetters: mapPutDownCardGetters,
+        mapMutations: mapPutDownCardMutations,
+        mapActions: mapPutDownCardActions
+    } = Vuex.createNamespacedHelpers('putDownCard');
+    const {
+        mapState: mapPermissionState,
+        mapGetters: mapPermissionGetters,
+        mapMutations: mapPermissionMutations,
+        mapActions: mapPermissionActions
+    } = Vuex.createNamespacedHelpers('permission');
     const vClickOutside = require('v-click-outside');
 
     module.exports = {
@@ -75,6 +90,12 @@
                 'allOpponentStationCards',
                 'createCard',
                 'attackerCard'
+            ]),
+            ...mapPermissionGetters([
+                'canSelectCardsForActiveAction',
+            ]),
+            ...mapPutDownCardState([
+                'transientPlayerCardsInHomeZone',
             ]),
             classes() {
                 const classes = ['card'];
@@ -146,6 +167,11 @@
                 if (!this.repairerCardId) return false;
 
                 return this.createCard(this.card).canBeRepaired();
+            },
+            canSelectCardForAction() {
+                const cardIsTransient = this.transientPlayerCardsInHomeZone.some(c => c.id === this.card.id); //TODO Perhaps have a flag in the fake card data that says that it is transient?
+                return !cardIsTransient
+                    && this.canSelectCardsForActiveAction;
             }
         },
         methods: {
@@ -156,6 +182,9 @@
                 'discardDurationCard',
                 'selectAsRepairer',
                 'selectForRepair'
+            ]),
+            ...mapPutDownCardActions([
+                'selectCardForActiveAction',
             ]),
             moveClick() {
                 this.moveCard(this.card);
@@ -195,34 +224,8 @@
     };
 </script>
 <style scoped lang="scss">
-    //Sync with Match.vue variables
-    //TODO Move to common file
-    $cardWidth: 652px;
-    $cardHeight: 916px;
-    $opponentCardWidth: calc(#{$cardWidth} / 8);
-    $opponentCardHeight: calc(#{$cardHeight} / 8);
-    $opponentCardOnHandWidth: calc(#{$cardWidth} / 12);
-    $opponentCardOnHandHeight: calc(#{$cardHeight} / 12);
-    $opponentStationCardWidth: calc(#{$cardWidth} / 12);
-    $opponentStationCardHeight: calc(#{$cardHeight} / 12);
-    $opponentDrawPileCardWidth: calc(#{$cardWidth} / 12);
-    $opponentDrawPileCardHeight: calc(#{$cardHeight} / 12);
-    $opponentDiscardPileCardWidth: calc(#{$cardWidth} / 12);
-    $opponentDiscardPileCardHeight: calc(#{$cardHeight} / 12);
-
-    $playerCardWidth: calc(#{$cardWidth} / 5);
-    $playerCardHeight: calc(#{$cardHeight} / 5);
-    $playerStationCardWidth: calc((#{$cardWidth} / 5) * .7);
-    $playerStationCardHeight: calc((#{$cardHeight} / 5) * .7);
-    $playerDiscardPileCardWidth: $playerCardWidth;
-    $playerDiscardPileCardHeight: $playerCardHeight;
-    $playerDrawPileCardWidth: $playerCardWidth;
-    $playerDrawPileCardHeight: $playerCardHeight;
-
-    $cardHoverWidth: $cardWidth / 4;
-    $cardHoverHeight: $cardHeight / 4;
-
-    $overlayColor: rgba(0, 0, 0, .4);
+    @import "miscVariables";
+    @import "card";
 
     .card {
         position: relative;
@@ -355,7 +358,7 @@
     }
 
     .dimOverlay {
-        background-color: $overlayColor;
+        background-color: $dimOverlayColor;
         position: fixed;
         top: 0;
         left: 0;

@@ -16,6 +16,7 @@ module.exports = function (deps) {
             canPutDownCards,
             canPutDownStationCards,
             canSelectStationCards,
+            canSelectCardsForActiveAction,
             canMoveStationCards,
             canDrawCards
         },
@@ -84,12 +85,18 @@ module.exports = function (deps) {
         return !hasRequirement;
     }
 
-    function canSelectStationCards(state, getters) {
+    function canSelectStationCards(state, getters) { //TODO Rename "canSelectStationCardsForRequirement"
         if (getters.waitingForOtherPlayerToFinishRequirements) return false;
 
-        const firstRequirementIsDamageOwnStationCard = getFrom('firstRequirementIsDamageOwnStationCard', 'requirement');
+        const damageOwnStationCardRequirement = getFrom('firstRequirementIsDamageOwnStationCard', 'requirement');
         const cardsLeftToSelect = getFrom('cardsLeftToSelect', 'requirement');
-        return firstRequirementIsDamageOwnStationCard && cardsLeftToSelect > 0;
+        return damageOwnStationCardRequirement && cardsLeftToSelect > 0;
+    }
+
+    function canSelectCardsForActiveAction() {
+        const activeAction = getFrom('activeAction', 'putDownCard');
+        if (!activeAction) return false;
+        return activeAction.name === 'destroyAnyCard';
     }
 
     function canDrawCards(state, getters, rootState) {
