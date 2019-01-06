@@ -525,6 +525,46 @@ module.exports = {
                     requirements: []
                 }));
             }
+        },
+        'when first player put down Supernova and both players has 1 flipped station card and 1 unflipped station card': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stateChanged']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'action',
+                            cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: SupernovaCommonId })],
+                            stationCards: [
+                                { card: createCard({ id: 'C2A' }), place: 'draw' },
+                                { flipped: true, card: createCard({ id: 'C3A' }), place: 'draw' }
+                            ]
+                        },
+                        'P2A': {
+                            stationCards: [
+                                { card: createCard({ id: 'C4A' }), place: 'draw' },
+                                { flipped: true, card: createCard({ id: 'C5A' }), place: 'draw' }
+                            ]
+                        }
+                    }
+                }));
+
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
+            },
+            'should emit stateChanged with NO requirements to first player'() {
+                assert.calledOnce(this.firstPlayerConnection.stateChanged);
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                    requirements: [{ type: 'damageOwnStationCard', common: true, count: 1 }]
+                }));
+            },
+            'should emit stateChanged with NO requirements to second player'() {
+                assert.calledOnce(this.secondPlayerConnection.stateChanged);
+                assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                    requirements: [{ type: 'damageOwnStationCard', common: true, count: 1 }]
+                }));
+            }
         }
     },
     'Excellent work': {

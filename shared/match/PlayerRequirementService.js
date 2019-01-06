@@ -24,10 +24,10 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
         if (type === 'drawCard') {
             this.addDrawCardRequirement({ count, common });
         }
-        else if(type === 'discardCard') {
+        else if (type === 'discardCard') {
             this.addDiscardCardRequirement({ count, common });
         }
-        else if(type === 'damageOwnStationCard') {
+        else if (type === 'damageOwnStationCard') {
             this.addDamageOwnStationCardRequirement({ count, common });
         }
     }
@@ -57,7 +57,7 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
     }
 
     addDamageOwnStationCardRequirement({ count, common = false }) {
-        const stationCardCount = this._playerStateService.getStationCards().length;
+        const stationCardCount = this._playerStateService.getUnflippedStationCardsCount();
         const availableCount = Math.min(stationCardCount, count);
         if (availableCount > 0) {
             const requirement = { type: 'damageOwnStationCard', count: availableCount };

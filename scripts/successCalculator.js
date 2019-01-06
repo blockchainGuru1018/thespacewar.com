@@ -102,6 +102,17 @@ const DONE = [
         "defense": "0",
         "attack": "0",
         "number_copies": "2",
+    },
+    {
+        "difficulty": "4",
+        "type_card": "event",
+        "name": "Fatal Error",
+        "id": "38",
+        "price": "0",
+        "detail": "Destroy any card in play (on the table including station cards).\r\nThe opponent may draw 2 cards.",
+        "defense": "0",
+        "attack": "0",
+        "number_copies": "2",
     }
 ];
 
@@ -267,17 +278,6 @@ const EASY_GUI = [
         "detail": "You may sacrifice Pursuiter from play instead of attacking to deal 4 damage to target in same zone (collision).",
         "defense": "1",
         "attack": "2",
-        "number_copies": "2",
-    },
-    {
-        "difficulty": "4",
-        "type_card": "event",
-        "name": "Fatal Error",
-        "id": "38",
-        "price": "0",
-        "detail": "Destroy any card in play (on the table including station cards).\r\nThe opponent may draw 2 cards.",
-        "defense": "0",
-        "attack": "0",
         "number_copies": "2",
     },
     {
