@@ -145,7 +145,8 @@ BaseCard.classNameByCommonId = {
     28: 'Hunter',
     29: 'NewHope',
     6: 'FastMissile',
-    42: 'Discovery'
+    42: 'Discovery',
+    38: 'FatalError'
 };
 
 function getTurnWhenWasPutDown(events, cardId) {

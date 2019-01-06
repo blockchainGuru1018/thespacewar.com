@@ -20,6 +20,18 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
         return this._findMatchingRequirement(requirements, { type, common, waiting });
     }
 
+    addCardRequirement({ type, count, common = false }) {
+        if (type === 'drawCard') {
+            this.addDrawCardRequirement({ count, common });
+        }
+        else if(type === 'discardCard') {
+            this.addDiscardCardRequirement({ count, common });
+        }
+        else if(type === 'damageOwnStationCard') {
+            this.addDamageOwnStationCardRequirement({ count, common });
+        }
+    }
+
     addDiscardCardRequirement({ count, common = false }) {
         const cardsOnHandCount = this._playerStateService.getCardsOnHand().length;
         const availableCount = Math.min(cardsOnHandCount, count);

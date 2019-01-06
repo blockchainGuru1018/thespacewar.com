@@ -260,6 +260,15 @@ class PlayerStateService {
         });
     }
 
+    removeCardFromStationOrZones(cardId) {
+        if (!!this.findStationCard(cardId)) {
+            this.removeStationCard(cardId);
+        }
+        else if (this.findCard(cardId)) {
+            this.removeCard(cardId);
+        }
+    }
+
     removeCard(cardId) { // TODO Rename removeFromZones/removeFromAllZones/removeFromPlay
         this.update(playerState => {
             const cardInZoneIndex = playerState.cardsInZone.findIndex(c => c.id === cardId);

@@ -4,11 +4,13 @@ const ExcellentWorkCommonId = '14';
 const GrandOpportunityCommonId = '20';
 const SupernovaCommonId = '15';
 const DiscoveryCommonId = '42';
+const FatalErrorCommonId = '38';
 const ImplementedEventCards = [
     ExcellentWorkCommonId,
     GrandOpportunityCommonId,
     SupernovaCommonId,
-    DiscoveryCommonId
+    DiscoveryCommonId,
+    FatalErrorCommonId
 ];
 
 function PutDownCardController(deps) {
@@ -122,6 +124,7 @@ function PutDownCardController(deps) {
 
     function putDownEventCardInZone({ playerId, cardData, choice }) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const card = cardFactory.createCardForPlayer(cardData, playerId);
 
         if (ImplementedEventCards.includes(cardData.commonId)) {
             if (cardData.commonId === SupernovaCommonId) {
@@ -136,6 +139,13 @@ function PutDownCardController(deps) {
             else if (cardData.commonId === DiscoveryCommonId) {
                 applyDiscovery({ playerId, cardData, choice });
             }
+            else if (card.commonId === FatalErrorCommonId) {
+                applyFatalError({ playerId, cardData, choice });
+            }
+
+            if (!!card.requirementsWhenPutDownInHomeZone) {
+                addRequirementsByCard({ playerId, card });
+            }
 
             emitGenerousStateChangedEventToPlayer(playerId);
             emitGenerousStateChangedEventToPlayer(matchComService.getOpponentId(playerId));
@@ -146,6 +156,21 @@ function PutDownCardController(deps) {
                 discardedCard: cardData,
                 opponentCardCount: playerStateService.getCardsOnHand().length
             });
+        }
+    }
+
+    function addRequirementsByCard({ playerId, card }) {
+        const requirements = card.requirementsWhenPutDownInHomeZone;
+
+        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
+        for (const requirement of requirements.forPlayer) {
+            playerRequirementService.addCardRequirement(requirement);
+        }
+
+        const opponentId = matchComService.getOpponentId(playerId);
+        const opponentRequirementService = playerServiceProvider.getRequirementServiceById(opponentId);
+        for (const requirement of requirements.forOpponent) {
+            opponentRequirementService.addCardRequirement(requirement);
         }
     }
 
@@ -210,6 +235,19 @@ function PutDownCardController(deps) {
         else if (choice === 'discard') {
             playerRequirementService.addDiscardCardRequirement({ count: 2, common: true })
             opponentRequirementService.addDiscardCardRequirement({ count: 2, common: true })
+        }
+    }
+
+    function applyFatalError({ playerId, cardData, choice: targetCardId }) {
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        playerStateService.putDownEventCardInZone(cardData);
+
+        const opponentId = matchComService.getOpponentId(playerId);
+        const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
+        const targetCardData = opponentStateService.findCardFromAnySource(targetCardId);
+        if (targetCardData) {
+            opponentStateService.removeCardFromStationOrZones(targetCardId);
+            opponentStateService.discardCard(targetCardData);
         }
     }
 
