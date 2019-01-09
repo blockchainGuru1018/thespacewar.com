@@ -454,8 +454,8 @@ module.exports = {
                         sinon.match({ id: 'C5A' })
                     ],
                     requirements: [
-                        { type: 'discardCard', common: true, count: 3 },
-                        { type: 'damageOwnStationCard', common: true, count: 3 }
+                        sinon.match({ type: 'discardCard', common: true, count: 3 }),
+                        sinon.match({ type: 'damageOwnStationCard', common: true, count: 3 })
                     ],
                     events: [
                         sinon.match({ type: 'discardCard', cardId: 'C1A' }),
@@ -487,8 +487,8 @@ module.exports = {
                         sinon.match({ type: 'discardCard', cardId: 'C5A' })
                     ],
                     requirements: [
-                        { type: 'discardCard', common: true, count: 3 },
-                        { type: 'damageOwnStationCard', common: true, count: 3 }
+                        sinon.match({ type: 'discardCard', common: true, count: 3 }),
+                        sinon.match({ type: 'damageOwnStationCard', common: true, count: 3 })
                     ]
                 }));
             },
@@ -556,13 +556,13 @@ module.exports = {
             'should emit stateChanged with NO requirements to first player'() {
                 assert.calledOnce(this.firstPlayerConnection.stateChanged);
                 assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
-                    requirements: [{ type: 'damageOwnStationCard', common: true, count: 1 }]
+                    requirements: [sinon.match({ type: 'damageOwnStationCard', common: true, count: 1 })]
                 }));
             },
             'should emit stateChanged with NO requirements to second player'() {
                 assert.calledOnce(this.secondPlayerConnection.stateChanged);
                 assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
-                    requirements: [{ type: 'damageOwnStationCard', common: true, count: 1 }]
+                    requirements: [sinon.match({ type: 'damageOwnStationCard', common: true, count: 1 })]
                 }));
             }
         }
@@ -596,7 +596,7 @@ module.exports = {
                 assert.calledOnce(this.firstPlayerConnection.stateChanged);
                 assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                     discardedCards: [sinon.match({ id: 'C1A' })],
-                    requirements: [{ type: 'drawCard', count: 3 },],
+                    requirements: [sinon.match({ type: 'drawCard', count: 3 })],
                     events: [
                         sinon.match({ type: 'putDownCard', cardId: 'C1A' }),
                         sinon.match({ type: 'discardCard', cardId: 'C1A' })
@@ -635,7 +635,7 @@ module.exports = {
             'should emit stateChanged to first player with requirement count of 1'() {
                 assert.calledOnce(this.firstPlayerConnection.stateChanged);
                 assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
-                    requirements: [{ type: 'drawCard', count: 1 },],
+                    requirements: [sinon.match({ type: 'drawCard', count: 1 })],
                 }));
             }
         },
@@ -702,8 +702,8 @@ module.exports = {
                 assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                     discardedCards: [sinon.match({ id: 'C1A' })],
                     requirements: [
-                        { type: 'drawCard', count: 6 },
-                        { type: 'discardCard', count: 2 }
+                        sinon.match({ type: 'drawCard', count: 6 }),
+                        sinon.match({ type: 'discardCard', count: 2 })
                     ],
                     events: [
                         sinon.match({ type: 'putDownCard', cardId: 'C1A' }),
@@ -747,8 +747,8 @@ module.exports = {
                 assert.calledOnce(this.firstPlayerConnection.stateChanged);
                 assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                     requirements: [
-                        { type: 'drawCard', count: 1 },
-                        { type: 'discardCard', count: 1 }
+                        sinon.match({ type: 'drawCard', count: 1 }),
+                        sinon.match({ type: 'discardCard', count: 1 })
                     ],
                 }));
             }
@@ -777,7 +777,7 @@ module.exports = {
             'should emit stateChanged to first player with ONLY discard card'() {
                 assert.calledOnce(this.firstPlayerConnection.stateChanged);
                 assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
-                    requirements: [{ type: 'discardCard', count: 1 }],
+                    requirements: [sinon.match({ type: 'discardCard', count: 1 })],
                 }));
             }
         },
@@ -802,7 +802,7 @@ module.exports = {
             'should emit stateChanged to first player with ONLY draw card'() {
                 assert.calledOnce(this.firstPlayerConnection.stateChanged);
                 assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
-                    requirements: [{ type: 'drawCard', count: 1 }],
+                    requirements: [sinon.match({ type: 'drawCard', count: 1 })],
                 }));
             }
         }
@@ -845,7 +845,7 @@ module.exports = {
                 assert.calledOnce(this.firstPlayerConnection.stateChanged);
                 assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                     discardedCards: [sinon.match({ id: 'C1A' })],
-                    requirements: [{ type: 'drawCard', count: 4, common: true }],
+                    requirements: [sinon.match({ type: 'drawCard', count: 4, common: true })],
                     events: [
                         sinon.match({ type: 'putDownCard', cardId: 'C1A' }),
                         sinon.match({ type: 'discardCard', cardId: 'C1A' })
@@ -857,7 +857,7 @@ module.exports = {
                 assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
                     opponentDiscardedCards: [sinon.match({ id: 'C1A' })],
                     opponentCardCount: 0,
-                    requirements: [{ type: 'drawCard', count: 4, common: true }]
+                    requirements: [sinon.match({ type: 'drawCard', count: 4, common: true })]
                 }));
             },
             'should NOT emit opponentDiscardedCard to second player'() {
@@ -894,13 +894,13 @@ module.exports = {
             'should emit stateChanged to first player'() {
                 assert.calledOnce(this.firstPlayerConnection.stateChanged);
                 assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
-                    requirements: [{ type: 'discardCard', count: 2, common: true }],
+                    requirements: [sinon.match({ type: 'discardCard', count: 2, common: true })],
                 }));
             },
             'should emit stateChanged to second player'() {
                 assert.calledOnce(this.secondPlayerConnection.stateChanged);
                 assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
-                    requirements: [{ type: 'discardCard', count: 2, common: true }]
+                    requirements: [sinon.match({ type: 'discardCard', count: 2, common: true })]
                 }));
             }
         }
@@ -934,7 +934,7 @@ module.exports = {
             'should emit new requirement to second player'() {
                 assert.calledOnce(this.secondPlayerConnection.stateChanged);
                 assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
-                    requirements: [{ type: 'drawCard', count: 2 }]
+                    requirements: [sinon.match({ type: 'drawCard', count: 2 })]
                 }));
             }
         },

@@ -58,8 +58,7 @@ function PutDownCardController(deps) {
             if (!canAffordCard) {
                 throw new CheatError('Cannot afford card');
             }
-        }
-        else if (location.startsWith('station')) {
+        } else if (location.startsWith('station')) {
             const hasAlreadyPutDownStationCard = playerStateService.hasAlreadyPutDownStationCardThisTurn();
             if (hasAlreadyPutDownStationCard) {
                 throw new CheatError('Cannot put down more than one station card on the same turn');
@@ -72,8 +71,7 @@ function PutDownCardController(deps) {
         const cardId = cardData.id;
         if (playerStateService.hasCardOnHand(cardId)) {
             removeCardFromPlayerHand(playerId, cardId);
-        }
-        else if (playerStateService.hasCardInStationCards(cardId)) {
+        } else if (playerStateService.hasCardInStationCards(cardId)) {
             if (location !== 'zone') {
                 throw new CheatError('Cannot put down card');
             }
@@ -85,11 +83,9 @@ function PutDownCardController(deps) {
     function putDownCardAtNewLocation({ playerId, location, cardData, choice }) {
         if (location === 'zone' && cardData.type === 'event') {
             putDownEventCardInZone({ playerId, cardData, choice })
-        }
-        else if (location === 'zone') {
+        } else if (location === 'zone') {
             putDownCardInZone({ playerId, cardData });
-        }
-        else if (location.startsWith('station')) {
+        } else if (location.startsWith('station')) {
             putDownStationCard({ playerId, cardData, location });
         }
     }
@@ -129,17 +125,13 @@ function PutDownCardController(deps) {
         if (ImplementedEventCards.includes(cardData.commonId)) {
             if (cardData.commonId === SupernovaCommonId) {
                 applySupernova({ playerId, cardData });
-            }
-            else if (cardData.commonId === ExcellentWorkCommonId) {
+            } else if (cardData.commonId === ExcellentWorkCommonId) {
                 applyExcellentWork({ playerId, cardData });
-            }
-            else if (cardData.commonId === GrandOpportunityCommonId) {
+            } else if (cardData.commonId === GrandOpportunityCommonId) {
                 applyGrandOpportunity({ playerId, cardData });
-            }
-            else if (cardData.commonId === DiscoveryCommonId) {
+            } else if (cardData.commonId === DiscoveryCommonId) {
                 applyDiscovery({ playerId, cardData, choice });
-            }
-            else if (card.commonId === FatalErrorCommonId) {
+            } else if (card.commonId === FatalErrorCommonId) {
                 applyFatalError({ playerId, cardData, choice });
             }
 
@@ -149,8 +141,7 @@ function PutDownCardController(deps) {
 
             emitGenerousStateChangedEventToPlayer(playerId);
             emitGenerousStateChangedEventToPlayer(matchComService.getOpponentId(playerId));
-        }
-        else {
+        } else {
             playerStateService.putDownEventCardInZone(cardData);
             matchComService.emitToOpponentOf(playerId, 'opponentDiscardedCard', {
                 discardedCard: cardData,
@@ -208,7 +199,7 @@ function PutDownCardController(deps) {
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
 
         playerStateService.putDownEventCardInZone(cardData);
-        playerRequirementService.addDrawCardRequirement({ count: 3 });
+        playerRequirementService.addDrawCardRequirement({ count: 3, cardCommonId: cardData.commonId });
     }
 
     function applyGrandOpportunity({ playerId, cardData }) {
@@ -216,8 +207,8 @@ function PutDownCardController(deps) {
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
 
         playerStateService.putDownEventCardInZone(cardData);
-        playerRequirementService.addDrawCardRequirement({ count: 6 });
-        playerRequirementService.addDiscardCardRequirement({ count: 2 });
+        playerRequirementService.addDrawCardRequirement({ count: 6, cardCommonId: cardData.commonId });
+        playerRequirementService.addDiscardCardRequirement({ count: 2, cardCommonId: cardData.commonId });
     }
 
     function applyDiscovery({ playerId, cardData, choice }) {
@@ -229,12 +220,27 @@ function PutDownCardController(deps) {
         playerStateService.putDownEventCardInZone(cardData);
 
         if (choice === 'draw') {
-            playerRequirementService.addDrawCardRequirement({ count: 4, common: true });
-            opponentRequirementService.addDrawCardRequirement({ count: 4, common: true });
-        }
-        else if (choice === 'discard') {
-            playerRequirementService.addDiscardCardRequirement({ count: 2, common: true })
-            opponentRequirementService.addDiscardCardRequirement({ count: 2, common: true })
+            playerRequirementService.addDrawCardRequirement({
+                count: 4,
+                common: true,
+                cardCommonId: cardData.commonId
+            });
+            opponentRequirementService.addDrawCardRequirement({
+                count: 4,
+                common: true,
+                cardCommonId: cardData.commonId
+            });
+        } else if (choice === 'discard') {
+            playerRequirementService.addDiscardCardRequirement({
+                count: 2,
+                common: true,
+                cardCommonId: cardData.commonId
+            })
+            opponentRequirementService.addDiscardCardRequirement({
+                count: 2,
+                common: true,
+                cardCommonId: cardData.commonId
+            })
         }
     }
 
@@ -247,16 +253,19 @@ function PutDownCardController(deps) {
 
         if (opponentStateService.hasCard(targetCardId)) {
             opponentStateService.removeAndDiscardCardFromStationOrZone(targetCardId);
-        }
-        else if (playerStateService.hasCard(targetCardId)) {
+        } else if (playerStateService.hasCard(targetCardId)) {
             playerStateService.removeAndDiscardCardFromStationOrZone(targetCardId);
         }
     }
 
     function addPlayerRequirementsFromSupernova(playerId) {
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
-        playerRequirementService.addDiscardCardRequirement({ count: 3, common: true });
-        playerRequirementService.addDamageOwnStationCardRequirement({ count: 3, common: true });
+        playerRequirementService.addDiscardCardRequirement({ count: 3, common: true, cardCommonId: SupernovaCommonId });
+        playerRequirementService.addDamageOwnStationCardRequirement({
+            count: 3,
+            common: true,
+            cardCommonId: SupernovaCommonId
+        });
     }
 
     function putDownCardInZone({ playerId, cardData }) {

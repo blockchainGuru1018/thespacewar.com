@@ -11,7 +11,8 @@
                     <div class="playerHud-phaseText playerHud-item">{{ currentPhaseText }}</div>
                     <div v-if="phase === 'discard' && playerCardsOnHand.length > maxHandSize"
                          class="playerHud-nextPhaseButton playerHud-phaseText playerHud-item">
-                        Discard {{ amountOfCardsToDiscard + (amountOfCardsToDiscard > 1 ? ' cards' : ' card')}} to continue
+                        Discard {{ amountOfCardsToDiscard + (amountOfCardsToDiscard > 1 ? ' cards' : ' card')}} to
+                        continue
                     </div>
                     <button v-else-if="nextPhaseButtonText"
                             @click="nextPhaseClick"
@@ -43,12 +44,21 @@
                  class="guideText-waitingForOtherPlayer guideText guideText--small">
                 Waiting for other player...
             </div>
-            <div v-else-if="actionGuideText"
-                 class="guideText guideText--small">
+            <div v-else-if="actionGuideText" class="guideText guideText--small">
+                <div @click="showEnlargedCard"
+                     :style="cardStyle"
+                     class="guideTextCardWrapper card">
+                    <div class="enlargeIcon enlargeIcon--small"/>
+                </div>
                 {{ actionGuideText }}
             </div>
             <div v-else-if="requirementGuideText"
-                 class="guideText-discardCard guideText guideText--small">
+                 class="guideText guideText--small">
+                <div @click="showEnlargedCard"
+                     :style="cardStyle"
+                     class="guideTextCardWrapper card">
+                    <div class="enlargeIcon enlargeIcon--small"/>
+                </div>
                 {{ requirementGuideText }}
             </div>
             <div v-else-if="numberOfStationCardsToSelect > 0" class="guideText">
@@ -79,14 +89,20 @@
             </span>
         </portal>
         <portal to="playerDrawPile">
-            <span v-if="phase === PHASES.draw" class="playerDrawPileDescription descriptionText">
+            <span v-if="canDrawCards" class="playerDrawPileDescription descriptionText">
                 Click on draw pile to draw a card
             </span>
         </portal>
         <portal to="opponentDrawPile">
-            <span v-if="phase === PHASES.draw" class="opponentDrawPileDescription descriptionText">
+            <span v-if="canMill" class="opponentDrawPileDescription descriptionText">
                 Click on draw pile to mill 2 cards
             </span>
+        </portal>
+        <portal to="match" v-if="enlargedCardVisible">
+            <div class="dimOverlay"/>
+            <div class="card card--enlarged"
+                 :style="cardStyle"
+                 v-click-outside="hideEnlargedCard"/>
         </portal>
     </div>
 </template>
@@ -105,9 +121,20 @@
         mapMutations: mapPutDownCardMutations,
         mapActions: mapPutDownCardActions
     } = Vuex.createNamespacedHelpers('putDownCard');
+    const {
+        mapState: mapPermissionState,
+        mapGetters: mapPermissionGetters,
+        mapMutations: mapPermissionMutations,
+        mapActions: mapPermissionActions
+    } = Vuex.createNamespacedHelpers('permission');
     const { PHASES } = require('./phases.js');
 
     module.exports = {
+        data() {
+            return {
+                enlargedCardVisible: false
+            };
+        },
         computed: {
             ...mapState([
                 'currentPlayer',
@@ -137,10 +164,16 @@
                 'firstRequirementIsDrawCard',
                 'cardsLeftToSelect',
                 'selectedCardsCount',
-                'countInFirstRequirement'
+                'countInFirstRequirement',
+                'requirementCardImageUrl'
             ]),
             ...mapPutDownCardGetters([
                 'activeAction',
+                'activeActionCardImageUrl'
+            ]),
+            ...mapPermissionGetters([
+                'canDrawCards',
+                'canMill'
             ]),
             gameHasEnded() {
                 return this.hasWonGame || this.hasLostGame;
@@ -194,21 +227,17 @@
                 if (this.firstRequirementIsDiscardCard) {
                     const cardsToDiscard = this.countInFirstRequirement;
                     return `Discard ${cardsToDiscard} ${pluralize('card', cardsToDiscard)}`;
-                }
-                else if (this.firstRequirementIsDamageOwnStationCard) {
+                } else if (this.firstRequirementIsDamageOwnStationCard) {
                     const cardsToSelect = this.cardsLeftToSelect;
                     if (cardsToSelect === 0) {
                         return '';
-                    }
-                    else {
+                    } else {
                         return `Select ${cardsToSelect} of your own station cards to damage`;
                     }
-                }
-                else if (this.firstRequirementIsDrawCard) {
+                } else if (this.firstRequirementIsDrawCard) {
                     const cardsToDraw = this.countInFirstRequirement;
                     return `Draw ${cardsToDraw} ${pluralize('card', cardsToDraw)}`;
-                }
-                else {
+                } else {
                     return '';
                 }
             },
@@ -216,6 +245,14 @@
                 return this.activeAction
                     ? this.activeAction.text
                     : '';
+            },
+            cardStyle() {
+                const imageUrl = this.activeAction
+                    ? this.activeActionCardImageUrl
+                    : this.requirementCardImageUrl
+                return {
+                    backgroundImage: `url(${imageUrl})`
+                };
             }
         },
         methods: {
@@ -228,6 +265,12 @@
             },
             nextPhaseClick() {
                 this.goToNextPhase();
+            },
+            showEnlargedCard() {
+                this.enlargedCardVisible = true;
+            },
+            hideEnlargedCard() {
+                this.enlargedCardVisible = false;
             }
         }
     };
@@ -241,6 +284,9 @@
     }
 </script>
 <style scoped lang="scss">
+    @import "card";
+    @import "enlargeCard";
+
     $overlayColor: rgba(0, 0, 0, .4);
 
     .field-playerHud {
@@ -421,5 +467,19 @@
         &:hover {
             background-color: #ff6670;
         }
+    }
+
+    .guideTextCardWrapper {
+        width: $cardWidth * .1;
+        height: $cardHeight * .1;
+        position: relative;
+        top: 4px;
+        margin-right: 15px;
+        flex: 0 0 auto;
+    }
+
+    .guideTextCard {
+        width: 100%;
+        height: 100%;
     }
 </style>

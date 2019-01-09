@@ -153,9 +153,6 @@ module.exports = function (deps) {
 
     function nextPhaseWithAction(state, getters) {
         let nextPhase = getters.nextPhase;
-        if (nextPhase === PHASES.action && getters.actionPoints2 === 0) {
-            nextPhase = getNextPhaseValue(PHASES.action);
-        }
         if (nextPhase === PHASES.discard && getters.amountOfCardsToDiscard === 0) {
             nextPhase = getNextPhaseValue(PHASES.discard);
         }
@@ -342,11 +339,9 @@ module.exports = function (deps) {
         const location = stationCard.place;
         if (location === 'draw') {
             state.opponentStation.drawCards.push(stationCard);
-        }
-        else if (location === 'action') {
+        } else if (location === 'action') {
             state.opponentStation.actionCards.push(stationCard);
-        }
-        else if (location === 'handSize') {
+        } else if (location === 'handSize') {
             state.opponentStation.handSizeCards.push(stationCard);
         }
     }
@@ -378,11 +373,9 @@ module.exports = function (deps) {
         for (let key of Object.keys(data)) {
             if (key === 'stationCards') {
                 commit('setPlayerStationCards', data[key]);
-            }
-            else if (key === 'opponentStationCards') {
+            } else if (key === 'opponentStationCards') {
                 commit('setOpponentStationCards', data[key]);
-            }
-            else {
+            } else {
                 const localKey = storeItemNameByServerItemName[key] || key;
                 state[localKey] = data[key];
             }
@@ -396,8 +389,7 @@ module.exports = function (deps) {
         if (currentPlayer === state.ownUser.id) {
             const hasDurationCardInPlay = state.playerCardsInZone.some(c => c.type === 'duration');
             state.phase = hasDurationCardInPlay ? PHASES.preparation : PHASES.draw;
-        }
-        else {
+        } else {
             state.phase = PHASES.wait;
         }
     }
@@ -487,8 +479,7 @@ module.exports = function (deps) {
 
         if (cardOnHand) {
             state.playerCardsOnHand.splice(cardIndexOnHand, 1);
-        }
-        else if (stationCard) {
+        } else if (stationCard) {
             commit('setPlayerStationCards', getters.allPlayerStationCards.filter(s => s.id !== cardId));
         }
 
@@ -498,19 +489,15 @@ module.exports = function (deps) {
         if (location.startsWith('station')) {
             if (location === 'station-draw') {
                 state.playerStation.drawCards.push(card);
-            }
-            else if (location === 'station-action') {
+            } else if (location === 'station-action') {
                 state.playerStation.actionCards.push(card);
-            }
-            else if (location === 'station-handSize') {
+            } else if (location === 'station-handSize') {
                 state.playerStation.handSizeCards.push(card);
             }
-        }
-        else if (location === 'zone') {
+        } else if (location === 'zone') {
             if (card.type === 'event') {
                 state.playerDiscardedCards.push(card);
-            }
-            else {
+            } else {
                 dispatch('placeCardInZone', card);
             }
         }
@@ -567,8 +554,7 @@ module.exports = function (deps) {
         const stationCard = getters.allOpponentStationCards.find(s => s.id === card.id);
         if (!!stationCard) {
             commit('setOpponentStationCards', getters.allOpponentStationCards.filter(s => s.id !== card.id));
-        }
-        else {
+        } else {
             state.opponentCardCount -= 1;
         }
 
@@ -625,8 +611,7 @@ module.exports = function (deps) {
         if (attackerCard.attack >= defenderTotalDefense) {
             const defenderCardIndex = defenderCardZone.findIndex(c => c.id === defenderCardId);
             defenderCardZone.splice(defenderCardIndex, 1);
-        }
-        else {
+        } else {
             defenderCard.damage = defenderCurrentDamage + attackerCard.attack;
         }
 
@@ -647,8 +632,7 @@ module.exports = function (deps) {
         if (defenderCardWasDestroyed) {
             let defenderCardIndex = defenderCardZone.findIndex(c => c.id === defenderCardId);
             defenderCardZone.splice(defenderCardIndex, 1);
-        }
-        else {
+        } else {
             defenderCard.damage = newDamage;
         }
 
@@ -703,8 +687,7 @@ module.exports = function (deps) {
     function cancelCurrentAction({ state, dispatch }) {
         if (state.attackerCardId) {
             dispatch('cancelAttack');
-        }
-        else if (state.repairerCardId) {
+        } else if (state.repairerCardId) {
             state.repairerCardId = null;
         }
     }
@@ -753,8 +736,7 @@ module.exports = function (deps) {
         const cardInZoneIndex = state.playerCardsInZone.findIndex(c => c.id === cardId);
         if (cardInZoneIndex >= 0) {
             state.playerCardsInZone.splice(cardInZoneIndex, 1);
-        }
-        else {
+        } else {
             const cardInOpponentZoneIndex = state.playerCardsInOpponentZone.findIndex(c => c.id === cardId);
             if (cardInOpponentZoneIndex >= 0) {
                 state.playerCardsInOpponentZone.splice(cardInOpponentZoneIndex, 1);

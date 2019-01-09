@@ -47,6 +47,12 @@ class PlayerStateService {
             .cardsInZone;
     }
 
+    getDurationCards() {
+        return this
+            .getCardsInZone()
+            .filter(c => c.type === 'duration');
+    }
+
     hasCardOfSameTypeInZone(cardCommonId) {
         return this.getCardsInZone().some(c => c.commonId === cardCommonId);
     }

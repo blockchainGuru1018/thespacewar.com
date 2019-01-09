@@ -15,7 +15,9 @@ const {
     catchError,
     createState,
 } = require('./shared.js');
-const energyShieldId = 21;
+const FakeDeck = require('../testUtils/FakeDeck.js');
+const EnergyShieldId = '21';
+const GoodKarmaCommonId = '11';
 
 module.exports = {
     'when put down station card should NOT lose any action points': {
@@ -83,10 +85,10 @@ module.exports = {
                     'P1A': {
                         phase: 'action',
                         cardsOnHand: [
-                            createCard({ id: 'C2A', cost: 1, commonId: energyShieldId })
+                            createCard({ id: 'C2A', cost: 1, commonId: EnergyShieldId })
                         ],
                         cardsInZone: [
-                            createCard({ id: 'C1A', cost: 1, commonId: energyShieldId })
+                            createCard({ id: 'C1A', cost: 1, commonId: EnergyShieldId })
                         ],
                         stationCards: [{ card: createCard({ id: 'C3A' }), place: 'action' }]
                     }
@@ -108,8 +110,8 @@ module.exports = {
                 playerStateById: {
                     'P1A': {
                         phase: 'action',
-                        cardsOnHand: [createCard({ id: 'C2A', commonId: energyShieldId })],
-                        cardsInZone: [createCard({ id: 'C1A', commonId: energyShieldId })]
+                        cardsOnHand: [createCard({ id: 'C2A', commonId: EnergyShieldId })],
+                        cardsInZone: [createCard({ id: 'C1A', commonId: EnergyShieldId })]
                     }
                 }
             }));
@@ -128,7 +130,7 @@ module.exports = {
                 playerStateById: {
                     'P1A': {
                         phase: 'action',
-                        cardsOnHand: [createCard({ id: 'C2A', commonId: energyShieldId })]
+                        cardsOnHand: [createCard({ id: 'C2A', commonId: EnergyShieldId })]
                     }
                 }
             }));
@@ -137,6 +139,76 @@ module.exports = {
         },
         'should NOT throw'() {
             refute(this.error);
+        }
+    },
+    'when has card "Good karma" in play and enters draw phase': {
+        setUp() {
+            this.firstPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
+            this.match = createMatch({ players: [Player('P1A', this.firstPlayerConnection), Player('P2A')] });
+            this.match.restoreFromState(createState({
+                turn: 1,
+                currentPlayer: 'P1A',
+                playerStateById: {
+                    'P1A': {
+                        phase: 'preparation',
+                        cardsInZone: [createCard({ id: 'C1A', type: 'duration', commonId: GoodKarmaCommonId })]
+                    }
+                },
+                deckByPlayerId: {
+                    'P1A': FakeDeck.realDeckFromCards([
+                        createCard({ id: 'C4A' }),
+                        createCard({ id: 'C5A' }),
+                        createCard({ id: 'C6A' }),
+                        createCard({ id: 'C6A' })
+                    ])
+                }
+            }));
+
+            this.match.nextPhase('P1A');
+        },
+        'should emit state changed with draw card requirement'() {
+            assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                requirements: [sinon.match({ type: 'drawCard', count: 4 })]
+            }));
+        },
+        'when restore state should have requirement'() {
+            this.match.start();
+            assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
+                requirements: [sinon.match({ type: 'drawCard', count: 4 })]
+            }));
+        }
+    },
+    'when has card "Good karma" in play and leaves draw phase': {
+        setUp() {
+            this.firstPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
+            this.match = createMatch({ players: [Player('P1A', this.firstPlayerConnection), Player('P2A')] });
+            this.match.restoreFromState(createState({
+                turn: 1,
+                currentPlayer: 'P1A',
+                playerStateById: {
+                    'P1A': {
+                        phase: 'draw',
+                        cardsInZone: [createCard({ id: 'C1A', type: 'duration', commonId: GoodKarmaCommonId })],
+                        cardsOnHand: [
+                            createCard({ id: 'C2A' }),
+                            createCard({ id: 'C3A' })
+                        ]
+                    }
+                }
+            }));
+
+            this.match.nextPhase('P1A');
+        },
+        'should emit state changed with discard card requirement'() {
+            assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                requirements: [sinon.match({ type: 'discardCard', count: 2 })]
+            }));
+        },
+        'when restore state should have requirement'() {
+            this.match.start();
+            assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
+                requirements: [sinon.match({ type: 'discardCard', count: 2 })]
+            }));
         }
     }
 };

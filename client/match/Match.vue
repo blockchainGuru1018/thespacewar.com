@@ -70,14 +70,15 @@
                     </div>
                     <div class="field-drawPile">
                         <portal-target name="opponentDrawPile"/>
-                        <div v-if="phase === PHASES.draw" class="card card-faceDown">
+                        <div class="card card-faceDown">
                             <div class="actionOverlays">
-                                <div @click="opponentDrawPileClick" class="drawPile-discardTopTwo actionOverlay">
+                                <div v-if="canMill"
+                                     @click="opponentDrawPileClick"
+                                     class="drawPile-discardTopTwo actionOverlay">
                                     Mill 2
                                 </div>
                             </div>
                         </div>
-                        <div v-else class="card card-faceDown"/>
                     </div>
                 </div>
                 <div class="field-opponentCardsOnHand field-section">
@@ -266,7 +267,8 @@
                 'canDiscardCards',
                 'canPutDownCards',
                 'canPutDownStationCards',
-                'canDrawCards'
+                'canDrawCards',
+                'canMill'
             ]),
             holdingCardStyle() {
                 if (!this.holdingCard) return {};
@@ -302,9 +304,8 @@
             },
             playerActionPointsText() {
                 if (this.calculatedActionPointsForActionPhaseVisible) {
-                    return `Actions ${ this.actionPoints2 }`;
-                }
-                else {
+                    return `Actions ${this.actionPoints2}`;
+                } else {
                     return `Actions (${this.actionPoints2})`
                 }
             },
@@ -349,14 +350,11 @@
 
                 if (location === 'discard') {
                     this.discardCard(this.holdingCard.id);
-                }
-                else if (location === 'zone' && this.createCard(cardData).choicesWhenPutDownInHomeZone) {
+                } else if (location === 'zone' && this.createCard(cardData).choicesWhenPutDownInHomeZone) {
                     this.showPutDownCardChoiceDialog(cardData);
-                }
-                else if (location === 'zone' && this.createCard(cardData).actionWhenPutDownInHomeZone) {
+                } else if (location === 'zone' && this.createCard(cardData).actionWhenPutDownInHomeZone) {
                     this.showPutDownCardAction(cardData);
-                }
-                else {
+                } else {
                     this.putDownCard({ location, cardId: this.holdingCard.id });
                 }
 
@@ -365,8 +363,7 @@
             emptyClick() {
                 if (this.holdingCard) {
                     this.holdingCard = null;
-                }
-                else {
+                } else {
                     this.cancelCurrentAction();
                 }
             },

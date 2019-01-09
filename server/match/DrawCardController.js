@@ -22,8 +22,7 @@ function DrawCardController(deps) {
         const drawCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'drawCard' });
         if (drawCardRequirement) {
             onDrawCardForRequirement({ playerId });
-        }
-        else {
+        } else {
             onDrawCardBecauseOfDrawPhase({ playerId });
         }
     }
@@ -74,6 +73,12 @@ function DrawCardController(deps) {
     }
 
     function onDiscardOpponentTopTwoCards(playerId) {
+        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
+        const drawCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'drawCard' });
+        if (drawCardRequirement) {
+            throw new Error('Cannot mill opponent with other requirements still in progress');
+        }
+
         const playerStateService = playerStateServiceById[playerId];
         const cannotDrawMoreCards = !playerStateService.moreCardsCanBeDrawnForDrawPhase();
         if (cannotDrawMoreCards) {

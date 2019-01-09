@@ -156,8 +156,8 @@ module.exports = {
                         phase: 'action',
                         cardsOnHand: [createCard({ id: 'C1A' })],
                         requirements: [
-                            { type: 'discardCard' },
                             { type: 'discardCard', count: 1 },
+                            { type: 'discardCard' },
                             { type: 'third' },
                             { type: 'fourth' },
                         ]

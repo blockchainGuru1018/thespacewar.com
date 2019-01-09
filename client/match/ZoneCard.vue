@@ -226,6 +226,7 @@
 <style scoped lang="scss">
     @import "miscVariables";
     @import "card";
+    @import "enlargeCard";
 
     .card {
         position: relative;
@@ -312,24 +313,6 @@
         font-family: Arial, sans-serif;
     }
 
-    .enlargeIcon {
-        opacity: 0;
-        background-image: url(/icon/enlarge-red.svg);
-        background-size: contain;
-        fill: red;
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        width: 20px;
-        height: 20px;
-        z-index: 3;
-
-        .card:hover & {
-            animation: fullOpacityOnIntentionalHover .14s;
-            opacity: 1;
-        }
-    }
-
     @keyframes fullOpacityOnIntentionalHover {
         0% {
             opacity: 0;
@@ -342,28 +325,5 @@
         100% {
             opacity: 1;
         }
-    }
-
-    .card--enlarged {
-        $ratio: $cardWidth / $cardHeight;
-
-        background-size: contain;
-        width: 80vh * $ratio;
-        height: 80vh;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 4;
-    }
-
-    .dimOverlay {
-        background-color: $dimOverlayColor;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 4;
     }
 </style>

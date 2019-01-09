@@ -6,6 +6,7 @@ module.exports = function (deps) {
 
     return {
         getCost,
+        getImageUrl,
         getType
     }
 
@@ -16,6 +17,10 @@ module.exports = function (deps) {
 
     function getType(cardCommonId) {
         return getCard(cardCommonId).type;
+    }
+
+    function getImageUrl(cardCommonId) {
+        return `/card/${cardCommonId}/image`;
     }
 
     function getCard(cardCommonId) {

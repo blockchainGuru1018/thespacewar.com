@@ -1,5 +1,13 @@
 @import "cardVariables";
 
+.card {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  background-size: 100% 100%;
+  box-sizing: border-box;
+}
+
 .actionOverlays {
   position: absolute;
   left: 0;

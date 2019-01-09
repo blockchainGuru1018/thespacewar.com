@@ -15,24 +15,23 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
         const requirements = this._playerStateService
             .getPlayerState()
             .requirements
-            .slice()
-            .reverse()
+            .slice();
         return this._findMatchingRequirement(requirements, { type, common, waiting });
     }
 
-    addCardRequirement({ type, count, common = false }) {
+    addCardRequirement({ type, count, common = false, cardCommonId = null }) {
         if (type === 'drawCard') {
-            this.addDrawCardRequirement({ count, common });
+            this.addDrawCardRequirement({ count, common, cardCommonId });
         }
         else if (type === 'discardCard') {
-            this.addDiscardCardRequirement({ count, common });
+            this.addDiscardCardRequirement({ count, common, cardCommonId });
         }
         else if (type === 'damageOwnStationCard') {
-            this.addDamageOwnStationCardRequirement({ count, common });
+            this.addDamageOwnStationCardRequirement({ count, common, cardCommonId });
         }
     }
 
-    addDiscardCardRequirement({ count, common = false }) {
+    addDiscardCardRequirement({ count, common = false, cardCommonId = null }) {
         const cardsOnHandCount = this._playerStateService.getCardsOnHandCount();
         const availableCount = Math.min(cardsOnHandCount, count);
         if (availableCount > 0) {
@@ -40,11 +39,14 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
             if (common) {
                 requirement.common = true;
             }
+            if (cardCommonId) {
+                requirement.cardCommonId = cardCommonId;
+            }
             this.addRequirement(requirement);
         }
     }
 
-    addDrawCardRequirement({ count, common = false }) {
+    addDrawCardRequirement({ count, common = false, cardCommonId = null }) {
         const deckCardCount = this._playerStateService.getDeck().getCardCount();
         const availableCount = Math.min(deckCardCount, count);
         if (availableCount > 0) {
@@ -52,11 +54,14 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
             if (common) {
                 requirement.common = true;
             }
+            if (cardCommonId) {
+                requirement.cardCommonId = cardCommonId;
+            }
             this.addRequirement(requirement);
         }
     }
 
-    addDamageOwnStationCardRequirement({ count, common = false }) {
+    addDamageOwnStationCardRequirement({ count, common = false, cardCommonId = null }) {
         const stationCardCount = this._playerStateService.getUnflippedStationCardsCount();
         const availableCount = Math.min(stationCardCount, count);
         if (availableCount > 0) {
@@ -64,11 +69,14 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
             if (common) {
                 requirement.common = true;
             }
+            if (cardCommonId) {
+                requirement.cardCommonId = cardCommonId;
+            }
             this.addRequirement(requirement);
         }
     }
 
-    addRequirement(requirement) {
+    addRequirement(requirement) { //TODO Find a better name to differentiate this from addCardRequirement (or perhaps addCardRequirement should be somewhere else?)
         this._playerStateService.update(playerState => {
             playerState.requirements.push(requirement);
         });
@@ -77,22 +85,22 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
     updateFirstMatchingRequirement({ type, common = null, waiting = null }, updateFn) {
         const updatedState = this._playerStateService
             .update(playerState => {
-                const requirements = playerState.requirements.slice().reverse();
+                const requirements = playerState.requirements.slice();
                 const requirement = this._findMatchingRequirement(requirements, { type, common, waiting });
                 updateFn(requirement);
             });
 
-        const requirements = updatedState.requirements.slice().reverse();
+        const requirements = updatedState.requirements.slice();
         return this._findMatchingRequirement(requirements, { type, common, waiting });
     }
 
     removeFirstMatchingRequirement({ type, common = null, waiting = null }) {
         this._playerStateService
             .update(playerState => {
-                const requirements = playerState.requirements.slice().reverse();
+                const requirements = playerState.requirements.slice();
                 const requirement = this._findMatchingRequirement(requirements, { type, common, waiting });
-                const reverseIndexOfRequirement = requirements.indexOf(requirement) + 1;
-                playerState.requirements.splice(-reverseIndexOfRequirement, 1);
+                const reverseIndexOfRequirement = requirements.indexOf(requirement);
+                playerState.requirements.splice(reverseIndexOfRequirement, 1);
             });
     }
 

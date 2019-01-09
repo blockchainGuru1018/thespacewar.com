@@ -1,7 +1,8 @@
 module.exports = function (deps) {
 
     const {
-        rootStore
+        rootStore,
+        cardInfoRepository
     } = deps;
 
     return {
@@ -18,7 +19,8 @@ module.exports = function (deps) {
             firstRequirementIsDrawCard,
             countInFirstRequirement,
             selectedCardsCount,
-            cardsLeftToSelect
+            cardsLeftToSelect,
+            requirementCardImageUrl
         },
         actions: {
             selectStationCardForRequirement
@@ -30,10 +32,10 @@ module.exports = function (deps) {
     }
 
     function firstRequirement(state, getters, rootState) {
-        const requirements = rootState.match.requirements.slice().reverse();
+        const requirements = rootState.match.requirements.slice();
 
         if (requirements.length === 0) return null;
-        return requirements[requirements.length - 1];
+        return requirements[0];
     }
 
     function firstRequirementIsDiscardCard(state, getters) {
@@ -64,6 +66,12 @@ module.exports = function (deps) {
 
     function cardsLeftToSelect(state, getters) {
         return getters.countInFirstRequirement - getters.selectedCardsCount;
+    }
+
+    function requirementCardImageUrl(state, getters) {
+        const firstRequirement = getters.firstRequirement;
+        if (!firstRequirement || !firstRequirement.cardCommonId) return '';
+        return cardInfoRepository.getImageUrl(firstRequirement.cardCommonId);
     }
 
     function selectStationCardForRequirement({ state, getters }, stationCard) {

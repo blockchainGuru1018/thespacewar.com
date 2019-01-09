@@ -18,7 +18,8 @@ module.exports = function (deps) {
             canSelectStationCards,
             canSelectCardsForActiveAction,
             canMoveStationCards,
-            canDrawCards
+            canDrawCards,
+            canMill
         },
         actions: {}
     }
@@ -46,8 +47,7 @@ module.exports = function (deps) {
         const hasRequirement = !!getFrom('firstRequirement', 'requirement');
         if (hasRequirement) {
             return getFrom('firstRequirementIsDiscardCard', 'requirement');
-        }
-        else {
+        } else {
             const phase = rootState.match.phase;
             return phase === 'action' || phase === 'discard';
         }
@@ -104,5 +104,12 @@ module.exports = function (deps) {
 
         return rootState.match.phase === 'draw'
             || getFrom('firstRequirementIsDrawCard', 'requirement');
+    }
+
+    function canMill(state, getters, rootState) {
+        if (getters.waitingForOtherPlayerToFinishRequirements) return false;
+
+        const hasRequirement = !!getFrom('firstRequirement', 'requirement');
+        return rootState.match.phase === 'draw' && !hasRequirement;
     }
 }

@@ -4,7 +4,8 @@ module.exports = function (deps) {
 
     const {
         matchController,
-        getFrom
+        getFrom,
+        cardInfoRepository
     } = deps;
 
     //TODO Needs a better name more in-line with what resource is hold. Is about the "card being put down".
@@ -19,7 +20,8 @@ module.exports = function (deps) {
         },
         getters: {
             choiceCardData,
-            activeAction
+            activeAction,
+            activeActionCardImageUrl
         },
         actions: {
             showChoiceDialog,
@@ -39,6 +41,12 @@ module.exports = function (deps) {
 
         const card = getFrom('createCard', 'match')(state.activeActionCardData);
         return card.actionWhenPutDownInHomeZone
+    }
+
+    function activeActionCardImageUrl(state) {
+        if (!state.activeActionCardData) return null;
+
+        return cardInfoRepository.getImageUrl(state.activeActionCardData.commonId);
     }
 
     function showChoiceDialog({ state }, cardData) {

@@ -198,6 +198,25 @@ module.exports = {
             }));
         }
     },
+    'when has draw card requirement and discard opponent top 2 cards': {
+        async setUp() {
+            this.match = createMatch({ players: [Player('P1A'), Player('P2A')] });
+            this.match.restoreFromState(createState({
+                playerStateById: {
+                    'P1A': {
+                        phase: 'draw',
+                        requirements: [{ type: 'drawCard', count: 1}]
+                    }
+                }
+            }));
+
+            this.error = catchError(() => this.match.discardOpponentTopTwoCards('P1A'));
+        },
+        'should throw error'() {
+            assert(this.error);
+            assert.equals(this.error.message, 'Cannot mill opponent with other requirements still in progress');
+        }
+    },
     'when has draw card requirement with count 1 and draw card': {
         setUp() {
             this.firstPlayerConnection = FakeConnection2(['restoreState', 'drawCards', 'stateChanged']);
