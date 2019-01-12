@@ -5,4 +5,8 @@ module.exports = class FastMissile extends CanMoveFirstTurn(BaseCard) {
     constructor(deps) {
         super(deps);
     }
+
+    static get CommonId() {
+        return '6';
+    }
 };

@@ -53,8 +53,26 @@ class PlayerStateService {
             .filter(c => c.type === 'duration');
     }
 
-    hasCardOfSameTypeInZone(cardCommonId) {
+    hasCardOnHand(cardId) {
+        return this
+            .getPlayerState()
+            .cardsOnHand.some(c => c.id === cardId);
+    }
+
+    hasCardInStationCards(cardId) {
+        return this.getStationCards().some(s => s.card.id === cardId);
+    }
+
+    hasCardOfTypeInZone(cardCommonId) {
         return this.getCardsInZone().some(c => c.commonId === cardCommonId);
+    }
+
+    hasDurationCardOfType(cardCommonId) {
+        return this.getDurationCards().some(c => c.commonId === cardCommonId);
+    }
+
+    hasCard(cardId) {
+        return !!this.findCardFromAnySource(cardId);
     }
 
     getCardsOnHand() {
@@ -65,12 +83,6 @@ class PlayerStateService {
 
     getCardsOnHandCount() {
         return this.getCardsOnHand().length;
-    }
-
-    hasCardOnHand(cardId) {
-        return this
-            .getPlayerState()
-            .cardsOnHand.some(c => c.id === cardId);
     }
 
     getDiscardedCards() {
@@ -87,14 +99,6 @@ class PlayerStateService {
     getUnflippedStationCardsCount() {
         const playerState = this.getPlayerState();
         return playerState.stationCards.filter(s => !s.flipped).length;
-    }
-
-    hasCardInStationCards(cardId) {
-        return this.getStationCards().some(s => s.card.id === cardId);
-    }
-
-    hasCard(cardId) {
-        return !!this.findCardFromAnySource(cardId);
     }
 
     getEvents() {

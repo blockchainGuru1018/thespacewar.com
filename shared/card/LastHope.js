@@ -7,4 +7,8 @@ module.exports = class NewHope extends RepairShip {
             repairCapability: 5
         });
     }
+
+    static get CommonId() {
+        return '30';
+    }
 };

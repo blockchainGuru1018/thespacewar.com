@@ -138,19 +138,6 @@ class BaseCard {
 
 module.exports = BaseCard;
 
-BaseCard.classNameByCommonId = {
-    '21': 'EnergyShield',
-    '23': 'SmallCannon',
-    '24': 'TriggerHappyJoe',
-    '28': 'Hunter',
-    '29': 'NewHope',
-    '6': 'FastMissile',
-    '42': 'Discovery',
-    '38': 'FatalError',
-    '30': 'LastHope',
-    '11': 'GoodKarma'
-};
-
 function getTurnWhenWasPutDown(events, cardId) {
     const putDownEventForThisCard = events.find(e => {
         return e.type === 'putDownCard'

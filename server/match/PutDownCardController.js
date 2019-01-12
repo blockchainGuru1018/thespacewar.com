@@ -49,7 +49,7 @@ function PutDownCardController(deps) {
             const canOnlyHaveOneOfCardInZone = cardFactory
                 .createCardForPlayer(cardData, playerId)
                 .canOnlyHaveOneInHomeZone();
-            if (canOnlyHaveOneOfCardInZone && playerStateService.hasCardOfSameTypeInZone(cardData.commonId)) {
+            if (canOnlyHaveOneOfCardInZone && playerStateService.hasCardOfTypeInZone(cardData.commonId)) {
                 throw new CheatError('Cannot put down card');
             }
 

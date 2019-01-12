@@ -1,8 +1,7 @@
 class MatchService {
 
     constructor({
-        endMatch = () => {
-        } //TODO Fix so that WebStorm does not put curly braces on new line
+        endMatch = () => {}
     } = {}) {
         this._state = {};
         this.endMatch = endMatch;
@@ -83,30 +82,8 @@ class MatchService {
         updateFn(card);
     }
 
-    updatePlayerState(playerId, updateFn) {
-        const playerState = this.getPlayerState(playerId);
-        updateFn(playerState);
-        return playerState;
-    }
-
     getPlayerState(playerId) {
         return this._state.playerStateById[playerId];
-    }
-
-    getPlayerDeck(playerId) {
-        return this._state.deckByPlayerId[playerId];
-    }
-
-    getStationDrawCardsCount(playerId) {
-        let stationCards = this.getPlayerStationCards(playerId);
-        return stationCards
-            .filter(card => card.place === 'draw')
-            .length;
-    }
-
-    getPlayerStationCards(playerId) {
-        const playerState = this.getPlayerState(playerId);
-        return playerState.stationCards;
     }
 
     storeEvent(playerId, event) {

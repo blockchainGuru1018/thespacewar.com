@@ -55,39 +55,32 @@ function PutDownCardController(deps) {
     }
 
     function enterDrawPhaseForPlayer(playerId) {
-        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-
-        const durationCardsData = playerStateService.getDurationCards();
-        if (durationCardsData.length > 0) {
-            for (const cardData of durationCardsData) {
-                const card = cardFactory.createCardForPlayer(cardData, playerId);
-                if (card.requirementsWhenEnterDrawPhase) {
-                    addCardRequirements({ playerId, requirements: card.requirementsWhenEnterDrawPhase });
-                }
-            }
-
+        const requirementLists = getRequirementsFromDurationCards(playerId, 'requirementsWhenEnterDrawPhase');
+        if (requirementLists.length > 0) {
+            requirementLists.forEach(requirements => addCardRequirements({ playerId, requirements }));
             emitStateChangedWithRequirementsToPlayer(playerId);
         }
     }
 
-    //TODO Remove duplication with method "enterDrawPhaseForPlayer"
+    //TODO Should not run duration card code when CANNOT run it by "CanThePlayer.useDurationCard(cardId)"
+    // find a smooth way to check for permission without to much copy & poaste
     function leaveDrawPhaseForPlayer(playerId) {
-        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-
-        const durationCardsData = playerStateService.getDurationCards();
-        if (durationCardsData.length > 0) {
-            for (const cardData of durationCardsData) {
-                const card = cardFactory.createCardForPlayer(cardData, playerId);
-                if (card.requirementsWhenLeavingDrawPhase) {
-                    addCardRequirements({ playerId, requirements: card.requirementsWhenLeavingDrawPhase })
-                }
-            }
-
+        const requirementLists = getRequirementsFromDurationCards(playerId, 'requirementsWhenLeavingDrawPhase');
+        if (requirementLists.length > 0) {
+            requirementLists.forEach(requirements => addCardRequirements({ playerId, requirements }));
             emitStateChangedWithRequirementsToPlayer(playerId);
         }
     }
 
-    //TODO Could this be moved to the requirement service class perhaps?
+    function getRequirementsFromDurationCards(playerId, key) {
+        return playerServiceProvider
+            .getStateServiceById(playerId)
+            .getDurationCards()
+            .map(cardData => cardFactory.createCardForPlayer(cardData, playerId))
+            .map(card => card[key])
+            .filter(requirements => !!requirements);
+    }
+
     function addCardRequirements({ playerId, requirements }) {
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
         for (const requirement of requirements.forPlayer) {

@@ -7,6 +7,10 @@ module.exports = class GoodKarma extends BaseCard {
         this._matchService = deps.matchService;
     }
 
+    static get CommonId() {
+        return '11';
+    }
+
     get requirementsWhenEnterDrawPhase() {
         const cardCommonId = this.commonId;
         return {

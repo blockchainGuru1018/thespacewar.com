@@ -1,13 +1,20 @@
-const BaseCard = require('./BaseCard.js');
+const classes = [
+    require('./EnergyShield.js'),
+    require('./SmallCannon.js'),
+    require('./TriggerHappyJoe.js'),
+    require('./Hunter.js'),
+    require('./NewHope.js'),
+    require('./FastMissile.js'),
+    require('./Discovery.js'),
+    require('./FatalError.js'),
+    require('./LastHope.js'),
+    require('./GoodKarma.js'),
+    require('./Neutralization.js')
+];
 
-const filesById = {};
-for (let cardCommonId of Object.keys(BaseCard.classNameByCommonId)) {
-    try {
-        filesById[cardCommonId] = require(`./${BaseCard.classNameByCommonId[cardCommonId]}`);
-    }
-    catch (err) {
-        console.error('Could not load Class file of card with common id: ' + cardCommonId + '! Got error: ' + err);
-    }
-}
+const classByCardCommonId = {}
+classes.forEach(c => {
+    classByCardCommonId[c.CommonId] = c
+});
 
-module.exports = filesById;
+module.exports = classByCardCommonId;

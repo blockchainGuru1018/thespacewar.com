@@ -12,9 +12,10 @@ const {
     catchError,
     createState,
 } = require('./shared.js');
-const BaseCard = require('../../../shared/card/BaseCard.js');
 const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
 const MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
+
+const EnergyShieldCommonId = '21';
 
 module.exports = {
     '//Energy Shield:': { //TODO Implement so that energy shield stops an station attack if in zone (is only implemented in GUI)
@@ -44,7 +45,7 @@ module.exports = {
                                 createCard({
                                     id: 'C2A',
                                     type: 'defense',
-                                    commonId: getCommonIdForClass('EnergyShield'),
+                                    commonId: EnergyShieldCommonId,
                                     defense: 5
                                 })
                             ],
@@ -139,7 +140,7 @@ module.exports = {
                             cardsInZone: [
                                 createCard({
                                     id: 'C2A',
-                                    commonId: getCommonIdForClass('EnergyShield'),
+                                    commonId: EnergyShieldCommonId,
                                     type: 'defense',
                                     defense: 5
                                 })
@@ -227,7 +228,7 @@ module.exports = {
                                     {
                                         id: 'C2A',
                                         type: 'defense',
-                                        commonId: getCommonIdForClass('EnergyShield'),
+                                        commonId: EnergyShieldCommonId,
                                         defense: 5,
                                         damage: 1
                                     }
@@ -302,11 +303,3 @@ module.exports = {
     },
     'Small Cannon:': {}
 };
-
-function getCommonIdForClass(className) {
-    const classNameByCommonId = BaseCard.classNameByCommonId
-    for (let key of Object.keys(classNameByCommonId)) {
-        if (classNameByCommonId[key] === className) return key;
-    }
-    throw new Error('Could not find common ID for class name ' + className);
-}

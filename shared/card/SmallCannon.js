@@ -5,4 +5,8 @@ module.exports = class SmallCannon extends CanAttackTwice(BaseCard) {
     constructor(deps) {
         super(deps);
     }
+
+    static get CommonId() {
+        return '23';
+    }
 };

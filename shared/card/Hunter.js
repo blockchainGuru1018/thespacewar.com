@@ -5,4 +5,8 @@ module.exports = class Hunter extends CanMoveFirstTurn(BaseCard) {
     constructor(deps) {
         super(deps);
     }
+
+    static get CommonId() {
+        return '28';
+    }
 };

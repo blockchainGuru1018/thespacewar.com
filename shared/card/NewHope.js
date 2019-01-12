@@ -8,4 +8,8 @@ module.exports = class NewHope extends CanMoveFirstTurn(RepairShip) {
             repairCapability: 3
         });
     }
+
+    static get CommonId() {
+        return '29';
+    }
 };

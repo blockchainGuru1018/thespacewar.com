@@ -11,6 +11,10 @@ module.exports = class EnergyShield extends BaseCard {
         this._matchService = deps.matchService;
     }
 
+    static get CommonId() {
+        return '21';
+    }
+
     hasEffectOnStationAttack() {
         return true;
     }

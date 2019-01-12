@@ -7,6 +7,10 @@ module.exports = class Discover extends BaseCard {
         this._matchService = deps.matchService;
     }
 
+    static get CommonId() {
+        return '42';
+    }
+
     get choicesWhenPutDownInHomeZone() {
         return [
             { name: 'draw', text: 'Each player draws 4 cards' },

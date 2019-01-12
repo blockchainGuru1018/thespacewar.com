@@ -5,6 +5,10 @@ module.exports = class FatalError extends BaseCard {
         super(deps);
     }
 
+    static get CommonId() {
+        return '38';
+    }
+
     get requirementsWhenPutDownInHomeZone() {
         return {
             forOpponent: [{ type: 'drawCard', count: 2 }],
