@@ -36,6 +36,11 @@ class MatchService {
         return playerOrder[playerOrder.length - 1];
     }
 
+    getOpponentId(playerId) {
+        const firstPlayerId = this.getFirstPlayerId();
+        return firstPlayerId === playerId ? this.getLastPlayerId() : firstPlayerId;
+    }
+
     getZoneWhereCardIs(cardId) {
         for (let playerId of Object.keys(this._state.playerStateById)) {
             const playerState = this._state.playerStateById[playerId];

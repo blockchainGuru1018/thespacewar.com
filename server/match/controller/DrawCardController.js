@@ -1,6 +1,6 @@
-const DrawCardEvent = require('../../shared/event/DrawCardEvent.js');
-const CheatError = require('./CheatError.js');
-const itemNamesForOpponentByItemNameForPlayer = require('./itemNamesForOpponentByItemNameForPlayer.js');
+const DrawCardEvent = require('../../../shared/event/DrawCardEvent.js');
+const CheatError = require('../CheatError.js');
+const itemNamesForOpponentByItemNameForPlayer = require('../itemNamesForOpponentByItemNameForPlayer.js');
 
 function DrawCardController(deps) {
 

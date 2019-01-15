@@ -11,6 +11,8 @@ class PlayerStateService {
         this._matchService = deps.matchService;
         this._queryEvents = deps.queryEvents;
         this._actionPointsCalculator = deps.actionPointsCalculator;
+
+        this._changeListeners = [];
     }
 
     getPhase() {
@@ -354,12 +356,36 @@ class PlayerStateService {
 
     update(updateFn) {
         const playerState = this.getPlayerState();
-        updateFn(playerState);
+
+        const emit = this._emitChange.bind(this);
+        const playerId = this._playerId;
+        const proxy = new Proxy(playerState, {
+            set(target, property, value) {
+                playerState[property] = value;
+                emit({ property, value, playerId });
+                return true;
+            },
+            get(target, property) {
+                emit({ property, value: target[property], playerId });
+                return target[property];
+            }
+        });
+        updateFn(proxy);
         return playerState;
     }
 
     getPlayerState() {
         return this._matchService.getPlayerState(this._playerId);
+    }
+
+    listenForChanges(listener) {
+        this._changeListeners.push(listener);
+    }
+
+    _emitChange(data) {
+        for (const listener of this._changeListeners) {
+            listener(data);
+        }
     }
 }
 

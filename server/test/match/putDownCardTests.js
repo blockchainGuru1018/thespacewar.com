@@ -513,17 +513,11 @@ module.exports = {
 
                 this.match.putDownCard('P1A', { location: 'zone', cardId: 'C3A' });
             },
-            'should emit stateChanged with NO requirements to first player'() {
-                assert.calledOnce(this.firstPlayerConnection.stateChanged);
-                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
-                    requirements: []
-                }));
+            'should NOT include requirements in state changed event to first player'() {
+                refute.defined(this.firstPlayerConnection.stateChanged.lastCall.args[0].requirements);
             },
-            'should emit stateChanged with NO requirements to second player'() {
-                assert.calledOnce(this.secondPlayerConnection.stateChanged);
-                assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
-                    requirements: []
-                }));
+            'should NOT include requirements in state changed event to second player'() {
+                refute.defined(this.secondPlayerConnection.stateChanged.lastCall.args[0].requirements);
             }
         },
         'when first player put down Supernova and both players has 1 flipped station card and 1 unflipped station card': {
@@ -553,17 +547,17 @@ module.exports = {
 
                 this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
             },
-            'should emit stateChanged with NO requirements to first player'() {
+            'should send damage own station card requirement of 1 count to first player'() {
                 assert.calledOnce(this.firstPlayerConnection.stateChanged);
                 assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                     requirements: [sinon.match({ type: 'damageOwnStationCard', common: true, count: 1 })]
                 }));
             },
-            'should emit stateChanged with NO requirements to second player'() {
+            'should send damage own station card requirement of 1 count to second player'() {
                 assert.calledOnce(this.secondPlayerConnection.stateChanged);
-                assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
-                    requirements: [sinon.match({ type: 'damageOwnStationCard', common: true, count: 1 })]
-                }));
+                const requirements = this.secondPlayerConnection.stateChanged.lastCall.args[0].requirements
+                assert.equals(requirements.length, 1);
+                assert.match(requirements[0], { type: 'damageOwnStationCard', common: true, count: 1 });
             }
         }
     },
@@ -657,11 +651,8 @@ module.exports = {
 
                 this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
             },
-            'should emit stateChanged to first player WITHOUT requirements'() {
-                assert.calledOnce(this.firstPlayerConnection.stateChanged);
-                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
-                    requirements: [],
-                }));
+            'should NOT emit state changed with any requirements'() {
+                refute.defined(this.firstPlayerConnection.stateChanged.lastCall.args[0].requirements);
             }
         }
     },
@@ -906,7 +897,7 @@ module.exports = {
         }
     },
     'Fatal Error:': {
-        'when put down card in home zone with requirements': {
+        'when put down Fatal Error': {
             setUp() {
                 this.secondPlayerConnection = FakeConnection2(['stateChanged']);
                 const players = [Player('P1A'), Player('P2A', this.secondPlayerConnection)]
@@ -931,7 +922,7 @@ module.exports = {
 
                 this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A', choice: 'C2A' });
             },
-            'should emit new requirement to second player'() {
+            'should emit draw card requirement to second player'() {
                 assert.calledOnce(this.secondPlayerConnection.stateChanged);
                 assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
                     requirements: [sinon.match({ type: 'drawCard', count: 2 })]
@@ -1045,10 +1036,7 @@ module.exports = {
             },
             'should emit card was NOT moved to discard pile for second player'() {
                 assert.calledOnce(this.secondPlayerConnection.stateChanged);
-                assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
-                    cardsInOpponentZone: [sinon.match({ id: 'C2A' })],
-                    discardedCards: []
-                }));
+                refute.defined(this.secondPlayerConnection.stateChanged.lastCall.args[0].discardedCards);
             }
         }
     }

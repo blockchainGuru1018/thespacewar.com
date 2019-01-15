@@ -1,6 +1,6 @@
 const Neutralization = require('../card/Neutralization.js');
 
-class MatchService {
+class CanThePlayer {
 
     constructor({
         playerStateService,
@@ -8,13 +8,12 @@ class MatchService {
     } = {}) {
         this._playerStateService = playerStateService;
         this._opponentStateService = opponentStateService;
-
     }
 
     useThisDurationCard(cardId) {
-        this._playerStateService.hasDurationCardOfType(Neutralization.CommonId);
-        this._opponentStateService.hasDurationCardOfType(Neutralization.CommonId);
+        return !this._playerStateService.hasDurationCardOfType(Neutralization.CommonId)
+            && !this._opponentStateService.hasDurationCardOfType(Neutralization.CommonId);
     }
 }
 
-module.exports = MatchService;
+module.exports = CanThePlayer;

@@ -1,20 +1,22 @@
 const DiscardCardEvent = require('../../shared/event/DiscardCardEvent.js');
 const RepairCardEvent = require('../../shared/event/RepairCardEvent.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
-const DrawCardController = require('./DrawCardController.js');
-const AttackController = require('./AttackController.js');
+const DrawCardController = require('./controller/DrawCardController.js');
+const AttackController = require('./controller/AttackController.js');
 const DebugController = require('./DebugController.js');
-const MoveCardController = require('./MoveCardController.js');
-const PutDownCardController = require('./PutDownCardController.js');
-const DiscardCardController = require('./DiscardCardController.js');
-const NextPhaseController = require('./NextPhaseController.js');
-const MatchComService = require('./MatchComService.js');
+const MoveCardController = require('./controller/MoveCardController.js');
+const PutDownCardController = require('./controller/PutDownCardController.js');
+const DiscardCardController = require('./controller/DiscardCardController.js');
+const NextPhaseController = require('./controller/NextPhaseController.js');
+const MatchComService = require('./service/MatchComService.js');
 const MatchService = require('../../shared/match/MatchService.js');
 const ServerQueryEvents = require('./ServerQueryEvents.js');
 const PlayerStateService = require('../../shared/match/PlayerStateService.js');
 const PlayerRequirementService = require('../../shared/match/PlayerRequirementService.js');
 const PlayerRequirementUpdaterFactory = require('./PlayerRequirementUpdaterFactory.js');
 const CardFactory = require('../card/ServerCardFactory.js');
+const StateChangeListener = require('../../shared/match/StateChangeListener.js');
+const CanThePlayer = require('../../shared/match/CanThePlayer.js');
 const { PHASES, TEMPORARY_START_PHASE } = require('../../shared/phases.js');
 
 const itemNamesForOpponentByItemNameForPlayer = {
@@ -49,8 +51,7 @@ module.exports = function (deps) {
 
     const matchService = new MatchService({ matchId, endMatch });
     matchService.setState(state);
-    const matchComService = new MatchComService({ matchId, players });
-    const cardFactory = new CardFactory({ getFreshState: () => state });
+
     const playerStateServiceById = {};
     const playerRequirementServiceById = {};
     for (let player of players) {
@@ -67,15 +68,34 @@ module.exports = function (deps) {
         getStateServiceById: playerId => playerStateServiceById[playerId],
         getRequirementServiceById: playerId => playerRequirementServiceById[playerId]
     };
+
+    const stateChangeListener = new StateChangeListener({ playerServiceProvider, matchService });
+    const matchComService = new MatchComService({ matchId, players, stateChangeListener });
+    const cardFactory = new CardFactory({ getFreshState: () => state });
+
     const controllerDeps = {
         matchService,
         matchComService,
         playerStateServiceById,
-        cardFactory,
         restoreFromState,
         playerServiceProvider,
-        playerRequirementUpdaterFactory: new PlayerRequirementUpdaterFactory({ playerServiceProvider, matchComService })
+        cardFactory,
+        stateChangeListener,
+        playerRequirementUpdaterFactory: new PlayerRequirementUpdaterFactory({
+            playerServiceProvider,
+            matchComService
+        }),
+        canThePlayerFactory: {
+            forPlayer(playerId) {
+                let opponentId = matchService.getOpponentId(playerId);
+                return new CanThePlayer({
+                    playerStateService: playerServiceProvider.getStateServiceById(playerId),
+                    opponentStateService: playerServiceProvider.getStateServiceById(opponentId),
+                });
+            }
+        }
     };
+
     const debugController = DebugController(controllerDeps);
     const drawCardController = DrawCardController(controllerDeps);
     const attackController = AttackController(controllerDeps);

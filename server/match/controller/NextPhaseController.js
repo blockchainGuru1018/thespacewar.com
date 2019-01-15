@@ -1,5 +1,5 @@
-const CheatError = require('./CheatError.js');
-const { COMMON_PHASE_ORDER, PHASES } = require('../../shared/phases.js');
+const CheatError = require('../CheatError.js');
+const { COMMON_PHASE_ORDER, PHASES } = require('../../../shared/phases.js');
 
 function PutDownCardController(deps) {
 
@@ -7,14 +7,18 @@ function PutDownCardController(deps) {
         matchService,
         matchComService,
         cardFactory,
-        playerServiceProvider
+        playerServiceProvider,
+        canThePlayerFactory
     } = deps;
+
+    let canThePlayer;
 
     return {
         onNextPhase
     }
 
     function onNextPhase(playerId) {
+        canThePlayer = canThePlayerFactory.forPlayer(playerId);
         if (playerId !== matchService.getCurrentPlayer()) {
             throw new CheatError('Switching phase when not your own turn');
         }
@@ -55,27 +59,26 @@ function PutDownCardController(deps) {
     }
 
     function enterDrawPhaseForPlayer(playerId) {
-        const requirementLists = getRequirementsFromDurationCards(playerId, 'requirementsWhenEnterDrawPhase');
+        const requirementLists = getRequirementsFromUsableDurationCards(playerId, 'requirementsWhenEnterDrawPhase');
         if (requirementLists.length > 0) {
             requirementLists.forEach(requirements => addCardRequirements({ playerId, requirements }));
             emitStateChangedWithRequirementsToPlayer(playerId);
         }
     }
 
-    //TODO Should not run duration card code when CANNOT run it by "CanThePlayer.useDurationCard(cardId)"
-    // find a smooth way to check for permission without to much copy & poaste
     function leaveDrawPhaseForPlayer(playerId) {
-        const requirementLists = getRequirementsFromDurationCards(playerId, 'requirementsWhenLeavingDrawPhase');
+        const requirementLists = getRequirementsFromUsableDurationCards(playerId, 'requirementsWhenLeavingDrawPhase');
         if (requirementLists.length > 0) {
             requirementLists.forEach(requirements => addCardRequirements({ playerId, requirements }));
             emitStateChangedWithRequirementsToPlayer(playerId);
         }
     }
 
-    function getRequirementsFromDurationCards(playerId, key) {
+    function getRequirementsFromUsableDurationCards(playerId, key) {
         return playerServiceProvider
             .getStateServiceById(playerId)
             .getDurationCards()
+            .filter(card => canThePlayer.useThisDurationCard(card.id))
             .map(cardData => cardFactory.createCardForPlayer(cardData, playerId))
             .map(card => card[key])
             .filter(requirements => !!requirements);

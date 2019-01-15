@@ -14,6 +14,8 @@ const {
     createState
 } = require('./shared.js');
 const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
+const GoodKarmaCommonId = '11';
+const NeutralizationCommonId = '12';
 
 module.exports = {
     'when is not own players turn should throw error': function () {
@@ -127,6 +129,34 @@ module.exports = {
             this.match.start();
             const { phase } = this.firstPlayerConnection.restoreState.lastCall.args[0];
             assert.equals(phase, 'draw');
+        }
+    },
+    'Neutralization:': {
+        'when opponent has Neutralization and has Good Karma and leave draw phase': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.match = createMatch({
+                    players: [Player('P1A', this.firstPlayerConnection), Player('P2A')]
+                });
+                this.match.restoreFromState(createState({
+                    turn: 2,
+                    currentPlayer: 'P1A',
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'draw',
+                            cardsInZone: [createCard({ id: 'C1A', type: 'duration', commonId: GoodKarmaCommonId })],
+                        },
+                        'P2A': {
+                            cardsInZone: [createCard({ id: 'C1A', type: 'duration', commonId: NeutralizationCommonId })]
+                        }
+                    }
+                }));
+
+                this.match.nextPhase('P1A');
+            },
+            'should NOT emit state changed'() {
+                refute.calledWith(this.firstPlayerConnection.stateChanged);
+            }
         }
     }
 };

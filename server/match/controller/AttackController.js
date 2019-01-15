@@ -1,6 +1,6 @@
-const itemNamesForOpponentByItemNameForPlayer = require('./itemNamesForOpponentByItemNameForPlayer.js');
-const CheatError = require('./CheatError.js');
-const { PHASES } = require('../../shared/phases.js');
+const itemNamesForOpponentByItemNameForPlayer = require('../itemNamesForOpponentByItemNameForPlayer.js');
+const CheatError = require('../CheatError.js');
+const { PHASES } = require('../../../shared/phases.js');
 
 function AttackController(deps) {
 

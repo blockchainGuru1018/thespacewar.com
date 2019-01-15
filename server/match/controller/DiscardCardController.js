@@ -1,4 +1,4 @@
-const CheatError = require('./CheatError.js');
+const CheatError = require('../CheatError.js');
 
 function DiscardCardController(deps) {
 
