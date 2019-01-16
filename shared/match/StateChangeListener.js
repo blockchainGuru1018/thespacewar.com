@@ -1,11 +1,14 @@
+const LOG_ALL_STATE_CHANGES = false;
+
 class StateChangeListener {
 
     constructor({
         playerServiceProvider,
-        matchService
+        matchService,
+        logger
     }) {
         this._matchService = matchService;
-
+        this._logger = logger;
         this._snapshotListeners = [];
         this._resetSnapshotData();
 
@@ -43,6 +46,14 @@ class StateChangeListener {
 
     _onStateChange({ property, value, playerId }) {
         this._snapshotData.changeDataByPlayerId[playerId][property] = value;
+        const valueString = JSON.stringify(value, null, 4);
+
+        if (LOG_ALL_STATE_CHANGES) {
+            this._logger.log(
+                `onStateChange ${new Date().toISOString()}: playerId=${playerId}, prop=${property}, value=${valueString}`,
+                'playerStateChange'
+            );
+        }
     }
 }
 

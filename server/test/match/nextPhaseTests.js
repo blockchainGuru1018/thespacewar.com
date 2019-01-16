@@ -154,8 +154,9 @@ module.exports = {
 
                 this.match.nextPhase('P1A');
             },
-            'should NOT emit state changed'() {
-                refute.calledWith(this.firstPlayerConnection.stateChanged);
+            'should emit state changed WITHOUT requirements'() {
+                assert.calledOnce(this.firstPlayerConnection.stateChanged);
+                refute.defined(this.firstPlayerConnection.stateChanged.lastCall.args[0].requirements);
             }
         }
     }

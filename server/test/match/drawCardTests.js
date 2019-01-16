@@ -22,8 +22,8 @@ const FakeDeck = require('../testUtils/FakeDeck.js');
 module.exports = {
     'when in draw phase and has 1 card in station draw-row': {
         setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState', 'drawCards']);
-            this.secondPlayerConnection = FakeConnection2(['restoreState', 'setOpponentCardCount']);
+            this.firstPlayerConnection = FakeConnection2(['restoreState', 'drawCards', 'stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
             const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
             this.match = createMatch({ players });
             this.match.restoreFromState(createState({
@@ -46,8 +46,7 @@ module.exports = {
         'should emit drawCards to first player'() {
             assert.calledOnce(this.firstPlayerConnection.drawCards);
             assert.calledWith(this.firstPlayerConnection.drawCards, sinon.match({
-                moreCardsCanBeDrawn: false,
-                cards: [sinon.match({ id: 'C1A' })]
+                moreCardsCanBeDrawn: false
             }));
         },
         'first player should have new card on hand'() {
@@ -56,15 +55,23 @@ module.exports = {
             assert.equals(cardsOnHand.length, 1);
             assert.equals(cardsOnHand[0].id, 'C1A');
         },
-        'should emit setOpponentCardCount to second player'() {
-            assert.calledOnce(this.secondPlayerConnection.setOpponentCardCount);
-            assert.calledWith(this.secondPlayerConnection.setOpponentCardCount, 1);
+        'should emit stateChanged to first player'() {
+            assert.calledOnce(this.firstPlayerConnection.stateChanged);
+            assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                cardsOnHand: [sinon.match({ id: 'C1A' })]
+            }));
+        },
+        'should emit stateChanged to second player'() {
+            assert.calledOnce(this.secondPlayerConnection.stateChanged);
+            assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                opponentCardCount: 1
+            }));
         }
     },
     'when in draw phase and has 2 cards in station draw-row': {
         setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState', 'drawCards']);
-            this.secondPlayerConnection = FakeConnection2(['restoreState', 'setOpponentCardCount']);
+            this.firstPlayerConnection = FakeConnection2(['restoreState', 'drawCards', 'stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
             const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
             this.match = createMatch({ players });
             this.match.restoreFromState(createState({
@@ -90,8 +97,7 @@ module.exports = {
         'should emit drawCards to first player'() {
             assert.calledOnce(this.firstPlayerConnection.drawCards);
             assert.calledWith(this.firstPlayerConnection.drawCards, sinon.match({
-                moreCardsCanBeDrawn: true,
-                cards: [sinon.match({ id: 'C1A' })]
+                moreCardsCanBeDrawn: true
             }));
         },
         'first player should have new card on hand'() {
@@ -100,9 +106,17 @@ module.exports = {
             assert.equals(cardsOnHand.length, 1);
             assert.equals(cardsOnHand[0].id, 'C1A');
         },
-        'should emit setOpponentCardCount to second player'() {
-            assert.calledOnce(this.secondPlayerConnection.setOpponentCardCount);
-            assert.calledWith(this.secondPlayerConnection.setOpponentCardCount, 1);
+        'should emit stateChanged to first player'() {
+            assert.calledOnce(this.firstPlayerConnection.stateChanged);
+            assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                cardsOnHand: [sinon.match({ id: 'C1A' })]
+            }));
+        },
+        'should emit stateChanged to second player'() {
+            assert.calledOnce(this.secondPlayerConnection.stateChanged);
+            assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                opponentCardCount: 1
+            }));
         }
     },
     'when can draw 1 card and draws 2 cards': {
@@ -127,10 +141,7 @@ module.exports = {
         },
         'should emit NO cards and that there are no more cards to draw'() {
             const args = this.firstPlayerConnection.drawCards.lastCall.args[0];
-            assert.equals(args, {
-                moreCardsCanBeDrawn: false,
-                cards: []
-            });
+            assert.equals(args, { moreCardsCanBeDrawn: false });
         }
     },
     'when discard opponent top 2 cards and has more cards to draw': {
@@ -205,7 +216,7 @@ module.exports = {
                 playerStateById: {
                     'P1A': {
                         phase: 'draw',
-                        requirements: [{ type: 'drawCard', count: 1}]
+                        requirements: [{ type: 'drawCard', count: 1 }]
                     }
                 }
             }));

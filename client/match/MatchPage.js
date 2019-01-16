@@ -27,6 +27,18 @@ module.exports = function (deps) {
             dispatch: (actionName, data) => rootStore.dispatch(`match/${actionName}`, data)
         });
         let matchStore = MatchStore({ ...deps, matchId, opponentUser, matchController });
+
+        //TODO GENERALIZE TO COMMON "LOGGING DECORATOR"
+        const originalMatchActions = matchStore.actions;
+        const loggedMatchActions = {};
+        Object.keys(matchStore.actions).forEach(actionName => {
+            loggedMatchActions[actionName] = (...args) => {
+                console.log(`[${new Date().toISOString()}] ACTION: ${actionName}`, { ...args });
+                return originalMatchActions[actionName](...args);
+            };
+        });
+        matchStore.actions = loggedMatchActions;
+
         rootStore.registerModule('match', matchStore);
         matchController.start();
 
@@ -36,6 +48,18 @@ module.exports = function (deps) {
                 matchController,
                 getFrom: (getterName, moduleName) => rootStore.getters[`${moduleName}/${getterName}`]
             });
+
+            //TODO GENERALIZE TO COMMON "LOGGING DECORATOR"
+            const originalActions = store.actions;
+            const loggedActions = {};
+            Object.keys(store.actions).forEach(actionName => {
+                loggedActions[actionName] = (...args) => {
+                    console.log(`[${new Date().toISOString()}] ACTION: ${actionName}`, { ...args });
+                    return originalActions[actionName](...args);
+                };
+            });
+            store.actions = loggedActions;
+
             registerStoreModule(store);
         }
 

@@ -62,7 +62,6 @@ function PutDownCardController(deps) {
         const requirementLists = getRequirementsFromUsableDurationCards(playerId, 'requirementsWhenEnterDrawPhase');
         if (requirementLists.length > 0) {
             requirementLists.forEach(requirements => addCardRequirements({ playerId, requirements }));
-            emitStateChangedWithRequirementsToPlayer(playerId);
         }
     }
 
@@ -70,7 +69,6 @@ function PutDownCardController(deps) {
         const requirementLists = getRequirementsFromUsableDurationCards(playerId, 'requirementsWhenLeavingDrawPhase');
         if (requirementLists.length > 0) {
             requirementLists.forEach(requirements => addCardRequirements({ playerId, requirements }));
-            emitStateChangedWithRequirementsToPlayer(playerId);
         }
     }
 
@@ -142,13 +140,6 @@ function PutDownCardController(deps) {
                 currentPlayer: matchService.getCurrentPlayer()
             });
         }
-    }
-
-    function emitStateChangedWithRequirementsToPlayer(playerId) {
-        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
-        matchComService.emitToPlayer(playerId, 'stateChanged', {
-            requirements: playerRequirementService.getRequirements()
-        });
     }
 }
 

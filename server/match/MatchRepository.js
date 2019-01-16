@@ -4,10 +4,11 @@ const CardDataAssembler = require('../../shared/CardDataAssembler.js');
 const CardInfoRepository = require('../../shared/CardInfoRepository.js');
 const DeckFactory = require('../deck/DeckFactory.js');
 
-module.exports = function (deps) {
-
-    const userRepository = deps.userRepository;
-    const socketRepository = deps.socketRepository;
+module.exports = function ({
+    logger,
+    userRepository,
+    socketRepository
+}) {
 
     const cardDataAssembler = CardDataAssembler();
     const deckFactory = DeckFactory({ cardDataAssembler });
@@ -46,6 +47,7 @@ module.exports = function (deps) {
             matchId,
             deckFactory,
             cardInfoRepository,
+            logger,
             endMatch: () => end(matchId)
         });
         matchById.set(matchId, match);

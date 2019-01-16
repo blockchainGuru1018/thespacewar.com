@@ -20,8 +20,8 @@ const {
 module.exports = {
     'when is action phase and first player discards card': {
         setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState', 'setOpponentCardCount']);
-            this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard']);
+            this.firstPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['stateChanged']);
             const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
             this.match = createMatch({ players });
             this.match.restoreFromState(createState({
@@ -38,9 +38,13 @@ module.exports = {
 
             this.match.discardCard('P1A', 'C1A');
         },
-        'should emit opponents new card count to first player'() {
-            assert.calledOnce(this.firstPlayerConnection.setOpponentCardCount);
-            assert.calledWith(this.firstPlayerConnection.setOpponentCardCount, 1);
+        'should emit state changed to first player'() {
+            assert.calledOnce(this.firstPlayerConnection.stateChanged);
+            assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                opponentCardCount: 1,
+                discardedCards: [sinon.match({ id: 'C1A' })],
+                cardsOnHand: []
+            }));
         },
         'when restore state of first player should NOT have discarded card on hand'() {
             this.match.start();
@@ -54,22 +58,19 @@ module.exports = {
             assert.equals(discardCardEvents.length, 1);
             assert(discardCardEvents[0].isSacrifice);
         },
-        'should emit opponentDiscardedCard to second player'() {
-            assert.calledOnce(this.secondPlayerConnection.opponentDiscardedCard);
-            const {
-                bonusCard,
-                discardedCard,
-                opponentCardCount
-            } = this.secondPlayerConnection.opponentDiscardedCard.lastCall.args[0];
-            assert.equals(bonusCard.id, 'C2A');
-            assert.equals(discardedCard.id, 'C1A');
-            assert.equals(opponentCardCount, 0);
+        'should emit state changed to second player'() {
+            assert.calledOnce(this.secondPlayerConnection.stateChanged);
+            assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                opponentDiscardedCards: [sinon.match({ id: 'C1A' })],
+                opponentCardCount: 0,
+                cardsOnHand: [sinon.match({ id: 'C2A' })]
+            }));
         }
     },
     'when discard card in action phase and has discard card requirement of 2 cards': {
         setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState', 'stateChanged', 'setOpponentCardCount']);
-            this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard']);
+            this.firstPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['stateChanged']);
             const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
             this.match = createMatch({ players });
             this.match.restoreFromState(createState({
@@ -87,9 +88,6 @@ module.exports = {
 
             this.match.discardCard('P1A', 'C1A');
         },
-        'should NOT emit opponents new card count to first player'() {
-            refute.called(this.firstPlayerConnection.setOpponentCardCount);
-        },
         'should emit updated requirement to first player'() {
             assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                 requirements: [{ type: 'discardCard', count: 1 }]
@@ -106,16 +104,14 @@ module.exports = {
             assert.equals(requirements.length, 1);
             assert.equals(requirements[0], { type: 'discardCard', count: 1 });
         },
-        'should emit opponentDiscardedCard to second player WITHOUT bonus card'() {
-            assert.calledOnce(this.secondPlayerConnection.opponentDiscardedCard);
-            const {
-                bonusCard,
-                discardedCard,
-                opponentCardCount
-            } = this.secondPlayerConnection.opponentDiscardedCard.lastCall.args[0];
-            refute.defined(bonusCard);
-            assert.equals(discardedCard.id, 'C1A');
-            assert.equals(opponentCardCount, 0);
+        'should emit state changed to second player WITHOUT bonus card'() {
+            assert.calledOnce(this.secondPlayerConnection.stateChanged);
+            assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                opponentDiscardedCards: [sinon.match({ id: 'C1A' })]
+            }));
+            refute.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                cardsOnHand: [sinon.match({ id: 'C2A' })]
+            }));
         }
     },
     'when discard card in action phase and has discard card requirement of 1 card': {

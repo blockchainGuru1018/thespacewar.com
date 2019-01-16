@@ -1,4 +1,3 @@
-const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
 const DiscardCardEvent = require('../../shared/event/DiscardCardEvent.js');
 const AttackEvent = require('../../shared/event/AttackEvent.js');
 const RepairCardEvent = require('../../shared/event/RepairCardEvent.js');
@@ -105,7 +104,6 @@ module.exports = function (deps) {
             restoreSavedMatch,
 
             // local & remote
-            putDownCard,
             discardCard,
             goToNextPhase,
             setActionPoints,
@@ -121,7 +119,6 @@ module.exports = function (deps) {
             restoreState,
             beginGame,
             placeCardInZone,
-            opponentDiscardedCard,
             opponentDiscardedDurationCard,
             putDownOpponentCard,
             putDownOpponentStationCard,
@@ -174,6 +171,7 @@ module.exports = function (deps) {
                 nextPhase = getNextPhaseValue(PHASES.attack);
             }
         }
+
         return nextPhase || PHASES.wait;
     }
 
@@ -277,7 +275,7 @@ module.exports = function (deps) {
     }
 
     function attackerCanAttackStationCards(state, getters) {
-        return getters.attackerCard.canAttackStationCards();
+        return !!getters.attackerCard && getters.attackerCard.canAttackStationCards();
     }
 
     function allPlayerCardsInOwnAndOpponentZone(state) {
@@ -339,9 +337,11 @@ module.exports = function (deps) {
         const location = stationCard.place;
         if (location === 'draw') {
             state.opponentStation.drawCards.push(stationCard);
-        } else if (location === 'action') {
+        }
+        else if (location === 'action') {
             state.opponentStation.actionCards.push(stationCard);
-        } else if (location === 'handSize') {
+        }
+        else if (location === 'handSize') {
             state.opponentStation.handSizeCards.push(stationCard);
         }
     }
@@ -373,9 +373,11 @@ module.exports = function (deps) {
         for (let key of Object.keys(data)) {
             if (key === 'stationCards') {
                 commit('setPlayerStationCards', data[key]);
-            } else if (key === 'opponentStationCards') {
+            }
+            else if (key === 'opponentStationCards') {
                 commit('setOpponentStationCards', data[key]);
-            } else {
+            }
+            else {
                 const localKey = storeItemNameByServerItemName[key] || key;
                 state[localKey] = data[key];
             }
@@ -389,7 +391,8 @@ module.exports = function (deps) {
         if (currentPlayer === state.ownUser.id) {
             const hasDurationCardInPlay = state.playerCardsInZone.some(c => c.type === 'duration');
             state.phase = hasDurationCardInPlay ? PHASES.preparation : PHASES.draw;
-        } else {
+        }
+        else {
             state.phase = PHASES.wait;
         }
     }
@@ -471,38 +474,6 @@ module.exports = function (deps) {
         matchController.emit('nextPhase');
     }
 
-    function putDownCard({ state, getters, commit, dispatch }, { location, cardId }) {
-        const cardIndexOnHand = state.playerCardsOnHand.findIndex(c => c.id === cardId);
-        const cardOnHand = state.playerCardsOnHand[cardIndexOnHand];
-        const stationCard = getters.allPlayerStationCards.find(s => s.id === cardId);
-        const card = cardOnHand || stationCard.card;
-
-        if (cardOnHand) {
-            state.playerCardsOnHand.splice(cardIndexOnHand, 1);
-        } else if (stationCard) {
-            commit('setPlayerStationCards', getters.allPlayerStationCards.filter(s => s.id !== cardId));
-        }
-
-        state.events.push(PutDownCardEvent({ turn: state.turn, location, cardId, cardCommonId: card.commonId }));
-        matchController.emit('putDownCard', { location, cardId });
-
-        if (location.startsWith('station')) {
-            if (location === 'station-draw') {
-                state.playerStation.drawCards.push(card);
-            } else if (location === 'station-action') {
-                state.playerStation.actionCards.push(card);
-            } else if (location === 'station-handSize') {
-                state.playerStation.handSizeCards.push(card);
-            }
-        } else if (location === 'zone') {
-            if (card.type === 'event') {
-                state.playerDiscardedCards.push(card);
-            } else {
-                dispatch('placeCardInZone', card);
-            }
-        }
-    }
-
     function placeCardInZone({ state }, card) {
         state.playerCardsInZone.push(card);
     }
@@ -535,15 +506,6 @@ module.exports = function (deps) {
         state.opponentCardCount = opponentCardCount;
     }
 
-    function opponentDiscardedCard({ state }, { bonusCard, discardedCard, opponentCardCount }) {
-        if (bonusCard) {
-            state.playerCardsOnHand.unshift(bonusCard);
-        }
-
-        state.opponentCardCount = opponentCardCount;
-        state.opponentDiscardedCards.push(discardedCard);
-    }
-
     function opponentDiscardedDurationCard({ state }, { card }) {
         state.opponentDiscardedCards.push(card);
         const cardIndexInZone = state.opponentCardsInZone.findIndex(c => c.id === card.id);
@@ -554,7 +516,8 @@ module.exports = function (deps) {
         const stationCard = getters.allOpponentStationCards.find(s => s.id === card.id);
         if (!!stationCard) {
             commit('setOpponentStationCards', getters.allOpponentStationCards.filter(s => s.id !== card.id));
-        } else {
+        }
+        else {
             state.opponentCardCount -= 1;
         }
 
@@ -580,7 +543,8 @@ module.exports = function (deps) {
         localStorage.setItem('ongoing-match', JSON.stringify(matchData));
     }
 
-    function drawCards({ state, dispatch }, { cards, moreCardsCanBeDrawn }) {
+    //TODO Should NOT take "cards". This should be emitted and received by a StateChanged event
+    function drawCards({ state, dispatch }, { cards = [], moreCardsCanBeDrawn }) {
         state.playerCardsOnHand.push(...cards);
         if (!moreCardsCanBeDrawn) {
             dispatch('goToNextPhase');
@@ -611,7 +575,8 @@ module.exports = function (deps) {
         if (attackerCard.attack >= defenderTotalDefense) {
             const defenderCardIndex = defenderCardZone.findIndex(c => c.id === defenderCardId);
             defenderCardZone.splice(defenderCardIndex, 1);
-        } else {
+        }
+        else {
             defenderCard.damage = defenderCurrentDamage + attackerCard.attack;
         }
 
@@ -632,7 +597,8 @@ module.exports = function (deps) {
         if (defenderCardWasDestroyed) {
             let defenderCardIndex = defenderCardZone.findIndex(c => c.id === defenderCardId);
             defenderCardZone.splice(defenderCardIndex, 1);
-        } else {
+        }
+        else {
             defenderCard.damage = newDamage;
         }
 
@@ -687,7 +653,8 @@ module.exports = function (deps) {
     function cancelCurrentAction({ state, dispatch }) {
         if (state.attackerCardId) {
             dispatch('cancelAttack');
-        } else if (state.repairerCardId) {
+        }
+        else if (state.repairerCardId) {
             state.repairerCardId = null;
         }
     }
@@ -736,7 +703,8 @@ module.exports = function (deps) {
         const cardInZoneIndex = state.playerCardsInZone.findIndex(c => c.id === cardId);
         if (cardInZoneIndex >= 0) {
             state.playerCardsInZone.splice(cardInZoneIndex, 1);
-        } else {
+        }
+        else {
             const cardInOpponentZoneIndex = state.playerCardsInOpponentZone.findIndex(c => c.id === cardId);
             if (cardInOpponentZoneIndex >= 0) {
                 state.playerCardsInOpponentZone.splice(cardInOpponentZoneIndex, 1);
@@ -753,7 +721,7 @@ module.exports = function (deps) {
     }
 
     function moveFlippedStationCardToZone({ dispatch }, stationCardId) {
-        dispatch('putDownCard', { location: 'zone', cardId: stationCardId });
+        dispatch('putDownCard/putDownCard', { location: 'zone', cardId: stationCardId }, { root: true });
     }
 
     function discardDurationCard({ state, getters, dispatch }, cardData) {

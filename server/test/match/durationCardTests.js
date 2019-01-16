@@ -82,8 +82,8 @@ module.exports = {
     },
     'when player is in the preparation phase and discards duration card': {
         setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState']);
-            this.secondPlayerConnection = FakeConnection2(['opponentDiscardedDurationCard']);
+            this.firstPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['stateChanged']);
             this.match = createMatch({
                 players: [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
             });
@@ -111,10 +111,17 @@ module.exports = {
             assert.equals(discardedCards.length, 1);
             assert.match(discardedCards[0], { id: 'C1A' });
         },
-        'should emit opponentDiscardedDurationCard to second player'() {
-            assert.calledOnce(this.secondPlayerConnection.opponentDiscardedDurationCard);
-            assert.calledWith(this.secondPlayerConnection.opponentDiscardedDurationCard, sinon.match({
-                card: sinon.match({ id: 'C1A' })
+        'should emit cards in zone to first player'() {
+            assert.calledOnce(this.firstPlayerConnection.stateChanged);
+            assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                cardsInZone: [],
+                discardedCards: [sinon.match({ id: 'C1A' })]
+            }));
+        },
+        'should emit opponent cards in zone to second player'() {
+            assert.calledOnce(this.secondPlayerConnection.stateChanged);
+            assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                opponentCardsInZone: []
             }));
         }
     },

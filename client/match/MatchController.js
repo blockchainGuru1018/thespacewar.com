@@ -22,6 +22,7 @@ module.exports = function (deps) {
     }
 
     function emit(action, value) {
+        console.log(`\n[${new Date().toISOString()}] MatchController.emit(${action}, ${value})`);
         socket.emit('match', {
             matchId,
             playerId: ownUserId,

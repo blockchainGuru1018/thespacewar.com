@@ -1,5 +1,3 @@
-const DiscardCardEvent = require('../../shared/event/DiscardCardEvent.js');
-const RepairCardEvent = require('../../shared/event/RepairCardEvent.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
 const DrawCardController = require('./controller/DrawCardController.js');
 const AttackController = require('./controller/AttackController.js');
@@ -19,21 +17,15 @@ const StateChangeListener = require('../../shared/match/StateChangeListener.js')
 const CanThePlayer = require('../../shared/match/CanThePlayer.js');
 const { PHASES, TEMPORARY_START_PHASE } = require('../../shared/phases.js');
 
-const itemNamesForOpponentByItemNameForPlayer = {
-    stationCards: 'opponentStationCards',
-    cardsInZone: 'opponentCardsInZone',
-    cardsInOpponentZone: 'opponentCardsInPlayerZone',
-    discardedCards: 'opponentDiscardedCards'
-};
-
-module.exports = function (deps) {
-
-    const deckFactory = deps.deckFactory;
-    const cardInfoRepository = deps.cardInfoRepository;
-    const matchId = deps.matchId;
-    const players = deps.players;
-    const actionPointsCalculator = deps.actionPointsCalculator || ActionPointsCalculator({ cardInfoRepository });
-    const endMatch = deps.endMatch;
+module.exports = function ({
+    logger,
+    deckFactory,
+    cardInfoRepository,
+    matchId,
+    players,
+    actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository }),
+    endMatch
+}) {
 
     const playerOrder = players.map(p => p.id);
 
@@ -49,6 +41,7 @@ module.exports = function (deps) {
         }
     };
 
+    const cardFactory = new CardFactory({ getFreshState: () => state });
     const matchService = new MatchService({ matchId, endMatch });
     matchService.setState(state);
 
@@ -59,7 +52,9 @@ module.exports = function (deps) {
             playerId: player.id,
             matchService,
             queryEvents: new ServerQueryEvents({ playerId: player.id, matchService }),
-            actionPointsCalculator
+            actionPointsCalculator,
+            logger,
+            cardFactory
         })
         playerStateServiceById[player.id] = playerStateService;
         playerRequirementServiceById[player.id] = new PlayerRequirementService({ playerStateService });
@@ -69,9 +64,8 @@ module.exports = function (deps) {
         getRequirementServiceById: playerId => playerRequirementServiceById[playerId]
     };
 
-    const stateChangeListener = new StateChangeListener({ playerServiceProvider, matchService });
-    const matchComService = new MatchComService({ matchId, players, stateChangeListener });
-    const cardFactory = new CardFactory({ getFreshState: () => state });
+    const stateChangeListener = new StateChangeListener({ playerServiceProvider, matchService, logger });
+    const matchComService = new MatchComService({ matchId, players, logger, stateChangeListener });
 
     const controllerDeps = {
         matchService,
@@ -104,7 +98,7 @@ module.exports = function (deps) {
     const discardCardController = DiscardCardController(controllerDeps);
     const nextPhaseController = NextPhaseController(controllerDeps);
 
-    return {
+    const api = {
         id: matchId,
         matchId, //TODO Remove all uses
         get players() {
@@ -129,8 +123,9 @@ module.exports = function (deps) {
         restoreSavedMatch: debugController.onRestoreSavedMatch,
         restoreFromState,
         toClientModel,
-        hasEnded
-    };
+        hasEnded,
+    }
+    return wrapApi({ api, stateChangeListener });
 
     function start() {
         const players = matchComService.getPlayers();
@@ -150,83 +145,22 @@ module.exports = function (deps) {
     }
 
     function discardDurationCard(playerId, cardId) {
-        const playerState = getPlayerState(playerId);
-        if (playerState.phase !== PHASES.preparation) {
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+
+        if (playerStateService.getPhase() !== PHASES.preparation) {
             throw CheatError('Cannot discard duration cards after turn your has started');
         }
-
-        const cardData = playerState.cardsInZone.find(c => c.id === cardId);
-        removePlayerCard(playerId, cardId);
-        playerState.discardedCards.push(cardData);
-
-        const opponentId = getOpponentId(playerId);
-        emitToPlayer(opponentId, 'opponentDiscardedDurationCard', { card: cardData });
-
-        playerState.events.push(DiscardCardEvent({
-            turn: state.turn,
-            phase: playerState.phase,
-            cardId,
-            cardCommonId: cardData.commonId
-        }));
-    }
-
-    function findPlayerCard(playerId, cardId) {
-        const playerState = getPlayerState(playerId);
-        return playerState.cardsInZone.find(c => c.id === cardId)
-            || playerState.cardsInOpponentZone.find(c => c.id === cardId)
-            || null;
-    }
-
-    function removePlayerCard(playerId, cardId) {
-        const playerState = getPlayerState(playerId);
-
-        const cardInZoneIndex = playerState.cardsInZone.findIndex(c => c.id === cardId);
-        if (cardInZoneIndex >= 0) {
-            playerState.cardsInZone.splice(cardInZoneIndex, 1);
-        }
-        else {
-            const cardInOpponentZoneIndex = playerState.cardsInOpponentZone.findIndex(c => c.id === cardId);
-            if (cardInOpponentZoneIndex >= 0) {
-                playerState.cardsInOpponentZone.splice(cardInOpponentZoneIndex, 1);
-            }
-        }
-    }
-
-    function updatePlayerCard(playerId, cardId, updateFn) {
-        const playerState = getPlayerState(playerId);
-        let card = playerState.cardsInZone.find(c => c.id === cardId)
-            || playerState.cardsInOpponentZone.find(c => c.id === cardId);
-        if (!card) throw Error('Could not find card when trying to update it. ID: ' + cardId);
-        updateFn(card);
+        playerStateService.removeAndDiscardCardFromStationOrZone(cardId);
     }
 
     function repairCard(playerId, { repairerCardId, cardToRepairId }) {
-        const repairerCardData = findPlayerCard(playerId, repairerCardId);
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+
+        const repairerCardData = playerStateService.findCard(repairerCardId);
         const repairerCard = cardFactory.createCardForPlayer(repairerCardData, playerId);
         if (!repairerCard.canRepair()) throw CheatError('Cannot repair');
 
-        const cardToRepairData = findPlayerCard(playerId, cardToRepairId);
-        const cardToRepair = cardFactory.createCardForPlayer(cardToRepairData, playerId);
-        repairerCard.repairCard(cardToRepair);
-        updatePlayerCard(playerId, cardToRepair.id, card => {
-            card.damage = cardToRepair.damage;
-        });
-
-        const playerState = getPlayerState(playerId);
-        playerState.events.push(RepairCardEvent({
-            turn: state.turn,
-            cardId: repairerCard.id,
-            cardCommonId: repairerCard.commonId,
-            repairedCardId: cardToRepair.id,
-            repairedCardCommonId: cardToRepair.commonId
-        }));
-        let zoneName = playerState.cardsInZone.some(c => c.id === cardToRepair.id)
-            ? 'cardsInZone'
-            : 'cardsInOpponentZone';
-        emitToOpponent(playerId, 'stateChanged', {
-            [itemNamesForOpponentByItemNameForPlayer[zoneName]]: playerState[zoneName],
-            events: playerState.events
-        });
+        playerStateService.repairCard(repairerCardId, cardToRepairId);
     }
 
     function retreat(playerId) {
@@ -310,12 +244,6 @@ module.exports = function (deps) {
             opponentCardCount: getOpponentCardCount(playerId),
             opponentStationCards: prepareStationCardsForClient(opponentStationCards)
         });
-    }
-
-    function emitToOpponent(playerId, action, value) {
-        const players = matchComService.getPlayers();
-        const opponent = players.find(p => p.id !== playerId);
-        emitToPlayer(opponent.id, action, value);
     }
 
     function emitToPlayer(playerId, action, value) {
@@ -402,6 +330,23 @@ module.exports = function (deps) {
         return getPlayerState(getOpponentId(playerId));
     }
 };
+
+function wrapApi({ api, stateChangeListener }) {
+    const wrappedApi = {};
+    for (let name of Object.keys(api)) {
+        if (typeof api[name] === 'function') {
+            wrappedApi[name] = (...args) => {
+                const result = api[name](...args);
+                stateChangeListener.snapshot();
+                return result;
+            };
+        }
+        else {
+            wrappedApi[name] = api[name];
+        }
+    }
+    return wrappedApi;
+}
 
 function CheatError(reason) {
     const error = new Error(reason);

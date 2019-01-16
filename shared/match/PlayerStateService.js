@@ -3,26 +3,29 @@ const DrawCardEvent = require('../event/DrawCardEvent.js');
 const DiscardCardEvent = require('../event/DiscardCardEvent.js');
 const MoveCardEvent = require('../event/MoveCardEvent.js');
 const PutDownCardEvent = require('../PutDownCardEvent.js');
+const RepairCardEvent = require('../event/RepairCardEvent.js');
 
 class PlayerStateService {
 
-    constructor(deps) {
-        this._playerId = deps.playerId;
-        this._matchService = deps.matchService;
-        this._queryEvents = deps.queryEvents;
-        this._actionPointsCalculator = deps.actionPointsCalculator;
-
+    constructor({
+        playerId,
+        matchService,
+        queryEvents,
+        actionPointsCalculator,
+        logger,
+        cardFactory
+    }) {
+        this._playerId = playerId;
+        this._matchService = matchService;
+        this._queryEvents = queryEvents;
+        this._actionPointsCalculator = actionPointsCalculator;
+        this._cardFactory = cardFactory;
+        this._logger = logger || { log: (...args) => console.log('PlayerStateService logger: ', ...args) };
         this._changeListeners = [];
     }
 
     getPhase() {
         return this.getPlayerState().phase;
-    }
-
-    setPhase(phase) {
-        this.update(playerState => {
-            playerState.phase = phase;
-        });
     }
 
     moreCardsCanBeDrawnForDrawPhase() {
@@ -136,7 +139,11 @@ class PlayerStateService {
 
     findStationCard(cardId) {
         const playerState = this.getPlayerState();
-        return playerState.stationCards.find(s => s.card.id === cardId);
+        return this._findStationCardFromCollection(cardId, playerState.stationCards);
+    }
+
+    _findStationCardFromCollection(cardId, collection) {
+        return collection.find(s => s.card.id === cardId)
     }
 
     findCard(cardId) {
@@ -167,6 +174,12 @@ class PlayerStateService {
         if (cardOnHand) return cardOnHand;
 
         return null;
+    }
+
+    setPhase(phase) {
+        this.update(playerState => {
+            playerState.phase = phase;
+        });
     }
 
     addStationCard(cardData, location) {
@@ -215,6 +228,12 @@ class PlayerStateService {
         this.discardCard(cardData);
     }
 
+    removeAndDiscardCardFromStationOrZone(cardId, discardCardOptions) {
+        const cardData = this.findCardFromAnySource(cardId);
+        this.removeCardFromStationOrZones(cardId);
+        this.discardCard(cardData, discardCardOptions);
+    }
+
     discardTopTwoCardsInDrawPile() {
         const deck = this.getDeck();
         const cards = deck.draw(2);
@@ -237,23 +256,44 @@ class PlayerStateService {
         }));
     }
 
-    removeAndDiscardCardFromStationOrZone(cardId, discardCardOptions) {
-        const cardData = this.findCardFromAnySource(cardId);
-        this.removeCardFromStationOrZones(cardId);
-        this.discardCard(cardData, discardCardOptions);
-    }
-
     drawCard({ byEvent = false } = {}) {
         const deck = this.getDeck();
         const card = deck.drawSingle();
+        if (!card) {
+            this._logger.log(`PLAYERID=${this._playerId} Cannot draw card, deck is empty`, 'playerStateService');
+            return;
+        }
+
         this.update(state => {
             state.cardsOnHand.push(card);
         });
 
         const turn = this._matchService.getTurn();
         this.storeEvent(DrawCardEvent({ turn, byEvent }));
+    }
 
-        return card;
+    _createBehaviourCard(cardId) {
+        const cardData = this.findCard(cardId);
+        return this._cardFactory.createCardForPlayer(cardData);
+    }
+
+    repairCard(repairerCardId, cardToRepairId) {
+        const cardToRepairData = this.findCard(cardToRepairId);
+        const cardToRepair = this._createBehaviourCard(cardToRepairData);
+        const repairerCard = this._createBehaviourCard(repairerCardId);
+        repairerCard.repairCard(cardToRepair);
+
+        this.updateCard(cardToRepair, card => {
+            Object.assign(card, cardToRepair.shallowCopyCardData());
+        });
+
+        this.storeEvent(RepairCardEvent({
+            turn: state.turn,
+            cardId: repairerCard.id,
+            cardCommonId: repairerCard.commonId,
+            repairedCardId: cardToRepair.id,
+            repairedCardCommonId: cardToRepair.commonId
+        }));
     }
 
     registerAttack(attackerCardId) {
@@ -268,22 +308,26 @@ class PlayerStateService {
     }
 
     moveCard(cardId) {
-        this.update(playerState => {
-            const cardIsInHomeZone = playerState.cardsInZone.some(c => c.id === cardId)
-            const cardZone = cardIsInHomeZone ? playerState.cardsInZone : playerState.cardsInOpponentZone;
-            const cardZoneIndex = cardZone.findIndex(c => c.id === cardId);
-            if (cardZoneIndex >= 0) {
+        const cardsInZone = this.getCardsInZone();
+        const cardIsInHomeZone = cardsInZone.some(c => c.id === cardId)
+        const cardZone = cardIsInHomeZone ? cardsInZone : this.getCardsInOpponentZone();
+        const cardZoneIndex = cardZone.findIndex(c => c.id === cardId);
+        if (cardZoneIndex >= 0) {
+            let updatedCardCommonId;
+            this.update(playerState => {
+                const cardZone = cardIsInHomeZone ? playerState.cardsInZone : playerState.cardsInOpponentZone;
                 const [cardData] = cardZone.splice(cardZoneIndex, 1);
                 const targetZone = cardIsInHomeZone ? playerState.cardsInOpponentZone : playerState.cardsInZone;
                 targetZone.push(cardData);
+                updatedCardCommonId = cardData.commonId;
+            });
 
-                const turn = this._matchService.getTurn();
-                this.storeEvent(MoveCardEvent({ turn, cardId, cardCommonId: cardData.commonId }));
-            }
-            else {
-                throw new Error(`Failed to move card with ID: ${cardId}`);
-            }
-        });
+            const turn = this._matchService.getTurn();
+            this.storeEvent(MoveCardEvent({ turn, cardId, cardCommonId: updatedCardCommonId }));
+        }
+        else {
+            throw new Error(`Failed to move card with ID: ${cardId}`);
+        }
     }
 
     flipStationCard(cardId) {
@@ -302,18 +346,27 @@ class PlayerStateService {
     }
 
     removeCard(cardId) { // TODO Rename removeFromZones/removeFromAllZones/removeFromPlay
-        this.update(playerState => {
-            const cardInZoneIndex = playerState.cardsInZone.findIndex(c => c.id === cardId);
-            if (cardInZoneIndex >= 0) {
-                playerState.cardsInZone.splice(cardInZoneIndex, 1);
+        let cardIndexInHomeZone = this.getCardsInZone().findIndex(c => c.id === cardId);
+        let zoneName;
+        let cardIndex;
+        if (cardIndexInHomeZone >= 0) {
+            zoneName = 'cardsInZone';
+            cardIndex = cardIndexInHomeZone;
+        }
+        else {
+            const cardInOpponentZoneIndex = this.getCardsInOpponentZone().findIndex(c => c.id === cardId);
+            if (cardInOpponentZoneIndex >= 0) {
+                zoneName = 'cardsInOpponentZone';
+                cardIndex = cardInOpponentZoneIndex;
             }
-            else {
-                const cardInOpponentZoneIndex = playerState.cardsInOpponentZone.findIndex(c => c.id === cardId);
-                if (cardInOpponentZoneIndex >= 0) {
-                    playerState.cardsInOpponentZone.splice(cardInOpponentZoneIndex, 1);
-                }
-            }
-        });
+        }
+
+        if (zoneName) {
+            this.update(playerState => {
+                let zone = playerState[zoneName];
+                zone.splice(cardIndex, 1);
+            });
+        }
     }
 
     removeStationCard(cardId) {
@@ -333,21 +386,32 @@ class PlayerStateService {
 
     updateCard(cardId, updateFn) {
         const playerState = this.getPlayerState();
-        let card = playerState.cardsInZone.find(c => c.id === cardId)
-            || playerState.cardsInOpponentZone.find(c => c.id === cardId);
-        if (!card) throw Error('Could not find card when trying to update it. ID: ' + cardId);
+        let zoneName;
+        if (playerState.cardsInZone.find(c => c.id === cardId)) {
+            zoneName = 'cardsInZone';
+        }
+        else if (playerState.cardsInOpponentZone.find(c => c.id === cardId)) {
+            zoneName = 'cardsInOpponentZone';
+        }
 
-        updateFn(card);
-        return playerState;
+        if (!zoneName) {
+            throw Error('Could not find card when trying to update it. ID: ' + cardId);
+        }
+
+        this.update(playerState => {
+            const cardToUpdate = playerState[zoneName].find(c => c.id === cardId);
+            updateFn(cardToUpdate);
+        });
     }
 
     updateStationCard(cardId, updateFn) {
-        const playerState = this.getPlayerState();
-        let stationCard = playerState.stationCards.find(s => s.card.id === cardId);
-        if (!stationCard) throw Error('Could not find station card when trying to update it. ID: ' + cardId);
+        if (!this.findStationCard(cardId)) throw Error('Could not find station card when trying to update it. ID: ' + cardId);
 
-        updateFn(stationCard);
-        return playerState;
+        this.update(playerState => {
+            const stationCards = playerState.stationCards
+            const stationCard = this._findStationCardFromCollection(cardId, stationCards);
+            updateFn(stationCard);
+        });
     }
 
     storeEvent(event) {

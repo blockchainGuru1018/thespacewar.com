@@ -28,11 +28,12 @@ module.exports = {
 function run({ closeServer, exitProcess, inProduction = false }) {
     const socketRepository = SocketRepository({ socketMaster });
     const userRepository = UserRepository({ socketMaster });
-    const deps = {};
+    const deps = {
+        logger
+    };
     deps.socketRepository = socketRepository;
     deps.userRepository = userRepository;
     deps.matchRepository = MatchRepository(deps);
-    deps.logger = logger;
     deps.inProduction = inProduction;
 
     const controllers = {
@@ -137,8 +138,7 @@ function setupSocketConnectionHandler(deps, controllers) {
                         playerId: userId,
                         matchId: ongoingMatch.id
                     });
-                }
-                catch (error) {
+                } catch (error) {
                     console.error('Error when registering connection for user: ' + error.message);
                     console.info('Raw error:', error);
                 }
@@ -148,12 +148,11 @@ function setupSocketConnectionHandler(deps, controllers) {
         connection.on('match', async data => {
             try {
                 await controllers.match.onAction(data);
-            }
-            catch (error) {
-                const errorMessage = 'Error in action to match: ' + error.message
-                const rawErrorMessage = `Raw error: ${JSON.stringify(error, null, 4)}`;
+            } catch (error) {
+                const rawErrorMessage = JSON.stringify(error, null, 4);
+                const dataString = JSON.stringify(data, null, 4);
+                const errorMessage = `(${new Date().toISOString()}) Error in action to match: ${error.message} - DATA: ${dataString} - RAW ERROR: ${rawErrorMessage}`
                 deps.logger.log(errorMessage, 'error');
-                deps.logger.log(rawErrorMessage, 'raw-error');
             }
         });
     });

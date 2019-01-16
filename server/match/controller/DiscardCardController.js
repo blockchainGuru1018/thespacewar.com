@@ -28,64 +28,27 @@ function DiscardCardController(deps) {
         playerStateService.discardCard(discardedCard, { isSacrifice: isSacrificialDiscard });
 
         if (isRequiredDiscard) {
-            onRequiredDiscard({ playerId, discardedCard });
+            onRequiredDiscard(playerId);
         }
         else if (isSacrificialDiscard) {
-            onSacrificialDiscard({ playerId, discardedCard });
+            onSacrificialDiscard(playerId);
         }
-        else if (discardAsPartOfDiscardPhase) {
-            emitOpponentDiscardedCardToOpponentOf({ playerId, discardedCard });
-        }
-        else {
+        else if (!discardAsPartOfDiscardPhase) {
             throw new CheatError('Illegal discard');
         }
     }
 
-    function onSacrificialDiscard({ playerId, discardedCard }) {
-        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        const playerCardCount = playerStateService.getCardsOnHandCount();
+    function onSacrificialDiscard(playerId) {
         const opponentId = matchComService.getOpponentId(playerId);
         const opponentStateService = playerStateServiceById[opponentId];
-
         const opponentDeck = opponentStateService.getDeck();
         const bonusCard = opponentDeck.drawSingle();
         opponentStateService.addCardToHand(bonusCard);
-        matchComService.emitToOpponentOf(playerId, 'opponentDiscardedCard', {
-            bonusCard,
-            discardedCard,
-            opponentCardCount: playerCardCount
-        });
-        emitOpponentCardCountToPlayer(playerId);
     }
 
-    function onRequiredDiscard({ playerId, discardedCard }) {
-        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
-        const opponentId = matchComService.getOpponentId(playerId);
-        const opponentRequirementService = playerServiceProvider.getRequirementServiceById(opponentId);
-
+    function onRequiredDiscard(playerId) {
         const requirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'discardCard' });
         requirementUpdater.progressRequirementByCount(1);
-
-        matchComService.emitToPlayer(playerId, 'stateChanged', {
-            requirements: playerRequirementService.getRequirements()
-        });
-        matchComService.emitToOpponentOf(playerId, 'stateChanged', {
-            requirements: opponentRequirementService.getRequirements()
-        });
-        emitOpponentDiscardedCardToOpponentOf({ playerId, discardedCard });
-    }
-
-    function emitOpponentDiscardedCardToOpponentOf({ playerId, discardedCard }) {
-        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        const opponentCardCount = playerStateService.getCardsOnHandCount();
-        matchComService.emitToOpponentOf(playerId, 'opponentDiscardedCard', { discardedCard, opponentCardCount });
-    }
-
-    function emitOpponentCardCountToPlayer(playerId) {
-        const opponentId = matchComService.getOpponentId(playerId);
-        const opponentStateService = playerStateServiceById[opponentId];
-        const opponentCardsOnHandCount = opponentStateService.getCardsOnHand().length;
-        matchComService.emitToPlayer(playerId, 'setOpponentCardCount', opponentCardsOnHandCount);
     }
 }
 

@@ -40,8 +40,8 @@ module.exports = {
             assert.calledOnce(this.firstPlayerConnection.stateChanged);
             assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                 stationCards: [
-                    { card: sinon.match({ id: 'C1A' }), place: 'action', flipped: true },
-                    { card: sinon.match({ id: 'C2A' }), place: 'action', flipped: true }
+                    sinon.match({ card: sinon.match({ id: 'C1A' }), place: 'action', flipped: true }),
+                    sinon.match({ card: sinon.match({ id: 'C2A' }), place: 'action', flipped: true })
                 ]
             }));
         },
@@ -55,8 +55,8 @@ module.exports = {
             assert.calledOnce(this.secondPlayerConnection.stateChanged);
             assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
                 opponentStationCards: [
-                    { card: sinon.match({ id: 'C1A' }), place: 'action', flipped: true },
-                    { card: sinon.match({ id: 'C2A' }), place: 'action', flipped: true }
+                    sinon.match({ card: sinon.match({ id: 'C1A' }), place: 'action', flipped: true }),
+                    sinon.match({ card: sinon.match({ id: 'C2A' }), place: 'action', flipped: true })
                 ]
             }));
         }

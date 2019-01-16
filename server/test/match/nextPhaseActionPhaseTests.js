@@ -20,25 +20,6 @@ const EnergyShieldId = '21';
 const GoodKarmaCommonId = '11';
 
 module.exports = {
-    'when put down station card should NOT lose any action points': {
-        async setUp() {
-            this.playerConnection = FakeConnection2(['restoreState']);
-            this.match = createMatchAndGoToFirstActionPhase({
-                deckFactory: FakeDeckFactory.fromCards([
-                    createCard({ id: 'C1A', cost: 1 }),
-                ]),
-                players: [createPlayer({ id: 'P1A', connection: this.playerConnection })]
-            });
-
-            this.match.putDownCard('P1A', { location: 'station-draw', cardId: 'C1A' });
-        },
-        'when restore state should have correct amount of action points': function () {
-            this.match.start();
-            assert.calledWith(this.playerConnection.restoreState, sinon.match({
-                actionPoints: 6
-            }));
-        }
-    },
     'when put down a station card in action row and then put down card in zone': {
         async setUp() {
             this.firstPlayerConnection = FakeConnection2(['restoreState']);

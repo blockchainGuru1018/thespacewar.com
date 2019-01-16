@@ -52,10 +52,14 @@ class BaseCard {
         this._card.damage = newDamage;
     }
 
+    shallowCopyCardData() {
+        return { ...this._card };
+    }
+
     canAttackStationCards() {
         const events = this._eventRepository.getAll();
         const moveCardEvent = hasMoved(this._card.id, events);
-        if (!moveCardEvent) return false;
+        if (!moveCardEvent) return false; //TODO BUG: Should mean that cards that have moved back to home zone can still attack opponent station cards.
         if (this._card.type === 'missile') return true;
 
         const turn = this._matchInfoRepository.getTurn();

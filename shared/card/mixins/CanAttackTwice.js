@@ -1,8 +1,16 @@
 module.exports = superclass => class extends superclass {
     canAttack() {
-        const turn = this._matchInfoRepository.getTurn();
-        const attacks = this._queryEvents.getAttacksOnTurn(this._card.id, turn);
-        const currentPlayerPhase = this._matchInfoRepository.getPlayerPhase(this._playerId)
-        return currentPlayerPhase === 'attack' && attacks.length < 2;
+        return canAttackAnyCard(this);
+    }
+
+    canAttackStationCards() {
+        return canAttackAnyCard(this);
     }
 };
+
+function canAttackAnyCard(context) {
+    const turn = context._matchInfoRepository.getTurn();
+    const attacks = context._queryEvents.getAttacksOnTurn(context._card.id, turn);
+    const currentPlayerPhase = context._matchInfoRepository.getPlayerPhase(context._playerId)
+    return currentPlayerPhase === 'attack' && attacks.length < 2;
+}

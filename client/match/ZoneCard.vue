@@ -140,11 +140,14 @@
                     .length > 0;
             },
             canAttackStationCards() {
-                return this.createCard(this.card).canAttackStationCards()
+                const canAttackStationCards = this.createCard(this.card).canAttackStationCards();
+                console.log(canAttackStationCards)
+                return canAttackStationCards
                     && this.allOpponentStationCards.length > 0;
             },
             canAttackThisTurn() {
                 const canAttackSomeTarget = (this.canAttackCardInZone || this.canAttackStationCards)
+                console.log('canAttackSomeTarget', this.canAttackCardInZone,this.canAttackStationCards)
                 return this.canAttack && canAttackSomeTarget;
             },
             canBeSelectedAsDefender() {

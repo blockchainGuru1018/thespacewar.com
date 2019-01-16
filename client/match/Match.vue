@@ -61,7 +61,7 @@
                 </div>
                 <div class="field-piles field-section">
                     <div class="field-discardPile">
-                        <div v-if="opponentDiscardedCards.length === 0"
+                        <div v-if="!opponentTopDiscardCard"
                              class="card card--placeholder"/>
                         <div v-else
                              :style="getCardImageStyle(opponentTopDiscardCard)"
@@ -108,7 +108,7 @@
                         </div>
                     </div>
                     <div class="field-discardPile">
-                        <div v-if="playerDiscardedCards.length === 0" class="card card--placeholder"/>
+                        <div v-if="!playerTopDiscardCard" class="card card--placeholder"/>
                         <div v-else
                              :style="getCardImageStyle(playerTopDiscardCard)"
                              :data-cardId="playerTopDiscardCard.id"
@@ -305,7 +305,8 @@
             playerActionPointsText() {
                 if (this.calculatedActionPointsForActionPhaseVisible) {
                     return `Actions ${this.actionPoints2}`;
-                } else {
+                }
+                else {
                     return `Actions (${this.actionPoints2})`
                 }
             },
@@ -321,7 +322,6 @@
         },
         methods: {
             ...mapActions([
-                'putDownCard',
                 'discardCard',
                 'selectAsDefender',
                 'retreat',
@@ -333,7 +333,8 @@
             ]),
             ...mapPutDownCardActions({
                 showPutDownCardChoiceDialog: 'showChoiceDialog',
-                showPutDownCardAction: 'showCardAction'
+                showPutDownCardAction: 'showCardAction',
+                putDownCard: 'putDownCard'
             }),
             canAffordCard(card) {
                 return this.actionPoints2 >= card.cost;
@@ -350,11 +351,14 @@
 
                 if (location === 'discard') {
                     this.discardCard(this.holdingCard.id);
-                } else if (location === 'zone' && this.createCard(cardData).choicesWhenPutDownInHomeZone) {
+                }
+                else if (location === 'zone' && this.createCard(cardData).choicesWhenPutDownInHomeZone) {
                     this.showPutDownCardChoiceDialog(cardData);
-                } else if (location === 'zone' && this.createCard(cardData).actionWhenPutDownInHomeZone) {
+                }
+                else if (location === 'zone' && this.createCard(cardData).actionWhenPutDownInHomeZone) {
                     this.showPutDownCardAction(cardData);
-                } else {
+                }
+                else {
                     this.putDownCard({ location, cardId: this.holdingCard.id });
                 }
 
@@ -363,7 +367,8 @@
             emptyClick() {
                 if (this.holdingCard) {
                     this.holdingCard = null;
-                } else {
+                }
+                else {
                     this.cancelCurrentAction();
                 }
             },

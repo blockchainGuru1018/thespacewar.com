@@ -36,7 +36,7 @@ module.exports = function (deps) {
 
     function matchActionLogMessage({ action, value, playerId }) {
         const actionValueJson = JSON.stringify(value, null, 4);
-        return `Match action: ${action} - To player: ${playerId} - With value: ${actionValueJson}`;
+        return `[${new Date().toISOString()}] Match action: ${action} - To player: ${playerId} - With value: ${actionValueJson}`;
     }
 
     //TODO Increase z-index of game buttons ("Current phase"/"next phase"/"end game")

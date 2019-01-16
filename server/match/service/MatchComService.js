@@ -1,11 +1,14 @@
+const LOG_ALL_EMITS = false;
+
 const preparePlayerState = require('./preparePlayerState.js');
 const prepareOpponentState = require('./prepareOpponentState.js');
 
 class MatchComService {
 
-    constructor({ matchId, players, stateChangeListener }) {
+    constructor({ matchId, players, logger, stateChangeListener }) {
         this._matchId = matchId;
         this._players = players;
+        this._logger = logger;
 
         stateChangeListener.listenForSnapshots(this._onSnapshot.bind(this));
     }
@@ -40,6 +43,13 @@ class MatchComService {
 
     emitToPlayer(playerId, action, value) {
         const playerConnection = this.getPlayerConnection(playerId);
+
+        if (LOG_ALL_EMITS) {
+            this._logger.log(
+                `[${new Date().toISOString()}] emitToPlayer(${playerId}, ${action}, ${value}) stack: ${new Error().stack}`,
+                'match'
+            );
+        }
         playerConnection.emit('match', {
             matchId: this._matchId,
             action,
@@ -71,13 +81,17 @@ class MatchComService {
         for (const player of this.getPlayers()) {
             const playerId = player.id;
             let opponentId = this.getOpponentId(playerId);
+
             const playerChangedState = snapshot.changeDataByPlayerId[playerId];
             const opponentChangedState = snapshot.changeDataByPlayerId[opponentId];
             const data = {
                 ...preparePlayerState(playerChangedState),
                 ...prepareOpponentState(opponentChangedState)
             };
-            this.emitToPlayer(playerId, 'stateChanged', data);
+
+            if (Object.keys(data).length > 0) {
+                this.emitToPlayer(playerId, 'stateChanged', data);
+            }
         }
     }
 }

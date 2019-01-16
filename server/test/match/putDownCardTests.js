@@ -278,7 +278,7 @@ module.exports = {
     'when has 1 flipped event station card and put down that station card': {
         setUp() {
             this.firstPlayerConnection = FakeConnection2(['restoreState']);
-            this.secondPlayerConnection = FakeConnection2(['restoreState', 'opponentDiscardedCard', 'putDownOpponentCard']);
+            this.secondPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
             this.match = createMatch({
                 players: [
                     Player('P1A', this.firstPlayerConnection),
@@ -330,21 +330,23 @@ module.exports = {
             assert.equals(opponentStationCards.length, 1);
             assert.equals(opponentStationCards[0].id, 'C1A');
         },
-        'should NOT emit put down opponent card'() {
-            refute.called(this.secondPlayerConnection.putDownOpponentCard);
-        },
-        'should emit opponent discarded card'() {
-            assert.calledOnce(this.secondPlayerConnection.opponentDiscardedCard);
-            assert.calledWith(this.secondPlayerConnection.opponentDiscardedCard, sinon.match({
-                discardedCard: sinon.match({ id: 'C2A' }),
-                opponentCardCount: 0
+        'should emit state changed to second player'() {
+            assert.calledOnce(this.secondPlayerConnection.stateChanged);
+            assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                opponentDiscardedCards: [sinon.match({ id: 'C2A' })]
             }));
+        },
+        'should NOT emit state changed with opponentCardCount to second player'() {
+            refute.defined(this.secondPlayerConnection.stateChanged.lastCall.args[0].opponentCardCount);
+        },
+        'should NOT emit state changed with opponentCardsInZone to second player'() {
+            refute.defined(this.secondPlayerConnection.stateChanged.lastCall.args[0].opponentCardsInZone);
         }
     },
     'when put down event card from hand to own zone': {
         setUp() {
             this.firstPlayerConnection = FakeConnection2(['restoreState']);
-            this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard', 'putDownOpponentCard']);
+            this.secondPlayerConnection = FakeConnection2(['stateChanged']);
             const players = [
                 Player('P1A', this.firstPlayerConnection),
                 Player('P2A', this.secondPlayerConnection)
@@ -379,21 +381,19 @@ module.exports = {
             const { cardsOnHand } = this.firstPlayerConnection.restoreState.lastCall.args[0];
             assert.equals(cardsOnHand.length, 0);
         },
-        'should emit opponentDiscardedCard to second player'() {
-            assert.calledOnce(this.secondPlayerConnection.opponentDiscardedCard);
-            const { discardedCard, opponentCardCount } = this.secondPlayerConnection.opponentDiscardedCard.lastCall.args[0];
-            assert.match(discardedCard, { id: 'C1A' });
-            assert.equals(opponentCardCount, 0);
-        },
-        'should NOT emit putDownOpponentCard to second player'() {
-            refute.called(this.secondPlayerConnection.putDownOpponentCard);
+        'should emit state changed with opponent discarded cards and card count to second player'() {
+            assert.calledOnce(this.secondPlayerConnection.stateChanged);
+            assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                opponentCardCount: 0,
+                opponentDiscardedCards: [sinon.match({ id: 'C1A' })]
+            }));
         }
     },
     'Supernova:': {
         'when first player put down Supernova': {
             setUp() {
                 this.firstPlayerConnection = FakeConnection2(['stateChanged']);
-                this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard', 'stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stateChanged']);
                 const players = [
                     Player('P1A', this.firstPlayerConnection),
                     Player('P2A', this.secondPlayerConnection)
@@ -491,9 +491,6 @@ module.exports = {
                         sinon.match({ type: 'damageOwnStationCard', common: true, count: 3 })
                     ]
                 }));
-            },
-            'should NOT emit opponentDiscardedCard to second player'() {
-                refute.called(this.secondPlayerConnection.opponentDiscardedCard);
             }
         },
         'when first player put down Supernova and both players has NO station cards and NO cards on hand': {
@@ -565,7 +562,7 @@ module.exports = {
         'when first player put down Excellent work': {
             setUp() {
                 this.firstPlayerConnection = FakeConnection2(['stateChanged']);
-                this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard', 'stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stateChanged']);
                 const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
                 this.match = createMatch({ players });
                 this.match.restoreFromState(createState({
@@ -603,9 +600,6 @@ module.exports = {
                     opponentDiscardedCards: [sinon.match({ id: 'C1A' })],
                     opponentCardCount: 0
                 }));
-            },
-            'should NOT emit opponentDiscardedCard to second player'() {
-                refute.called(this.secondPlayerConnection.opponentDiscardedCard);
             }
         },
         'when first player put down Excellent work but only has 1 card left in deck': {
@@ -660,7 +654,7 @@ module.exports = {
         'when first player put down Grand Opportunity': {
             setUp() {
                 this.firstPlayerConnection = FakeConnection2(['stateChanged']);
-                this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard', 'stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stateChanged']);
                 const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
                 this.match = createMatch({ players });
                 this.match.restoreFromState(createState({
@@ -708,9 +702,6 @@ module.exports = {
                     opponentDiscardedCards: [sinon.match({ id: 'C1A' })],
                     opponentCardCount: 2
                 }));
-            },
-            'should NOT emit opponentDiscardedCard to second player'() {
-                refute.called(this.secondPlayerConnection.opponentDiscardedCard);
             }
         },
         'when first player put down Grand Opportunity but only has 1 card left in deck and 1 more on hand': {
@@ -802,7 +793,7 @@ module.exports = {
         'when put down Discovery with choice "draw"': {
             setUp() {
                 this.firstPlayerConnection = FakeConnection2(['stateChanged']);
-                this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard', 'stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stateChanged']);
                 const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
                 this.match = createMatch({ players });
                 this.match.restoreFromState(createState({
@@ -850,15 +841,12 @@ module.exports = {
                     opponentCardCount: 0,
                     requirements: [sinon.match({ type: 'drawCard', count: 4, common: true })]
                 }));
-            },
-            'should NOT emit opponentDiscardedCard to second player'() {
-                refute.called(this.secondPlayerConnection.opponentDiscardedCard);
             }
         },
         'when put down Discovery with choice "discard"': {
             setUp() {
                 this.firstPlayerConnection = FakeConnection2(['stateChanged']);
-                this.secondPlayerConnection = FakeConnection2(['opponentDiscardedCard', 'stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stateChanged']);
                 const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
                 this.match = createMatch({ players });
                 this.match.restoreFromState(createState({
@@ -907,6 +895,44 @@ module.exports = {
                         'P1A': {
                             phase: 'action',
                             cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: FatalErrorCommonId })]
+                        },
+                        'P2A': {
+                            cardsInOpponentZone: [createCard({ id: 'C2A' })]
+                        }
+                    },
+                    deckByPlayerId: {
+                        'P2A': FakeDeck.realDeckFromCards([
+                            createCard({ id: 'C3A' }),
+                            createCard({ id: 'C4A' })
+                        ])
+                    }
+                }));
+
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A', choice: 'C2A' });
+            },
+            'should emit draw card requirement to second player'() {
+                assert.calledOnce(this.secondPlayerConnection.stateChanged);
+                assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                    requirements: [sinon.match({ type: 'drawCard', count: 2 })]
+                }));
+            }
+        },
+        'when move Fatal Error from station card to zone': {
+            setUp() {
+                this.secondPlayerConnection = FakeConnection2(['stateChanged']);
+                const players = [Player('P1A'), Player('P2A', this.secondPlayerConnection)]
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'action',
+                            stationCards: [
+                                {
+                                    place: 'action',
+                                    card: createCard({ id: 'C1A', type: 'event', commonId: FatalErrorCommonId }),
+                                    flipped: true
+                                }
+                            ]
                         },
                         'P2A': {
                             cardsInOpponentZone: [createCard({ id: 'C2A' })]

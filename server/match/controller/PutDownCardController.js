@@ -1,25 +1,11 @@
 const CheatError = require('../CheatError.js');
 const CardApplier = require('../card/CardApplier.js');
-const itemNamesForOpponentByItemNameForPlayer = require('../itemNamesForOpponentByItemNameForPlayer.js');
-const ExcellentWorkCommonId = '14';
-const GrandOpportunityCommonId = '20';
-const SupernovaCommonId = '15';
-const DiscoveryCommonId = '42';
-const FatalErrorCommonId = '38';
-const ImplementedEventCards = [
-    ExcellentWorkCommonId,
-    GrandOpportunityCommonId,
-    SupernovaCommonId,
-    DiscoveryCommonId,
-    FatalErrorCommonId
-];
 
 function PutDownCardController(deps) {
 
     const {
         matchService,
         matchComService,
-        stateChangeListener,
         cardFactory,
         playerServiceProvider
     } = deps;
@@ -128,29 +114,12 @@ function PutDownCardController(deps) {
         return stationCard;
     }
 
-    //TODO Try to remove state change emits all over the game
-    //TODO Try to make sure every state change in playerstateservice is done through an "update" method
-    //TODO Would be nice to do away with "opponentDiscardedCard" events and the likes of that
-    //TODO Then test it a lot IRL! And Commit. And log time for the last 2 days in KF!
-    //TODO Implement Neutralization.
-
     function putDownEventCardInZone({ playerId, cardData, choice = '' }) {
-        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         const card = cardFactory.createCardForPlayer(cardData, playerId);
 
         cardApplier.putDownEventCard(playerId, cardData, { choice });
         if (!!card.requirementsWhenPutDownInHomeZone) {
             addRequirementsByCard({ playerId, card });
-        }
-
-        if (ImplementedEventCards.includes(cardData.commonId)) {
-            stateChangeListener.snapshot();
-        }
-        else {
-            matchComService.emitToOpponentOf(playerId, 'opponentDiscardedCard', {
-                discardedCard: cardData,
-                opponentCardCount: playerStateService.getCardsOnHandCount()
-            });
         }
     }
 
