@@ -184,6 +184,12 @@ module.exports = function ({
     }
 
     function emitRestoreStateForPlayer(playerId) {
+        const opponentId = matchService.getOpponentId(playerId);
+        repairRequirements({
+            playerRequirementUpdater: playerServiceProvider.getRequirementServiceById(playerId),
+            opponentRequirementUpdater: playerServiceProvider.getRequirementServiceById(opponentId)
+        });
+
         const playerState = getPlayerState(playerId);
         const actionPointsForPlayer = getActionPointsForPlayer(playerId)
         const opponentState = getOpponentState(playerId);
@@ -346,6 +352,25 @@ function wrapApi({ api, stateChangeListener }) {
         }
     }
     return wrappedApi;
+}
+
+function repairRequirements({
+    playerRequirementUpdater,
+    opponentRequirementUpdater
+}) {
+    let playerWaitingRequirement = playerRequirementUpdater.getFirstMatchingRequirement({ waiting: true });
+    let opponentWaitingRequirement = opponentRequirementUpdater.getFirstMatchingRequirement({ waiting: true });
+    while (!!playerWaitingRequirement !== !!opponentWaitingRequirement) {
+        if (playerWaitingRequirement) {
+            playerRequirementUpdater.removeFirstMatchingRequirement({ waiting: true });
+        }
+        else {
+            opponentRequirementUpdater.removeFirstMatchingRequirement({ waiting: true });
+        }
+
+        playerWaitingRequirement = playerRequirementUpdater.getFirstMatchingRequirement({ waiting: true });
+        opponentWaitingRequirement = opponentRequirementUpdater.getFirstMatchingRequirement({ waiting: true });
+    }
 }
 
 function CheatError(reason) {

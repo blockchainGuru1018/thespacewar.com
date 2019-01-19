@@ -1231,6 +1231,83 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.putDownCardChoiceDialog', 1);
             }
         },
+        'when move card "Discovery" from station to zone': {
+            async setUp() {
+                const { dispatch } = this.createController();
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 2,
+                    currentPlayer: 'P1A',
+                    phase: 'action',
+                    stationCards: [
+                        {
+                            place: 'draw',
+                            id: 'C1A',
+                            card: createCard({ id: 'C1A', commonId: DiscoveryCommonId }),
+                            flipped: true
+                        },
+                        { place: 'draw', id: 'C2A' },
+                    ],
+                    events: [
+                        PutDownCardEvent({ cardId: 'C1A', cardCommonId: DiscoveryCommonId, location: 'zone', turn: 1 })
+                    ]
+                }));
+                await timeout();
+
+                await click('.stationCard .movable');
+            },
+            'should show choice dialog'() {
+                assert.elementCount('.putDownCardChoiceDialog', 1);
+            },
+            'should have card in zone'() {
+                assert.elementCount('.field-playerZoneCards .card:not(.card--placeholder)', 1);
+            },
+            'should NOT have card among station cards'() {
+                assert.elementCount('.field-player .stationCard', 1);
+            },
+            'should NOT have discarded card'() {
+                assert.elementCount('.field-discardPile .card-faceDown', 0);
+            }
+        },
+        'when move card "Discovery" from station to zone and select "Cancel" from choice dialog': {
+            async setUp() {
+                const { dispatch } = this.createController();
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 2,
+                    currentPlayer: 'P1A',
+                    phase: 'action',
+                    stationCards: [
+                        {
+                            place: 'draw',
+                            id: 'C1A',
+                            card: createCard({ id: 'C1A', commonId: DiscoveryCommonId }),
+                            flipped: true
+                        },
+                        { place: 'draw', id: 'C2A' },
+                    ],
+                    events: [
+                        PutDownCardEvent({ cardId: 'C1A', cardCommonId: DiscoveryCommonId, location: 'zone', turn: 1 })
+                    ]
+                }));
+                await timeout();
+
+                await click('.stationCard .movable');
+                await click('.putDownCardChoiceDialog-choice:contains("Cancel")');
+            },
+            'should NOT show choice dialog'() {
+                assert.elementCount('.putDownCardChoiceDialog', 0);
+            },
+            'should NOT have card in zone'() {
+                assert.elementCount('.field-playerZoneCards .card:not(.card--placeholder)', 0);
+            },
+            'should have card among station cards'() {
+                assert.elementCount('.field-player .stationCard', 2);
+            },
+            'should NOT have discarded card'() {
+                assert.elementCount('.field-discardPile .card-faceDown', 0);
+            }
+        },
         'when place down card "Discovery" and choose "Each player draws 4 cards"': {
             async setUp() {
                 this.matchController = FakeMatchController();
@@ -1270,7 +1347,7 @@ module.exports = testCase('MatchPage', {
         },
         'when place down card "Discovery" and choose "Each player discards 2 cards"': {
             async setUp() {
-                this.matchController = FakeMatchController({ emit: stub() });
+                this.matchController = FakeMatchController({ emit: stub().returns(new Promise(() => {})) });
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
                 dispatch('restoreState', FakeState({
@@ -1318,6 +1395,15 @@ module.exports = testCase('MatchPage', {
             },
             'should NOT show choice dialog'() {
                 assert.elementCount('.putDownCardChoiceDialog', 0);
+            },
+            'should NOT have card in zone'() {
+                assert.elementCount('.field-playerZoneCards .card:not(.card--placeholder)', 0);
+            },
+            'should show card on hand'() {
+                assert.elementCount('.field-playerCardsOnHand .card', 1);
+            },
+            'should NOT have discarded card'() {
+                assert.elementCount('.field-discardPile .card-faceDown', 0);
             }
         },
     },
@@ -1377,7 +1463,7 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.field-player .stationCard .selectable', 1);
             }
         },
-        'when move Fatal Error to zone from station card': {
+        'when move Fatal Error from station to zone': {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();

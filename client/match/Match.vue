@@ -194,10 +194,11 @@
                             @click="playerCardClick(card)"/>
                 </div>
                 <player-hud/>
-                <put-down-card-choice-dialog/>
             </div>
         </div>
         <div v-if="holdingCard" class="card holdingCard" :style="holdingCardStyle"/>
+        <put-down-card-choice-dialog/>
+        <loading-indicator/>
         <portal-target name="match" multiple/>
     </div>
 </template>
@@ -220,6 +221,7 @@
     const StationCard = require('./StationCard.vue').default;
     const PlayerHud = require('./PlayerHud.vue').default;
     const PutDownCardChoiceDialog = require('./PutDownCardChoiceDialog.vue').default;
+    const LoadingIndicator = require('./loadingIndicator/LoadingIndicator.vue').default;
     const { PHASES } = require('./phases.js');
 
     module.exports = {
@@ -446,7 +448,7 @@
                 }
             });
         },
-        components: { ZoneCard, StationCard, PlayerHud, PutDownCardChoiceDialog }
+        components: { ZoneCard, StationCard, PlayerHud, PutDownCardChoiceDialog, LoadingIndicator }
     };
 </script>
 <style scoped lang="scss">

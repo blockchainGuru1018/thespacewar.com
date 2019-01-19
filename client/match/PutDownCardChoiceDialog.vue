@@ -6,11 +6,11 @@
                 <h1>Choose event effect</h1>
                 <button v-for="choice in choices"
                         class="putDownCardChoiceDialog-choice"
-                        @click="putDownCardWithChoice(choice.name)">
+                        @click="choiceDialogApplyChoice(choice.name)">
                     {{ choice.text }}
                 </button>
                 <button class="putDownCardChoiceDialog-choice"
-                        @click="hideChoiceDialog">
+                        @click="choiceDialogCancel">
                     Cancel
                 </button>
             </div>
@@ -55,14 +55,9 @@
         },
         methods: {
             ...mapPutDownCardActions([
-                'putDownCard',
-                'hideChoiceDialog'
+                'choiceDialogCancel',
+                'choiceDialogApplyChoice'
             ]),
-            putDownCardWithChoice(choice) {
-                const cardId = this.choiceCardId;
-                this.hideChoiceDialog();
-                this.putDownCard({ location: 'zone', cardId, choice });
-            }
         }
     };
 </script>

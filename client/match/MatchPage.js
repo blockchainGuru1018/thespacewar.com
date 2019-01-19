@@ -2,7 +2,8 @@ const Vue = require('vue').default || require('vue');
 const STORES = [
     require('./RequirementStore.js'),
     require('./PermissionStore.js'),
-    require('./PutDownCardStore.js')
+    require('./PutDownCardStore.js'),
+    require('./loadingIndicator/LoadingIndicatorStore.js')
 ];
 const MatchStore = require('./MatchStore.js');
 const MatchView = require('./Match.vue').default;
@@ -42,11 +43,28 @@ module.exports = function (deps) {
         rootStore.registerModule('match', matchStore);
         matchController.start();
 
+        const rootDispatch = new Proxy({
+            store: ''
+        }, {
+            get(target, property, reciever) {
+                if (!target.store) {
+                    target.store = property;
+                    return reciever;
+                }
+                else {
+                    let storeName = target.store;
+                    target.store = '';
+                    return (...args) => rootStore.dispatch(`${storeName}/${property}`, ...args);
+                }
+            }
+        });
+
         for (const Store of STORES) {
             const store = Store({
                 ...deps,
                 matchController,
-                getFrom: (getterName, moduleName) => rootStore.getters[`${moduleName}/${getterName}`]
+                getFrom: (getterName, moduleName) => rootStore.getters[`${moduleName}/${getterName}`],
+                rootDispatch
             });
 
             //TODO GENERALIZE TO COMMON "LOGGING DECORATOR"
