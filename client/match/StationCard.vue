@@ -2,7 +2,7 @@
     <div v-if="stationCard.flipped" :style="cardStyle" :class="classes">
         <div class="actionOverlays">
             <div v-if="canMoveCardToZone"
-                 @click.stop="moveFlippedStationCardToZone(stationCard.id)"
+                 @click.stop="startPuttingDownCard({ location: 'zone', cardId: stationCard.id })"
                  class="movable">
                 Move to zone
             </div>
@@ -132,13 +132,13 @@
         methods: {
             ...mapActions([
                 'selectStationCardAsDefender',
-                'moveFlippedStationCardToZone'
             ]),
             ...mapRequirementActions([
                 'selectStationCardForRequirement',
             ]),
             ...mapPutDownCardActions([
                 'selectCardForActiveAction',
+                'startPuttingDownCard'
             ]),
         }
     };

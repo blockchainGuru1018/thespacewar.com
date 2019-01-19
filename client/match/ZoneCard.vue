@@ -147,7 +147,6 @@
             },
             canAttackThisTurn() {
                 const canAttackSomeTarget = (this.canAttackCardInZone || this.canAttackStationCards)
-                console.log('canAttackSomeTarget', this.canAttackCardInZone,this.canAttackStationCards)
                 return this.canAttack && canAttackSomeTarget;
             },
             canBeSelectedAsDefender() {

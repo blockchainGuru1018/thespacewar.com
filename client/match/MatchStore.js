@@ -110,7 +110,6 @@ module.exports = function (deps) {
             moveCard,
             retreat,
             selectStationCardAsDefender,
-            moveFlippedStationCardToZone,
             discardDurationCard,
             endGame,
 
@@ -222,12 +221,17 @@ module.exports = function (deps) {
         }
     }
 
-    function findPlayerCardFromAllSources(state) { // TODO Rename => findPlayerCardInZones
+    function findPlayerCardFromAllSources(state, getters) {
         return cardId => {
-            return state.playerCardsInZone.find(c => c.id === cardId)
+            const cardInSomeZone = state.playerCardsInZone.find(c => c.id === cardId)
                 || state.playerCardsInOpponentZone.find(c => c.id === cardId)
-                || state.playerCardsOnHand.find(c => c.id === cardId)
-                || null;
+                || state.playerCardsOnHand.find(c => c.id === cardId);
+            if (cardInSomeZone) return cardInSomeZone;
+
+            const stationCard = getters.allPlayerStationCards.find(s => s.id === cardId);
+            if (stationCard) return stationCard.card;
+
+            return null;
         }
     }
 
@@ -718,10 +722,6 @@ module.exports = function (deps) {
         if (!card) throw Error('Could not find card when trying to update it. ID: ' + cardId);
 
         updateFn(card);
-    }
-
-    function moveFlippedStationCardToZone({ dispatch }, stationCardId) {
-        dispatch('putDownCard/putDownCard', { location: 'zone', cardId: stationCardId }, { root: true });
     }
 
     function discardDurationCard({ state, getters, dispatch }, cardData) {

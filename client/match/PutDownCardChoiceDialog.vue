@@ -41,8 +41,7 @@
                 'choiceCardData',
             ]),
             ...mapMatchGetters([
-                'createCard',
-                'findPlayerCardFromAllSources'
+                'createCard'
             ]),
             choices() {
                 if (!this.choiceCardId) return [];

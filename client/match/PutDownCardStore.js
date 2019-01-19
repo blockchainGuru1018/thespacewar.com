@@ -16,7 +16,8 @@ module.exports = function (deps) {
             choiceCardId: null,
             activeActionCardData: null,
             transientPlayerCardsInHomeZone: [],
-            hiddenCardIdsOnHand: []
+            hiddenCardIdsOnHand: [],
+            hiddenStationCardIds: []
         },
         getters: {
             choiceCardData,
@@ -28,7 +29,8 @@ module.exports = function (deps) {
             hideChoiceDialog,
             showCardAction,
             selectCardForActiveAction,
-            putDownCard
+            startPuttingDownCard, //Use this and not "putDownCard", this will in turn call putdowncard
+            putDownCard //TODO Need better naming scheme for when putting down a card and for actually sending event to matchController
         }
     };
 
@@ -49,6 +51,20 @@ module.exports = function (deps) {
         return cardInfoRepository.getImageUrl(state.activeActionCardData.commonId);
     }
 
+    function startPuttingDownCard({ dispatch, rootGetters }, { location, cardId }) {
+        const cardData = rootGetters['match/findPlayerCardFromAllSources'](cardId);
+        const card = rootGetters['match/createCard'](cardData)
+        if (location === 'zone' && card.choicesWhenPutDownInHomeZone) {
+            dispatch('showPutDownCardChoiceDialog', cardData);
+        }
+        else if (location === 'zone' && card.actionWhenPutDownInHomeZone) {
+            dispatch('showCardAction', cardData);
+        }
+        else {
+            dispatch('putDownCard', { location, cardId: cardData.id });
+        }
+    }
+
     function showChoiceDialog({ state }, cardData) {
         state.choiceCardId = cardData.id;
         state.transientPlayerCardsInHomeZone.push(cardData);
@@ -67,6 +83,7 @@ module.exports = function (deps) {
     function showCardAction({ state }, cardData) {
         state.transientPlayerCardsInHomeZone.push(cardData);
         state.hiddenCardIdsOnHand.push(cardData.id);
+        state.hiddenStationCardIds.push(cardData.id);
         state.activeActionCardData = cardData;
     }
 

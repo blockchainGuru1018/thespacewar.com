@@ -1377,6 +1377,47 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.field-player .stationCard .selectable', 1);
             }
         },
+        'when move Fatal Error to zone from station card': {
+            async setUp() {
+                const { dispatch } = this.createController();
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 2,
+                    currentPlayer: 'P1A',
+                    phase: 'action',
+                    stationCards: [
+                        { place: 'action', id: 'S1A' },
+                        {
+                            place: 'draw',
+                            id: 'C2A',
+                            card: createCard({ id: 'C2A', commonId: FatalErrorCommonId, cost: 0 }),
+                            flipped: true
+                        }
+                    ],
+                    events: [PutDownCardEvent({
+                        turn: 1,
+                        location: 'station-draw',
+                        cardId: 'C2A',
+                        cardCommonId: FatalErrorCommonId
+                    })]
+                }));
+                await timeout();
+
+                await click('.stationCard .movable');
+            },
+            'should have card in zone'() {
+                assert.elementCount('.field-playerZoneCards .card:not(.card--placeholder)', 1);
+            },
+            'should NOT have card among station cards'() {
+                assert.elementCount('.field-player .stationCard', 1);
+            },
+            'should NOT have discarded card'() {
+                assert.elementCount('.field-discardPile .card-faceDown', 0);
+            },
+            'should show guide text'() {
+                assert.elementText('.guideText', 'Select any card to destroy');
+            }
+        },
         'when put down card Fatal Error and then select opponent card in player zone': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });

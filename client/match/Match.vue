@@ -151,7 +151,7 @@
                     <div class="field-stationRow">
                         <portal-target name="stationDrawRow"/>
                         <station-card
-                                v-for="card in playerStation.drawCards"
+                                v-for="card in playerVisibleDrawStationCards"
                                 :stationCard="card"
                                 :key="card.id"
                         />
@@ -163,7 +163,7 @@
                     <div class="field-stationRow">
                         <portal-target name="stationActionRow"/>
                         <station-card
-                                v-for="card in playerStation.actionCards"
+                                v-for="card in playerVisibleActionStationCards"
                                 :stationCard="card"
                                 :key="card.id"
                         />
@@ -175,7 +175,7 @@
                     <div class="field-stationRow">
                         <portal-target name="stationHandSizeRow"/>
                         <station-card
-                                v-for="card in playerStation.handSizeCards"
+                                v-for="card in playerVisibleHandSizeStationCards"
                                 :stationCard="card"
                                 :key="card.id"
                         />
@@ -253,11 +253,13 @@
                 'hasPutDownNonFreeCardThisTurn',
                 'actionPoints2',
                 'canPutDownCard',
-                'createCard'
+                'createCard',
+                'allPlayerStationCards'
             ]),
             ...mapPutDownCardState([
                 'transientPlayerCardsInHomeZone',
                 'hiddenCardIdsOnHand',
+                'hiddenStationCardIds'
             ]),
             ...mapPutDownCardGetters({
                 putDownCardChoiceDialogCardData: 'choiceCardData'
@@ -318,6 +320,15 @@
             },
             playerVisibleCardsOnHand() {
                 return this.playerCardsOnHand.filter(card => !this.hiddenCardIdsOnHand.some(id => id === card.id));
+            },
+            playerVisibleDrawStationCards() {
+                return this.playerStation.drawCards.filter(s => !this.hiddenStationCardIds.some(id => id === s.id));
+            },
+            playerVisibleActionStationCards() {
+                return this.playerStation.actionCards.filter(s => !this.hiddenStationCardIds.some(id => id === s.id));
+            },
+            playerVisibleHandSizeStationCards() {
+                return this.playerStation.handSizeCards.filter(s => !this.hiddenStationCardIds.some(id => id === s.id));
             }
         },
         methods: {
