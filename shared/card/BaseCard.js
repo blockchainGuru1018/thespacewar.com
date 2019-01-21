@@ -51,53 +51,59 @@ class BaseCard {
         this._card.damage = newDamage;
     }
 
+    get numberOfAttacksPerTurn() {
+        return 1;
+    }
+
     shallowCopyCardData() {
         return { ...this._card };
     }
 
     canAttackStationCards() {
-        const events = this._eventRepository.getAll();
-        const moveCardEvent = hasMoved(this._card.id, events);
-        if (!moveCardEvent) return false; //TODO BUG: Should mean that cards that have moved back to home zone can still attack opponent station cards.
-        if (this._card.type === 'missile') return true;
+        if (!this.canAttack()) return false;
 
+        const events = this._eventRepository.getAll();
         const turn = this._matchInfoRepository.getTurn();
-        const didNotMoveThisTurn = turnCountSinceMove(this._card.id, turn, events) > 0
-        return didNotMoveThisTurn && !this.hasAttackedThisTurn();
+        const isInHomeZone = this._matchService.isPlayerCardInHomeZone(this.playerId, this.id);
+        const isMissile = this._card.type === 'missile'
+
+        const canAttackFromHomeZone = (isInHomeZone && this.canAttackCardsInOtherZone());
+        const hasWaitedAndCanAttackFromOpponentZone = (hasMovedOnPreviousTurn(this.id, turn, events) && !isInHomeZone);
+        const isMissileAndCanAttackFromOpponentZone = (isMissile && !isInHomeZone);
+
+        return canAttackFromHomeZone
+            || hasWaitedAndCanAttackFromOpponentZone
+            || isMissileAndCanAttackFromOpponentZone;
     }
 
     canAttack() {
         if (!this._card.attack) return false;
         if (this._card.type === 'duration') return false;
+        const isAttackPhase = this._matchInfoRepository.getPlayerPhase(this.playerId) === phases.PHASES.attack
+        if (!isAttackPhase) return false;
 
-        return this._matchInfoRepository.getPlayerPhase(this.playerId) === phases.PHASES.attack
-            && !this.hasAttackedThisTurn();
+        const turn = this._matchInfoRepository.getTurn();
+        const attacksOnTurn = this._queryEvents.getAttacksOnTurn(this._card.id, turn).length;
+        if (attacksOnTurn >= this.numberOfAttacksPerTurn) return false;
+
+        return true;
     }
 
     canAttackCard(otherCard) {
         if (otherCard.type === 'duration') return false;
         if (otherCard.playerId === this.playerId) return false;
+        if (!this.canAttack()) return false;
 
-        if (this.canAttackCardsInOtherZone()) return true;
+        const otherCardInOpponentZone = !this._matchService.isPlayerCardInHomeZone(otherCard.playerId, otherCard.id);
+        const playerCardInHomeZone = this._matchService.isPlayerCardInHomeZone(this.playerId, this.id);
+        const isInSameZone = otherCardInOpponentZone === playerCardInHomeZone;
 
-        const opponentCardIsInOpponentZone = !this._matchService.isPlayerCardInHomeZone(otherCard.playerId, otherCard.id);
-        const playerCardIsInHomeZone = this._matchService.isPlayerCardInHomeZone(this.playerId, this.id);
-        return opponentCardIsInOpponentZone === playerCardIsInHomeZone;
+        return isInSameZone
+            || this.canAttackCardsInOtherZone();
     }
 
     canAttackCardsInOtherZone() {
         return false;
-    }
-
-    hasAttackedThisTurn() {
-        const turn = this._matchInfoRepository.getTurn();
-        const attacksOnTurn = this._queryEvents.getAttacksOnTurn(this._card.id, turn)
-        return attacksOnTurn.length > 0;
-    }
-
-    isInOpponentZone() {
-        let moves = this._queryEvents.getAllMoves(this._card.id);
-        return moves.length % 2 === 1;
     }
 
     attackCard(defenderCard) {
@@ -160,11 +166,15 @@ function getTurnWhenWasPutDown(events, cardId) {
     return putDownEventForThisCard.turn;
 }
 
-function hasMoved(cardId, events) {
+function hasMovedOnPreviousTurn(cardId, currentTurn, events) {
+    return cardHasMoved(cardId, events) && turnCountSinceMoveLast(cardId, currentTurn, events) > 0;
+}
+
+function cardHasMoved(cardId, events) {
     return events.some(e => e.type === 'moveCard' && e.cardId === cardId);
 }
 
-function turnCountSinceMove(cardId, currentTurn, events) {
-    const moveCardEvent = events.find(e => e.type === 'moveCard' && e.cardId === cardId);
+function turnCountSinceMoveLast(cardId, currentTurn, events) {
+    const moveCardEvent = events.reverse().find(e => e.type === 'moveCard' && e.cardId === cardId);
     return currentTurn - moveCardEvent.turn;
 }

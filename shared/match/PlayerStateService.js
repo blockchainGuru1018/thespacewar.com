@@ -146,7 +146,7 @@ class PlayerStateService {
         return collection.find(s => s.card.id === cardId)
     }
 
-    findCard(cardId) {
+    findCard(cardId) {//TODO Rename findCardFromZones
         const playerState = this.getPlayerState();
         return playerState.cardsInZone.find(c => c.id === cardId)
             || playerState.cardsInOpponentZone.find(c => c.id === cardId)
@@ -285,9 +285,8 @@ class PlayerStateService {
     }
 
     repairCard(repairerCardId, cardToRepairId) {
-        const cardToRepairData = this.findCard(cardToRepairId);
-        const cardToRepair = this._createBehaviourCard(cardToRepairData);
-        const repairerCard = this._createBehaviourCard(repairerCardId);
+        const cardToRepair = this._createBehaviourCardById(cardToRepairId);
+        const repairerCard = this._createBehaviourCardById(repairerCardId);
         repairerCard.repairCard(cardToRepair);
 
         this.updateCard(cardToRepair, card => {
@@ -459,10 +458,18 @@ class PlayerStateService {
         }
     }
 
-    _createBehaviourCard(cardId) {
+    _createBehaviourCardById(cardId) {
         const cardData = this.findCard(cardId);
+        return this._cardFactory.createCardForPlayer(cardData);
+    }
+
+    _createBehaviourCard(cardData) {
         return this._cardFactory.createCardForPlayer(cardData);
     }
 }
 
 module.exports = PlayerStateService;
+
+function sum(arr, accessorKey) {
+    return arr.reduce((acc, v) => acc + (v[accessorKey] || 0), 0);
+}

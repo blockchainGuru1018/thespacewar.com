@@ -567,7 +567,7 @@ module.exports = {
             },
             'should throw an error'() {
                 assert.defined(this.error);
-                assert.equals(this.error.message, 'Can only attack station card from enemy zone');
+                assert.equals(this.error.message, 'Cannot attack station');
             }
         },
         'when missile card attack station on the same turn it moved to zone': {
@@ -780,7 +780,7 @@ module.exports = {
             },
             'should throw error'() {
                 assert(this.error);
-                assert.equals(this.error.message, 'Can only attack station card from enemy zone');
+                assert.equals(this.error.message, 'Cannot attack station');
             }
         },
         'when attack station card twice': {
@@ -793,7 +793,7 @@ module.exports = {
                     playerStateById: {
                         'P1A': {
                             phase: 'attack',
-                            cardsInOpponentZone: [createCard({ id: 'C1A' })],
+                            cardsInOpponentZone: [createCard({ id: 'C1A', attack: 1 })],
                             events: [{ type: 'moveCard', turn: 1, cardId: 'C1A' }]
                         },
                         'P2A': {
@@ -832,7 +832,10 @@ module.exports = {
                     playerStateById: {
                         'P1A': {
                             phase: 'attack',
-                            cardsInOpponentZone: [createCard({ id: 'C1A' }), createCard({ id: 'C2A' })],
+                            cardsInOpponentZone: [
+                                createCard({ id: 'C1A', attack: 1 }),
+                                createCard({ id: 'C2A', attack: 1 })
+                            ],
                             events: [
                                 { type: 'moveCard', turn: 1, cardId: 'C1A' },
                                 { type: 'moveCard', turn: 1, cardId: 'C2A' }
@@ -909,13 +912,13 @@ module.exports = {
                     ]
                 });
                 this.match.restoreFromState(createState({
-                    turn: 3,
+                    turn: 2,
                     currentPlayer: 'P1A',
                     playerOrder: ['P1A', 'P2A'],
                     playerStateById: {
                         'P1A': {
                             phase: 'attack',
-                            cardsInOpponentZone: [createCard({ id: 'C1A', type: 'action' })],
+                            cardsInOpponentZone: [createCard({ id: 'C1A', type: 'action', attack: 1 })],
                             events: [{ type: 'moveCard', cardId: 'C1A', turn: 1 }]
                         },
                         'P2A': {
@@ -965,7 +968,7 @@ module.exports = {
                     playerStateById: {
                         'P1A': {
                             phase: 'attack',
-                            cardsInOpponentZone: [createCard({ id: 'C1A', type: 'defense' })],
+                            cardsInOpponentZone: [createCard({ id: 'C1A', type: 'defense', attack: 1 })],
                             events: [{ type: 'moveCard', cardId: 'C1A', turn: 1 }]
                         },
                         'P2A': {

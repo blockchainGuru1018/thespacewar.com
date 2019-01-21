@@ -64,13 +64,9 @@ function AttackController(deps) {
         let opponentId = matchComService.getOpponentId(playerId);
         let opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
         let opponentState = opponentStateService.getPlayerState();
-
         let playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        const attackerCardData = playerStateService
-            .getCardsInOpponentZone()
-            .find(c => c.id === attackerCardId);
-        if (!attackerCardData) throw new CheatError('Can only attack station card from enemy zone');
 
+        const attackerCardData = playerStateService.findCard(attackerCardId);
         const opponentStationCards = opponentState.stationCards;
         const unflippedOpponentStationCards = opponentState.stationCards.filter(s => !s.flipped);
         if (unflippedOpponentStationCards.length > targetStationCardIds.length

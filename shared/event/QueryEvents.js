@@ -49,6 +49,15 @@ class QueryEvents { // TODO rename QueryCardEvents?
         });
     }
 
+    getStationCardsPutDownThisTurnCount(turn) {
+        const putDownStationCardEvents = this._eventRepository.getAll().filter(e => {
+            return e.turn === turn
+                && e.type === 'putDownCard'
+                && e.location.startsWith('station');
+        })
+        return putDownStationCardEvents.length;
+    }
+
     hasAlreadyPutDownStationCardThisTurn(turn) {
         return this._eventRepository.getAll().some(e => {
             return e.turn === turn

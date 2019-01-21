@@ -913,6 +913,27 @@ module.exports = testCase('MatchPage', {
             'should NOT be able to select card to move back'() {
                 assert.elementCount('.playerCardsInOpponentZone .card .movable', 0);
             }
+        },
+        'when put down Fast missile this turn and select for attack': {
+            async setUp() {
+                const { dispatch } = this.createController();
+                this.controller.showPage();
+
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'attack',
+                    cardsInZone: [{ id: 'C1A', attack: 1, commonId: FastMissileId }],
+                    opponentCardsInPlayerZone: [{ id: 'C2A' }],
+                    events: [PutDownCardEvent({ turn: 1, cardId: 'C1A' })]
+                }));
+                await timeout();
+
+                await click('.playerCardsInZone .card .readyToAttack');
+            },
+            'should NOT be able to attack a station card'() {
+                assert.elementCount('.field-opponentStation .attackable', 0);
+            }
         }
     },
     'discard card requirement': {
@@ -1555,12 +1576,12 @@ module.exports = testCase('MatchPage', {
         }
     },
     'Trigger happy joe:': {
-        'when has attacked station card and ready card again for attack': {
+        'when moved to opponent zone last turn and has attacked station card once this turn and ready card again for attack': {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
                 dispatch('restoreState', FakeState({
-                    turn: 2,
+                    turn: 3,
                     currentPlayer: 'P1A',
                     phase: 'attack',
                     cardsInOpponentZone: [{ id: 'C1A', type: 'spaceShip', commonId: TriggerHappyJoeCommonId }],
@@ -1572,7 +1593,7 @@ module.exports = testCase('MatchPage', {
                     events: [
                         PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A' }),
                         MoveCardEvent({ turn: 2, cardId: 'C1A' }),
-                        AttackEvent({ turn: 2, attackerCardId: 'C1A' })
+                        AttackEvent({ turn: 3, attackerCardId: 'C1A' })
                     ]
                 }));
                 await timeout();
@@ -1596,6 +1617,7 @@ module.exports = testCase('MatchPage', {
                     cardsInZone: [{ id: 'C1A', type: 'spaceShip', commonId: DeadlySniperCommonId }],
                     opponentCardsInZone: [{ id: 'C2A' }],
                     opponentCardsInPlayerZone: [{ id: 'C3A' }],
+                    opponentStationCards: [{ place: 'draw', id: 'C4A' }],
                     events: [
                         PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A' })
                     ]
@@ -1606,6 +1628,9 @@ module.exports = testCase('MatchPage', {
             },
             'should NOT be able to attack opponent card in opponent zone'() {
                 assert.elementCount('.opponentCardsInZone .attackable', 0);
+            },
+            'should NOT be able to attack station card'() {
+                assert.elementCount('.field-opponentStation .attackable', 0);
             },
             'should be able to attack opponent card in home zone'() {
                 assert.elementCount('.opponentCardsInPlayerZone .attackable', 1);
@@ -1631,6 +1656,9 @@ module.exports = testCase('MatchPage', {
             },
             'should be able to attack opponent card in opponent zone '() {
                 assert.elementCount('.opponentCardsInZone .attackable', 1);
+            },
+            'should be able to attack opponent station card'() {
+                assert.elementCount('.field-opponentStation .attackable', 1);
             }
         }
     }
