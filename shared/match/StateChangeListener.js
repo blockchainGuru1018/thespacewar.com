@@ -12,12 +12,12 @@ class StateChangeListener {
         this._snapshotListeners = [];
         this._resetSnapshotData();
 
-        const stateChangeListener = this._onStateChange.bind(this);
+        const stateTouchedListener = this._onStateTouched.bind(this);
         const playerIds = matchService.getPlayerOrder();
         for (const playerId of playerIds) {
             playerServiceProvider
                 .getStateServiceById(playerId)
-                .listenForChanges(stateChangeListener);
+                .listenForStateTouches(stateTouchedListener);
         }
     }
 
@@ -26,7 +26,12 @@ class StateChangeListener {
     }
 
     snapshot() {
-        const snapshot = this._snapshotData;
+        const snapshot = { changedKeysByPlayerId: {} };
+        const playerIds = Object.keys(this._snapshotData.changedKeysByPlayerId)
+        for (const playerId of playerIds) {
+            snapshot.changedKeysByPlayerId[playerId] = Array.from(this._snapshotData.changedKeysByPlayerId[playerId]);
+        }
+
         for (const listener of this._snapshotListeners) {
             listener(snapshot);
         }
@@ -35,22 +40,21 @@ class StateChangeListener {
     }
 
     _resetSnapshotData() {
-        const snapshotData = { changeDataByPlayerId: {} };
+        const snapshotData = { changedKeysByPlayerId: {} };
         const playerIds = this._matchService.getPlayerOrder();
         for (const playerId of playerIds) {
-            snapshotData.changeDataByPlayerId[playerId] = {};
+            snapshotData.changedKeysByPlayerId[playerId] = new Set();
         }
 
         this._snapshotData = snapshotData;
     }
 
-    _onStateChange({ property, value, playerId }) {
-        this._snapshotData.changeDataByPlayerId[playerId][property] = value;
-        const valueString = JSON.stringify(value, null, 4);
+    _onStateTouched({ property, playerId }) {
+        this._snapshotData.changedKeysByPlayerId[playerId].add(property);
 
         if (LOG_ALL_STATE_CHANGES) {
             this._logger.log(
-                `onStateChange ${new Date().toISOString()}: playerId=${playerId}, prop=${property}, value=${valueString}`,
+                `[${new Date().toISOString()}] state touched: playerId=${playerId}, prop=${property}`,
                 'playerStateChange'
             );
         }

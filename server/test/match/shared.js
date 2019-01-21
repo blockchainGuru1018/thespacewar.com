@@ -151,7 +151,10 @@ function createMatch(deps = {}) {
     defaults(deps, {
         deckFactory,
         cardInfoRepository: CardInfoRepository({ cardDataAssembler }),
-        players: [createPlayer(), createPlayer()]
+        players: [createPlayer(), createPlayer()],
+        logger: {
+            log: (...args) => console.log(...args)
+        }
     });
     return Match(deps);
 }
@@ -193,8 +196,7 @@ function FakeConnection2(namesOfActionsToStub = []) {
 function catchError(callback) {
     try {
         callback();
-    }
-    catch (error) {
+    } catch (error) {
         return error;
     }
 }

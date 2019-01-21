@@ -172,10 +172,7 @@ module.exports = {
         },
         'should emit drawCards to first player'() {
             assert.calledOnce(this.firstPlayerConnection.drawCards);
-            assert.calledWith(this.firstPlayerConnection.drawCards, sinon.match({
-                moreCardsCanBeDrawn: true,
-                cards: []
-            }));
+            assert.calledWith(this.firstPlayerConnection.drawCards, sinon.match({ moreCardsCanBeDrawn: true }));
         },
         'first player should NOT have new card on hand'() {
             this.match.start();
@@ -207,25 +204,6 @@ module.exports = {
                     sinon.match({ type: 'discardCard' })
                 ]
             }));
-        }
-    },
-    'when has draw card requirement and discard opponent top 2 cards': {
-        async setUp() {
-            this.match = createMatch({ players: [Player('P1A'), Player('P2A')] });
-            this.match.restoreFromState(createState({
-                playerStateById: {
-                    'P1A': {
-                        phase: 'draw',
-                        requirements: [{ type: 'drawCard', count: 1 }]
-                    }
-                }
-            }));
-
-            this.error = catchError(() => this.match.discardOpponentTopTwoCards('P1A'));
-        },
-        'should throw error'() {
-            assert(this.error);
-            assert.equals(this.error.message, 'Cannot mill opponent with other requirements still in progress');
         }
     },
     'when has draw card requirement with count 1 and draw card': {
@@ -260,6 +238,42 @@ module.exports = {
             assert.calledOnce(this.secondPlayerConnection.stateChanged);
             assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
                 opponentCardCount: 1
+            }));
+        }
+    },
+    'when has draw card requirement with count 1 and mill opponent': {
+        setUp() {
+            this.firstPlayerConnection = FakeConnection2(['restoreState', 'drawCards', 'stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['restoreState', 'stateChanged', 'setOpponentCardCount']);
+            const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+            this.match = createMatch({ players });
+            this.match.restoreFromState(createState({
+                playerStateById: {
+                    'P1A': {
+                        phase: 'draw',
+                        requirements: [{ type: 'drawCard', count: 1 }]
+                    }
+                },
+                deckByPlayerId: {
+                    'P2A': FakeDeck.fromCards([
+                        createCard({ id: 'C1A' }),
+                        createCard({ id: 'C2A' })
+                    ])
+                }
+            }));
+
+            this.match.discardOpponentTopTwoCards('P1A');
+        },
+        'should emit state changed with requirement removed'() {
+            assert.calledOnce(this.firstPlayerConnection.stateChanged);
+            assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                requirements: []
+            }));
+        },
+        'should emit state changed to second player'() {
+            assert.calledOnce(this.secondPlayerConnection.stateChanged);
+            assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                discardedCards: [sinon.match({ id: 'C1A' }), sinon.match({ id: 'C2A' })]
             }));
         }
     },

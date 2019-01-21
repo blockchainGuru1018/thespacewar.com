@@ -16,7 +16,7 @@ module.exports = class RepairShip extends BaseCard {
     }
 
     canRepair() {
-        const currentPhase = this._matchInfoRepository.getPlayerPhase(this._playerId);
+        const currentPhase = this._matchInfoRepository.getPlayerPhase(this.playerId);
         if (currentPhase !== phases.PHASES.attack) return false;
 
         const currentTurn = this._matchInfoRepository.getTurn();

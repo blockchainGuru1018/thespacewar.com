@@ -208,8 +208,8 @@ module.exports = function (deps) {
     }
 
     function createCard(state) {
-        return cardData => {
-            return cardFactory.createFromVuexStore(cardData, state);
+        return (cardData, { isOpponent = false, playerId = null } = {}) => {
+            return cardFactory.createFromVuexStore(cardData, state, { isOpponent, playerId });
         };
     }
 

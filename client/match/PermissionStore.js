@@ -47,7 +47,8 @@ module.exports = function (deps) {
         const hasRequirement = !!getFrom('firstRequirement', 'requirement');
         if (hasRequirement) {
             return getFrom('firstRequirementIsDiscardCard', 'requirement');
-        } else {
+        }
+        else {
             const phase = rootState.match.phase;
             return phase === 'action' || phase === 'discard';
         }
@@ -81,8 +82,10 @@ module.exports = function (deps) {
     function canMoveStationCards(state, getters) {
         if (getters.waitingForOtherPlayerToFinishRequirements) return false;
 
+        const hasActiveAction = getFrom('activeAction', 'putDownCard');
         const hasRequirement = !!getFrom('firstRequirement', 'requirement');
-        return !hasRequirement;
+        return !hasActiveAction
+            && !hasRequirement;
     }
 
     function canSelectStationCards(state, getters) { //TODO Rename "canSelectStationCardsForRequirement"
@@ -93,7 +96,7 @@ module.exports = function (deps) {
         return damageOwnStationCardRequirement && cardsLeftToSelect > 0;
     }
 
-    function canSelectCardsForActiveAction() {
+    function canSelectCardsForActiveAction() { //TODO This and the ones who use this might have to support this action for both opponent and player cards
         const activeAction = getFrom('activeAction', 'putDownCard');
         if (!activeAction) return false;
         return activeAction.name === 'destroyAnyCard';
@@ -109,7 +112,7 @@ module.exports = function (deps) {
     function canMill(state, getters, rootState) {
         if (getters.waitingForOtherPlayerToFinishRequirements) return false;
 
-        const hasRequirement = !!getFrom('firstRequirement', 'requirement');
-        return rootState.match.phase === 'draw' && !hasRequirement;
+        return rootState.match.phase === 'draw'
+            || getFrom('firstRequirementIsDrawCard', 'requirement');
     }
 }

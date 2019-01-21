@@ -32,9 +32,6 @@ function AttackController(deps) {
         const defenderCardData = opponentStateService.findCard(defenderCardId);
         const defenderCard = cardFactory.createCardForPlayer(defenderCardData, opponentId);
         if (!attackerCard.canAttackCard(defenderCard)) throw new CheatError('Cannot attack that card');
-        if (defenderCard.isInOpponentZone() === attackerCard.isInOpponentZone()) {
-            throw new CheatError('Cannot attack card in another zone');
-        }
 
         attackerCard.attackCard(defenderCard);
 

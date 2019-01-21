@@ -7,6 +7,12 @@ module.exports = function (clientState) {
                 events: clientState.events,
                 cardsInZone: clientState.playerCardsInZone,
                 cardsInOpponentZone: clientState.playerCardsInOpponentZone
+            },
+            [clientState.opponentUser.id]: {
+                phase: 'wait',
+                events: [],
+                cardsInZone: clientState.opponentCardsInZone,
+                cardsInOpponentZone: clientState.opponentCardsInPlayerZone
             }
         }
     };

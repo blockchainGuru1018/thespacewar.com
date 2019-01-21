@@ -1,15 +1,14 @@
 const phases = require('../phases.js');
-const QueryEvents = require('../event/QueryEvents.js');
 
 class BaseCard {
 
     constructor(deps) {
         this._card = { ...deps.card };
-        this._playerId = deps.playerId;
+        this.playerId = deps.playerId;
         this._eventRepository = deps.eventRepository;
         this._matchInfoRepository = deps.matchInfoRepository;
-
-        this._queryEvents = new QueryEvents(this._eventRepository); //TODO Use QueryEvents and take it in as a dependency instead of event repository
+        this._queryEvents = deps.queryEvents;
+        this._matchService = deps.matchService; // TODO remove similar assignments in subclasses
     }
 
     get id() {
@@ -71,13 +70,23 @@ class BaseCard {
         if (!this._card.attack) return false;
         if (this._card.type === 'duration') return false;
 
-        return this._matchInfoRepository.getPlayerPhase(this._playerId) === phases.PHASES.attack
+        return this._matchInfoRepository.getPlayerPhase(this.playerId) === phases.PHASES.attack
             && !this.hasAttackedThisTurn();
     }
 
     canAttackCard(otherCard) {
         if (otherCard.type === 'duration') return false;
-        return true; //TODO Should this check "canAttack"? Is redundant in current uses, but it "makes sense" to do it.
+        if (otherCard.playerId === this.playerId) return false;
+
+        if (this.canAttackCardsInOtherZone()) return true;
+
+        const opponentCardIsInOpponentZone = !this._matchService.isPlayerCardInHomeZone(otherCard.playerId, otherCard.id);
+        const playerCardIsInHomeZone = this._matchService.isPlayerCardInHomeZone(this.playerId, this.id);
+        return opponentCardIsInOpponentZone === playerCardIsInHomeZone;
+    }
+
+    canAttackCardsInOtherZone() {
+        return false;
     }
 
     hasAttackedThisTurn() {
@@ -107,7 +116,7 @@ class BaseCard {
     canMove(alternativeConditions = {}) {
         if (this._card.type === 'defense') return false;
         if (this._card.type === 'duration') return false;
-        const phase = alternativeConditions.phase || this._matchInfoRepository.getPlayerPhase(this._playerId);
+        const phase = alternativeConditions.phase || this._matchInfoRepository.getPlayerPhase(this.playerId);
         if (phase !== 'attack') return false;
 
         if (this.hasMovedThisTurn()) return false;

@@ -73,14 +73,21 @@ function PutDownCardController(deps) {
     }
 
     function putDownCardAtNewLocation({ playerId, location, cardData, choice }) {
-        if (location === 'zone' && cardData.type === 'event') {
-            putDownEventCardInZone({ playerId, cardData, choice })
-        }
-        else if (location === 'zone') {
-            putDownCardInZone({ playerId, cardData });
-        }
-        else if (location.startsWith('station')) {
+        if (location.startsWith('station')) {
             putDownStationCard({ playerId, cardData, location });
+        }
+        else {
+            if (location === 'zone' && cardData.type === 'event') {
+                cardApplier.putDownEventCard(playerId, cardData, { choice });
+            }
+            else if (location === 'zone') {
+                putDownCardInZone({ playerId, cardData });
+            }
+
+            const card = cardFactory.createCardForPlayer(cardData, playerId);
+            if (!!card.requirementsWhenPutDownInHomeZone) {
+                addCardRequirementsOnPutDownInHomeZone({ playerId, card });
+            }
         }
     }
 
@@ -114,16 +121,7 @@ function PutDownCardController(deps) {
         return stationCard;
     }
 
-    function putDownEventCardInZone({ playerId, cardData, choice = '' }) {
-        const card = cardFactory.createCardForPlayer(cardData, playerId);
-
-        cardApplier.putDownEventCard(playerId, cardData, { choice });
-        if (!!card.requirementsWhenPutDownInHomeZone) {
-            addRequirementsByCard({ playerId, card });
-        }
-    }
-
-    function addRequirementsByCard({ playerId, card }) {
+    function addCardRequirementsOnPutDownInHomeZone({ playerId, card }) {
         const requirements = card.requirementsWhenPutDownInHomeZone;
 
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);

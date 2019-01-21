@@ -151,7 +151,7 @@ module.exports = {
         },
         'should throw error': function () {
             assert(this.error);
-            assert.equals(this.error.message, 'Cannot attack card in another zone');
+            assert.equals(this.error.message, 'Cannot attack that card');
         },
         'when second player restore state should have card undamaged and still in own zone'() {
             this.match.start();
@@ -229,7 +229,7 @@ module.exports = {
         },
         'should throw error': function () {
             assert(this.error);
-            assert.equals(this.error.message, 'Cannot attack card in another zone');
+            assert.equals(this.error.message, 'Cannot attack that card');
         },
         'when second player restore state should have card undamaged and still in own zone'() {
             this.match.start();

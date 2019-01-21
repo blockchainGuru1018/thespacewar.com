@@ -6,16 +6,16 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
 
     getRequirements() {
         return this._playerStateService
-                   .getPlayerState()
-                   .requirements
-                   .slice();
+            .getPlayerState()
+            .requirements
+            .slice();
     }
 
     getFirstMatchingRequirement({ type, common = null, waiting = null }) {
         const requirements = this._playerStateService
-                                 .getPlayerState()
-                                 .requirements
-                                 .slice();
+            .getPlayerState()
+            .requirements
+            .slice();
         return this._findMatchingRequirement(requirements, { type, common, waiting });
     }
 
@@ -83,15 +83,14 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
     }
 
     updateFirstMatchingRequirement({ type, common = null, waiting = null }, updateFn) {
-        const updatedState = this._playerStateService
-                                 .update(playerState => {
-                                     const requirements = playerState.requirements.slice();
-                                     const requirement = this._findMatchingRequirement(
-                                         requirements,
-                                         { type, common, waiting }
-                                     );
-                                     updateFn(requirement);
-                                 });
+        const updatedState = this._playerStateService.update(playerState => {
+            const requirements = playerState.requirements.slice();
+            const requirement = this._findMatchingRequirement(
+                requirements,
+                { type, common, waiting }
+            );
+            updateFn(requirement);
+        });
 
         const requirements = updatedState.requirements.slice();
         return this._findMatchingRequirement(requirements, { type, common, waiting });

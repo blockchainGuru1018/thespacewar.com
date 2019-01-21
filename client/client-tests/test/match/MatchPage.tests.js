@@ -23,6 +23,7 @@ const CommonShipId = '25';
 const FastMissileId = '6';
 const FatalErrorCommonId = '38';
 const TriggerHappyJoeCommonId = '24';
+const DeadlySniperCommonId = '39';
 
 const Vue = require('vue').default;
 const Vuex = require('vuex').default;
@@ -302,30 +303,19 @@ module.exports = testCase('MatchPage', {
     },
     'behaviours - Small Cannon': {
         'when in attack phase with small cannon and has attacked once should be able to attack again': async function () {
-            const events = [
-                PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
-                AttackEvent({ turn: 2, attackerCardId: 'C1A', cardCommonId: 'C1A' })
-            ];
-            const { dispatch } = this.createController({
-                cardFactory: {
-                    createFromVuexStore() {
-                        return new SmallCannon({
-                            eventRepository: { getAll: () => events },
-                            matchInfoRepository: { getTurn: () => 2, getPlayerPhase: () => 'attack' },
-                            playerId: 'P1A',
-                            card: { id: 'C1A', type: 'defense' }
-                        });
-                    }
-                }
-            });
+            const { dispatch } = this.createController();
             this.controller.showPage();
 
             dispatch('restoreState', FakeState({
                 turn: 2,
+                phase: 'attack',
                 currentPlayer: 'P1A',
-                cardsInZone: [{ id: 'C1A' }],
+                cardsInZone: [{ id: 'C1A', commonId: SmallCannon.CommonId }],
                 opponentCardsInPlayerZone: [{ id: 'C2A' }],
-                events
+                events: [
+                    PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
+                    AttackEvent({ turn: 2, attackerCardId: 'C1A', cardCommonId: 'C1A' })
+                ]
             }));
             await timeout();
 
@@ -1158,7 +1148,7 @@ module.exports = testCase('MatchPage', {
                 await timeout();
             },
             'should show guide text'() {
-                assert.elementText('.guideText', 'Draw 2 cards');
+                assert.elementText('.guideText', 'Draw card or Mill opponent');
             },
             'should show draw pile action overlay'() {
                 assert.elementCount('.drawPile-draw', 1);
@@ -1177,11 +1167,11 @@ module.exports = testCase('MatchPage', {
                 }));
                 await timeout();
             },
-            'should NOT show opponent draw pile mill action overlay'() {
-                assert.elementCount('.drawPile-discardTopTwo', 0);
+            'should show opponent draw pile mill action overlay'() {
+                assert.elementCount('.drawPile-discardTopTwo', 1);
             },
-            'should NOT show opponent draw pile help text'() {
-                assert.elementCount('.opponentDrawPileDescription', 0);
+            'should show opponent draw pile help text'() {
+                assert.elementCount('.opponentDrawPileDescription', 1);
             }
         },
         'when have discard card requirement but a draw card requirement is the first': {
@@ -1198,7 +1188,7 @@ module.exports = testCase('MatchPage', {
                 await timeout();
             },
             'should show draw card guide text'() {
-                assert.elementText('.guideText', 'Draw 2 cards');
+                assert.elementText('.guideText', 'Draw card or Mill opponent');
             }
         }
     },
@@ -1419,10 +1409,16 @@ module.exports = testCase('MatchPage', {
                     cardsOnHand: [{ id: 'C1A', commonId: FatalErrorCommonId }],
                     cardsInZone: [{ id: 'C2A' }],
                     cardsInOpponentZone: [{ id: 'C3A' }],
-                    stationCards: [{ place: 'draw', id: 'S1A' }],
-                    opponentCardsInZone: [{ id: 'C3A' }],
-                    opponentCardsInPlayerZone: [{ id: 'C3A' }],
-                    opponentStationCards: [{ place: 'draw', id: 'S2A' }]
+                    stationCards: [
+                        { place: 'draw', id: 'C4A' },
+                        { place: 'draw', id: 'C9A', flipped: true, card: createCard({ id: 'C9A' }) }
+                    ],
+                    opponentCardsInZone: [{ id: 'C5A' }],
+                    opponentCardsInPlayerZone: [{ id: 'C6A' }],
+                    opponentStationCards: [
+                        { place: 'draw', id: 'C7A' },
+                        { place: 'draw', id: 'C8A', flipped: true, card: createCard({ id: 'C8A' }) }
+                    ]
                 }));
                 await timeout();
                 await click('.field-playerCardsOnHand .card');
@@ -1447,20 +1443,23 @@ module.exports = testCase('MatchPage', {
             'should be able to select opponent card in opponent zone'() {
                 assert.elementCount('.opponentCardsInZone .selectable', 1);
             },
-            'should be able to select opponent station card'() {
-                assert.elementCount('.field-opponent .stationCard .selectable', 1);
+            'should be able to select BOTH opponents station cards'() {
+                assert.elementCount('.field-opponent .stationCard .selectable', 2);
             },
-            'should be able to select first player card in home zone'() {
-                assert.elementCount('.playerCardsInZone .card:eq(0) .selectable', 1);
+            'should NOT be able to select first player card in home zone'() {
+                assert.elementCount('.playerCardsInZone .card:eq(0) .selectable', 0);
             },
-            'should NOT be able to select second player card in home zone'() {
+            'should NOT be able to select players second card in home zone'() {
                 assert.elementCount('.playerCardsInZone .card:eq(1) .selectable', 0);
             },
-            'should be able to select player card in opponent zone'() {
-                assert.elementCount('.playerCardsInOpponentZone .selectable', 1);
+            'should NOT be able to select player card in opponent zone'() {
+                assert.elementCount('.playerCardsInOpponentZone .selectable', 0);
             },
-            'should be able to select player station card'() {
-                assert.elementCount('.field-player .stationCard .selectable', 1);
+            'should NOT be able to select player station card'() {
+                assert.elementCount('.field-player .stationCard .selectable', 0);
+            },
+            'should NOT be able to move own flipped station card'() {
+                assert.elementCount('.stationCard .movable', 0);
             }
         },
         'when move Fatal Error from station to zone': {
@@ -1582,6 +1581,56 @@ module.exports = testCase('MatchPage', {
             },
             'should be able to attack another unflipped station card'() {
                 assert.elementCount('.field-opponentStation .attackable', 1);
+            }
+        }
+    },
+    'Deadly sniper': {
+        'when card was placed this turn': {
+            async setUp() {
+                const { dispatch } = this.createController();
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'attack',
+                    cardsInZone: [{ id: 'C1A', type: 'spaceShip', commonId: DeadlySniperCommonId }],
+                    opponentCardsInZone: [{ id: 'C2A' }],
+                    opponentCardsInPlayerZone: [{ id: 'C3A' }],
+                    events: [
+                        PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A' })
+                    ]
+                }));
+                await timeout();
+
+                await click('.playerCardsInZone .card .readyToAttack');
+            },
+            'should NOT be able to attack opponent card in opponent zone'() {
+                assert.elementCount('.opponentCardsInZone .attackable', 0);
+            },
+            'should be able to attack opponent card in home zone'() {
+                assert.elementCount('.opponentCardsInPlayerZone .attackable', 1);
+            }
+        },
+        'when was placed last turn': {
+            async setUp() {
+                const { dispatch } = this.createController();
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 2,
+                    currentPlayer: 'P1A',
+                    phase: 'attack',
+                    cardsInZone: [{ id: 'C1A', type: 'spaceShip', commonId: DeadlySniperCommonId }],
+                    opponentCardsInZone: [{ id: 'C2A' }],
+                    events: [
+                        PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A' })
+                    ]
+                }));
+                await timeout();
+
+                await click('.playerCardsInZone .card .readyToAttack');
+            },
+            'should be able to attack opponent card in opponent zone '() {
+                assert.elementCount('.opponentCardsInZone .attackable', 1);
             }
         }
     }

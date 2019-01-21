@@ -14,7 +14,7 @@
                      class="movable actionOverlay">
                     Move
                 </div>
-                <div v-if="canAttackThisTurn"
+                <div v-if="canAttack"
                      @click.stop="readyToAttackClick"
                      class="readyToAttack actionOverlay">
                     Attack
@@ -131,8 +131,18 @@
                 return card.canMove();
             },
             canAttack() {
+                if (this.attackerCardId) return false;
+
                 const card = this.createCard(this.card);
-                return !this.attackerCardId && card.canAttack();
+                if (!card.canAttack()) return false;
+
+                if (!card.canAttackCardsInOtherZone()
+                    && !this.canAttackSomeCardInSameZone) return false;
+
+                return true;
+            },
+            canAttackSomeCardInSameZone() {
+                return this.canAttackCardInZone || this.canAttackStationCards;
             },
             canAttackCardInZone() {
                 return this.zoneOpponentRow
@@ -140,20 +150,13 @@
                     .length > 0;
             },
             canAttackStationCards() {
-                const canAttackStationCards = this.createCard(this.card).canAttackStationCards();
-                console.log(canAttackStationCards)
-                return canAttackStationCards
+                return this.createCard(this.card).canAttackStationCards()
                     && this.allOpponentStationCards.length > 0;
             },
-            canAttackThisTurn() {
-                const canAttackSomeTarget = (this.canAttackCardInZone || this.canAttackStationCards)
-                return this.canAttack && canAttackSomeTarget;
-            },
             canBeSelectedAsDefender() {
-                const card = this.createCard(this.card);
+                const card = this.createCard(this.card, { isOpponent: !this.isPlayerCard });
                 return !this.isPlayerCard
                     && this.attackerCardId
-                    && this.zoneOpponentRow.some(c => c.id === this.attackerCardId)
                     && this.attackerCard.canAttackCard(card);
             },
             canBeDiscarded() {
@@ -173,6 +176,7 @@
             canSelectCardForAction() {
                 const cardIsTransient = this.transientPlayerCardsInHomeZone.some(c => c.id === this.card.id); //TODO Perhaps have a flag in the fake card data that says that it is transient?
                 return !cardIsTransient
+                    && !this.isPlayerCard
                     && this.canSelectCardsForActiveAction;
             }
         },

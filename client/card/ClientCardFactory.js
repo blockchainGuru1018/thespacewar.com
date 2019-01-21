@@ -13,7 +13,7 @@ module.exports = class ClientCardFactory extends CardFactory {
         this._cardDataAssembler = CardDataAssembler();
     }
 
-    createFromVuexStore(cardInfo, state) {
+    createFromVuexStore(cardInfo, state, { isOpponent = false, playerId = null } = {}) {
         const cardDataAssembler = this._cardDataAssembler;
         let cardData = !!cardInfo.commonId
             ? { ...cardDataAssembler.createFromCommonId(cardInfo.commonId), ...cardInfo }
@@ -21,6 +21,11 @@ module.exports = class ClientCardFactory extends CardFactory {
 
         const mappedState = mapFromClientToServerState(state);
         this._matchService.setState(mappedState);
-        return super.createCardForPlayer(cardData, state.ownUser.id);
+
+        let cardOwnerId = isOpponent ? state.opponentUser.id : state.ownUser.id;
+        if (playerId !== null) {
+            cardOwnerId = playerId;
+        }
+        return super.createCardForPlayer(cardData, cardOwnerId);
     }
 }

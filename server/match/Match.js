@@ -65,7 +65,13 @@ module.exports = function ({
     };
 
     const stateChangeListener = new StateChangeListener({ playerServiceProvider, matchService, logger });
-    const matchComService = new MatchComService({ matchId, players, logger, stateChangeListener });
+    const matchComService = new MatchComService({
+        matchId,
+        players,
+        logger,
+        playerServiceProvider,
+        stateChangeListener
+    });
 
     const controllerDeps = {
         matchService,

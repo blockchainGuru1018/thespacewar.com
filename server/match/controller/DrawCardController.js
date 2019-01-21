@@ -1,5 +1,3 @@
-const DrawCardEvent = require('../../../shared/event/DrawCardEvent.js');
-
 function DrawCardController(deps) {
 
     const {
@@ -50,26 +48,25 @@ function DrawCardController(deps) {
     function onDiscardOpponentTopTwoCards(playerId) {
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
         const drawCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'drawCard' });
-        if (drawCardRequirement) {
-            throw new Error('Cannot mill opponent with other requirements still in progress');
-        }
-
         const playerStateService = playerStateServiceById[playerId];
-        const cannotDrawMoreCards = !playerStateService.moreCardsCanBeDrawnForDrawPhase();
-        if (cannotDrawMoreCards) {
+        if (!drawCardRequirement && !playerStateService.moreCardsCanBeDrawnForDrawPhase()) {
             matchComService.emitToPlayer(playerId, 'drawCards', { moreCardsCanBeDrawn: false });
             return;
         }
 
-        const turn = matchService.getTurn();
-        playerStateService.storeEvent(new DrawCardEvent({ turn }));
-
-        const moreCardsCanBeDrawn = playerStateService.moreCardsCanBeDrawnForDrawPhase();
-        matchComService.emitToPlayer(playerId, 'drawCards', { moreCardsCanBeDrawn, cards: [] });
-
-        const opponentStateService = playerStateServiceById[matchComService.getOpponentId(playerId)];
+        const opponentStateService = playerStateServiceById[matchService.getOpponentId(playerId)];
         opponentStateService.discardTopTwoCardsInDrawPile();
+        playerStateService.registerMill();
 
+        if (drawCardRequirement) {
+            const requirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'drawCard' });
+            requirementUpdater.progressRequirementByCount(1);
+        }
+        else {
+            matchComService.emitToPlayer(playerId, 'drawCards', {
+                moreCardsCanBeDrawn: playerStateService.moreCardsCanBeDrawnForDrawPhase()
+            });
+        }
     }
 }
 

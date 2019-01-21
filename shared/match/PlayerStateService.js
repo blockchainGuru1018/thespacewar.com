@@ -21,7 +21,7 @@ class PlayerStateService {
         this._actionPointsCalculator = actionPointsCalculator;
         this._cardFactory = cardFactory;
         this._logger = logger || { log: (...args) => console.log('PlayerStateService logger: ', ...args) };
-        this._changeListeners = [];
+        this._stateTouchListeners = [];
     }
 
     getPhase() {
@@ -236,6 +236,11 @@ class PlayerStateService {
 
     discardTopTwoCardsInDrawPile() {
         const deck = this.getDeck();
+        if (deck.getCardCount() === 0) {
+            this._logger.log(`PLAYERID=${this._playerId} Cannot mill, deck is empty`, 'playerStateService');
+            return;
+        }
+
         const cards = deck.draw(2);
         for (let card of cards) {
             this.discardCard(card);
@@ -258,12 +263,12 @@ class PlayerStateService {
 
     drawCard({ byEvent = false } = {}) {
         const deck = this.getDeck();
-        const card = deck.drawSingle();
-        if (!card) {
+        if (deck.getCardCount() === 0) {
             this._logger.log(`PLAYERID=${this._playerId} Cannot draw card, deck is empty`, 'playerStateService');
             return;
         }
 
+        const card = deck.drawSingle();
         this.update(state => {
             state.cardsOnHand.push(card);
         });
@@ -272,9 +277,11 @@ class PlayerStateService {
         this.storeEvent(DrawCardEvent({ turn, byEvent }));
     }
 
-    _createBehaviourCard(cardId) {
-        const cardData = this.findCard(cardId);
-        return this._cardFactory.createCardForPlayer(cardData);
+    registerMill({ byEvent = false } = {}) {
+        if (!byEvent) {
+            const turn = this._matchService.getTurn();
+            this.storeEvent(new DrawCardEvent({ turn }));
+        }
     }
 
     repairCard(repairerCardId, cardToRepairId) {
@@ -421,16 +428,16 @@ class PlayerStateService {
     update(updateFn) {
         const playerState = this.getPlayerState();
 
-        const emit = this._emitChange.bind(this);
+        const emit = this._emitStateTouched.bind(this);
         const playerId = this._playerId;
         const proxy = new Proxy(playerState, {
             set(target, property, value) {
                 playerState[property] = value;
-                emit({ property, value, playerId });
+                emit({ property, playerId });
                 return true;
             },
             get(target, property) {
-                emit({ property, value: target[property], playerId });
+                emit({ property, playerId });
                 return target[property];
             }
         });
@@ -442,14 +449,19 @@ class PlayerStateService {
         return this._matchService.getPlayerState(this._playerId);
     }
 
-    listenForChanges(listener) {
-        this._changeListeners.push(listener);
+    listenForStateTouches(listener) {
+        this._stateTouchListeners.push(listener);
     }
 
-    _emitChange(data) {
-        for (const listener of this._changeListeners) {
+    _emitStateTouched(data) {
+        for (const listener of this._stateTouchListeners) {
             listener(data);
         }
+    }
+
+    _createBehaviourCard(cardId) {
+        const cardData = this.findCard(cardId);
+        return this._cardFactory.createCardForPlayer(cardData);
     }
 }
 

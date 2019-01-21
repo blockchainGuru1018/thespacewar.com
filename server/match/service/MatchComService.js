@@ -5,10 +5,11 @@ const prepareOpponentState = require('./prepareOpponentState.js');
 
 class MatchComService {
 
-    constructor({ matchId, players, logger, stateChangeListener }) {
+    constructor({ matchId, players, logger, playerServiceProvider, stateChangeListener }) {
         this._matchId = matchId;
         this._players = players;
         this._logger = logger;
+        this._playerServiceProvider = playerServiceProvider;
 
         stateChangeListener.listenForSnapshots(this._onSnapshot.bind(this));
     }
@@ -80,10 +81,13 @@ class MatchComService {
     _onSnapshot(snapshot) {
         for (const player of this.getPlayers()) {
             const playerId = player.id;
-            let opponentId = this.getOpponentId(playerId);
+            const playerChangedKeys = snapshot.changedKeysByPlayerId[playerId];
+            const playerChangedState = this._getPlayerChangedState(playerId, playerChangedKeys);
 
-            const playerChangedState = snapshot.changeDataByPlayerId[playerId];
-            const opponentChangedState = snapshot.changeDataByPlayerId[opponentId];
+            let opponentId = this.getOpponentId(playerId);
+            const opponentChangedKeys = snapshot.changedKeysByPlayerId[opponentId];
+            const opponentChangedState = this._getPlayerChangedState(opponentId, opponentChangedKeys);
+
             const data = {
                 ...preparePlayerState(playerChangedState),
                 ...prepareOpponentState(opponentChangedState)
@@ -94,6 +98,21 @@ class MatchComService {
             }
         }
     }
+
+    _getPlayerChangedState(playerId, playerChangedKeys) {
+        const playerStateService = this._playerServiceProvider.getStateServiceById(playerId);
+        const playerState = playerStateService.getPlayerState();
+        return getChangedStateFromChangedKeys(playerState, playerChangedKeys);
+    }
+}
+
+function getChangedStateFromChangedKeys(state, changedKeys) {
+    const changedState = {};
+    for (const key of changedKeys) {
+        changedState[key] = state[key];
+    }
+
+    return changedState;
 }
 
 module.exports = MatchComService;

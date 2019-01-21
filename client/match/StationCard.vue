@@ -1,16 +1,11 @@
 <template>
-    <div v-if="stationCard.flipped" :style="cardStyle" :class="classes">
+    <div :style="cardStyle" :class="classes">
         <div class="actionOverlays">
             <div v-if="canMoveCardToZone"
                  @click.stop="startPuttingDownCard({ location: 'zone', cardId: stationCard.id })"
                  class="movable">
                 Move to zone
             </div>
-        </div>
-    </div>
-    <div v-else-if="selectedWithDanger" :class="classes"/>
-    <div v-else :class="classes">
-        <div class="actionOverlays">
             <div v-if="canBeSelectedAsDefender"
                  @click.stop="selectStationCardAsDefender(stationCard)"
                  class="attackable"/>
@@ -92,12 +87,16 @@
                 return classes;
             },
             cardStyle() {
-                return {
-                    backgroundImage: 'url(/card/' + this.stationCard.card.commonId + '/image)'
+                if (this.stationCard.flipped) {
+                    return {
+                        backgroundImage: 'url(/card/' + this.stationCard.card.commonId + '/image)'
+                    }
                 }
+                return {};
             },
             canMoveCardToZone() {
                 return this.phase === 'action'
+                    && this.stationCard.flipped
                     && this.actionPoints2 >= this.stationCard.card.cost
                     && !this.isOpponentStationCard
                     && this.canMoveStationCards;
@@ -126,7 +125,8 @@
                     && this.canSelectStationCards;
             },
             canBeSelectedForAction() {
-                return this.canSelectCardsForActiveAction;
+                return this.isOpponentStationCard
+                    && this.canSelectCardsForActiveAction;
             }
         },
         methods: {

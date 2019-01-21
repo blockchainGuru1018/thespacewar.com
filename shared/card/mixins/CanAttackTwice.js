@@ -11,6 +11,6 @@ module.exports = superclass => class extends superclass {
 function canAttackAnyCard(context) {
     const turn = context._matchInfoRepository.getTurn();
     const attacks = context._queryEvents.getAttacksOnTurn(context._card.id, turn);
-    const currentPlayerPhase = context._matchInfoRepository.getPlayerPhase(context._playerId)
+    const currentPlayerPhase = context._matchInfoRepository.getPlayerPhase(context.playerId)
     return currentPlayerPhase === 'attack' && attacks.length < 2;
 }

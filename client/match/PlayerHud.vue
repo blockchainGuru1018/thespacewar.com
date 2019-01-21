@@ -227,17 +227,14 @@
                 if (this.firstRequirementIsDiscardCard) {
                     const cardsToDiscard = this.countInFirstRequirement;
                     return `Discard ${cardsToDiscard} ${pluralize('card', cardsToDiscard)}`;
-                } else if (this.firstRequirementIsDamageOwnStationCard) {
-                    const cardsToSelect = this.cardsLeftToSelect;
-                    if (cardsToSelect === 0) {
-                        return '';
-                    } else {
-                        return `Select ${cardsToSelect} of your own station cards to damage`;
-                    }
-                } else if (this.firstRequirementIsDrawCard) {
-                    const cardsToDraw = this.countInFirstRequirement;
-                    return `Draw ${cardsToDraw} ${pluralize('card', cardsToDraw)}`;
-                } else {
+                }
+                else if (this.firstRequirementIsDamageOwnStationCard && this.cardsLeftToSelect > 0) {
+                    return `Select ${this.cardsLeftToSelect} of your own station cards to damage`;
+                }
+                else if (this.firstRequirementIsDrawCard) {
+                    return this.composeDrawOrMillText();
+                }
+                else {
                     return '';
                 }
             },
@@ -271,6 +268,9 @@
             },
             hideEnlargedCard() {
                 this.enlargedCardVisible = false;
+            },
+            composeDrawOrMillText() {
+                return 'Draw card or Mill opponent';
             }
         }
     };

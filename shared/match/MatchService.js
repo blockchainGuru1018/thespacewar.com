@@ -54,6 +54,10 @@ class MatchService {
         return null;
     }
 
+    isPlayerCardInHomeZone(playerId, cardId) {
+        return this._state.playerStateById[playerId].cardsInZone.some(c => c.id === cardId);
+    }
+
     goToNextTurn() {
         this.update(state => {
             state.turn += 1;

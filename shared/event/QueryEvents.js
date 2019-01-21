@@ -4,6 +4,16 @@ class QueryEvents { // TODO rename QueryCardEvents?
         this._eventRepository = eventRepository;
     }
 
+    getTurnWhenCardWasPutDown(cardId) {
+        const events = this._eventRepository.getAll();
+        const putDownEventForThisCard = events.find(e => {
+            return e.type === 'putDownCard'
+                && e.cardId === cardId;
+        });
+        if (!putDownEventForThisCard) throw new Error(`Asking when card (${cardId}) was put down. But card has not been put down.`);
+        return putDownEventForThisCard.turn;
+    }
+
     getAttacksOnTurn(cardId, turn) {
         const events = this._eventRepository.getAll();
         return events.filter(event => {

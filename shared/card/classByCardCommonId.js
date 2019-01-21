@@ -10,7 +10,9 @@ const classes = [
     require('./LastHope.js'),
     require('./GoodKarma.js'),
     require('./Neutralization.js'),
-    require('./Supernova.js')
+    require('./Supernova.js'),
+    require('./DeadlySniper.js'),
+    require('./TheDarkDestroyer.js')
 ];
 
 const classByCardCommonId = {}
