@@ -24,6 +24,7 @@ const FastMissileId = '6';
 const FatalErrorCommonId = '38';
 const TriggerHappyJoeCommonId = '24';
 const DeadlySniperCommonId = '39';
+const ExpansionCommonId = '40';
 
 const Vue = require('vue').default;
 const Vuex = require('vuex').default;
@@ -1659,6 +1660,32 @@ module.exports = testCase('MatchPage', {
             },
             'should be able to attack opponent station card'() {
                 assert.elementCount('.field-opponentStation .attackable', 1);
+            }
+        }
+    },
+    'Expansion:': {
+        'when has expansion in play and has put down a station card and hold a card': {
+            async setUp() {
+                const { dispatch } = this.createController();
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'action',
+                    stationCards: [{ id: 'C1A', place: 'draw' }],
+                    cardsInZone: [{ id: 'C2A', type: 'duration', commonId: ExpansionCommonId }],
+                    cardsOnHand: [{ id: 'C3A' }],
+                    events: [
+                        PutDownCardEvent({ turn: 1, location: 'station-draw', cardId: 'C1A' }),
+                        { type: 'putDownExtraStationCard', effectCardId: 'C2A', turn: 1 }
+                    ]
+                }));
+                await timeout();
+
+                await click('.field-playerCardsOnHand .card');
+            },
+            'should be able to put down a second station card'() {
+                assert.elementCount('.field-playerStation .card-ghost', 3);
             }
         }
     }

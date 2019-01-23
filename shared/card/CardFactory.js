@@ -6,8 +6,10 @@ const QueryEvents = require('../event/QueryEvents.js');
 
 module.exports = class CardFactory {
 
-    constructor(deps) {
-        this._matchService = deps.matchService;
+    constructor({
+        matchService
+    }) {
+        this._matchService = matchService;
     }
 
     createCardForPlayer(cardData, playerId) {

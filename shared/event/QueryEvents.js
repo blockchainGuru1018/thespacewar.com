@@ -58,14 +58,6 @@ class QueryEvents { // TODO rename QueryCardEvents?
         return putDownStationCardEvents.length;
     }
 
-    hasAlreadyPutDownStationCardThisTurn(turn) {
-        return this._eventRepository.getAll().some(e => {
-            return e.turn === turn
-                && e.type === 'putDownCard'
-                && e.location.startsWith('station');
-        });
-    }
-
     getCardDrawsOnTurn(turn, { byEvent = false } = {}) {
         const events = this._eventRepository.getAll();
         return events.filter(event => {

@@ -12,7 +12,8 @@ const classes = [
     require('./Neutralization.js'),
     require('./Supernova.js'),
     require('./DeadlySniper.js'),
-    require('./TheDarkDestroyer.js')
+    require('./TheDarkDestroyer.js'),
+    require('./Expansion.js')
 ];
 
 const classByCardCommonId = {}

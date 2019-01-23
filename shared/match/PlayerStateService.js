@@ -35,9 +35,16 @@ class PlayerStateService {
         return cardsToDrawOnTurnCount > cardDrawEvents.length;
     }
 
-    hasAlreadyPutDownStationCardThisTurn() {
+    canPutDownMoreStationCards() {
+        const durationCards = this
+            .getDurationCards()
+            .map(c => this._createBehaviourCard(c));
+        const extraAllowedStationCards = sum(durationCards, 'allowsToPutDownExtraStationCards');
+        const totalAllowedStationCards = extraAllowedStationCards + 1;
+
         let currentTurn = this._matchService.getTurn();
-        return this._queryEvents.hasAlreadyPutDownStationCardThisTurn(currentTurn);
+        const stationCardsPutDownThisTurn = this._queryEvents.getStationCardsPutDownThisTurnCount(currentTurn)
+        return stationCardsPutDownThisTurn < totalAllowedStationCards;
     }
 
     getCardsInOpponentZone() {
@@ -460,11 +467,11 @@ class PlayerStateService {
 
     _createBehaviourCardById(cardId) {
         const cardData = this.findCard(cardId);
-        return this._cardFactory.createCardForPlayer(cardData);
+        return this._cardFactory.createCardForPlayer(cardData, this._playerId);
     }
 
     _createBehaviourCard(cardData) {
-        return this._cardFactory.createCardForPlayer(cardData);
+        return this._cardFactory.createCardForPlayer(cardData, this._playerId);
     }
 }
 

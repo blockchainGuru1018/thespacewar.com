@@ -3,7 +3,7 @@ const AttackEvent = require('../../shared/event/AttackEvent.js');
 const RepairCardEvent = require('../../shared/event/RepairCardEvent.js');
 const QueryEvents = require('../../shared/event/QueryEvents.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
-const CardFactory = require('../card/ClientCardFactory.js');
+const ClientCardFactory = require('../card/ClientCardFactory.js');
 const MatchService = require("../../shared/match/MatchService");
 const ClientPlayerStateService = require("./ClientPlayerStateService");
 const mapFromClientToServerState = require('./mapFromClientToServerState.js');
@@ -33,7 +33,7 @@ module.exports = function (deps) {
     const cardInfoRepository = deps.cardInfoRepository;
     const actionPointsCalculator = deps.actionPointsCalculator || ActionPointsCalculator({ cardInfoRepository });
     const matchController = deps.matchController;
-    const cardFactory = deps.cardFactory || new CardFactory();
+    const clientCardFactory = deps.cardFactory || new ClientCardFactory();
 
     return {
         namespaced: true,
@@ -209,7 +209,7 @@ module.exports = function (deps) {
 
     function createCard(state) {
         return (cardData, { isOpponent = false, playerId = null } = {}) => {
-            return cardFactory.createFromVuexStore(cardData, state, { isOpponent, playerId });
+            return clientCardFactory.createFromVuexStore(cardData, state, { isOpponent, playerId });
         };
     }
 
@@ -253,7 +253,7 @@ module.exports = function (deps) {
         };
     }
 
-    function playerStateService(state) {
+    function playerStateService(state, getters) {
         const matchService = new MatchService();
         const mappedState = mapFromClientToServerState(state);
         matchService.setState(mappedState);
@@ -264,10 +264,12 @@ module.exports = function (deps) {
             }
         }
         return new ClientPlayerStateService({
+            updateStore,
             playerId: state.ownUser.id,
             matchService,
-            queryEvents,
-            updateStore
+            actionPointsCalculator,
+            queryEvents: getters.queryEvents,
+            cardFactory: clientCardFactory
         });
     }
 

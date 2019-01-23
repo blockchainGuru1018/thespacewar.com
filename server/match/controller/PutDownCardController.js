@@ -49,11 +49,8 @@ function PutDownCardController(deps) {
                 throw new CheatError('Cannot afford card');
             }
         }
-        else if (location.startsWith('station')) {
-            const hasAlreadyPutDownStationCard = playerStateService.hasAlreadyPutDownStationCardThisTurn();
-            if (hasAlreadyPutDownStationCard) {
-                throw new CheatError('Cannot put down more than one station card on the same turn');
-            }
+        else if (location.startsWith('station') && !playerStateService.canPutDownMoreStationCards()) {
+            throw new CheatError('Cannot put down more station cards this turn');
         }
     }
 
@@ -94,11 +91,50 @@ function PutDownCardController(deps) {
     function putDownStationCard({ playerId, cardData, location }) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         const stationCard = playerStateService.addStationCard(cardData, location);
+
+        const currentTurn = matchService.getTurn();
+        const durationCardsThatPermitExtraStationCards = playerStateService
+            .getDurationCards()
+            .map(c => cardFactory.createCardForPlayer(c, playerId))
+            .filter(c => !!c.allowsToPutDownExtraStationCards
+                && !!c.requirementsOnPutDownExtraStationCard
+                && !playerStateService.getEvents().some(e => {
+                    return e.turn === currentTurn
+                        && e.type === 'putDownExtraStationCard'
+                        && e.effectCardId === c.id
+                }));
+
+        for (const durationCard of durationCardsThatPermitExtraStationCards) {
+            playerStateService.storeEvent({
+                type: 'putDownExtraStationCard',
+                effectCardId: durationCard.id,
+                turn: currentTurn
+            });
+
+            addCardRequirements({
+                playerId,
+                requirements: durationCard.requirementsOnPutDownExtraStationCard
+            });
+        }
+
         matchComService.emitToOpponentOf(
             playerId,
             'putDownOpponentStationCard',
             matchComService.prepareStationCardForClient(stationCard)
-        );
+        ); //TODO Can this be removed?
+    }
+
+    function addCardRequirements({ playerId, requirements }) { //TODO Duplicated from another controller. Perhaps this could move in to some service
+        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
+        for (const requirement of requirements.forPlayer) {
+            playerRequirementService.addCardRequirement(requirement);
+        }
+
+        const opponentId = matchComService.getOpponentId(playerId);
+        const opponentRequirementService = playerServiceProvider.getRequirementServiceById(opponentId);
+        for (const requirement of requirements.forOpponent) {
+            opponentRequirementService.addCardRequirement(requirement);
+        }
     }
 
     function removeCardFromPlayerHand(playerId, cardId) {

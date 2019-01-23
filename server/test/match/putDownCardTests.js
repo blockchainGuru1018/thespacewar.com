@@ -18,12 +18,13 @@ const {
     createState,
     FakeDeck
 } = require('./shared.js');
-
+const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
 const GrandOpportunityCommonId = '20';
 const ExcellentWorkCommonId = '14';
 const SupernovaCommonId = '15';
 const DiscoveryCommonId = '42';
 const FatalErrorCommonId = '38';
+const ExpansionCommonId = '40';
 
 module.exports = {
     'when does NOT have card should throw error': function () {
@@ -161,7 +162,7 @@ module.exports = {
 
         let error = catchError(() => match.putDownCard('P1A', { location: 'station-draw', cardId: 'C2A' }));
 
-        assert.equals(error.message, 'Cannot put down more than one station card on the same turn');
+        assert.equals(error.message, 'Cannot put down more station cards this turn');
         assert.equals(error.type, 'CheatDetected');
     },
     'when put down card and is NOT your turn should throw error': function () {
@@ -1063,6 +1064,174 @@ module.exports = {
             'should emit card was NOT moved to discard pile for second player'() {
                 assert.calledOnce(this.secondPlayerConnection.stateChanged);
                 refute.defined(this.secondPlayerConnection.stateChanged.lastCall.args[0].discardedCards);
+            }
+        }
+    },
+    'Expansion:': {
+        'when in the action phase and has put down second station card': {
+            async setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stateChanged']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    playerStateById: {
+                        'P1A': {
+                            turn: 1,
+                            phase: 'action',
+                            cardsInZone: [createCard({ id: 'C2A', type: 'duration', commonId: ExpansionCommonId })],
+                            stationCards: [
+                                { place: 'draw', id: 'C1A', card: createCard({ id: 'C1A' }) }
+                            ],
+                            events: [
+                                PutDownCardEvent({ turn: 1, location: 'station-draw', cardId: 'C1A' })
+                            ]
+                        },
+                    },
+                    deckByPlayerId: {
+                        'P2A': FakeDeck.realDeckFromCards([
+                            createCard({ id: 'C3A' }),
+                            createCard({ id: 'C4A' })
+                        ])
+                    }
+                }));
+
+                const options = { location: 'station-draw', cardId: 'C2A' };
+                this.error = catchError(() => this.match.putDownCard('P1A', options));
+            },
+            'should NOT throw'() {
+                refute(this.error);
+            },
+            'should have put down second station card'() {
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                    stationCards: [
+                        sinon.match({ id: 'C1A', place: 'draw' }),
+                        sinon.match({ id: 'C2A', place: 'draw' })
+                    ]
+                }));
+            },
+            'should have sent requirement to second player'() {
+                assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                    requirements: [{ type: 'drawCard', count: 2 }]
+                }));
+            }
+        },
+        'when put down 2nd station card this turn and has 2 Expansion cards in play': {
+            async setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stateChanged', 'restoreState']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    playerStateById: {
+                        'P1A': {
+                            turn: 1,
+                            phase: 'action',
+                            cardsOnHand: [
+                                createCard({ id: 'C5A' })
+                            ],
+                            cardsInZone: [
+                                createCard({ id: 'C3A', type: 'duration', commonId: ExpansionCommonId }),
+                                createCard({ id: 'C4A', type: 'duration', commonId: ExpansionCommonId })
+                            ],
+                            stationCards: [
+                                { place: 'draw', id: 'C1A', card: createCard({ id: 'C1A' }) }
+                            ],
+                            events: [
+                                PutDownCardEvent({ turn: 1, location: 'station-draw', cardId: 'C1A' }),
+                                { type: 'putDownExtraStationCard', effectCardId: 'C3A', turn: 1 }
+                            ]
+                        },
+                        'P2A': {
+                            requirements: [
+                                { type: 'drawCard', count: 2 }
+                            ]
+                        }
+                    },
+                    deckByPlayerId: {
+                        'P2A': FakeDeck.realDeckFromCards([
+                            createCard({ id: 'C3A' }),
+                            createCard({ id: 'C4A' })
+                        ])
+                    }
+                }));
+
+                const options = { location: 'station-draw', cardId: 'C5A' };
+                this.error = catchError(() => this.match.putDownCard('P1A', options));
+            },
+            'should NOT throw'() {
+                refute(this.error);
+            },
+            'should add second putDownExtraStationCard event to player'() {
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                    events: [
+                        sinon.match({ turn: 1, location: 'station-draw', cardId: 'C1A' }),
+                        { type: 'putDownExtraStationCard', effectCardId: 'C3A', turn: 1 },
+                        sinon.match({ turn: 1, location: 'station-draw', cardId: 'C5A' }),
+                        { type: 'putDownExtraStationCard', effectCardId: 'C4A', turn: 1 }
+                    ]
+                }));
+            },
+            'should add requirement to second player'() {
+                this.match.start();
+                assert.calledWith(this.secondPlayerConnection.restoreState, sinon.match({
+                    requirements: [
+                        sinon.match({ type: 'drawCard', count: 2 }),
+                        sinon.match({ type: 'drawCard', count: 2 })
+                    ]
+                }));
+            }
+        },
+        'when in the action phase and has put down 2 station cards and put down another': {
+            async setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stateChanged', 'restoreState']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    playerStateById: {
+                        'P1A': {
+                            turn: 1,
+                            phase: 'action',
+                            cardsOnHand: [
+                                createCard({ id: 'C5A' })
+                            ],
+                            cardsInZone: [
+                                createCard({ id: 'C3A', type: 'duration', commonId: ExpansionCommonId })
+                            ],
+                            stationCards: [
+                                { place: 'draw', id: 'C1A', card: createCard({ id: 'C1A' }) },
+                                { place: 'draw', id: 'C2A', card: createCard({ id: 'C2A' }) }
+                            ],
+                            events: [
+                                PutDownCardEvent({ turn: 1, location: 'station-draw', cardId: 'C1A' }),
+                                PutDownCardEvent({ turn: 1, location: 'station-draw', cardId: 'C2A' })
+                            ]
+                        },
+                    },
+                    deckByPlayerId: {
+                        'P2A': FakeDeck.realDeckFromCards([
+                            createCard({ id: 'C3A' }),
+                            createCard({ id: 'C4A' })
+                        ])
+                    }
+                }));
+
+                const options = { location: 'station-draw', cardId: 'C5A' };
+                this.error = catchError(() => this.match.putDownCard('P1A', options));
+            },
+            'should throw'() {
+                assert(this.error);
+                assert.equals(this.error.message, 'Cannot put down more station cards this turn');
+            },
+            'should NOT have put down third station card'() {
+                refute.called(this.firstPlayerConnection.stateChanged);
+            },
+            'should NOT add requirement to second player'() {
+                this.match.start();
+                assert.calledWith(this.secondPlayerConnection.restoreState, sinon.match({
+                    requirements: []
+                }));
             }
         }
     }

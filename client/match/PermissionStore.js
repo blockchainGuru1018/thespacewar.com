@@ -64,18 +64,15 @@ module.exports = function (deps) {
             && !hasRequirement;
     }
 
-    function canPutDownStationCards(state, getters, rootState) {
+    function canPutDownStationCards(state, getters, rootState, rootGetters) {
         if (getters.waitingForOtherPlayerToFinishRequirements) return false;
 
-        const matchState = rootState.match;
-        const hasAlreadyPutDownStationCard = matchState.events.some(e => {
-            return e.turn === matchState.turn
-                && e.type === 'putDownCard'
-                && e.location.startsWith('station');
-        })
         const hasRequirement = !!getFrom('firstRequirement', 'requirement');
-        return matchState.phase === 'action'
-            && !hasAlreadyPutDownStationCard
+        const playerStateService = rootGetters['match/playerStateService'];
+        const canPutDownMoreStationCards = playerStateService.canPutDownMoreStationCards();
+
+        return rootState.match.phase === 'action'
+            && canPutDownMoreStationCards
             && !hasRequirement;
     }
 
