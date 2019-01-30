@@ -14,7 +14,8 @@ function AttackController(deps) {
     return {
         onAttack,
         onAttackStationCards,
-        onDamageOwnStationCard
+        onDamageOwnStationCard,
+        onSacrifice
     }
 
     function onAttack(playerId, { attackerCardId, defenderCardId }) {
@@ -125,6 +126,28 @@ function AttackController(deps) {
 
         const requirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'damageOwnStationCard' });
         requirementUpdater.progressRequirementByCount(targetIds.length);
+    }
+
+    function onSacrifice(playerId, { cardId, targetCardId }) {
+        if (!targetCardId) throw new CheatError('Cannot sacrifice');
+        const opponentId = matchService.getOpponentId(playerId);
+        const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
+        const targetCardData = opponentStateService.findCard(targetCardId);
+        if (!targetCardData) throw new CheatError('Cannot sacrifice');
+
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const cardData = playerStateService.findCard(cardId);
+        const card = cardFactory.createCardForPlayer(cardData, playerId);
+        if (!card.canBeSacrificed()) throw new CheatError('Cannot sacrifice');
+
+        const targetCard = cardFactory.createCardForPlayer(targetCardData, opponentId);
+        if (!card.canTargetCardForSacrifice(targetCard)) throw new CheatError('Cannot sacrifice');
+
+        playerStateService.removeCard(cardId);
+        playerStateService.discardCard(cardData);
+
+        opponentStateService.removeCard(targetCardId);
+        opponentStateService.discardCard(targetCardData);
     }
 }
 

@@ -24,6 +24,11 @@
                      class="repair actionOverlay">
                     Repair
                 </div>
+                <div v-if="canBeSacrificed"
+                     @click="sacrifice(card.id)"
+                     class="sacrifice actionOverlay">
+                    Sacrifice
+                </div>
                 <div v-if="canBeDiscarded"
                      @click.stop="discardClick"
                      class="discard actionOverlay">
@@ -49,11 +54,11 @@
     const Vuex = require('vuex');
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
     const {
-        mapState: mapPutDownCardState,
-        mapGetters: mapPutDownCardGetters,
-        mapMutations: mapPutDownCardMutations,
-        mapActions: mapPutDownCardActions
-    } = Vuex.createNamespacedHelpers('putDownCard');
+        mapState: mapCardState,
+        mapGetters: mapCardGetters,
+        mapMutations: mapCardMutations,
+        mapActions: mapCardActions
+    } = Vuex.createNamespacedHelpers('card');
     const {
         mapState: mapPermissionState,
         mapGetters: mapPermissionGetters,
@@ -94,7 +99,7 @@
             ...mapPermissionGetters([
                 'canSelectCardsForActiveAction',
             ]),
-            ...mapPutDownCardState([
+            ...mapCardState([
                 'transientPlayerCardsInHomeZone',
             ]),
             classes() {
@@ -140,6 +145,9 @@
                     && !this.canAttackSomeCardInSameZone) return false;
 
                 return true;
+            },
+            canBeSacrificed() {
+                return this.createCard(this.card).canBeSacrificed();
             },
             canAttackSomeCardInSameZone() {
                 return this.canAttackCardInZone || this.canAttackStationCards;
@@ -189,7 +197,8 @@
                 'selectAsRepairer',
                 'selectForRepair'
             ]),
-            ...mapPutDownCardActions([
+            ...mapCardActions([
+                'startSacrifice',
                 'selectCardForActiveAction',
             ]),
             moveClick() {
@@ -206,6 +215,9 @@
             },
             hideEnlargedCard() {
                 this.showEnlargedCard = false;
+            },
+            sacrifice() {
+                this.startSacrifice(this.card.id);
             }
         },
         created() {
@@ -281,7 +293,7 @@
         background-color: rgba(0, 1, 51, .5);
     }
 
-    .readyToAttack, .attackable {
+    .readyToAttack, .attackable, .sacrifice {
         background-color: rgba(255, 100, 100, .5);
     }
 

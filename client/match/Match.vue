@@ -197,7 +197,7 @@
             </div>
         </div>
         <div v-if="holdingCard" class="card holdingCard" :style="holdingCardStyle"/>
-        <put-down-card-choice-dialog/>
+        <card-choice-dialog/>
         <loading-indicator/>
         <portal-target name="match" multiple/>
     </div>
@@ -212,15 +212,14 @@
         mapActions: mapPermissionActions
     } = Vuex.createNamespacedHelpers('permission');
     const {
-        mapState: mapPutDownCardState,
-        mapGetters: mapPutDownCardGetters,
-        mapMutations: mapPutDownCardMutations,
-        mapActions: mapPutDownCardActions
-    } = Vuex.createNamespacedHelpers('putDownCard');
+        mapState: mapCardState,
+        mapGetters: mapCardGetters,
+        mapActions: mapCardActions
+    } = Vuex.createNamespacedHelpers('card');
     const ZoneCard = require('./ZoneCard.vue').default;
     const StationCard = require('./StationCard.vue').default;
     const PlayerHud = require('./PlayerHud.vue').default;
-    const PutDownCardChoiceDialog = require('./PutDownCardChoiceDialog.vue').default;
+    const CardChoiceDialog = require('./CardChoiceDialog.vue').default;
     const LoadingIndicator = require('./loadingIndicator/LoadingIndicator.vue').default;
     const { PHASES } = require('./phases.js');
 
@@ -258,13 +257,13 @@
                 'createCard',
                 'allPlayerStationCards'
             ]),
-            ...mapPutDownCardState([
+            ...mapCardState([
                 'transientPlayerCardsInHomeZone',
                 'hiddenCardIdsOnHand',
                 'hiddenStationCardIds'
             ]),
-            ...mapPutDownCardGetters({
-                putDownCardChoiceDialogCardData: 'choiceCardData'
+            ...mapCardGetters({
+                cardChoiceDialogCardData: 'choiceCardData'
             }),
             ...mapPermissionGetters([
                 'canMoveCardsFromHand',
@@ -344,10 +343,11 @@
                 'saveMatch',
                 'restoreSavedMatch'
             ]),
-            ...mapPutDownCardActions({
-                showPutDownCardChoiceDialog: 'showChoiceDialog',
-                showPutDownCardAction: 'showCardAction',
-                putDownCard: 'putDownCard'
+            ...mapCardActions({
+                showCardChoiceDialog: 'showChoiceDialog',
+                showCardAction: 'showCardAction',
+                putDownCard: 'putDownCard',
+                startPuttingDownCard: 'startPuttingDownCard'
             }),
             canAffordCard(card) {
                 return this.actionPoints2 >= card.cost;
@@ -365,14 +365,8 @@
                 if (location === 'discard') {
                     this.discardCard(this.holdingCard.id);
                 }
-                else if (location === 'zone' && this.createCard(cardData).choicesWhenPutDownInHomeZone) {
-                    this.showPutDownCardChoiceDialog(cardData);
-                }
-                else if (location === 'zone' && this.createCard(cardData).actionWhenPutDownInHomeZone) {
-                    this.showPutDownCardAction(cardData);
-                }
                 else {
-                    this.putDownCard({ location, cardId: this.holdingCard.id });
+                    this.startPuttingDownCard({ location, cardId: cardData.id });
                 }
 
                 this.holdingCard = null;
@@ -448,7 +442,7 @@
                 }
             });
         },
-        components: { ZoneCard, StationCard, PlayerHud, PutDownCardChoiceDialog, LoadingIndicator }
+        components: { ZoneCard, StationCard, PlayerHud, CardChoiceDialog, LoadingIndicator }
     };
 </script>
 <style scoped lang="scss">

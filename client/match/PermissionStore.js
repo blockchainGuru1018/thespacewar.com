@@ -76,10 +76,10 @@ module.exports = function (deps) {
             && !hasRequirement;
     }
 
-    function canMoveStationCards(state, getters) {
+    function canMoveStationCards(state, getters, rootState) {
         if (getters.waitingForOtherPlayerToFinishRequirements) return false;
 
-        const hasActiveAction = getFrom('activeAction', 'putDownCard');
+        const hasActiveAction = rootState.card.activeAction;
         const hasRequirement = !!getFrom('firstRequirement', 'requirement');
         return !hasActiveAction
             && !hasRequirement;
@@ -93,10 +93,11 @@ module.exports = function (deps) {
         return damageOwnStationCardRequirement && cardsLeftToSelect > 0;
     }
 
-    function canSelectCardsForActiveAction() { //TODO This and the ones who use this might have to support this action for both opponent and player cards
-        const activeAction = getFrom('activeAction', 'putDownCard');
+    function canSelectCardsForActiveAction(state, getters, rootState) { //TODO This and the ones who use this might have to support this action for both opponent and player cards
+        const activeAction = rootState.card.activeAction;
         if (!activeAction) return false;
-        return activeAction.name === 'destroyAnyCard';
+
+        return ['destroyAnyCard', 'sacrifice'].includes(activeAction.name);
     }
 
     function canDrawCards(state, getters, rootState) {

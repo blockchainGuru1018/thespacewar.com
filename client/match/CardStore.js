@@ -9,45 +9,51 @@ module.exports = function (deps) {
         rootDispatch
     } = deps;
 
-    //TODO Needs a better name more in-line with what resource is hold. Is about the "card being put down".
+    let onActiveActionFinish = null;
+
     return {
         namespaced: true,
-        name: 'putDownCard',
+        name: 'card',
         state: {
             choiceCardId: null,
             activeActionCardData: null,
+            activeAction: null,
             transientPlayerCardsInHomeZone: [],
             hiddenCardIdsOnHand: [],
             hiddenStationCardIds: []
         },
         getters: {
             choiceCardData,
-            activeAction,
             activeActionCardImageUrl
         },
         actions: {
+            // Utils/Transient cards
             moveCardToZoneAsTransient,
             removeTransientCard,
+
+            // Card choices
             showChoiceDialog,
             choiceDialogApplyChoice,
             choiceDialogCancel,
+
+            // Card action
             showCardAction,
             selectCardForActiveAction,
+
+            // Sacrifice
+            startSacrifice,
+            _completeSacrifice,
+
+            // PutDownCard
             startPuttingDownCard, //Use this and not "putDownCard", this will in turn call putdowncard
             putDownCard, //TODO Need better naming scheme for when putting down a card and for actually sending event to matchController
+
             _hideChoiceDialog,
         }
     };
 
     function choiceCardData(state, getters, rootState, rootGetters) {
         return rootGetters['match/findPlayerCardFromAllSources'](state.choiceCardId);
-    }
-
-    function activeAction(state) {
-        if (!state.activeActionCardData) return null;
-
-        const card = getFrom('createCard', 'match')(state.activeActionCardData);
-        return card.actionWhenPutDownInHomeZone
     }
 
     function activeActionCardImageUrl(state) {
@@ -68,6 +74,22 @@ module.exports = function (deps) {
         state.transientPlayerCardsInHomeZone = state.transientPlayerCardsInHomeZone.filter(c => c.id !== cardId);
     }
 
+    function startSacrifice({ dispatch, rootGetters }, cardId) {
+        const cardData = rootGetters['match/findPlayerCardFromAllSources'](cardId);
+        dispatch('showCardAction', {
+            cardData,
+            action: {
+                name: 'sacrifice',
+                text: 'Select a target'
+            },
+            onFinish: targetCardId => dispatch('_completeSacrifice', { cardId, targetCardId })
+        });
+    }
+
+    function _completeSacrifice({}, { cardId, targetCardId }) {
+        matchController.emit('sacrifice', { cardId, targetCardId });
+    }
+
     function startPuttingDownCard({ dispatch, rootGetters }, { location, cardId }) {
         const cardData = rootGetters['match/findPlayerCardFromAllSources'](cardId);
         const card = rootGetters['match/createCard'](cardData)
@@ -75,10 +97,14 @@ module.exports = function (deps) {
             dispatch('showChoiceDialog', cardData);
         }
         else if (location === 'zone' && card.actionWhenPutDownInHomeZone) {
-            dispatch('showCardAction', cardData);
+            dispatch('showCardAction', {
+                cardData,
+                action: card.actionWhenPutDownInHomeZone,
+                onFinish: targetCardId => dispatch('putDownCard', { location, cardId, choice: targetCardId })
+            });
         }
         else {
-            dispatch('putDownCard', { location, cardId: cardData.id });
+            dispatch('putDownCard', { location, cardId });
         }
     }
 
@@ -103,25 +129,22 @@ module.exports = function (deps) {
         rootDispatch.loadingIndicator.hide();
     }
 
-    function showCardAction({ state, dispatch }, cardData) {
+    function showCardAction({ state, dispatch }, { cardData, action, onFinish }) {
+        onActiveActionFinish = onFinish;
         dispatch('moveCardToZoneAsTransient', cardData);
         state.activeActionCardData = cardData;
+        state.activeAction = action;
     }
 
     async function selectCardForActiveAction({ state, dispatch }, targetCardId) { //TODO Will probably need to support selecting multiple cards for an action
         rootDispatch.loadingIndicator.show();
+        await onActiveActionFinish(targetCardId);
+        rootDispatch.loadingIndicator.hide();
 
-        const options = {
-            location: 'zone',
-            cardId: state.activeActionCardData.id,
-            choice: targetCardId
-        };
-        await dispatch('putDownCard', options);
-
+        onActiveActionFinish = null;
         dispatch('removeTransientCard', state.activeActionCardData.id);
         state.activeActionCardData = null;
-
-        rootDispatch.loadingIndicator.hide();
+        state.activeAction = null;
     }
 
     async function putDownCard({ state, rootState, dispatch, commit }, { cardId, choice = null, location }) { //TODO Should not directly manipulate state of MatchStore

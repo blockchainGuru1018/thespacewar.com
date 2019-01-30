@@ -34,11 +34,8 @@
         mapActions: mapRequirementActions
     } = Vuex.createNamespacedHelpers('requirement');
     const {
-        mapState: mapPutDownCardState,
-        mapGetters: mapPutDownCardGetters,
-        mapMutations: mapPutDownCardMutations,
-        mapActions: mapPutDownCardActions
-    } = Vuex.createNamespacedHelpers('putDownCard');
+        mapActions: mapCardActions
+    } = Vuex.createNamespacedHelpers('card');
 
     module.exports = {
         props: [
@@ -136,7 +133,7 @@
             ...mapRequirementActions([
                 'selectStationCardForRequirement',
             ]),
-            ...mapPutDownCardActions([
+            ...mapCardActions([
                 'selectCardForActiveAction',
                 'startPuttingDownCard'
             ]),

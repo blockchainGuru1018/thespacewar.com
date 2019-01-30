@@ -58,6 +58,12 @@ class MatchService {
         return this._state.playerStateById[playerId].cardsInZone.some(c => c.id === cardId);
     }
 
+    cardsAreInSameZone(card, otherCard) {
+        const otherCardIsInItsHomeZone = this.isPlayerCardInHomeZone(otherCard.playerId, otherCard.id);
+        const cardIsInHomeZone = this.isPlayerCardInHomeZone(card.playerId, card.id);
+        return otherCardIsInItsHomeZone !== cardIsInHomeZone;
+    }
+
     goToNextTurn() {
         this.update(state => {
             state.turn += 1;

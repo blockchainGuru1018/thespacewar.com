@@ -1,15 +1,15 @@
 <template>
-    <div class="putDownCardChoiceDialog-wrapper">
+    <div class="cardChoiceDialog-wrapper">
         <portal to="match">
-            <div v-if="dialogVisible" class="putDownCardChoiceDialog-overlay"/>
-            <div v-if="dialogVisible" class="putDownCardChoiceDialog">
+            <div v-if="dialogVisible" class="cardChoiceDialog-overlay"/>
+            <div v-if="dialogVisible" class="cardChoiceDialog">
                 <h1>Choose event effect</h1>
                 <button v-for="choice in choices"
-                        class="putDownCardChoiceDialog-choice"
+                        class="cardChoiceDialog-choice"
                         @click="choiceDialogApplyChoice(choice.name)">
                     {{ choice.text }}
                 </button>
-                <button class="putDownCardChoiceDialog-choice"
+                <button class="cardChoiceDialog-choice"
                         @click="choiceDialogCancel">
                     Cancel
                 </button>
@@ -20,11 +20,11 @@
 <script>
     const Vuex = require('vuex');
     const {
-        mapState: mapPutDownCardState,
-        mapGetters: mapPutDownCardGetters,
-        mapMutations: mapPutDownCardMutations,
-        mapActions: mapPutDownCardActions
-    } = Vuex.createNamespacedHelpers('putDownCard');
+        mapState: mapCardState,
+        mapGetters: mapCardGetters,
+        mapMutations: mapCardMutations,
+        mapActions: mapCardActions
+    } = Vuex.createNamespacedHelpers('card');
     const {
         mapState: mapMatchState,
         mapGetters: mapMatchGetters,
@@ -34,10 +34,10 @@
 
     module.exports = {
         computed: {
-            ...mapPutDownCardState([
+            ...mapCardState([
                 'choiceCardId'
             ]),
-            ...mapPutDownCardGetters([
+            ...mapCardGetters([
                 'choiceCardData',
             ]),
             ...mapMatchGetters([
@@ -54,7 +54,7 @@
             }
         },
         methods: {
-            ...mapPutDownCardActions([
+            ...mapCardActions([
                 'choiceDialogCancel',
                 'choiceDialogApplyChoice'
             ]),
@@ -63,7 +63,7 @@
 </script>
 <style scoped lang="scss">
 
-    .putDownCardChoiceDialog-overlay {
+    .cardChoiceDialog-overlay {
         background-color: rgba(0, 0, 0, .32);
         position: absolute;
         z-index: 1000;
@@ -73,7 +73,7 @@
         bottom: 0;
     }
 
-    .putDownCardChoiceDialog {
+    .cardChoiceDialog {
         position: absolute;
         z-index: 1001;
         transform: translate(-50%, -50%);
@@ -88,7 +88,7 @@
         align-items: stretch;
     }
 
-    .putDownCardChoiceDialog h1 {
+    .cardChoiceDialog h1 {
         font-family: Helvetica, sans-serif;
         font-size: 22px;
         font-weight: bold;
@@ -96,7 +96,7 @@
         text-align: center;
     }
 
-    .putDownCardChoiceDialog-choice {
+    .cardChoiceDialog-choice {
         color: #444;
         border: none;
         font-size: 18px;

@@ -116,11 +116,11 @@
         mapActions: mapRequirementActions
     } = Vuex.createNamespacedHelpers('requirement');
     const {
-        mapState: mapPutDownCardState,
-        mapGetters: mapPutDownCardGetters,
-        mapMutations: mapPutDownCardMutations,
-        mapActions: mapPutDownCardActions
-    } = Vuex.createNamespacedHelpers('putDownCard');
+        mapState: mapCardState,
+        mapGetters: mapCardGetters,
+        mapMutations: mapCardMutations,
+        mapActions: mapCardActions
+    } = Vuex.createNamespacedHelpers('card');
     const {
         mapState: mapPermissionState,
         mapGetters: mapPermissionGetters,
@@ -167,8 +167,10 @@
                 'countInFirstRequirement',
                 'requirementCardImageUrl'
             ]),
-            ...mapPutDownCardGetters([
+            ...mapCardState([
                 'activeAction',
+            ]),
+            ...mapCardGetters([
                 'activeActionCardImageUrl'
             ]),
             ...mapPermissionGetters([

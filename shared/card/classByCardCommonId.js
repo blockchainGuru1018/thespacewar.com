@@ -13,7 +13,8 @@ const classes = [
     require('./Supernova.js'),
     require('./DeadlySniper.js'),
     require('./TheDarkDestroyer.js'),
-    require('./Expansion.js')
+    require('./Expansion.js'),
+    require('./Pursuiter.js')
 ];
 
 const classByCardCommonId = {}

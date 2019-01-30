@@ -2,7 +2,7 @@ const Vue = require('vue').default || require('vue');
 const STORES = [
     require('./RequirementStore.js'),
     require('./PermissionStore.js'),
-    require('./PutDownCardStore.js'),
+    require('./CardStore.js'),
     require('./loadingIndicator/LoadingIndicatorStore.js')
 ];
 const MatchStore = require('./MatchStore.js');

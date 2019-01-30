@@ -254,7 +254,7 @@ class PlayerStateService {
         }
     }
 
-    discardCard(cardData, { isSacrifice = false } = {}) { //TODO must say if is sacrifice as they gain bonus card to the opponent
+    discardCard(cardData, { isSacrifice = false } = {}) { //TODO isSacrifice does not mean the same as "sacrifice" instead of attacking, must be clarified somehow
         const turn = this._matchService.getTurn();
         this.update(playerState => {
             playerState.discardedCards.push(cardData);

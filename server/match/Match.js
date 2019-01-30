@@ -122,6 +122,7 @@ module.exports = function ({
         attack: attackController.onAttack,
         attackStationCard: attackController.onAttackStationCards, // TODO Rename attackStationCards (pluralized),
         damageOwnStationCards: attackController.onDamageOwnStationCard,
+        sacrifice: attackController.onSacrifice,
         repairCard,
         retreat,
         updatePlayer: matchComService.updatePlayer.bind(matchComService),

@@ -25,6 +25,7 @@ const FatalErrorCommonId = '38';
 const TriggerHappyJoeCommonId = '24';
 const DeadlySniperCommonId = '39';
 const ExpansionCommonId = '40';
+const PursuiterCommonId = '19';
 
 const Vue = require('vue').default;
 const Vuex = require('vuex').default;
@@ -1240,7 +1241,7 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.field-discardPile .card-faceDown', 0);
             },
             'should show choice dialog'() {
-                assert.elementCount('.putDownCardChoiceDialog', 1);
+                assert.elementCount('.cardChoiceDialog', 1);
             }
         },
         'when move card "Discovery" from station to zone': {
@@ -1269,7 +1270,7 @@ module.exports = testCase('MatchPage', {
                 await click('.stationCard .movable');
             },
             'should show choice dialog'() {
-                assert.elementCount('.putDownCardChoiceDialog', 1);
+                assert.elementCount('.cardChoiceDialog', 1);
             },
             'should have card in zone'() {
                 assert.elementCount('.field-playerZoneCards .card:not(.card--placeholder)', 1);
@@ -1305,10 +1306,10 @@ module.exports = testCase('MatchPage', {
                 await timeout();
 
                 await click('.stationCard .movable');
-                await click('.putDownCardChoiceDialog-choice:contains("Cancel")');
+                await click('.cardChoiceDialog-choice:contains("Cancel")');
             },
             'should NOT show choice dialog'() {
-                assert.elementCount('.putDownCardChoiceDialog', 0);
+                assert.elementCount('.cardChoiceDialog', 0);
             },
             'should NOT have card in zone'() {
                 assert.elementCount('.field-playerZoneCards .card:not(.card--placeholder)', 0);
@@ -1335,7 +1336,7 @@ module.exports = testCase('MatchPage', {
                 await click('.field-playerCardsOnHand .card');
                 await click('.field-playerZoneCards .card-ghost:eq(0)');
 
-                await click('.putDownCardChoiceDialog-choice:contains("Each player draws 4 cards")');
+                await click('.cardChoiceDialog-choice:contains("Each player draws 4 cards")');
             },
             'should emit "putDownCard"'() {
                 assert.calledOnceWith(this.matchController.emit, 'putDownCard', {
@@ -1345,7 +1346,7 @@ module.exports = testCase('MatchPage', {
                 });
             },
             'should NOT show choice dialog'() {
-                assert.elementCount('.putDownCardChoiceDialog', 0);
+                assert.elementCount('.cardChoiceDialog', 0);
             },
             'should NOT show card in zone'() {
                 assert.elementCount('.field-playerZoneCards .card:not(.card--placeholder)', 0);
@@ -1372,7 +1373,7 @@ module.exports = testCase('MatchPage', {
                 await click('.field-playerCardsOnHand .card');
                 await click('.field-playerZoneCards .card-ghost:eq(0)');
 
-                await click('.putDownCardChoiceDialog-choice:contains("Each player discards 2 cards")');
+                await click('.cardChoiceDialog-choice:contains("Each player discards 2 cards")');
             },
             'should emit "putDownCard"'() {
                 assert.calledOnceWith(this.matchController.emit, 'putDownCard', {
@@ -1382,7 +1383,7 @@ module.exports = testCase('MatchPage', {
                 });
             },
             'should NOT show choice dialog'() {
-                assert.elementCount('.putDownCardChoiceDialog', 0);
+                assert.elementCount('.cardChoiceDialog', 0);
             }
         },
         'when place down card "Discovery" and choose "Cancel"': {
@@ -1400,13 +1401,13 @@ module.exports = testCase('MatchPage', {
                 await click('.field-playerCardsOnHand .card');
                 await click('.field-playerZoneCards .card-ghost:eq(0)');
 
-                await click('.putDownCardChoiceDialog-choice:contains("Cancel")');
+                await click('.cardChoiceDialog-choice:contains("Cancel")');
             },
             'should NOT emit "putDownCard"'() {
                 refute.calledWith(this.matchController.emit, 'putDownCard');
             },
             'should NOT show choice dialog'() {
-                assert.elementCount('.putDownCardChoiceDialog', 0);
+                assert.elementCount('.cardChoiceDialog', 0);
             },
             'should NOT have card in zone'() {
                 assert.elementCount('.field-playerZoneCards .card:not(.card--placeholder)', 0);
@@ -1688,6 +1689,85 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.field-playerStation .card-ghost', 3);
             }
         }
+    },
+    'Pursuiter:': {
+        'when has card and an opponent card in home zone': {
+            async setUp() {
+                const { dispatch } = this.createController();
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'attack',
+                    cardsInZone: [{ id: 'C1A', type: 'spaceShip', commonId: PursuiterCommonId }],
+                    opponentCardsInPlayerZone: [{ id: 'C2A' }],
+                    events: [PutDownCardEvent({ turn: 1, location: 'station-draw', cardId: 'C1A' })]
+                }));
+                await timeout();
+            },
+            'should be able to sacrifice own card'() {
+                assert.elementCount('.playerCardsInZone .sacrifice', 1);
+            }
+        },
+        'when is NOT attack phase and has card and an opponent card in home zone': {
+            async setUp() {
+                const { dispatch } = this.createController();
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'action',
+                    cardsInZone: [{ id: 'C1A', type: 'spaceShip', commonId: PursuiterCommonId }],
+                    opponentCardsInPlayerZone: [{ id: 'C2A' }],
+                    events: [PutDownCardEvent({ turn: 1, location: 'station-draw', cardId: 'C1A' })]
+                }));
+                await timeout();
+            },
+            'should NOT be able to sacrifice own card'() {
+                assert.elementCount('.playerCardsInZone .sacrifice', 0);
+            }
+        },
+        'when has card THAT IS NOT PURSUITER and an opponent card in home zone': {
+            async setUp() {
+                const { dispatch } = this.createController();
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'attack',
+                    cardsInZone: [{ id: 'C1A', type: 'spaceShip' }],
+                    opponentCardsInPlayerZone: [{ id: 'C2A' }],
+                    events: [PutDownCardEvent({ turn: 1, location: 'station-draw', cardId: 'C1A' })]
+                }));
+                await timeout();
+            },
+            'should NOT be able to sacrifice own card'() {
+                assert.elementCount('.playerCardsInZone .sacrifice', 0);
+            }
+        },
+        'when select card to sacrifice and selects other card': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'attack',
+                    cardsInZone: [{ id: 'C1A', type: 'spaceShip', commonId: PursuiterCommonId }],
+                    opponentCardsInPlayerZone: [{ id: 'C2A' }],
+                    events: [PutDownCardEvent({ turn: 1, location: 'station-draw', cardId: 'C1A' })]
+                }));
+                await timeout();
+
+                await click('.playerCardsInZone .sacrifice');
+                await click('.opponentCardsInPlayerZone .selectable');
+            },
+            'should emit sacrifice with target card id': function () {
+                assert.calledWith(this.matchController.emit, 'sacrifice', { cardId: 'C1A', targetCardId: 'C2A' });
+            }
+        },
+        //TODO when select card to sacrifice and clicks outside should UNSELECT card for sacrifice (goes generally for all actions)
     }
 });
 

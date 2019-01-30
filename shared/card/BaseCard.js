@@ -89,21 +89,31 @@ class BaseCard {
         return true;
     }
 
-    canAttackCard(otherCard) {
-        if (otherCard.type === 'duration') return false;
-        if (otherCard.playerId === this.playerId) return false;
+    canAttackCard(otherCard) { //TODO rename "canTargetCardForAttack", also perhaps this belongs in a more higher level class?
+        if (!this._canTargetCard(otherCard)) return false;
         if (!this.canAttack()) return false;
 
-        const otherCardInOpponentZone = !this._matchService.isPlayerCardInHomeZone(otherCard.playerId, otherCard.id);
-        const playerCardInHomeZone = this._matchService.isPlayerCardInHomeZone(this.playerId, this.id);
-        const isInSameZone = otherCardInOpponentZone === playerCardInHomeZone;
-
-        return isInSameZone
-            || this.canAttackCardsInOtherZone();
+        return this.canAttackCardsInOtherZone()
+            || this._matchService.cardsAreInSameZone(this, otherCard);
     }
 
     canAttackCardsInOtherZone() {
         return false;
+    }
+
+    canBeSacrificed() {
+        return false;
+    }
+
+    canTargetCardForSacrifice(otherCard) { //TODO Check against this on the front-end, also perhaps this belongs in a more higher level class?
+        return this._canTargetCard(otherCard)
+            && this._matchService.cardsAreInSameZone(this, otherCard);
+    }
+
+    _canTargetCard(otherCard) {
+        if (otherCard.type === 'duration') return false;
+        if (otherCard.playerId === this.playerId) return false;
+        return true;
     }
 
     attackCard(defenderCard) {
