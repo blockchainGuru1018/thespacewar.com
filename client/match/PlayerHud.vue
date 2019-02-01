@@ -241,17 +241,26 @@
                 }
             },
             actionGuideText() {
-                return this.activeAction
-                    ? this.activeAction.text
-                    : '';
+                if (!this.activeAction) return '';
+                if (this.activeAction.text) {
+                    return this.activeAction.text;
+                }
+                return '';
             },
             cardStyle() {
-                const imageUrl = this.activeAction
-                    ? this.activeActionCardImageUrl
-                    : this.requirementCardImageUrl
-                return {
-                    backgroundImage: `url(${imageUrl})`
-                };
+                if (this.activeActionCardImageUrl) {
+                    return {
+                        backgroundImage: `url(${this.activeActionCardImageUrl})`
+                    };
+                }
+                else if (this.requirementCardImageUrl) {
+                    return {
+                        backgroundImage: `url(${this.requirementCardImageUrl})`
+                    };
+                }
+                else {
+                    return {};
+                }
             }
         },
         methods: {

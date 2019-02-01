@@ -101,6 +101,10 @@
             ]),
             ...mapCardState([
                 'transientPlayerCardsInHomeZone',
+                'activeAction'
+            ]),
+            ...mapCardGetters([
+                'activeActionCard'
             ]),
             classes() {
                 const classes = ['card'];
@@ -129,7 +133,8 @@
                 if (!this.isPlayerCard) return false;
 
                 return !this.attackerCardId
-                    && !this.repairerCardId;
+                    && !this.repairerCardId
+                    && !this.activeAction;
             },
             canMove() {
                 const card = this.createCard(this.card);
@@ -182,10 +187,16 @@
                 return this.createCard(this.card).canBeRepaired();
             },
             canSelectCardForAction() {
-                const cardIsTransient = this.transientPlayerCardsInHomeZone.some(c => c.id === this.card.id); //TODO Perhaps have a flag in the fake card data that says that it is transient?
-                return !cardIsTransient
-                    && !this.isPlayerCard
-                    && this.canSelectCardsForActiveAction;
+                const cardIsTransient = this.transientPlayerCardsInHomeZone.some(c => c.id === this.card.id);
+                if (cardIsTransient) return false;
+                if (this.isPlayerCard) return false;
+                if (!this.canSelectCardsForActiveAction) return false;
+
+                if (this.activeAction.name === 'sacrifice') {
+                    const card = this.createCard(this.card, { isOpponent: true })
+                    return this.activeActionCard.canTargetCardForSacrifice(card);
+                }
+                return true;
             }
         },
         methods: {

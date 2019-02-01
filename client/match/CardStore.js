@@ -24,6 +24,7 @@ module.exports = function (deps) {
         },
         getters: {
             choiceCardData,
+            activeActionCard,
             activeActionCardImageUrl
         },
         actions: {
@@ -56,10 +57,20 @@ module.exports = function (deps) {
         return rootGetters['match/findPlayerCardFromAllSources'](state.choiceCardId);
     }
 
-    function activeActionCardImageUrl(state) {
+    function activeActionCard(state, getters, rootState, rootGetters) {
         if (!state.activeActionCardData) return null;
+        return rootGetters['match/createCard'](state.activeActionCardData);
+    }
 
-        return cardInfoRepository.getImageUrl(state.activeActionCardData.commonId);
+    function activeActionCardImageUrl(state) {
+        if (!state.activeActionCardData) return '';
+
+        if (state.activeAction.showCardImage) {
+            return cardInfoRepository.getImageUrl(state.activeActionCardData.commonId);
+        }
+        else {
+            return '';
+        }
     }
 
     function moveCardToZoneAsTransient({ state }, cardData) {
@@ -79,8 +90,9 @@ module.exports = function (deps) {
         dispatch('showCardAction', {
             cardData,
             action: {
-                name: 'sacrifice',
-                text: 'Select a target'
+                showCardImage: false,
+                showGuideText: false,
+                name: 'sacrifice'
             },
             onFinish: targetCardId => dispatch('_completeSacrifice', { cardId, targetCardId })
         });
@@ -100,7 +112,8 @@ module.exports = function (deps) {
             dispatch('showCardAction', {
                 cardData,
                 action: card.actionWhenPutDownInHomeZone,
-                onFinish: targetCardId => dispatch('putDownCard', { location, cardId, choice: targetCardId })
+                onFinish: targetCardId => dispatch('putDownCard', { location, cardId, choice: targetCardId }),
+                useTransientCard: true
             });
         }
         else {
@@ -131,7 +144,9 @@ module.exports = function (deps) {
 
     function showCardAction({ state, dispatch }, { cardData, action, onFinish }) {
         onActiveActionFinish = onFinish;
-        dispatch('moveCardToZoneAsTransient', cardData);
+        if (action.showTransientCardInHomeZone) {
+            dispatch('moveCardToZoneAsTransient', cardData);
+        }
         state.activeActionCardData = cardData;
         state.activeAction = action;
     }

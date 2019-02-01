@@ -105,7 +105,7 @@ class BaseCard {
         return false;
     }
 
-    canTargetCardForSacrifice(otherCard) { //TODO Check against this on the front-end, also perhaps this belongs in a more higher level class?
+    canTargetCardForSacrifice(otherCard) {
         return this._canTargetCard(otherCard)
             && this._matchService.cardsAreInSameZone(this, otherCard);
     }

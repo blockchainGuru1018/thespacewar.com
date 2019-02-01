@@ -18,6 +18,8 @@ module.exports = class FatalError extends BaseCard {
 
     get actionWhenPutDownInHomeZone() {
         return {
+            showCardImage: true,
+            showTransientCardInHomeZone: true,
             name: 'destroyAnyCard',
             text: 'Select any card to destroy'
         }

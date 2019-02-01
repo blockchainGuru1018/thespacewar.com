@@ -1767,6 +1767,57 @@ module.exports = testCase('MatchPage', {
                 assert.calledWith(this.matchController.emit, 'sacrifice', { cardId: 'C1A', targetCardId: 'C2A' });
             }
         },
+        'when select card to sacrifice and opponent card is in opposite zone': {
+            async setUp() {
+                const { dispatch } = this.createController();
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'attack',
+                    cardsInZone: [
+                        { id: 'C1A', type: 'spaceShip', commonId: PursuiterCommonId },
+                        { id: 'C2A' }
+                    ],
+                    opponentCardsInZone: [{ id: 'C2A' }],
+                    events: [PutDownCardEvent({ turn: 1, location: 'station-draw', cardId: 'C1A' })]
+                }));
+                await timeout();
+
+                await click('.playerCardsInZone .sacrifice');
+            },
+            'should NOT be able to select opponent card to target for sacrifice': function () {
+                assert.elementCount('.opponentCardsInZone .selectable', 0);
+            },
+            'should NOT be able to select player card to target for sacrifice': function () {
+                assert.elementCount('.playerCardsInZone .selectable', 0);
+            }
+        },
+        'when select card to sacrifice and opponent card is in same zone': {
+            async setUp() {
+                const { dispatch } = this.createController();
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'attack',
+                    cardsInZone: [
+                        { id: 'C1A', type: 'spaceShip', commonId: PursuiterCommonId }
+                    ],
+                    opponentCardsInPlayerZone: [{ id: 'C2A' }],
+                    events: [PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A' })]
+                }));
+                await timeout();
+
+                await click('.playerCardsInZone .sacrifice');
+            },
+            'should NOT be able to any card for attack': function () {
+                assert.elementCount('.readyToAttack', 0);
+            },
+            'should NOT show extra transient card in home zone': function () {
+                assert.elementCount('.playerCardsInZone .card:not(.card--placeholder)', 1);
+            }
+        }
         //TODO when select card to sacrifice and clicks outside should UNSELECT card for sacrifice (goes generally for all actions)
     }
 });
