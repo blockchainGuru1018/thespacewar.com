@@ -1,6 +1,8 @@
 const CheatError = require('../CheatError.js');
 const { PHASES } = require('../../../shared/phases.js');
 
+const MAX_COLLISION_TARGETS_ON_SACRIFICE = 4;
+
 function AttackController(deps) {
 
     const {
@@ -128,26 +130,77 @@ function AttackController(deps) {
         requirementUpdater.progressRequirementByCount(targetIds.length);
     }
 
-    function onSacrifice(playerId, { cardId, targetCardId }) {
-        if (!targetCardId) throw new CheatError('Cannot sacrifice');
-        const opponentId = matchService.getOpponentId(playerId);
-        const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
-        const targetCardData = opponentStateService.findCard(targetCardId);
-        if (!targetCardData) throw new CheatError('Cannot sacrifice');
+    function onSacrifice(playerId, { cardId, targetCardId, targetCardIds }) {
+        if (!!targetCardIds && !!targetCardId) throw new CheatError('Cannot sacrifice');
 
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const opponentId = matchService.getOpponentId(playerId);
+        const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
+
+        if (targetCardIds) {
+            if (!isValidStationCollisionFromSacrifice({ playerId, cardId, targetCardIds })) {
+                throw new CheatError('Cannot sacrifice');
+            }
+        }
+        else {
+            const targetCardData = opponentStateService.findCard(targetCardId);
+            if (!targetCardId) throw new CheatError('Cannot sacrifice');
+            if (!targetCardData) throw new CheatError('Cannot sacrifice');
+        }
+
+
         const cardData = playerStateService.findCard(cardId);
         const card = cardFactory.createCardForPlayer(cardData, playerId);
         if (!card.canBeSacrificed()) throw new CheatError('Cannot sacrifice');
 
-        const targetCard = cardFactory.createCardForPlayer(targetCardData, opponentId);
-        if (!card.canTargetCardForSacrifice(targetCard)) throw new CheatError('Cannot sacrifice');
+        if (!targetCardIds) {
+            const targetCardData = opponentStateService.findCard(targetCardId);
+            const targetCard = cardFactory.createCardForPlayer(targetCardData, opponentId);
+            if (!card.canTargetCardForSacrifice(targetCard)) throw new CheatError('Cannot sacrifice');
+        }
 
         playerStateService.removeCard(cardId);
         playerStateService.discardCard(cardData);
 
-        opponentStateService.removeCard(targetCardId);
-        opponentStateService.discardCard(targetCardData);
+        if (!targetCardIds) {
+            opponentStateService.registerCardCollisionFromSacrifice(targetCardId);
+        }
+        else {
+            onStationCollisionFromSacrifice({ playerId, targetCardIds });
+        }
+    }
+
+    function isValidStationCollisionFromSacrifice({ playerId, cardId, targetCardIds }) {
+        if (targetCardIds.length > MAX_COLLISION_TARGETS_ON_SACRIFICE) return false;
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const cardData = playerStateService.findCard(cardId);
+        const card = cardFactory.createCardForPlayer(cardData, playerId);
+        if (card.isInHomeZone()) return false;
+
+        const opponentId = matchService.getOpponentId(playerId);
+        const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
+        if (opponentStateService.hasCardThatStopsStationAttack()) return false;
+
+        const validTargetIdCount = targetCardIds
+            .map(id => opponentStateService.findStationCard(id))
+            .filter(card => !!card)
+            .length;
+        const availableTargetCount = opponentStateService
+            .getStationCards()
+            .filter(card => !card.flipped)
+            .length;
+        const isBelowTargetLimit = validTargetIdCount < MAX_COLLISION_TARGETS_ON_SACRIFICE
+        const hasMoreAvailableTargets = availableTargetCount > validTargetIdCount;
+        if (isBelowTargetLimit && hasMoreAvailableTargets) {
+            return false;
+        }
+        return true;
+    }
+
+    function onStationCollisionFromSacrifice({ playerId, targetCardIds }) {
+        const opponentId = matchService.getOpponentId(playerId);
+        const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
+        opponentStateService.registerStationCollisionFromSacrifice(targetCardIds);
     }
 }
 

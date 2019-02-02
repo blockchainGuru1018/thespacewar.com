@@ -1,5 +1,7 @@
 const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
 
+const falsyOp = () => false;
+
 module.exports = function (deps) {
 
     const {
@@ -18,14 +20,17 @@ module.exports = function (deps) {
             choiceCardId: null,
             activeActionCardData: null,
             activeAction: null,
+            selectedCardIdsForAction: [],
             transientPlayerCardsInHomeZone: [],
             hiddenCardIdsOnHand: [],
-            hiddenStationCardIds: []
+            hiddenStationCardIds: [],
+            checkIfCanBeSelectedForAction: falsyOp
         },
         getters: {
             choiceCardData,
             activeActionCard,
-            activeActionCardImageUrl
+            activeActionCardImageUrl,
+            canSelectMoreCardsForAction
         },
         actions: {
             // Utils/Transient cards
@@ -73,6 +78,31 @@ module.exports = function (deps) {
         }
     }
 
+    function canSelectMoreCardsForAction(state, getters, rootState, rootGetters) {
+        if (!state.activeAction) return false;
+
+        if (state.activeAction.name === 'sacrifice') {
+            const opponentStationCards = rootGetters['match/allOpponentStationCards'];
+            const selectedStationCardCount = state.selectedCardIdsForAction
+                .filter(id => opponentStationCards.some(s => s.id === id))
+                .length;
+
+            const hasSelectedOneCardFromAZone = state.selectedCardIdsForAction.length === 1 && selectedStationCardCount === 0
+            if (hasSelectedOneCardFromAZone) {
+                return false;
+            }
+
+            const unflippedOpponentStationCardCount = opponentStationCards.filter(s => !s.flipped).length;
+            const isLessThanLimitAndHasMoreCardsToPickFrom = selectedStationCardCount < 4
+                && selectedStationCardCount < unflippedOpponentStationCardCount;
+
+            return isLessThanLimitAndHasMoreCardsToPickFrom;
+        }
+        else {
+            return false;
+        }
+    }
+
     function moveCardToZoneAsTransient({ state }, cardData) {
         state.transientPlayerCardsInHomeZone.push(cardData);
         state.hiddenCardIdsOnHand.push(cardData.id);
@@ -85,21 +115,39 @@ module.exports = function (deps) {
         state.transientPlayerCardsInHomeZone = state.transientPlayerCardsInHomeZone.filter(c => c.id !== cardId);
     }
 
-    function startSacrifice({ dispatch, rootGetters }, cardId) {
+    function startSacrifice({ state, getters, dispatch, rootGetters }, cardId) {
         const cardData = rootGetters['match/findPlayerCardFromAllSources'](cardId);
         dispatch('showCardAction', {
             cardData,
             action: {
                 showCardImage: false,
-                showGuideText: false,
                 name: 'sacrifice'
             },
-            onFinish: targetCardId => dispatch('_completeSacrifice', { cardId, targetCardId })
+            checkIfCanBeSelectedForAction: (activeCard, { cardData, isStationCard, isOpponentCard }) => { //TODO Can this be a getter function based on the current active action name?
+                if (!isOpponentCard) return false;
+                if (!isStationCard && state.selectedCardIdsForAction.length > 0) return false;
+
+                if (isStationCard) {
+                    return !cardData.flipped && !activeCard.isInHomeZone();
+                }
+                else {
+                    const card = rootGetters['match/createCard'](cardData, { isOpponent: isOpponentCard });
+                    return activeCard.canTargetCardForSacrifice(card);
+                }
+            },
+            onFinish: targetCardIds => dispatch('_completeSacrifice', { cardId, targetCardIds })
         });
     }
 
-    function _completeSacrifice({}, { cardId, targetCardId }) {
-        matchController.emit('sacrifice', { cardId, targetCardId });
+    function _completeSacrifice({ rootGetters }, { cardId, targetCardIds }) {
+        const opponentStationCards = rootGetters['match/allOpponentStationCards'];
+        const firstCardIsStationCard = opponentStationCards.some(s => s.id === targetCardIds[0]);
+        if (targetCardIds.length === 1 && !firstCardIsStationCard) {
+            matchController.emit('sacrifice', { cardId, targetCardId: targetCardIds[0] });
+        }
+        else {
+            matchController.emit('sacrifice', { cardId, targetCardIds });
+        }
     }
 
     function startPuttingDownCard({ dispatch, rootGetters }, { location, cardId }) {
@@ -112,8 +160,11 @@ module.exports = function (deps) {
             dispatch('showCardAction', {
                 cardData,
                 action: card.actionWhenPutDownInHomeZone,
-                onFinish: targetCardId => dispatch('putDownCard', { location, cardId, choice: targetCardId }),
-                useTransientCard: true
+                useTransientCard: true,
+                checkIfCanBeSelectedForAction: (actionCard, { cardData, isStationCard, isOpponentCard }) => {
+                    return isOpponentCard;
+                },
+                onFinish: targetCardIds => dispatch('putDownCard', { location, cardId, choice: targetCardIds[0] })
             });
         }
         else {
@@ -142,24 +193,36 @@ module.exports = function (deps) {
         rootDispatch.loadingIndicator.hide();
     }
 
-    function showCardAction({ state, dispatch }, { cardData, action, onFinish }) {
+    function showCardAction(
+        { state, getters, dispatch },
+        { cardData, action, checkIfCanBeSelectedForAction, onFinish }
+    ) {
         onActiveActionFinish = onFinish;
         if (action.showTransientCardInHomeZone) {
             dispatch('moveCardToZoneAsTransient', cardData);
         }
         state.activeActionCardData = cardData;
         state.activeAction = action;
+
+        state.checkIfCanBeSelectedForAction = options => {
+            return checkIfCanBeSelectedForAction(getters.activeActionCard, options);
+        }
     }
 
-    async function selectCardForActiveAction({ state, dispatch }, targetCardId) { //TODO Will probably need to support selecting multiple cards for an action
+    async function selectCardForActiveAction({ state, getters, dispatch }, targetCardId) {
+        state.selectedCardIdsForAction.push(targetCardId);
+        if (getters.canSelectMoreCardsForAction) return;
+
         rootDispatch.loadingIndicator.show();
-        await onActiveActionFinish(targetCardId);
+        await onActiveActionFinish(state.selectedCardIdsForAction);
         rootDispatch.loadingIndicator.hide();
 
         onActiveActionFinish = null;
         dispatch('removeTransientCard', state.activeActionCardData.id);
         state.activeActionCardData = null;
         state.activeAction = null;
+        state.checkIfCanBeSelectedForAction = falsyOp;
+        state.selectedCardIdsForAction = [];
     }
 
     async function putDownCard({ state, rootState, dispatch, commit }, { cardId, choice = null, location }) { //TODO Should not directly manipulate state of MatchStore

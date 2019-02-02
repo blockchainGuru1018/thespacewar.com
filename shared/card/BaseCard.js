@@ -116,6 +116,10 @@ class BaseCard {
         return true;
     }
 
+    isInHomeZone() {
+        return this._matchService.isPlayerCardInHomeZone(this.playerId, this.id);
+    }
+
     attackCard(defenderCard) {
         const defenderCurrentDamage = defenderCard.damage;
         const defenderTotalDefense = defenderCard.defense - defenderCurrentDamage;

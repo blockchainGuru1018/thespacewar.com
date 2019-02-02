@@ -101,7 +101,10 @@
             ]),
             ...mapCardState([
                 'transientPlayerCardsInHomeZone',
-                'activeAction'
+                'activeAction',
+                'activeActionCardData',
+                'selectedCardIdsForAction',
+                'checkIfCanBeSelectedForAction'
             ]),
             ...mapCardGetters([
                 'activeActionCard'
@@ -110,6 +113,9 @@
                 const classes = ['card'];
                 if (this.selectedAsAttacker) {
                     classes.push('selectedAsAttacker');
+                }
+                if (this.isActiveActionCard) {
+                    classes.push('isActiveActionCard');
                 }
                 return classes;
             },
@@ -128,6 +134,9 @@
             },
             selectedAsAttacker() {
                 return this.attackerCardId === this.card.id;
+            },
+            isActiveActionCard() {
+                return this.activeActionCardData && this.activeActionCardData.id === this.card.id;
             },
             canSelectAction() {
                 if (!this.isPlayerCard) return false;
@@ -186,17 +195,22 @@
 
                 return this.createCard(this.card).canBeRepaired();
             },
+            isSelectedForAction() {
+                return this.selectedCardIdsForAction.includes(this.card.id);
+            },
             canSelectCardForAction() {
                 const cardIsTransient = this.transientPlayerCardsInHomeZone.some(c => c.id === this.card.id);
                 if (cardIsTransient) return false;
                 if (this.isPlayerCard) return false;
                 if (!this.canSelectCardsForActiveAction) return false;
+                if (this.isSelectedForAction) return false;
 
-                if (this.activeAction.name === 'sacrifice') {
-                    const card = this.createCard(this.card, { isOpponent: true })
-                    return this.activeActionCard.canTargetCardForSacrifice(card);
+                const options = {
+                    cardData: this.card,
+                    isStationCard: false,
+                    isOpponentCard: !this.isPlayerCard
                 }
-                return true;
+                return this.checkIfCanBeSelectedForAction(options);
             }
         },
         methods: {
@@ -312,7 +326,7 @@
         background-color: rgba(100, 100, 255, .5);
     }
 
-    .selectedAsAttacker {
+    .selectedAsAttacker, .isActiveActionCard {
         outline: 2px solid red;
     }
 

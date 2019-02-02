@@ -153,6 +153,7 @@ function setupSocketConnectionHandler(deps, controllers) {
                 const dataString = JSON.stringify(data, null, 4);
                 const errorMessage = `(${new Date().toISOString()}) Error in action to match: ${error.message} - DATA: ${dataString} - RAW ERROR: ${rawErrorMessage}`
                 deps.logger.log(errorMessage, 'error');
+                deps.logger.log(error.stack, 'error-stack');
             }
         });
     });

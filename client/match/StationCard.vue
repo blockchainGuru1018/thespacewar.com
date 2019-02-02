@@ -12,7 +12,7 @@
             <div v-if="canBeSelectedForRequirement"
                  @click.stop="selectStationCardForRequirement(stationCard)"
                  class="selectable"/>
-            <div v-if="canBeSelectedForAction"
+            <div v-if="canSelectedCardForAction"
                  @click.stop="selectCardForActiveAction(stationCard.id)"
                  class="selectable"/>
         </div>
@@ -22,18 +22,14 @@
     const Vuex = require('vuex');
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
     const {
-        mapState: mapPermissionState,
         mapGetters: mapPermissionGetters,
-        mapMutations: mapPermissionMutations,
-        mapActions: mapPermissionActions
     } = Vuex.createNamespacedHelpers('permission');
     const {
         mapState: mapRequirementState,
-        mapGetters: mapRequirementGetters,
-        mapMutations: mapRequirementMutations,
         mapActions: mapRequirementActions
     } = Vuex.createNamespacedHelpers('requirement');
     const {
+        mapState: mapCardState,
         mapActions: mapCardActions
     } = Vuex.createNamespacedHelpers('card');
 
@@ -61,6 +57,10 @@
                 'canSelectStationCards',
                 'canMoveStationCards',
                 'canSelectCardsForActiveAction',
+            ]),
+            ...mapCardState([
+                'checkIfCanBeSelectedForAction',
+                'selectedCardIdsForAction'
             ]),
             classes() {
                 const classes = ['stationCard', 'card'];
@@ -100,7 +100,8 @@
             },
             selectedWithDanger() {
                 return this.selectedAsDefender
-                    || this.selectedForRequirement;
+                    || this.selectedForRequirement
+                    || this.selectedForAction;
             },
             selectedAsDefender() {
                 return this.selectedDefendingStationCards.includes(this.stationCard.id);
@@ -121,9 +122,19 @@
                     && !this.stationCard.flipped
                     && this.canSelectStationCards;
             },
-            canBeSelectedForAction() {
-                return this.isOpponentStationCard
-                    && this.canSelectCardsForActiveAction;
+            selectedForAction() {
+                return this.selectedCardIdsForAction.includes(this.stationCard.id);
+            },
+            canSelectedCardForAction() {
+                if (!this.canSelectCardsForActiveAction) return false;
+                if (this.selectedForAction) return false;
+
+                const options = {
+                    cardData: this.stationCard,
+                    isStationCard: true,
+                    isOpponentCard: this.isOpponentStationCard
+                }
+                return this.checkIfCanBeSelectedForAction(options);
             }
         },
         methods: {

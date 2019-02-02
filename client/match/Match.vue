@@ -8,7 +8,7 @@
         </div>
         <div class="field">
             <div class="field-opponent">
-                <div class="field-opponentStation field-station field-section">
+                <div class="field-opponentStation opponentStationCards field-station field-section">
                     <div class="field-stationRow">
                         <station-card
                                 v-for="card in opponentStation.drawCards"

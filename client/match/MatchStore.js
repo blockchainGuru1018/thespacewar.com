@@ -273,6 +273,26 @@ module.exports = function (deps) {
         });
     }
 
+    function playerStateService(state, getters) {
+        const matchService = new MatchService();
+        const mappedState = mapFromClientToServerState(state);
+        matchService.setState(mappedState);
+        const updateStore = (clientState) => {
+            let changedProperties = Object.keys(clientState);
+            for (let property of changedProperties) {
+                state[property] = clientState[property];
+            }
+        }
+        return new ClientPlayerStateService({
+            updateStore,
+            playerId: state.ownUser.id,
+            matchService,
+            actionPointsCalculator,
+            queryEvents: getters.queryEvents,
+            cardFactory: clientCardFactory
+        });
+    }
+
     function attackerCard(state, getters) {
         if (!state.attackerCardId) return null;
 

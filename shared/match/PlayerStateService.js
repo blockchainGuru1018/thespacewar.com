@@ -87,6 +87,13 @@ class PlayerStateService {
         return !!this.findCardFromAnySource(cardId);
     }
 
+    hasCardThatStopsStationAttack() {
+        return this
+            .getCardsInZone()
+            .map(c => this._createBehaviourCard(c))
+            .some(c => c.stopsStationAttack());
+    }
+
     getCardsOnHand() {
         return this
             .getPlayerState()
@@ -307,6 +314,28 @@ class PlayerStateService {
             repairedCardId: cardToRepair.id,
             repairedCardCommonId: cardToRepair.commonId
         }));
+    }
+
+    registerStationCollisionFromSacrifice(targetCardIds) {
+        for (const targetCardId of targetCardIds) {
+            this.flipStationCard(targetCardId);
+        }
+    }
+
+    registerCardCollisionFromSacrifice(targetCardId) {
+        const targetCardData = this.findCard(targetCardId);
+        const targetCard = this._createBehaviourCard(targetCardData);
+        const newTargetDamage = targetCard.damage ? targetCard.damage + 4 : 4;
+        const targetDefense = targetCard.defense || 0;
+        if (newTargetDamage >= targetDefense) {
+            this.removeCard(targetCardId);
+            this.discardCard(targetCardData);
+        }
+        else {
+            this.updateCard(targetCardId, card => {
+                card.damage = newTargetDamage;
+            });
+        }
     }
 
     registerAttack(attackerCardId) {

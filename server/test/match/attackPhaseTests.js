@@ -15,6 +15,7 @@ const {
 let PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
 let MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
 const PursuiterCommonId = '19';
+const EnergyShieldCommonId = '21';
 
 module.exports = {
     'when first player is in attack phase and moves card': {
@@ -1129,7 +1130,7 @@ module.exports = {
         }
     },
     'sacrifice:': {
-        'when sacrifice card': {
+        'when sacrifice card and target card has defense of 4': {
             async setUp() {
                 this.firstPlayerConnection = FakeConnection2(['stateChanged']);
                 this.secondPlayerConnection = FakeConnection2(['stateChanged']);
@@ -1143,11 +1144,10 @@ module.exports = {
                             cardsInZone: [createCard({ id: 'C1A', commonId: PursuiterCommonId })],
                             events: [
                                 PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
-                                MoveCardEvent({ turn: 2, cardId: 'C1A' })
                             ]
                         },
                         'P2A': {
-                            cardsInOpponentZone: [createCard({ id: 'C2A' })],
+                            cardsInOpponentZone: [createCard({ id: 'C2A', defense: 4 })],
                             events: []
                         }
                     }
@@ -1167,6 +1167,39 @@ module.exports = {
                     discardedCards: [sinon.match({ id: 'C2A' })],
                     opponentDiscardedCards: [sinon.match({ id: 'C1A' })],
                     cardsInOpponentZone: [],
+                    opponentCardsInZone: []
+                }));
+            }
+        },
+        'when sacrifice card and target card has defense of 5': {
+            async setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stateChanged']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    turn: 3,
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInZone: [createCard({ id: 'C1A', commonId: PursuiterCommonId })],
+                            events: [
+                                PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
+                            ]
+                        },
+                        'P2A': {
+                            cardsInOpponentZone: [createCard({ id: 'C2A', defense: 5 })],
+                            events: []
+                        }
+                    }
+                }));
+
+                this.match.sacrifice('P1A', { cardId: 'C1A', targetCardId: 'C2A' });
+            },
+            'should have damaged opponent card'() {
+                assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                    opponentDiscardedCards: [sinon.match({ id: 'C1A' })],
+                    cardsInOpponentZone: [sinon.match({ id: 'C2A', damage: 4 })],
                     opponentCardsInZone: []
                 }));
             }
@@ -1261,6 +1294,324 @@ module.exports = {
                 this.error = catchError(() => this.match.sacrifice('P1A', options));
             },
             'should throw error'() {
+                assert(this.error);
+                assert.equals(this.error.message, 'Cannot sacrifice');
+            }
+        }
+
+        //TODO ENERGY SHIELD SHOULD BLOCK COLLISION WITH STATION BACKEND(DONE) AND GUI
+    },
+    'sacrifice and target station': {
+        'when sacrifice card against 4 target station cards': {
+            async setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stateChanged']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    turn: 3,
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInOpponentZone: [createCard({ id: 'C1A', commonId: PursuiterCommonId })],
+                            events: [
+                                PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
+                                MoveCardEvent({ turn: 2, cardId: 'C1A' })
+                            ]
+                        },
+                        'P2A': {
+                            stationCards: [
+                                { id: 'C2A', card: createCard({ id: 'C2A' }) },
+                                { id: 'C3A', card: createCard({ id: 'C3A' }) },
+                                { id: 'C4A', card: createCard({ id: 'C4A' }) },
+                                { id: 'C5A', card: createCard({ id: 'C5A' }) }
+                            ]
+                        }
+                    }
+                }));
+
+                this.match.sacrifice('P1A', { cardId: 'C1A', targetCardIds: ['C2A', 'C3A', 'C4A', 'C5A'] });
+            },
+            'should emit state changed to opponent'() {
+                assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                    opponentDiscardedCards: [sinon.match({ id: 'C1A' })],
+                    opponentCardsInPlayerZone: [],
+                    stationCards: [
+                        sinon.match({ id: 'C2A', flipped: true, card: sinon.match({ id: 'C2A' }) }),
+                        sinon.match({ id: 'C3A', flipped: true, card: sinon.match({ id: 'C3A' }) }),
+                        sinon.match({ id: 'C4A', flipped: true, card: sinon.match({ id: 'C4A' }) }),
+                        sinon.match({ id: 'C5A', flipped: true, card: sinon.match({ id: 'C5A' }) })
+                    ],
+                }));
+            },
+            'should emit state changed to player'() {
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                    discardedCards: [sinon.match({ id: 'C1A' })],
+                    cardsInOpponentZone: [],
+                    opponentStationCards: [
+                        sinon.match({ id: 'C2A', flipped: true, card: sinon.match({ id: 'C2A' }) }),
+                        sinon.match({ id: 'C3A', flipped: true, card: sinon.match({ id: 'C3A' }) }),
+                        sinon.match({ id: 'C4A', flipped: true, card: sinon.match({ id: 'C4A' }) }),
+                        sinon.match({ id: 'C5A', flipped: true, card: sinon.match({ id: 'C5A' }) })
+                    ],
+                }));
+            }
+        },
+        'when sacrifice card against 3 target station cards but there are 4 left': {
+            async setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stateChanged']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    turn: 3,
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInOpponentZone: [createCard({ id: 'C1A', commonId: PursuiterCommonId })],
+                            events: [
+                                PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
+                                MoveCardEvent({ turn: 2, cardId: 'C1A' })
+                            ]
+                        },
+                        'P2A': {
+                            stationCards: [
+                                { id: 'C2A', card: createCard({ id: 'C2A' }) },
+                                { id: 'C3A', card: createCard({ id: 'C3A' }) },
+                                { id: 'C4A', card: createCard({ id: 'C4A' }) },
+                                { id: 'C5A', card: createCard({ id: 'C5A' }) }
+                            ]
+                        }
+                    }
+                }));
+
+                const options = { cardId: 'C1A', targetCardIds: ['C2A', 'C3A', 'C4A'] };
+                this.error = catchError(() => this.match.sacrifice('P1A', options));
+            },
+            'should throw an error'() {
+                assert(this.error);
+                assert.equals(this.error.message, 'Cannot sacrifice');
+            }
+        },
+        'when sacrifice card against 4 target station cards and there are 4 left but 1 target card id is NOT valid': {
+            async setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stateChanged']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    turn: 3,
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInOpponentZone: [createCard({ id: 'C1A', commonId: PursuiterCommonId })],
+                            events: [
+                                PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
+                                MoveCardEvent({ turn: 2, cardId: 'C1A' })
+                            ]
+                        },
+                        'P2A': {
+                            stationCards: [
+                                { id: 'C2A', card: createCard({ id: 'C2A' }) },
+                                { id: 'C3A', card: createCard({ id: 'C3A' }) },
+                                { id: 'C4A', card: createCard({ id: 'C4A' }) },
+                                { id: 'C5A', card: createCard({ id: 'C5A' }) }
+                            ]
+                        }
+                    }
+                }));
+
+                const options = { cardId: 'C1A', targetCardIds: ['C2A', 'C3A', 'C4A', 'NOT_VALID_ID'] };
+                this.error = catchError(() => this.match.sacrifice('P1A', options));
+            },
+            'should throw an error'() {
+                assert(this.error);
+                assert.equals(this.error.message, 'Cannot sacrifice');
+            }
+        },
+        'when sacrifice card and provide both targetCardIds and targetCardId should throw error': {
+            async setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stateChanged']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    turn: 3,
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInOpponentZone: [createCard({ id: 'C1A', commonId: PursuiterCommonId })],
+                            events: [
+                                PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
+                                MoveCardEvent({ turn: 2, cardId: 'C1A' })
+                            ]
+                        },
+                        'P2A': {
+                            cardsInZone: [createCard({ id: 'C3A' })],
+                            stationCards: [{ id: 'C2A', card: createCard({ id: 'C2A' }) }]
+                        }
+                    }
+                }));
+
+                const options = { cardId: 'C1A', targetCardId: 'C3A', targetCardIds: ['C2A'] };
+                this.error = catchError(() => this.match.sacrifice('P1A', options));
+            },
+            'should throw an error'() {
+                assert(this.error);
+                assert.equals(this.error.message, 'Cannot sacrifice');
+            }
+        },
+        'when sacrifice card against 3 target station cards and there are 3 unflipped left and 1 flipped left': {
+            async setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stateChanged']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    turn: 3,
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInOpponentZone: [createCard({ id: 'C1A', commonId: PursuiterCommonId })],
+                            events: [
+                                PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
+                                MoveCardEvent({ turn: 2, cardId: 'C1A' })
+                            ]
+                        },
+                        'P2A': {
+                            stationCards: [
+                                { id: 'C2A', card: createCard({ id: 'C2A' }) },
+                                { id: 'C3A', card: createCard({ id: 'C3A' }) },
+                                { id: 'C4A', card: createCard({ id: 'C4A' }) },
+                                { id: 'C5A', flipped: true, card: createCard({ id: 'C5A' }) }
+                            ]
+                        }
+                    }
+                }));
+
+                this.match.sacrifice('P1A', { cardId: 'C1A', targetCardIds: ['C2A', 'C3A', 'C4A'] });
+            },
+            'should emit state changed to opponent'() {
+                assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                    opponentDiscardedCards: [sinon.match({ id: 'C1A' })],
+                    opponentCardsInPlayerZone: [],
+                    stationCards: [
+                        sinon.match({ id: 'C2A', flipped: true, card: sinon.match({ id: 'C2A' }) }),
+                        sinon.match({ id: 'C3A', flipped: true, card: sinon.match({ id: 'C3A' }) }),
+                        sinon.match({ id: 'C4A', flipped: true, card: sinon.match({ id: 'C4A' }) }),
+                        sinon.match({ id: 'C5A', flipped: true, card: sinon.match({ id: 'C5A' }) })
+                    ],
+                }));
+            },
+            'should emit state changed to player'() {
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                    discardedCards: [sinon.match({ id: 'C1A' })],
+                    cardsInOpponentZone: [],
+                    opponentStationCards: [
+                        sinon.match({ id: 'C2A', flipped: true, card: sinon.match({ id: 'C2A' }) }),
+                        sinon.match({ id: 'C3A', flipped: true, card: sinon.match({ id: 'C3A' }) }),
+                        sinon.match({ id: 'C4A', flipped: true, card: sinon.match({ id: 'C4A' }) }),
+                        sinon.match({ id: 'C5A', flipped: true, card: sinon.match({ id: 'C5A' }) })
+                    ],
+                }));
+            }
+        },
+        'when sacrifice card against 5 target station cards': {
+            async setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stateChanged']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    turn: 3,
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInOpponentZone: [createCard({ id: 'C1A', commonId: PursuiterCommonId })],
+                            events: [
+                                PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
+                                MoveCardEvent({ turn: 2, cardId: 'C1A' })
+                            ]
+                        },
+                        'P2A': {
+                            stationCards: [
+                                { id: 'C2A', card: createCard({ id: 'C2A' }) },
+                                { id: 'C3A', card: createCard({ id: 'C3A' }) },
+                                { id: 'C4A', card: createCard({ id: 'C4A' }) },
+                                { id: 'C5A', card: createCard({ id: 'C5A' }) },
+                                { id: 'C6A', card: createCard({ id: 'C6A' }) }
+                            ]
+                        }
+                    }
+                }));
+
+                const options = { cardId: 'C1A', targetCardIds: ['C2A', 'C3A', 'C4A', 'C5A', 'C6A'] };
+                this.error = catchError(() => this.match.sacrifice('P1A', options));
+            },
+            'should throw an error'() {
+                assert(this.error);
+                assert.equals(this.error.message, 'Cannot sacrifice');
+            }
+        },
+        'when sacrifice card against only target station card but opponent has energy shield in zone': {
+            async setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stateChanged']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    turn: 3,
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInOpponentZone: [createCard({ id: 'C1A', commonId: PursuiterCommonId })],
+                            events: [
+                                PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
+                                MoveCardEvent({ turn: 2, cardId: 'C1A' })
+                            ]
+                        },
+                        'P2A': {
+                            stationCards: [{ id: 'C2A', card: createCard({ id: 'C2A' }) }],
+                            cardsInZone: [createCard({ id: 'C3A', commonId: EnergyShieldCommonId })]
+                        }
+                    }
+                }));
+
+                const options = { cardId: 'C1A', targetCardIds: ['C2A'] };
+                this.error = catchError(() => this.match.sacrifice('P1A', options));
+            },
+            'should throw an error'() {
+                assert(this.error);
+                assert.equals(this.error.message, 'Cannot sacrifice');
+            }
+        },
+        'when sacrifice card in home zone and target card is station card': {
+            async setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stateChanged']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    turn: 3,
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInZone: [createCard({ id: 'C1A', commonId: PursuiterCommonId })],
+                            events: [
+                                PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
+                                MoveCardEvent({ turn: 2, cardId: 'C1A' })
+                            ]
+                        },
+                        'P2A': {
+                            stationCards: [{ id: 'C2A', card: createCard({ id: 'C2A' }) }]
+                        }
+                    }
+                }));
+
+                const options = { cardId: 'C1A', targetCardIds: ['C2A'] };
+                this.error = catchError(() => this.match.sacrifice('P1A', options));
+            },
+            'should throw an error'() {
                 assert(this.error);
                 assert.equals(this.error.message, 'Cannot sacrifice');
             }

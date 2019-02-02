@@ -1767,7 +1767,7 @@ module.exports = testCase('MatchPage', {
                 assert.calledWith(this.matchController.emit, 'sacrifice', { cardId: 'C1A', targetCardId: 'C2A' });
             }
         },
-        'when select card to sacrifice and opponent card is in opposite zone': {
+        'when select card in home zone to sacrifice': {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
@@ -1779,21 +1779,38 @@ module.exports = testCase('MatchPage', {
                         { id: 'C1A', type: 'spaceShip', commonId: PursuiterCommonId },
                         { id: 'C2A' }
                     ],
-                    opponentCardsInZone: [{ id: 'C2A' }],
-                    events: [PutDownCardEvent({ turn: 1, location: 'station-draw', cardId: 'C1A' })]
+                    opponentCardsInPlayerZone: [{ id: 'C2A' }],
+                    opponentCardsInZone: [{ id: 'C3A' }],
+                    opponentStationCards: [{ id: 'C4A', place: 'draw' }],
+                    events: [
+                        PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A' }),
+                        PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C2A' })
+                    ]
                 }));
                 await timeout();
 
                 await click('.playerCardsInZone .sacrifice');
             },
-            'should NOT be able to select opponent card to target for sacrifice': function () {
+            'should NOT be able to select opponent card in opponent home zone': function () {
                 assert.elementCount('.opponentCardsInZone .selectable', 0);
+            },
+            'should be able to select opponent card in player home zone': function () {
+                assert.elementCount('.opponentCardsInPlayerZone .selectable', 1);
+            },
+            'should NOT be able to select opponent station card': function () {
+                assert.elementCount('.opponentStationCards .selectable', 0);
             },
             'should NOT be able to select player card to target for sacrifice': function () {
                 assert.elementCount('.playerCardsInZone .selectable', 0);
+            },
+            'should NOT be able to any card for attack': function () {
+                assert.elementCount('.readyToAttack', 0);
+            },
+            'should NOT show extra transient card in home zone': function () {
+                assert.elementCount('.playerCardsInZone .card:not(.card--placeholder)', 2);
             }
         },
-        'when select card to sacrifice and opponent card is in same zone': {
+        'when select card in opponent zone to sacrifice': {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
@@ -1801,23 +1818,161 @@ module.exports = testCase('MatchPage', {
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'attack',
-                    cardsInZone: [
-                        { id: 'C1A', type: 'spaceShip', commonId: PursuiterCommonId }
-                    ],
+                    cardsInOpponentZone: [{ id: 'C1A', type: 'spaceShip', commonId: PursuiterCommonId }],
                     opponentCardsInPlayerZone: [{ id: 'C2A' }],
-                    events: [PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A' })]
+                    opponentCardsInZone: [{ id: 'C3A' }],
+                    opponentStationCards: [
+                        { id: 'C4A', place: 'draw' },
+                        { id: 'C5A', flipped: true, place: 'draw', card: createCard({ id: 'C5A' }) }
+                    ],
+                    events: [
+                        PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A' }),
+                        PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C2A' })
+                    ]
                 }));
                 await timeout();
 
-                await click('.playerCardsInZone .sacrifice');
+                await click('.playerCardsInOpponentZone .sacrifice');
             },
-            'should NOT be able to any card for attack': function () {
-                assert.elementCount('.readyToAttack', 0);
+            'should be able to select opponent card in opponent home zone': function () {
+                assert.elementCount('.opponentCardsInZone .selectable', 1);
             },
-            'should NOT show extra transient card in home zone': function () {
-                assert.elementCount('.playerCardsInZone .card:not(.card--placeholder)', 1);
+            'should NOT be able to select opponent card in player home zone': function () {
+                assert.elementCount('.opponentCardsInPlayerZone .selectable', 0);
+            },
+            'should be able to select opponent station card': function () {
+                assert.elementCount('.opponentStationCards .card:eq(0) .selectable', 1);
+            },
+            'should NOT be able to select flipped opponent station card': function () {
+                assert.elementCount('.opponentStationCards .card:eq(1) .selectable', 0);
+            }
+        },
+        'when select card to sacrifice and select a station card': {
+            async setUp() {
+                const { dispatch } = this.createController();
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'attack',
+                    cardsInOpponentZone: [{ id: 'C1A', type: 'spaceShip', commonId: PursuiterCommonId }],
+                    opponentCardsInZone: [{ id: 'C3A' }],
+                    opponentStationCards: [
+                        { id: 'C4A', place: 'draw' },
+                        { id: 'C5A', place: 'draw' }
+                    ],
+                    events: [PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A' }),]
+                }));
+                await timeout();
+
+                await click('.playerCardsInOpponentZone .sacrifice');
+                await click('.opponentStationCards .card:eq(0) .selectable');
+            },
+            'should NOT be able to select opponent card in opponent home zone': function () {
+                assert.elementCount('.opponentCardsInZone .selectable', 0);
+            },
+            'should be able to select second opponent station card': function () {
+                assert.elementCount('.opponentStationCards .selectable', 1);
+            }
+        },
+        'when select card to sacrifice and select a 4 station cards': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'attack',
+                    cardsInOpponentZone: [{ id: 'C1A', type: 'spaceShip', commonId: PursuiterCommonId }],
+                    opponentStationCards: [
+                        { id: 'C2A', place: 'draw' },
+                        { id: 'C3A', place: 'draw' },
+                        { id: 'C4A', place: 'draw' },
+                        { id: 'C5A', place: 'draw' },
+                        { id: 'C6A', place: 'draw' }
+                    ],
+                    events: [PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A' }),]
+                }));
+                await timeout();
+
+                await click('.playerCardsInOpponentZone .sacrifice');
+                await click('.opponentStationCards .card:eq(0) .selectable');
+                await click('.opponentStationCards .card:eq(1) .selectable');
+                await click('.opponentStationCards .card:eq(2) .selectable');
+                await click('.opponentStationCards .card:eq(3) .selectable');
+            },
+            'should emit sacrifice with station card ids'() {
+                assert.calledWith(this.matchController.emit, 'sacrifice', {
+                    cardId: 'C1A',
+                    targetCardIds: ['C2A', 'C3A', 'C4A', 'C5A']
+                });
+            },
+            'should NOT be able to select another opponent station card': function () {
+                assert.elementCount('.opponentStationCards .selectable', 0);
+            }
+        },
+        'when select card to sacrifice and opponent has 3 unflipped station cards and select all 3': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'attack',
+                    cardsInOpponentZone: [{ id: 'C1A', type: 'spaceShip', commonId: PursuiterCommonId }],
+                    opponentStationCards: [
+                        { id: 'C2A', place: 'draw' },
+                        { id: 'C3A', place: 'draw' },
+                        { id: 'C4A', place: 'draw' },
+                        { id: 'C5A', flipped: true, place: 'draw', card: createCard({ id: 'C5A' }) }
+                    ],
+                    events: [PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A' }),]
+                }));
+                await timeout();
+
+                await click('.playerCardsInOpponentZone .sacrifice');
+                await click('.opponentStationCards .card:eq(0) .selectable');
+                await click('.opponentStationCards .card:eq(1) .selectable');
+                await click('.opponentStationCards .card:eq(2) .selectable');
+            },
+            'should emit sacrifice with station card ids'() {
+                assert.calledWith(this.matchController.emit, 'sacrifice', {
+                    cardId: 'C1A',
+                    targetCardIds: ['C2A', 'C3A', 'C4A']
+                });
+            },
+            'should NOT be able to select another opponent station card': function () {
+                assert.elementCount('.opponentStationCards .selectable', 0);
+            }
+        },
+        'when select card to sacrifice and opponent has 1 station card and select that card': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'attack',
+                    cardsInOpponentZone: [{ id: 'C1A', type: 'spaceShip', commonId: PursuiterCommonId }],
+                    opponentStationCards: [{ id: 'C2A', place: 'draw' }],
+                    events: [PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A' }),]
+                }));
+                await timeout();
+
+                await click('.playerCardsInOpponentZone .sacrifice');
+                await click('.opponentStationCards .card .selectable');
+            },
+            'should emit sacrifice with station card ids'() {
+                assert.calledWith(this.matchController.emit, 'sacrifice', { cardId: 'C1A', targetCardIds: ['C2A'] });
+            },
+            'should NOT be able to select another opponent station card': function () {
+                assert.elementCount('.opponentStationCards .selectable', 0);
             }
         }
+
         //TODO when select card to sacrifice and clicks outside should UNSELECT card for sacrifice (goes generally for all actions)
     }
 });
