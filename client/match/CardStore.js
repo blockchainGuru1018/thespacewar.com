@@ -115,7 +115,7 @@ module.exports = function (deps) {
         state.transientPlayerCardsInHomeZone = state.transientPlayerCardsInHomeZone.filter(c => c.id !== cardId);
     }
 
-    function startSacrifice({ state, getters, dispatch, rootGetters }, cardId) {
+    function startSacrifice({ state, getters, dispatch, rootState, rootGetters }, cardId) {
         const cardData = rootGetters['match/findPlayerCardFromAllSources'](cardId);
         dispatch('showCardAction', {
             cardData,
@@ -128,7 +128,11 @@ module.exports = function (deps) {
                 if (!isStationCard && state.selectedCardIdsForAction.length > 0) return false;
 
                 if (isStationCard) {
-                    return !cardData.flipped && !activeCard.isInHomeZone();
+                    const someCardStopsAttacks = rootState.match.opponentCardsInZone
+                        .some(c => rootGetters['match/createCard'](c).stopsStationAttack());
+                    return !cardData.flipped
+                        && !activeCard.isInHomeZone()
+                        && !someCardStopsAttacks;
                 }
                 else {
                     const card = rootGetters['match/createCard'](cardData, { isOpponent: isOpponentCard });

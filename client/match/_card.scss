@@ -6,6 +6,11 @@
   background: white;
   background-size: 100% 100%;
   box-sizing: border-box;
+
+  //&:not(.card-faceDown):hover {
+  //  transform: scale(2);
+  //  z-index: 1;
+  //}
 }
 
 .actionOverlays {

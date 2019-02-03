@@ -383,7 +383,9 @@
         text-decoration: underline;
         font-weight: bold;
         text-shadow: -1px 1px 10px rgba(255, 255, 255, 0.12),
-        1px 1px 10px rgba(255, 255, 255, 0.12)
+        1px 1px 10px rgba(255, 255, 255, 0.12);
+
+        user-select: none;
     }
 
     .guideText--small {

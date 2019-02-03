@@ -1847,6 +1847,33 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.opponentStationCards .card:eq(1) .selectable', 0);
             }
         },
+        'when select card in opponent zone to sacrifice and opponent has energy shield': {
+            async setUp() {
+                const { dispatch } = this.createController();
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'attack',
+                    cardsInOpponentZone: [{ id: 'C1A', type: 'spaceShip', commonId: PursuiterCommonId }],
+                    opponentCardsInZone: [{ id: 'C2A', commonId: this.energyShieldId }],
+                    opponentStationCards: [{ id: 'C3A', place: 'draw' }],
+                    events: [
+                        PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A' }),
+                        PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C2A' })
+                    ]
+                }));
+                await timeout();
+
+                await click('.playerCardsInOpponentZone .sacrifice');
+            },
+            'should be able to select opponent card in opponent home zone': function () {
+                assert.elementCount('.opponentCardsInZone .selectable', 1);
+            },
+            'should NOT be able to select opponent station card': function () {
+                assert.elementCount('.opponentStationCards .selectable', 0);
+            }
+        },
         'when select card to sacrifice and select a station card': {
             async setUp() {
                 const { dispatch } = this.createController();
