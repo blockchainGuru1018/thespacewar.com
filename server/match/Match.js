@@ -15,6 +15,7 @@ const PlayerRequirementUpdaterFactory = require('./PlayerRequirementUpdaterFacto
 const CardFactory = require('../card/ServerCardFactory.js');
 const StateChangeListener = require('../../shared/match/StateChangeListener.js');
 const CanThePlayer = require('../../shared/match/CanThePlayer.js');
+const obscureOpponentEvents = require('./service/obscureOpponentEvents.js');
 const { PHASES, TEMPORARY_START_PHASE } = require('../../shared/phases.js');
 
 module.exports = function ({
@@ -209,11 +210,13 @@ module.exports = function ({
             actionPoints: actionPointsForPlayer,
             turn: state.turn,
             currentPlayer: state.currentPlayer,
+            playerOrder: state.playerOrder,
             opponentCardsInZone: opponentState.cardsInZone,
             opponentCardsInPlayerZone: opponentState.cardsInOpponentZone,
             opponentCardCount: getOpponentCardCount(playerId),
             opponentDiscardedCards: getOpponentDiscardedCards(playerId),
             opponentStationCards: prepareStationCardsForClient(opponentStationCards),
+            opponentEvents: obscureOpponentEvents(opponentState.events),
             opponentRetreated,
             playerRetreated
         });
@@ -248,12 +251,13 @@ module.exports = function ({
             cardsOnHand,
             phase,
         } = getPlayerState(playerId);
-        const opponentStationCards = getOpponentStationCards(playerId)
+        const opponentStationCards = getOpponentStationCards(playerId);
         emitToPlayer(playerId, 'beginGame', {
             stationCards: prepareStationCardsForClient(stationCards),
             cardsOnHand,
             phase,
             currentPlayer: state.currentPlayer,
+            playerOrder: state.playerOrder,
             opponentCardCount: getOpponentCardCount(playerId),
             opponentStationCards: prepareStationCardsForClient(opponentStationCards)
         });

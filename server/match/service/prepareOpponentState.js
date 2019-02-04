@@ -1,3 +1,4 @@
+const obscureOpponentEvents = require('./obscureOpponentEvents.js');
 const itemNamesForOpponentByItemNameForPlayer = require('../itemNamesForOpponentByItemNameForPlayer.js');
 const StatePreparer = require('./StatePreparer.js');
 const obscurerByKey = {
@@ -10,6 +11,10 @@ const obscurerByKey = {
             return cardsOnHand.length;
         },
         key: 'opponentCardCount'
+    },
+    events: {
+        obscure: obscureOpponentEvents,
+        key: 'opponentEvents'
     }
 };
 

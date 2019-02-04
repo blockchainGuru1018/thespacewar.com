@@ -156,7 +156,7 @@
                 if (!card.canAttack()) return false;
 
                 if (!card.canAttackCardsInOtherZone()
-                    && !this.canAttackSomeCardInSameZone) return false;
+                    && !this.canAttackSomeCardInSameZone) return false; //TODO According to this you should be able to select card for attack even though there are no cards in the opposite zone.. seems like a bug!
 
                 return true;
             },
@@ -167,8 +167,13 @@
                 return this.canAttackCardInZone || this.canAttackStationCards;
             },
             canAttackCardInZone() {
+                const card = this.createCard(this.card);
                 return this.zoneOpponentRow
-                    .filter(c => c.type !== 'duration')
+                    .map(cardData => {
+                        const isOpponent = !!this.isPlayerCard;
+                        return this.createCard(cardData, { isOpponent });
+                    })
+                    .filter(target => card.canAttackCard(target))
                     .length > 0;
             },
             canAttackStationCards() {

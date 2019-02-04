@@ -111,6 +111,7 @@ class BaseCard {
     }
 
     _canTargetCard(otherCard) {
+        if (!otherCard.canBeTargeted()) return false;
         if (otherCard.type === 'duration') return false;
         if (otherCard.playerId === this.playerId) return false;
         return true;
@@ -166,6 +167,10 @@ class BaseCard {
 
     canOnlyHaveOneInHomeZone() {
         return false;
+    }
+
+    canBeTargeted() {
+        return true;
     }
 }
 

@@ -46,6 +46,7 @@ module.exports = function (deps) {
             matchId,
             opponentUser,
             ownUser: userRepository.getOwnUser(),
+            playerOrder: [],
             playerCardsInZone: [],
             playerCardsOnHand: [],
             playerDiscardedCards: [],
@@ -64,6 +65,7 @@ module.exports = function (deps) {
             },
             opponentCardsInPlayerZone: [],
             opponentCardsInZone: [],
+            opponentEvents: [],
             attackerCardId: null,
             selectedDefendingStationCards: [],
             repairerCardId: null
@@ -435,13 +437,15 @@ module.exports = function (deps) {
             opponentStationCards,
             opponentCardsInZone,
             opponentCardsInPlayerZone,
+            opponentEvents,
             events,
             phase,
             requirements,
             turn,
             currentPlayer,
             opponentRetreated,
-            playerRetreated
+            playerRetreated,
+            playerOrder
         } = restoreState;
 
         if (opponentRetreated || playerRetreated) {
@@ -458,12 +462,14 @@ module.exports = function (deps) {
         state.opponentDiscardedCards = opponentDiscardedCards;
         state.opponentCardsInZone = opponentCardsInZone;
         state.opponentCardsInPlayerZone = opponentCardsInPlayerZone;
+        state.opponentEvents = opponentEvents;
         commit('setOpponentStationCards', opponentStationCards);
 
         state.events = events;
         state.requirements = requirements;
         state.turn = turn;
         state.currentPlayer = currentPlayer;
+        state.playerOrder = playerOrder;
         state.phase = phase;
     }
 
@@ -474,7 +480,8 @@ module.exports = function (deps) {
             opponentCardCount,
             opponentStationCards,
             phase,
-            currentPlayer
+            currentPlayer,
+            playerOrder
         } = beginningState;
         commit('setPlayerStationCards', stationCards);
         commit('setPlayerCardsOnHand', cardsOnHand);
@@ -482,6 +489,7 @@ module.exports = function (deps) {
         state.opponentCardCount = opponentCardCount;
         state.phase = phase;
         state.currentPlayer = currentPlayer;
+        state.playerOrder = playerOrder;
 
         dispatch('persistOngoingMatch');
     }

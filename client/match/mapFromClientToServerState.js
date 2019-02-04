@@ -1,6 +1,7 @@
 module.exports = function (clientState) {
     const state = {
         turn: clientState.turn,
+        playerOrder: clientState.playerOrder,
         playerStateById: {
             [clientState.ownUser.id]: {
                 phase: clientState.phase,
@@ -10,7 +11,7 @@ module.exports = function (clientState) {
             },
             [clientState.opponentUser.id]: {
                 phase: 'wait',
-                events: [],
+                events: clientState.opponentEvents,
                 cardsInZone: clientState.opponentCardsInZone,
                 cardsInOpponentZone: clientState.opponentCardsInPlayerZone
             }

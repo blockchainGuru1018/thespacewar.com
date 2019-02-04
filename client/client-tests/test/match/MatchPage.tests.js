@@ -26,6 +26,7 @@ const TriggerHappyJoeCommonId = '24';
 const DeadlySniperCommonId = '39';
 const ExpansionCommonId = '40';
 const PursuiterCommonId = '19';
+const TheShadeCommonId = '27';
 
 const Vue = require('vue').default;
 const Vuex = require('vuex').default;
@@ -1999,8 +2000,92 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.opponentStationCards .selectable', 0);
             }
         }
-
         //TODO when select card to sacrifice and clicks outside should UNSELECT card for sacrifice (goes generally for all actions)
+    },
+    'The Shade:': {
+        'when opponent card is The Shade and it has NOT attacked this turn': {
+            async setUp() {
+                const { dispatch } = this.createController();
+                this.controller.showPage();
+
+                dispatch('restoreState', FakeState({
+                    turn: 2,
+                    currentPlayer: 'P1A',
+                    phase: 'attack',
+                    cardsInZone: [{ id: 'C1A', attack: 1 }],
+                    opponentCardsInPlayerZone: [{ id: 'C2A', commonId: TheShadeCommonId }],
+                    events: [PutDownCardEvent({ turn: 1, cardId: 'C1A' })],
+                    opponentEvents: []
+                }));
+                await timeout();
+            },
+            'player card should NOT be able to attack'() {
+                assert.elementCount('.playerCardsInZone .readyToAttack', 0);
+            }
+        },
+        'when PLAYER IS THE FIRST PLAYER and opponent card is The Shade and it has attacked last turn': {
+            async setUp() {
+                const { dispatch } = this.createController();
+                this.controller.showPage();
+
+                dispatch('restoreState', FakeState({
+                    turn: 2,
+                    currentPlayer: 'P1A',
+                    phase: 'attack',
+                    playerOrder: ['P1A', 'P2A'],
+                    cardsInZone: [{ id: 'C1A', attack: 1 }],
+                    opponentCardsInPlayerZone: [{ id: 'C2A', commonId: TheShadeCommonId }],
+                    events: [PutDownCardEvent({ turn: 1, cardId: 'C1A' })],
+                    opponentEvents: [AttackEvent({ turn: 1, attackerCardId: 'C2A', cardCommonId: TheShadeCommonId })]
+                }));
+                await timeout();
+            },
+            'player card should be able to attack'() {
+                assert.elementCount('.playerCardsInZone .readyToAttack', 1);
+            }
+        },
+        'when PLAYER IS THE SECOND PLAYER and opponent card is The Shade and it has attacked this turn': {
+            async setUp() {
+                const { dispatch } = this.createController();
+                this.controller.showPage();
+
+                dispatch('restoreState', FakeState({
+                    turn: 2,
+                    currentPlayer: 'P1A',
+                    phase: 'attack',
+                    playerOrder: ['P2A', 'P1A'],
+                    cardsInZone: [{ id: 'C1A', attack: 1 }],
+                    opponentCardsInPlayerZone: [{ id: 'C2A', commonId: TheShadeCommonId }],
+                    events: [PutDownCardEvent({ turn: 1, cardId: 'C1A' })],
+                    opponentEvents: [AttackEvent({ turn: 2, attackerCardId: 'C2A', cardCommonId: TheShadeCommonId })]
+                }));
+                await timeout();
+            },
+            'player card should be able to attack'() {
+                assert.elementCount('.playerCardsInZone .readyToAttack', 1);
+            }
+        },
+        'when PLAYER IS THE SECOND PLAYER and opponent card is The Shade and it has attacked last turn': {
+            async setUp() {
+                const { dispatch } = this.createController();
+                this.controller.showPage();
+
+                dispatch('restoreState', FakeState({
+                    turn: 2,
+                    currentPlayer: 'P1A',
+                    phase: 'attack',
+                    playerOrder: ['P2A', 'P1A'],
+                    cardsInZone: [{ id: 'C1A', attack: 1 }],
+                    opponentCardsInPlayerZone: [{ id: 'C2A', commonId: TheShadeCommonId }],
+                    events: [PutDownCardEvent({ turn: 1, cardId: 'C1A' })],
+                    opponentEvents: [AttackEvent({ turn: 1, attackerCardId: 'C2A', cardCommonId: TheShadeCommonId })]
+                }));
+                await timeout();
+            },
+            'player card should NOT be able to attack'() {
+                assert.elementCount('.playerCardsInZone .readyToAttack', 0);
+            }
+        }
     }
 });
 

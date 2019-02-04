@@ -477,6 +477,10 @@ module.exports = {
             assert.equals(this.error.message, 'Cannot move card');
         }
     },
+    'attack - The Shade': {
+        //TODO when attack and target is The Shade and it cannot be targeted, should throw error
+        //TODO when attack and target is The Shade and it can be targeted should NOT throw error
+    },
     'missile cards:': {
         'when first player makes deadly attack with missile card': {
             async setUp() {
