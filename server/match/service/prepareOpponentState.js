@@ -23,7 +23,8 @@ const whitelist = [
     'cardsInZone',
     'cardsInOpponentZone',
     'stationCards',
-    'cardsOnHand'
+    'cardsOnHand',
+    'events'
 ];
 
 const statePreparer = StatePreparer({
