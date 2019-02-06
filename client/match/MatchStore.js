@@ -139,7 +139,6 @@ module.exports = function (deps) {
             endAttack,
             selectAsRepairer,
             selectForRepair,
-            cancelCurrentAction,
             damageOwnStationCards
         }
     };
@@ -682,15 +681,6 @@ module.exports = function (deps) {
             repairerCardId: repairerCard.id,
             cardToRepairId: cardToRepair.id
         });
-    }
-
-    function cancelCurrentAction({ state, dispatch }) {
-        if (state.attackerCardId) {
-            dispatch('cancelAttack');
-        }
-        else if (state.repairerCardId) {
-            state.repairerCardId = null;
-        }
     }
 
     function damageOwnStationCards({}, targetIds) {

@@ -151,6 +151,14 @@ class PlayerStateService {
         });
     }
 
+    getAttackBonusForCard(card) {
+        if (card.type === 'spaceShip') {
+            const durationCards = this.getDurationCards().map(c => this._createBehaviourCard(c));
+            return sum(durationCards, 'friendlySpaceShipAttackBonus');
+        }
+        return 0;
+    }
+
     findStationCard(cardId) {
         const playerState = this.getPlayerState();
         return this._findStationCardFromCollection(cardId, playerState.stationCards);

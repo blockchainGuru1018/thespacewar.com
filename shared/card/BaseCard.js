@@ -2,13 +2,20 @@ const phases = require('../phases.js');
 
 class BaseCard {
 
-    constructor(deps) {
-        this._card = { ...deps.card };
-        this.playerId = deps.playerId;
-        this._eventRepository = deps.eventRepository;
-        this._matchInfoRepository = deps.matchInfoRepository;
-        this._queryEvents = deps.queryEvents;
-        this._matchService = deps.matchService; // TODO remove similar assignments in subclasses
+    constructor({
+        card,
+        playerId,
+        eventRepository,
+        matchInfoRepository,
+        queryEvents,
+        matchService
+    }) {
+        this._card = { ...card };
+        this.playerId = playerId;
+        this._eventRepository = eventRepository;
+        this._matchInfoRepository = matchInfoRepository;
+        this._queryEvents = queryEvents;
+        this._matchService = matchService; // TODO remove similar assignments in subclasses
     }
 
     get id() {
@@ -28,7 +35,8 @@ class BaseCard {
     }
 
     get attack() {
-        return this._card.attack;
+        const boost = this._matchService.getAttackBoostForCard(this);
+        return this._card.attack + boost;
     }
 
     get defense() {

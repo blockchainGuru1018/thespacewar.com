@@ -8,4 +8,8 @@ module.exports = class FullForceForward extends BaseCard {
     static get CommonId() {
         return "9";
     }
+
+    get friendlySpaceShipAttackBonus() {
+        return 1;
+    }
 };

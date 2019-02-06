@@ -337,7 +337,6 @@
                 'discardCard',
                 'selectAsDefender',
                 'retreat',
-                'cancelCurrentAction',
                 'askToDrawCard',
                 'askToDiscardOpponentTopTwoCards',
                 'saveMatch',
@@ -347,7 +346,8 @@
                 showCardChoiceDialog: 'showChoiceDialog',
                 showCardAction: 'showCardAction',
                 putDownCard: 'putDownCard',
-                startPuttingDownCard: 'startPuttingDownCard'
+                startPuttingDownCard: 'startPuttingDownCard',
+                cancelCurrentUserInteraction: 'cancelCurrentUserInteraction'
             }),
             canAffordCard(card) {
                 return this.actionPoints2 >= card.cost;
@@ -376,7 +376,7 @@
                     this.holdingCard = null;
                 }
                 else {
-                    this.cancelCurrentAction();
+                    this.cancelCurrentUserInteraction();
                 }
             },
             getOpponentCardStyle(index) {

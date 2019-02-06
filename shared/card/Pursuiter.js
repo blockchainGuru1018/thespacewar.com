@@ -11,7 +11,9 @@ module.exports = class Pursuiter extends BaseCard {
     }
 
     canBeSacrificed() {
+        const currentTurn = this._matchInfoRepository.getTurn();
+        const attacksOnTurn = this._queryEvents.getAttacksOnTurn(this.id, currentTurn)
         const playerPhase = this._matchInfoRepository.getPlayerPhase(this.playerId)
-        return playerPhase === PHASES.attack;
+        return playerPhase === PHASES.attack && attacksOnTurn.length === 0;
     }
 };

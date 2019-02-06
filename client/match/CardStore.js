@@ -45,6 +45,7 @@ module.exports = function (deps) {
             // Card action
             showCardAction,
             selectCardForActiveAction,
+            cancelCardAction,
 
             // Sacrifice
             startSacrifice,
@@ -53,6 +54,9 @@ module.exports = function (deps) {
             // PutDownCard
             startPuttingDownCard, //Use this and not "putDownCard", this will in turn call putdowncard
             putDownCard, //TODO Need better naming scheme for when putting down a card and for actually sending event to matchController
+
+            // Cancel any action, note: move to own store?
+            cancelCurrentUserInteraction,
 
             _hideChoiceDialog,
         }
@@ -221,6 +225,10 @@ module.exports = function (deps) {
         await onActiveActionFinish(state.selectedCardIdsForAction);
         rootDispatch.loadingIndicator.hide();
 
+        dispatch('cancelCardAction');
+    }
+
+    function cancelCardAction({ state, dispatch }) {
         onActiveActionFinish = null;
         dispatch('removeTransientCard', state.activeActionCardData.id);
         state.activeActionCardData = null;
@@ -277,6 +285,18 @@ module.exports = function (deps) {
             else {
                 dispatch('match/placeCardInZone', cardData, { root: true });
             }
+        }
+    }
+
+    function cancelCurrentUserInteraction({ state, rootState, dispatch }) {
+        if (rootState.match.attackerCardId) {
+            dispatch('match/cancelAttack', null, { root: true });
+        }
+        else if (rootState.match.repairerCardId) {
+            state.repairerCardId = null;
+        }
+        else if (state.activeAction) {
+            dispatch('cancelCardAction');
         }
     }
 

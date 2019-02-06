@@ -1,7 +1,7 @@
-const ClassFactory = require('../../shared/card/CardFactory.js');
+const CardFactory = require('../../shared/card/CardFactory.js');
 const MatchService = require('../../shared/match/MatchService.js');
 
-class ServerCardFactory extends ClassFactory {
+class ServerCardFactory extends CardFactory {
 
     constructor(deps) {
         super({
