@@ -1,6 +1,7 @@
 const {
     testCase,
-    assert
+    assert,
+    refute
 } = require('bocha');
 const BaseCard = require('../../../shared/card/BaseCard.js');
 const NewHope = require('../../../shared/card/NewHope.js');
@@ -24,20 +25,46 @@ module.exports = testCase('Match', {
                 assert.equals(this.card.attack, 2);
             }
         },
-        'when card cannot move same turn that was put down but has attack boost of 1': {
+        'when card was put down this turn': {
             async setUp() {
                 this.card = new BaseCard({
                     card: { id: 'C1A', attack: 1 },
                     playerStateService: {
-                        getAttackBoostForCard: card => {
-                            if (card.id === 'C1A') return 1;
-                            return 0;
-                        }
+                        getPhase: () => 'attack',
+                        cardCanMoveOnTurnWhenPutDown: () => false
+                    },
+                    matchService: {
+                        getTurn: () => 1
+                    },
+                    queryEvents: {
+                        getMovesOnTurn: () => [],
+                        getTurnWhenCardWasPutDown: () => 1
                     }
                 });
             },
-            'card should have attack of 2'() {
-                assert.equals(this.card.attack, 2);
+            'should NOT be able to move'() {
+                refute(this.card.canMove());
+            }
+        },
+        'when card was put down this turn and player state service says it can move on turn when put down': {
+            async setUp() {
+                this.card = new BaseCard({
+                    card: { id: 'C1A', attack: 1 },
+                    playerStateService: {
+                        getPhase: () => 'attack',
+                        cardCanMoveOnTurnWhenPutDown: () => true
+                    },
+                    matchService: {
+                        getTurn: () => 1
+                    },
+                    queryEvents: {
+                        getMovesOnTurn: () => [],
+                        getTurnWhenCardWasPutDown: () => 1
+                    }
+                });
+            },
+            'should be able to move'() {
+                assert(this.card.canMove());
             }
         }
     },
