@@ -39,10 +39,8 @@ function DiscardCardController(deps) {
 
     function onSacrificialDiscard(playerId) {
         const opponentId = matchComService.getOpponentId(playerId);
-        const opponentStateService = playerServiceProvider.getStateServiceById([opponentId]);
-        const opponentDeck = opponentStateService.getDeck();
-        const bonusCard = opponentDeck.drawSingle();
-        opponentStateService.addCardToHand(bonusCard);
+        const opponentRequirementService = playerServiceProvider.getRequirementServiceById([opponentId]);
+        opponentRequirementService.addDrawCardRequirement({ count: 1 });
     }
 
     function onRequiredDiscard(playerId) {
