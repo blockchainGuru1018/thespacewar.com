@@ -15,7 +15,7 @@ class QueryEvents {
     }
 
     _turnCountSinceMoveLast(cardId, currentTurn, events) {
-        const moveCardEvent = events.reverse().find(e => e.type === 'moveCard' && e.cardId === cardId);
+        const moveCardEvent = events.slice().reverse().find(e => e.type === 'moveCard' && e.cardId === cardId);
         return currentTurn - moveCardEvent.turn;
     }
 
