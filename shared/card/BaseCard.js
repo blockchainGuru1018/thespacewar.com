@@ -157,7 +157,7 @@ class BaseCard {
     }
 
     canMoveOnTurnWhenPutDown() {
-        return this._playerStateService.cardCanMoveOnTurnWhenPutDown();
+        return this._playerStateService.cardCanMoveOnTurnWhenPutDown(this);
     }
 
     hasMovedThisTurn() {

@@ -52,7 +52,7 @@ module.exports = testCase('Match', {
                     card: { id: 'C1A', attack: 1 },
                     playerStateService: {
                         getPhase: () => 'attack',
-                        cardCanMoveOnTurnWhenPutDown: () => true
+                        cardCanMoveOnTurnWhenPutDown: card => card.id === 'C1A'
                     },
                     matchService: {
                         getTurn: () => 1
