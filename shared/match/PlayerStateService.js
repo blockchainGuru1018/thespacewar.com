@@ -159,6 +159,14 @@ class PlayerStateService {
         return 0;
     }
 
+    cardCanMoveOnTurnWhenPutDown(card) {
+        if (card.type === 'spaceShip') {
+            const durationCards = this.getDurationCards().map(c => this._createBehaviourCard(c));
+            return durationCards.some(c => c.allowsFriendlySpaceShipsToMoveTurnWhenPutDown);
+        }
+        return false;
+    }
+
     findStationCard(cardId) {
         const playerState = this.getPlayerState();
         return this._findStationCardFromCollection(cardId, playerState.stationCards);

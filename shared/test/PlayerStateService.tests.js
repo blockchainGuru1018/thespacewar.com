@@ -10,6 +10,7 @@ const PlayerStateService = require('../match/PlayerStateService.js');
 const BaseCard = require('../card/BaseCard.js');
 const MatchService = require('../match/MatchService.js');
 const FakeDeckFactory = require('../../server/test/testUtils/FakeDeckFactory.js')
+const PlayerServiceProvider = require('../match/PlayerServiceProvider.js');
 
 const FullForceForwardCommonId = '9';
 
@@ -91,6 +92,62 @@ module.exports = bocha.testCase('PlayerStateService', {
                 assert.equals(this.bonus, 0);
             }
         }
+    },
+    'cardCanMoveOnTurnWhenPutDown:': {
+        'should return false': function () {
+            const C1A = createCard({ id: 'C1A', type: 'spaceShip' });
+            const card = new BaseCard({ card: C1A });
+            const state = createState({
+                playerStateById: {
+                    'P1A': {
+                        cardsInZone: [C1A]
+                    }
+                }
+            });
+            const service = createServiceForPlayer(state, 'P1A');
+
+            const result = service.cardCanMoveOnTurnWhenPutDown(card);
+
+            refute(result);
+        },
+        'when card is space ship has Full Force Forward in zone should return true': function () {
+            const C1A = createCard({ id: 'C1A', type: 'spaceShip' });
+            const card = new BaseCard({ card: C1A });
+            const state = createState({
+                playerStateById: {
+                    'P1A': {
+                        cardsInZone: [
+                            C1A,
+                            createCard({ id: 'C2A', type: 'duration', commonId: FullForceForwardCommonId })
+                        ]
+                    }
+                }
+            });
+            const service = createServiceForPlayer(state, 'P1A');
+
+            const result = service.cardCanMoveOnTurnWhenPutDown(card);
+
+            assert(result);
+        },
+        'when has Full Force Forward in zone but card is NOT space ship should return false': function () {
+            const C1A = createCard({ id: 'C1A', type: 'missile' });
+            const card = new BaseCard({ card: C1A });
+            const state = createState({
+                playerStateById: {
+                    'P1A': {
+                        cardsInZone: [
+                            C1A,
+                            createCard({ id: 'C2A', type: 'duration', commonId: FullForceForwardCommonId })
+                        ]
+                    }
+                }
+            });
+            const service = createServiceForPlayer(state, 'P1A');
+
+            const result = service.cardCanMoveOnTurnWhenPutDown(card);
+
+            refute(result);
+        }
     }
 });
 
@@ -101,11 +158,12 @@ function createFullForceForward(id) {
 function createServiceForPlayer(state, playerId) {
     const matchService = new MatchService();
     matchService.setState(state);
-    return new PlayerStateService({
-        playerId,
-        matchService,
-        cardFactory: new ServerCardFactory({ matchService, getFreshState: () => state })
-    });
+    const playerServiceProvider = PlayerServiceProvider();
+    const cardFactory = new ServerCardFactory({ matchService, playerServiceProvider, getFreshState: () => state });
+    const playerStateService = new PlayerStateService({ playerId, matchService, cardFactory });
+    playerServiceProvider.registerService(PlayerServiceProvider.TYPE.state, playerId, playerServiceProvider);
+
+    return playerStateService;
 }
 
 function createState(options = {}) {

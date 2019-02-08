@@ -12,4 +12,8 @@ module.exports = class FullForceForward extends BaseCard {
     get friendlySpaceShipAttackBonus() {
         return 1;
     }
+
+    get allowsFriendlySpaceShipsToMoveTurnWhenPutDown() {
+        return true;
+    }
 };
