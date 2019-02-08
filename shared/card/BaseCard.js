@@ -146,18 +146,22 @@ class BaseCard {
     canMove(alternativeConditions = {}) {
         if (this.type === 'defense') return false;
         if (this.type === 'duration') return false;
-        const phase = alternativeConditions.phase || this._matchInfoRepository.getPlayerPhase(this.playerId);
+        const phase = alternativeConditions.phase || this._playerStateService.getPhase();
         if (phase !== 'attack') return false;
 
         if (this.hasMovedThisTurn()) return false;
 
         const putDownOnTurn = this._queryEvents.getTurnWhenCardWasPutDown(this.id);
-        const turn = this._matchInfoRepository.getTurn();
-        return putDownOnTurn !== turn;
+        const turn = this._matchService.getTurn();
+        return putDownOnTurn !== turn || this.canMoveOnTurnWhenPutDown();
+    }
+
+    canMoveOnTurnWhenPutDown() {
+        return false;
     }
 
     hasMovedThisTurn() {
-        const turn = this._matchInfoRepository.getTurn();
+        const turn = this._matchService.getTurn();
         const movesOnTurn = this._queryEvents.getMovesOnTurn(this.id, turn);
         return movesOnTurn.length > 0;
     }
