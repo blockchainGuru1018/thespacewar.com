@@ -88,12 +88,13 @@ class BaseCard {
     canAttack() {
         if (!this.attack) return false;
         if (this.type === 'duration') return false;
-        const isAttackPhase = this._matchInfoRepository.getPlayerPhase(this.playerId) === phases.PHASES.attack
+        const isAttackPhase = this._playerStateService.getPhase() === phases.PHASES.attack
         if (!isAttackPhase) return false;
 
-        const turn = this._matchInfoRepository.getTurn();
+        const turn = this._matchService.getTurn();
         const attacksOnTurn = this._queryEvents.getAttacksOnTurn(this.id, turn).length;
         if (attacksOnTurn >= this.numberOfAttacksPerTurn) return false;
+        if (!this.canMoveAndAttackOnSameTurn() && this.hasMovedThisTurn()) return false;
 
         return true;
     }
@@ -200,6 +201,10 @@ class BaseCard {
     }
 
     canBeTargeted() {
+        return true;
+    }
+
+    canMoveAndAttackOnSameTurn() {
         return true;
     }
 }

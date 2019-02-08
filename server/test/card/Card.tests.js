@@ -3,8 +3,10 @@ const {
     assert,
     refute
 } = require('bocha');
+const MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
 const BaseCard = require('../../../shared/card/BaseCard.js');
 const NewHope = require('../../../shared/card/NewHope.js');
+const NuclearMissile = require('../../../shared/card/NuclearMissile.js');
 
 module.exports = testCase('Match', {
     'misc:': {
@@ -140,6 +142,46 @@ module.exports = testCase('Match', {
             });
 
             refute(this.card.canTargetCardForSacrifice(stationCard));
+        }
+    },
+    'Nuclear missile:': {
+        'when card is NOT Nuclear Missile and has moved this turn should be able to attack': function () {
+            this.card = new BaseCard({
+                card: { id: 'C1A', attack: 1 },
+                playerId: 'P1A',
+                matchService: {
+                    getTurn: () => 2,
+                },
+                queryEvents: {
+                    getAttacksOnTurn: () => [],
+                    getMovesOnTurn: () => [MoveCardEvent({ turn: 2, cardId: 'C1A' })]
+                },
+                playerStateService: {
+                    getAttackBoostForCard: () => 0,
+                    getPhase: () => 'attack'
+                }
+            });
+
+            assert(this.card.canAttack());
+        },
+        'when card has moved this turn should NOT be able to attack': function () {
+            this.card = new NuclearMissile({
+                card: { id: 'C1A', attack: 1 },
+                playerId: 'P1A',
+                matchService: {
+                    getTurn: () => 2,
+                },
+                queryEvents: {
+                    getAttacksOnTurn: () => [],
+                    getMovesOnTurn: () => [MoveCardEvent({ turn: 2, cardId: 'C1A' })]
+                },
+                playerStateService: {
+                    getAttackBoostForCard: () => 0,
+                    getPhase: () => 'attack'
+                }
+            });
+
+            refute(this.card.canAttack());
         }
     }
 });

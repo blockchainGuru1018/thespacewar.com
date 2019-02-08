@@ -16,7 +16,8 @@ const classes = [
     require('./Expansion.js'),
     require('./Pursuiter.js'),
     require('./TheShade.js'),
-    require('./FullForceForward.js')
+    require('./FullForceForward.js'),
+    require('./NuclearMissile.js')
 ];
 
 const classByCardCommonId = {}
