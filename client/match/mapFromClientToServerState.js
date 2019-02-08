@@ -7,13 +7,23 @@ module.exports = function (clientState) {
                 phase: clientState.phase,
                 events: clientState.events,
                 cardsInZone: clientState.playerCardsInZone,
-                cardsInOpponentZone: clientState.playerCardsInOpponentZone
+                cardsInOpponentZone: clientState.playerCardsInOpponentZone,
+                stationCards: [
+                    ...clientState.playerStation.drawCards,
+                    ...clientState.playerStation.actionCards,
+                    ...clientState.playerStation.handSizeCards
+                ]
             },
             [clientState.opponentUser.id]: {
                 phase: 'wait',
                 events: clientState.opponentEvents,
                 cardsInZone: clientState.opponentCardsInZone,
-                cardsInOpponentZone: clientState.opponentCardsInPlayerZone
+                cardsInOpponentZone: clientState.opponentCardsInPlayerZone,
+                stationCards: [
+                    ...clientState.opponentStation.drawCards,
+                    ...clientState.opponentStation.actionCards,
+                    ...clientState.opponentStation.handSizeCards
+                ]
             }
         }
     };

@@ -161,10 +161,22 @@
                 return true;
             },
             canBeSacrificed() {
-                return this.createCard(this.card).canBeSacrificed();
+                const card = this.createCard(this.card);
+                return card.canBeSacrificed()
+                    && (card.canTargetStationCardsForSacrifice() || this.canTargetCardInZoneForSacrifice);
             },
             canAttackSomeCardInSameZone() {
                 return this.canAttackCardInZone || this.canAttackStationCards;
+            },
+            canTargetCardInZoneForSacrifice() {
+                const card = this.createCard(this.card);
+                return this.zoneOpponentRow
+                    .map(cardData => {
+                        const isOpponent = !!this.isPlayerCard;
+                        return this.createCard(cardData, { isOpponent });
+                    })
+                    .filter(target => card.canTargetCardForSacrifice(target))
+                    .length > 0;
             },
             canAttackCardInZone() {
                 const card = this.createCard(this.card);

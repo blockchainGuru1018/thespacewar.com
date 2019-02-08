@@ -131,15 +131,17 @@ module.exports = function (deps) {
                 if (!isOpponentCard) return false;
                 if (!isStationCard && state.selectedCardIdsForAction.length > 0) return false;
 
+                const card = rootGetters['match/createCard'](cardData, { isOpponent: isOpponentCard });
+                
                 if (isStationCard) {
                     const someCardStopsAttacks = rootState.match.opponentCardsInZone
                         .some(c => rootGetters['match/createCard'](c).stopsStationAttack());
                     return !cardData.flipped
                         && !activeCard.isInHomeZone()
-                        && !someCardStopsAttacks;
+                        && !someCardStopsAttacks
+                        && activeCard.canTargetCardForSacrifice(card);
                 }
                 else {
-                    const card = rootGetters['match/createCard'](cardData, { isOpponent: isOpponentCard });
                     return activeCard.canTargetCardForSacrifice(card);
                 }
             },

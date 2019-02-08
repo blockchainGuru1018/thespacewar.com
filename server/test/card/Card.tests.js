@@ -86,5 +86,60 @@ module.exports = testCase('Match', {
 
             assert(this.card.canMove());
         }
+    },
+    'Pursuiter:': {
+        'when has moved to opponent zone previous turn should be able to target a station card for sacrifice': async function () {
+            const stationCard = new BaseCard({
+                card: { id: 'C2A' },
+                playerStateService: {
+                    isCardStationCard: cardId => cardId === 'C2A'
+                }
+            });
+            this.card = new BaseCard({
+                card: { id: 'C1A', attack: 1 },
+                playerId: 'P1A',
+                matchService: {
+                    getTurn: () => 2,
+                    isPlayerCardInHomeZone: () => false,
+                    cardsAreInSameZone: (card, otherCard) => card.id === 'C1A' && otherCard.id === 'C2A'
+                },
+                queryEvents: {
+                    hasMovedOnPreviousTurn: () => true,
+                    getTurnWhenCardWasPutDown: () => 1
+                },
+                playerStateService: {
+                    getPhase: () => 'attack'
+                }
+            });
+
+            assert(this.card.canTargetCardForSacrifice(stationCard));
+        },
+        'when has moved to opponent zone this turn should NOT be able to target a station card for sacrifice': async function () {
+            const stationCard = new BaseCard({
+                card: { id: 'C2A' },
+                isStationCard: true,
+                playerStateService: {
+                    isCardStationCard: cardId => cardId === 'C2A'
+                }
+            });
+            this.card = new BaseCard({
+                card: { id: 'C1A', attack: 1 },
+                playerId: 'P1A',
+                matchService: {
+                    getTurn: () => 2,
+                    isPlayerCardInHomeZone: () => false,
+                    cardsAreInSameZone: (card, otherCard) => card.id === 'C1A' && otherCard.id === 'C2A'
+                },
+                queryEvents: {
+                    hasMovedOnPreviousTurn: () => false,
+                    getTurnWhenCardWasPutDown: () => 1
+                },
+                playerStateService: {
+                    getPhase: () => 'attack'
+                }
+            });
+
+            refute(this.card.canTargetCardForSacrifice(stationCard));
+        }
     }
 });

@@ -151,6 +151,8 @@ class PlayerStateService {
         });
     }
 
+    /// These methods do queries on behaviour cards, perhaps these belong in a separate service?
+
     getAttackBoostForCard(card) {
         if (card.type === 'spaceShip') {
             const durationCards = this.getDurationCards().map(c => this._createBehaviourCard(c));
@@ -165,6 +167,16 @@ class PlayerStateService {
             return durationCards.some(c => c.allowsFriendlySpaceShipsToMoveTurnWhenPutDown);
         }
         return false;
+    }
+
+    ///
+
+    isCardInHomeZone(cardId) {
+        return this.getPlayerState().cardsInZone.some(c => c.id === cardId);
+    }
+
+    isCardStationCard(cardId) {
+        return this.getPlayerState().stationCards.some(c => c.card.id === cardId);
     }
 
     findStationCard(cardId) {

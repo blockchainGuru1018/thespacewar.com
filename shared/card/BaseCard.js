@@ -10,8 +10,9 @@ class BaseCard {
         matchService,
         playerStateService
     }) {
-        this._card = { ...card };
         this.playerId = playerId;
+
+        this._card = { ...card };
         this._matchInfoRepository = matchInfoRepository;
         this._queryEvents = queryEvents;
         this._matchService = matchService; // TODO remove similar assignments in subclasses
@@ -71,7 +72,7 @@ class BaseCard {
         if (!this.canAttack()) return false;
 
         const turn = this._matchInfoRepository.getTurn();
-        const isInHomeZone = this._matchService.isPlayerCardInHomeZone(this.playerId, this.id);
+        const isInHomeZone = this.isInHomeZone();
         const isMissile = this.type === 'missile';
 
         const canAttackFromHomeZone = (isInHomeZone && this.canAttackCardsInOtherZone());
@@ -114,8 +115,20 @@ class BaseCard {
     }
 
     canTargetCardForSacrifice(otherCard) {
-        return this._canTargetCard(otherCard)
-            && this._matchService.cardsAreInSameZone(this, otherCard);
+        if (!this._canTargetCard(otherCard)) return false;
+        if (!this._matchService.cardsAreInSameZone(this, otherCard)) return false;
+
+        if (otherCard.isStationCard()) {
+            return this.canTargetStationCardsForSacrifice();
+        }
+        else {
+            return true;
+        }
+    }
+
+    canTargetStationCardsForSacrifice() {
+        const turn = this._matchService.getTurn();
+        return this._queryEvents.hasMovedOnPreviousTurn(this.id, turn);
     }
 
     _canTargetCard(otherCard) {
@@ -126,7 +139,11 @@ class BaseCard {
     }
 
     isInHomeZone() {
-        return this._matchService.isPlayerCardInHomeZone(this.playerId, this.id);
+        return this._playerStateService.isCardInHomeZone(this.id);
+    }
+
+    isStationCard() {
+        return this._playerStateService.isCardStationCard(this.id);
     }
 
     attackCard(defenderCard) {
