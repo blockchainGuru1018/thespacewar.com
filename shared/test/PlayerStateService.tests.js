@@ -14,8 +14,8 @@ const FakeDeckFactory = require('../../server/test/testUtils/FakeDeckFactory.js'
 const FullForceForwardCommonId = '9';
 
 module.exports = bocha.testCase('PlayerStateService', {
-    'attack bonus:': {
-        'when has card Full Force Forward in play and a SPACE SHIP card asks for its attack bonus': {
+    'attack boost:': {
+        'when has card Full Force Forward in play and a SPACE SHIP card asks for its attack boost': {
             async setUp() {
                 const C1A = createCard({ id: 'C1A', type: 'spaceShip' });
                 const card = new BaseCard({ card: C1A });
@@ -28,13 +28,13 @@ module.exports = bocha.testCase('PlayerStateService', {
                 });
                 const service = createServiceForPlayer(state, 'P1A');
 
-                this.bonus = service.getAttackBonusForCard(card);
+                this.bonus = service.getAttackBoostForCard(card);
             },
-            'should return 1 in attack bonus': function () {
+            'should return 1 in attack boost': function () {
                 assert.equals(this.bonus, 1);
             }
         },
-        'when has card Full Force Forward in play and a MISSILE card asks for its attack bonus': {
+        'when has card Full Force Forward in play and a MISSILE card asks for its attack boost': {
             async setUp() {
                 const C1A = createCard({ id: 'C1A', type: 'missile' });
                 const card = new BaseCard({ card: C1A });
@@ -47,13 +47,13 @@ module.exports = bocha.testCase('PlayerStateService', {
                 });
                 const service = createServiceForPlayer(state, 'P1A');
 
-                this.bonus = service.getAttackBonusForCard(card);
+                this.bonus = service.getAttackBoostForCard(card);
             },
-            'should return 0 in attack bonus': function () {
+            'should return 0 in attack boost': function () {
                 assert.equals(this.bonus, 0);
             }
         },
-        'when does NOT have Full Force Forward in play and a SPACE SHIP card asks for its attack bonus': {
+        'when does NOT have Full Force Forward in play and a SPACE SHIP card asks for its attack boost': {
             async setUp() {
                 const C1A = createCard({ id: 'C1A', type: 'spaceShip' });
                 const card = new BaseCard({ card: C1A });
@@ -66,13 +66,13 @@ module.exports = bocha.testCase('PlayerStateService', {
                 });
                 const service = createServiceForPlayer(state, 'P1A');
 
-                this.bonus = service.getAttackBonusForCard(card);
+                this.bonus = service.getAttackBoostForCard(card);
             },
-            'should return 0 in attack bonus': function () {
+            'should return 0 in attack boost': function () {
                 assert.equals(this.bonus, 0);
             }
         },
-        'when have 1 duration card that is NOT Full Force Forward in play and a SPACE SHIP card asks for its attack bonus': {
+        'when have 1 duration card that is NOT Full Force Forward in play and a SPACE SHIP card asks for its attack boost': {
             async setUp() {
                 const C1A = createCard({ id: 'C1A', type: 'spaceShip' });
                 const card = new BaseCard({ card: C1A });
@@ -85,9 +85,9 @@ module.exports = bocha.testCase('PlayerStateService', {
                 });
                 const service = createServiceForPlayer(state, 'P1A');
 
-                this.bonus = service.getAttackBonusForCard(card);
+                this.bonus = service.getAttackBoostForCard(card);
             },
-            'should return 0 in attack bonus': function () {
+            'should return 0 in attack boost': function () {
                 assert.equals(this.bonus, 0);
             }
         }

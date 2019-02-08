@@ -12,10 +12,11 @@ const ServerQueryEvents = require('./ServerQueryEvents.js');
 const PlayerStateService = require('../../shared/match/PlayerStateService.js');
 const PlayerRequirementService = require('../../shared/match/PlayerRequirementService.js');
 const PlayerRequirementUpdaterFactory = require('./PlayerRequirementUpdaterFactory.js');
-const CardFactory = require('../card/ServerCardFactory.js');
+const ServerCardFactory = require('../card/ServerCardFactory.js');
 const StateChangeListener = require('../../shared/match/StateChangeListener.js');
 const CanThePlayer = require('../../shared/match/CanThePlayer.js');
 const obscureOpponentEvents = require('./service/obscureOpponentEvents.js');
+const PlayerServiceProvider = require('../../shared/match/PlayerServiceProvider.js');
 const { PHASES, TEMPORARY_START_PHASE } = require('../../shared/phases.js');
 
 module.exports = function ({
@@ -42,12 +43,15 @@ module.exports = function ({
         }
     };
 
-    const cardFactory = new CardFactory({ getFreshState: () => state });
+    const playerServiceProvider = PlayerServiceProvider();
+
+    const cardFactory = new ServerCardFactory({
+        playerServiceProvider,
+        getFreshState: () => state
+    });
     const matchService = new MatchService({ matchId, endMatch });
     matchService.setState(state);
 
-    const playerStateServiceById = {};
-    const playerRequirementServiceById = {};
     for (let player of players) {
         const playerStateService = new PlayerStateService({
             playerId: player.id,
@@ -57,13 +61,15 @@ module.exports = function ({
             logger,
             cardFactory
         })
-        playerStateServiceById[player.id] = playerStateService;
-        playerRequirementServiceById[player.id] = new PlayerRequirementService({ playerStateService });
+        playerServiceProvider.registerService(PlayerServiceProvider.TYPE.state, player.id, playerStateService);
+
+        const playerRequirementService = new PlayerRequirementService({ playerStateService });
+        playerServiceProvider.registerService(
+            PlayerServiceProvider.TYPE.requirement,
+            player.id,
+            playerRequirementService
+        );
     }
-    const playerServiceProvider = {
-        getStateServiceById: playerId => playerStateServiceById[playerId],
-        getRequirementServiceById: playerId => playerRequirementServiceById[playerId]
-    };
 
     const stateChangeListener = new StateChangeListener({ playerServiceProvider, matchService, logger });
     const matchComService = new MatchComService({
@@ -77,7 +83,6 @@ module.exports = function ({
     const controllerDeps = {
         matchService,
         matchComService,
-        playerStateServiceById,
         restoreFromState,
         playerServiceProvider,
         cardFactory,

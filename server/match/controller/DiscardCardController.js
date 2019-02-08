@@ -4,7 +4,6 @@ function DiscardCardController(deps) {
 
     const {
         matchComService,
-        playerStateServiceById,
         playerServiceProvider,
         playerRequirementUpdaterFactory
     } = deps;
@@ -40,7 +39,7 @@ function DiscardCardController(deps) {
 
     function onSacrificialDiscard(playerId) {
         const opponentId = matchComService.getOpponentId(playerId);
-        const opponentStateService = playerStateServiceById[opponentId];
+        const opponentStateService = playerServiceProvider.getStateServiceById([opponentId]);
         const opponentDeck = opponentStateService.getDeck();
         const bonusCard = opponentDeck.drawSingle();
         opponentStateService.addCardToHand(bonusCard);

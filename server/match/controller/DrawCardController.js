@@ -3,7 +3,6 @@ function DrawCardController(deps) {
     const {
         matchService,
         matchComService,
-        playerStateServiceById,
         playerServiceProvider,
         playerRequirementUpdaterFactory
     } = deps;
@@ -48,13 +47,13 @@ function DrawCardController(deps) {
     function onDiscardOpponentTopTwoCards(playerId) {
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
         const drawCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'drawCard' });
-        const playerStateService = playerStateServiceById[playerId];
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         if (!drawCardRequirement && !playerStateService.moreCardsCanBeDrawnForDrawPhase()) {
             matchComService.emitToPlayer(playerId, 'drawCards', { moreCardsCanBeDrawn: false });
             return;
         }
 
-        const opponentStateService = playerStateServiceById[matchService.getOpponentId(playerId)];
+        const opponentStateService = playerServiceProvider.getStateServiceById([matchService.getOpponentId(playerId)]);
         opponentStateService.discardTopTwoCardsInDrawPile();
         playerStateService.registerMill();
 

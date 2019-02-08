@@ -151,7 +151,7 @@ class PlayerStateService {
         });
     }
 
-    getAttackBonusForCard(card) {
+    getAttackBoostForCard(card) {
         if (card.type === 'spaceShip') {
             const durationCards = this.getDurationCards().map(c => this._createBehaviourCard(c));
             return sum(durationCards, 'friendlySpaceShipAttackBonus');

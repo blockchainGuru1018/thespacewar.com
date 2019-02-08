@@ -5,17 +5,17 @@ class BaseCard {
     constructor({
         card,
         playerId,
-        eventRepository,
         matchInfoRepository,
         queryEvents,
-        matchService
+        matchService,
+        playerStateService
     }) {
         this._card = { ...card };
         this.playerId = playerId;
-        this._eventRepository = eventRepository;
         this._matchInfoRepository = matchInfoRepository;
         this._queryEvents = queryEvents;
         this._matchService = matchService; // TODO remove similar assignments in subclasses
+        this._playerStateService = playerStateService;
     }
 
     get id() {
@@ -35,7 +35,7 @@ class BaseCard {
     }
 
     get attack() {
-        const boost = this._matchService.getAttackBoostForCard(this);
+        const boost = this._playerStateService.getAttackBoostForCard(this);
         return this._card.attack + boost;
     }
 
@@ -70,13 +70,13 @@ class BaseCard {
     canAttackStationCards() {
         if (!this.canAttack()) return false;
 
-        const events = this._eventRepository.getAll();
         const turn = this._matchInfoRepository.getTurn();
         const isInHomeZone = this._matchService.isPlayerCardInHomeZone(this.playerId, this.id);
-        const isMissile = this._card.type === 'missile'
+        const isMissile = this.type === 'missile';
 
         const canAttackFromHomeZone = (isInHomeZone && this.canAttackCardsInOtherZone());
-        const hasWaitedAndCanAttackFromOpponentZone = (hasMovedOnPreviousTurn(this.id, turn, events) && !isInHomeZone);
+        const hasMovedOnPreviousTurn = this._queryEvents.hasMovedOnPreviousTurn(this.id, turn);
+        const hasWaitedAndCanAttackFromOpponentZone = (hasMovedOnPreviousTurn && !isInHomeZone);
         const isMissileAndCanAttackFromOpponentZone = (isMissile && !isInHomeZone);
 
         return canAttackFromHomeZone
@@ -85,13 +85,13 @@ class BaseCard {
     }
 
     canAttack() {
-        if (!this._card.attack) return false;
-        if (this._card.type === 'duration') return false;
+        if (!this.attack) return false;
+        if (this.type === 'duration') return false;
         const isAttackPhase = this._matchInfoRepository.getPlayerPhase(this.playerId) === phases.PHASES.attack
         if (!isAttackPhase) return false;
 
         const turn = this._matchInfoRepository.getTurn();
-        const attacksOnTurn = this._queryEvents.getAttacksOnTurn(this._card.id, turn).length;
+        const attacksOnTurn = this._queryEvents.getAttacksOnTurn(this.id, turn).length;
         if (attacksOnTurn >= this.numberOfAttacksPerTurn) return false;
 
         return true;
@@ -132,32 +132,33 @@ class BaseCard {
     attackCard(defenderCard) {
         const defenderCurrentDamage = defenderCard.damage;
         const defenderTotalDefense = defenderCard.defense - defenderCurrentDamage;
-        if (this._card.attack >= defenderTotalDefense) {
+        const cardAttack = this.attack;
+        if (cardAttack >= defenderTotalDefense) {
             defenderCard.destroyed = true;
         }
-        defenderCard.damage = defenderCurrentDamage + this._card.attack;
+        defenderCard.damage = defenderCurrentDamage + cardAttack;
 
-        if (this._card.type === 'missile') {
-            this._card.destroyed = true;
+        if (this.type === 'missile') {
+            this.destroyed = true;
         }
     }
 
     canMove(alternativeConditions = {}) {
-        if (this._card.type === 'defense') return false;
-        if (this._card.type === 'duration') return false;
+        if (this.type === 'defense') return false;
+        if (this.type === 'duration') return false;
         const phase = alternativeConditions.phase || this._matchInfoRepository.getPlayerPhase(this.playerId);
         if (phase !== 'attack') return false;
 
         if (this.hasMovedThisTurn()) return false;
 
-        const putDownOnTurn = getTurnWhenWasPutDown(this._eventRepository.getAll(), this._card.id);
+        const putDownOnTurn = this._queryEvents.getTurnWhenCardWasPutDown(this.id);
         const turn = this._matchInfoRepository.getTurn();
         return putDownOnTurn !== turn;
     }
 
     hasMovedThisTurn() {
         const turn = this._matchInfoRepository.getTurn();
-        const movesOnTurn = this._queryEvents.getMovesOnTurn(this._card.id, turn);
+        const movesOnTurn = this._queryEvents.getMovesOnTurn(this.id, turn);
         return movesOnTurn.length > 0;
     }
 
@@ -183,25 +184,3 @@ class BaseCard {
 }
 
 module.exports = BaseCard;
-
-function getTurnWhenWasPutDown(events, cardId) {
-    const putDownEventForThisCard = events.find(e => {
-        return e.type === 'putDownCard'
-            && e.cardId === cardId;
-    });
-    if (!putDownEventForThisCard) throw new Error(`Asking when card (${cardId}) was put down. But card has not been put down.`);
-    return putDownEventForThisCard.turn;
-}
-
-function hasMovedOnPreviousTurn(cardId, currentTurn, events) {
-    return cardHasMoved(cardId, events) && turnCountSinceMoveLast(cardId, currentTurn, events) > 0;
-}
-
-function cardHasMoved(cardId, events) {
-    return events.some(e => e.type === 'moveCard' && e.cardId === cardId);
-}
-
-function turnCountSinceMoveLast(cardId, currentTurn, events) {
-    const moveCardEvent = events.reverse().find(e => e.type === 'moveCard' && e.cardId === cardId);
-    return currentTurn - moveCardEvent.turn;
-}

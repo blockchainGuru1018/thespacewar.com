@@ -1,8 +1,12 @@
-module.exports = function EventRepository(deps) {
+module.exports = function EventRepository({
+    playerId,
+    playerServiceProvider
+}) {
 
     return {
         getAll() {
-            return deps.events;
+            const service = playerServiceProvider.getStateServiceById(playerId);
+            return service.getEvents();
         }
     };
 }

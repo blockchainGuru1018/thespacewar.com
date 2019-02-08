@@ -2161,7 +2161,8 @@ function FakeState(options) {
         turn: 1,
         currentPlayer: 'P2A',
         opponentRetreated: false,
-        playerRetreated: false
+        playerRetreated: false,
+        playerOrder: ['P1A', 'P2A']
     });
 }
 

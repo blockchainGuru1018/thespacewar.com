@@ -33,7 +33,7 @@ module.exports = function (deps) {
     const cardInfoRepository = deps.cardInfoRepository;
     const actionPointsCalculator = deps.actionPointsCalculator || ActionPointsCalculator({ cardInfoRepository });
     const matchController = deps.matchController;
-    const clientCardFactory = deps.cardFactory || new ClientCardFactory();
+    const clientCardFactory = deps.cardFactory || ClientCardFactory({ actionPointsCalculator });
 
     return {
         namespaced: true,
@@ -210,7 +210,7 @@ module.exports = function (deps) {
 
     function createCard(state) {
         return (cardData, { isOpponent = false, playerId = null } = {}) => {
-            return clientCardFactory.createFromVuexStore(cardData, state, { isOpponent, playerId });
+            return clientCardFactory.fromVuexStore(cardData, state, { isOpponent, playerId });
         };
     }
 
@@ -240,7 +240,7 @@ module.exports = function (deps) {
         const eventRepository = {
             getAll: () => state.events
         };
-        return new QueryEvents(eventRepository);
+        return new QueryEvents({ eventRepository });
     }
 
     function canPutDownCard(state, getters) {
@@ -270,27 +270,11 @@ module.exports = function (deps) {
             matchService,
             actionPointsCalculator,
             queryEvents: getters.queryEvents,
-            cardFactory: clientCardFactory
-        });
-    }
-
-    function playerStateService(state, getters) {
-        const matchService = new MatchService();
-        const mappedState = mapFromClientToServerState(state);
-        matchService.setState(mappedState);
-        const updateStore = (clientState) => {
-            let changedProperties = Object.keys(clientState);
-            for (let property of changedProperties) {
-                state[property] = clientState[property];
+            cardFactory: {
+                createCardForPlayer: (cardData, playerId) => {
+                    return clientCardFactory.fromVuexStore(cardData, state, { playerId });
+                }
             }
-        }
-        return new ClientPlayerStateService({
-            updateStore,
-            playerId: state.ownUser.id,
-            matchService,
-            actionPointsCalculator,
-            queryEvents: getters.queryEvents,
-            cardFactory: clientCardFactory
         });
     }
 

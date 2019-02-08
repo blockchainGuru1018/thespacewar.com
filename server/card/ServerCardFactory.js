@@ -1,22 +1,27 @@
 const CardFactory = require('../../shared/card/CardFactory.js');
 const MatchService = require('../../shared/match/MatchService.js');
+const QueryEvents = require('../../shared/event/QueryEvents.js');
+const EventRepository = require('../../shared/event/EventRepository.js');
 
-class ServerCardFactory extends CardFactory {
+function ServerCardFactory({
+    getFreshState,
+    playerServiceProvider
+}) {
 
-    constructor(deps) {
-        super({
-            matchService: new MatchService()
-        });
+    const matchService = new MatchService();
 
-        this._getFreshState = deps.getFreshState;
+    return {
+        createCardForPlayer
+    };
+
+    function createCardForPlayer(cardData, playerId) {
+        matchService.setState(getFreshState());
+
+        const eventRepository = EventRepository({ playerId, playerServiceProvider });
+        const queryEvents = new QueryEvents({ eventRepository });
+        const cardFactory = new CardFactory({ matchService, playerServiceProvider, queryEvents });
+        return cardFactory.createCardForPlayer(cardData, playerId);
     }
-
-    createCardForPlayer(cardData, playerId) {
-        let freshState = this._getFreshState();
-        this._matchService.setState(freshState);
-        return super.createCardForPlayer(cardData, playerId);
-    }
-
 }
 
 module.exports = ServerCardFactory;

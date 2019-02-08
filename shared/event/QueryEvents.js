@@ -1,7 +1,22 @@
-class QueryEvents { // TODO rename QueryCardEvents?
+class QueryEvents {
 
-    constructor(eventRepository) {
+    constructor({ eventRepository }) {
         this._eventRepository = eventRepository;
+    }
+
+    hasMovedOnPreviousTurn(cardId, currentTurn) {
+        const events = this._eventRepository.getAll();
+        return this._cardHasMoved(cardId, events)
+            && this._turnCountSinceMoveLast(cardId, currentTurn, events) > 0;
+    }
+
+    _cardHasMoved(cardId, events) {
+        return events.some(e => e.type === 'moveCard' && e.cardId === cardId);
+    }
+
+    _turnCountSinceMoveLast(cardId, currentTurn, events) {
+        const moveCardEvent = events.reverse().find(e => e.type === 'moveCard' && e.cardId === cardId);
+        return currentTurn - moveCardEvent.turn;
     }
 
     getTurnWhenCardWasPutDown(cardId) {
