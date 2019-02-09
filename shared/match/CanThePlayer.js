@@ -14,6 +14,22 @@ class CanThePlayer {
         return !this._playerStateService.hasDurationCardOfType(Neutralization.CommonId)
             && !this._opponentStateService.hasDurationCardOfType(Neutralization.CommonId);
     }
+
+    moveThisCard(card) {
+        if (card.type === 'missile') {
+            return !this._opponentStateService
+                .hasMatchingCardInSomeZone(card => card.preventsOpponentMissilesFromMoving);
+        }
+        return true;
+    }
+
+    attackWithThisCard(card) {
+        if (card.type === 'missile') {
+            return !this._opponentStateService
+                .hasMatchingCardInSomeZone(card => card.preventsOpponentMissilesFromAttacking);
+        }
+        return true;
+    }
 }
 
 module.exports = CanThePlayer;

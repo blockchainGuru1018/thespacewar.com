@@ -75,8 +75,13 @@ class PlayerStateService {
         return this.getStationCards().some(s => s.card.id === cardId);
     }
 
-    hasCardOfTypeInZone(cardCommonId) {
+    hasCardOfTypeInZone(cardCommonId) { //TODO "type" is misleading, perhaps call is "hasCardWithCommonIdInAnyZone"
         return this.getCardsInZone().some(c => c.commonId === cardCommonId);
+    }
+
+    hasMatchingCardInSomeZone(matcher) {
+        return this.getCardsInZone().map(c => this._createBehaviourCard(c)).some(matcher)
+            || this.getCardsInOpponentZone().map(c => this._createBehaviourCard(c)).some(matcher);
     }
 
     hasDurationCardOfType(cardCommonId) {
@@ -176,7 +181,7 @@ class PlayerStateService {
     }
 
     isCardStationCard(cardId) {
-        return this.getPlayerState().stationCards.some(c => c.card.id === cardId);
+        return this.getPlayerState().stationCards.some(c => (c.card ? c.card.id : c.id) === cardId);
     }
 
     findStationCard(cardId) {

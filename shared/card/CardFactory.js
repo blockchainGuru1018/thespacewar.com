@@ -17,13 +17,15 @@ module.exports = class CardFactory {
     createCardForPlayer(cardData, playerId) {
         const state = this._matchService.getState();
         const Constructor = getCardConstructor(cardData);
+        const stateServiceById = this._playerServiceProvider.getStateServiceById(playerId)
         return new Constructor({
             card: cardData,
             playerId,
             queryEvents: this._queryEvents,
             matchInfoRepository: MatchInfoRepository(state),
             matchService: this._matchService,
-            playerStateService: this._playerServiceProvider.getStateServiceById(playerId)
+            playerStateService: stateServiceById,
+            canThePlayer: this._playerServiceProvider.getCanThePlayerServiceById(playerId)
         });
     }
 }

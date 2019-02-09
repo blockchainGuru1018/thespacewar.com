@@ -51,25 +51,16 @@ module.exports = function ({
     });
     const matchService = new MatchService({ matchId, endMatch });
     matchService.setState(state);
-
-    for (let player of players) {
-        const playerStateService = new PlayerStateService({
-            playerId: player.id,
-            matchService,
-            queryEvents: new ServerQueryEvents({ playerId: player.id, matchService }),
-            actionPointsCalculator,
-            logger,
-            cardFactory
-        })
-        playerServiceProvider.registerService(PlayerServiceProvider.TYPE.state, player.id, playerStateService);
-
-        const playerRequirementService = new PlayerRequirementService({ playerStateService });
-        playerServiceProvider.registerService(
-            PlayerServiceProvider.TYPE.requirement,
-            player.id,
-            playerRequirementService
-        );
-    }
+    registerPlayerStateServices({
+        players,
+        matchService,
+        actionPointsCalculator,
+        logger,
+        cardFactory,
+        playerServiceProvider
+    })
+    registerPlayerRequirementServices(players, playerServiceProvider);
+    registerCanThePlayerServices(players, playerServiceProvider);
 
     const stateChangeListener = new StateChangeListener({ playerServiceProvider, matchService, logger });
     const matchComService = new MatchComService({
@@ -386,6 +377,47 @@ function repairRequirements({
 
         playerWaitingRequirement = playerRequirementUpdater.getFirstMatchingRequirement({ waiting: true });
         opponentWaitingRequirement = opponentRequirementUpdater.getFirstMatchingRequirement({ waiting: true });
+    }
+}
+
+function registerPlayerStateServices({ players, matchService, actionPointsCalculator, logger, cardFactory, playerServiceProvider }) {
+    for (let player of players) {
+        const playerId = player.id;
+        const playerStateService = new PlayerStateService({
+            playerId,
+            matchService,
+            queryEvents: new ServerQueryEvents({ playerId, matchService }),
+            actionPointsCalculator,
+            logger,
+            cardFactory
+        })
+        playerServiceProvider.registerService(PlayerServiceProvider.TYPE.state, playerId, playerStateService);
+    }
+}
+
+function registerPlayerRequirementServices(players, playerServiceProvider) {
+    for (let player of players) {
+        const playerId = player.id;
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const playerRequirementService = new PlayerRequirementService({ playerStateService });
+        playerServiceProvider.registerService(
+            PlayerServiceProvider.TYPE.requirement,
+            playerId,
+            playerRequirementService
+        );
+    }
+}
+
+function registerCanThePlayerServices(players, playerServiceProvider) {
+    for (let player of players) {
+        const playerId = player.id;
+        const opponentId = players.find(p => p.id !== playerId).id;
+        const stateServiceById = playerServiceProvider.getStateServiceById(opponentId)
+        let canThePlayer = new CanThePlayer({
+            playerStateService: playerServiceProvider.getStateServiceById(playerId),
+            opponentStateService: stateServiceById,
+        });
+        playerServiceProvider.registerService(PlayerServiceProvider.TYPE.canThePlayer, playerId, canThePlayer);
     }
 }
 

@@ -1,6 +1,7 @@
 const TYPE = {
     state: 'state',
-    requirement: 'requirement'
+    requirement: 'requirement',
+    canThePlayer: 'canThePlayer'
 }
 
 PlayerServiceProvider.TYPE = TYPE;
@@ -13,7 +14,8 @@ function PlayerServiceProvider() {
         TYPE,
         registerService,
         getStateServiceById,
-        getRequirementServiceById
+        getRequirementServiceById,
+        getCanThePlayerServiceById
     };
 
     function registerService(type, playerId, service) {
@@ -26,6 +28,10 @@ function PlayerServiceProvider() {
 
     function getRequirementServiceById(playerId) {
         return servicesByTypeAndPlayerId[`${TYPE.requirement}:${playerId}`];
+    }
+
+    function getCanThePlayerServiceById(playerId) {
+        return servicesByTypeAndPlayerId[`${TYPE.canThePlayer}:${playerId}`];
     }
 }
 

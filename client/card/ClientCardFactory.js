@@ -6,6 +6,8 @@ const PlayerServiceProvider = require('../../shared/match/PlayerServiceProvider.
 const ClientPlayerStateService = require('../match/ClientPlayerStateService.js');
 const QueryEvents = require('../../shared/event/QueryEvents.js');
 const EventRepository = require('../../shared/event/EventRepository.js');
+const CanThePlayer = require('../../shared/match/CanThePlayer.js');
+
 module.exports = function ClientCardFactory({
     actionPointsCalculator
 }) {
@@ -18,30 +20,38 @@ module.exports = function ClientCardFactory({
         fromVuexStore
     };
 
-    function fromVuexStore(cardInfo, state, { isOpponent = false, playerId = null } = {}) {
+    function bootstrapPlayerData(playerId, updateStore) {
+        const eventRepository = EventRepository({ playerId, playerServiceProvider });
+        const queryEvents = new QueryEvents({ eventRepository });
+        const cardFactory = new CardFactory({ matchService, playerServiceProvider, queryEvents });
+        const playerStateService = PlayerStateService({
+            cardFactory,
+            updateStore,
+            playerId,
+            queryEvents
+        });
+        return { cardFactory, playerStateService };
+    }
+
+    function fromVuexStore(cardInfo, clientState, { isOpponent = false, playerId = null } = {}) {
         let cardData = cardDataFromCardInfo(cardInfo);
-        if (!state.playerOrder) {
-            debugger;
-        }
-        const mappedState = mapFromClientToServerState(state);
+        const mappedState = mapFromClientToServerState(clientState);
         matchService.setState(mappedState);
 
-        let cardOwnerId = isOpponent ? state.opponentUser.id : state.ownUser.id;
+        let cardOwnerId = isOpponent ? clientState.opponentUser.id : clientState.ownUser.id;
         if (playerId !== null) {
             cardOwnerId = playerId;
         }
 
-        const eventRepository = EventRepository({ playerId: cardOwnerId, playerServiceProvider });
-        const queryEvents = new QueryEvents({ eventRepository });
-        const cardFactory = new CardFactory({ matchService, playerServiceProvider, queryEvents });
-        const updateStore = UpdateStore(state);
-        const playerStateService = PlayerStateService({
-            cardFactory,
-            updateStore,
-            playerId: cardOwnerId,
-            queryEvents
-        });
+        const updateStore = UpdateStore(clientState);
+
+        const opponentId = cardOwnerId === clientState.ownUser.id ? clientState.opponentUser.id : clientState.ownUser.id;
+        const { playerStateService: opponentStateService } = bootstrapPlayerData(opponentId, updateStore);
+
+        const { cardFactory, playerStateService } = bootstrapPlayerData(cardOwnerId, updateStore);
         playerServiceProvider.registerService(PlayerServiceProvider.TYPE.state, cardOwnerId, playerStateService);
+        let canThePlayer = new CanThePlayer({ playerStateService, opponentStateService });
+        playerServiceProvider.registerService(PlayerServiceProvider.TYPE.canThePlayer, cardOwnerId, canThePlayer);
 
         return cardFactory.createCardForPlayer(cardData, cardOwnerId);
     }

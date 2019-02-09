@@ -8,7 +8,8 @@ class BaseCard {
         matchInfoRepository,
         queryEvents,
         matchService,
-        playerStateService
+        playerStateService,
+        canThePlayer
     }) {
         this.playerId = playerId;
 
@@ -17,6 +18,7 @@ class BaseCard {
         this._queryEvents = queryEvents;
         this._matchService = matchService; // TODO remove similar assignments in subclasses
         this._playerStateService = playerStateService;
+        this._canThePlayer = canThePlayer;
     }
 
     get id() {
@@ -87,6 +89,8 @@ class BaseCard {
 
     canAttack() {
         if (!this.attack) return false;
+        if (!this._canThePlayer.attackWithThisCard(this)) return false;
+
         if (this.type === 'duration') return false;
         const isAttackPhase = this._playerStateService.getPhase() === phases.PHASES.attack
         if (!isAttackPhase) return false;
@@ -166,6 +170,7 @@ class BaseCard {
         if (this.type === 'duration') return false;
         const phase = alternativeConditions.phase || this._playerStateService.getPhase();
         if (phase !== 'attack') return false;
+        if (!this._canThePlayer.moveThisCard(this)) return false;
 
         if (this.hasMovedThisTurn()) return false;
 
