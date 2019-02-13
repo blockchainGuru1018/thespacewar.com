@@ -121,19 +121,17 @@ class BaseCard {
 
     canTargetCardForSacrifice(otherCard) {
         if (!this._canTargetCard(otherCard)) return false;
-        if (!this._matchService.cardsAreInSameZone(this, otherCard)) return false;
 
         if (otherCard.isStationCard()) {
             return this.canTargetStationCardsForSacrifice();
         }
         else {
-            return true;
+            return this._matchService.cardsAreInSameZone(this, otherCard);
         }
     }
 
     canTargetStationCardsForSacrifice() {
-        const turn = this._matchService.getTurn();
-        return this._queryEvents.hasMovedOnPreviousTurn(this.id, turn);
+        return !this.isInHomeZone();
     }
 
     _canTargetCard(otherCard) {

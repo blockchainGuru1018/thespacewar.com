@@ -1975,18 +1975,42 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.opponentStationCards .selectable', 0);
             }
         },
+        'when opponent has 1 station card and player has card in opponent zone with the ability to sacrifice itself': {
+            async setUp() {
+                const { dispatch } = this.createController();
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 3,
+                    currentPlayer: 'P1A',
+                    phase: 'attack',
+                    cardsInOpponentZone: [{ id: 'C1A', type: 'spaceShip', commonId: PursuiterCommonId }],
+                    opponentStationCards: [{ id: 'C2A', place: 'draw' }],
+                    events: [
+                        PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A' }),
+                        MoveCardEvent({ turn: 2, cardId: 'C1A' })
+                    ]
+                }));
+                await timeout();
+            },
+            'should be able to select card for sacrifice'() {
+                assert.elementCount('.playerCardsInOpponentZone .sacrifice', 1);
+            }
+        },
         'when select card to sacrifice and opponent has 1 station card and select that card': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
                 dispatch('restoreState', FakeState({
-                    turn: 1,
+                    turn: 3,
                     currentPlayer: 'P1A',
                     phase: 'attack',
                     cardsInOpponentZone: [{ id: 'C1A', type: 'spaceShip', commonId: PursuiterCommonId }],
                     opponentStationCards: [{ id: 'C2A', place: 'draw' }],
-                    events: [PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A' }),]
+                    events: [
+                        PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A' }),
+                        MoveCardEvent({ turn: 2, cardId: 'C1A' })
+                    ]
                 }));
                 await timeout();
 
@@ -2000,7 +2024,6 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.opponentStationCards .selectable', 0);
             }
         }
-        //TODO when select card to sacrifice and clicks outside should UNSELECT card for sacrifice (goes generally for all actions)
     },
     'The Shade:': {
         'when opponent card is The Shade and it has NOT attacked this turn': {
