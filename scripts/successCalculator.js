@@ -148,6 +148,94 @@ const DONE = [
         "attack": "1",
         "number_copies": "1",
     },
+    {
+        "difficulty": "9",
+        "type_card": "missile",
+        "name": "Nuclear missile",
+        "id": "8",
+        "price": "2",
+        "defense": "3",
+        "attack": "10",
+        "number_copies": "1",
+    },
+    {
+        "difficulty": "9",
+        "type_card": "spaceShip",
+        "name": "The Shade",
+        "id": "27",
+        "price": "4",
+        "detail": "Stealth (invisible upside down, becomes visible when attacking).\r\nCan enter stealth instead of attacking.",
+        "defense": "4",
+        "attack": "3",
+        "number_copies": "1",
+    },
+    {
+        "difficulty": "3",
+        "type_card": "spaceShip",
+        "name": "The Dark Destroyer",
+        "id": "2",
+        "price": "6",
+        "detail": "Opponent may draw 2 cards when this enters play.",
+        "defense": "10",
+        "attack": "7",
+        "number_copies": "1",
+    },
+    {
+        "difficulty": "4",
+        "type_card": "spaceShip",
+        "name": "Pursuiter",
+        "id": "19",
+        "price": "1",
+        "detail": "You may sacrifice Pursuiter from play instead of attacking to deal 4 damage to target in same zone (collision).",
+        "defense": "1",
+        "attack": "2",
+        "number_copies": "2",
+    },
+    {
+        "difficulty": "6",
+        "type_card": "duration",
+        "name": "Expansion",
+        "id": "40",
+        "price": "1",
+        "detail": "You may put down or move an extra station card each turn, if you do the opponent may draw a card.",
+        "defense": "0",
+        "attack": "0",
+        "number_copies": "2",
+    },
+    {
+        "difficulty": "6",
+        "type_card": "duration",
+        "name": "Full Force Forward",
+        "id": "9",
+        "price": "3",
+        "detail": "\u00b7 +1 attack of your space ships (blue).\r\n\u00b7 Your space ships can move the first turn     they enter play.",
+        "defense": "0",
+        "attack": "0",
+        "number_copies": "2",
+    },
+    {
+        "difficulty": "5",
+        "type_card": "spaceShip",
+        "name": "Disturbing Sensor",
+        "id": "37",
+        "price": "4",
+        "detail": "\u00b7 Enemy missiles can't move or attack.\r\n\u00b7 If opponent after draw phase has more   than 1 card in hand, he or she           discards a card.",
+        "defense": "4",
+        "attack": "0",
+        "number_copies": "1",
+    },
+    {
+        "difficulty": "1",
+        "type_card": "spaceShip",
+        "name": "Deadly Sniper",
+        "id": "39",
+        "price": "4",
+        "detail": "Long distance shooter.\r\n(Can after the first turn shoot targets in enemy zone from home zone)",
+        "defense": "4",
+        "attack": "2",
+        "number_copies": "1",
+        "image_card": "https:\/\/admin.thespacewar.com\/source\/services\/generate_card_md_39.png"
+    }
 ];
 
 const SKIP = [
@@ -224,18 +312,6 @@ const COUNTERS = [
 const HEAVY_GUI = [
     {
         "difficulty": "9",
-        "type_card": "missile",
-        "name": "Kamikaze Nuke",
-        "id": "8",
-        "price": "2",
-        "detail": "Carried by ship with defense 3 or more. Replaces defense to 3. Ship that carries dies in attack (collision).",
-        "august-note": "'Replaces defense to 3', i.e a carrier with defense 6 gets a defense of 3",
-        "defense": "3",
-        "attack": "10",
-        "number_copies": "1",
-    },
-    {
-        "difficulty": "9",
         "type_card": "duration",
         "name": "Over Capacity",
         "id": "13",
@@ -267,31 +343,9 @@ const HEAVY_GUI = [
         "attack": "0",
         "number_copies": "1",
     },
-    {
-        "difficulty": "9",
-        "type_card": "spaceShip",
-        "name": "The Shade",
-        "id": "27",
-        "price": "4",
-        "detail": "Stealth (invisible upside down, becomes visible when attacking).\r\nCan enter stealth instead of attacking.",
-        "defense": "4",
-        "attack": "3",
-        "number_copies": "1",
-    },
 ];
 
 const EASY_GUI = [
-    {
-        "difficulty": "3",
-        "type_card": "spaceShip",
-        "name": "The Dark Destroyer",
-        "id": "2",
-        "price": "6",
-        "detail": "Opponent may draw 2 cards when this enters play.",
-        "defense": "10",
-        "attack": "7",
-        "number_copies": "1",
-    },
     {
         "difficulty": "8",
         "type_card": "missile",
@@ -303,66 +357,9 @@ const EASY_GUI = [
         "attack": "0",
         "number_copies": "2",
     },
-    {
-        "difficulty": "4",
-        "type_card": "spaceShip",
-        "name": "Pursuiter",
-        "id": "19",
-        "price": "1",
-        "detail": "You may sacrifice Pursuiter from play instead of attacking to deal 4 damage to target in same zone (collision).",
-        "defense": "1",
-        "attack": "2",
-        "number_copies": "2",
-    },
-    {
-        "difficulty": "6",
-        "type_card": "duration",
-        "name": "Expansion",
-        "id": "40",
-        "price": "1",
-        "detail": "You may put down or move an extra station card each turn, if you do the opponent may draw a card.",
-        "defense": "0",
-        "attack": "0",
-        "number_copies": "2",
-    }
 ];
 
-const NO_GUI = [
-    {
-        "difficulty": "6",
-        "type_card": "duration",
-        "name": "Full Force Forward",
-        "id": "9",
-        "price": "3",
-        "detail": "\u00b7 +1 attack of your space ships (blue).\r\n\u00b7 Your space ships can move the first turn     they enter play.",
-        "defense": "0",
-        "attack": "0",
-        "number_copies": "2",
-    },
-    {
-        "difficulty": "5",
-        "type_card": "spaceShip",
-        "name": "Disturbing Sensor",
-        "id": "37",
-        "price": "4",
-        "detail": "\u00b7 Enemy missiles can't move or attack.\r\n\u00b7 If opponent after draw phase has more   than 1 card in hand, he or she           discards a card.",
-        "defense": "4",
-        "attack": "0",
-        "number_copies": "1",
-    },
-    {
-        "difficulty": "1",
-        "type_card": "spaceShip",
-        "name": "Deadly Sniper",
-        "id": "39",
-        "price": "4",
-        "detail": "Long distance shooter.\r\n(Can after the first turn shoot targets in enemy zone from home zone)",
-        "defense": "4",
-        "attack": "2",
-        "number_copies": "1",
-        "image_card": "https:\/\/admin.thespacewar.com\/source\/services\/generate_card_md_39.png"
-    },
-];
+const NO_GUI = [];
 
 
 const categories = [
@@ -454,8 +451,7 @@ async function createTasksInKanbanflow() {
             const { taskId } = await axios.post(url, data);
             doneTasks.push({ taskId, name: task.name });
             process.stdout.write(' . . . done');
-        }
-        catch (err) {
+        } catch (err) {
             process.stdout.write(' . . . FAILED!');
             errors.push(err);
         }
@@ -510,8 +506,10 @@ function printAllTasksRanked() {
         } = t;
         const score = getScoreForTask(t);
         const order = index + 1;
-        return `\n${order}: ${name.substr(0,
-            10)}... x${nCopies}\tid: ${id}\ttype: ${type}\t difficulty: ${diff} \t (${score}p)`;
+        return `\n${order}: ${name.substr(
+            0,
+            10
+        )}... x${nCopies}\tid: ${id}\ttype: ${type}\t difficulty: ${diff} \t (${score}p)`;
     });
 
     console.log('Total difficulty: ' + totalDifficulty);
