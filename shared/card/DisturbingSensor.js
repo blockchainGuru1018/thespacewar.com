@@ -16,4 +16,8 @@ module.exports = class DisturbingSensor extends BaseCard {
     get preventsOpponentMissilesFromAttacking() {
         return true;
     }
+
+    canAttack() {
+        return false;
+    }
 };

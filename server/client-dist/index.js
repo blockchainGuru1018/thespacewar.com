@@ -181,7 +181,7 @@ eval("const BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("const BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nmodule.exports = class DisturbingSensor extends BaseCard {\n  constructor(deps) {\n    super(deps);\n  }\n\n  static get CommonId() {\n    return '37';\n  }\n\n  get preventsOpponentMissilesFromMoving() {\n    return true;\n  }\n\n  get preventsOpponentMissilesFromAttacking() {\n    return true;\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/DisturbingSensor.js?");
+eval("const BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nmodule.exports = class DisturbingSensor extends BaseCard {\n  constructor(deps) {\n    super(deps);\n  }\n\n  static get CommonId() {\n    return '37';\n  }\n\n  get preventsOpponentMissilesFromMoving() {\n    return true;\n  }\n\n  get preventsOpponentMissilesFromAttacking() {\n    return true;\n  }\n\n  canAttack() {\n    return false;\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/DisturbingSensor.js?");
 
 /***/ }),
 
