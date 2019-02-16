@@ -136,7 +136,7 @@
     "name": "Over Capacity",
     "price": "2",
     "type_card": "violet",
-    "detail": "You have no maximum hand size.\r\nDuring your action phase you may look at and move station cards to your hand.",
+    "detail": "You have no maximum hand size.",
     "defense": "0",
     "attack": "0",
     "number_copies": "2",
