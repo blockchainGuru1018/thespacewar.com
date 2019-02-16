@@ -15,6 +15,7 @@ const PlayerRequirementUpdaterFactory = require('./PlayerRequirementUpdaterFacto
 const ServerCardFactory = require('../card/ServerCardFactory.js');
 const StateChangeListener = require('../../shared/match/StateChangeListener.js');
 const CanThePlayer = require('../../shared/match/CanThePlayer.js');
+const PlayerRuleService = require('../../shared/match/PlayerRuleService.js');
 const obscureOpponentEvents = require('./service/obscureOpponentEvents.js');
 const PlayerServiceProvider = require('../../shared/match/PlayerServiceProvider.js');
 const { PHASES, TEMPORARY_START_PHASE } = require('../../shared/phases.js');
@@ -61,6 +62,7 @@ module.exports = function ({
     })
     registerPlayerRequirementServices(players, playerServiceProvider);
     registerCanThePlayerServices(players, playerServiceProvider);
+    registerPlayerRuleServices(players, playerServiceProvider);
 
     const stateChangeListener = new StateChangeListener({ playerServiceProvider, matchService, logger });
     const matchComService = new MatchComService({
@@ -412,12 +414,24 @@ function registerCanThePlayerServices(players, playerServiceProvider) {
     for (let player of players) {
         const playerId = player.id;
         const opponentId = players.find(p => p.id !== playerId).id;
-        const stateServiceById = playerServiceProvider.getStateServiceById(opponentId)
         let canThePlayer = new CanThePlayer({
             playerStateService: playerServiceProvider.getStateServiceById(playerId),
-            opponentStateService: stateServiceById,
+            opponentStateService: playerServiceProvider.getStateServiceById(opponentId),
         });
         playerServiceProvider.registerService(PlayerServiceProvider.TYPE.canThePlayer, playerId, canThePlayer);
+    }
+}
+
+function registerPlayerRuleServices(players, playerServiceProvider) {
+    for (let player of players) {
+        const playerId = player.id;
+        const opponentId = players.find(p => p.id !== playerId).id;
+        let ruleService = new PlayerRuleService({
+            playerStateService: playerServiceProvider.getStateServiceById(playerId),
+            opponentStateService: playerServiceProvider.getStateServiceById(opponentId),
+            canThePlayer: playerServiceProvider.getCanThePlayerServiceById(playerId)
+        });
+        playerServiceProvider.registerService(PlayerServiceProvider.TYPE.rule, playerId, ruleService);
     }
 }
 

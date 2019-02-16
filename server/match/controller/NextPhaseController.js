@@ -112,7 +112,8 @@ function PutDownCardController(deps) {
 
     function leaveDiscardPhaseForPlayer(playerId) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        const maxHandSize = playerStateService.getMaximumHandSize();
+        const playerRuleService = playerServiceProvider.getRuleServiceById(playerId);
+        const maxHandSize = playerRuleService.getMaximumHandSize();
         if (playerStateService.getCardsOnHandCount() > maxHandSize) {
             throw new CheatError('Cannot leave the discard phase without discarding enough cards');
         }

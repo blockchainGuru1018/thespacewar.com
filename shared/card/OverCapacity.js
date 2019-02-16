@@ -9,7 +9,7 @@ module.exports = class OverCapacity extends BaseCard {
         return '13';
     }
 
-    static get grantsUnlimitedHandSize() {
+    get grantsUnlimitedHandSize() {
         return true;
     }
 };

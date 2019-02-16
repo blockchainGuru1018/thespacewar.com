@@ -4,7 +4,9 @@ const RepairCardEvent = require('../../shared/event/RepairCardEvent.js');
 const QueryEvents = require('../../shared/event/QueryEvents.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
 const ClientCardFactory = require('../card/ClientCardFactory.js');
-const MatchService = require("../../shared/match/MatchService");
+const MatchService = require("../../shared/match/MatchService.js");
+const CanThePlayer = require("../../shared/match/CanThePlayer.js");
+const PlayerRuleService = require("../../shared/match/PlayerRuleService.js");
 const ClientPlayerStateService = require("./ClientPlayerStateService");
 const mapFromClientToServerState = require('./mapFromClientToServerState.js');
 const {
@@ -90,7 +92,12 @@ module.exports = function (deps) {
             findPlayerCardFromAllSources,
             queryEvents,
             canPutDownCard,
-            playerStateService
+            playerRuleService,
+            canThePlayer,
+            playerStateService,
+            opponentStateService,
+            queryOpponentEvents,
+            matchService
         },
         mutations: {
             setPlayerStationCards,
@@ -184,7 +191,7 @@ module.exports = function (deps) {
     }
 
     function maxHandSize(state, getters) {
-        return getters.playerStateService.getMaximumHandSize();
+        return getters.playerRuleService.getMaximumHandSize();
     }
 
     function amountOfCardsToDiscard(state, getters) {
@@ -254,10 +261,22 @@ module.exports = function (deps) {
         };
     }
 
+    function playerRuleService(state, getters) {
+        return new PlayerRuleService({
+            playerStateService: getters.playerStateService,
+            opponentStateService: getters.opponentStateService,
+            canThePlayer: getters.canThePlayer
+        });
+    }
+
+    function canThePlayer(state, getters) {
+        return new CanThePlayer({
+            playerStateService: getters.playerStateService,
+            opponentStateService: getters.opponentStateService,
+        });
+    }
+
     function playerStateService(state, getters) {
-        const matchService = new MatchService();
-        const mappedState = mapFromClientToServerState(state);
-        matchService.setState(mappedState);
         const updateStore = (clientState) => {
             let changedProperties = Object.keys(clientState);
             for (let property of changedProperties) {
@@ -267,13 +286,44 @@ module.exports = function (deps) {
         return new ClientPlayerStateService({
             updateStore,
             playerId: state.ownUser.id,
-            matchService,
+            matchService: getters.matchService,
             actionPointsCalculator,
             queryEvents: getters.queryEvents,
             cardFactory: {
                 createCardForPlayer: (cardData, playerId) => {
                     return clientCardFactory.fromVuexStore(cardData, state, { playerId });
                 }
+            }
+        });
+    }
+
+    function opponentStateService(state, getters) {
+        return new ClientPlayerStateService({
+            updateStore: () => {
+                console.error('Trying to update state through opponent state service, this is NOT intended behaviour.')
+            },
+            playerId: state.opponentUser.id,
+            matchService: getters.matchService,
+            queryEvents: getters.queryOpponentEvents,
+            cardFactory: {
+                createCardForPlayer: (cardData, playerId) => {
+                    return clientCardFactory.fromVuexStore(cardData, state, { playerId });
+                }
+            }
+        });
+    }
+
+    function matchService(state) {
+        const matchService = new MatchService();
+        const serverState = mapFromClientToServerState(state)
+        matchService.setState(serverState);
+        return matchService;
+    }
+
+    function queryOpponentEvents() {
+        return new QueryEvents({
+            eventRepository: {
+                getAll: () => state.opponentEvents
             }
         });
     }
