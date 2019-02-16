@@ -1,7 +1,8 @@
 const {
     bocha: {
         assert,
-        refute
+        refute,
+        sinon
     },
     createCard,
     createPlayer,
@@ -13,6 +14,7 @@ const {
     catchError,
     createState
 } = require('./shared.js');
+const DisturbingSensor = require('../../../shared/card/DisturbingSensor.js');
 const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
 const GoodKarmaCommonId = '11';
 const NeutralizationCommonId = '12';
@@ -157,6 +159,71 @@ module.exports = {
             'should emit state changed WITHOUT requirements'() {
                 assert.calledOnce(this.firstPlayerConnection.stateChanged);
                 refute.defined(this.firstPlayerConnection.stateChanged.lastCall.args[0].requirements);
+            }
+        }
+    },
+    'Disturbing sensor:': {
+        'when opponent has disturbing sensor in play and player has 2 cards on hand and leaves draw phase': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.match = createMatch({ players: [Player('P1A', this.firstPlayerConnection), Player('P2A')] });
+                this.match.restoreFromState(createState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'draw',
+                            cardsOnHand: [
+                                createCard({ id: 'C1A' }),
+                                createCard({ id: 'C2A' })
+                            ]
+                        },
+                        'P2A': {
+                            cardsInZone: [
+                                createCard({ id: 'C3A', type: 'spaceShip', commonId: DisturbingSensor.CommonId })
+                            ]
+                        }
+                    }
+                }));
+
+                this.match.nextPhase('P1A');
+            },
+            'should emit requirement to player'() {
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                    requirements: [
+                        sinon.match({ type: 'discardCard', count: 1 })
+                    ]
+                }));
+            }
+        },
+        'when opponent has disturbing sensor in play and player has 1 card on hand and leaves draw phase': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.match = createMatch({ players: [Player('P1A', this.firstPlayerConnection), Player('P2A')] });
+                this.match.restoreFromState(createState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'draw',
+                            cardsOnHand: [createCard({ id: 'C1A' })]
+                        },
+                        'P2A': {
+                            cardsInZone: [
+                                createCard({ id: 'C3A', type: 'spaceShip', commonId: DisturbingSensor.CommonId })
+                            ]
+                        }
+                    }
+                }));
+
+                this.match.nextPhase('P1A');
+            },
+            'should NOT emit requirement to player'() {
+                refute.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                    requirements: sinon.match([
+                        sinon.match({ type: 'discardCard', count: 1 })
+                    ])
+                }));
             }
         }
     }

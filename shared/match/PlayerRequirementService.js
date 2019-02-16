@@ -1,7 +1,9 @@
 class PlayerRequirementService { //TODO Rename PlayerRequirements
 
-    constructor(deps) {
-        this._playerStateService = deps.playerStateService;
+    constructor({
+        playerStateService
+    }) {
+        this._playerStateService = playerStateService;
     }
 
     getRequirements() {
@@ -33,9 +35,15 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
 
     addDiscardCardRequirement({ count, common = false, cardCommonId = null }) {
         const cardsOnHandCount = this._playerStateService.getCardsOnHandCount();
-        const availableCount = Math.min(cardsOnHandCount, count);
-        if (availableCount > 0) {
-            const requirement = { type: 'discardCard', count: availableCount };
+
+        const currentDiscardCardRequirementsCount = this.getRequirements()
+            .filter(r => r.type === 'discardCard')
+            .reduce((total, requirement) => total + requirement.count, 0);
+
+        const maxDiscardCount = cardsOnHandCount - currentDiscardCardRequirementsCount;
+        const countToDiscard = Math.min(maxDiscardCount, count);
+        if (countToDiscard > 0) {
+            const requirement = { type: 'discardCard', count: countToDiscard };
             if (common) {
                 requirement.common = true;
             }
@@ -48,9 +56,15 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
 
     addDrawCardRequirement({ count, common = false, cardCommonId = null }) {
         const deckCardCount = this._playerStateService.getDeck().getCardCount();
-        const availableCount = Math.min(deckCardCount, count);
-        if (availableCount > 0) {
-            const requirement = { type: 'drawCard', count: availableCount };
+
+        const currentDrawCardRequirementsCount = this.getRequirements()
+            .filter(r => r.type === 'drawCard')
+            .reduce((total, requirement) => total + requirement.count, 0);
+
+        const maxDrawCount = deckCardCount - currentDrawCardRequirementsCount;
+        const countToDraw = Math.min(maxDrawCount, count);
+        if (countToDraw > 0) {
+            const requirement = { type: 'drawCard', count: countToDraw };
             if (common) {
                 requirement.common = true;
             }
@@ -63,9 +77,15 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
 
     addDamageOwnStationCardRequirement({ count, common = false, cardCommonId = null }) {
         const stationCardCount = this._playerStateService.getUnflippedStationCardsCount();
-        const availableCount = Math.min(stationCardCount, count);
-        if (availableCount > 0) {
-            const requirement = { type: 'damageOwnStationCard', count: availableCount };
+
+        const currentDrawCardRequirementsCount = this.getRequirements()
+            .filter(r => r.type === 'damageOwnStationCard')
+            .reduce((total, requirement) => total + requirement.count, 0);
+
+        const maxStationCardCount = stationCardCount - currentDrawCardRequirementsCount;
+        const countToDraw = Math.min(maxStationCardCount, count);
+        if (countToDraw > 0) {
+            const requirement = { type: 'damageOwnStationCard', count: countToDraw };
             if (common) {
                 requirement.common = true;
             }

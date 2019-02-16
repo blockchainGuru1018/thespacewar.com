@@ -59,27 +59,42 @@ function PutDownCardController(deps) {
     }
 
     function enterDrawPhaseForPlayer(playerId) {
-        const requirementLists = getRequirementsFromUsableDurationCards(playerId, 'requirementsWhenEnterDrawPhase');
+        const requirementLists = getRequirementsFromDurationCards(playerId, 'requirementsWhenEnterDrawPhase');
         if (requirementLists.length > 0) {
             requirementLists.forEach(requirements => addCardRequirements({ playerId, requirements }));
         }
     }
 
     function leaveDrawPhaseForPlayer(playerId) {
-        const requirementLists = getRequirementsFromUsableDurationCards(playerId, 'requirementsWhenLeavingDrawPhase');
+        const requirementLists = [
+            ...getRequirementsFromDurationCards(playerId, 'requirementsWhenLeavingDrawPhase'),
+            ...getRequirementsFromOpponentCards(playerId, 'requirementsWhenOpponentLeaveDrawPhase')
+        ];
         if (requirementLists.length > 0) {
             requirementLists.forEach(requirements => addCardRequirements({ playerId, requirements }));
         }
     }
 
-    function getRequirementsFromUsableDurationCards(playerId, key) {
+    function getRequirementsFromDurationCards(playerId, key) {
         return playerServiceProvider
             .getStateServiceById(playerId)
             .getDurationCards()
-            .filter(card => canThePlayer.useThisDurationCard(card.id))
+            .filter(cardData => canThePlayer.useThisDurationCard(cardData.id))
             .map(cardData => cardFactory.createCardForPlayer(cardData, playerId))
             .map(card => card[key])
             .filter(requirements => !!requirements);
+    }
+
+    function getRequirementsFromOpponentCards(playerId, key) {
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const opponentId = matchService.getOpponentId(playerId);
+        return playerServiceProvider
+            .getStateServiceById(opponentId)
+            .getMatchingBehaviourCards(withKey(key))
+            .map(card => card[key])
+            .filter(soToKeepValuesThatAreNotNull)
+            .filter(soToKeepApplicableRequirements(playerStateService))
+            .map(opponentRequirementToPlayerRequirement);
     }
 
     function addCardRequirements({ playerId, requirements }) {
@@ -141,6 +156,25 @@ function PutDownCardController(deps) {
             });
         }
     }
+}
+
+function opponentRequirementToPlayerRequirement(requirement) {
+    return {
+        forPlayer: requirement.forOpponent,
+        forOpponent: requirement.forPlayer
+    };
+}
+
+function soToKeepApplicableRequirements(opponentStateService) {
+    return requirement => !requirement.shouldApply || requirement.shouldApply({ opponentStateService });
+}
+
+function soToKeepValuesThatAreNotNull(v) {
+    return !!v;
+}
+
+function withKey(key) {
+    return card => !!card[key]
 }
 
 module.exports = PutDownCardController;
