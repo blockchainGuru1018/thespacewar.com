@@ -143,6 +143,13 @@ class PlayerStateService {
             .length;
     }
 
+    getMaximumHandSize() { //TODO Perhaps this fits with some of the other methods in a "PlayerRule"-service isch?
+        let stationCards = this.getStationCards();
+        return stationCards
+            .filter(card => card.place === 'handSize')
+            .length * 3;
+    }
+
     getDeck() {
         const state = this._matchService.getState();
         return state.deckByPlayerId[this._playerId];

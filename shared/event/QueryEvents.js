@@ -10,6 +10,10 @@ class QueryEvents {
             && this._turnCountSinceMoveLast(cardId, currentTurn, events) > 0;
     }
 
+    hasMovedOnTurn(cardId, turn) {
+        return this.getMovesOnTurn(cardId, turn).length > 0;
+    }
+
     _cardHasMoved(cardId, events) {
         return events.some(e => e.type === 'moveCard' && e.cardId === cardId);
     }

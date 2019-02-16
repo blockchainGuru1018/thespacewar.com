@@ -131,7 +131,8 @@ class BaseCard {
     }
 
     canTargetStationCardsForSacrifice() {
-        return !this.isInHomeZone();
+        return !this.isInHomeZone()
+            && !this.hasMovedThisTurn();
     }
 
     _canTargetCard(otherCard) {
@@ -139,6 +140,11 @@ class BaseCard {
         if (otherCard.type === 'duration') return false;
         if (otherCard.playerId === this.playerId) return false;
         return true;
+    }
+
+    hasMovedThisTurn() {
+        let currentTurn = this._matchService.getTurn();
+        return this._queryEvents.hasMovedOnTurn(this.id, currentTurn);
     }
 
     isInHomeZone() {
@@ -179,12 +185,6 @@ class BaseCard {
 
     canMoveOnTurnWhenPutDown() {
         return this._playerStateService.cardCanMoveOnTurnWhenPutDown(this);
-    }
-
-    hasMovedThisTurn() {
-        const turn = this._matchService.getTurn();
-        const movesOnTurn = this._queryEvents.getMovesOnTurn(this.id, turn);
-        return movesOnTurn.length > 0;
     }
 
     canRepair() {

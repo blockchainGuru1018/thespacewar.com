@@ -183,8 +183,8 @@ module.exports = function (deps) {
         return state.playerStation.actionCards.length * 2;
     }
 
-    function maxHandSize(state) {
-        return state.playerStation.handSizeCards.length * 3;
+    function maxHandSize(state, getters) {
+        return getters.playerStateService.getMaximumHandSize();
     }
 
     function amountOfCardsToDiscard(state, getters) {

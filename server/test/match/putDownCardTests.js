@@ -1150,8 +1150,10 @@ module.exports = {
                     },
                     deckByPlayerId: {
                         'P2A': FakeDeck.realDeckFromCards([
-                            createCard({ id: 'C3A' }),
-                            createCard({ id: 'C4A' })
+                            createCard(),
+                            createCard(),
+                            createCard(),
+                            createCard(),
                         ])
                     }
                 }));

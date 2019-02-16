@@ -10,6 +10,7 @@ const NewHope = require('../card/NewHope.js');
 const NuclearMissile = require('../card/NuclearMissile.js');
 const canThePlayerFactory = require('./fakeFactories/canThePlayerFactory.js');
 const playerStateServiceFactory = require('./fakeFactories/playerStateServiceFactory.js');
+const queryEventsFactory = require('./fakeFactories/queryEventsFactory.js');
 const {
     createCard
 } = require('./shared.js');
@@ -43,10 +44,10 @@ module.exports = testCase('Match', {
                     matchService: {
                         getTurn: () => 1
                     },
-                    queryEvents: {
+                    queryEvents: queryEventsFactory.withStubs({
                         getMovesOnTurn: () => [],
                         getTurnWhenCardWasPutDown: () => 1
-                    }
+                    })
                 });
             },
             'should NOT be able to move'() {
@@ -64,10 +65,10 @@ module.exports = testCase('Match', {
                     matchService: {
                         getTurn: () => 1
                     },
-                    queryEvents: {
+                    queryEvents: queryEventsFactory.withStubs({
                         getMovesOnTurn: () => [],
                         getTurnWhenCardWasPutDown: () => 1
-                    }
+                    })
                 });
             },
             'should be able to move'() {
@@ -82,10 +83,10 @@ module.exports = testCase('Match', {
                 matchService: {
                     getTurn: () => 1,
                 },
-                queryEvents: {
+                queryEvents: queryEventsFactory.withStubs({
                     getMovesOnTurn: () => [],
                     getTurnWhenCardWasPutDown: () => 1
-                },
+                }),
                 playerStateService: playerStateServiceFactory.withStubs({
                     getPhase: () => 'attack'
                 })
@@ -107,14 +108,15 @@ module.exports = testCase('Match', {
                 playerId: 'P1A',
                 matchService: {
                     getTurn: () => 2,
-                    isPlayerCardInHomeZone: () => false,
                     cardsAreInSameZone: (card, otherCard) => card.id === 'C1A' && otherCard.id === 'C2A'
                 },
-                queryEvents: {
+                queryEvents: queryEventsFactory.withStubs({
+                    hasMovedOnTurn: () => false,
                     hasMovedOnPreviousTurn: () => true,
                     getTurnWhenCardWasPutDown: () => 1
-                },
+                }),
                 playerStateService: playerStateServiceFactory.withStubs({
+                    isCardInHomeZone: () => false,
                     getPhase: () => 'attack'
                 })
             });
@@ -134,14 +136,14 @@ module.exports = testCase('Match', {
                 playerId: 'P1A',
                 matchService: {
                     getTurn: () => 2,
-                    isPlayerCardInHomeZone: () => false,
                     cardsAreInSameZone: (card, otherCard) => card.id === 'C1A' && otherCard.id === 'C2A'
                 },
-                queryEvents: {
-                    hasMovedOnPreviousTurn: () => false,
+                queryEvents: queryEventsFactory.withStubs({
+                    hasMovedOnTurn: (cardId, turn) => cardId === 'C1A' && turn === 2,
                     getTurnWhenCardWasPutDown: () => 1
-                },
+                }),
                 playerStateService: playerStateServiceFactory.withStubs({
+                    isCardInHomeZone: () => false,
                     getPhase: () => 'attack'
                 })
             });
@@ -157,10 +159,10 @@ module.exports = testCase('Match', {
                 matchService: {
                     getTurn: () => 2,
                 },
-                queryEvents: {
+                queryEvents: queryEventsFactory.withStubs({
                     getAttacksOnTurn: () => [],
                     getMovesOnTurn: () => [MoveCardEvent({ turn: 2, cardId: 'C1A' })]
-                },
+                }),
                 playerStateService: playerStateServiceFactory.withStubs({
                     getAttackBoostForCard: () => 0,
                     getPhase: () => 'attack'
@@ -176,10 +178,11 @@ module.exports = testCase('Match', {
                 matchService: {
                     getTurn: () => 2,
                 },
-                queryEvents: {
+                queryEvents: queryEventsFactory.withStubs({
                     getAttacksOnTurn: () => [],
+                    hasMovedOnTurn: (cardId, turn) => cardId === 'C1A' && turn === 2,
                     getMovesOnTurn: () => [MoveCardEvent({ turn: 2, cardId: 'C1A' })]
-                },
+                }),
                 playerStateService: playerStateServiceFactory.withStubs({
                     getAttackBoostForCard: () => 0,
                     getPhase: () => 'attack'
@@ -198,11 +201,11 @@ module.exports = testCase('Match', {
                     matchService: {
                         getTurn: () => 2,
                     },
-                    queryEvents: {
+                    queryEvents: queryEventsFactory.withStubs({
                         getTurnWhenCardWasPutDown: () => 1,
                         getAttacksOnTurn: () => [],
                         getMovesOnTurn: () => []
-                    },
+                    }),
                     playerStateService: playerStateServiceFactory.withStubs({
                         getPhase: () => 'attack'
                     }),
@@ -227,11 +230,11 @@ module.exports = testCase('Match', {
                     matchService: {
                         getTurn: () => 2,
                     },
-                    queryEvents: {
+                    queryEvents: queryEventsFactory.withStubs({
                         getTurnWhenCardWasPutDown: () => 1,
                         getAttacksOnTurn: () => [],
                         getMovesOnTurn: () => []
-                    },
+                    }),
                     playerStateService: playerStateServiceFactory.withStubs({
                         getPhase: () => 'attack'
                     }),

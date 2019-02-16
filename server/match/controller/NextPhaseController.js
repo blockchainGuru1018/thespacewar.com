@@ -112,8 +112,7 @@ function PutDownCardController(deps) {
 
     function leaveDiscardPhaseForPlayer(playerId) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        const playerStationCards = playerStateService.getStationCards(playerId);
-        const maxHandSize = getMaxHandSizeFromStationCards(playerStationCards);
+        const maxHandSize = playerStateService.getMaximumHandSize();
         if (playerStateService.getCardsOnHandCount() > maxHandSize) {
             throw new CheatError('Cannot leave the discard phase without discarding enough cards');
         }
@@ -139,12 +138,6 @@ function PutDownCardController(deps) {
         currentPlayerStateService.setPhase(nextPhase);
 
         emitNextPlayer();
-    }
-
-    function getMaxHandSizeFromStationCards(stationCards) {
-        return stationCards
-            .filter(c => c.place === 'handSize')
-            .length * 3;
     }
 
     function emitNextPlayer() {
