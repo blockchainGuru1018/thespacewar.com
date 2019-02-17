@@ -189,14 +189,7 @@
                         <div v-else class="card card--placeholder"/>
                     </div>
                 </div>
-                <div class="field-playerCardsOnHand field-section">
-                    <div
-                            v-for="card, index in playerVisibleCardsOnHand"
-                            v-if="card !== holdingCard"
-                            :style="getCardOnHandStyle(card, index)"
-                            :class="getPlayerCardClasses(card)"
-                            @click="playerCardClick(card)"/>
-                </div>
+                <PlayerCardsOnHand :holdingCard="holdingCard" @cardClick="playerCardClick"/>
                 <player-hud/>
             </div>
         </div>
@@ -210,10 +203,7 @@
     const Vuex = require('vuex');
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
     const {
-        mapState: mapPermissionState,
         mapGetters: mapPermissionGetters,
-        mapMutations: mapPermissionMutations,
-        mapActions: mapPermissionActions
     } = Vuex.createNamespacedHelpers('permission');
     const {
         mapState: mapCardState,
@@ -225,6 +215,7 @@
     const PlayerHud = require('./PlayerHud.vue').default;
     const CardChoiceDialog = require('./CardChoiceDialog.vue').default;
     const LoadingIndicator = require('./loadingIndicator/LoadingIndicator.vue').default;
+    const PlayerCardsOnHand = require('./PlayerCardsOnHand.vue').default;
     const { PHASES } = require('./phases.js');
 
     module.exports = {
@@ -243,7 +234,6 @@
                 'phase',
                 'opponentUser',
                 'ownUser',
-                'playerCardsOnHand',
                 'playerStation',
                 'opponentStation',
                 'opponentCardCount',
@@ -263,7 +253,6 @@
             ]),
             ...mapCardState([
                 'transientPlayerCardsInHomeZone',
-                'hiddenCardIdsOnHand',
                 'hiddenStationCardIds'
             ]),
             ...mapCardGetters({
@@ -323,9 +312,6 @@
             visiblePlayerCards() {
                 return [...this.playerCardsInZone, ...this.transientPlayerCardsInHomeZone];
             },
-            playerVisibleCardsOnHand() {
-                return this.playerCardsOnHand.filter(card => !this.hiddenCardIdsOnHand.some(id => id === card.id));
-            },
             playerVisibleDrawStationCards() {
                 return this.playerStation.drawCards.filter(s => !this.hiddenStationCardIds.some(id => id === s.id));
             },
@@ -357,9 +343,7 @@
                 return this.actionPoints2 >= card.cost;
             },
             playerCardClick(card) {
-                if (this.canMoveCardsFromHand) {
-                    this.holdingCard = card;
-                }
+                this.holdingCard = card;
             },
             cardGhostClick(location) {
                 if (!this.holdingCard) throw Error('Should not be able to click on card ghost without holding a card');
@@ -391,27 +375,6 @@
                 return {
                     transform: 'rotate(' + (startDegrees + degrees) + 'deg)',
                     transformOrigin: 'center -1600%'
-                }
-            },
-            getPlayerCardClasses(card) {
-                const classes = ['card'];
-                if (card.highlighted) {
-                    classes.push('card--highlight');
-                }
-                if (!this.holdingCard) {
-                    classes.push('card--hoverable');
-                }
-                return classes;
-            },
-            getCardOnHandStyle(card, index) {
-                const cardCount = this.playerCardsOnHand.length;
-                const turnDistance = 1.5;
-                const startDegrees = -((cardCount - 1) * turnDistance * .5);
-                let degrees = index * turnDistance;
-                return {
-                    transform: 'rotate(' + (startDegrees + degrees) + 'deg)',
-                    transformOrigin: 'center 1600%',
-                    backgroundImage: 'url(/card/' + card.commonId + '/image)'
                 }
             },
             getCardInZoneStyle(card) {
@@ -446,591 +409,9 @@
                 }
             });
         },
-        components: { ZoneCard, StationCard, PlayerHud, CardChoiceDialog, LoadingIndicator }
+        components: { ZoneCard, StationCard, PlayerHud, CardChoiceDialog, LoadingIndicator, PlayerCardsOnHand }
     };
 </script>
 <style scoped lang="scss">
-    $cardWidth: 652px;
-    $cardHeight: 916px;
-    $opponentCardWidth: calc(#{$cardWidth} / 8);
-    $opponentCardHeight: calc(#{$cardHeight} / 8);
-    $opponentCardOnHandWidth: calc(#{$cardWidth} / 12);
-    $opponentCardOnHandHeight: calc(#{$cardHeight} / 12);
-    $opponentStationCardWidth: calc(#{$cardWidth} / 12);
-    $opponentStationCardHeight: calc(#{$cardHeight} / 12);
-    $opponentDrawPileCardWidth: calc(#{$cardWidth} / 12);
-    $opponentDrawPileCardHeight: calc(#{$cardHeight} / 12);
-    $opponentDiscardPileCardWidth: calc(#{$cardWidth} / 12);
-    $opponentDiscardPileCardHeight: calc(#{$cardHeight} / 12);
-
-    $playerCardWidth: calc(#{$cardWidth} / 5);
-    $playerCardHeight: calc(#{$cardHeight} / 5);
-    $playerCardOnHandWidth: calc(#{$cardWidth} / 3);
-    $playerCardOnHandHeight: calc(#{$cardHeight} / 3);
-    $playerStationCardWidth: calc((#{$cardWidth} / 5) * .7);
-    $playerStationCardHeight: calc((#{$cardHeight} / 5) * .7);
-    $playerDiscardPileCardWidth: $playerCardWidth;
-    $playerDiscardPileCardHeight: $playerCardHeight;
-    $playerDrawPileCardWidth: $playerCardWidth;
-    $playerDrawPileCardHeight: $playerCardHeight;
-
-    $cardHoverWidth: $cardWidth / 2;
-    $cardHoverHeight: $cardHeight / 2;
-
-    $cardGhostZIndex: 1;
-    $playerCardsOnHandZIndex: 2;
-    $holdingCardZIndex: 3;
-
-    .match {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        width: 100vw;
-        height: 100vh;
-        overflow: hidden;
-    }
-
-    .match-header {
-        position: absolute;
-        right: 14px;
-        top: 0;
-        display: flex;
-        align-items: center;
-        z-index: 3;
-        font-family: Helvetica, sans-serif;
-        color: #333;
-    }
-
-    .match-smallButton {
-        background-color: #35A7FF;
-        color: rgba(255, 255, 255, 1);
-        box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.2);;
-        border: none;
-        font-size: 14px;
-        padding: 8px 12px;
-        margin-right: 16px;
-        letter-spacing: .11em;
-
-        &:active {
-            outline: 2px solid rgba(0, 0, 0, .3);
-        }
-
-        &:focus, &:hover {
-            background-color: #66bdff;
-            outline: 0;
-        }
-    }
-
-    .match-smallButton--success {
-        background-color: #51c870;
-
-        &:focus, &:hover {
-            background-color: #68cc88;
-        }
-    }
-
-    .match-retreatButton {
-        background-color: #ff3646;
-
-        &:focus, &:hover {
-            background-color: #ff6670;
-        }
-    }
-
-    .field {
-        flex: 1 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .field-player, .field-opponent {
-        width: 100%;
-        display: flex;
-        align-items: stretch;
-        justify-content: space-between;
-        position: relative;
-    }
-
-    .field-player {
-        flex: 0 0 60%;
-    }
-
-    .field-opponent {
-        flex: 0 0 40%;
-        width: 62%;
-        margin: 0 auto;
-
-        .card {
-            width: $opponentCardWidth;
-            height: $opponentCardHeight;
-        }
-    }
-
-    .field-playerStation {
-        flex-direction: column;
-        margin-right: 8px;
-
-        .card {
-            width: $playerStationCardWidth;
-            height: $playerStationCardHeight;
-
-            margin-right: 8px;
-
-            &:last-child {
-                margin-right: 0;
-            }
-        }
-    }
-
-    .field-opponentStation {
-        flex-direction: column-reverse;
-        justify-content: flex-end;
-        margin-top: 5px;
-
-        .card {
-            width: $opponentStationCardWidth;
-            height: $opponentStationCardHeight;
-            margin-left: 8px;
-
-            &:last-child {
-                margin-left: 0;
-            }
-        }
-    }
-
-    .field-opponentStation .field-stationRow {
-        flex-direction: row-reverse;
-    }
-
-    .field-station {
-        display: flex;
-        flex: 0 0 20%;
-    }
-
-    .field-stationRow {
-        position: relative;
-        display: flex;
-        margin-bottom: 8px;
-    }
-
-    .field-piles {
-        flex: 0 0 12%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-evenly;
-        position: relative;
-
-        .field-opponent & {
-            flex: 0 0 10%;
-        }
-    }
-
-    .field-drawPile {
-        position: relative;
-
-        .card {
-            width: 100%;
-            height: 100%;
-        }
-
-        .field-player & {
-            width: $playerDrawPileCardWidth;
-            height: $playerDrawPileCardHeight;
-        }
-
-        .field-opponent & {
-            width: $opponentDrawPileCardWidth;
-            height: $opponentDrawPileCardHeight;
-        }
-    }
-
-    .field-discardPile {
-        position: relative;
-
-        .field-player & {
-            width: $playerDiscardPileCardWidth;
-            height: $playerDiscardPileCardHeight;
-        }
-
-        .field-opponent & {
-            width: $opponentDiscardPileCardWidth;
-            height: $opponentDiscardPileCardHeight;
-        }
-
-        .card {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-        }
-    }
-
-    .discardPile-cardGhost::after {
-        content: "";
-        position: absolute;
-        width: 170%;
-        height: 170%;
-        top: 50%;
-        left: 20%;
-        z-index: 10000;
-        transform: translate(-50%, -50%);
-    }
-
-    .field-zone {
-        flex: 0 0 auto;
-        display: flex;
-        flex-wrap: wrap;
-
-        .card {
-            margin: 4px;
-            box-sizing: border-box;
-        }
-    }
-
-    .field-zoneRows {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-
-        &.field-opponentZoneRows {
-            padding-top: 80px;
-            flex: 1 0;
-        }
-
-        .field-opponentZoneRow {
-            flex-direction: row-reverse;
-        }
-    }
-
-    .field-opponentCardsOnHand {
-        position: absolute;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        flex: 1 0;
-        justify-content: center;
-        align-items: flex-start;
-
-        .card {
-            width: $opponentCardOnHandWidth;
-            height: $opponentCardOnHandHeight;
-            position: absolute;
-            top: 0;
-            transition: bottom .2s ease-out;
-
-            &:last-child {
-                margin-right: 0;
-            }
-        }
-    }
-
-    .field-playerZoneRows {
-        justify-content: flex-start;
-    }
-
-    .field-playerCardsOnHand {
-        position: absolute;
-        z-index: $playerCardsOnHandZIndex;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex: 1 0;
-    }
-
-    .field-playerCardsOnHand .card {
-        width: $playerCardOnHandWidth;
-        height: $playerCardOnHandHeight;
-        position: absolute;
-        bottom: 0;
-        transition: bottom .2s ease-out, width .2s ease-out, height .2s ease-out;
-        box-sizing: content-box;
-
-        &::after {
-            content: "";
-            width: 100%;
-            height: 175%;
-            position: absolute;
-        }
-
-        &::before {
-            content: "";
-            width: 100%;
-            height: 100%;
-            left: 0;
-            bottom: 0;
-            position: absolute;
-        }
-
-        &.card--hoverable:hover {
-            position: absolute;
-            bottom: 300px;
-            left: -($playerCardWidth - $cardHoverWidth);
-            width: $cardHoverWidth;
-            height: $cardHoverHeight;
-        }
-
-        &--highlight {
-            outline: 4px solid #8ae68a;
-
-            &:hover {
-                outline: 6px solid #2ee62e;
-            }
-        }
-    }
-
-    .card {
-        width: $playerCardWidth;
-        height: $playerCardHeight;
-        display: flex;
-        flex-direction: column;
-        background: white;
-        background-size: 100% 100%;
-        box-sizing: border-box;
-
-        &--placeholder {
-            background: none;
-            border-color: transparent;
-        }
-
-        &--turnedAround {
-            transform: rotate(180deg);
-        }
-    }
-
-    .card-faceDown {
-        position: relative;
-        overflow: hidden;
-        background-color: transparent;
-
-        &::before {
-            content: "";
-            position: absolute;
-            top: -1px;
-            left: -1px;
-            right: -1px;
-            bottom: -1px;
-            background-image: url("/card/back-image");
-            background-size: cover;
-
-            .field-opponent & {
-                transform: rotate(180deg);
-            }
-
-            .field-opponentCardsOnHand & {
-                transform: rotate(180deg);
-            }
-        }
-
-        &::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-
-            .field-opponent & {
-                background-color: rgba(53, 167, 255, .3);
-            }
-
-            .field-player & {
-                background-color: rgba(255, 0, 0, 0.25);
-            }
-        }
-    }
-
-    .card-ghost {
-        width: $playerCardWidth;
-        height: $playerCardHeight;
-        border: 4px solid #8ae68a;
-        background: transparent;
-        position: relative;
-        z-index: $cardGhostZIndex;
-    }
-
-    .holdingCard {
-        position: absolute;
-        z-index: $holdingCardZIndex;
-    }
-
-    .playerActionPointsContainer {
-        position: absolute;
-        top: -30px;
-        left: 51%;
-        transform: translateX(-50%);
-    }
-
-    .playerActionPoints {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 16px;
-        font-weight: bold;
-        font-family: Helvetica, sans-serif;
-        color: black;
-        border: 2px solid black;
-        background-color: white;
-        width: 60px;
-        height: 60px;
-        text-align: center;
-        border-radius: 4px;
-    }
-
-    .field-playerHud {
-        position: absolute;
-        left: 0;
-        bottom: 0;
-    }
-
-    .field-playerHudRow {
-        height: 80px;
-        box-sizing: border-box;
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        padding-left: 10px;
-    }
-
-    .playerHud-item {
-        margin: 0 10px;
-        padding: 10px 20px;
-        font-size: 18px;
-        font-family: Helvetica, sans-serif;
-        font-weight: bold;
-
-        &:first-child {
-            margin-right: 0;
-        }
-    }
-
-    .playerHud-phaseText {
-        display: inline-block;
-        background-color: #35A7FF;
-        box-shadow: inset 0 1px 10px 1px rgba(0, 0, 0, 0.18);
-        color: white;
-    }
-
-    .playerHud-button {
-        box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.2);;
-        border: none;
-
-        &:active {
-            outline: 2px solid rgba(0, 0, 0, .3);
-        }
-
-        &:focus, &:hover {
-            outline: 0;
-        }
-    }
-
-    .playerHud-nextPhaseButton {
-        background-color: #51c870;
-        color: white;
-
-        &:hover {
-            background-color: #68cc88;
-            outline: 0;
-        }
-    }
-
-    .playerHud-endTurnButton {
-        background-color: #ff3646;
-        color: white;
-
-        &:hover {
-            background-color: #ff6670;
-        }
-    }
-
-    .guideText {
-        pointer-events: none;
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 74px;
-        font-family: "Space Mono", monospace;
-        width: 80vw;
-        height: 30vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-    }
-
-    .actionOverlays, .indicatorOverlays {
-        position: absolute;
-        left: 0;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .actionOverlays {
-        z-index: 2;
-
-        &:hover {
-            & .actionOverlay {
-                visibility: visible;
-            }
-        }
-    }
-
-    .actionOverlay {
-        color: white;
-        font-family: Helvetica, sans-serif;
-        font-size: 16px;
-        flex: 1 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        visibility: hidden;
-        opacity: .5;
-        cursor: pointer;
-
-        &:hover {
-            opacity: 1;
-        }
-    }
-
-    .drawPile-draw {
-        background-color: rgba(0, 0, 0, .5);
-    }
-
-    .match-background {
-        background-image: url("/image/simple_texture.jpg");
-        width: 100%;
-        height: 100%;
-        background-size: cover;
-        position: absolute;
-        top: 0;
-        left: 0;
-    }
-
-    .match-backgroundWrapper {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
-    }
-
-    .match-backgroundOverlay {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
-        background-color: rgba(0, 1, 5, 0.9);
-    }
+    @import "match.scss";
 </style>
