@@ -805,7 +805,7 @@
             left: -1px;
             right: -1px;
             bottom: -1px;
-            background-image: url("/card/back/image");
+            background-image: url("/card/back-image");
             background-size: cover;
 
             .field-opponent & {

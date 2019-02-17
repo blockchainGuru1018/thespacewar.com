@@ -101,6 +101,7 @@ function setupRoutes(deps, controllers) {
     app.post('/match', controllers.match.create);
     app.get('/match/:matchId/player/:playerId/state', controllers.match.getOwnState);
     app.get('/card/:cardId/image', controllers.card.getImage);
+    app.get('/card/back-image', controllers.card.getBackImage);
 
     app.post('/git/push', controllers.git.onPush);
 
