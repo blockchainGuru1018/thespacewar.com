@@ -9,12 +9,13 @@ const EventRepository = require('../../shared/event/EventRepository.js');
 const CanThePlayer = require('../../shared/match/CanThePlayer.js');
 
 module.exports = function ClientCardFactory({
-    actionPointsCalculator
+    actionPointsCalculator,
+    rawCardDataRepository
 }) {
 
     const playerServiceProvider = PlayerServiceProvider();
     const matchService = new MatchService();
-    const cardDataAssembler = CardDataAssembler();
+    const cardDataAssembler = CardDataAssembler({ rawCardDataRepository });
 
     return {
         fromVuexStore

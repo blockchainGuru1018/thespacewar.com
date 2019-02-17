@@ -1,0 +1,113 @@
+<template>
+    <div :class="['loading', {'loading--done': loadingDone}]">
+        <div class="loading-backdropLetterBoxWrapper">
+            <img :class="backdropClasses" src="/image/backdrop.jpg"/>
+        </div>
+        <div class="loading-bar" v-if="!loadingDone">
+            <div :style="progressStyle" class="loading-barProgress"/>
+        </div>
+        <Lobby :class="viewClasses" v-if="!!ownUser && loadingDone"/>
+        <Login :class="viewClasses" v-else/>
+    </div>
+</template>
+<script>
+    const Vuex = require('vuex');
+    const loadingHelpers = Vuex.createNamespacedHelpers('loading');
+    const userHelpers = Vuex.createNamespacedHelpers('user');
+    const Lobby = require('../lobby/Lobby.vue').default;
+    const Login = require('../login/Login.vue').default;
+
+    module.exports = {
+        computed: {
+            ...loadingHelpers.mapState([
+                'progress'
+            ]),
+            ...loadingHelpers.mapGetters([
+                'loadingDone'
+            ]),
+            ...userHelpers.mapState([
+                'ownUser'
+            ]),
+            backdropClasses() {
+                let classes = ['loading-backdrop'];
+                if (this.loadingDone) {
+                    classes.push('loading-backdrop--blur');
+                }
+                return classes;
+            },
+            progressStyle() {
+                const progress = Math.max(0, Math.min(100, this.progress));
+                return {
+                    width: `${progress}%`
+                }
+            },
+            viewClasses() {
+                let classes = ['view-wrapper'];
+                if (this.loadingDone) {
+                    classes.push('view-wrapper--visible');
+                }
+                return classes;
+            }
+        },
+        components: {
+            Lobby,
+            Login
+        }
+    };
+</script>
+<style scoped lang="scss">
+    $animation-time: 1s;
+    $animation-curve: ease;
+
+    .loading-backdropLetterBoxWrapper {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background-color: black;
+    }
+
+    .loading-backdrop {
+        width: 100%;
+        transition: filter $animation-time $animation-curve;
+    }
+
+    .loading-backdrop--blur {
+        filter: brightness(.9) contrast(105%) blur(3px);
+    }
+
+    .loading-bar {
+        position: fixed;
+        bottom: 35px;
+
+        transform: translateX(-50%);
+        left: 50%;
+
+        width: 400px;
+        height: 14px;
+    }
+
+    .loading-barProgress {
+        background-color: rgba(255, 255, 255, .8);
+        height: 100%;
+    }
+
+    .view-wrapper {
+        transition: opacity $animation-time $animation-curve;
+        opacity: 0;
+        z-index: 1;
+        position: fixed;
+        transform: translate(-50%, -50%);
+        left: 50%;
+        top: 50%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .view-wrapper--visible {
+        opacity: 1;
+    }
+</style>

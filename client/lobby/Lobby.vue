@@ -1,14 +1,14 @@
 <template>
-    <div class="lobby">
+    <div class="lobby" v-if="ownUser">
         <div class="users-container">
             <div class="users-header">
-                <div class="users-headerTitle">Name</div>
+                <div class="users-headerTitle">Users</div>
             </div>
             <div class="users">
                 <div class="user">
                     <div class="user-name">{{ ownUser.name }} (you)</div>
                 </div>
-                <div v-for="user in users"
+                <div v-for="user in otherUsers"
                      @keydown.enter="userClick(user)"
                      @click="userClick(user)"
                      class="user"
@@ -21,26 +21,55 @@
 </template>
 <script>
     const Vuex = require('vuex');
-    const { mapState, mapActions } = Vuex.createNamespacedHelpers('lobby');
+    const { mapActions } = Vuex.createNamespacedHelpers('lobby');
+    const userHelpers = Vuex.createNamespacedHelpers('user');
 
     module.exports = {
         computed: {
-            ...mapState([
+            ...userHelpers.mapState([
                 'users',
                 'ownUser'
-            ])
+            ]),
+            otherUsers() {
+                return this.users.filter(u => u.id !== this.ownUser.id);
+            }
         },
         methods: {
             ...mapActions([
-                'init',
                 'startGameWithUser'
             ]),
             userClick(user) {
                 this.startGameWithUser(user);
             }
-        },
-        created() {
-            this.init();
         }
     };
 </script>
+<style scoped lang="scss">
+
+    .users-headerTitle {
+        font-size: 16px;
+        color: white;
+        font-family: "Space Mono", monospace;
+        position: relative;
+        left: 5px;
+    }
+
+    .users {
+        width: 300px;
+        background: rgba(0, 0, 0, .4);
+        box-shadow: 1px 1px 1px rgba(0, 0, 0, .1);
+    }
+
+    .user {
+        font-family: "Space Mono", monospace;
+        font-size: 20px;
+        color: white;
+        margin-bottom: 4px;
+        padding: 4px 6px;
+
+        &:hover, &:focus {
+            background: rgba(0, 0, 0, .7);
+            cursor: pointer;
+        }
+    }
+</style>

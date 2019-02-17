@@ -11,7 +11,7 @@
                     <div class="playerHud-phaseText playerHud-item">{{ currentPhaseText }}</div>
                     <div v-if="phase === 'discard' && playerCardsOnHand.length > maxHandSize"
                          class="playerHud-nextPhaseButton playerHud-phaseText playerHud-item">
-                        Discard {{ amountOfCardsToDiscard + (amountOfCardsToDiscard > 1 ? ' cards' : ' card')}} to
+                        Discard {{ amountOfCardsToDiscard + (amountOfCardsToDiscard === 1 ? ' card' : ' cards')}} to
                         continue
                     </div>
                     <button v-else-if="nextPhaseButtonText"
@@ -75,17 +75,17 @@
         </portal>
         <portal to="stationDrawRow">
             <span class="stationRowDescription descriptionText">
-                Draw {{ cardsToDrawInDrawPhase }} card{{cardsToDrawInDrawPhase > 1 ? 's' : ''}} each turn
+                Draw {{ cardsToDrawInDrawPhase }} card{{cardsToDrawInDrawPhase === 1 ? '' : 's'}} each turn
             </span>
         </portal>
         <portal to="stationActionRow">
             <span class="stationRowDescription descriptionText">
-                Gives {{ actionPointsFromStationCards }} action point{{actionPointsFromStationCards > 1 ? 's' : ''}}
+                Gives {{ actionPointsFromStationCards }} action point{{actionPointsFromStationCards === 1 ? '' : 's'}}
             </span>
         </portal>
         <portal to="stationHandSizeRow">
             <span class="stationRowDescription descriptionText">
-                Max {{ maxHandSize }} card{{maxHandSize > 1 ? 's' : ''}} on hand
+                Max {{ maxHandSize }} card{{maxHandSize === 1 ? '' : 's'}} on hand
             </span>
         </portal>
         <portal to="playerDrawPile">
@@ -287,7 +287,7 @@
     };
 
     function pluralize(word, count) {
-        return count > 1 ? word + 's' : word;
+        return count === 1 ? word : word + 's';
     }
 
     function capitalize(word) {
@@ -373,18 +373,13 @@
         transform: translate(-50%, -50%);
         text-align: center;
         font-size: 74px;
-        font-family: Consolas, serif;
+        font-family: "Space Mono", monospace;
         width: 65vw;
         height: 30vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #ff3336;
-        text-decoration: underline;
-        font-weight: bold;
-        text-shadow: -1px 1px 10px rgba(255, 255, 255, 0.12),
-        1px 1px 10px rgba(255, 255, 255, 0.12);
-
+        color: white;
         user-select: none;
     }
 

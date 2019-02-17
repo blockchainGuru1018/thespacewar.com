@@ -7,10 +7,11 @@ const DeckFactory = require('../deck/DeckFactory.js');
 module.exports = function ({
     logger,
     userRepository,
-    socketRepository
+    socketRepository,
+    rawCardDataRepository
 }) {
 
-    const cardDataAssembler = CardDataAssembler();
+    const cardDataAssembler = CardDataAssembler({ rawCardDataRepository });
     const deckFactory = DeckFactory({ cardDataAssembler });
     const cardInfoRepository = CardInfoRepository({ cardDataAssembler });
 

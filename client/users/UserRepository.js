@@ -7,6 +7,11 @@ module.exports = function (deps) {
     let ownUser = null;
     let cachedUsers = [];
 
+    if (isAlreadyLoggedIn()) { //TODO Might be unnecessary if we still check this in LoadingStore
+        const ownUserJson = localStorage.getItem('own-user');
+        ownUser = JSON.parse(ownUserJson);
+    }
+
     return {
         storeOwnUser,
         getOwnUser,
@@ -16,8 +21,11 @@ module.exports = function (deps) {
     };
 
     function storeOwnUser(user) {
-        socket.emit('registerConnection', { userId: user.id });
         ownUser = user;
+
+        if (!!user) {
+            socket.emit('registerConnection', { userId: user.id });
+        }
     }
 
     function getOwnUser() {
@@ -39,5 +47,9 @@ module.exports = function (deps) {
             cachedUsers = [...users];
             callback(users);
         });
+    }
+
+    function isAlreadyLoggedIn() {
+        return !!localStorage.getItem('own-user');
     }
 };

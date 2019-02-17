@@ -35,7 +35,8 @@ module.exports = function (deps) {
     const cardInfoRepository = deps.cardInfoRepository;
     const actionPointsCalculator = deps.actionPointsCalculator || ActionPointsCalculator({ cardInfoRepository });
     const matchController = deps.matchController;
-    const clientCardFactory = deps.cardFactory || ClientCardFactory({ actionPointsCalculator });
+    const clientCardFactory = deps.cardFactory
+        || ClientCardFactory({ actionPointsCalculator, rawCardDataRepository: deps.rawCardDataRepository });
 
     return {
         namespaced: true,
@@ -482,7 +483,7 @@ module.exports = function (deps) {
         } = restoreState;
 
         if (opponentRetreated || playerRetreated) {
-            deleteMatchLocalDataAndReturnToLobby();
+            deleteMatchLocalDataAndReturnToStart();
             return;
         }
 
@@ -723,7 +724,7 @@ module.exports = function (deps) {
 
     function retreat() {
         matchController.emit('retreat');
-        deleteMatchLocalDataAndReturnToLobby();
+        deleteMatchLocalDataAndReturnToStart();
     }
 
     function selectStationCardAsDefender({ state, getters, dispatch }, { id }) {
@@ -797,16 +798,16 @@ module.exports = function (deps) {
     }
 
     function opponentRetreated() {
-        deleteMatchLocalDataAndReturnToLobby();
+        deleteMatchLocalDataAndReturnToStart();
     }
 
     function endGame() {
-        deleteMatchLocalDataAndReturnToLobby();
+        deleteMatchLocalDataAndReturnToStart();
     }
 
-    function deleteMatchLocalDataAndReturnToLobby() {
+    function deleteMatchLocalDataAndReturnToStart() {
         localStorage.removeItem('ongoing-match');
-        route('lobby');
+        route('start');
     }
 
     function getNextPhaseValue(currentPhase) {

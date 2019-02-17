@@ -2,7 +2,7 @@ module.exports = function (deps) {
 
     const cardDataAssembler = deps.cardDataAssembler;
 
-    const cards = cardDataAssembler.createAll();
+    let cards = null;
 
     return {
         getCost,
@@ -24,8 +24,16 @@ module.exports = function (deps) {
     }
 
     function getCard(cardCommonId) {
-        const card = cards.find(c => c.commonId === cardCommonId);
+        const card = getCards().find(c => c.commonId === cardCommonId);
         if (!card) throw new Error(`Could not find card with id: ${cardCommonId}`);
         return card;
+    }
+
+    function getCards() {
+        if (!cards) {
+            cards = cardDataAssembler.createAll();
+        }
+
+        return cards;
     }
 };

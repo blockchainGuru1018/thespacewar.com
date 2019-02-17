@@ -1,5 +1,9 @@
 <template>
     <div ref="match" :class="['match', `currentPhase--${phase}`]">
+        <div class="match-backgroundWrapper">
+            <div class="match-background"/>
+            <div class="match-backgroundOverlay"/>
+        </div>
         <div class="match-header">
             <button @click="restoreSavedMatch" class="match-smallButton">Restore match</button>
             <button @click="saveMatch" class="match-smallButton--success match-smallButton">Save match</button>
@@ -461,6 +465,8 @@
 
     $playerCardWidth: calc(#{$cardWidth} / 5);
     $playerCardHeight: calc(#{$cardHeight} / 5);
+    $playerCardOnHandWidth: calc(#{$cardWidth} / 3);
+    $playerCardOnHandHeight: calc(#{$cardHeight} / 3);
     $playerStationCardWidth: calc((#{$cardWidth} / 5) * .7);
     $playerStationCardHeight: calc((#{$cardHeight} / 5) * .7);
     $playerDiscardPileCardWidth: $playerCardWidth;
@@ -468,8 +474,8 @@
     $playerDrawPileCardWidth: $playerCardWidth;
     $playerDrawPileCardHeight: $playerCardHeight;
 
-    $cardHoverWidth: $cardWidth / 4;
-    $cardHoverHeight: $cardHeight / 4;
+    $cardHoverWidth: $cardWidth / 2;
+    $cardHoverHeight: $cardHeight / 2;
 
     $cardGhostZIndex: 1;
     $playerCardsOnHandZIndex: 2;
@@ -723,6 +729,10 @@
         }
     }
 
+    .field-playerZoneRows {
+        justify-content: flex-start;
+    }
+
     .field-playerCardsOnHand {
         position: absolute;
         z-index: $playerCardsOnHandZIndex;
@@ -736,6 +746,8 @@
     }
 
     .field-playerCardsOnHand .card {
+        width: $playerCardOnHandWidth;
+        height: $playerCardOnHandHeight;
         position: absolute;
         bottom: 0;
         transition: bottom .2s ease-out, width .2s ease-out, height .2s ease-out;
@@ -759,7 +771,7 @@
 
         &.card--hoverable:hover {
             position: absolute;
-            bottom: 165px;
+            bottom: 300px;
             left: -($playerCardWidth - $cardHoverWidth);
             width: $cardHoverWidth;
             height: $cardHoverHeight;
@@ -945,17 +957,13 @@
         top: 50%;
         transform: translate(-50%, -50%);
         font-size: 74px;
-        font-family: Consolas, serif;
+        font-family: "Space Mono", monospace;
         width: 80vw;
         height: 30vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #ff3336;
-        text-decoration: underline;
-        font-weight: bold;
-        text-shadow: -1px 1px 10px rgba(255, 255, 255, 0.12),
-        1px 1px 10px rgba(255, 255, 255, 0.12);
+        color: white;
     }
 
     .actionOverlays, .indicatorOverlays {
@@ -997,5 +1005,32 @@
 
     .drawPile-draw {
         background-color: rgba(0, 0, 0, .5);
+    }
+
+    .match-background {
+        background-image: url("/image/simple_texture.jpg");
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .match-backgroundWrapper {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .match-backgroundOverlay {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: rgba(0, 1, 5, 0.9);
     }
 </style>

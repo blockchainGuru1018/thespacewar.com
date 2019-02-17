@@ -4,14 +4,15 @@ const SAVE_FOLDER = path.join(__dirname, 'save');
 const Deck = require('../deck/Deck.js');
 const CardDataAssembler = require('../../shared/CardDataAssembler.js');
 
-function AttackController(deps) {
+function DebugController(deps) {
 
     const {
         matchService,
-        restoreFromState
+        restoreFromState,
+        rawCardDataRepository
     } = deps;
 
-    const cardDataAssembler = CardDataAssembler();
+    let cardDataAssembler = CardDataAssembler({ rawCardDataRepository });
 
     return {
         onSaveMatch,
@@ -71,4 +72,4 @@ function AttackController(deps) {
     }
 }
 
-module.exports = AttackController;
+module.exports = DebugController;

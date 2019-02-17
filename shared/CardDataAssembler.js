@@ -1,5 +1,3 @@
-const cardsJson = require('../server/card/cards.json');
-
 const CARD_COLOR_TO_TYPE = {
     'blue': 'spaceShip',
     'violet': 'duration',
@@ -8,7 +6,9 @@ const CARD_COLOR_TO_TYPE = {
     'green': 'defense'
 };
 
-module.exports = function () {
+module.exports = function ({
+    rawCardDataRepository
+}) {
 
     return {
         createAll,
@@ -16,8 +16,10 @@ module.exports = function () {
     };
 
     function createAll() {
+        let rawCardData = rawCardDataRepository.get();
+
         let cards = [];
-        for (let cardJson of cardsJson) {
+        for (let cardJson of rawCardData) {
             const copies = cardJson.number_copies ? parseInt(cardJson.number_copies) : 1;
             for (let i = 0; i < copies; i++) {
                 const card = CardData(cardJson);
@@ -28,7 +30,8 @@ module.exports = function () {
     }
 
     function createFromCommonId(commonId) {
-        const cardJson = cardsJson.find(c => c.id === commonId.toString());
+        let unmappedCardData = rawCardDataRepository.get();
+        const cardJson = unmappedCardData.find(c => c.id === commonId.toString());
         return CardData(cardJson);
     }
 };

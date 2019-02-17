@@ -93,10 +93,12 @@ module.exports = function (deps) {
     }
 
     function hide() {
-        vm.$destroy();
-        vm.$el.remove();
-        vm.$store.unregisterModule('match');
-        vm = null;
+        window.location.reload();
+        //TODO To destroy SAP style its necessary to unegister all match stores
+        // vm.$destroy();
+        // vm.$el.remove();
+        // vm.$store.unregisterModule('match');
+        // vm = null;
     }
 
     function registerStoreModule(store) {

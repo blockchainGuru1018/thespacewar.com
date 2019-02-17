@@ -8,7 +8,8 @@ module.exports = function (deps) {
         getSocketMaster,
         setForUser,
         getForUser,
-        hasConnectionToUser
+        hasConnectionToUser,
+        getAllConnectedUserIds
     };
 
     function getSocketMaster() {
@@ -25,5 +26,9 @@ module.exports = function (deps) {
 
     function hasConnectionToUser(userId) {
         return connectionByUserId.has(userId);
+    }
+
+    function getAllConnectedUserIds() {
+        return Array.from(connectionByUserId.keys());
     }
 };

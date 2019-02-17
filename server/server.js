@@ -11,6 +11,7 @@ const MatchController = require('./match/MatchController.js');
 const CardController = require('./card/CardController.js');
 const GitController = require('./git/GitController.js');
 const AssetsController = require('./assets/AssetsController.js');
+const ServerRawCardDataRepository = require('./card/ServerRawCardDataRepository.js');
 const Logger = require('./utils/Logger.js');
 const http = require('http');
 const { port } = require('./settings.json');
@@ -25,11 +26,19 @@ module.exports = {
     restart: restartServer
 };
 
-function run({ closeServer, exitProcess, inProduction = false }) {
+async function run({ closeServer, exitProcess, inProduction = false }) {
+
+    const rawCardDataRepository = ServerRawCardDataRepository();
+
+    console.log(' - 1/2 Fetching fresh game data');
+    await rawCardDataRepository.init();
+    console.log(' - 1/2 SUCCESS');
+
     const socketRepository = SocketRepository({ socketMaster });
     const userRepository = UserRepository({ socketMaster });
     const deps = {
-        logger
+        logger,
+        rawCardDataRepository
     };
     deps.socketRepository = socketRepository;
     deps.userRepository = userRepository;
@@ -69,16 +78,18 @@ function closeServer() {
 function startServer({ production }) {
     process.env.production = production;
 
-    return new Promise(resolve => {
+    return new Promise(async resolve => {
         app = express();
         app.use(bodyParser.json());
 
         server = http.createServer(app);
         socketMaster = SocketIO(server);
 
-        run({ closeServer, exitProcess, inProduction: !!production });
+        await run({ closeServer, exitProcess, inProduction: !!production });
+
+        console.log(` - 2/2 Setting up server at port ${port}`)
         server.listen(port, () => {
-            console.log(`\n\n --- Running on port ${port} ---`)
+            console.log(` - 2/2 SUCCESS, running on port ${port}\n`)
             resolve();
         });
     });
@@ -106,6 +117,7 @@ function setupRoutes(deps, controllers) {
     app.post('/git/push', controllers.git.onPush);
 
     app.get('/icon/:iconName', controllers.assets.getIcon);
+    app.get('/image/:imageName', controllers.assets.getImage);
 
     if (!deps.inProduction) {
         app.post('/restart', async (req, res) => {

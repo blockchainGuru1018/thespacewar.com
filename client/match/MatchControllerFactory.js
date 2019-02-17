@@ -1,9 +1,9 @@
 const MatchController = require('./MatchController.js');
 
-module.exports = function (deps) {
-
-    const socket = deps.socket;
-    const userRepository = deps.userRepository;
+module.exports = function ({
+    socket,
+    userRepository
+}) {
 
     return {
         create
