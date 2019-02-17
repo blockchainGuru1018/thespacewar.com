@@ -13,8 +13,8 @@ $opponentDiscardPileCardHeight: calc(#{$cardHeight} / 12);
 
 $playerCardWidth: calc(#{$cardWidth} / 5);
 $playerCardHeight: calc(#{$cardHeight} / 5);
-$playerCardOnHandWidth: calc(#{$cardWidth} / 3);
-$playerCardOnHandHeight: calc(#{$cardHeight} / 3);
+$playerCardOnHandWidth: calc(#{$cardWidth} / 3.8);
+$playerCardOnHandHeight: calc(#{$cardHeight} / 3.8);
 $playerStationCardWidth: calc((#{$cardWidth} / 5) * .7);
 $playerStationCardHeight: calc((#{$cardHeight} / 5) * .7);
 $playerDiscardPileCardWidth: $playerCardWidth;
@@ -22,8 +22,8 @@ $playerDiscardPileCardHeight: $playerCardHeight;
 $playerDrawPileCardWidth: $playerCardWidth;
 $playerDrawPileCardHeight: $playerCardHeight;
 
-$cardHoverWidth: $cardWidth / 2;
-$cardHoverHeight: $cardHeight / 2;
+$cardHoverWidth: $cardWidth / 2.8;
+$cardHoverHeight: $cardHeight / 2.8;
 
 $cardGhostZIndex: 1;
 $playerCardsOnHandZIndex: 2;
@@ -284,7 +284,7 @@ $holdingCardZIndex: 3;
 .field-playerCardsOnHand {
   position: absolute;
   z-index: $playerCardsOnHandZIndex;
-  bottom: 0;
+  bottom: -20px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -319,7 +319,7 @@ $holdingCardZIndex: 3;
 
   &.card--hoverable:hover {
     position: absolute;
-    bottom: 300px;
+    bottom: 240px;
     left: -($playerCardWidth - $cardHoverWidth);
     width: $cardHoverWidth;
     height: $cardHoverHeight;
