@@ -328,6 +328,17 @@ eval("const BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card
 
 /***/ }),
 
+/***/ "../shared/card/RawCardDataRepository.js":
+/*!***********************************************!*\
+  !*** ../shared/card/RawCardDataRepository.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("const cardsJson = __webpack_require__(/*! ../../server/card/cards.json */ \"../server/card/cards.json\");\n\nconst HOURS_12 = 12 * 60 * 60 * 1000;\n\nmodule.exports = function ({\n  ajax\n}) {\n  let cache = getCacheOrNull();\n  return {\n    init,\n    get\n  };\n\n  async function init() {\n    if (!cache || cacheIsTooOld()) {\n      clearCache();\n      await updateCache();\n    }\n  }\n\n  function get() {\n    if (!cache) throw new Error('Trying to get card data before it has finished downloading.');\n    return cache;\n  }\n\n  function cacheIsTooOld() {\n    const timeSinceCached = Date.now() - cache.saveTime;\n    return timeSinceCached > HOURS_12;\n  }\n\n  async function updateCache() {\n    let data = await downloadCardData();\n    cache = {\n      data,\n      saveTime: Date.now()\n    };\n    localStorage.setItem('rawCardData', JSON.stringify(cache));\n  }\n\n  async function downloadCardData() {\n    try {\n      return await ajax.get('https://admin.thespacewar.com/services/api/cards');\n    } catch (err) {\n      console.error(err);\n      console.error('Failed downloading cards JSON data, using backup.');\n      return cardsJson;\n    }\n  }\n\n  function getCacheOrNull() {\n    const cacheJson = localStorage.getItem('rawCardData');\n\n    if (cacheJson) {\n      return JSON.parse(cacheJson);\n    } else {\n      return null;\n    }\n  }\n\n  function clearCache() {\n    localStorage.removeItem('rawCardData');\n    cache = null;\n  }\n};\n\n//# sourceURL=webpack:///../shared/card/RawCardDataRepository.js?");
+
+/***/ }),
+
 /***/ "../shared/card/RepairShip.js":
 /*!************************************!*\
   !*** ../shared/card/RepairShip.js ***!
@@ -632,7 +643,7 @@ eval("const CardFactory = __webpack_require__(/*! ../../shared/card/CardFactory.
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("const cardsJson = __webpack_require__(/*! ../../server/card/cards.json */ \"../server/card/cards.json\");\n\nmodule.exports = function () {\n  const cacheJson = localStorage.getItem('rawCardData');\n  let initiated = !!cacheJson ? JSON.parse(cacheJson) : false;\n  return {\n    init,\n    get\n  };\n\n  function init() {\n    return new Promise(resolve => {\n      setTimeout(() => {\n        initiated = true;\n        localStorage.setItem('rawCardData', '[]');\n        resolve();\n      }, 3000);\n    });\n  }\n\n  function get() {\n    if (!initiated) throw new Error('Trying to get card data before it has finished downloading.');\n    return cardsJson;\n  }\n};\n\n//# sourceURL=webpack:///./card/ClientRawCardDataRepository.js?");
+eval("const ajax = __webpack_require__(/*! ../utils/ajax.js */ \"./utils/ajax.js\");\n\nconst RawCardDataRepository = __webpack_require__(/*! ../../shared/card/RawCardDataRepository.js */ \"../shared/card/RawCardDataRepository.js\");\n\nmodule.exports = () => RawCardDataRepository({\n  ajax\n});\n\n//# sourceURL=webpack:///./card/ClientRawCardDataRepository.js?");
 
 /***/ }),
 
