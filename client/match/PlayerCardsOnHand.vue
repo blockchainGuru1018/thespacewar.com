@@ -47,7 +47,7 @@
                 return classes;
             },
             getCardOnHandStyle(card, index) {
-                const cardUrl = getCardImageUrl.byCommonId(this.card.commonId);
+                const cardUrl = getCardImageUrl.byCommonId(card.commonId);
 
                 const cardCount = this.playerCardsOnHand.length;
                 const turnDistance = 1.5;

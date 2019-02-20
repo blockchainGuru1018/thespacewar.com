@@ -5,19 +5,14 @@ module.exports = function (deps) {
     const matchId = deps.matchId;
     const dispatch = deps.dispatch;
 
-    socket.on('match', data => {
-        console.log('Got match event on client', data);
-        if (data.matchId === matchId) {
-            dispatch(data.action, data.value);
-        }
-    });
-
     return {
         start,
+        stop,
         emit
     }
 
     function start() {
+        socket.on('match', onSocketMatchEvent);
         emit('start');
     }
 
@@ -29,5 +24,16 @@ module.exports = function (deps) {
             action,
             value
         });
+    }
+
+    function stop() {
+        socket.off('match', onSocketMatchEvent);
+    }
+
+    function onSocketMatchEvent(data) {
+        console.log('Got match event on client', data);
+        if (data.matchId === matchId) {
+            dispatch(data.action, data.value);
+        }
     }
 }

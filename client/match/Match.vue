@@ -384,8 +384,8 @@
                     ...this.getCardImageStyle(card)
                 }
             },
-            getCardImageStyle() {
-                const cardUrl = getCardImageUrl.byCommonId(this.card.commonId);
+            getCardImageStyle(card) {
+                const cardUrl = getCardImageUrl.byCommonId(card.commonId);
                 return {
                     backgroundImage: `url(${cardUrl})`
                 }

@@ -40,6 +40,7 @@ module.exports = function (deps) {
 
     return {
         namespaced: true,
+        name: 'match',
         state: {
             turn: 1,
             currentPlayer: null,

@@ -19,7 +19,7 @@
                             class="playerHud-nextPhaseButton playerHud-button playerHud-item">
                         {{ nextPhaseButtonText }}
                     </button>
-                    <button v-else-if="shouldEndTurnButton"
+                    <button v-else-if="endTurnButtonVisible"
                             @click="nextPhaseClick"
                             class="playerHud-endTurnButton playerHud-button playerHud-item">
                         End turn
@@ -200,11 +200,11 @@
                 const nameOfCurrentPhase = this.phase.substr(0, 1).toUpperCase() + this.phase.substr(1);
                 return `${nameOfCurrentPhase} phase`;
             },
-            shouldEndTurnButton() {
+            endTurnButtonVisible() {
                 return !this.nextPhaseWithAction || this.nextPhaseWithAction === PHASES.wait;
             },
             nextPhaseButtonText() {
-                if (this.shouldEndTurnButton) return '';
+                if (this.endTurnButtonVisible) return '';
                 if (this.phase === PHASES.wait) return '';
                 if (this.phase === PHASES.preparation) {
                     return 'Start turn';

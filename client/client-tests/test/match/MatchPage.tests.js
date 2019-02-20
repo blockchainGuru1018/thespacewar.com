@@ -17,6 +17,8 @@ const MoveCardEvent = require('../../../../shared/event/MoveCardEvent.js');
 const RepairCardEvent = require('../../../../shared/event/RepairCardEvent.js');
 const AttackEvent = require('../../../../shared/event/AttackEvent.js');
 const SmallCannon = require('../../../../shared/card/SmallCannon.js');
+const getCardImageUrl = require('../../../utils/getCardImageUrl.js');
+const cardsJson = require('../../../../server/card/cards.json');
 
 const DiscoveryCommonId = '42';
 const CommonShipId = '25';
@@ -34,6 +36,8 @@ Vue.use(Vuex);
 
 module.exports = testCase('MatchPage', {
     async setUp() {
+        sinon.stub(getCardImageUrl, 'byCommonId', () => '/#');
+
         this.store = new Vuex.Store({});
         this.vm = new Vue({ store: this.store });
         this.vm.$mount();
@@ -48,6 +52,8 @@ module.exports = testCase('MatchPage', {
         };
     },
     tearDown() {
+        getCardImageUrl.byCommonId.restore();
+
         delete this.createPage;
 
         this.controller && this.controller.tearDown();
@@ -2117,24 +2123,28 @@ function TestController({ playerIds = ['P1A', 'P2A'], matchId = 'M1A', ...pageDe
     const vm = new Vue({ store });
     vm.$mount();
 
-    pageDeps.matchControllerFactory = pageDeps.matchControllerFactory
-        || FakeMatchControllerFactory({ matchController: pageDeps.matchController || FakeMatchController() });
-
     const [ownId, opponentId] = playerIds;
+    const matchController = pageDeps.matchController || FakeMatchController();
+    pageDeps.matchControllerFactory = pageDeps.matchControllerFactory || FakeMatchControllerFactory({ matchController });
     pageDeps.userRepository = pageDeps.userRepository || FakeUserRepository({ ownUser: { id: ownId } });
-
     pageDeps.cardInfoRepository = {
         getType() {},
         getCost() {},
         getImageUrl() {}
     };
     pageDeps.rootStore = store;
+    pageDeps.rawCardDataRepository = { init() {}, get: () => cardsJson };
+
     const page = Page(pageDeps);
 
     return {
-        dispatch: (...args) => pageDeps.matchControllerFactory.getStoreDispatch()(...args),
-        showPage: () => page.show({ matchId, opponentUser: { id: opponentId } }),
-        tearDown: () => {
+        dispatch(...args) {
+            pageDeps.matchControllerFactory.getStoreDispatch()(...args);
+        },
+        showPage() {
+            page.show({ matchId, opponentUser: { id: opponentId } });
+        },
+        tearDown() {
             page.hide();
             vm.$destroy();
         }
@@ -2156,7 +2166,8 @@ function FakeMatchController(options = {}) {
     return defaults(options, {
         start() {
         },
-        emit: stub()
+        emit: stub(),
+        stop() {}
     });
 }
 
