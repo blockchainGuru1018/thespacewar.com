@@ -66,6 +66,7 @@
         mapActions: mapPermissionActions
     } = Vuex.createNamespacedHelpers('permission');
     const vClickOutside = require('v-click-outside');
+    const getCardImageUrl = require("../utils/getCardImageUrl.js")
 
     module.exports = {
         props: [
@@ -120,8 +121,9 @@
                 return classes;
             },
             cardStyle() {
+                const cardUrl = getCardImageUrl.byCommonId(this.card.commonId);
                 return {
-                    backgroundImage: 'url(/card/' + this.card.commonId + '/image)'
+                    backgroundImage: `url("${cardUrl}")`
                 };
             },
             damageTextStyle() {

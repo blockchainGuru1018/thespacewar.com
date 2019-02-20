@@ -201,6 +201,7 @@
 </template>
 <script>
     const Vuex = require('vuex');
+    const getCardImageUrl = require("../utils/getCardImageUrl.js")
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
     const {
         mapGetters: mapPermissionGetters,
@@ -269,10 +270,11 @@
             holdingCardStyle() {
                 if (!this.holdingCard) return {};
 
+                const cardUrl = getCardImageUrl.byCommonId(this.holdingCard.commonId);
                 return {
                     left: this.mousePosition.x + 'px',
                     top: this.mousePosition.y + 'px',
-                    backgroundImage: 'url(/card/' + this.holdingCard.commonId + '/image)',
+                    backgroundImage: `url(${cardUrl})`,
                     pointerEvents: 'none'
                 }
             },
@@ -382,9 +384,10 @@
                     ...this.getCardImageStyle(card)
                 }
             },
-            getCardImageStyle(card) {
+            getCardImageStyle() {
+                const cardUrl = getCardImageUrl.byCommonId(this.card.commonId);
                 return {
-                    backgroundImage: 'url(/card/' + card.commonId + '/image)'
+                    backgroundImage: `url(${cardUrl})`
                 }
             },
             playerDrawPileClick() {

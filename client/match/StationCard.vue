@@ -20,6 +20,7 @@
 </template>
 <script>
     const Vuex = require('vuex');
+    const getCardImageUrl = require("../utils/getCardImageUrl.js")
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
     const {
         mapGetters: mapPermissionGetters,
@@ -85,8 +86,9 @@
             },
             cardStyle() {
                 if (this.stationCard.flipped) {
+                    const cardUrl = getCardImageUrl.byCommonId(this.stationCard.card.commonId);
                     return {
-                        backgroundImage: 'url(/card/' + this.stationCard.card.commonId + '/image)'
+                        backgroundImage: `url(${cardUrl})`
                     }
                 }
                 return {};

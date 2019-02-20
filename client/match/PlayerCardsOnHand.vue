@@ -9,6 +9,7 @@
 </template>
 <script>
     const Vuex = require('vuex');
+    const getCardImageUrl = require("../utils/getCardImageUrl.js");
     const { mapState } = Vuex.createNamespacedHelpers('match');
     const { mapGetters: mapPermissionGetters } = Vuex.createNamespacedHelpers('permission');
     const { mapState: mapCardState } = Vuex.createNamespacedHelpers('card');
@@ -46,6 +47,8 @@
                 return classes;
             },
             getCardOnHandStyle(card, index) {
+                const cardUrl = getCardImageUrl.byCommonId(this.card.commonId);
+
                 const cardCount = this.playerCardsOnHand.length;
                 const turnDistance = 1.5;
                 const startDegrees = -((cardCount - 1) * turnDistance * .5);
@@ -53,7 +56,7 @@
                 return {
                     transform: 'rotate(' + (startDegrees + degrees) + 'deg)',
                     transformOrigin: 'center 1600%',
-                    backgroundImage: 'url(/card/' + card.commonId + '/image)'
+                    backgroundImage: `url(${cardUrl})`
                 }
             }
         }

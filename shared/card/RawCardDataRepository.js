@@ -1,9 +1,9 @@
 const cardsJson = require('../../server/card/cards.json');
 
 const HOURS_12 = 12 * 60 * 60 * 1000;
-module.exports = function ({ ajax }) {
+module.exports = function ({ ajax, cache = DummyCache() }) {
 
-    let cache = getCacheOrNull();
+    let cacheData = getCacheOrNull();
 
     return {
         init,
@@ -11,31 +11,34 @@ module.exports = function ({ ajax }) {
     };
 
     async function init() {
-        if (!cache || cacheIsTooOld()) {
+        if (!cacheData || cacheIsTooOld()) {
             clearCache();
             await updateCache();
         }
     }
 
     function get() {
-        if (!cache) throw new Error('Trying to get card data before it has finished downloading.');
-        return cache;
+        if (!cacheData) throw new Error('Trying to get card data before it has finished downloading.');
+        return cacheData.data;
     }
 
     function cacheIsTooOld() {
-        const timeSinceCached = Date.now() - cache.saveTime;
+        const timeSinceCached = Date.now() - cacheData.saveTime;
         return timeSinceCached > HOURS_12;
     }
 
     async function updateCache() {
         let data = await downloadCardData();
-        cache = { data, saveTime: Date.now() };
-        localStorage.setItem('rawCardData', JSON.stringify(cache));
+        cacheData = { data, saveTime: Date.now() };
+        cache.setItem('rawCardData', JSON.stringify(cacheData));
     }
 
     async function downloadCardData() {
         try {
-            return await ajax.get('https://admin.thespacewar.com/services/api/cards');
+            const url = 'https://admin.thespacewar.com/services/api/cards';
+            console.log('Gettings fresh cards JSON from:', url);
+            const response = await ajax.get(url);
+            return response.data;
         } catch (err) {
             console.error(err);
             console.error('Failed downloading cards JSON data, using backup.');
@@ -44,7 +47,7 @@ module.exports = function ({ ajax }) {
     }
 
     function getCacheOrNull() {
-        const cacheJson = localStorage.getItem('rawCardData');
+        const cacheJson = cache.getItem('rawCardData');
         if (cacheJson) {
             return JSON.parse(cacheJson);
         }
@@ -54,7 +57,15 @@ module.exports = function ({ ajax }) {
     }
 
     function clearCache() {
-        localStorage.removeItem('rawCardData');
-        cache = null;
+        cache.removeItem('rawCardData');
+        cacheData = null;
     }
 };
+
+function DummyCache() {
+    return {
+        getItem: () => null,
+        setItem: () => {},
+        removeItem: () => {}
+    };
+}
