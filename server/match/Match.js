@@ -27,7 +27,8 @@ module.exports = function ({
     matchId,
     players,
     actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository }),
-    endMatch
+    endMatch,
+    rawCardDataRepository
 }) {
 
     const playerOrder = players.map(p => p.id);
@@ -92,7 +93,8 @@ module.exports = function ({
                     opponentStateService: playerServiceProvider.getStateServiceById(opponentId),
                 });
             }
-        }
+        },
+        rawCardDataRepository
     };
 
     const debugController = DebugController(controllerDeps);

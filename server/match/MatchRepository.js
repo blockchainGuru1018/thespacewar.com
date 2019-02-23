@@ -49,6 +49,7 @@ module.exports = function ({
             deckFactory,
             cardInfoRepository,
             logger,
+            rawCardDataRepository,
             endMatch: () => end(matchId)
         });
         matchById.set(matchId, match);

@@ -10,12 +10,13 @@ module.exports = class EmpMissile extends BaseCard {
         return '7';
     }
 
-    attacksWithSpecialAbility() {
+    hasSpecialAttackForCardsInZones() {
         return true;
     }
 
     canAttackCard(otherCard) {
-        if (!this._canTargetCard(otherCard)) return false;
+        if (otherCard.paralyzed) return false;
+        if (!this.canTargetCard(otherCard)) return false;
         if (!this.canAttack()) return false;
         if (!this._matchService.cardsAreInSameZone(this, otherCard)) return false;
 

@@ -82,13 +82,30 @@ class BaseCard {
         return { ...this._card };
     }
 
+    canAttack() {
+        if (this.paralyzed) return false;
+        if (!this.attack && !this.hasSpecialAttackForCardsInZones()) return false;
+        if (!this._canThePlayer.attackWithThisCard(this)) return false;
+
+        if (this.type === 'duration') return false;
+        const isAttackPhase = this._playerStateService.getPhase() === phases.PHASES.attack
+        if (!isAttackPhase) return false;
+
+        const turn = this._matchService.getTurn();
+        const attacksOnTurn = this._queryEvents.getAttacksOnTurn(this.id, turn).length;
+        if (attacksOnTurn >= this.numberOfAttacksPerTurn) return false;
+        if (!this.canMoveAndAttackOnSameTurn() && this._hasMovedThisTurn()) return false;
+
+        return true;
+    }
+
     canAttackStationCards() {
         if (!this.canAttack()) return false;
+        if (!this.attack) return false;
 
-        const turn = this._matchInfoRepository.getTurn();
+        const turn = this._matchService.getTurn();
         const isInHomeZone = this.isInHomeZone();
         const isMissile = this.type === 'missile';
-
         const canAttackFromHomeZone = (isInHomeZone && this.canAttackCardsInOtherZone());
         const hasMovedOnPreviousTurn = this._queryEvents.hasMovedOnPreviousTurn(this.id, turn);
         const hasWaitedAndCanAttackFromOpponentZone = (hasMovedOnPreviousTurn && !isInHomeZone);
@@ -99,40 +116,17 @@ class BaseCard {
             || isMissileAndCanAttackFromOpponentZone;
     }
 
-    canAttack() {
-        if (!this.attack && !this.attacksWithSpecialAbility()) return false;
-        if (!this._canThePlayer.attackWithThisCard(this)) return false;
-
-        if (this.type === 'duration') return false;
-        const isAttackPhase = this._playerStateService.getPhase() === phases.PHASES.attack
-        if (!isAttackPhase) return false;
-
-        const turn = this._matchService.getTurn();
-        const attacksOnTurn = this._queryEvents.getAttacksOnTurn(this.id, turn).length;
-        if (attacksOnTurn >= this.numberOfAttacksPerTurn) return false;
-        if (!this.canMoveAndAttackOnSameTurn() && this.hasMovedThisTurn()) return false;
-
-        return true;
-    }
-
     canAttackCard(otherCard) { //TODO rename "canTargetCardForAttack", also perhaps this belongs in a more higher level class?
-        if (!this._canTargetCard(otherCard)) return false;
+        if (!this.canTargetCard(otherCard)) return false;
         if (!this.canAttack()) return false;
 
         return this.canAttackCardsInOtherZone()
             || this._matchService.cardsAreInSameZone(this, otherCard);
     }
 
-    canAttackCardsInOtherZone() {
-        return false;
-    }
-
-    canBeSacrificed() {
-        return false;
-    }
-
     canTargetCardForSacrifice(otherCard) {
-        if (!this._canTargetCard(otherCard)) return false;
+        if (!this.canBeSacrificed()) return false;
+        if (!this.canTargetCard(otherCard)) return false;
 
         if (otherCard.isStationCard()) {
             return this.canTargetStationCardsForSacrifice();
@@ -144,27 +138,39 @@ class BaseCard {
 
     canTargetStationCardsForSacrifice() {
         return !this.isInHomeZone()
-            && !this.hasMovedThisTurn();
+            && !this._hasMovedThisTurn();
     }
 
-    _canTargetCard(otherCard) {
+    canMove(alternativeConditions = {}) {
+        if (this.type === 'defense') return false;
+        if (this.type === 'duration') return false;
+        if (this.paralyzed) return false;
+
+        const phase = alternativeConditions.phase || this._playerStateService.getPhase();
+        if (phase !== 'attack') return false;
+
+        if (!this._canThePlayer.moveThisCard(this)) return false;
+
+        if (this._hasMovedThisTurn()) return false;
+
+        const putDownOnTurn = this._queryEvents.getTurnWhenCardWasPutDown(this.id);
+        const turn = this._matchService.getTurn();
+        return putDownOnTurn !== turn || this.canMoveOnTurnWhenPutDown();
+    }
+
+    canBeRepaired() {
+        return !!this.damage || this.paralyzed;
+    }
+
+    canTargetCard(otherCard) {
         if (!otherCard.canBeTargeted()) return false;
         if (otherCard.type === 'duration') return false;
         if (otherCard.playerId === this.playerId) return false;
         return true;
     }
 
-    hasMovedThisTurn() {
-        let currentTurn = this._matchService.getTurn();
-        return this._queryEvents.hasMovedOnTurn(this.id, currentTurn);
-    }
-
-    isInHomeZone() {
-        return this._playerStateService.isCardInHomeZone(this.id);
-    }
-
-    isStationCard() {
-        return this._playerStateService.isCardStationCard(this.id);
+    canBeTargeted() {
+        return true;
     }
 
     attackCard(defenderCard) {
@@ -181,30 +187,16 @@ class BaseCard {
         }
     }
 
-    canMove(alternativeConditions = {}) {
-        if (this.type === 'defense') return false;
-        if (this.type === 'duration') return false;
-        const phase = alternativeConditions.phase || this._playerStateService.getPhase();
-        if (phase !== 'attack') return false;
-        if (!this._canThePlayer.moveThisCard(this)) return false;
-
-        if (this.hasMovedThisTurn()) return false;
-
-        const putDownOnTurn = this._queryEvents.getTurnWhenCardWasPutDown(this.id);
-        const turn = this._matchService.getTurn();
-        return putDownOnTurn !== turn || this.canMoveOnTurnWhenPutDown();
+    canBeSacrificed() {
+        return false;
     }
 
-    canMoveOnTurnWhenPutDown() {
-        return this._playerStateService.cardCanMoveOnTurnWhenPutDown(this);
+    canAttackCardsInOtherZone() {
+        return false;
     }
 
     canRepair() {
         return false;
-    }
-
-    canBeRepaired() {
-        return !!this.damage;
     }
 
     stopsStationAttack() {
@@ -215,16 +207,29 @@ class BaseCard {
         return false;
     }
 
-    canBeTargeted() {
-        return true;
+    isInHomeZone() {
+        return this._playerStateService.isCardInHomeZone(this.id);
+    }
+
+    isStationCard() {
+        return this._playerStateService.isCardStationCard(this.id);
+    }
+
+    canMoveOnTurnWhenPutDown() {
+        return this._playerStateService.cardCanMoveOnTurnWhenPutDown(this);
+    }
+
+    hasSpecialAttackForCardsInZones() {
+        return false;
     }
 
     canMoveAndAttackOnSameTurn() {
         return true;
     }
 
-    attacksWithSpecialAbility() {
-        return false;
+    _hasMovedThisTurn() {
+        let currentTurn = this._matchService.getTurn();
+        return this._queryEvents.hasMovedOnTurn(this.id, currentTurn);
     }
 }
 

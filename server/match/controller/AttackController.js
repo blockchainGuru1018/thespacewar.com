@@ -52,7 +52,7 @@ function AttackController(deps) {
             opponentStateService.discardCard(defenderCardData);
         }
         else {
-            opponentStateService.updateCard(defenderCardId, card => {
+            opponentStateService.updateCardById(defenderCardId, card => {
                 Object.assign(card, defenderCard.getCardData());
             });
         }
@@ -62,7 +62,7 @@ function AttackController(deps) {
             playerStateService.discardCard(attackerCardData);
         }
         else {
-            playerStateService.updateCard(attackerCardId, card => {
+            playerStateService.updateCardById(attackerCardId, card => {
                 Object.assign(card, attackerCard.getCardData());
             });
         }

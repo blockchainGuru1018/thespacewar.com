@@ -8,7 +8,7 @@ class ClientPlayerStateService extends PlayerStateService {
         this._updateStore = deps.updateStore;
     }
 
-    updateCard(cardId, updateFn) {
+    updateCardById(cardId, updateFn) {
         throw new Error('Not implemented');
     }
 

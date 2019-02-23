@@ -296,6 +296,7 @@
     .card {
         position: relative;
         transition: transform .1s cubic-bezier(0, 0.07, 0.12, 1.04) !important;
+        flex: 0 0 auto;
     }
 
     .actionOverlays, .indicatorOverlays {

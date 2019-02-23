@@ -288,6 +288,7 @@ $holdingCardZIndex: 3;
 
 .opponentCardsInPlayerZone {
   flex: 0 1 auto;
+  flex-wrap: nowrap;
 }
 
 .field-playerCardsOnHand {

@@ -612,7 +612,7 @@ module.exports = function (deps) {
         localStorage.setItem('ongoing-match', JSON.stringify(matchData));
     }
 
-    //TODO Should NOT take "cards". This should be emitted and received by a StateChanged event
+    //TODO Should NOT take "cards" as a parameter. This should be emitted and received by a StateChanged event
     function drawCards({ state, dispatch }, { cards = [], moreCardsCanBeDrawn }) {
         state.playerCardsOnHand.push(...cards);
         if (!moreCardsCanBeDrawn) {

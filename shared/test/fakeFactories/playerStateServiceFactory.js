@@ -1,7 +1,8 @@
 const playerStateServiceFactory = {
-    withStubs: stubs => {
+    withStubs: (stubs = {}) => {
         return {
             getAttackBoostForCard: () => 0,
+            cardCanMoveOnTurnWhenPutDown: () => false,
             ...stubs
         };
     }

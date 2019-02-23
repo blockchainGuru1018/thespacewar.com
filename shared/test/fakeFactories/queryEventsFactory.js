@@ -1,8 +1,9 @@
 const queryEventsFactory = {
-    withStubs: stubs => {
+    withStubs: (stubs = {}) => {
         return {
             hasMovedOnTurn: () => false,
             hasMovedOnPreviousTurn: () => false,
+            getRepairsOnTurn: () => [],
             ...stubs
         };
     }

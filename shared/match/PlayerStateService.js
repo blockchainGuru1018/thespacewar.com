@@ -341,12 +341,13 @@ class PlayerStateService {
         const repairerCard = this._createBehaviourCardById(repairerCardId);
         repairerCard.repairCard(cardToRepair);
 
-        this.updateCard(cardToRepair, card => {
+        this.updateCardById(cardToRepairId, card => {
             Object.assign(card, cardToRepair.shallowCopyCardData());
         });
 
+        let currentTurn = this._matchService.getTurn();
         this.storeEvent(RepairCardEvent({
-            turn: state.turn,
+            turn: currentTurn,
             cardId: repairerCard.id,
             cardCommonId: repairerCard.commonId,
             repairedCardId: cardToRepair.id,
@@ -370,7 +371,7 @@ class PlayerStateService {
             this.discardCard(targetCardData);
         }
         else {
-            this.updateCard(targetCardId, card => {
+            this.updateCardById(targetCardId, card => {
                 card.damage = newTargetDamage;
             });
         }
@@ -464,7 +465,7 @@ class PlayerStateService {
         });
     }
 
-    updateCard(cardId, updateFn) {
+    updateCardById(cardId, updateFn) {
         const playerState = this.getPlayerState();
         let zoneName;
         if (playerState.cardsInZone.find(c => c.id === cardId)) {

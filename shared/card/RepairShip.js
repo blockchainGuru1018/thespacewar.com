@@ -10,24 +10,36 @@ module.exports = class RepairShip extends BaseCard {
     }
 
     canAttack() {
-        const currentTurn = this._matchInfoRepository.getTurn();
-        let repairsThisTurn = this._queryEvents.getRepairsOnTurn(this.id, currentTurn);
-        return super.canAttack() && repairsThisTurn.length === 0;
+        return super.canAttack() && !this._hasRepairedThisTurn();
     }
 
     canRepair() {
-        const currentPhase = this._matchInfoRepository.getPlayerPhase(this.playerId);
-        if (currentPhase !== phases.PHASES.attack) return false;
+        if (this.paralyzed) return false;
+        if (this._playerStateService.getPhase() !== phases.PHASES.attack) return false;
+        if (this._hasRepairedThisTurn()) return false;
+        if (this._hasAttackedThisTurn()) return false;
 
-        const currentTurn = this._matchInfoRepository.getTurn();
-        let repairsThisTurn = this._queryEvents.getRepairsOnTurn(this.id, currentTurn);
-        if (repairsThisTurn.length > 0) return false;
-        let ownZone = this._matchService.getZoneWhereCardIs(this.id);
-        let otherCards = ownZone.filter(c => c.id !== this.id);
-        return otherCards.some(c => !!c.damage);
+        return this._playerStateService.hasMatchingCardInSomeZone(card => card.canBeRepaired());
     }
 
     repairCard(otherCard) {
-        otherCard.damage = Math.max(0, otherCard.damage - this._repairCapability);
+        if (otherCard.paralyzed) {
+            otherCard.paralyzed = false;
+        }
+        else {
+            otherCard.damage = Math.max(0, otherCard.damage - this._repairCapability);
+        }
+    }
+
+    _hasRepairedThisTurn() {
+        const currentTurn = this._matchService.getTurn();
+        let repairsThisTurn = this._queryEvents.getRepairsOnTurn(this.id, currentTurn);
+        return repairsThisTurn.length > 0;
+    }
+
+    _hasAttackedThisTurn() {
+        const turn = this._matchService.getTurn();
+        const attacksOnTurn = this._queryEvents.getAttacksOnTurn(this.id, turn).length;
+        return attacksOnTurn > 0;
     }
 };

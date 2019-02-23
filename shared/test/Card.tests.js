@@ -10,6 +10,7 @@ const NewHope = require('../card/NewHope.js');
 const NuclearMissile = require('../card/NuclearMissile.js');
 const EmpMissile = require('../card/EmpMissile.js');
 const EnergyShield = require('../card/EnergyShield.js');
+const Pursuiter = require('../card/Pursuiter.js');
 const canThePlayerFactory = require('./fakeFactories/canThePlayerFactory.js');
 const playerStateServiceFactory = require('./fakeFactories/playerStateServiceFactory.js');
 const queryEventsFactory = require('./fakeFactories/queryEventsFactory.js');
@@ -79,7 +80,7 @@ module.exports = testCase('Match', {
         }
     },
     'New hope:': {
-        'New Hope should be able to move on turn when put down': async function () {
+        'New Hope should be able to move on turn when put down'() {
             this.card = createCard(NewHope, {
                 card: { id: 'C1A', attack: 1 },
                 matchService: {
@@ -95,6 +96,66 @@ module.exports = testCase('Match', {
             });
 
             assert(this.card.canMove());
+        },
+        'when repair other ship with 1 damage and that is paralyzed': {
+            setUp() {
+                this.card = createCard(NewHope, {
+                    card: { id: 'C1A', attack: 1 },
+                    matchService: {
+                        getTurn: () => 1,
+                    },
+                    queryEvents: queryEventsFactory.withStubs({
+                        getMovesOnTurn: () => [],
+                        getTurnWhenCardWasPutDown: () => 1
+                    }),
+                    playerStateService: playerStateServiceFactory.withStubs({
+                        getPhase: () => 'attack'
+                    })
+                });
+                this.otherCard = createCard(BaseCard, { card: { paralyzed: true, damage: 1 } });
+
+                this.card.repairCard(this.otherCard);
+            },
+            'should make it NOT paralyzed'() {
+                refute(this.otherCard.paralyzed);
+            },
+            'should NOT repair any damage'() {
+                assert.equals(this.otherCard.damage, 1);
+            }
+        },
+        'when has attacked this turn should NOT be able to repair': {
+            setUp() {
+                this.card = createCard(NewHope, {
+                    card: { id: 'C1A', attack: 1 },
+                    matchService: {
+                        getTurn: () => 1,
+                    },
+                    queryEvents: queryEventsFactory.withStubs({
+                        getMovesOnTurn: () => [],
+                        getTurnWhenCardWasPutDown: () => 1,
+                        getAttacksOnTurn: (cardId, turn) => cardId === 'C1A' && turn === 1 ? [{}] : []
+                    }),
+                    playerStateService: playerStateServiceFactory.withStubs({
+                        getPhase: () => 'attack',
+                        hasMatchingCardInSomeZone: matcher => matcher({ canBeRepaired: () => true })
+                    })
+                });
+            },
+            'should NOT be able to repair'() {
+                refute(this.card.canRepair());
+            }
+        },
+        'when is paralyzed should NOT be able to repair': {
+            setUp() {
+                this.card = createCard(NewHope, {
+                    card: { id: 'C1A', paralyzed: true },
+                    queryEvents: queryEventsFactory.withStubs(),
+                    playerStateService: playerStateServiceFactory.withStubs()
+                });
+            },
+            'should NOT be able to repair'() {
+                refute(this.card.canRepair());
+            }
         }
     },
     'Pursuiter:': {
@@ -105,7 +166,7 @@ module.exports = testCase('Match', {
                     isCardStationCard: cardId => cardId === 'C2A'
                 }
             });
-            this.card = createCard(BaseCard, {
+            this.card = createCard(Pursuiter, {
                 card: { id: 'C1A', attack: 1 },
                 playerId: 'P1A',
                 matchService: {
@@ -113,6 +174,7 @@ module.exports = testCase('Match', {
                     cardsAreInSameZone: (card, otherCard) => card.id === 'C1A' && otherCard.id === 'C2A'
                 },
                 queryEvents: queryEventsFactory.withStubs({
+                    getAttacksOnTurn: () => [],
                     hasMovedOnTurn: () => false,
                     hasMovedOnPreviousTurn: () => true,
                     getTurnWhenCardWasPutDown: () => 1
@@ -324,7 +386,7 @@ module.exports = testCase('Match', {
     'when EmpMissile attacks basic defense card': {
         setUp() {
             this.card = createCard(EmpMissile, {
-                card: { id: 'C1A', attack: 1 },
+                card: { id: 'C1A' },
                 playerId: 'P1A',
                 matchService: {
                     getTurn: () => 2,
@@ -354,6 +416,83 @@ module.exports = testCase('Match', {
         },
         'should have destroyed self': function () {
             assert(this.card.destroyed);
+        }
+    },
+    'when EmpMissile should NOT be able to attack station cards'() {
+        this.card = createCard(EmpMissile, {
+            card: { id: 'C1A', type: 'missile' },
+            playerId: 'P1A',
+            matchService: {
+                getTurn: () => 1,
+            },
+            queryEvents: queryEventsFactory.withStubs({
+                getAttacksOnTurn: () => [],
+                hasMovedOnTurn: (cardId, turn) => cardId === 'C1A' && turn === 1,
+                getMovesOnTurn: () => [MoveCardEvent({ turn: 1, cardId: 'C1A' })]
+            }),
+            playerStateService: playerStateServiceFactory.withStubs({
+                getAttackBoostForCard: () => 0,
+                getPhase: () => 'attack',
+                isCardInHomeZone: () => false
+            })
+        });
+
+        refute(this.card.canAttackStationCards());
+    },
+    'when EmpMissile should NOT be able to attack paralyzed cards'() {
+        this.card = createCard(EmpMissile, {
+            card: { id: 'C1A', type: 'missile' },
+            playerId: 'P1A',
+            matchService: {
+                getTurn: () => 1,
+            },
+            queryEvents: queryEventsFactory.withStubs({
+                getAttacksOnTurn: () => [],
+                hasMovedOnTurn: (cardId, turn) => cardId === 'C1A' && turn === 1,
+                getMovesOnTurn: () => [MoveCardEvent({ turn: 1, cardId: 'C1A' })]
+            }),
+            playerStateService: playerStateServiceFactory.withStubs({
+                getAttackBoostForCard: () => 0,
+                getPhase: () => 'attack',
+                isCardInHomeZone: () => false
+            })
+        });
+
+        refute(this.card.canAttackCard({ canBeTargeted: () => true, paralyzed: true }));
+    },
+    'when card is paralyzed': {
+        setUp() {
+            this.card = createCard(BaseCard, {
+                card: { id: 'C1A', attack: 1, paralyzed: true },
+                canThePlayer: canThePlayerFactory.withStubs({
+                    attackWithThisCard: () => true,
+                    moveThisCard: () => true
+                }),
+                playerStateService: playerStateServiceFactory.withStubs({
+                    getAttackBoostForCard: () => 0,
+                    getPhase: () => 'attack'
+                }),
+                matchService: {
+                    getTurn: () => 2,
+                },
+                queryEvents: {
+                    getAttacksOnTurn: () => [],
+                    hasMovedOnTurn: () => false,
+                    getTurnWhenCardWasPutDown: () => 1
+                }
+            });
+        },
+        'should be able to target for attack'() {
+            assert(this.card.canBeTargeted());
+        },
+        'should NOT be able to attack'() {
+            refute(this.card.canAttack());
+        },
+        'should NOT be able to move'() {
+            refute(this.card.canMove());
+        },
+        'can be repaired'() {
+            assert(this.card.canBeRepaired());
         }
     }
 });
