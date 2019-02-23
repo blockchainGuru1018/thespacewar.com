@@ -145,7 +145,7 @@
                                        :isHomeZone="true"
                                        :key="visiblePlayerCards[n - 1].id"/>
                             <div v-else-if="playerZoneCardGhostVisible"
-                                 @click="cardGhostClick('zone')"
+                                 @click.stop="cardGhostClick('zone')"
                                  class="card card-ghost"/>
                             <div v-else class="card card--placeholder"/>
                         </template>

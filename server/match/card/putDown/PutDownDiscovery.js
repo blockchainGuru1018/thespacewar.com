@@ -26,14 +26,14 @@ function PutDownDiscovery({
                 cardCommonId: cardData.commonId
             });
             opponentRequirementService.addDrawCardRequirement({
-                count: 4,
+                count: 3,
                 common: true,
                 cardCommonId: cardData.commonId
             });
         }
         else if (choice === 'discard') {
             playerRequirementService.addDiscardCardRequirement({
-                count: 2,
+                count: 1,
                 common: true,
                 cardCommonId: cardData.commonId
             })

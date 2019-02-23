@@ -1,17 +1,12 @@
 <template>
-    <div class="cardChoiceDialog-wrapper">
+    <div class="cardChoiceDialog-wrapper" v-click-outside="choiceDialogCancel">
         <portal to="match">
             <div v-if="dialogVisible" class="cardChoiceDialog-overlay"/>
             <div v-if="dialogVisible" class="cardChoiceDialog">
-                <h1>Choose event effect</h1>
                 <button v-for="choice in choices"
                         class="cardChoiceDialog-choice"
                         @click="choiceDialogApplyChoice(choice.name)">
                     {{ choice.text }}
-                </button>
-                <button class="cardChoiceDialog-choice"
-                        @click="choiceDialogCancel">
-                    Cancel
                 </button>
             </div>
         </portal>
@@ -31,6 +26,7 @@
         mapMutations: mapMatchMutations,
         mapActions: mapMatchActions
     } = Vuex.createNamespacedHelpers('match');
+    const vClickOutside = require('v-click-outside');
 
     module.exports = {
         computed: {
@@ -58,6 +54,9 @@
                 'choiceDialogCancel',
                 'choiceDialogApplyChoice'
             ]),
+        },
+        directives: {
+            clickOutside: vClickOutside.directive
         }
     };
 </script>
@@ -83,23 +82,25 @@
         flex-direction: column;
         background: #FFF;
         border-radius: 4px;
-        padding: 20px;
+        padding: 20px 0;
         justify-content: center;
         align-items: stretch;
+        background: linear-gradient(to top, rgba(24, 24, 24, 0.8), rgba(47, 47, 47, 0.6));
+        color: rgba(255, 255, 255, .9);
     }
 
     .cardChoiceDialog h1 {
         font-family: Helvetica, sans-serif;
-        font-size: 22px;
+        font-size: 18px;
         font-weight: bold;
         margin-bottom: 25px;
         text-align: center;
     }
 
     .cardChoiceDialog-choice {
-        color: #444;
+        color: #FAFAFA;
         border: none;
-        font-size: 18px;
+        font-size: 20px;
         padding: 8px 12px;
         letter-spacing: .11em;
         background: transparent;
@@ -107,7 +108,7 @@
         margin-bottom: 6px;
 
         &:hover {
-            background-color: rgba(0, 0, 0, .1);
+            background-color: rgba(255, 255, 255, .1);
         }
 
         &:last-child {
