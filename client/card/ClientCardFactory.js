@@ -25,7 +25,7 @@ module.exports = function ClientCardFactory({
         const eventRepository = EventRepository({ playerId, playerServiceProvider });
         const queryEvents = new QueryEvents({ eventRepository });
         const cardFactory = new CardFactory({ matchService, playerServiceProvider, queryEvents });
-        const playerStateService = PlayerStateService({
+        const playerStateService = createPlayerStateService({
             cardFactory,
             updateStore,
             playerId,
@@ -69,7 +69,7 @@ module.exports = function ClientCardFactory({
         }
     }
 
-    function PlayerStateService({ cardFactory, queryEvents, playerId, updateStore }) {
+    function createPlayerStateService({ cardFactory, queryEvents, playerId, updateStore }) {
         return new ClientPlayerStateService({
             updateStore,
             playerId,

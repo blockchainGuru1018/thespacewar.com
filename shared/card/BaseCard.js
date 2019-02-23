@@ -62,8 +62,20 @@ class BaseCard {
         this._card.damage = newDamage;
     }
 
+    get paralyzed() {
+        return this._card.paralyzed;
+    }
+
+    set paralyzed(isParalyzed) {
+        this._card.paralyzed = isParalyzed;
+    }
+
     get numberOfAttacksPerTurn() {
         return 1;
+    }
+
+    getCardData() {
+        return { ...this._card };
     }
 
     shallowCopyCardData() {
@@ -88,7 +100,7 @@ class BaseCard {
     }
 
     canAttack() {
-        if (!this.attack) return false;
+        if (!this.attack && !this.attacksWithSpecialAbility()) return false;
         if (!this._canThePlayer.attackWithThisCard(this)) return false;
 
         if (this.type === 'duration') return false;
@@ -209,6 +221,10 @@ class BaseCard {
 
     canMoveAndAttackOnSameTurn() {
         return true;
+    }
+
+    attacksWithSpecialAbility() {
+        return false;
     }
 }
 

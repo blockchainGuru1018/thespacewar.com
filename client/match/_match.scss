@@ -251,6 +251,7 @@ $holdingCardZIndex: 3;
 
   .field-opponentZoneRow {
     flex-direction: row-reverse;
+    flex-wrap: nowrap;
   }
 }
 
@@ -279,6 +280,14 @@ $holdingCardZIndex: 3;
 
 .field-playerZoneRows {
   justify-content: flex-start;
+}
+
+.playerCardsInZone {
+  flex: 1 0 auto;
+}
+
+.opponentCardsInPlayerZone {
+  flex: 0 1 auto;
 }
 
 .field-playerCardsOnHand {

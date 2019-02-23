@@ -53,13 +53,18 @@ function AttackController(deps) {
         }
         else {
             opponentStateService.updateCard(defenderCardId, card => {
-                card.damage = defenderCard.damage;
+                Object.assign(card, defenderCard.getCardData());
             });
         }
 
         if (attackerCard.destroyed) {
             playerStateService.removeCard(attackerCardId);
             playerStateService.discardCard(attackerCardData);
+        }
+        else {
+            playerStateService.updateCard(attackerCardId, card => {
+                Object.assign(card, attackerCard.getCardData());
+            });
         }
     }
 

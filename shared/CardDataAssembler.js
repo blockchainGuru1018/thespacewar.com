@@ -48,7 +48,8 @@ function CardData(cardJson) {
         description: cardJson.detail,
         cost: parseInt(cardJson.price, 10),
         attack: parseInt(cardJson.attack, 10),
-        defense: parseInt(cardJson.defense, 10)
+        defense: parseInt(cardJson.defense, 10),
+        paralyzed: false
     };
 }
 

@@ -259,7 +259,9 @@
                     };
                 }
                 else {
-                    return {};
+                    return {
+                        display: 'none'
+                    };
                 }
             }
         },

@@ -118,6 +118,9 @@
                 if (this.isActiveActionCard) {
                     classes.push('isActiveActionCard');
                 }
+                if (this.card.paralyzed) {
+                    classes.push('paralyzed');
+                }
                 return classes;
             },
             cardStyle() {
@@ -292,6 +295,7 @@
 
     .card {
         position: relative;
+        transition: transform .1s cubic-bezier(0, 0.07, 0.12, 1.04) !important;
     }
 
     .actionOverlays, .indicatorOverlays {
@@ -347,6 +351,29 @@
 
     .selectedAsAttacker, .isActiveActionCard {
         outline: 2px solid red;
+    }
+
+    .paralyzed {
+        margin-right: 4% !important;
+        margin-left: 4% !important;
+        transform: rotate(90deg) !important;
+        flex: 0 0 auto;
+
+        .field-opponentZoneRows &:first-child {
+            margin-right: 4px !important;
+        }
+
+        .field-playerZoneRows &:first-child {
+            margin-left: 4px !important;
+        }
+
+        .field-opponentZoneRows &:last-child {
+            margin-left: 4px !important;
+        }
+
+        .field-playerZoneRows &:last-child {
+            margin-right: 4px !important;
+        }
     }
 
     .actionOverlays:hover {

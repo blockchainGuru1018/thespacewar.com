@@ -1,0 +1,35 @@
+const BaseCard = require('./BaseCard.js');
+const EnergyShield = require('./EnergyShield.js');
+
+module.exports = class EmpMissile extends BaseCard {
+    constructor(deps) {
+        super(deps);
+    }
+
+    static get CommonId() {
+        return '7';
+    }
+
+    attacksWithSpecialAbility() {
+        return true;
+    }
+
+    canAttackCard(otherCard) {
+        if (!this._canTargetCard(otherCard)) return false;
+        if (!this.canAttack()) return false;
+        if (!this._matchService.cardsAreInSameZone(this, otherCard)) return false;
+
+        return otherCard.type === 'spaceShip' || otherCard.CommonId === EnergyShield.CommonId;
+    }
+
+    attackCard(defenderCard) {
+        if (defenderCard.commonId === EnergyShield.CommonId) {
+            defenderCard.destroyed = true;
+        }
+        else if (defenderCard.type === 'spaceShip') {
+            defenderCard.paralyzed = true;
+        }
+
+        this.destroyed = true;
+    }
+};

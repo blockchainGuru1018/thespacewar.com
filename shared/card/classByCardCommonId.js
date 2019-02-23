@@ -19,7 +19,8 @@ const classes = [
     require('./FullForceForward.js'),
     require('./NuclearMissile.js'),
     require('./DisturbingSensor.js'),
-    require('./OverCapacity.js')
+    require('./OverCapacity.js'),
+    require('./EmpMissile.js')
 ];
 
 const classByCardCommonId = {}

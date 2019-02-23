@@ -34,7 +34,7 @@ module.exports = function ({ ajax, cache = DummyCache() }) {
     }
 
     async function downloadCardData() {
-        if (window.location.hostname === 'localhost') return cardsJson;
+        if (typeof (window) !== 'undefined' && window.location.hostname === 'localhost') return cardsJson;
 
         try {
             const url = 'https://admin.thespacewar.com/services/api/cards';

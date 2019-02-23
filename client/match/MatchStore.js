@@ -624,30 +624,10 @@ module.exports = function (deps) {
         state.attackerCardId = card.id;
     }
 
-    function selectAsDefender({ state, dispatch }, card) {
+    function selectAsDefender({ state, dispatch, getters }, card) {
         const attackerCardId = state.attackerCardId;
         const defenderCardId = card.id
         matchController.emit('attack', { attackerCardId, defenderCardId });
-
-        const defenderCardInOpponentZone = state.opponentCardsInZone.find(c => c.id === defenderCardId);
-        const defenderCardInPlayerZone = state.opponentCardsInPlayerZone.find(c => c.id === defenderCardId)
-
-        const attackerCardInPlayerZone = state.playerCardsInZone.find(c => c.id === attackerCardId);
-        const attackerCardInOpponentZone = state.playerCardsInOpponentZone.find(c => c.id === attackerCardId);
-
-        const defenderCardZone = !!defenderCardInOpponentZone ? state.opponentCardsInZone : state.opponentCardsInPlayerZone;
-        const defenderCard = defenderCardInOpponentZone || defenderCardInPlayerZone;
-        const attackerCard = attackerCardInOpponentZone || attackerCardInPlayerZone;
-        const defenderCurrentDamage = defenderCard.damage || 0;
-        const defenderTotalDefense = defenderCard.defense - defenderCurrentDamage;
-
-        if (attackerCard.attack >= defenderTotalDefense) {
-            const defenderCardIndex = defenderCardZone.findIndex(c => c.id === defenderCardId);
-            defenderCardZone.splice(defenderCardIndex, 1);
-        }
-        else {
-            defenderCard.damage = defenderCurrentDamage + attackerCard.attack;
-        }
 
         dispatch('registerAttack', state.attackerCardId);
     }
