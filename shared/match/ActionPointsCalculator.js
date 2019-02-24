@@ -26,7 +26,7 @@ module.exports = function (deps) {
                         hasPutDownZoneCardThatIsNotFree = true;
                     }
                 }
-                else if (event.location === 'station-action' && hasPutDownZoneCardThatIsNotFree) {
+                else if (event.location === 'station-action') {
                     actionPoints -= 2;
                 }
             }

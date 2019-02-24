@@ -88,7 +88,7 @@ module.exports = testCase('ActionPointCalculator', {
             actionStationCardsCount: 4
         });
 
-        assert.equals(actionPoints, 8);
+        assert.equals(actionPoints, 6);
     },
     'when discarded a card and put down a card in own zone and in the discard phase'() {
         const calculator = ActionPointCalculator({
@@ -122,7 +122,7 @@ module.exports = testCase('ActionPointCalculator', {
             actionStationCardsCount: 4
         });
 
-        assert.equals(actionPoints, 7);
+        assert.equals(actionPoints, 5);
     },
     'when in action phase and has discarded 1 card but was NOT a "sacrifice" should NOT get points for discard'() {
         const calculator = ActionPointCalculator({
