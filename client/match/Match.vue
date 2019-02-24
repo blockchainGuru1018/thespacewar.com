@@ -93,13 +93,14 @@
                             class="card card-faceDown"/>
                 </div>
             </div>
+            <div class="field-divider"/>
             <div class="field-player">
-                <div class="field-piles field-section">
-                    <div v-if="showActionPoints" class="playerActionPointsContainer">
-                        <div class="playerActionPoints">
-                            {{ playerActionPointsText }}
-                        </div>
+                <div class="playerActionPointsContainer" v-if="showActionPoints">
+                    <div class="playerActionPoints">
+                        {{ playerActionPointsText }}
                     </div>
+                </div>
+                <div class="field-piles field-section">
                     <div class="field-drawPile">
                         <portal-target name="playerDrawPile"/>
                         <div class="card card-faceDown">
@@ -303,12 +304,7 @@
                     && this.hasPutDownNonFreeCardThisTurn;
             },
             playerActionPointsText() {
-                if (this.calculatedActionPointsForActionPhaseVisible) {
-                    return `Actions ${this.actionPoints2}`;
-                }
-                else {
-                    return `Actions (${this.actionPoints2})`
-                }
+                return `${this.actionPoints2} action ${pluralize('point', this.actionPoints2)} remaining`;
             },
             showActionPoints() {
                 return ['preparation', 'draw', 'action'].includes(this.phase);
@@ -420,6 +416,10 @@
         },
         components: { ZoneCard, StationCard, PlayerHud, CardChoiceDialog, LoadingIndicator, PlayerCardsOnHand }
     };
+
+    function pluralize(word, count) {
+        return count === 1 ? word : word + 's';
+    }
 </script>
 <style scoped lang="scss">
     @import "match.scss";
