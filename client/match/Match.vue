@@ -2,7 +2,7 @@
     <div ref="match" :class="['match', `currentPhase--${phase}`]">
         <div class="match-overlay"/>
         <div class="match-backgroundWrapper">
-            <div :class="['match-background', { 'match-background--move': moveBackground}]"/>
+            <img class="match-background" src="/image/space2.jpg"/>
             <div class="match-backgroundOverlay"/>
         </div>
         <div class="match-header">
@@ -173,15 +173,19 @@
                     </div>
                     <div class="field-stationRow">
                         <portal-target name="stationActionRow"/>
-                        <station-card
-                                v-for="card in playerVisibleActionStationCards"
-                                :stationCard="card"
-                                :key="card.id"
-                        />
-                        <div v-if="stationCardGhostVisible"
-                             @click="cardGhostClick('station-action')"
-                             class="card card-ghost"/>
-                        <div v-else class="card card--placeholder"/>
+                        <div :class="['stationCardWrapper', {'stationCardWrapper--fullSize': card.flipped}]"
+                             v-for="card in playerVisibleActionStationCards">
+                            <station-card
+                                    :key="card.id"
+                                    :stationCard="card"
+                            />
+                        </div>
+                        <div class="stationCardWrapper stationCardWrapper--fullSize">
+                            <div @click="cardGhostClick('station-action')"
+                                 class="card card-ghost"
+                                 v-if="stationCardGhostVisible"/>
+                            <div class="card card--placeholder" v-else/>
+                        </div>
                     </div>
                     <div class="field-stationRow">
                         <portal-target name="stationHandSizeRow"/>
@@ -231,8 +235,7 @@
             return {
                 holdingCard: null,
                 mousePosition: { x: 0, y: 0 },
-                PHASES,
-                moveBackground: false
+                PHASES
             }
         },
         computed: {
@@ -413,10 +416,6 @@
                     || targetElementClasses.includes('card--placeholder')) {
                     this.emptyClick();
                 }
-            });
-
-            setTimeout(() => {
-                this.moveBackground = true;
             });
         },
         components: { ZoneCard, StationCard, PlayerHud, CardChoiceDialog, LoadingIndicator, PlayerCardsOnHand }

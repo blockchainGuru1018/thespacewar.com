@@ -213,7 +213,27 @@ $holdingCardZIndex: 3;
 
 .field-station {
   display: flex;
-  flex: 0 0 20%;
+  flex: 0 0 15%;
+  width: 15%;
+}
+
+.field-station .card {
+  flex: 0 0 auto;
+}
+
+.stationCardWrapper {
+  flex: 0 1 auto;
+  min-width: 20px;
+
+  &--fullSize {
+    flex: 0 0 auto;
+  }
+
+  .card-ghost {
+    position: relative;
+    z-index: 2;
+    background: transparent;
+  }
 }
 
 .field-stationRow {
@@ -223,7 +243,8 @@ $holdingCardZIndex: 3;
 }
 
 .field-piles {
-  flex: 0 0 12%;
+  width: 15%;
+  flex: 0 0 15%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -537,20 +558,19 @@ $holdingCardZIndex: 3;
 }
 
 .match-background {
-  //background-image: url("https://static4.depositphotos.com/1027863/384/i/950/depositphotos_3846803-stock-photo-space-background.jpg");
-  background-image: url("/image/space2.jpg");
-  width: 100%;
-  height: 100%;
-  background-size: cover;
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 50%;
+  left: 50%;
   filter: contrast(190%) saturate(115%) brightness(30%) hue-rotate(230deg) grayscale(20%);
-  transition: transform 2000s;
-  transform: translate(-1000px, -400px) scale(2);
+  animation: move 2000s linear 0s infinite alternate;
+}
 
-  &--move {
-    transform: translate(0, 0) scale(1.1);
+@keyframes move {
+  0% {
+    transform: translate(-50%, -50%) scale(.4);
+  }
+  100% {
+    transform: translate(-40%, -40%) scale(.8, 1);
   }
 }
 

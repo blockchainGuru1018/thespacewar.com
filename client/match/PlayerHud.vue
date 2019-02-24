@@ -357,14 +357,14 @@
         left: 0;
         transform: translateY(-50%);
 
-        width: 12%;
+        width: 15%;
         display: flex;
         justify-content: center;
         align-items: center;
     }
 
     .nextPhaseButton {
-        width: 80%;
+        width: 70%;
         display: flex;
         justify-content: center;
         align-items: center;
