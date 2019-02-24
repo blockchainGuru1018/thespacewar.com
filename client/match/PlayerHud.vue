@@ -1,33 +1,27 @@
 <template>
     <div class="field-playerHud">
-        <div class="field-playerHudRow">
-            <template v-if="isOwnTurn">
+        <portal to="player-top">
+            <div class="nextPhaseButtonContainer">
                 <button v-if="phase === 'start'"
                         @click="startClick"
-                        class="playerHud-nextPhaseButton playerHud-button playerHud-item">
-                    START
+                        class="nextPhaseButton">
+                    Start
                 </button>
                 <template v-else-if="canGoToNextTurn">
-                    <div class="playerHud-phaseText playerHud-item">{{ currentPhaseText }}</div>
-                    <div v-if="phase === 'discard' && playerCardsOnHand.length > maxHandSize"
-                         class="playerHud-nextPhaseButton playerHud-phaseText playerHud-item">
-                        Discard {{ amountOfCardsToDiscard + (amountOfCardsToDiscard === 1 ? ' card' : ' cards')}} to
-                        continue
-                    </div>
-                    <button v-else-if="nextPhaseButtonText"
+                    <button class="nextPhaseButton"
                             @click="nextPhaseClick"
-                            class="playerHud-nextPhaseButton playerHud-button playerHud-item">
+                            v-if="nextPhaseButtonText">
                         {{ nextPhaseButtonText }}
                     </button>
                     <button v-else-if="endTurnButtonVisible"
                             @click="nextPhaseClick"
-                            class="playerHud-endTurnButton playerHud-button playerHud-item">
+                            class="nextPhaseButton nextPhaseButton-endTurn">
                         End turn
                     </button>
                 </template>
-            </template>
-            <div v-else class="playerHud-phaseText playerHud-item">Waiting for next player</div>
-        </div>
+                <div class="nextPhaseButton nextPhaseButton-wait" v-else-if="phase === PHASES.wait">Enemy turn</div>
+            </div>
+        </portal>
         <portal to="match">
             <div v-if="gameHasEnded" class="endGameOverlay">
                 <div v-if="hasLostGame" class="defeatText endGameText">
@@ -71,6 +65,10 @@
             </div>
             <div v-else-if="phase === PHASES.draw" class="guideText-drawCard guideText guideText--small">
                 Draw card or Mill opponent
+            </div>
+            <div class="guideText-drawCard guideText guideText--small"
+                 v-else-if="inDiscardPhaseAndMustDiscardCard">
+                Discard {{ amountOfCardsToDiscard + (amountOfCardsToDiscard === 1 ? ' card' : ' cards')}} to continue
             </div>
         </portal>
         <portal to="stationDrawRow">
@@ -213,11 +211,16 @@
                 const hasDrawnEnoughCards = cardDrawsOnTurn.length === this.cardsToDrawInDrawPhase
                 if (this.phase === PHASES.draw && !hasDrawnEnoughCards) return '';
 
-                return `${capitalize(this.nextPhaseWithAction)} phase`;
+                return `Go to ${(this.nextPhaseWithAction)} phase`;
+            },
+            inDiscardPhaseAndMustDiscardCard() {
+                return this.phase === PHASES.discard && this.playerCardsOnHand.length > this.maxHandSize;
             },
             canGoToNextTurn() {
                 return this.actionPoints2 >= 0
-                    && !this.firstRequirement;
+                    && !this.firstRequirement
+                    && !this.inDiscardPhaseAndMustDiscardCard
+                    && this.phase !== PHASES.wait;
             },
             numberOfStationCardsToSelect() {
                 if (!this.attackerCard) return 0;
@@ -318,7 +321,6 @@
     }
 
     .playerHud-item {
-        margin: 0 10px;
         padding: 10px 20px;
         font-size: 18px;
         font-family: Helvetica, sans-serif;
@@ -349,22 +351,52 @@
         }
     }
 
-    .playerHud-nextPhaseButton {
-        background-color: #51c870;
+    .nextPhaseButtonContainer {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
+
+        width: 12%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .nextPhaseButton {
+        width: 80%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 46px;
+        font-size: 16px;
+        font-family: Helvetica, sans-serif;
+        font-weight: bold;
         color: white;
+        background-color: rgba(0, 0, 0, .8);
+        border-left: 1px solid white;
+        border-top: 1px solid white;
+        border-right: 1px solid white;
+        border-bottom: 1px solid white;
+        user-select: none;
 
         &:hover {
-            background-color: #68cc88;
+            background-color: #51c870;
+            color: white;
             outline: 0;
         }
     }
 
-    .playerHud-endTurnButton {
-        background-color: #ff3646;
-        color: white;
+    .nextPhaseButton-wait {
+        color: #AAA;
+        background: rgba(0, 0, 0, .8);
+        pointer-events: none;
+    }
 
+    .nextPhaseButton-endTurn {
         &:hover {
-            background-color: #ff6670;
+            background-color: #ff3646;
+            color: white;
         }
     }
 

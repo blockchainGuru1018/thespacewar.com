@@ -93,13 +93,18 @@
                             class="card card-faceDown"/>
                 </div>
             </div>
-            <div class="field-divider"/>
-            <div class="field-player">
-                <div class="playerActionPointsContainer" v-if="showActionPoints">
-                    <div class="playerActionPoints">
-                        {{ playerActionPointsText }}
+            <div class="field-dividerWrapper">
+                <div class="field-divider"/>
+                <div class="field-dividerContent">
+                    <portal-target name="player-top" slim/>
+                    <div class="playerActionPointsContainer" v-if="showActionPoints">
+                        <div class="playerActionPoints">
+                            {{ playerActionPointsText }}
+                        </div>
                     </div>
                 </div>
+            </div>
+            <div class="field-player">
                 <div class="field-piles field-section">
                     <div class="field-drawPile">
                         <portal-target name="playerDrawPile"/>
@@ -307,7 +312,7 @@
                 return `${this.actionPoints2} action ${pluralize('point', this.actionPoints2)} remaining`;
             },
             showActionPoints() {
-                return ['preparation', 'draw', 'action'].includes(this.phase);
+                return ['action'].includes(this.phase);
             },
             visiblePlayerCards() {
                 return [...this.playerCardsInZone, ...this.transientPlayerCardsInHomeZone];
