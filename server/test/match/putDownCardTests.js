@@ -840,7 +840,7 @@ module.exports = {
                 assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
                     opponentDiscardedCards: [sinon.match({ id: 'C1A' })],
                     opponentCardCount: 0,
-                    requirements: [sinon.match({ type: 'drawCard', count: 4, common: true })]
+                    requirements: [sinon.match({ type: 'drawCard', count: 3, common: true })]
                 }));
             }
         },
@@ -874,7 +874,7 @@ module.exports = {
             'should emit stateChanged to first player'() {
                 assert.calledOnce(this.firstPlayerConnection.stateChanged);
                 assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
-                    requirements: [sinon.match({ type: 'discardCard', count: 2, common: true })],
+                    requirements: [sinon.match({ type: 'discardCard', count: 1, common: true })],
                 }));
             },
             'should emit stateChanged to second player'() {

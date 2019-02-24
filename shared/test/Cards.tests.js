@@ -482,7 +482,8 @@ module.exports = testCase('Cards', {
                 }),
                 playerStateService: playerStateServiceFactory.withStubs({
                     getAttackBoostForCard: () => 0,
-                    getPhase: () => 'attack'
+                    getPhase: () => 'attack',
+                    isCardStationCard: () => false
                 }),
                 matchService: {
                     getTurn: () => 2,
