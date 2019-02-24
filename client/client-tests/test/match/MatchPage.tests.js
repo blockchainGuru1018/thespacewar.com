@@ -18,7 +18,7 @@ const RepairCardEvent = require('../../../../shared/event/RepairCardEvent.js');
 const AttackEvent = require('../../../../shared/event/AttackEvent.js');
 const SmallCannon = require('../../../../shared/card/SmallCannon.js');
 const getCardImageUrl = require('../../../utils/getCardImageUrl.js');
-const cardsJson = require('../../../../server/card/cards.json');
+const cardsJson = require('../../../../server/card/rawCardData.cache.json').data;
 
 const DiscoveryCommonId = '42';
 const CommonShipId = '25';
@@ -331,9 +331,9 @@ module.exports = testCase('MatchPage', {
             assert.elementCount('.field-playerZoneCards .readyToAttack', 1);
         }
     },
-    'behaviour - New Hope': {
+    'behaviour - Small Repair Shop': {
         setUp() {
-            this.newHopeId = 29;
+            this.smallRepairShopId = 29;
         },
         'when has card in zone and a damaged card in same zone BUT is action phase': {
             async setUp() {
@@ -347,7 +347,7 @@ module.exports = testCase('MatchPage', {
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'action',
-                    cardsInZone: [{ id: 'C1A', commonId: this.newHopeId }, { id: 'C2A', damage: 1 }],
+                    cardsInZone: [{ id: 'C1A', commonId: this.smallRepairShopId }, { id: 'C2A', damage: 1 }],
                     events
                 }));
                 await timeout();
@@ -356,30 +356,35 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.repair', 0);
             }
         },
-        'when has card in zone and a damaged card in same zone': {
+        'when has card in zone, a damaged card in same zone, a station card and a flipped station card': {
             async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
                 const events = [
                     PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
                     PutDownCardEvent({ turn: 1, cardId: 'C2A' })
                 ];
-                const { dispatch } = this.createController();
+                const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
-                    cardsInZone: [{ id: 'C1A', commonId: this.newHopeId }, { id: 'C2A', damage: 1 }],
+                    cardsInZone: [{ id: 'C1A', commonId: this.smallRepairShopId }, { id: 'C2A', damage: 1 }],
+                    stationCards: [
+                        { id: 'C3A', place: 'draw', flipped: true, card: createCard({ id: 'C3A' }) },
+                        { id: 'C4A', place: 'draw' }
+                    ],
                     events
                 }));
                 await timeout();
             },
-            'should be able to choose repair for New Hope'() {
+            'should be able to choose repair for Small Repair Shop'() {
                 assert.elementCount('.field-playerZoneCards .card:eq(0) .repair', 1);
             },
             'should show damage indicator for other card'() {
                 assert.elementText('.card-damageIndicator', '-1');
             },
-            'and click repair': { // SHOULD FAIL!!!
+            'and click repair': {
                 async setUp() {
                     await click('.field-playerZoneCards .card:eq(0) .repair');
                 },
@@ -389,12 +394,29 @@ module.exports = testCase('MatchPage', {
                 'should NOT be able to select for move'() {
                     assert.elementCount('.field-playerZoneCards .card:eq(0) .movable', 0);
                 },
-                'and click selectForRepair damaged card': {
+                'should be able to select station card for repair'() {
+                    assert.elementCount('.playerStationCards .selectForRepair', 1);
+                },
+                'and click selectForRepair on damaged card': {
                     async setUp() {
                         await click('.field-playerZoneCards .card:eq(1) .selectForRepair');
                     },
-                    'should NOT be able to choose repair for New Hope'() {
+                    'should NOT be able to choose repair for Small Repair Shop'() {
                         assert.elementCount('.field-playerZoneCards .card:eq(0) .repair', 0);
+                    }
+                },
+                'and click selectForRepair on flipped station card': {
+                    async setUp() {
+                        await click('.playerStationCards .selectForRepair');
+                    },
+                    'should NOT be able to choose repair for Small Repair Shop'() {
+                        assert.elementCount('.field-playerZoneCards .card:eq(0) .repair', 0);
+                    },
+                    'should emit repair card'() {
+                        assert.calledOnceWith(this.matchController.emit, 'repairCard', {
+                            repairerCardId: 'C1A',
+                            cardToRepairId: 'C3A'
+                        });
                     }
                 }
             }
@@ -408,7 +430,7 @@ module.exports = testCase('MatchPage', {
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
-                    cardsInZone: [{ id: 'C1A', commonId: this.newHopeId }, { id: 'C2A', damage: 4 }],
+                    cardsInZone: [{ id: 'C1A', commonId: this.smallRepairShopId }, { id: 'C2A', damage: 4 }],
                     opponentCardsInPlayerZone: [{ id: 'C3A' }],
                     events: [
                         PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
@@ -452,12 +474,12 @@ module.exports = testCase('MatchPage', {
                 dispatch('restoreState', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
-                    cardsInZone: [{ id: 'C1A', commonId: this.newHopeId }, { id: 'C2A', damage: 1 }],
+                    cardsInZone: [{ id: 'C1A', commonId: this.smallRepairShopId }, { id: 'C2A', damage: 1 }],
                     events
                 }));
                 await timeout();
             },
-            'should NOT be able to choose repair for New Hope'() {
+            'should NOT be able to choose repair for Small Repair Shop'() {
                 assert.elementCount('.field-playerZoneCards .card:eq(0) .repair', 0);
             }
         },
@@ -469,12 +491,12 @@ module.exports = testCase('MatchPage', {
                 dispatch('restoreState', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
-                    cardsInZone: [{ id: this.newHopeId }],
-                    events: [PutDownCardEvent({ turn: 1, cardId: this.newHopeId })]
+                    cardsInZone: [{ id: this.smallRepairShopId }],
+                    events: [PutDownCardEvent({ turn: 1, cardId: this.smallRepairShopId })]
                 }));
                 await timeout();
             },
-            'should NOT be able to choose repair for New Hope'() {
+            'should NOT be able to choose repair for Small Repair Shop'() {
                 assert.elementCount('.field-playerZoneCards .card:eq(0) .repair', 0);
             }
         },
@@ -1289,7 +1311,7 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.field-discardPile .card-faceDown', 0);
             }
         },
-        'when move card "Discovery" from station to zone and select "Cancel" from choice dialog': {
+        'when move card "Discovery" from station to zone and cancels': {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
@@ -1313,7 +1335,7 @@ module.exports = testCase('MatchPage', {
                 await timeout();
 
                 await click('.stationCard .movable');
-                await click('.cardChoiceDialog-choice:contains("Cancel")');
+                await click('.cardChoiceDialog-overlay');
             },
             'should NOT show choice dialog'() {
                 assert.elementCount('.cardChoiceDialog', 0);
@@ -1328,7 +1350,7 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.field-discardPile .card-faceDown', 0);
             }
         },
-        'when place down card "Discovery" and choose "Each player draws 4 cards"': {
+        'when place down card "Discovery" and choose draw options': {
             async setUp() {
                 this.matchController = FakeMatchController();
                 const { dispatch } = this.createController({ matchController: this.matchController });
@@ -1343,7 +1365,7 @@ module.exports = testCase('MatchPage', {
                 await click('.field-playerCardsOnHand .card');
                 await click('.field-playerZoneCards .card-ghost:eq(0)');
 
-                await click('.cardChoiceDialog-choice:contains("Each player draws 4 cards")');
+                await click('.cardChoiceDialog-choice:contains("draw")');
             },
             'should emit "putDownCard"'() {
                 assert.calledOnceWith(this.matchController.emit, 'putDownCard', {
@@ -1365,7 +1387,7 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.field-player .field-discardPile .card[data-cardId="C1A"]', 1);
             }
         },
-        'when place down card "Discovery" and choose "Each player discards 2 cards"': {
+        'when place down card "Discovery" and choose discard option': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub().returns(new Promise(() => {})) });
                 const { dispatch } = this.createController({ matchController: this.matchController });
@@ -1380,7 +1402,7 @@ module.exports = testCase('MatchPage', {
                 await click('.field-playerCardsOnHand .card');
                 await click('.field-playerZoneCards .card-ghost:eq(0)');
 
-                await click('.cardChoiceDialog-choice:contains("Each player discards 2 cards")');
+                await click('.cardChoiceDialog-choice:contains("discard")');
             },
             'should emit "putDownCard"'() {
                 assert.calledOnceWith(this.matchController.emit, 'putDownCard', {
@@ -1393,7 +1415,7 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.cardChoiceDialog', 0);
             }
         },
-        'when place down card "Discovery" and choose "Cancel"': {
+        'when place down card "Discovery" and cancels': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
                 const { dispatch } = this.createController({ matchController: this.matchController });
@@ -1408,7 +1430,7 @@ module.exports = testCase('MatchPage', {
                 await click('.field-playerCardsOnHand .card');
                 await click('.field-playerZoneCards .card-ghost:eq(0)');
 
-                await click('.cardChoiceDialog-choice:contains("Cancel")');
+                await click('.cardChoiceDialog-overlay');
             },
             'should NOT emit "putDownCard"'() {
                 refute.calledWith(this.matchController.emit, 'putDownCard');

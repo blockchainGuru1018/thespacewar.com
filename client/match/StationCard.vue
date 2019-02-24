@@ -9,6 +9,9 @@
             <div v-if="canBeSelectedAsDefender"
                  @click.stop="selectStationCardAsDefender(stationCard)"
                  class="attackable"/>
+            <div @click.stop="selectForRepair(stationCard.id)"
+                 class="selectForRepair actionOverlay"
+                 v-else-if="canBeSelectedForRepair"/>
             <div v-if="canBeSelectedForRequirement"
                  @click.stop="selectStationCardForRequirement(stationCard)"
                  class="selectable"/>
@@ -44,7 +47,8 @@
                 'opponentCardsInZone',
                 'attackerCardId',
                 'phase',
-                'selectedDefendingStationCards'
+                'selectedDefendingStationCards',
+                'repairerCardId'
             ]),
             ...mapRequirementState([
                 'selectedStationCardIdsForRequirement',
@@ -116,6 +120,12 @@
                     && this.attackerCanAttackStationCards
                     && !this.opponentCardsInZone.some(c => this.createCard(c).stopsStationAttack());
             },
+            canBeSelectedForRepair() {
+                if (!this.stationCard.card) return false;
+                if (!this.repairerCardId) return false;
+
+                return this.createCard(this.stationCard.card).canBeRepaired();
+            },
             selectedForRequirement() {
                 return this.selectedStationCardIdsForRequirement.includes(this.stationCard.id);
             },
@@ -142,6 +152,7 @@
         methods: {
             ...mapActions([
                 'selectStationCardAsDefender',
+                'selectForRepair'
             ]),
             ...mapRequirementActions([
                 'selectStationCardForRequirement',

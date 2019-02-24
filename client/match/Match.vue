@@ -151,7 +151,7 @@
                         </template>
                     </div>
                 </div>
-                <div class="field-playerStation field-station field-section">
+                <div class="playerStationCards field-playerStation field-station field-section">
                     <div class="field-stationRow">
                         <portal-target name="stationDrawRow"/>
                         <station-card

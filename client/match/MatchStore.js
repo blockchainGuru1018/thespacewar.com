@@ -672,31 +672,11 @@ module.exports = function (deps) {
         state.repairerCardId = repairerCardId;
     }
 
-    function selectForRepair({ state, getters, dispatch }, cardData) {
-        let repairCardData = getters.findPlayerCard(state.repairerCardId);
-        let repairerCard = getters.createCard(repairCardData);
-        let cardToRepair = getters.createCard(cardData);
-        repairerCard.repairCard(cardToRepair);
-        state.events.push(RepairCardEvent({
-            turn: state.turn,
-            cardId: repairerCard.id,
-            cardCommonId: repairerCard.commonId,
-            repairedCardId: cardToRepair.id,
-            repairedCardCommonId: cardToRepair.commonId
-        }));
+    function selectForRepair({ state, getters, dispatch }, cardToRepairId) {
+        const repairerCardId = state.repairerCardId;
         state.repairerCardId = null;
 
-        dispatch('updatePlayerCard', {
-            cardId: cardToRepair.id,
-            updateFn: card => {
-                card.damage = cardToRepair.damage;
-            }
-        });
-
-        matchController.emit('repairCard', {
-            repairerCardId: repairerCard.id,
-            cardToRepairId: cardToRepair.id
-        });
+        matchController.emit('repairCard', { repairerCardId, cardToRepairId });
     }
 
     function damageOwnStationCards({}, targetIds) {
@@ -752,11 +732,9 @@ module.exports = function (deps) {
         }
     }
 
-    function updatePlayerCard({ state }, { cardId, updateFn }) {
-        let card = state.playerCardsInZone.find(c => c.id === cardId)
-            || state.playerCardsInOpponentZone.find(c => c.id === cardId);
+    function updatePlayerCard({ state, getters }, { cardId, updateFn }) {
+        const card = getters.findPlayerCardFromAllSources(cardId);
         if (!card) throw Error('Could not find card when trying to update it. ID: ' + cardId);
-
         updateFn(card);
     }
 

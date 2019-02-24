@@ -70,16 +70,21 @@ class BaseCard {
         this._card.paralyzed = isParalyzed;
     }
 
+    get flipped() {
+        return this._card.flipped;
+    }
+
+    set flipped(isFlipped) {
+        this._card.flipped = isFlipped;
+    }
+
     get numberOfAttacksPerTurn() {
         return 1;
     }
 
     getCardData() {
-        return { ...this._card };
-    }
-
-    shallowCopyCardData() {
-        return { ...this._card };
+        const { flipped, ...cardData } = this._card;
+        return { ...cardData };
     }
 
     canAttack() {
@@ -159,7 +164,12 @@ class BaseCard {
     }
 
     canBeRepaired() {
-        return !!this.damage || this.paralyzed;
+        if (this.isStationCard()) {
+            return this.isFlipped();
+        }
+        else {
+            return !!this.damage || this.paralyzed;
+        }
     }
 
     canTargetCard(otherCard) {
@@ -213,6 +223,10 @@ class BaseCard {
 
     isStationCard() {
         return this._playerStateService.isCardStationCard(this.id);
+    }
+
+    isFlipped() {
+        return this._playerStateService.isCardFlipped(this.id);
     }
 
     canMoveOnTurnWhenPutDown() {

@@ -6,7 +6,7 @@
                  @click.stop="selectAsDefender(card)"
                  class="attackable actionOverlay"/>
             <div v-else-if="canBeSelectedForRepair"
-                 @click.stop="selectForRepair(card)"
+                 @click.stop="selectForRepair(card.id)"
                  class="selectForRepair actionOverlay"/>
             <template v-else-if="canSelectAction">
                 <div v-if="canMove"
@@ -213,6 +213,7 @@
                     .canRepair();
             },
             canBeSelectedForRepair() {
+                if (!this.isPlayerCard) return false;
                 if (!this.repairerCardId) return false;
 
                 return this.createCard(this.card).canBeRepaired();
@@ -334,7 +335,7 @@
         }
     }
 
-    .movable, .repair, .selectForRepair {
+    .movable, .repair {
         background-color: rgba(0, 0, 0, .5);
     }
 

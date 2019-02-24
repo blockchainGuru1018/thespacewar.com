@@ -1,7 +1,7 @@
 <template>
-    <div class="cardChoiceDialog-wrapper" v-click-outside="choiceDialogCancel">
+    <div class="cardChoiceDialog-wrapper">
         <portal to="match">
-            <div v-if="dialogVisible" class="cardChoiceDialog-overlay"/>
+            <div @click.self="choiceDialogCancel" class="cardChoiceDialog-overlay" v-if="dialogVisible"/>
             <div v-if="dialogVisible" class="cardChoiceDialog">
                 <button v-for="choice in choices"
                         class="cardChoiceDialog-choice"
@@ -26,7 +26,6 @@
         mapMutations: mapMatchMutations,
         mapActions: mapMatchActions
     } = Vuex.createNamespacedHelpers('match');
-    const vClickOutside = require('v-click-outside');
 
     module.exports = {
         computed: {
@@ -54,9 +53,6 @@
                 'choiceDialogCancel',
                 'choiceDialogApplyChoice'
             ]),
-        },
-        directives: {
-            clickOutside: vClickOutside.directive
         }
     };
 </script>
@@ -89,23 +85,16 @@
         color: rgba(255, 255, 255, .9);
     }
 
-    .cardChoiceDialog h1 {
-        font-family: Helvetica, sans-serif;
-        font-size: 18px;
-        font-weight: bold;
-        margin-bottom: 25px;
-        text-align: center;
-    }
-
     .cardChoiceDialog-choice {
         color: #FAFAFA;
         border: none;
         font-size: 20px;
-        padding: 8px 12px;
-        letter-spacing: .11em;
+        padding: 18px 120px;
         background: transparent;
         font-weight: bold;
         margin-bottom: 6px;
+        font-family: "Space Mono", monospace;
+        letter-spacing: .18em;
 
         &:hover {
             background-color: rgba(255, 255, 255, .1);

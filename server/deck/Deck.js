@@ -1,8 +1,23 @@
+const BLACK_LIST_COMMON_IDS = [
+    '16',
+    '17',
+    '18',
+    '64',
+    '31',
+    '34',
+    '66',
+];
+
+const FILTER_BLACK_LISTED_CARDS = true; //Mainly used for game testing while the game is pre-alpha
+
 module.exports = function (deps) {
 
     const cardDataAssembler = deps.cardDataAssembler;
 
     let deck = cardDataAssembler.createAll();
+    if (FILTER_BLACK_LISTED_CARDS) {
+        deck = deck.filter(c => !BLACK_LIST_COMMON_IDS.includes(c.commonId));
+    }
     shuffle(deck);
 
     return {
@@ -10,7 +25,7 @@ module.exports = function (deps) {
         draw,
         getCardCount,
         _getDeck: () => [...deck],
-        _restoreDeck: previousDeck => deck = [...previousDeck]
+        _restoreDeck: previousDeck => { deck = [...previousDeck] }
     };
 
     function drawSingle() {

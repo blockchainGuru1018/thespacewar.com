@@ -37,7 +37,8 @@
 
 .attackable,
 .movable,
-.selectable {
+.selectable,
+.selectForRepair {
   color: white;
   font-family: Helvetica, sans-serif;
   font-size: 16px;
@@ -57,6 +58,10 @@
 .attackable,
 .selectable {
   background-color: rgba(255, 100, 100, .5);
+}
+
+.selectForRepair {
+  background-color: rgba(100, 100, 255, .5);
 }
 
 .movable {

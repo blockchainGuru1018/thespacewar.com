@@ -6,7 +6,7 @@ const {
 } = require('bocha');
 const MoveCardEvent = require('../event/MoveCardEvent.js');
 const BaseCard = require('../card/BaseCard.js');
-const NewHope = require('../card/NewHope.js');
+const SmallRepairShop = require('../card/SmallRepairShop.js');
 const NuclearMissile = require('../card/NuclearMissile.js');
 const EmpMissile = require('../card/EmpMissile.js');
 const EnergyShield = require('../card/EnergyShield.js');
@@ -18,7 +18,7 @@ const {
     createCard
 } = require('./shared.js');
 
-module.exports = testCase('Match', {
+module.exports = testCase('Cards', {
     'misc:': {
         'when card has 1 attack but has attack boost of 1': {
             async setUp() {
@@ -79,9 +79,9 @@ module.exports = testCase('Match', {
             }
         }
     },
-    'New hope:': {
-        'New Hope should be able to move on turn when put down'() {
-            this.card = createCard(NewHope, {
+    'Small Repair Shop:': {
+        'Small Repair Shop should be able to move on turn when put down'() {
+            this.card = createCard(SmallRepairShop, {
                 card: { id: 'C1A', attack: 1 },
                 matchService: {
                     getTurn: () => 1,
@@ -99,7 +99,7 @@ module.exports = testCase('Match', {
         },
         'when repair other ship with 1 damage and that is paralyzed': {
             setUp() {
-                this.card = createCard(NewHope, {
+                this.card = createCard(SmallRepairShop, {
                     card: { id: 'C1A', attack: 1 },
                     matchService: {
                         getTurn: () => 1,
@@ -125,7 +125,7 @@ module.exports = testCase('Match', {
         },
         'when has attacked this turn should NOT be able to repair': {
             setUp() {
-                this.card = createCard(NewHope, {
+                this.card = createCard(SmallRepairShop, {
                     card: { id: 'C1A', attack: 1 },
                     matchService: {
                         getTurn: () => 1,
@@ -147,7 +147,19 @@ module.exports = testCase('Match', {
         },
         'when is paralyzed should NOT be able to repair': {
             setUp() {
-                this.card = createCard(NewHope, {
+                this.card = createCard(SmallRepairShop, {
+                    card: { id: 'C1A', paralyzed: true },
+                    queryEvents: queryEventsFactory.withStubs(),
+                    playerStateService: playerStateServiceFactory.withStubs()
+                });
+            },
+            'should NOT be able to repair'() {
+                refute(this.card.canRepair());
+            }
+        },
+        'when other card belongs to the opponent should NOT be able to repair that card': {
+            setUp() {
+                this.card = createCard(SmallRepairShop, {
                     card: { id: 'C1A', paralyzed: true },
                     queryEvents: queryEventsFactory.withStubs(),
                     playerStateService: playerStateServiceFactory.withStubs()

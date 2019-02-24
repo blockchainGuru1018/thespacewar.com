@@ -25,8 +25,13 @@ module.exports = function (deps) {
 
     function getCard(cardCommonId) {
         const card = getCards().find(c => c.commonId === cardCommonId);
-        if (!card) throw new Error(`Could not find card with id: ${cardCommonId}`);
-        return card;
+        if (!card) {
+            console.error(`Could not find card with ID ${cardCommonId}`);
+            return {};
+        }
+        else {
+            return card;
+        }
     }
 
     function getCards() {

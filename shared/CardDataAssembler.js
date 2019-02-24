@@ -32,10 +32,15 @@ module.exports = function ({
     function createFromCommonId(commonId) {
         let unmappedCardData = rawCardDataRepository.get();
         const cardJson = unmappedCardData.find(c => c.id === commonId.toString());
-        return CardData(cardJson);
+        if (!cardJson) {
+            console.error('Could not find card data for card with ID ' + commonId)
+            return {};
+        }
+        else {
+            return CardData(cardJson);
+        }
     }
 };
-
 
 function CardData(cardJson) {
     const color = cardJson.type_card;

@@ -17,6 +17,5 @@ const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
 const MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
 
 module.exports = {
-    '29 "New Hope":': {
-    }
+    '29 "Small Repair Shop":': {}
 };

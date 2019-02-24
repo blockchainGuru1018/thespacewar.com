@@ -1,9 +1,9 @@
-const cardsJson = require('../../server/card/cards.json');
-
+const ALWAYS_UPDATE_CACHE = true; //Set to true mainly for development purposes
 const HOURS_12 = 12 * 60 * 60 * 1000;
-module.exports = function ({ ajax, cache = DummyCache() }) {
 
-    let cacheData = getCacheOrNull();
+module.exports = function ({ getCardData, cache = DummyCache() }) {
+
+    let cacheData = null;
 
     return {
         init,
@@ -11,9 +11,14 @@ module.exports = function ({ ajax, cache = DummyCache() }) {
     };
 
     async function init() {
+        cacheData = await getCacheOrNull();
+
         if (!cacheData || cacheIsTooOld()) {
-            clearCache();
-            await updateCache();
+            try {
+                await updateCache();
+            } catch (err) {
+                console.error('Failed updating cache, using the current cache instead.');
+            }
         }
     }
 
@@ -23,44 +28,27 @@ module.exports = function ({ ajax, cache = DummyCache() }) {
     }
 
     function cacheIsTooOld() {
+        if (ALWAYS_UPDATE_CACHE) return true;
+
         const timeSinceCached = Date.now() - cacheData.saveTime;
         return timeSinceCached > HOURS_12;
     }
 
     async function updateCache() {
-        let data = await downloadCardData();
+        let data = await getCardData();
+
         cacheData = { data, saveTime: Date.now() };
-        cache.setItem('rawCardData', JSON.stringify(cacheData));
+        await cache.setItem('rawCardData', JSON.stringify(cacheData, null, 4));
     }
 
-    async function downloadCardData() {
-        if (typeof (window) !== 'undefined' && window.location.hostname === 'localhost') return cardsJson;
-
-        try {
-            const url = 'https://admin.thespacewar.com/services/api/cards';
-            console.log('Gettings fresh cards JSON from:', url);
-            const response = await ajax.get(url);
-            return response.data;
-        } catch (err) {
-            console.error(err);
-            console.error('Failed downloading cards JSON data, using backup.');
-            return cardsJson;
-        }
-    }
-
-    function getCacheOrNull() {
-        const cacheJson = cache.getItem('rawCardData');
+    async function getCacheOrNull() {
+        const cacheJson = await cache.getItem('rawCardData');
         if (cacheJson) {
             return JSON.parse(cacheJson);
         }
         else {
             return null;
         }
-    }
-
-    function clearCache() {
-        cache.removeItem('rawCardData');
-        cacheData = null;
     }
 };
 

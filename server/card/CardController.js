@@ -1,10 +1,13 @@
 const path = require('path');
 
-module.exports = function () {
+module.exports = function ({
+    rawCardDataRepository
+}) {
 
     return {
         getImage,
-        getBackImage
+        getBackImage,
+        getData
     };
 
     function getImage(req, res) {
@@ -16,5 +19,9 @@ module.exports = function () {
         const filePath = path.join(__dirname, 'image', 'back.png');
         res.sendFile(filePath);
     }
-};
 
+    function getData(req, res) {
+        const data = rawCardDataRepository.get();
+        res.json(data);
+    }
+};

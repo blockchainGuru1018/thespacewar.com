@@ -84,6 +84,11 @@ class PlayerStateService {
             || this.getCardsInOpponentZone().map(c => this._createBehaviourCard(c)).some(matcher);
     }
 
+    hasMatchingCardInSameZone(sameZoneAsCardId, matcher) {
+        const targetZone = this.isCardInHomeZone(sameZoneAsCardId) ? this.getCardsInZone() : this.getCardsInOpponentZone();
+        return targetZone.map(c => this._createBehaviourCard(c)).some(matcher);
+    }
+
     getMatchingBehaviourCards(matcher) { //TODO This now returns behaviour cards, to have it return card data would be a hassle. Perhaps the responsibility to create cards could lie within playerStateService?
         return this.getCardsInZone().map(c => this._createBehaviourCard(c)).filter(matcher)
             || this.getCardsInOpponentZone().map(c => this._createBehaviourCard(c)).filter(matcher);
@@ -128,6 +133,11 @@ class PlayerStateService {
     getUnflippedStationCardsCount() {
         const playerState = this.getPlayerState();
         return playerState.stationCards.filter(s => !s.flipped).length;
+    }
+
+    hasFlippedStationCards() {
+        const playerState = this.getPlayerState();
+        return playerState.stationCards.filter(s => s.flipped).length > 0;
     }
 
     getEvents() {
@@ -189,13 +199,18 @@ class PlayerStateService {
         return this.getPlayerState().stationCards.some(c => (c.card ? c.card.id : c.id) === cardId);
     }
 
+    isCardFlipped(cardId) {
+        const stationCard = this.findStationCard(cardId)
+        return stationCard && stationCard.flipped;
+    }
+
     findStationCard(cardId) {
         const playerState = this.getPlayerState();
         return this._findStationCardFromCollection(cardId, playerState.stationCards);
     }
 
     _findStationCardFromCollection(cardId, collection) {
-        return collection.find(s => s.card.id === cardId)
+        return collection.find(stationCard => stationCard.card && stationCard.card.id === cardId);
     }
 
     findCard(cardId) {//TODO Rename findCardFromZones
@@ -341,9 +356,20 @@ class PlayerStateService {
         const repairerCard = this._createBehaviourCardById(repairerCardId);
         repairerCard.repairCard(cardToRepair);
 
-        this.updateCardById(cardToRepairId, card => {
-            Object.assign(card, cardToRepair.shallowCopyCardData());
-        });
+        if (cardToRepair.isStationCard()) {
+            this.update(playerState => {
+                const stationCardToRepair = playerState.stationCards.find(s => {
+                    const id = s.card ? s.card.id : s.id;
+                    return id === cardToRepairId;
+                });
+                stationCardToRepair.flipped = cardToRepair.flipped;
+            });
+        }
+        else {
+            this.updateCardById(cardToRepairId, card => {
+                Object.assign(card, cardToRepair.getCardData());
+            });
+        }
 
         let currentTurn = this._matchService.getTurn();
         this.storeEvent(RepairCardEvent({
@@ -534,7 +560,7 @@ class PlayerStateService {
     }
 
     _createBehaviourCardById(cardId) {
-        const cardData = this.findCard(cardId);
+        const cardData = this.findCardFromAnySource(cardId);
         return this._cardFactory.createCardForPlayer(cardData, this._playerId);
     }
 

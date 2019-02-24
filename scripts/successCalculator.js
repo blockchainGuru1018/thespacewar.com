@@ -55,7 +55,7 @@ const DONE = [
     },
     {
         "id": "29",
-        "name": "New Hope",
+        "name": "Small Repair Shop",
         "price": "2",
         "type_card": "spaceShip",
         "detail": "Can repair 3 damage instead of attacking. Can move the first turn.",

@@ -35,7 +35,17 @@ module.exports = function (deps) {
             }
         }
 
-        return actionPoints;
+        if (actionPoints < 0 && phase === 'action') {
+            console.error(
+                'Player has negative action points but is in the Action phase. '
+                + 'This is probably caused by a bug.'
+                + ' The player will be compensated up to 0 action points, as long as the action points are negative.'
+            );
+            return 0;
+        }
+        else {
+            return actionPoints;
+        }
     }
 
     function getCostOfDurationCardsLeftFromPreviousTurns(events, turn) {

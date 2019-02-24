@@ -3,7 +3,7 @@ const RawCardDataRepository = require('../../shared/card/RawCardDataRepository.j
 
 module.exports = function () {
     return RawCardDataRepository({
-        ajax,
+        getCardData: () => ajax.get(`/card/data`),
         cache: localStorage
     });
 }
