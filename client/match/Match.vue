@@ -1,7 +1,8 @@
 <template>
     <div ref="match" :class="['match', `currentPhase--${phase}`]">
+        <div class="match-overlay"/>
         <div class="match-backgroundWrapper">
-            <div class="match-background"/>
+            <div :class="['match-background', { 'match-background--move': moveBackground}]"/>
             <div class="match-backgroundOverlay"/>
         </div>
         <div class="match-header">
@@ -224,7 +225,8 @@
             return {
                 holdingCard: null,
                 mousePosition: { x: 0, y: 0 },
-                PHASES
+                PHASES,
+                moveBackground: false
             }
         },
         computed: {
@@ -410,6 +412,10 @@
                     || targetElementClasses.includes('card--placeholder')) {
                     this.emptyClick();
                 }
+            });
+
+            setTimeout(() => {
+                this.moveBackground = true;
             });
         },
         components: { ZoneCard, StationCard, PlayerHud, CardChoiceDialog, LoadingIndicator, PlayerCardsOnHand }
