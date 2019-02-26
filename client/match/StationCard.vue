@@ -1,23 +1,25 @@
 <template>
-    <div :style="cardStyle" :class="classes">
-        <div class="actionOverlays">
-            <div v-if="canMoveCardToZone"
-                 @click.stop="startPuttingDownCard({ location: 'zone', cardId: stationCard.id })"
-                 class="movable">
-                Move to zone
+    <div :class="['stationCardWrapper', {'stationCardWrapper--fullSize': stationCard.flipped && !isOpponentStationCard}]">
+        <div :class="classes" :style="cardStyle">
+            <div class="actionOverlays">
+                <div @click.stop="startPuttingDownCard({ location: 'zone', cardId: stationCard.id })"
+                     class="movable"
+                     v-if="canMoveCardToZone">
+                    Move to zone
+                </div>
+                <div @click.stop="selectStationCardAsDefender(stationCard)"
+                     class="attackable"
+                     v-if="canBeSelectedAsDefender"/>
+                <div @click.stop="selectForRepair(stationCard.id)"
+                     class="selectForRepair actionOverlay"
+                     v-else-if="canBeSelectedForRepair"/>
+                <div @click.stop="selectStationCardForRequirement(stationCard)"
+                     class="selectable"
+                     v-if="canBeSelectedForRequirement"/>
+                <div @click.stop="selectCardForActiveAction(stationCard.id)"
+                     class="selectable"
+                     v-if="canSelectedCardForAction"/>
             </div>
-            <div v-if="canBeSelectedAsDefender"
-                 @click.stop="selectStationCardAsDefender(stationCard)"
-                 class="attackable"/>
-            <div @click.stop="selectForRepair(stationCard.id)"
-                 class="selectForRepair actionOverlay"
-                 v-else-if="canBeSelectedForRepair"/>
-            <div v-if="canBeSelectedForRequirement"
-                 @click.stop="selectStationCardForRequirement(stationCard)"
-                 class="selectable"/>
-            <div v-if="canSelectedCardForAction"
-                 @click.stop="selectCardForActiveAction(stationCard.id)"
-                 class="selectable"/>
         </div>
     </div>
 </template>
@@ -69,9 +71,6 @@
             ]),
             classes() {
                 const classes = ['stationCard', 'card'];
-                if (this.isOpponentStationCard) {
-                    classes.push('card--turnedAround');
-                }
                 if (this.selectedWithDanger) {
                     classes.push('selected--danger');
                 }
@@ -164,7 +163,7 @@
         }
     };
 </script>
-<style scoped lang="scss">
+<style lang="scss">
     @import "card";
 
     .card {

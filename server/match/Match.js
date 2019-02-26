@@ -146,7 +146,7 @@ module.exports = function ({
         else {
             state.playersReady++;
             if (state.playersReady === players.length) {
-                players.forEach(player => startGameForPlayer(player.id));
+                players.forEach((player, index) => startGameForPlayer(player.id, { isFirstPlayer: index === 0 }));
                 players.forEach(player => emitBeginGameForPlayer(player.id));
             }
         }
@@ -222,7 +222,7 @@ module.exports = function ({
         });
     }
 
-    function startGameForPlayer(playerId) {
+    function startGameForPlayer(playerId, { isFirstPlayer }) {
         let playerDeck = state.deckByPlayerId[playerId];
         let stationCards = [
             { card: playerDeck.drawSingle(), place: 'draw' },
@@ -238,7 +238,7 @@ module.exports = function ({
             cardsInZone: [],
             cardsInOpponentZone: [],
             discardedCards: [],
-            phase: TEMPORARY_START_PHASE,
+            phase: isFirstPlayer ? TEMPORARY_START_PHASE : 'wait',
             actionPoints: 0,
             events: [],
             requirements: []

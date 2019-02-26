@@ -1,2 +1,35 @@
 $cardWidth: 652px;
 $cardHeight: 916px;
+
+$opponentScale: .8;
+$opponentHandScale: .6;
+$opponentStationScale: .5;
+
+$opponentCardWidth: calc((#{$cardWidth} / 5));
+$opponentCardHeight: calc((#{$cardHeight} / 5));
+$opponentCardOnHandWidth: calc((#{$cardWidth} / 5) * #{$opponentHandScale});
+$opponentCardOnHandHeight: calc((#{$cardHeight} / 5) * #{$opponentHandScale});
+$opponentStationCardWidth: calc(((#{$cardWidth} / 5)) * #{$opponentStationScale});
+$opponentStationCardHeight: calc(((#{$cardHeight} / 5)) * #{$opponentStationScale});
+$opponentDiscardPileCardWidth: calc(#{$opponentCardWidth} * #{$opponentScale});
+$opponentDiscardPileCardHeight: calc(#{$opponentCardHeight} * #{$opponentScale});
+$opponentDrawPileCardWidth: calc(#{$opponentCardWidth} * #{$opponentScale});
+$opponentDrawPileCardHeight: calc(#{$opponentCardHeight} * #{$opponentScale});
+
+$playerCardWidth: calc(#{$cardWidth} / 5);
+$playerCardHeight: calc(#{$cardHeight} / 5);
+$playerCardOnHandWidth: calc(#{$cardWidth} / 5);
+$playerCardOnHandHeight: calc(#{$cardHeight} / 5);
+$playerStationCardWidth: calc((#{$cardWidth} / 5) * .7);
+$playerStationCardHeight: calc((#{$cardHeight} / 5) * .7);
+$playerDiscardPileCardWidth: $playerCardWidth;
+$playerDiscardPileCardHeight: $playerCardHeight;
+$playerDrawPileCardWidth: $playerCardWidth;
+$playerDrawPileCardHeight: $playerCardHeight;
+
+$cardHoverWidth: $cardWidth / 2.8;
+$cardHoverHeight: $cardHeight / 2.8;
+
+$cardGhostZIndex: 1;
+$playerCardsOnHandZIndex: 2;
+$holdingCardZIndex: 3;

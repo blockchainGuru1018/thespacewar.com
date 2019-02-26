@@ -21,6 +21,9 @@
                                 :isOpponentStationCard="true"
                                 :key="card.id"
                         />
+                        <div class="stationCardWrapper stationCardWrapper--fullSize">
+                            <div class="card card--placeholder"/>
+                        </div>
                     </div>
                     <div class="field-stationRow">
                         <station-card
@@ -29,6 +32,9 @@
                                 :isOpponentStationCard="true"
                                 :key="card.id"
                         />
+                        <div class="stationCardWrapper stationCardWrapper--fullSize">
+                            <div class="card card--placeholder"/>
+                        </div>
                     </div>
                     <div class="field-stationRow">
                         <station-card
@@ -37,6 +43,9 @@
                                 :isOpponentStationCard="true"
                                 :key="card.id"
                         />
+                        <div class="stationCardWrapper stationCardWrapper--fullSize">
+                            <div class="card card--placeholder"/>
+                        </div>
                     </div>
                 </div>
                 <div class="field-zoneRows field-opponentZoneRows">
@@ -161,25 +170,21 @@
                 <div class="playerStationCards field-playerStation field-station field-section">
                     <div class="field-stationRow">
                         <portal-target name="stationDrawRow"/>
-                        <station-card
-                                v-for="card in playerVisibleDrawStationCards"
-                                :stationCard="card"
-                                :key="card.id"
-                        />
-                        <div v-if="stationCardGhostVisible"
-                             @click="cardGhostClick('station-draw')"
-                             class="card card-ghost"/>
-                        <div v-else class="card card--placeholder"/>
+                        <station-card :key="card.id"
+                                      :stationCard="card"
+                                      v-for="card in playerVisibleDrawStationCards"/>
+                        <div class="stationCardWrapper stationCardWrapper--fullSize">
+                            <div @click="cardGhostClick('station-draw')"
+                                 class="card card-ghost"
+                                 v-if="stationCardGhostVisible"/>
+                            <div class="card card--placeholder" v-else/>
+                        </div>
                     </div>
                     <div class="field-stationRow">
                         <portal-target name="stationActionRow"/>
-                        <div :class="['stationCardWrapper', {'stationCardWrapper--fullSize': card.flipped}]"
-                             v-for="card in playerVisibleActionStationCards">
-                            <station-card
-                                    :key="card.id"
-                                    :stationCard="card"
-                            />
-                        </div>
+                        <station-card :key="card.id"
+                                      :stationCard="card"
+                                      v-for="card in playerVisibleActionStationCards"/>
                         <div class="stationCardWrapper stationCardWrapper--fullSize">
                             <div @click="cardGhostClick('station-action')"
                                  class="card card-ghost"
@@ -194,13 +199,17 @@
                                 :stationCard="card"
                                 :key="card.id"
                         />
-                        <div v-if="stationCardGhostVisible"
-                             @click="cardGhostClick('station-handSize')"
-                             class="card card-ghost"/>
-                        <div v-else class="card card--placeholder"/>
+                        <div class="stationCardWrapper stationCardWrapper--fullSize">
+                            <div @click="cardGhostClick('station-handSize')"
+                                 class="card card-ghost"
+                                 v-if="stationCardGhostVisible"/>
+                            <div class="card card--placeholder" v-else/>
+                        </div>
                     </div>
                 </div>
-                <PlayerCardsOnHand :holdingCard="holdingCard" @cardClick="playerCardClick"/>
+                <PlayerCardsOnHand
+                        :holdingCard="holdingCard"
+                        @cardClick="playerCardClick"/>
                 <player-hud/>
             </div>
         </div>
@@ -425,6 +434,7 @@
         return count === 1 ? word : word + 's';
     }
 </script>
-<style scoped lang="scss">
+<style lang="scss">
     @import "match.scss";
+    @import "stationCard.scss";
 </style>

@@ -1,0 +1,73 @@
+@import "cardVariables";
+
+.field-playerStation {
+  flex-direction: column;
+  margin-right: 12px;
+  margin-top: 8px;
+  display: flex;
+  flex: 1 1;
+  max-width: 30%;
+
+  .card {
+    width: $playerStationCardWidth;
+    height: $playerStationCardHeight;
+
+    margin-right: 8px;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
+
+.field-opponentStation {
+  flex-direction: column;
+  margin-left: 8px;
+  transform: rotate(180deg);
+  justify-content: flex-end;
+  display: flex;
+  flex: 1 1;
+  max-width: 20%;
+
+  .card {
+    width: $opponentStationCardWidth;
+    height: $opponentStationCardHeight;
+    margin-left: 8px;
+
+    &:last-child {
+      margin-left: 0;
+    }
+  }
+}
+
+.stationCardWrapper {
+  flex: 0 1 auto;
+  min-width: 20px;
+  max-width: 30px;
+
+  &--fullSize {
+    flex: 0 0 auto;
+    max-width: inherit;
+  }
+
+  .card-ghost {
+    position: relative;
+    z-index: 2;
+    background: transparent;
+  }
+}
+
+.field-station .card {
+  flex: 0 0 auto;
+}
+
+.field-playerStation .field-stationRow {
+  padding-top: 20px;
+  padding-bottom: 16px;
+}
+
+.field-stationRow {
+  position: relative;
+  display: flex;
+  padding-bottom: 8px;
+}

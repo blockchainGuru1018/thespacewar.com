@@ -424,20 +424,18 @@
     .descriptionText {
         font-family: sans-serif;
         font-weight: bold;
-        color: #AAA;
+        color: rgba(180, 180, 180, 0.5);
     }
 
     .stationRowDescription {
         position: absolute;
         left: 0;
-        transform: translate(-100%, 0);
         display: flex;
         text-align: right;
         justify-content: flex-end;
         align-items: center;
-        width: 220px;
-        height: 100%;
-        padding: 0 10px;
+        top: 0;
+        z-index: 1;
     }
 
     .opponentDrawPileDescription,

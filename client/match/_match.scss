@@ -1,33 +1,4 @@
-$cardWidth: 652px;
-$cardHeight: 916px;
-$opponentCardWidth: calc(#{$cardWidth} / 8);
-$opponentCardHeight: calc(#{$cardHeight} / 8);
-$opponentCardOnHandWidth: calc(#{$cardWidth} / 12);
-$opponentCardOnHandHeight: calc(#{$cardHeight} / 12);
-$opponentStationCardWidth: calc(#{$cardWidth} / 12);
-$opponentStationCardHeight: calc(#{$cardHeight} / 12);
-$opponentDrawPileCardWidth: calc(#{$cardWidth} / 12);
-$opponentDrawPileCardHeight: calc(#{$cardHeight} / 12);
-$opponentDiscardPileCardWidth: calc(#{$cardWidth} / 12);
-$opponentDiscardPileCardHeight: calc(#{$cardHeight} / 12);
-
-$playerCardWidth: calc(#{$cardWidth} / 5);
-$playerCardHeight: calc(#{$cardHeight} / 5);
-$playerCardOnHandWidth: calc(#{$cardWidth} / 3.8);
-$playerCardOnHandHeight: calc(#{$cardHeight} / 3.8);
-$playerStationCardWidth: calc((#{$cardWidth} / 5) * .7);
-$playerStationCardHeight: calc((#{$cardHeight} / 5) * .7);
-$playerDiscardPileCardWidth: $playerCardWidth;
-$playerDiscardPileCardHeight: $playerCardHeight;
-$playerDrawPileCardWidth: $playerCardWidth;
-$playerDrawPileCardHeight: $playerCardHeight;
-
-$cardHoverWidth: $cardWidth / 2.8;
-$cardHoverHeight: $cardHeight / 2.8;
-
-$cardGhostZIndex: 1;
-$playerCardsOnHandZIndex: 2;
-$holdingCardZIndex: 3;
+@import "cardVariables";
 
 .match {
   display: flex;
@@ -161,85 +132,17 @@ $holdingCardZIndex: 3;
 }
 
 .field-player {
-  flex: 0 0 60%;
+  flex: 0 0 55%;
 }
 
 .field-opponent {
-  flex: 0 0 40%;
-  width: 62%;
-  margin: 0 auto;
+  flex: 0 0 45%;
+  width: 80%;
 
   .card {
     width: $opponentCardWidth;
     height: $opponentCardHeight;
   }
-}
-
-.field-playerStation {
-  flex-direction: column;
-  margin-right: 8px;
-
-  .card {
-    width: $playerStationCardWidth;
-    height: $playerStationCardHeight;
-
-    margin-right: 8px;
-
-    &:last-child {
-      margin-right: 0;
-    }
-  }
-}
-
-.field-opponentStation {
-  flex-direction: column-reverse;
-  justify-content: flex-end;
-  margin-top: 5px;
-
-  .card {
-    width: $opponentStationCardWidth;
-    height: $opponentStationCardHeight;
-    margin-left: 8px;
-
-    &:last-child {
-      margin-left: 0;
-    }
-  }
-}
-
-.field-opponentStation .field-stationRow {
-  flex-direction: row-reverse;
-}
-
-.field-station {
-  display: flex;
-  flex: 0 0 15%;
-  width: 15%;
-}
-
-.field-station .card {
-  flex: 0 0 auto;
-}
-
-.stationCardWrapper {
-  flex: 0 1 auto;
-  min-width: 20px;
-
-  &--fullSize {
-    flex: 0 0 auto;
-  }
-
-  .card-ghost {
-    position: relative;
-    z-index: 2;
-    background: transparent;
-  }
-}
-
-.field-stationRow {
-  position: relative;
-  display: flex;
-  margin-bottom: 8px;
 }
 
 .field-piles {
@@ -250,10 +153,6 @@ $holdingCardZIndex: 3;
   align-items: center;
   justify-content: space-evenly;
   position: relative;
-
-  .field-opponent & {
-    flex: 0 0 10%;
-  }
 }
 
 .field-drawPile {
@@ -311,7 +210,7 @@ $holdingCardZIndex: 3;
 .field-zone {
   flex: 0 0 auto;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 
   .card {
     margin: 4px;
@@ -324,21 +223,21 @@ $holdingCardZIndex: 3;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
 
-  &.field-opponentZoneRows {
-    padding-top: 80px;
-    flex: 1 0;
-  }
+.field-opponentZoneRow {
+  flex-direction: row-reverse;
+  flex-wrap: nowrap;
+}
 
-  .field-opponentZoneRow {
-    flex-direction: row-reverse;
-    flex-wrap: nowrap;
-  }
+.field-opponentZoneRows {
+  flex: 2 0 auto;
+  justify-content: flex-end;
 }
 
 .field-opponentCardsOnHand {
   position: absolute;
-  top: 0;
+  top: -50px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -361,6 +260,7 @@ $holdingCardZIndex: 3;
 
 .field-playerZoneRows {
   justify-content: flex-start;
+  flex: 1 0 auto;
 }
 
 .playerCardsInZone {
@@ -375,7 +275,7 @@ $holdingCardZIndex: 3;
 .field-playerCardsOnHand {
   position: absolute;
   z-index: $playerCardsOnHandZIndex;
-  bottom: -20px;
+  bottom: -100px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -394,9 +294,10 @@ $holdingCardZIndex: 3;
 
   &::after {
     content: "";
-    width: 100%;
+    width: 140%;
     height: 175%;
     position: absolute;
+    left: -20%;
   }
 
   &::before {
@@ -406,14 +307,6 @@ $holdingCardZIndex: 3;
     left: 0;
     bottom: 0;
     position: absolute;
-  }
-
-  &.card--hoverable:hover {
-    position: absolute;
-    bottom: 240px;
-    left: -($playerCardWidth - $cardHoverWidth);
-    width: $cardHoverWidth;
-    height: $cardHoverHeight;
   }
 
   &--highlight {
@@ -559,10 +452,11 @@ $holdingCardZIndex: 3;
 
 .match-background {
   position: absolute;
+  transform: translate(-50%, -50%) scale(.4);
   top: 50%;
   left: 50%;
-  filter: contrast(190%) saturate(115%) brightness(30%) hue-rotate(230deg) grayscale(20%);
-  animation: move 2000s linear 0s infinite alternate;
+  //animation: move 2000s linear 0s infinite alternate;
+  filter: contrast(190%) saturate(115%) brightness(10%) hue-rotate(230deg) grayscale(20%);
 }
 
 @keyframes move {
@@ -591,4 +485,32 @@ $holdingCardZIndex: 3;
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.cardHoverActivator {
+  position: absolute;
+  width: $playerCardOnHandWidth;
+  height: 100px;
+  bottom: 100px;
+  opacity: 0;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  transform: translateX(-50%);
+  z-index: 2;
+  cursor: pointer;
+}
+
+.cardHoverBlowUp {
+  position: absolute;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  transform: translateX(-50%);
+  opacity: 1;
+  bottom: 120px;
+  width: calc(#{$cardWidth} / 2);
+  height: calc(#{$cardHeight} / 2);
+  cursor: pointer;
+  z-index: 1;
 }
