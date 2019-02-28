@@ -4,9 +4,12 @@ $cardHeight: 916px;
 $opponentScale: .8;
 $opponentHandScale: .6;
 $opponentStationScale: .5;
+$opponentZoneCardScale: .8;
 
 $opponentCardWidth: calc((#{$cardWidth} / 5));
 $opponentCardHeight: calc((#{$cardHeight} / 5));
+$opponentZoneCardWidth: calc(#{$opponentCardWidth} * #{$opponentZoneCardScale});
+$opponentZoneCardHeight: calc(#{$opponentCardHeight} * #{$opponentZoneCardScale});
 $opponentCardOnHandWidth: calc((#{$cardWidth} / 5) * #{$opponentHandScale});
 $opponentCardOnHandHeight: calc((#{$cardHeight} / 5) * #{$opponentHandScale});
 $opponentStationCardWidth: calc(((#{$cardWidth} / 5)) * #{$opponentStationScale});

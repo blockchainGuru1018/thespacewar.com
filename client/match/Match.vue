@@ -22,7 +22,7 @@
                                 :key="card.id"
                         />
                         <div class="stationCardWrapper stationCardWrapper--fullSize">
-                            <div class="card card--placeholder"/>
+                            <div class="card card-placeholder"/>
                         </div>
                     </div>
                     <div class="field-stationRow">
@@ -33,7 +33,7 @@
                                 :key="card.id"
                         />
                         <div class="stationCardWrapper stationCardWrapper--fullSize">
-                            <div class="card card--placeholder"/>
+                            <div class="card card-placeholder"/>
                         </div>
                     </div>
                     <div class="field-stationRow">
@@ -44,13 +44,13 @@
                                 :key="card.id"
                         />
                         <div class="stationCardWrapper stationCardWrapper--fullSize">
-                            <div class="card card--placeholder"/>
+                            <div class="card card-placeholder"/>
                         </div>
                     </div>
                 </div>
                 <div class="field-zoneRows field-opponentZoneRows">
                     <div class="opponentCardsInZone field-opponentZoneRow field-zone field-section">
-                        <template v-for="n in 6">
+                        <template v-for="n in opponentCardsInZone.length">
                             <zone-card v-if="n <= opponentCardsInZone.length"
                                        :card="opponentCardsInZone[n - 1]"
                                        :ownerId="opponentUser.id"
@@ -58,25 +58,25 @@
                                        :zoneOpponentRow="playerCardsInOpponentZone"
                                        :key="opponentCardsInZone[n - 1].id"
                                        class="card--turnedAround"/>
-                            <div v-else class="card card--placeholder"/>
                         </template>
+                        <div class="card card-placeholder" v-if="opponentCardsInZone.length === 0"/>
                     </div>
                     <div class="playerCardsInOpponentZone field-opponentZoneRow field-zone field-section">
-                        <template v-for="n in 6">
+                        <template v-for="n in playerCardsInOpponentZone.length">
                             <zone-card v-if="n <= playerCardsInOpponentZone.length"
                                        :card="playerCardsInOpponentZone[n - 1]"
                                        :ownerId="ownUser.id"
                                        :zonePlayerRow="playerCardsInOpponentZone"
                                        :zoneOpponentRow="opponentCardsInZone"
                                        :key="playerCardsInOpponentZone[n - 1].id"/>
-                            <div v-else class="card card--placeholder"/>
                         </template>
+                        <div class="card card-placeholder" v-if="playerCardsInOpponentZone.length === 0"/>
                     </div>
                 </div>
                 <div class="field-piles field-section">
                     <div class="field-discardPile">
                         <div v-if="!opponentTopDiscardCard"
-                             class="card card--placeholder"/>
+                             class="card card-placeholder"/>
                         <div v-else
                              :style="getCardImageStyle(opponentTopDiscardCard)"
                              :data-cardId="opponentTopDiscardCard.id"
@@ -104,14 +104,7 @@
             </div>
             <div class="field-dividerWrapper">
                 <div class="field-divider"/>
-                <div class="field-dividerContent">
-                    <portal-target name="player-top" slim/>
-                    <div class="playerActionPointsContainer" v-if="showActionPoints">
-                        <div class="playerActionPoints">
-                            {{ playerActionPointsText }}
-                        </div>
-                    </div>
-                </div>
+                <portal-target class="field-dividerContent" name="player-top" tag="div"/>
             </div>
             <div class="field-player">
                 <div class="field-piles field-section">
@@ -128,7 +121,7 @@
                         </div>
                     </div>
                     <div class="field-discardPile">
-                        <div v-if="!playerTopDiscardCard" class="card card--placeholder"/>
+                        <div class="card card-placeholder" v-if="!playerTopDiscardCard"/>
                         <div v-else
                              :style="getCardImageStyle(playerTopDiscardCard)"
                              :data-cardId="playerTopDiscardCard.id"
@@ -140,7 +133,7 @@
                 </div>
                 <div class="field-zoneRows field-playerZoneRows">
                     <div class="opponentCardsInPlayerZone field-zone field-section">
-                        <template v-for="n in 6">
+                        <template v-for="n in opponentCardsInPlayerZone.length">
                             <zone-card v-if="n <= opponentCardsInPlayerZone.length"
                                        :card="opponentCardsInPlayerZone[n - 1]"
                                        :ownerId="opponentUser.id"
@@ -148,11 +141,11 @@
                                        :zoneOpponentRow="playerCardsInZone"
                                        :key="opponentCardsInPlayerZone[n - 1].id"
                                        class="card--turnedAround"/>
-                            <div v-else class="card card--placeholder"/>
                         </template>
+                        <div class="card card-placeholder" v-if="opponentCardsInPlayerZone.length === 0"/>
                     </div>
                     <div class="playerCardsInZone field-playerZoneCards field-zone field-section">
-                        <template v-for="n in 6">
+                        <template v-for="n in visiblePlayerCards.length">
                             <zone-card v-if="n <= visiblePlayerCards.length"
                                        :card="(visiblePlayerCards[n - 1])"
                                        :ownerId="ownUser.id"
@@ -160,11 +153,11 @@
                                        :zoneOpponentRow="opponentCardsInPlayerZone"
                                        :isHomeZone="true"
                                        :key="visiblePlayerCards[n - 1].id"/>
-                            <div v-else-if="playerZoneCardGhostVisible"
-                                 @click.stop="cardGhostClick('zone')"
-                                 class="card card-ghost"/>
-                            <div v-else class="card card--placeholder"/>
                         </template>
+                        <div class="card card-placeholder" v-if="visiblePlayerCards.length === 0"/>
+                        <div @click.stop="cardGhostClick('zone')"
+                             class="card card-ghost card-ghost--leftAbsolute"
+                             v-if="playerZoneCardGhostVisible"/>
                     </div>
                 </div>
                 <div class="playerStationCards field-playerStation field-station field-section">
@@ -173,11 +166,10 @@
                         <station-card :key="card.id"
                                       :stationCard="card"
                                       v-for="card in playerVisibleDrawStationCards"/>
-                        <div class="stationCardWrapper stationCardWrapper--fullSize">
+
+                        <div class="stationCardWrapper stationCardWrapper--fullSize" v-if="stationCardGhostVisible">
                             <div @click="cardGhostClick('station-draw')"
-                                 class="card card-ghost"
-                                 v-if="stationCardGhostVisible"/>
-                            <div class="card card--placeholder" v-else/>
+                                 class="card card-ghost"/>
                         </div>
                     </div>
                     <div class="field-stationRow">
@@ -185,11 +177,9 @@
                         <station-card :key="card.id"
                                       :stationCard="card"
                                       v-for="card in playerVisibleActionStationCards"/>
-                        <div class="stationCardWrapper stationCardWrapper--fullSize">
+                        <div class="stationCardWrapper stationCardWrapper--fullSize" v-if="stationCardGhostVisible">
                             <div @click="cardGhostClick('station-action')"
-                                 class="card card-ghost"
-                                 v-if="stationCardGhostVisible"/>
-                            <div class="card card--placeholder" v-else/>
+                                 class="card card-ghost"/>
                         </div>
                     </div>
                     <div class="field-stationRow">
@@ -199,11 +189,9 @@
                                 :stationCard="card"
                                 :key="card.id"
                         />
-                        <div class="stationCardWrapper stationCardWrapper--fullSize">
+                        <div class="stationCardWrapper stationCardWrapper--fullSize" v-if="stationCardGhostVisible">
                             <div @click="cardGhostClick('station-handSize')"
-                                 class="card card-ghost"
-                                 v-if="stationCardGhostVisible"/>
-                            <div class="card card--placeholder" v-else/>
+                                 class="card card-ghost"/>
                         </div>
                     </div>
                 </div>
@@ -320,12 +308,6 @@
                 return this.phase === 'action'
                     && this.hasPutDownNonFreeCardThisTurn;
             },
-            playerActionPointsText() {
-                return `${this.actionPoints2} action ${pluralize('point', this.actionPoints2)} remaining`;
-            },
-            showActionPoints() {
-                return ['action'].includes(this.phase);
-            },
             visiblePlayerCards() {
                 return [...this.playerCardsInZone, ...this.transientPlayerCardsInHomeZone];
             },
@@ -422,17 +404,13 @@
                 const isNotCardOrCardActionOverlay = (!targetElementClasses.includes('card')
                     && !targetElementClasses.includes('actionOverlay'))
                 if (isNotCardOrCardActionOverlay
-                    || targetElementClasses.includes('card--placeholder')) {
+                    || targetElementClasses.includes('card-placeholder')) {
                     this.emptyClick();
                 }
             });
         },
         components: { ZoneCard, StationCard, PlayerHud, CardChoiceDialog, LoadingIndicator, PlayerCardsOnHand }
     };
-
-    function pluralize(word, count) {
-        return count === 1 ? word : word + 's';
-    }
 </script>
 <style lang="scss">
     @import "match.scss";

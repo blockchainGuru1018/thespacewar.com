@@ -59,7 +59,7 @@
 <style scoped lang="scss">
 
     .cardChoiceDialog-overlay {
-        background-color: rgba(0, 0, 0, .32);
+        background-color: rgba(0, 0, 0, .3);
         position: absolute;
         z-index: 1000;
         left: 0;
@@ -76,17 +76,15 @@
         left: 50%;
         display: flex;
         flex-direction: column;
-        background: #FFF;
         border-radius: 4px;
         padding: 20px 0;
         justify-content: center;
         align-items: stretch;
-        background: linear-gradient(to top, rgba(24, 24, 24, 0.8), rgba(47, 47, 47, 0.6));
-        color: rgba(255, 255, 255, .9);
+        background: linear-gradient(to bottom, rgba(10, 10, 20, 1), rgba(20, 10, 10, 1))
     }
 
     .cardChoiceDialog-choice {
-        color: #FAFAFA;
+        color: #FFF;
         border: none;
         font-size: 20px;
         padding: 18px 120px;
@@ -97,7 +95,7 @@
         letter-spacing: .18em;
 
         &:hover {
-            background-color: rgba(255, 255, 255, .1);
+            background-color: rgba(120, 120, 120, .06);
         }
 
         &:last-child {

@@ -4,6 +4,7 @@ const queryEventsFactory = {
             hasMovedOnTurn: () => false,
             hasMovedOnPreviousTurn: () => false,
             getRepairsOnTurn: () => [],
+            getAttacksOnTurn: () => [],
             ...stubs
         };
     }

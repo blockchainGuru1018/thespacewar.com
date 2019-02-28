@@ -3,6 +3,7 @@ const playerStateServiceFactory = {
         return {
             getAttackBoostForCard: () => 0,
             cardCanMoveOnTurnWhenPutDown: () => false,
+            hasMatchingCardInSameZone: () => false,
             ...stubs
         };
     }

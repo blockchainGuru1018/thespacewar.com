@@ -1,6 +1,6 @@
 <template>
     <div class="field-playerHud">
-        <portal to="player-top">
+        <portal to="player-top" v-if="!gameHasEnded">
             <div class="nextPhaseButtonContainer">
                 <button v-if="phase === 'start'"
                         @click="startClick"
@@ -21,54 +21,63 @@
                 </template>
                 <div class="nextPhaseButton nextPhaseButton-wait" v-else-if="phase === PHASES.wait">Enemy turn</div>
             </div>
+
+            <div class="guideTextContainer">
+                <div class="guideText-waitingForOtherPlayer guideText guideText--small"
+                     v-if="waitingForOtherPlayerToFinishRequirements">
+                    Waiting for other player...
+                </div>
+                <div class="guideText guideText--small" v-else-if="actionGuideText">
+                    <div :style="cardStyle"
+                         @click="showEnlargedCard"
+                         class="guideTextCardWrapper card">
+                        <div class="enlargeIcon enlargeIcon--small"/>
+                    </div>
+                    {{ actionGuideText }}
+                </div>
+                <div class="guideText guideText--small"
+                     v-else-if="requirementGuideText">
+                    <div :style="cardStyle"
+                         @click="showEnlargedCard"
+                         class="guideTextCardWrapper card">
+                        <div class="enlargeIcon enlargeIcon--small"/>
+                    </div>
+                    {{ requirementGuideText }}
+                </div>
+                <div class="guideText" v-else-if="numberOfStationCardsToSelect > 0">
+                    Select {{ numberOfStationCardsToSelect}}
+                    more station {{ numberOfStationCardsToSelect === 1 ? 'card' : 'cards' }}
+                </div>
+                <div class="guideText-discardDurationCards guideText guideText--small"
+                     v-else-if="phase === PHASES.preparation">
+                    Discard any duration card you don't want to pay for
+                </div>
+                <div class="guideText-drawCard guideText guideText--small" v-else-if="phase === PHASES.draw">
+                    Draw card or Mill opponent
+                </div>
+                <div class="guideText-drawCard guideText guideText--small"
+                     v-else-if="inDiscardPhaseAndMustDiscardCard">
+                    Discard {{ amountOfCardsToDiscard + (amountOfCardsToDiscard === 1 ? ' card' : ' cards')}} to
+                    continue
+                </div>
+                <!--<div class="playerActionPointsContainer" >-->
+                <div class="playerActionPoints" v-else-if="showActionPoints">
+                    {{ playerActionPointsText }}
+                </div>
+                <!--</div>-->
+            </div>
         </portal>
         <portal to="match">
-            <div v-if="gameHasEnded" class="endGameOverlay">
-                <div v-if="hasLostGame" class="defeatText endGameText">
+            <div class="endGameOverlay" v-if="gameHasEnded">
+                <div class="defeatText endGameText" v-if="hasLostGame">
                     DEFEAT
                 </div>
-                <div v-else-if="hasWonGame" class="victoryText endGameText">
+                <div class="victoryText endGameText" v-else-if="hasWonGame">
                     VICTORY
                 </div>
                 <button @click="endGame" class="endGameButton">
                     End game
                 </button>
-            </div>
-            <div v-else-if="waitingForOtherPlayerToFinishRequirements"
-                 class="guideText-waitingForOtherPlayer guideText guideText--small">
-                Waiting for other player...
-            </div>
-            <div v-else-if="actionGuideText" class="guideText guideText--small">
-                <div @click="showEnlargedCard"
-                     :style="cardStyle"
-                     class="guideTextCardWrapper card">
-                    <div class="enlargeIcon enlargeIcon--small"/>
-                </div>
-                {{ actionGuideText }}
-            </div>
-            <div v-else-if="requirementGuideText"
-                 class="guideText guideText--small">
-                <div @click="showEnlargedCard"
-                     :style="cardStyle"
-                     class="guideTextCardWrapper card">
-                    <div class="enlargeIcon enlargeIcon--small"/>
-                </div>
-                {{ requirementGuideText }}
-            </div>
-            <div v-else-if="numberOfStationCardsToSelect > 0" class="guideText">
-                Select {{ numberOfStationCardsToSelect}}
-                more station {{ numberOfStationCardsToSelect === 1 ? 'card' : 'cards' }}
-            </div>
-            <div v-else-if="phase === PHASES.preparation"
-                 class="guideText-discardDurationCards guideText guideText--small">
-                Discard any duration card you don't want to pay for
-            </div>
-            <div v-else-if="phase === PHASES.draw" class="guideText-drawCard guideText guideText--small">
-                Draw card or Mill opponent
-            </div>
-            <div class="guideText-drawCard guideText guideText--small"
-                 v-else-if="inDiscardPhaseAndMustDiscardCard">
-                Discard {{ amountOfCardsToDiscard + (amountOfCardsToDiscard === 1 ? ' card' : ' cards')}} to continue
             </div>
         </portal>
         <portal to="stationDrawRow">
@@ -175,6 +184,12 @@
                 'canDrawCards',
                 'canMill'
             ]),
+            showActionPoints() {
+                return ['action'].includes(this.phase);
+            },
+            playerActionPointsText() {
+                return `${this.actionPoints2} action ${pluralize('point', this.actionPoints2)} remaining`;
+            },
             gameHasEnded() {
                 return this.hasWonGame || this.hasLostGame;
             },
@@ -398,27 +413,6 @@
             background-color: #ff3646;
             color: white;
         }
-    }
-
-    .guideText {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
-        font-size: 74px;
-        font-family: "Space Mono", monospace;
-        width: 65vw;
-        height: 30vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        user-select: none;
-    }
-
-    .guideText--small {
-        font-size: 64px;
     }
 
     .descriptionText {

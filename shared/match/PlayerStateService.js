@@ -4,6 +4,7 @@ const DiscardCardEvent = require('../event/DiscardCardEvent.js');
 const MoveCardEvent = require('../event/MoveCardEvent.js');
 const PutDownCardEvent = require('../PutDownCardEvent.js');
 const RepairCardEvent = require('../event/RepairCardEvent.js');
+const RemoveStationCardEvent = require('../event/RemoveStationCardEvent.js');
 
 class PlayerStateService {
 
@@ -196,7 +197,7 @@ class PlayerStateService {
     }
 
     isCardStationCard(cardId) {
-        return this.getPlayerState().stationCards.some(c => (c.card ? c.card.id : c.id) === cardId);
+        return this.getPlayerState().stationCards.some(s => getStationCardId(s) === cardId);
     }
 
     isCardFlipped(cardId) {
@@ -477,9 +478,16 @@ class PlayerStateService {
     }
 
     removeStationCard(cardId) {
+        let stationCard = this.findStationCard(cardId);
         this.update(playerState => {
             playerState.stationCards = playerState.stationCards.filter(s => s.card.id !== cardId);
         });
+
+        this.storeEvent(RemoveStationCardEvent({
+            stationCard,
+            turn: this._matchService.getTurn(),
+            phase: this.getPhase()
+        }));
     }
 
     removeCardFromHand(cardId) {
@@ -573,4 +581,8 @@ module.exports = PlayerStateService;
 
 function sum(arr, accessorKey) {
     return arr.reduce((acc, v) => acc + (v[accessorKey] || 0), 0);
+}
+
+function getStationCardId(stationCard) {
+    return stationCard.card ? stationCard.card.id : stationCard.id;
 }

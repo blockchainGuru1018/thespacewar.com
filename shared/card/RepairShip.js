@@ -19,11 +19,12 @@ module.exports = class RepairShip extends BaseCard {
         if (this._hasRepairedThisTurn()) return false;
         if (this._hasAttackedThisTurn()) return false;
 
-        const hasCardToRepair = this._playerStateService.hasMatchingCardInSameZone(this.id, card => {
-            return card.canBeRepaired()
-        });
-        return hasCardToRepair
-            || this._playerStateService.hasFlippedStationCards();
+        if (this._playerStateService.hasFlippedStationCards()) {
+            return this._playerStateService.isCardInHomeZone(this.id);
+        }
+        else {
+            return this._hasCardInSameZoneThatCanBeRepaired();
+        }
     }
 
     repairCard(otherCardOrStationCard) {
@@ -54,5 +55,11 @@ module.exports = class RepairShip extends BaseCard {
         const turn = this._matchService.getTurn();
         const attacksOnTurn = this._queryEvents.getAttacksOnTurn(this.id, turn).length;
         return attacksOnTurn > 0;
+    }
+
+    _hasCardInSameZoneThatCanBeRepaired() {
+        return this._playerStateService.hasMatchingCardInSameZone(this.id, card => {
+            return card.canBeRepaired()
+        });
     }
 };

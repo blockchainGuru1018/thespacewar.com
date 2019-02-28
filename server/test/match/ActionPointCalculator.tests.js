@@ -11,6 +11,7 @@ let DiscardCardEvent = require('../../../shared/event/DiscardCardEvent.js');
 let MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
 let AttackEvent = require('../../../shared/event/AttackEvent.js');
 let PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
+let RemoveStationCardEvent = require('../../../shared/event/RemoveStationCardEvent.js');
 
 module.exports = testCase('ActionPointCalculator', {
     'when put card in zone and then put down a station card in action row'() {
@@ -134,6 +135,22 @@ module.exports = testCase('ActionPointCalculator', {
             turn: 1,
             phase: 'action',
             actionStationCardsCount: 1
+        });
+
+        assert.equals(actionPoints, 2);
+    },
+    'when in action phase and has 0 station cards but has removed 1 station card from action row this turn'() {
+        const calculator = ActionPointCalculator({
+            cardInfoRepository: FakeCardInfoRepository([{ commonId: 'C1A', cost: 1 }])
+        });
+
+        const actionPoints = calculator.calculate({
+            events: [
+                RemoveStationCardEvent({ phase: 'action', turn: 1, stationCard: { id: 'C1A', place: 'action' } })
+            ],
+            turn: 1,
+            phase: 'action',
+            actionStationCardsCount: 0
         });
 
         assert.equals(actionPoints, 2);

@@ -168,6 +168,38 @@ module.exports = testCase('Cards', {
             'should NOT be able to repair'() {
                 refute(this.card.canRepair());
             }
+        },
+        'when is in home zone and has flipped station card should be able to repair': function () {
+            this.card = createCard(SmallRepairShop, {
+                card: { id: 'C1A' },
+                matchService: {
+                    getTurn: () => 1
+                },
+                queryEvents: queryEventsFactory.withStubs(),
+                playerStateService: playerStateServiceFactory.withStubs({
+                    getPhase: () => 'attack',
+                    isCardInHomeZone: id => id === 'C1A',
+                    hasFlippedStationCards: () => true
+                })
+            });
+
+            assert(this.card.canRepair());
+        },
+        'when is NOT in home zone and has flipped station card should NOT be able to repair': function () {
+            this.card = createCard(SmallRepairShop, {
+                card: { id: 'C1A' },
+                matchService: {
+                    getTurn: () => 1
+                },
+                queryEvents: queryEventsFactory.withStubs(),
+                playerStateService: playerStateServiceFactory.withStubs({
+                    getPhase: () => 'attack',
+                    isCardInHomeZone: id => id !== 'C1A',
+                    hasFlippedStationCards: () => true
+                })
+            });
+
+            refute(this.card.canRepair());
         }
     },
     'Pursuiter:': {

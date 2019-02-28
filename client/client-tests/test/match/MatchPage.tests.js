@@ -1261,7 +1261,7 @@ module.exports = testCase('MatchPage', {
                 await click('.field-playerZoneCards .card-ghost:eq(0)');
             },
             'should put down card in zone'() {
-                assert.elementCount('.field-playerZoneCards .card:not(.card--placeholder)', 1);
+                assert.elementCount('.field-playerZoneCards .card:not(.card-placeholder)', 1);
             },
             'should NOT have card on hand'() {
                 assert.elementCount('.field-playerCardsOnHand .card', 0);
@@ -1302,7 +1302,7 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.cardChoiceDialog', 1);
             },
             'should have card in zone'() {
-                assert.elementCount('.field-playerZoneCards .card:not(.card--placeholder)', 1);
+                assert.elementCount('.field-playerZoneCards .card:not(.card-placeholder)', 1);
             },
             'should NOT have card among station cards'() {
                 assert.elementCount('.field-player .stationCard', 1);
@@ -1341,7 +1341,7 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.cardChoiceDialog', 0);
             },
             'should NOT have card in zone'() {
-                assert.elementCount('.field-playerZoneCards .card:not(.card--placeholder)', 0);
+                assert.elementCount('.field-playerZoneCards .card:not(.card-placeholder)', 0);
             },
             'should have card among station cards'() {
                 assert.elementCount('.field-player .stationCard', 2);
@@ -1378,7 +1378,7 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.cardChoiceDialog', 0);
             },
             'should NOT show card in zone'() {
-                assert.elementCount('.field-playerZoneCards .card:not(.card--placeholder)', 0);
+                assert.elementCount('.field-playerZoneCards .card:not(.card-placeholder)', 0);
             },
             'should NOT show card on hand'() {
                 assert.elementCount('.field-playerCardsOnHand .card', 0);
@@ -1439,7 +1439,7 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.cardChoiceDialog', 0);
             },
             'should NOT have card in zone'() {
-                assert.elementCount('.field-playerZoneCards .card:not(.card--placeholder)', 0);
+                assert.elementCount('.field-playerZoneCards .card:not(.card-placeholder)', 0);
             },
             'should show card on hand'() {
                 assert.elementCount('.field-playerCardsOnHand .card', 1);
@@ -1478,7 +1478,7 @@ module.exports = testCase('MatchPage', {
                 await click('.field-playerZoneCards .card-ghost:eq(0)');
             },
             'should have card in zone'() {
-                assert.elementCount('.field-playerZoneCards .card:not(.card--placeholder)', 2);
+                assert.elementCount('.field-playerZoneCards .card:not(.card-placeholder)', 2);
             },
             'should NOT have card in hand'() {
                 assert.elementCount('.field-playerCardsOnHand .card', 0);
@@ -1543,7 +1543,7 @@ module.exports = testCase('MatchPage', {
                 await click('.stationCard .movable');
             },
             'should have card in zone'() {
-                assert.elementCount('.field-playerZoneCards .card:not(.card--placeholder)', 1);
+                assert.elementCount('.field-playerZoneCards .card:not(.card-placeholder)', 1);
             },
             'should NOT have card among station cards'() {
                 assert.elementCount('.field-player .stationCard', 1);
@@ -1583,7 +1583,7 @@ module.exports = testCase('MatchPage', {
                 await click('.opponentCardsInPlayerZone .card:eq(0) .selectable');
             },
             'should NOT have card in zone'() {
-                assert.elementCount('.field-playerZoneCards .card:not(.card--placeholder)', 1);
+                assert.elementCount('.field-playerZoneCards .card:not(.card-placeholder)', 1);
             },
             'should NOT have card in hand'() {
                 assert.elementCount('.field-playerCardsOnHand .card', 0);
@@ -1836,7 +1836,7 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.readyToAttack', 0);
             },
             'should NOT show extra transient card in home zone': function () {
-                assert.elementCount('.playerCardsInZone .card:not(.card--placeholder)', 2);
+                assert.elementCount('.playerCardsInZone .card:not(.card-placeholder)', 2);
             }
         },
         'when select card in opponent zone to sacrifice': {
