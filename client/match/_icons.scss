@@ -1,0 +1,33 @@
+
+.icon-reload {
+  position: absolute;
+  right: 100%;
+  background-image: url(/icon/reload.png);
+  background-size: contain;
+  filter: invert(40%);
+  width: 34px;
+  height: 34px;
+  border: 0;
+  margin: 0 10px;
+  background-color: transparent;
+
+  &:hover {
+    animation: rotate .8s linear 0s infinite;
+  }
+
+  &:active {
+    filter: invert(0);
+    background-color: yellow;
+    border-radius: 100%;
+    outline: 0;
+  }
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

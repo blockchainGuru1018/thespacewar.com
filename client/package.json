@@ -3,12 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@babel/runtime": "^7.3.4",
     "portal-vue": "^1.5.0",
     "v-click-outside": "^2.0.2",
     "vue": "^2.5.21",
@@ -16,8 +15,11 @@
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-object-rest-spread": "^7.3.4",
+    "@babel/plugin-transform-async-to-generator": "^7.3.4",
+    "@babel/plugin-transform-runtime": "^7.3.4",
+    "@babel/preset-env": "^7.3.4",
     "babel-loader": "^8.0.4",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-polyfill": "^6.26.0",
     "bocha": "^1.7.1",
     "css-loader": "^1.0.1",
@@ -25,6 +27,7 @@
     "find": "^0.2.9",
     "node-sass": "^4.11.0",
     "sass-loader": "^7.1.0",
+    "uglifyjs-webpack-plugin": "^2.1.2",
     "vue-loader": "^15.4.2",
     "vue-template-compiler": "^2.5.21",
     "webpack": "^4.28.2",

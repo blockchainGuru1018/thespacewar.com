@@ -1,6 +1,8 @@
 @import "cardVariables";
 
 .card {
+  -webkit-user-select: none;
+  user-select: none;
   display: flex;
   flex-direction: column;
   background: white;

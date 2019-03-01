@@ -2,10 +2,44 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="apple-mobile-web-app-title" content="The Space War"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=.7, maximum-scale=.7, minimum-scale=.7, user-scalable=no"/>
     <title>The Space War</title>
     <style>
         body {
             margin: 0;
+            background: black;
+        }
+
+        .match-wrapper {
+            overflow: hidden;
+            position: fixed;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .match {
+            overflow: hidden;
+        }
+
+        div {
+            -webkit-user-select: none !important;
+            user-select: none !important;
+        }
+
+        img {
+            -webkit-user-select: none !important;
+            user-select: none !important;
+        }
+
+        span {
+            -webkit-user-select: none !important;
+            user-select: none !important;
         }
     </style>
     <link href="https://fonts.googleapis.com/css?family=Space+Mono" rel="stylesheet">

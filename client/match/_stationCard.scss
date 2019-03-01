@@ -5,8 +5,9 @@
   margin-right: 12px;
   margin-top: 8px;
   display: flex;
-  flex: 1 1;
+  flex: 1 1 auto;
   max-width: 30%;
+  min-width: 10%;
 
   .card {
     width: $playerStationCardWidth;
@@ -53,7 +54,6 @@
   .card-ghost {
     position: relative;
     z-index: 2;
-    background: transparent;
   }
 }
 

@@ -1,4 +1,5 @@
 @import "cardVariables";
+@import "icons";
 
 .match {
   display: flex;
@@ -209,6 +210,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  flex: 10 0 auto;
 }
 
 .field-opponentZoneRow {
@@ -217,7 +219,6 @@
 }
 
 .field-opponentZoneRows {
-  flex: 2 0 auto;
   justify-content: flex-end;
 }
 
@@ -246,7 +247,6 @@
 
 .field-playerZoneRows {
   justify-content: flex-start;
-  flex: 1 0 auto;
 }
 
 .playerCardsInZone {
@@ -379,6 +379,10 @@
     position: absolute;
     left: 100%;
   }
+
+  &--hoveredOver {
+    background: rgba(255, 0, 0, .2);
+  }
 }
 
 .holdingCard {
@@ -457,20 +461,10 @@
 
 .match-background {
   position: absolute;
-  transform: translate(-50%, -50%) scale(.4);
-  top: 50%;
-  left: 50%;
-  //animation: move 2000s linear 0s infinite alternate;
-  filter: contrast(190%) saturate(115%) brightness(10%) hue-rotate(230deg) grayscale(20%);
-}
-
-@keyframes move {
-  0% {
-    transform: translate(-50%, -50%) scale(.4);
-  }
-  100% {
-    transform: translate(-40%, -40%) scale(.8, 1);
-  }
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .match-backgroundWrapper {
@@ -495,18 +489,23 @@
 .cardHoverActivator {
   position: absolute;
   width: $playerCardOnHandWidth;
-  height: 100px;
+  height: 150px;
   bottom: 100px;
   opacity: 0;
   background-size: contain;
   background-repeat: no-repeat;
   background-color: transparent;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
   transform: translateX(-50%);
   z-index: 2;
   cursor: pointer;
+
+  touch-action: none;
 }
 
 .cardHoverBlowUp {
+  touch-action: none;
+
   position: absolute;
   background-size: contain;
   background-repeat: no-repeat;

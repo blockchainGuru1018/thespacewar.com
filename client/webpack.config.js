@@ -3,23 +3,39 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 module.exports = {
     mode: 'development',
-    entry: './index.js',
+    entry: ['./index.js'],
     output: {
         filename: 'index.js',
         path: path.resolve(__dirname, '..', 'server', 'client-dist')
     },
     module: {
         rules: [
-            {
-                test: /\.vue$/,
-                loader: 'vue-loader'
-            },
+
             {
                 test: /\.js$/,
                 loader: 'babel-loader',
                 query: {
-                    plugins: ['transform-object-rest-spread']
+                    presets: [
+                        [
+                            "@babel/preset-env",
+                            {
+                                "targets": {
+                                    "browsers": [
+                                        "> 5%"
+                                    ]
+                                }
+                            }
+                        ]
+                    ],
+                    plugins: [
+                        '@babel/plugin-proposal-object-rest-spread',
+                        '@babel/plugin-transform-async-to-generator'
+                    ]
                 }
+            },
+            {
+                test: /\.vue$/,
+                loader: 'vue-loader'
             },
             {
                 test: /\.scss$/,

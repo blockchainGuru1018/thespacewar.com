@@ -1,26 +1,28 @@
 <template>
     <div class="field-playerCardsOnHand field-section">
-        <div :style="getCardHoverActivatorStyle(card, index)"
-             @click.stop="playerCardClick(card)"
-             @mouseenter="mouseEnterCardAtIndex(index)"
-             @mouseleave="mouseLeaveCardAtIndex(index)"
-             class="cardHoverActivator"
-             v-for="card, index in playerVisibleCardsOnHand"
-             v-if="!holdingCard"/>
-        <div :style="getCardHoverBlowUpStyle(card, index)"
-             @click.stop="playerCardClick(card)"
-             @mouseenter="mouseEnterCardAtIndex(index)"
-             @mouseleave="mouseLeaveCardAtIndex(index)"
-             class="cardHoverBlowUp"
-             v-for="card, index in playerVisibleCardsOnHand"
-             v-if="!holdingCard && index === hoveringOverCardAtIndex"/>
         <div
-                :class="getPlayerCardClasses(card)"
-                :style="getCardOnHandStyle(card, index)"
-                @click="switchCardClick(card)"
-                v-for="card, index in playerVisibleCardsOnHand"
-                v-if="card !== holdingCard"
-        />
+                :data-index="index"
+                :style="getCardHoverActivatorStyle(card, index)"
+                @click.stop="playerCardClick(card)"
+                @mouseenter="mouseEnterCardAtIndex(index)"
+                @mouseleave="mouseLeaveCardAtIndex(index)"
+                class="cardHoverActivator"
+                ref="cardHoverActivator"
+                v-for="card, index in playerVisibleCardsOnHand"/>
+        <div :data-index="index"
+             v-for="card, index in playerVisibleCardsOnHand"
+             :style="getCardHoverBlowUpStyle(card, index)"
+             class="cardHoverBlowUp"
+             @click.stop="playerCardClick(card)"
+             @mouseenter="mouseEnterCardAtIndex(index)"
+             @mouseleave="mouseLeaveCardAtIndex(index)"
+             ref="cardHoverBlowUp"
+             v-if="!holdingCard && index === hoveringOverCardAtIndex"/>
+        <div :class="getPlayerCardClasses(card)"
+             v-for="card, index in playerVisibleCardsOnHand"
+             :style="getCardOnHandStyle(card, index)"
+             @click="switchCardClick(card)"
+             v-if="card !== holdingCard"/>
     </div>
 </template>
 <script>
@@ -122,6 +124,37 @@
                     this.hoveringOverCardAtIndex = -1;
                 }
             }
+        },
+        mounted() {
+            const dragLooseThreshold = 50;
+
+            let startY = 0;
+            const onTouchStart = e => {
+                startY = e.touches[0].clientY;
+                onTouchMove(e);
+            };
+
+            const onTouchMove = e => {
+                if (this.holdingCard) return;
+
+                if (e.touches[0].clientY < (startY - dragLooseThreshold)) {
+                    this.$emit('cardClick', this.playerVisibleCardsOnHand[this.hoveringOverCardAtIndex]);
+                    this.hoveringOverCardAtIndex = -1;
+                    return;
+                }
+
+                let touchedElement = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+                const activator = this.$refs.cardHoverActivator.find(activator => activator === touchedElement);
+                if (activator) {
+                    this.hoveringOverCardAtIndex = parseInt(activator.dataset.index);
+                }
+                else {
+                    this.hoveringOverCardAtIndex = -1;
+                }
+            };
+
+            document.addEventListener('touchstart', onTouchStart);
+            document.addEventListener('touchmove', onTouchMove);
         }
     };
 </script>
