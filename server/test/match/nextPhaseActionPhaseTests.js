@@ -15,6 +15,7 @@ const {
     catchError,
     createState,
 } = require('./shared.js');
+const GoodKarma = require('../../../shared/card/GoodKarma.js');
 const FakeDeck = require('../testUtils/FakeDeck.js');
 const EnergyShieldId = '21';
 const GoodKarmaCommonId = '11';
@@ -40,21 +41,14 @@ module.exports = {
             this.match.putDownCard('P1A', { location: 'station-action', cardId: 'C1A' });
             this.error = catchError(() => this.match.putDownCard('P1A', { location: 'zone', cardId: 'C2A' }));
         },
-        'should NOT give error'() {
-            refute(this.error);
+        'should throw error'() {
+            assert(this.error);
+            assert.equals(this.error.message, 'Cannot afford card');
         },
-        'when restore state should have card in zone': function () {
+        'when restore state should NOT have card in zone': function () {
             this.match.start();
             let { cardsInZone } = this.firstPlayerConnection.restoreState.lastCall.args[0];
-            assert.equals(cardsInZone.length, 1);
-            assert.equals(cardsInZone[0].id, 'C2A');
-        },
-        'when restore state should have the new station card': function () {
-            this.match.start();
-            let { stationCards } = this.firstPlayerConnection.restoreState.lastCall.args[0];
-            assert.equals(stationCards.length, 1);
-            assert.equals(stationCards[0].id, 'C1A');
-            assert.equals(stationCards[0].place, 'action');
+            assert.equals(cardsInZone.length, 0);
         }
     },
     'when has Energy shield in home zone and put down another Energy shield': {
@@ -149,13 +143,13 @@ module.exports = {
         },
         'should emit state changed with draw card requirement'() {
             assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
-                requirements: [sinon.match({ type: 'drawCard', count: 4 })]
+                requirements: [sinon.match({ type: 'drawCard', count: GoodKarmaDrawCardRequirementCount() })]
             }));
         },
         'when restore state should have requirement'() {
             this.match.start();
             assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
-                requirements: [sinon.match({ type: 'drawCard', count: 4 })]
+                requirements: [sinon.match({ type: 'drawCard', count: GoodKarmaDrawCardRequirementCount() })]
             }));
         }
     },
@@ -182,14 +176,27 @@ module.exports = {
         },
         'should emit state changed with discard card requirement'() {
             assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
-                requirements: [sinon.match({ type: 'discardCard', count: 2 })]
+                requirements: [sinon.match({ type: 'discardCard', count: GoodKarmaDiscardCardRequirementCount() })]
             }));
         },
         'when restore state should have requirement'() {
             this.match.start();
             assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
-                requirements: [sinon.match({ type: 'discardCard', count: 2 })]
+                requirements: [sinon.match({ type: 'discardCard', count: GoodKarmaDiscardCardRequirementCount() })]
             }));
         }
     }
 };
+
+function GoodKarmaDrawCardRequirementCount() {
+    return getCount(GoodKarma, 'requirementsWhenEnterDrawPhase', 'forPlayer', 'drawCard');
+}
+
+function GoodKarmaDiscardCardRequirementCount() {
+    return getCount(GoodKarma, 'requirementsWhenLeavingDrawPhase', 'forPlayer', 'discardCard');
+}
+
+function getCount(CardConstructor, keyInCard, keyInRequirement, type) {
+    let card = new CardConstructor({ card: {} });
+    return card[keyInCard][keyInRequirement].find(r => r.type === type).count;
+}

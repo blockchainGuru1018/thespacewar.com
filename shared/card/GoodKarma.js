@@ -1,6 +1,6 @@
 const BaseCard = require('./BaseCard.js');
 
-module.exports = class GoodKarma extends BaseCard {
+class GoodKarma extends BaseCard {
     constructor(deps) {
         super(deps);
 
@@ -16,7 +16,7 @@ module.exports = class GoodKarma extends BaseCard {
         return {
             forOpponent: [],
             forPlayer: [
-                { type: 'drawCard', count: 4, cardCommonId }
+                { type: 'drawCard', count: 3, cardCommonId }
             ]
         }
     }
@@ -26,8 +26,10 @@ module.exports = class GoodKarma extends BaseCard {
         return {
             forOpponent: [],
             forPlayer: [
-                { type: 'discardCard', count: 2, cardCommonId }
+                { type: 'discardCard', count: 1, cardCommonId }
             ]
         }
     }
-};
+}
+
+module.exports = GoodKarma;
