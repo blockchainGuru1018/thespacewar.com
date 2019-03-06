@@ -1,28 +1,28 @@
 <template>
     <div class="field-playerCardsOnHand field-section">
-        <div
-                :data-index="index"
-                :style="getCardHoverActivatorStyle(card, index)"
-                @click.stop="playerCardClick(card)"
-                @mouseenter="mouseEnterCardAtIndex(index)"
-                @mouseleave="mouseLeaveCardAtIndex(index)"
-                class="cardHoverActivator cardOnHand"
-                ref="cardHoverActivator"
-                v-for="card, index in playerVisibleCardsOnHand"/>
-        <div :data-index="index"
+        <div v-if="!holdingCard"
              v-for="card, index in playerVisibleCardsOnHand"
-             :style="getCardHoverBlowUpStyle(card, index)"
-             class="cardHoverBlowUp"
+             :data-index="index"
+             :style="getCardHoverActivatorStyle(card, index)"
              @click.stop="playerCardClick(card)"
              @mouseenter="mouseEnterCardAtIndex(index)"
              @mouseleave="mouseLeaveCardAtIndex(index)"
-             ref="cardHoverBlowUp"
-             v-if="!holdingCard && index === hoveringOverCardAtIndex"/>
-        <div :class="getPlayerCardClasses(card)"
+             class="cardHoverActivator cardOnHand"
+             ref="cardHoverActivator"/>
+        <div v-if="!holdingCard && index === hoveringOverCardAtIndex"
              v-for="card, index in playerVisibleCardsOnHand"
+             :data-index="index"
+             :style="getCardHoverBlowUpStyle(card, index)"
+             @click.stop="playerCardClick(card)"
+             @mouseenter="mouseEnterCardAtIndex(index)"
+             @mouseleave="mouseLeaveCardAtIndex(index)"
+             class="cardHoverBlowUp"
+             ref="cardHoverBlowUp"/>
+        <div v-if="card !== holdingCard"
+             v-for="card, index in playerVisibleCardsOnHand"
+             :class="getPlayerCardClasses(card)"
              :style="getCardOnHandStyle(card, index)"
-             @click="switchCardClick(card)"
-             v-if="card !== holdingCard"/>
+             @click="switchCardClick(card)"/>
     </div>
 </template>
 <script>
@@ -70,14 +70,10 @@
                 if (card.highlighted) {
                     classes.push('card--highlight');
                 }
-                if (!this.holdingCard) {
-                    classes.push('card--hoverable');
-                }
                 return classes;
             },
             getCardImageUrl(card) {
-                const cardUrl = getCardImageUrl.byCommonId(card.commonId);
-                return cardUrl;
+                return getCardImageUrl.byCommonId(card.commonId);
             },
             getCardOnHandStyle(card, index) {
                 const cardUrl = getCardImageUrl.byCommonId(card.commonId);

@@ -19,9 +19,6 @@
                         End turn
                     </button>
                 </template>
-                <div class="playerHud-phaseText nextPhaseButton nextPhaseButton-wait" v-else-if="phase === PHASES.wait">
-                    Enemy turn
-                </div>
             </div>
 
             <div class="guideTextContainer">
@@ -50,23 +47,24 @@
                     Select {{ numberOfStationCardsToSelect}}
                     more station {{ numberOfStationCardsToSelect === 1 ? 'card' : 'cards' }}
                 </div>
-                <div class="guideText-discardDurationCards guideText guideText--small"
-                     v-else-if="phase === PHASES.preparation">
+                <div v-else-if="phase === PHASES.preparation"
+                     class="guideText-discardDurationCards guideText guideText--small">
                     Discard any duration card you don't want to pay for
                 </div>
                 <div class="guideText-drawCard guideText guideText--small" v-else-if="phase === PHASES.draw">
                     Draw card or Mill opponent
                 </div>
-                <div class="guideText-drawCard guideText guideText--small"
-                     v-else-if="inDiscardPhaseAndMustDiscardCard">
+                <div v-else-if="inDiscardPhaseAndMustDiscardCard"
+                     class="guideText-drawCard guideText guideText--small">
                     Discard {{ amountOfCardsToDiscard + (amountOfCardsToDiscard === 1 ? ' card' : ' cards')}} to
                     continue
                 </div>
-                <!--<div class="playerActionPointsContainer" >-->
                 <div class="playerActionPoints" v-else-if="showActionPoints">
                     {{ playerActionPointsText }}
                 </div>
-                <!--</div>-->
+                <div class="guideText" v-else-if="phase === PHASES.wait">
+                    Enemy turn
+                </div>
             </div>
         </portal>
         <portal to="match">
