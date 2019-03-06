@@ -13,7 +13,7 @@ module.exports = class Discover extends BaseCard {
 
     get choicesWhenPutDownInHomeZone() {
         return [
-            { name: 'draw', text: 'Draw 4 cards and the opponent draws 3 cards' },
+            { name: 'draw', text: 'Draw 3 cards and the opponent draws 2 cards' },
             { name: 'discard', text: 'Discard 1 card and the opponent discards 2 cards' }
         ];
     }
