@@ -1,3 +1,5 @@
+const localGameDataFacade = require("../utils/localGameDataFacade.js");
+
 module.exports = function ({
     matchRepository,
     userRepository,
@@ -7,10 +9,13 @@ module.exports = function ({
     return {
         namespaced: true,
         name: 'lobby',
-        state: {},
+        state: {
+            loggingOut: false
+        },
         actions: {
             init,
-            startGameWithUser
+            startGameWithUser,
+            logout
         }
     }
 
@@ -40,5 +45,13 @@ module.exports = function ({
         if (matchId) {
             route('match', { matchId, opponentUser });
         }
+    }
+
+    function logout({ state }) {
+        localGameDataFacade.removeAll();
+        state.loggingOut = true;
+        setTimeout(() => {
+            window.location.reload();
+        });
     }
 };

@@ -1,4 +1,5 @@
 const ajax = require('../utils/ajax.js');
+const localGameDataFacade = require("../utils/localGameDataFacade.js")
 
 module.exports = function (deps) {
 
@@ -8,8 +9,7 @@ module.exports = function (deps) {
     let cachedUsers = [];
 
     if (isAlreadyLoggedIn()) { //TODO Might be unnecessary if we still check this in LoadingStore
-        const ownUserJson = localStorage.getItem('own-user');
-        ownUser = JSON.parse(ownUserJson);
+        ownUser = localGameDataFacade.getOwnUser();
     }
 
     return {
@@ -50,6 +50,6 @@ module.exports = function (deps) {
     }
 
     function isAlreadyLoggedIn() {
-        return !!localStorage.getItem('own-user');
+        return !!localGameDataFacade.getOwnUser();
     }
 };

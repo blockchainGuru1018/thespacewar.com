@@ -3,10 +3,10 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 module.exports = {
     mode: 'development',
-    entry: ['./index.js'],
+    entry: ['./input.js'],
     output: {
-        filename: 'index.js',
-        path: path.resolve(__dirname, '..', 'server', 'client-dist')
+        filename: 'output.test.js',
+        path: path.resolve(__dirname)
     },
     module: {
         rules: [

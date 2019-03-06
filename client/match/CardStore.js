@@ -132,14 +132,15 @@ module.exports = function (deps) {
                 if (!isStationCard && state.selectedCardIdsForAction.length > 0) return false;
 
                 const card = rootGetters['match/createCard'](cardData, { isOpponent: isOpponentCard });
-                
+
                 if (isStationCard) {
+                    if (activeCard.isInHomeZone()) return false;
+                    if (cardData.flipped) return false;
+
                     const someCardStopsAttacks = rootState.match.opponentCardsInZone
                         .some(c => rootGetters['match/createCard'](c).stopsStationAttack());
-                    return !cardData.flipped
-                        && !activeCard.isInHomeZone()
-                        && !someCardStopsAttacks
-                        && activeCard.canTargetCardForSacrifice(card);
+                    if (someCardStopsAttacks) return false;
+                    return activeCard.canTargetCardForSacrifice(card);
                 }
                 else {
                     return activeCard.canTargetCardForSacrifice(card);
@@ -193,20 +194,15 @@ module.exports = function (deps) {
 
     async function choiceDialogApplyChoice({ state, dispatch }, choice) {
         rootDispatch.loadingIndicator.show();
-        await dispatch('putDownCard', {
-            location: 'zone',
-            choice,
-            cardId: state.choiceCardId
-        });
-        await dispatch('removeTransientCard', state.choiceCardId);
+        const choiceCardId = state.choiceCardId;
         dispatch('_hideChoiceDialog');
+        await dispatch('putDownCard', { location: 'zone', choice, cardId: choiceCardId });
+        dispatch('removeTransientCard', choiceCardId);
         rootDispatch.loadingIndicator.hide();
     }
 
-    function showCardAction(
-        { state, getters, dispatch },
-        { cardData, action, checkIfCanBeSelectedForAction, onFinish }
-    ) {
+    function showCardAction({ state, getters, dispatch },
+        { cardData, action, checkIfCanBeSelectedForAction, onFinish }) {
         onActiveActionFinish = onFinish;
         if (action.showTransientCardInHomeZone) {
             dispatch('moveCardToZoneAsTransient', cardData);

@@ -1,3 +1,5 @@
+const localGameDataFacade = require("../utils/localGameDataFacade")
+
 module.exports = function ({
     rootStore,
     pageDependencies
@@ -39,8 +41,7 @@ module.exports = function ({
 
         let b = performance.now();
         if (isAlreadyLoggedIn()) {
-            const ownUserJson = localStorage.getItem('own-user');
-            const ownUser = JSON.parse(ownUserJson);
+            const ownUser = localGameDataFacade.getOwnUser();
 
             const allUsers = await userRepository.getAll();
             const existsOnServer = allUsers.some(u => u.id === ownUser.id);
@@ -48,7 +49,7 @@ module.exports = function ({
                 dispatch('user/storeOwnUser', ownUser, { root: true });
             }
             else {
-                resetLocalStorage();
+                localGameDataFacade.removeAll();
                 dispatch('user/storeOwnUser', null, { root: true });
             }
         }
@@ -75,11 +76,6 @@ module.exports = function ({
     }
 
     function isAlreadyLoggedIn() {
-        return !!localStorage.getItem('own-user');
-    }
-
-    function resetLocalStorage() {
-        localStorage.removeItem('own-user');
-        localStorage.removeItem('ongoing-match');
+        return !!localGameDataFacade.getOwnUser();
     }
 };

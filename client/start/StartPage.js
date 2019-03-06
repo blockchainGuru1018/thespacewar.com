@@ -1,5 +1,6 @@
-const Vue = require('vue');
-const StartView = require('./Start.vue').default;
+const resolveModuleWithPossibleDefault = require('../utils/resolveModuleWithPossibleDefault.js');
+const Vue = resolveModuleWithPossibleDefault(require('vue'));
+const StartView = resolveModuleWithPossibleDefault(require('./Start.vue'));
 
 module.exports = function ({
     route,

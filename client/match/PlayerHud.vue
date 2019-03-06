@@ -4,22 +4,24 @@
             <div class="nextPhaseButtonContainer">
                 <button v-if="phase === 'start'"
                         @click="startClick"
-                        class="nextPhaseButton">
+                        class="playerHud-phaseText nextPhaseButton">
                     Start
                 </button>
                 <template v-else-if="canGoToNextTurn">
-                    <button class="nextPhaseButton"
+                    <button class="playerHud-phaseText nextPhaseButton"
                             @click="nextPhaseClick"
                             v-if="nextPhaseButtonText">
                         {{ nextPhaseButtonText }}
                     </button>
                     <button v-else-if="endTurnButtonVisible"
                             @click="nextPhaseClick"
-                            class="nextPhaseButton nextPhaseButton-endTurn">
+                            class="playerHud-phaseText nextPhaseButton nextPhaseButton-endTurn">
                         End turn
                     </button>
                 </template>
-                <div class="nextPhaseButton nextPhaseButton-wait" v-else-if="phase === PHASES.wait">Enemy turn</div>
+                <div class="playerHud-phaseText nextPhaseButton nextPhaseButton-wait" v-else-if="phase === PHASES.wait">
+                    Enemy turn
+                </div>
             </div>
 
             <div class="guideTextContainer">
@@ -344,13 +346,6 @@
         &:first-child {
             margin-right: 0;
         }
-    }
-
-    .playerHud-phaseText {
-        display: inline-block;
-        background-color: #35A7FF;
-        box-shadow: inset 0 1px 10px 1px rgba(0, 0, 0, 0.18);
-        color: white;
     }
 
     .playerHud-button {

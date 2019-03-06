@@ -1,3 +1,4 @@
 ./idea
 ./client/node_modules
+./client-test/node_modules
 ./server/node_modules

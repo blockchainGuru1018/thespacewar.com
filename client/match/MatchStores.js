@@ -5,6 +5,7 @@ const STORES = [
     require('./CardStore.js'),
     require('./loadingIndicator/LoadingIndicatorStore.js')
 ];
+const LOGGING_ENABLED = false;
 
 module.exports = function (deps) {
 
@@ -51,7 +52,9 @@ function loggedActions(actions) {
     const loggedActions = {};
     Object.keys(actions).forEach(actionName => {
         loggedActions[actionName] = (...args) => {
-            console.log(`[${new Date().toISOString()}] ACTION: ${actionName}`, { ...args });
+            if (LOGGING_ENABLED) {
+                console.log(`[${new Date().toISOString()}] ACTION: ${actionName}`, { ...args });
+            }
             return actions[actionName](...args);
         };
     });

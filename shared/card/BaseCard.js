@@ -91,7 +91,6 @@ class BaseCard {
         if (this.paralyzed) return false;
         if (!this.attack && !this.hasSpecialAttackForCardsInZones()) return false;
         if (!this._canThePlayer.attackWithThisCard(this)) return false;
-
         if (this.type === 'duration') return false;
         const isAttackPhase = this._playerStateService.getPhase() === phases.PHASES.attack
         if (!isAttackPhase) return false;

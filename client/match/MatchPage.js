@@ -1,4 +1,5 @@
-const Vue = require('vue').default || require('vue');
+const resolveModuleWithPossibleDefault = require('../../client/utils/resolveModuleWithPossibleDefault.js');
+const Vue = resolveModuleWithPossibleDefault(require('vue'));
 const MatchView = require('./Match.vue').default;
 const MatchStores = require('./MatchStores.js');
 
@@ -29,9 +30,11 @@ module.exports = function (deps) {
     }
 
     function hide() {
-        vm.$destroy();
-        vm.$el.remove();
-        matchStores.destroyAll();
-        vm = null;
+        if (vm) {
+            vm.$destroy();
+            vm.$el.remove();
+            matchStores.destroyAll();
+            vm = null;
+        }
     }
 }

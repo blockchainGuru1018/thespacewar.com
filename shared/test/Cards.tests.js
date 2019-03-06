@@ -145,6 +145,29 @@ module.exports = testCase('Cards', {
                 refute(this.card.canRepair());
             }
         },
+        'when has repaired this turn should NOT be able to attack': {
+            setUp() {
+                this.card = createCard(SmallRepairShop, {
+                    card: { id: 'C1A', attack: 1 },
+                    matchService: {
+                        getTurn: () => 1,
+                    },
+                    queryEvents: queryEventsFactory.withStubs({
+                        getMovesOnTurn: () => [],
+                        getTurnWhenCardWasPutDown: () => 1,
+                        getRepairsOnTurn: (cardId, turn) => cardId === 'C1A' && turn === 1 ? [{}] : null,
+                        getAttacksOnTurn: () => []
+                    }),
+                    playerStateService: playerStateServiceFactory.withStubs({
+                        getPhase: () => 'attack',
+                        hasMatchingCardInSomeZone: matcher => matcher({ canBeRepaired: () => true })
+                    })
+                });
+            },
+            'should NOT be able to attack'() {
+                refute(this.card.canAttack());
+            }
+        },
         'when is paralyzed should NOT be able to repair': {
             setUp() {
                 this.card = createCard(SmallRepairShop, {

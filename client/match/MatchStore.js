@@ -9,6 +9,7 @@ const CanThePlayer = require("../../shared/match/CanThePlayer.js");
 const PlayerRuleService = require("../../shared/match/PlayerRuleService.js");
 const ClientPlayerStateService = require("./ClientPlayerStateService");
 const mapFromClientToServerState = require('./mapFromClientToServerState.js');
+const localGameDataFacade = require('../utils/localGameDataFacade.js');
 const {
     COMMON_PHASE_ORDER,
     PHASES
@@ -609,7 +610,8 @@ module.exports = function (deps) {
     function persistOngoingMatch({ state }) {
         const playerIds = [state.ownUser.id, state.opponentUser.id]
         const matchData = { id: matchId, playerIds };
-        localStorage.setItem('ongoing-match', JSON.stringify(matchData));
+
+        localGameDataFacade.setOngoingMatch(matchData);
     }
 
     //TODO Should NOT take "cards" as a parameter. This should be emitted and received by a StateChanged event
@@ -765,7 +767,7 @@ module.exports = function (deps) {
     }
 
     function deleteMatchLocalDataAndReturnToStart() {
-        localStorage.removeItem('ongoing-match');
+        localGameDataFacade.removeOngoingMatch();
         route('start');
     }
 

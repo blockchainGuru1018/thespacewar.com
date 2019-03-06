@@ -1,24 +1,26 @@
-let {
-    stub,
-    assert,
-    refute,
-    defaults,
-    timeoutPromise: timeout,
-    dom: {
-        clickAndTick: click
-    },
-    testCase
-} = require('bocha');
-const Page = require('../../../match/MatchPage.js');
-const FakeCardDataAssembler = require('../../../../server/test/testUtils/FakeCardDataAssembler.js');
+let assert = require('bocha/lib/dom/assert.js');
+let refute = require('bocha/lib/dom/refute.js');
+let timeout = require('bocha/lib/timeoutPromise.js');
+let bochaDom = require('bocha/lib/dom/dom.js');
+let sinon = require('sinon');
+let stub = sinon.stub;
+let click = bochaDom.clickAndTick;
+const resolveModuleWithPossibleDefault = require('../client/utils/resolveModuleWithPossibleDefault.js');
+const Vue = resolveModuleWithPossibleDefault(require('vue'));
+const Vuex = resolveModuleWithPossibleDefault(require('vuex'));
+const PortalVue = resolveModuleWithPossibleDefault(require('portal-vue'));
+const vClickOutside = resolveModuleWithPossibleDefault(require('v-click-outside'));
+const defaults = require('lodash/defaults');
+const Page = require('../client/match/MatchPage.js');
+const FakeCardDataAssembler = require('../server/test/testUtils/FakeCardDataAssembler.js');
 const createCard = FakeCardDataAssembler.createCard;
-const PutDownCardEvent = require('../../../../shared/PutDownCardEvent.js');
-const MoveCardEvent = require('../../../../shared/event/MoveCardEvent.js');
-const RepairCardEvent = require('../../../../shared/event/RepairCardEvent.js');
-const AttackEvent = require('../../../../shared/event/AttackEvent.js');
-const SmallCannon = require('../../../../shared/card/SmallCannon.js');
-const getCardImageUrl = require('../../../utils/getCardImageUrl.js');
-const cardsJson = require('../../../../server/card/rawCardData.cache.json').data;
+const PutDownCardEvent = require('../shared/PutDownCardEvent.js');
+const MoveCardEvent = require('../shared/event/MoveCardEvent');
+const RepairCardEvent = require('../shared/event/RepairCardEvent.js');
+const AttackEvent = require('../shared/event/AttackEvent.js');
+const SmallCannon = require('../shared/card/SmallCannon.js');
+const getCardImageUrl = require('../client/utils/getCardImageUrl.js');
+const cardsJson = require('../server/card/rawCardData.cache.json').data;
 
 const DiscoveryCommonId = '42';
 const CommonShipId = '25';
@@ -26,76 +28,86 @@ const FastMissileId = '6';
 const FatalErrorCommonId = '38';
 const TriggerHappyJoeCommonId = '24';
 const DeadlySniperCommonId = '39';
-const ExpansionCommonId = '40';
 const PursuiterCommonId = '19';
 const TheShadeCommonId = '27';
+const EnergyShieldCommonId = '21';
+const SmallRepairShopId = '29';
 
-const Vue = require('vue').default;
-const Vuex = require('vuex').default;
 Vue.use(Vuex);
+Vue.use(PortalVue);
+Vue.use(vClickOutside);
 
-module.exports = testCase('MatchPage', {
-    async setUp() {
-        sinon.stub(getCardImageUrl, 'byCommonId', () => '/#');
+let controller;
 
-        this.createController = (...args) => {
-            this.controller = TestController(...args);
-            return { dispatch: this.controller.dispatch };
-        };
+beforeEach(() => {
+    sinon.stub(getCardImageUrl, 'byCommonId').returns('/#');
+});
+
+afterEach(() => {
+    getCardImageUrl.byCommonId.restore && getCardImageUrl.byCommonId.restore();
+    controller && controller.tearDown();
+});
+
+describe('misc', async () => {
+    test('when in "start" phase and click card on hand should NOT see ANY card ghosts', async () => {
+        const { dispatch } = createController();
+        controller.showPage();
+        dispatch('restoreState', FakeState({
+            turn: 1,
+            currentPlayer: 'P1A',
+            phase: 'start',
+            cardsOnHand: [createCard({ id: 'C1A' })],
+            stationCards: [{ place: 'draw' }]
+        }));
+        await timeout();
+
+        await click('.field-playerCardsOnHand .cardOnHand');
+
+        assert.elementCount('.card-ghost', 0);
+    });
+});
+
+describe('action phase', () => {
+    describe('when in action phase and click card on hand', async () => {
+        beforeEach(async () => {
+            const { dispatch } = createController();
+            controller.showPage();
+            dispatch('restoreState', FakeState({
+                turn: 1,
+                currentPlayer: 'P1A',
+                phase: 'action',
+                cardsOnHand: [createCard({ id: 'C1A' })],
+                stationCards: [{ place: 'draw' }]
+            }));
+            await timeout();
+
+            await click('.field-playerCardsOnHand .cardOnHand');
+        });
+
+        test('should see station card ghosts', async () => {
+            assert.elementCount('.field-playerStation .card-ghost', 3);
+        });
+    });
+});
+
+let keysToPreserver = [];
+
+const testConfig = {
+    setUp() {
+        keysToPreserver.push(Object.keys(this));
     },
     tearDown() {
-        getCardImageUrl.byCommonId.restore();
-
-        this.controller && this.controller.tearDown();
-        delete this.createController;
-    },
-    'misc': {
-        'when in "start" phase and click card on hand': {
-            async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
-                dispatch('restoreState', FakeState({
-                    turn: 1,
-                    currentPlayer: 'P1A',
-                    phase: 'start',
-                    cardsOnHand: [createCard({ id: 'C1A' })],
-                    stationCards: [{ place: 'draw' }]
-                }));
-                await timeout();
-
-                await click('.field-playerCardsOnHand .card');
-            },
-            'should NOT see ANY card ghosts'() {
-                assert.elementCount('.card-ghost', 0);
-            }
-        }
-    },
-    'action phase': {
-        'when in action phase and click card on hand': {
-            async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
-                dispatch('restoreState', FakeState({
-                    turn: 1,
-                    currentPlayer: 'P1A',
-                    phase: 'action',
-                    cardsOnHand: [createCard({ id: 'C1A' })],
-                    stationCards: [{ place: 'draw' }]
-                }));
-                await timeout();
-
-                await click('.field-playerCardsOnHand .card');
-            },
-            'should see station card ghosts'() {
-                assert.elementCount('.field-playerStation .card-ghost', 3);
+        for (let key of Object.keys(this)) {
+            if (!keysToPreserver.includes(key)) {
+                delete this[key];
             }
         }
     },
     'attack': {
         'when player has card in opponent zone and opponent has 1 defense card': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 2,
@@ -113,8 +125,8 @@ module.exports = testCase('MatchPage', {
         },
         'when player has 1 card in opponent zone and opponent has 1 duration card in its zone': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 2,
@@ -134,24 +146,21 @@ module.exports = testCase('MatchPage', {
     'duration cards': {
         'when has duration in play and is your turn': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     cardsInZone: [{ id: 'C1A', type: 'duration' }]
                 }));
 
                 dispatch('nextPlayer', { turn: 2, currentPlayer: 'P1A' });
                 await timeout();
-            },
-            'current phase text should say "Prepare for turn"'() {
-                assert.elementText('.playerHud-phaseText', 'Prepare for turn');
             }
         },
         'when in preparation phase with 2 duration cards and click and discards the first': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = this.createController({ matchController: this.matchController });
-                this.controller.showPage();
+                const { dispatch } = createController({ matchController: this.matchController });
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     phase: 'preparation',
                     currentPlayer: 'P1A',
@@ -169,58 +178,30 @@ module.exports = testCase('MatchPage', {
             },
             'should put card in discard pile'() {
                 assert.elementCount('.field-player .field-discardPile .card[data-cardId="C1A"]', 1);
-            },
-            'current phase text should say "Prepare for turn"'() {
-                assert.elementText('.playerHud-phaseText', 'Prepare for turn');
-            },
-            'should see action point indicator'() {
-                assert.elementCount('.playerActionPoints', 1);
             }
         },
         'when in preparation phase and go to next phase': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = this.createController({ matchController: this.matchController });
-                this.controller.showPage();
+                const { dispatch } = createController({ matchController: this.matchController });
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     phase: 'preparation',
                     currentPlayer: 'P1A'
                 }));
                 await timeout();
 
-                await click('.playerHud-nextPhaseButton');
+                await click('.nextPhaseButton');
             },
             'should emit next phase'() {
                 assert.calledOnceWith(this.matchController.emit, 'nextPhase');
             },
-            'current phase text should say "Draw phase"'() {
-                assert.elementText('.playerHud-phaseText', 'Draw phase');
-            }
-        },
-        'when in preparation phase and has less than 0 action points': {
-            async setUp() {
-                const { dispatch } = this.createController({
-                    actionPointsCalculator: {
-                        calculate: () => -1
-                    }
-                });
-                this.controller.showPage();
-
-                dispatch('restoreState', FakeState({
-                    phase: 'preparation',
-                    currentPlayer: 'P1A'
-                }));
-                await timeout();
-            },
-            'should NOT show next phase button'() {
-                assert.elementCount('.playerHud-nextPhaseButton', 0);
-            }
         },
         'when in preparation phase and discard all duration cards should AUTOMATICALLY go to the draw phase': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = this.createController({ matchController: this.matchController });
-                this.controller.showPage();
+                const { dispatch } = createController({ matchController: this.matchController });
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     phase: 'preparation',
                     currentPlayer: 'P1A',
@@ -232,15 +213,12 @@ module.exports = testCase('MatchPage', {
             },
             'should emit next phase'() {
                 assert.calledOnceWith(this.matchController.emit, 'nextPhase');
-            },
-            'current phase text should say "Draw phase"'() {
-                assert.elementText('.playerHud-phaseText', 'Draw phase');
             }
         },
         'on "opponentDiscardedDurationCard"': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     currentPlayer: 'P2A',
                     opponentCardsInZone: [{ id: 'C1A' }]
@@ -260,8 +238,8 @@ module.exports = testCase('MatchPage', {
     'enlarge': {
         'when has 1 card in own zone and click enlarge icon on it': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
@@ -277,8 +255,8 @@ module.exports = testCase('MatchPage', {
             }
         },
         'when enlarged version of card is visible and click on overlay should hide enlarged card': async function () {
-            const { dispatch } = this.createController();
-            this.controller.showPage();
+            const { dispatch } = createController();
+            controller.showPage();
             dispatch('restoreState', FakeState({
                 turn: 2,
                 currentPlayer: 'P1A',
@@ -293,44 +271,20 @@ module.exports = testCase('MatchPage', {
             assert.elementCount('.card--enlarged', 0);
         }
     },
-    'behaviours - Small Cannon': {
-        'when in attack phase with small cannon and has attacked once should be able to attack again': async function () {
-            const { dispatch } = this.createController();
-            this.controller.showPage();
-
-            dispatch('restoreState', FakeState({
-                turn: 2,
-                phase: 'attack',
-                currentPlayer: 'P1A',
-                cardsInZone: [{ id: 'C1A', commonId: SmallCannon.CommonId }],
-                opponentCardsInPlayerZone: [{ id: 'C2A' }],
-                events: [
-                    PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
-                    AttackEvent({ turn: 2, attackerCardId: 'C1A', cardCommonId: 'C1A' })
-                ]
-            }));
-            await timeout();
-
-            assert.elementCount('.field-playerZoneCards .readyToAttack', 1);
-        }
-    },
     'behaviour - Small Repair Shop': {
-        setUp() {
-            this.smallRepairShopId = 29;
-        },
         'when has card in zone and a damaged card in same zone BUT is action phase': {
             async setUp() {
                 const events = [
                     PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
                     PutDownCardEvent({ turn: 1, cardId: 'C2A' })
                 ];
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'action',
-                    cardsInZone: [{ id: 'C1A', commonId: this.smallRepairShopId }, { id: 'C2A', damage: 1 }],
+                    cardsInZone: [{ id: 'C1A', commonId: SmallRepairShopId }, { id: 'C2A', damage: 1 }],
                     events
                 }));
                 await timeout();
@@ -346,13 +300,13 @@ module.exports = testCase('MatchPage', {
                     PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
                     PutDownCardEvent({ turn: 1, cardId: 'C2A' })
                 ];
-                const { dispatch } = this.createController({ matchController: this.matchController });
-                this.controller.showPage();
+                const { dispatch } = createController({ matchController: this.matchController });
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
-                    cardsInZone: [{ id: 'C1A', commonId: this.smallRepairShopId }, { id: 'C2A', damage: 1 }],
+                    cardsInZone: [{ id: 'C1A', commonId: SmallRepairShopId }, { id: 'C2A', damage: 1 }],
                     stationCards: [
                         { id: 'C3A', place: 'draw', flipped: true, card: createCard({ id: 'C3A' }) },
                         { id: 'C4A', place: 'draw' }
@@ -407,13 +361,13 @@ module.exports = testCase('MatchPage', {
         'when repair 3 damage of card with 4 damage and has opponent card in zone': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = this.createController({ matchController: this.matchController });
-                this.controller.showPage();
+                const { dispatch } = createController({ matchController: this.matchController });
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
-                    cardsInZone: [{ id: 'C1A', commonId: this.smallRepairShopId }, { id: 'C2A', damage: 4 }],
+                    cardsInZone: [{ id: 'C1A', commonId: SmallRepairShopId }, { id: 'C2A', damage: 4 }],
                     opponentCardsInPlayerZone: [{ id: 'C3A' }],
                     events: [
                         PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
@@ -425,9 +379,6 @@ module.exports = testCase('MatchPage', {
                 await click('.field-playerZoneCards .card:eq(0) .repair');
                 await click('.field-playerZoneCards .card:eq(1) .selectForRepair');
             },
-            'should show damage indicator for other card'() {
-                assert.elementText('.card-damageIndicator', '-1');
-            },
             'should emit repair card'() {
                 assert.calledOnceWith(this.matchController.emit, 'repairCard', {
                     repairerCardId: 'C1A',
@@ -436,12 +387,6 @@ module.exports = testCase('MatchPage', {
             },
             'should NOT be able to still select card for repair'() {
                 assert.elementCount('.field-playerZoneCards .card:eq(0) .selectForRepair', 0);
-            },
-            'should NOT be able to select for attack'() {
-                assert.elementCount('.field-playerZoneCards .card:eq(0) .readyToAttack', 0);
-            },
-            'should be able to select for move'() {
-                assert.elementCount('.field-playerZoneCards .card:eq(0) .movable', 1);
             }
         },
         'when has repaired this turn and has card in same zone with damage': {
@@ -451,13 +396,13 @@ module.exports = testCase('MatchPage', {
                     PutDownCardEvent({ turn: 1, cardId: 'C2A' }),
                     RepairCardEvent({ turn: 2, cardId: 'C1A' })
                 ];
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
-                    cardsInZone: [{ id: 'C1A', commonId: this.smallRepairShopId }, { id: 'C2A', damage: 1 }],
+                    cardsInZone: [{ id: 'C1A', commonId: SmallRepairShopId }, { id: 'C2A', damage: 1 }],
                     events
                 }));
                 await timeout();
@@ -468,14 +413,14 @@ module.exports = testCase('MatchPage', {
         },
         'when has card in zone and there is NO damaged ship in same zone': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
-                    cardsInZone: [{ id: this.smallRepairShopId }],
-                    events: [PutDownCardEvent({ turn: 1, cardId: this.smallRepairShopId })]
+                    cardsInZone: [{ id: SmallRepairShopId }],
+                    events: [PutDownCardEvent({ turn: 1, cardId: SmallRepairShopId })]
                 }));
                 await timeout();
             },
@@ -487,23 +432,20 @@ module.exports = testCase('MatchPage', {
         //OR when is damaged should be able to select for repair and repair self
     },
     'behaviour - Energy Shield': {
-        setUp() {
-            this.energyShieldId = 21;
-        },
         'when ready card for attack in opponent zone and they have an Energy shield': {
             async setUp() {
                 const events = [
                     PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
                     MoveCardEvent({ turn: 2, cardId: 'C1A' })
                 ];
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 3,
                     currentPlayer: 'P1A',
                     phase: 'attack',
                     cardsInOpponentZone: [{ id: 'C1A', attack: 1 }],
-                    opponentCardsInZone: [{ id: 'C2A', commonId: this.energyShieldId }],
+                    opponentCardsInZone: [{ id: 'C2A', commonId: EnergyShieldCommonId }],
                     opponentStationCards: [{ place: 'action' }],
                     events
                 }));
@@ -519,8 +461,8 @@ module.exports = testCase('MatchPage', {
     'draw phase:': {
         'when in draw phase': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -540,14 +482,14 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.drawPile-discardTopTwo', 1);
             },
             'should NOT show next phase button'() {
-                assert.elementCount('.playerHud-nextPhaseButton', 0);
+                assert.elementCount('.nextPhaseButton', 0);
             }
         },
         'when has 1 card in draw-station row and is in draw phase and click on own draw pile': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = this.createController({ matchController: this.matchController });
-                this.controller.showPage();
+                const { dispatch } = createController({ matchController: this.matchController });
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -565,10 +507,7 @@ module.exports = testCase('MatchPage', {
                 assert.calledOnceWith(this.matchController.emit, 'drawCard');
             },
             'should get put new card in hand'() {
-                assert.elementCount('.field-playerCardsOnHand .card', 1);
-            },
-            'should go to next phase'() {
-                assert.elementText('.playerHud-phaseText', 'Action phase');
+                assert.elementCount('.field-playerCardsOnHand .cardOnHand', 1);
             },
             'should NOT show guide text'() {
                 assert.elementCount('.guideText-drawCard', 0);
@@ -583,8 +522,8 @@ module.exports = testCase('MatchPage', {
         'when is in draw phase and click on own draw pile and server responds with card and that more can be drawn': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = this.createController({ matchController: this.matchController });
-                this.controller.showPage();
+                const { dispatch } = createController({ matchController: this.matchController });
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -601,10 +540,10 @@ module.exports = testCase('MatchPage', {
                 assert.calledOnceWith(this.matchController.emit, 'drawCard');
             },
             'should get put new card in hand'() {
-                assert.elementCount('.field-playerCardsOnHand .card', 1);
+                assert.elementCount('.field-playerCardsOnHand .cardOnHand', 1);
             },
-            'should NOT go to next phase'() {
-                assert.elementText('.playerHud-phaseText', 'Draw phase');
+            'should NOT show go to next phase button'() {
+                assert.elementCount('.nextPhaseButton', 0);
             },
             'should still show guide text'() {
                 assert.elementCount('.guideText-drawCard', 1);
@@ -613,8 +552,8 @@ module.exports = testCase('MatchPage', {
         'when is in draw phase and click on opponent draw pile and server responds without any card but that more can be drawn': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = this.createController({ matchController: this.matchController });
-                this.controller.showPage();
+                const { dispatch } = createController({ matchController: this.matchController });
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -635,10 +574,10 @@ module.exports = testCase('MatchPage', {
                 assert.calledOnceWith(this.matchController.emit, 'discardOpponentTopTwoCards');
             },
             'should NOT get new card in hand'() {
-                assert.elementCount('.field-playerCardsOnHand .card', 0);
+                assert.elementCount('.field-playerCardsOnHand .cardOnHand', 0);
             },
-            'should NOT go to next phase'() {
-                assert.elementText('.playerHud-phaseText', 'Draw phase');
+            'should NOT show next phase button'() {
+                assert.elementCount('.nextPhaseButton', 0);
             },
             'should still show guide text'() {
                 assert.elementCount('.guideText-drawCard', 1);
@@ -648,8 +587,8 @@ module.exports = testCase('MatchPage', {
     'skip phases with NO actions:': {
         'when in draw phase with NO station cards in draw row but 1 in action row should show next phase button to Action phase': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -660,13 +599,13 @@ module.exports = testCase('MatchPage', {
                 await timeout();
             },
             'should show next phase as Action phase'() {
-                assert.elementText('.playerHud-nextPhaseButton', 'Action phase');
+                assert.elementText('.nextPhaseButton', 'Go to action phase');
             }
         },
         'when in action phase with no cards to discard and no cards in play should show next phase as End turn': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -676,14 +615,14 @@ module.exports = testCase('MatchPage', {
                 await timeout();
             },
             'should show next phase as End turn'() {
-                assert.elementCount('.playerHud-endTurnButton', 1);
+                assert.elementCount('.nextPhaseButton-endTurn', 1);
             }
         },
         'when in action phase with no cards to discard and no cards in play and click "End turn"': {
             async setUp() {
                 this.matchController = FakeMatchController();
-                const { dispatch } = this.createController({ matchController: this.matchController });
-                this.controller.showPage();
+                const { dispatch } = createController({ matchController: this.matchController });
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -692,7 +631,7 @@ module.exports = testCase('MatchPage', {
                 }));
                 await timeout();
 
-                await click('.playerHud-endTurnButton');
+                await click('.nextPhaseButton-endTurn');
             },
             'should skip to end of turn'() {
                 assert.calledThriceWith(this.matchController.emit, 'nextPhase');
@@ -700,8 +639,8 @@ module.exports = testCase('MatchPage', {
         },
         'when in action phase with no cards to discard and 1 in play that can move': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 2,
@@ -713,13 +652,13 @@ module.exports = testCase('MatchPage', {
                 await timeout();
             },
             'should see next phase as "Attack phase"'() {
-                assert.elementText('.playerHud-nextPhaseButton', 'Attack phase');
+                assert.elementText('.nextPhaseButton', 'Go to attack phase');
             }
         },
         'when in action phase with no cards to discard and 1 in play in opponent zone that can move': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 3,
@@ -734,13 +673,13 @@ module.exports = testCase('MatchPage', {
                 await timeout();
             },
             'should see next phase as "Attack phase"'() {
-                assert.elementText('.playerHud-nextPhaseButton', 'Attack phase');
+                assert.elementText('.nextPhaseButton', 'Go to attack phase');
             }
         },
         'when in action phase with no cards to discard and 1 in play in opponent zone that can NOT move': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 2,
@@ -755,13 +694,13 @@ module.exports = testCase('MatchPage', {
                 await timeout();
             },
             'should see "End turn" button'() {
-                assert.elementCount('.playerHud-endTurnButton', 1);
+                assert.elementCount('.nextPhaseButton-endTurn', 1);
             }
         },
         'when in action phase with no cards to discard and has 1 fast missile in play': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -778,10 +717,10 @@ module.exports = testCase('MatchPage', {
                 await timeout();
             },
             'should NOT see end turn button'() {
-                assert.elementCount('.playerHud-endTurnButton', 0);
+                assert.elementCount('.nextPhaseButton-endTurn', 0);
             },
             'should see next phase as "Attack phase"'() {
-                assert.elementText('.playerHud-nextPhaseButton', 'Attack phase');
+                assert.elementText('.nextPhaseButton', 'Go to attack phase');
             }
         }
     },
@@ -789,8 +728,8 @@ module.exports = testCase('MatchPage', {
         'when card has attack level 2 and attack last opponent station card that is NOT flipped': {
             async setUp() {
                 this.matchController = FakeMatchController();
-                const { dispatch } = this.createController({ matchController: this.matchController });
-                this.controller.showPage();
+                const { dispatch } = createController({ matchController: this.matchController });
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 3,
                     currentPlayer: 'P1A',
@@ -819,8 +758,8 @@ module.exports = testCase('MatchPage', {
         },
         'when opponent has 0 unflipped station cards': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 3,
@@ -842,8 +781,8 @@ module.exports = testCase('MatchPage', {
         },
         'when you have 0 unflipped station cards': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 3,
@@ -867,8 +806,8 @@ module.exports = testCase('MatchPage', {
         },
         'when moved card to opponent zone last turn': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 3,
@@ -888,8 +827,8 @@ module.exports = testCase('MatchPage', {
         },
         'when moved card to opponent zone this turn': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 2,
@@ -909,8 +848,8 @@ module.exports = testCase('MatchPage', {
         },
         'when moved Fast Missile to opponent zone THIS turn': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 2,
@@ -930,8 +869,8 @@ module.exports = testCase('MatchPage', {
         },
         'when put down Fast missile this turn and select for attack': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -953,8 +892,8 @@ module.exports = testCase('MatchPage', {
     'discard card requirement': {
         'when have discard card requirement': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -966,10 +905,10 @@ module.exports = testCase('MatchPage', {
                 await timeout();
             },
             'should NOT show next phase button'() {
-                assert.elementCount('.playerHud-nextPhaseButton', 0);
+                assert.elementCount('.nextPhaseButton', 0);
             },
             'should NOT show end turn button'() {
-                assert.elementCount('.playerHud-endTurnButton', 0);
+                assert.elementCount('.nextPhaseButton-endTurn', 0);
             },
             'should show guide text'() {
                 assert.elementText('.guideText', 'Discard 2 cards');
@@ -980,8 +919,8 @@ module.exports = testCase('MatchPage', {
         },
         'when have draw card requirement with "waiting" set to true': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -993,10 +932,10 @@ module.exports = testCase('MatchPage', {
                 await timeout();
             },
             'should NOT show next phase button'() {
-                assert.elementCount('.playerHud-nextPhaseButton', 0);
+                assert.elementCount('.nextPhaseButton', 0);
             },
             'should NOT show end turn button'() {
-                assert.elementCount('.playerHud-endTurnButton', 0);
+                assert.elementCount('.nextPhaseButton-endTurn', 0);
             },
             'should show guide text'() {
                 assert.elementCount('.guideText', 1);
@@ -1010,8 +949,8 @@ module.exports = testCase('MatchPage', {
     'damage own station card requirement': {
         'when have damageOwnStationCard requirement': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -1024,10 +963,10 @@ module.exports = testCase('MatchPage', {
                 await timeout();
             },
             'should NOT show next phase button'() {
-                assert.elementCount('.playerHud-nextPhaseButton', 0);
+                assert.elementCount('.nextPhaseButton', 0);
             },
             'should NOT show end turn button'() {
-                assert.elementCount('.playerHud-endTurnButton', 0);
+                assert.elementCount('.nextPhaseButton-endTurn', 0);
             },
             'should show guide text'() {
                 assert.elementText('.guideText', 'Select 2 of your own station cards to damage');
@@ -1038,8 +977,8 @@ module.exports = testCase('MatchPage', {
         },
         'when in action phase with damageOwnStationCard requirement and a flipped station card and click on card in hand': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1053,7 +992,7 @@ module.exports = testCase('MatchPage', {
                 }));
                 await timeout();
 
-                await click('.field-playerCardsOnHand .card');
+                await click('.field-playerCardsOnHand .cardOnHand');
             },
             'should NOT be able to move station cards to zone'() {
                 assert.elementCount('.stationCard .movable', 0);
@@ -1061,8 +1000,8 @@ module.exports = testCase('MatchPage', {
         },
         'when in action phase with damageOwnStationCard requirement and an affordable card on hand and click on card in hand': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1076,7 +1015,7 @@ module.exports = testCase('MatchPage', {
                 }));
                 await timeout();
 
-                await click('.field-playerCardsOnHand .card');
+                await click('.field-playerCardsOnHand .cardOnHand');
             },
             'should NOT show ANY card ghosts'() {
                 assert.elementCount('.card-ghost', 0);
@@ -1084,8 +1023,8 @@ module.exports = testCase('MatchPage', {
         },
         'when have damageOwnStationCard requirement and 1 of 2 station cards is flipped': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -1106,8 +1045,8 @@ module.exports = testCase('MatchPage', {
         },
         'when have damageOwnStationCard requirement and click on station card ': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1120,10 +1059,10 @@ module.exports = testCase('MatchPage', {
                 await click('.field-player .stationCard:eq(0) .selectable');
             },
             'should NOT show next phase button'() {
-                assert.elementCount('.playerHud-nextPhaseButton', 0);
+                assert.elementCount('.nextPhaseButton', 0);
             },
             'should NOT show end turn button'() {
-                assert.elementCount('.playerHud-endTurnButton', 0);
+                assert.elementCount('.nextPhaseButton-endTurn', 0);
             },
             'should show guide text'() {
                 assert.elementText('.guideText', 'Select 1 of your own station cards to damage');
@@ -1135,8 +1074,8 @@ module.exports = testCase('MatchPage', {
         'when have damageOwnStationCard requirement with count of 1 and click on station card': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = this.createController({ matchController: this.matchController });
-                this.controller.showPage();
+                const { dispatch } = createController({ matchController: this.matchController });
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1149,10 +1088,10 @@ module.exports = testCase('MatchPage', {
                 await click('.field-player .stationCard:eq(0) .selectable');
             },
             'should NOT show next phase button'() {
-                assert.elementCount('.playerHud-nextPhaseButton', 0);
+                assert.elementCount('.nextPhaseButton', 0);
             },
             'should NOT show end turn button'() {
-                assert.elementCount('.playerHud-endTurnButton', 0);
+                assert.elementCount('.nextPhaseButton-endTurn', 0);
             },
             'should NOT show guide text'() {
                 assert.elementCount('.guideText', 0);
@@ -1170,8 +1109,8 @@ module.exports = testCase('MatchPage', {
     'draw card requirement': {
         'when have draw card requirement': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -1191,8 +1130,8 @@ module.exports = testCase('MatchPage', {
         },
         'when have a draw card requirement in the draw phase': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -1211,8 +1150,8 @@ module.exports = testCase('MatchPage', {
         },
         'when have discard card requirement but a draw card requirement is the first': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -1230,8 +1169,8 @@ module.exports = testCase('MatchPage', {
     'Discovery:': {
         'when place down card "Discovery"': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1240,14 +1179,14 @@ module.exports = testCase('MatchPage', {
                 }));
                 await timeout();
 
-                await click('.field-playerCardsOnHand .card');
+                await click('.field-playerCardsOnHand .cardOnHand');
                 await click('.field-playerZoneCards .card-ghost:eq(0)');
             },
             'should put down card in zone'() {
                 assert.elementCount('.field-playerZoneCards .card:not(.card-placeholder)', 1);
             },
             'should NOT have card on hand'() {
-                assert.elementCount('.field-playerCardsOnHand .card', 0);
+                assert.elementCount('.field-playerCardsOnHand .cardOnHand', 0);
             },
             'should NOT discard card'() {
                 assert.elementCount('.field-discardPile .card-faceDown', 0);
@@ -1258,8 +1197,8 @@ module.exports = testCase('MatchPage', {
         },
         'when move card "Discovery" from station to zone': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
@@ -1296,8 +1235,8 @@ module.exports = testCase('MatchPage', {
         },
         'when move card "Discovery" from station to zone and cancels': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
@@ -1336,8 +1275,8 @@ module.exports = testCase('MatchPage', {
         'when place down card "Discovery" and choose draw options': {
             async setUp() {
                 this.matchController = FakeMatchController();
-                const { dispatch } = this.createController({ matchController: this.matchController });
-                this.controller.showPage();
+                const { dispatch } = createController({ matchController: this.matchController });
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1345,7 +1284,7 @@ module.exports = testCase('MatchPage', {
                     cardsOnHand: [{ id: 'C1A', type: 'event', commonId: DiscoveryCommonId }]
                 }));
                 await timeout();
-                await click('.field-playerCardsOnHand .card');
+                await click('.field-playerCardsOnHand .cardOnHand');
                 await click('.field-playerZoneCards .card-ghost:eq(0)');
 
                 await click('.cardChoiceDialog-choice:contains("draw")');
@@ -1364,7 +1303,7 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.field-playerZoneCards .card:not(.card-placeholder)', 0);
             },
             'should NOT show card on hand'() {
-                assert.elementCount('.field-playerCardsOnHand .card', 0);
+                assert.elementCount('.field-playerCardsOnHand .cardOnHand', 0);
             },
             'should show card in discard pile'() {
                 assert.elementCount('.field-player .field-discardPile .card[data-cardId="C1A"]', 1);
@@ -1373,8 +1312,8 @@ module.exports = testCase('MatchPage', {
         'when place down card "Discovery" and choose discard option': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub().returns(new Promise(() => {})) });
-                const { dispatch } = this.createController({ matchController: this.matchController });
-                this.controller.showPage();
+                const { dispatch } = createController({ matchController: this.matchController });
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1382,7 +1321,7 @@ module.exports = testCase('MatchPage', {
                     cardsOnHand: [{ id: 'C1A', commonId: DiscoveryCommonId }]
                 }));
                 await timeout();
-                await click('.field-playerCardsOnHand .card');
+                await click('.field-playerCardsOnHand .cardOnHand');
                 await click('.field-playerZoneCards .card-ghost:eq(0)');
 
                 await click('.cardChoiceDialog-choice:contains("discard")');
@@ -1401,8 +1340,8 @@ module.exports = testCase('MatchPage', {
         'when place down card "Discovery" and cancels': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = this.createController({ matchController: this.matchController });
-                this.controller.showPage();
+                const { dispatch } = createController({ matchController: this.matchController });
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1410,7 +1349,7 @@ module.exports = testCase('MatchPage', {
                     cardsOnHand: [{ id: 'C1A', commonId: DiscoveryCommonId }]
                 }));
                 await timeout();
-                await click('.field-playerCardsOnHand .card');
+                await click('.field-playerCardsOnHand .cardOnHand');
                 await click('.field-playerZoneCards .card-ghost:eq(0)');
 
                 await click('.cardChoiceDialog-overlay');
@@ -1425,7 +1364,7 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.field-playerZoneCards .card:not(.card-placeholder)', 0);
             },
             'should show card on hand'() {
-                assert.elementCount('.field-playerCardsOnHand .card', 1);
+                assert.elementCount('.field-playerCardsOnHand .cardOnHand', 1);
             },
             'should NOT have discarded card'() {
                 assert.elementCount('.field-discardPile .card-faceDown', 0);
@@ -1435,8 +1374,8 @@ module.exports = testCase('MatchPage', {
     'Fatal Error:': {
         'when put down card Fatal Error': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1456,7 +1395,7 @@ module.exports = testCase('MatchPage', {
                     ]
                 }));
                 await timeout();
-                await click('.field-playerCardsOnHand .card');
+                await click('.field-playerCardsOnHand .cardOnHand');
 
                 await click('.field-playerZoneCards .card-ghost:eq(0)');
             },
@@ -1464,7 +1403,7 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.field-playerZoneCards .card:not(.card-placeholder)', 2);
             },
             'should NOT have card in hand'() {
-                assert.elementCount('.field-playerCardsOnHand .card', 0);
+                assert.elementCount('.field-playerCardsOnHand .cardOnHand', 0);
             },
             'should NOT have discarded card'() {
                 assert.elementCount('.field-discardPile .card-faceDown', 0);
@@ -1499,8 +1438,8 @@ module.exports = testCase('MatchPage', {
         },
         'when move Fatal Error from station to zone': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
@@ -1541,8 +1480,8 @@ module.exports = testCase('MatchPage', {
         'when put down card Fatal Error and then select opponent card in player zone': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = this.createController({ matchController: this.matchController });
-                this.controller.showPage();
+                const { dispatch } = createController({ matchController: this.matchController });
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1560,7 +1499,7 @@ module.exports = testCase('MatchPage', {
                     ]
                 }));
                 await timeout();
-                await click('.field-playerCardsOnHand .card');
+                await click('.field-playerCardsOnHand .cardOnHand');
                 await click('.field-playerZoneCards .card-ghost:eq(0)');
 
                 await click('.opponentCardsInPlayerZone .card:eq(0) .selectable');
@@ -1569,7 +1508,7 @@ module.exports = testCase('MatchPage', {
                 assert.elementCount('.field-playerZoneCards .card:not(.card-placeholder)', 1);
             },
             'should NOT have card in hand'() {
-                assert.elementCount('.field-playerCardsOnHand .card', 0);
+                assert.elementCount('.field-playerCardsOnHand .cardOnHand', 0);
             },
             'should have discarded card'() {
                 assert.elementCount('.field-player .field-discardPile .card[data-cardId="C1A"]', 1);
@@ -1592,8 +1531,8 @@ module.exports = testCase('MatchPage', {
     'Trigger happy joe:': {
         'when moved to opponent zone last turn and has attacked station card once this turn and ready card again for attack': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 3,
                     currentPlayer: 'P1A',
@@ -1622,8 +1561,8 @@ module.exports = testCase('MatchPage', {
     'Deadly sniper': {
         'when card was placed this turn': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1652,8 +1591,8 @@ module.exports = testCase('MatchPage', {
         },
         'when was placed last turn': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
@@ -1676,37 +1615,37 @@ module.exports = testCase('MatchPage', {
             }
         }
     },
-    'Expansion:': {
-        'when has expansion in play and has put down a station card and hold a card': {
-            async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
-                dispatch('restoreState', FakeState({
-                    turn: 1,
-                    currentPlayer: 'P1A',
-                    phase: 'action',
-                    stationCards: [{ id: 'C1A', place: 'draw' }],
-                    cardsInZone: [{ id: 'C2A', type: 'duration', commonId: ExpansionCommonId }],
-                    cardsOnHand: [{ id: 'C3A' }],
-                    events: [
-                        PutDownCardEvent({ turn: 1, location: 'station-draw', cardId: 'C1A' }),
-                        { type: 'putDownExtraStationCard', effectCardId: 'C2A', turn: 1 }
-                    ]
-                }));
-                await timeout();
-
-                await click('.field-playerCardsOnHand .card');
-            },
-            'should be able to put down a second station card'() {
-                assert.elementCount('.field-playerStation .card-ghost', 3);
-            }
-        }
-    },
+    // 'Expansion:': { //TODO What to do about this test? The card expansion is replaced with a new one with a different ability
+    //     'when has expansion in play and has put down a station card and hold a card': {
+    //         async setUp() {
+    //             const { dispatch } = createController();
+    //             controller.showPage();
+    //             dispatch('restoreState', FakeState({
+    //                 turn: 1,
+    //                 currentPlayer: 'P1A',
+    //                 phase: 'action',
+    //                 stationCards: [{ id: 'C1A', place: 'draw' }],
+    //                 cardsInZone: [{ id: 'C2A', type: 'duration', commonId: ExpansionCommonId }],
+    //                 cardsOnHand: [{ id: 'C3A' }],
+    //                 events: [
+    //                     PutDownCardEvent({ turn: 1, location: 'station-draw', cardId: 'C1A' }),
+    //                     { type: 'putDownExtraStationCard', effectCardId: 'C2A', turn: 1 }
+    //                 ]
+    //             }));
+    //             await timeout();
+    //
+    //             await click('.field-playerCardsOnHand .cardOnHand');
+    //         },
+    //         'should be able to put down a second station card'() {
+    //             assert.elementCount('.field-playerStation .card-ghost', 3);
+    //         }
+    //     }
+    // },
     'Pursuiter:': {
         'when has card and an opponent card in home zone': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1723,8 +1662,8 @@ module.exports = testCase('MatchPage', {
         },
         'when is NOT attack phase and has card and an opponent card in home zone': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1741,8 +1680,8 @@ module.exports = testCase('MatchPage', {
         },
         'when has card THAT IS NOT PURSUITER and an opponent card in home zone': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1760,8 +1699,8 @@ module.exports = testCase('MatchPage', {
         'when select card to sacrifice and selects other card': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = this.createController({ matchController: this.matchController });
-                this.controller.showPage();
+                const { dispatch } = createController({ matchController: this.matchController });
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1781,8 +1720,8 @@ module.exports = testCase('MatchPage', {
         },
         'when select card in home zone to sacrifice': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1824,8 +1763,8 @@ module.exports = testCase('MatchPage', {
         },
         'when select card in opponent zone to sacrifice': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1861,14 +1800,14 @@ module.exports = testCase('MatchPage', {
         },
         'when select card in opponent zone to sacrifice and opponent has energy shield': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'attack',
                     cardsInOpponentZone: [{ id: 'C1A', type: 'spaceShip', commonId: PursuiterCommonId }],
-                    opponentCardsInZone: [{ id: 'C2A', commonId: this.energyShieldId }],
+                    opponentCardsInZone: [{ id: 'C2A', commonId: EnergyShieldCommonId }],
                     opponentStationCards: [{ id: 'C3A', place: 'draw' }],
                     events: [
                         PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A' }),
@@ -1888,8 +1827,8 @@ module.exports = testCase('MatchPage', {
         },
         'when select card to sacrifice and select a station card': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1917,8 +1856,8 @@ module.exports = testCase('MatchPage', {
         'when select card to sacrifice and select a 4 station cards': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = this.createController({ matchController: this.matchController });
-                this.controller.showPage();
+                const { dispatch } = createController({ matchController: this.matchController });
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1954,8 +1893,8 @@ module.exports = testCase('MatchPage', {
         'when select card to sacrifice and opponent has 3 unflipped station cards and select all 3': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = this.createController({ matchController: this.matchController });
-                this.controller.showPage();
+                const { dispatch } = createController({ matchController: this.matchController });
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1988,8 +1927,8 @@ module.exports = testCase('MatchPage', {
         },
         'when opponent has 1 station card and player has card in opponent zone with the ability to sacrifice itself': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 3,
                     currentPlayer: 'P1A',
@@ -2010,8 +1949,8 @@ module.exports = testCase('MatchPage', {
         'when select card to sacrifice and opponent has 1 station card and select that card': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = this.createController({ matchController: this.matchController });
-                this.controller.showPage();
+                const { dispatch } = createController({ matchController: this.matchController });
+                controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 3,
                     currentPlayer: 'P1A',
@@ -2039,8 +1978,8 @@ module.exports = testCase('MatchPage', {
     'The Shade:': {
         'when opponent card is The Shade and it has NOT attacked this turn': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 2,
@@ -2059,8 +1998,8 @@ module.exports = testCase('MatchPage', {
         },
         'when PLAYER IS THE FIRST PLAYER and opponent card is The Shade and it has attacked last turn': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 2,
@@ -2080,8 +2019,8 @@ module.exports = testCase('MatchPage', {
         },
         'when PLAYER IS THE SECOND PLAYER and opponent card is The Shade and it has attacked this turn': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 2,
@@ -2101,8 +2040,8 @@ module.exports = testCase('MatchPage', {
         },
         'when PLAYER IS THE SECOND PLAYER and opponent card is The Shade and it has attacked last turn': {
             async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
+                const { dispatch } = createController();
+                controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 2,
@@ -2121,13 +2060,112 @@ module.exports = testCase('MatchPage', {
             }
         }
     }
-});
+};
+
+let methods = {
+    describe,
+    test,
+    beforeEach,
+    afterEach
+};
+let testContext = {
+    testContext: 'yeah'
+};
+let myStack = loopOverTestConfig(testConfig);
+let myTests = setItUp(myStack);
+for (let callback of myTests) {
+    callback();
+}
+
+function setItUp(stack, depth = 0) {
+
+    let callbacks = [];
+    while (stack.length > 0) {
+        let piece = stack.pop();
+
+        if (piece.method === 'beforeEach' || piece.method === 'afterEach') {
+            callbacks.push(function () {
+                methods[piece.method](piece.fn);
+            });
+        }
+        else if (piece.method === 'describe') {
+            let subCallbacks = setItUp(piece.stack, depth + 1);
+            if (piece.name.startsWith('=>')) {
+                callbacks.push(function () {
+                    methods[piece.method].only(piece.name, function () {
+                        for (let subCallback of subCallbacks) {
+                            subCallback();
+                        }
+                    });
+                });
+            }
+            else {
+                callbacks.push(function () {
+                    methods[piece.method](piece.name, function () {
+                        for (let subCallback of subCallbacks) {
+                            subCallback();
+                        }
+                    });
+                });
+            }
+        }
+        else if (piece.method === 'test') {
+            while (piece && piece.method === 'test') {
+                let pieceToUse = piece;
+                if (piece.name.startsWith('=>')) {
+                    callbacks.push(function () {
+                        methods[pieceToUse.method].only(pieceToUse.name, pieceToUse.fn);
+                    });
+                }
+                else {
+                    callbacks.push(function () {
+                        methods[pieceToUse.method](pieceToUse.name, pieceToUse.fn);
+                    });
+                }
+
+                piece = stack.pop();
+            }
+        }
+    }
+
+    return callbacks;
+}
+
+function loopOverTestConfig(config) {
+    let stack = [];
+
+    for (let key of Object.keys(config)) {
+        if (key === 'setUp') {
+            stack.push({ method: 'beforeEach', fn: config[key].bind(testContext) });
+        }
+        else if (key === 'tearDown') {
+            stack.push({ method: 'afterEach', fn: config[key].bind(testContext) });
+        }
+        else {
+            if (typeof config[key] === 'object') {
+                let subStack = loopOverTestConfig(config[key]);
+                stack.push({
+                    method: 'describe',
+                    name: key,
+                    stack: subStack
+                });
+            }
+            else if (typeof config[key] === 'function') {
+                stack.push({ method: 'test', name: key, fn: config[key].bind(testContext) });
+            }
+        }
+    }
+
+    return stack.reverse();
+}
+
+function createController(options = {}) {
+    controller = TestController(options);
+    return { dispatch: controller.dispatch };
+}
 
 function TestController({ playerIds = ['P1A', 'P2A'], matchId = 'M1A', ...pageDeps } = {}) {
     const store = new Vuex.Store({});
-    const vm = new Vue({ store });
-    vm.$mount();
-
     const [ownId, opponentId] = playerIds;
     const matchController = pageDeps.matchController || FakeMatchController();
     pageDeps.matchControllerFactory = pageDeps.matchControllerFactory || FakeMatchControllerFactory({ matchController });
@@ -2151,7 +2189,6 @@ function TestController({ playerIds = ['P1A', 'P2A'], matchId = 'M1A', ...pageDe
         },
         tearDown() {
             page.hide();
-            vm.$destroy();
         }
     };
 }

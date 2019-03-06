@@ -246,13 +246,14 @@
         mapGetters: mapCardGetters,
         mapActions: mapCardActions
     } = Vuex.createNamespacedHelpers('card');
-    const ZoneCard = require('./ZoneCard.vue').default;
-    const StationCard = require('./StationCard.vue').default;
-    const PlayerHud = require('./PlayerHud.vue').default;
-    const CardChoiceDialog = require('./CardChoiceDialog.vue').default;
-    const LoadingIndicator = require('./loadingIndicator/LoadingIndicator.vue').default;
-    const PlayerCardsOnHand = require('./PlayerCardsOnHand.vue').default;
-    const CardGhost = require('./CardGhost.vue').default;
+    const resolveModule = require('../utils/resolveModuleWithPossibleDefault.js');
+    const ZoneCard = resolveModule(require('./ZoneCard.vue'));
+    const StationCard = resolveModule(require('./StationCard.vue'));
+    const PlayerHud = resolveModule(require('./PlayerHud.vue'));
+    const CardChoiceDialog = resolveModule(require('./CardChoiceDialog.vue'));
+    const LoadingIndicator = resolveModule(require('./loadingIndicator/LoadingIndicator.vue'));
+    const PlayerCardsOnHand = resolveModule(require('./PlayerCardsOnHand.vue'));
+    const CardGhost = resolveModule(require('./CardGhost.vue'));
     const { PHASES } = require('./phases.js');
 
     module.exports = {

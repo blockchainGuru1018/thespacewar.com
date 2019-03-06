@@ -1,4 +1,4 @@
-const { defaults } = require('bocha');
+const defaults = require('lodash/defaults');
 
 module.exports = FakeCardDataAssembler;
 

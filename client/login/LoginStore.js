@@ -1,4 +1,5 @@
 const ajax = require('../utils/ajax.js');
+const localGameDataFacade = require("../utils/localGameDataFacade.js")
 
 module.exports = function ({
     route,
@@ -23,18 +24,17 @@ module.exports = function ({
 
     async function login({ state, dispatch }) {
         let ownUser = await ajax.jsonPost('/login', { name: state.username });
-        localStorage.setItem('own-user', JSON.stringify(ownUser));
+        localGameDataFacade.setOwnUser(ownUser);
         dispatch('user/storeOwnUser', ownUser, { root: true });
     }
 
     function checkIfHasPreviousSession() {
-        return () => !!localStorage.getItem('ongoing-match');
+        return () => !!localGameDataFacade.getOngoingMatch();
     }
 
     async function restoreFromPreviousSession() {
-        const ongoingMatchJson = localStorage.getItem('ongoing-match');
-        if (ongoingMatchJson) {
-            const matchData = JSON.parse(ongoingMatchJson);
+        const matchData = localGameDataFacade.getOngoingMatch();
+        if (matchData) {
             await joinMatch(matchData);
         }
     }

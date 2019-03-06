@@ -6,7 +6,7 @@
                 @click.stop="playerCardClick(card)"
                 @mouseenter="mouseEnterCardAtIndex(index)"
                 @mouseleave="mouseLeaveCardAtIndex(index)"
-                class="cardHoverActivator"
+                class="cardHoverActivator cardOnHand"
                 ref="cardHoverActivator"
                 v-for="card, index in playerVisibleCardsOnHand"/>
         <div :data-index="index"
