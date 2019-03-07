@@ -1,4 +1,4 @@
-module.exports = function (deps) {
+module.exports = function (deps) { //TODO Rename MatchConnectionController or something better
 
     const socket = deps.socket;
     const ownUserId = deps.ownUserId;
@@ -14,6 +14,8 @@ module.exports = function (deps) {
     function start() {
         socket.on('match', onSocketMatchEvent);
         emit('start');
+
+        document.addEventListener('visibilitychange', onVisibilityChange);
     }
 
     function emit(action, value) {
@@ -34,6 +36,12 @@ module.exports = function (deps) {
         console.log('Got match event on client', data);
         if (data.matchId === matchId) {
             dispatch(data.action, data.value);
+        }
+    }
+
+    function onVisibilityChange() {
+        if (!document.hidden) {
+            emit('refresh');
         }
     }
 }

@@ -112,6 +112,7 @@ module.exports = function ({
             return matchComService.getPlayers();
         },
         start,
+        refresh,
         getOwnState: getPlayerState,
         nextPhase: nextPhaseController.onNextPhase,
         putDownCard: putDownCardController.onPutDownCard,
@@ -150,6 +151,10 @@ module.exports = function ({
                 players.forEach(player => emitBeginGameForPlayer(player.id));
             }
         }
+    }
+
+    function refresh(playerId) {
+        emitRestoreStateForPlayer(playerId);
     }
 
     function discardDurationCard(playerId, cardId) {
