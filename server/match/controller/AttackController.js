@@ -153,7 +153,6 @@ function AttackController(deps) {
             if (!targetCardData) throw new CheatError('Cannot sacrifice');
         }
 
-
         const cardData = playerStateService.findCard(cardId);
         const card = cardFactory.createCardForPlayer(cardData, playerId);
         if (!card.canBeSacrificed()) throw new CheatError('Cannot sacrifice');

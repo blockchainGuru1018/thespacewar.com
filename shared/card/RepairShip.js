@@ -37,12 +37,20 @@ module.exports = class RepairShip extends BaseCard {
     }
 
     _repairZoneCard(otherCard) {
-        if (otherCard.paralyzed) {
-            otherCard.paralyzed = false;
-        }
-        else {
-            otherCard.damage = Math.max(0, otherCard.damage - this._repairCapability);
-        }
+        const {
+            paralyzed,
+            damage
+        } = this.simulateRepairingCard(otherCard);
+
+        otherCard.paralyzed = paralyzed;
+        otherCard.damage = damage;
+    }
+
+    simulateRepairingCard(otherCard) {
+        return {
+            paralyzed: false,
+            damage: otherCard.paralyzed ? null : Math.max(0, otherCard.damage - this._repairCapability)
+        };
     }
 
     _hasRepairedThisTurn() {

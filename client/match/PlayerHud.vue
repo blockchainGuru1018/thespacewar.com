@@ -87,7 +87,8 @@
         </portal>
         <portal to="stationActionRow">
             <span class="stationRowDescription descriptionText">
-                Gives {{ actionPointsFromStationCards }} action point{{actionPointsFromStationCards === 1 ? '' : 's'}}
+                Start turn with {{ actionPointsFromStationCards
+                }} action point{{actionPointsFromStationCards === 1 ? '' : 's'}}
             </span>
         </portal>
         <portal to="stationHandSizeRow">

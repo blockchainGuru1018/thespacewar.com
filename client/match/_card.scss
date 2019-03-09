@@ -73,3 +73,7 @@
 .card.card-faceDown.selected--danger {
   outline: 3px solid red;
 }
+
+.selectable--turnedAround {
+  transform: rotate(180deg);
+}

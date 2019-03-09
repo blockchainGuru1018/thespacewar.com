@@ -489,7 +489,7 @@
 .cardHoverActivator {
   position: absolute;
   width: $playerCardOnHandWidth;
-  height: 150px;
+  height: 100px; //TODO Increase to 150px when using touch?
   bottom: 100px;
   opacity: 0;
   background-size: contain;

@@ -1,3 +1,4 @@
+const simulateAttack = require('./simulateAttack.js');
 const phases = require('../phases.js');
 
 class BaseCard {
@@ -182,18 +183,20 @@ class BaseCard {
         return true;
     }
 
-    attackCard(defenderCard) {
-        const defenderCurrentDamage = defenderCard.damage;
-        const defenderTotalDefense = defenderCard.defense - defenderCurrentDamage;
-        const cardAttack = this.attack;
-        if (cardAttack >= defenderTotalDefense) {
-            defenderCard.destroyed = true;
-        }
-        defenderCard.damage = defenderCurrentDamage + cardAttack;
+    attackCard(defenderCard) { //TODO Perhaps attack logic should be in an outside class?
+        const {
+            attackerDestroyed,
+            defenderDestroyed,
+            defenderDamage
+        } = this.simulateAttackingCard(defenderCard);
 
-        if (this.type === 'missile') {
-            this.destroyed = true;
-        }
+        defenderCard.damage = defenderDamage;
+        defenderCard.destroyed = defenderDestroyed;
+        this.destroyed = attackerDestroyed;
+    }
+
+    simulateAttackingCard(defenderCard) {
+        return simulateAttack(this, defenderCard)
     }
 
     canBeSacrificed() {

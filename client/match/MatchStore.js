@@ -85,6 +85,7 @@ module.exports = function (deps) {
             hasPutDownNonFreeCardThisTurn,
             actionPoints2,
             attackerCard,
+            repairerCard,
             attackerCanAttackStationCards,
             allPlayerCardsInOwnAndOpponentZone,
             allPlayerStationCards,
@@ -336,6 +337,13 @@ module.exports = function (deps) {
 
         const attackerCard = getters.allPlayerCardsInOwnAndOpponentZone.find(c => c.id === state.attackerCardId);
         return getters.createCard(attackerCard);
+    }
+
+    function repairerCard(state, getters) {
+        if (!state.repairerCardId) return null;
+
+        const repairerCard = getters.allPlayerCardsInOwnAndOpponentZone.find(c => c.id === state.repairerCardId);
+        return getters.createCard(repairerCard);
     }
 
     function attackerCanAttackStationCards(state, getters) {
