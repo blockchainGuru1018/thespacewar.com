@@ -24,13 +24,23 @@ module.exports = class EmpMissile extends BaseCard {
     }
 
     attackCard(defenderCard) {
-        if (defenderCard.commonId === EnergyShield.CommonId) {
-            defenderCard.destroyed = true;
-        }
-        else if (defenderCard.type === 'spaceShip') {
-            defenderCard.paralyzed = true;
-        }
+        const {
+            attackerDestroyed,
+            defenderParalyzed,
+            defenderDestroyed
+        } = this.simulateAttackingCard(this, defenderCard);
 
-        this.destroyed = true;
+        defenderCard.destroyed = defenderDestroyed;
+        defenderCard.paralyzed = defenderParalyzed;
+        this.destroyed = attackerDestroyed;
+    }
+
+    simulateAttackingCard(defenderCard) {
+        const defenderIsEnergyShield = defenderCard.commonId === EnergyShield.CommonId
+        return {
+            attackerDestroyed: true,
+            defenderDestroyed: defenderIsEnergyShield,
+            defenderParalyzed: defenderCard.type === 'spaceShip' && !defenderIsEnergyShield
+        };
     }
 };

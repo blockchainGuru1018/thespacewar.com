@@ -4,10 +4,36 @@
         <div class="actionOverlays">
             <div v-if="canBeSelectedAsDefender"
                  @click.stop="selectAsDefender(card)"
-                 class="attackable actionOverlay"/>
+                 class="attackable actionOverlay actionOverlay--turnedAround">
+                <div v-if="predictedResultsIfAttacked.defenderParalyzed"
+                     class="attackble-paralyzed actionOverlay-predictionText">
+                    Paralyze
+                </div>
+                <div v-else-if="predictedResultsIfAttacked.defenderDestroyed"
+                     class="actionOverlay-predictedLethal actionOverlay-predictionText">
+                    🕱
+                </div>
+                <div v-else
+                     class="actionOverlay-predictedDamageChange actionOverlay-predictionText">
+                    {{ behaviourCard.defense - behaviourCard.damage }}
+                    ⇒
+                    {{ behaviourCard.defense - predictedResultsIfAttacked.defenderDamage }}
+                </div>
+            </div>
             <div v-else-if="canBeSelectedForRepair"
                  @click.stop="selectForRepair(card.id)"
-                 class="selectForRepair actionOverlay"/>
+                 class="selectForRepair actionOverlay">
+                <div v-if="behaviourCard.paralyzed != predictedResultsIfRepaired.paralyzed"
+                     class="selectForRepair-reActivate actionOverlay-predictionText">
+                    Re-activate
+                </div>
+                <div v-if="behaviourCard.damage != predictedResultsIfRepaired.damage"
+                     class="actionOverlay-predictedDamageChange actionOverlay-predictionText">
+                    {{ behaviourCard.defense - behaviourCard.damage }}
+                    ⇒
+                    {{ behaviourCard.defense - predictedResultsIfRepaired.damage }}
+                </div>
+            </div>
             <template v-else-if="canSelectAction">
                 <div v-if="canMove"
                      @click.stop="moveClick"
@@ -37,7 +63,17 @@
             </template>
             <div v-if="canSelectCardForAction"
                  @click.stop="selectCardForActiveAction(card.id)"
-                 class="selectable"/>
+                 :class="['selectable', {'selectable--turnedAround': !isPlayerCard}]">
+                <div v-if="predictedResultsIfTargetForSacrifice.destroyed"
+                     class="actionOverlay-predictedLethal actionOverlay-predictionText">
+                    🕱
+                </div>
+                <div v-else class="actionOverlay-predictedDamageChange actionOverlay-predictionText">
+                    {{ behaviourCard.defense - behaviourCard.damage }}
+                    ⇒
+                    {{ behaviourCard.defense - predictedResultsIfTargetForSacrifice.damage }}
+                </div>
+            </div>
         </div>
         <div class="indicatorOverlays">
             <div v-if="card.damage && card.damage > 0" class="card-damageIndicator" :style="damageTextStyle">
@@ -67,6 +103,7 @@
     } = Vuex.createNamespacedHelpers('permission');
     const vClickOutside = require('v-click-outside');
     const getCardImageUrl = require("../utils/getCardImageUrl.js")
+    const DAMAGE_WHEN_TARGET_FOR_SACRIFICE = 4;
 
     module.exports = {
         props: [
@@ -95,7 +132,8 @@
             ...mapGetters([
                 'allOpponentStationCards',
                 'createCard',
-                'attackerCard'
+                'attackerCard',
+                'repairerCard'
             ]),
             ...mapPermissionGetters([
                 'canSelectCardsForActiveAction',
@@ -110,6 +148,9 @@
             ...mapCardGetters([
                 'activeActionCard'
             ]),
+            behaviourCard() {
+                return this.createCard(this.card);
+            },
             classes() {
                 const classes = ['card'];
                 if (this.selectedAsAttacker) {
@@ -234,6 +275,26 @@
                     isOpponentCard: !this.isPlayerCard
                 }
                 return this.checkIfCanBeSelectedForAction(options);
+            },
+            predictedResultsIfAttacked() {
+                if (!this.attackerCardId) return null;
+
+                return this.attackerCard.simulateAttackingCard(this.behaviourCard);
+            },
+            predictedResultsIfRepaired() {
+                if (!this.repairerCardId) return null;
+
+                return this.repairerCard.simulateRepairingCard(this.behaviourCard);
+            },
+            predictedResultsIfTargetForSacrifice() {
+                if (!this.activeAction && this.activeAction.name !== 'sacrifice') return null;
+
+                const defense = this.behaviourCard.defense;
+                const damageAfter = (this.behaviourCard.damage + DAMAGE_WHEN_TARGET_FOR_SACRIFICE);
+                return {
+                    damage: damageAfter,
+                    destroyed: (defense - damageAfter) <= 0
+                }
             }
         },
         methods: {
@@ -333,6 +394,10 @@
         &:hover {
             opacity: 1;
         }
+
+        &--turnedAround {
+            transform: rotate(180deg);
+        }
     }
 
     .movable, .repair {
@@ -353,6 +418,30 @@
 
     .selectedAsAttacker, .isActiveActionCard {
         outline: 2px solid red;
+    }
+
+    .actionOverlay-predictionText {
+        font-family: "Space mono", monospace;
+    }
+
+    .actionOverlay-predictedDamageChange {
+        font-size: 1.5em;
+    }
+
+    .actionOverlay-predictedLethal {
+        font-size: 3em;
+    }
+
+    .attackble-paralyzed {
+        font-size: 1em;
+    }
+
+    .selectForRepair-repairDamage {
+        font-size: 1.5em;
+    }
+
+    .selectForRepair-reActivate {
+        font-size: 1em;
     }
 
     .paralyzed {
