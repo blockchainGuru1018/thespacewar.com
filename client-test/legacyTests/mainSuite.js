@@ -1,26 +1,24 @@
-let assert = require('bocha/lib/dom/assert.js');
-let refute = require('bocha/lib/dom/refute.js');
-let timeout = require('bocha/lib/timeoutPromise.js');
-let bochaDom = require('bocha/lib/dom/dom.js');
-let sinon = require('sinon');
-let stub = sinon.stub;
-let click = bochaDom.clickAndTick;
-const resolveModuleWithPossibleDefault = require('../client/utils/resolveModuleWithPossibleDefault.js');
-const Vue = resolveModuleWithPossibleDefault(require('vue'));
-const Vuex = resolveModuleWithPossibleDefault(require('vuex'));
-const PortalVue = resolveModuleWithPossibleDefault(require('portal-vue'));
-const vClickOutside = resolveModuleWithPossibleDefault(require('v-click-outside'));
-const defaults = require('lodash/defaults');
-const Page = require('../client/match/MatchPage.js');
-const FakeCardDataAssembler = require('../server/test/testUtils/FakeCardDataAssembler.js');
+const FakeCardDataAssembler = require('../../server/test/testUtils/FakeCardDataAssembler.js');
 const createCard = FakeCardDataAssembler.createCard;
-const PutDownCardEvent = require('../shared/PutDownCardEvent.js');
-const MoveCardEvent = require('../shared/event/MoveCardEvent');
-const RepairCardEvent = require('../shared/event/RepairCardEvent.js');
-const AttackEvent = require('../shared/event/AttackEvent.js');
-const SmallCannon = require('../shared/card/SmallCannon.js');
-const getCardImageUrl = require('../client/utils/getCardImageUrl.js');
-const cardsJson = require('../server/card/rawCardData.cache.json').data;
+const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
+const MoveCardEvent = require('../../shared/event/MoveCardEvent');
+const RepairCardEvent = require('../../shared/event/RepairCardEvent.js');
+const AttackEvent = require('../../shared/event/AttackEvent.js');
+const getCardImageUrl = require('../../client/utils/getCardImageUrl.js');
+const FakeState = require('../matchTestUtils/FakeState.js');
+const FakeMatchController = require('../matchTestUtils/FakeMatchController.js');
+const { createControllerBoundToTestContext } = require('../matchTestUtils/legacyIndex.js');
+const {
+    assert,
+    refute,
+    sinon,
+    timeout,
+    defaults,
+    stub,
+    dom: {
+        click
+    }
+} = require('../bocha-jest/bocha-jest.js');
 
 const DiscoveryCommonId = '42';
 const CommonShipId = '25';
@@ -33,72 +31,21 @@ const TheShadeCommonId = '27';
 const EnergyShieldCommonId = '21';
 const SmallRepairShopId = '29';
 
-Vue.use(Vuex);
-Vue.use(PortalVue);
-Vue.use(vClickOutside);
+let keysToPreserve = [];
 
-let controller;
-
-beforeEach(() => {
-    sinon.stub(getCardImageUrl, 'byCommonId').returns('/#');
-});
-
-afterEach(() => {
-    getCardImageUrl.byCommonId.restore && getCardImageUrl.byCommonId.restore();
-    controller && controller.tearDown();
-});
-
-describe('misc', async () => {
-    test('when in "start" phase and click card on hand should NOT see ANY card ghosts', async () => {
-        const { dispatch } = createController();
-        controller.showPage();
-        dispatch('restoreState', FakeState({
-            turn: 1,
-            currentPlayer: 'P1A',
-            phase: 'start',
-            cardsOnHand: [createCard({ id: 'C1A' })],
-            stationCards: [{ place: 'draw' }]
-        }));
-        await timeout();
-
-        await click('.field-playerCardsOnHand .cardOnHand');
-
-        assert.elementCount('.card-ghost', 0);
-    });
-});
-
-describe('action phase', () => {
-    describe('when in action phase and click card on hand', async () => {
-        beforeEach(async () => {
-            const { dispatch } = createController();
-            controller.showPage();
-            dispatch('restoreState', FakeState({
-                turn: 1,
-                currentPlayer: 'P1A',
-                phase: 'action',
-                cardsOnHand: [createCard({ id: 'C1A' })],
-                stationCards: [{ place: 'draw' }]
-            }));
-            await timeout();
-
-            await click('.field-playerCardsOnHand .cardOnHand');
-        });
-
-        test('should see station card ghosts', async () => {
-            assert.elementCount('.field-playerStation .card-ghost', 3);
-        });
-    });
-});
-
-let keysToPreserver = [];
-
-const testConfig = {
+module.exports = {
     setUp() {
-        keysToPreserver.push(Object.keys(this));
+        keysToPreserve.push(Object.keys(this));
+        sinon.stub(getCardImageUrl, 'byCommonId').returns('/#');
+
+        this.createController = createControllerBoundToTestContext(this);
     },
     tearDown() {
+        getCardImageUrl.byCommonId.restore && getCardImageUrl.byCommonId.restore();
+        this.controller && this.controller.tearDown();
+        
         for (let key of Object.keys(this)) {
-            if (!keysToPreserver.includes(key)) {
+            if (!keysToPreserve.includes(key)) {
                 delete this[key];
             }
         }
@@ -106,8 +53,8 @@ const testConfig = {
     'attack': {
         'when player has card in opponent zone and opponent has 1 defense card': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 2,
@@ -125,8 +72,8 @@ const testConfig = {
         },
         'when player has 1 card in opponent zone and opponent has 1 duration card in its zone': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 2,
@@ -146,8 +93,8 @@ const testConfig = {
     'duration cards': {
         'when has duration in play and is your turn': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     cardsInZone: [{ id: 'C1A', type: 'duration' }]
                 }));
@@ -159,8 +106,8 @@ const testConfig = {
         'when in preparation phase with 2 duration cards and click and discards the first': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = createController({ matchController: this.matchController });
-                controller.showPage();
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     phase: 'preparation',
                     currentPlayer: 'P1A',
@@ -183,8 +130,8 @@ const testConfig = {
         'when in preparation phase and go to next phase': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = createController({ matchController: this.matchController });
-                controller.showPage();
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     phase: 'preparation',
                     currentPlayer: 'P1A'
@@ -200,8 +147,8 @@ const testConfig = {
         'when in preparation phase and discard all duration cards should AUTOMATICALLY go to the draw phase': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = createController({ matchController: this.matchController });
-                controller.showPage();
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     phase: 'preparation',
                     currentPlayer: 'P1A',
@@ -217,8 +164,8 @@ const testConfig = {
         },
         'on "opponentDiscardedDurationCard"': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     currentPlayer: 'P2A',
                     opponentCardsInZone: [{ id: 'C1A' }]
@@ -238,8 +185,8 @@ const testConfig = {
     'enlarge': {
         'when has 1 card in own zone and click enlarge icon on it': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
@@ -255,8 +202,8 @@ const testConfig = {
             }
         },
         'when enlarged version of card is visible and click on overlay should hide enlarged card': async function () {
-            const { dispatch } = createController();
-            controller.showPage();
+            const { dispatch } = this.createController();
+            this.controller.showPage();
             dispatch('restoreState', FakeState({
                 turn: 2,
                 currentPlayer: 'P1A',
@@ -278,8 +225,8 @@ const testConfig = {
                     PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
                     PutDownCardEvent({ turn: 1, cardId: 'C2A' })
                 ];
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
@@ -300,8 +247,8 @@ const testConfig = {
                     PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
                     PutDownCardEvent({ turn: 1, cardId: 'C2A' })
                 ];
-                const { dispatch } = createController({ matchController: this.matchController });
-                controller.showPage();
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
@@ -361,8 +308,8 @@ const testConfig = {
         'when repair 3 damage of card with 4 damage and has opponent card in zone': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = createController({ matchController: this.matchController });
-                controller.showPage();
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
@@ -396,8 +343,8 @@ const testConfig = {
                     PutDownCardEvent({ turn: 1, cardId: 'C2A' }),
                     RepairCardEvent({ turn: 2, cardId: 'C1A' })
                 ];
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 2,
@@ -413,8 +360,8 @@ const testConfig = {
         },
         'when has card in zone and there is NO damaged ship in same zone': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 2,
@@ -438,8 +385,8 @@ const testConfig = {
                     PutDownCardEvent({ turn: 1, cardId: 'C1A' }),
                     MoveCardEvent({ turn: 2, cardId: 'C1A' })
                 ];
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 3,
                     currentPlayer: 'P1A',
@@ -461,8 +408,8 @@ const testConfig = {
     'draw phase:': {
         'when in draw phase': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -488,8 +435,8 @@ const testConfig = {
         'when has 1 card in draw-station row and is in draw phase and click on own draw pile': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = createController({ matchController: this.matchController });
-                controller.showPage();
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -522,8 +469,8 @@ const testConfig = {
         'when is in draw phase and click on own draw pile and server responds with card and that more can be drawn': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = createController({ matchController: this.matchController });
-                controller.showPage();
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -552,8 +499,8 @@ const testConfig = {
         'when is in draw phase and click on opponent draw pile and server responds without any card but that more can be drawn': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = createController({ matchController: this.matchController });
-                controller.showPage();
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -587,8 +534,8 @@ const testConfig = {
     'skip phases with NO actions:': {
         'when in draw phase with NO station cards in draw row but 1 in action row should show next phase button to Action phase': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -604,8 +551,8 @@ const testConfig = {
         },
         'when in action phase with no cards to discard and no cards in play should show next phase as End turn': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -621,8 +568,8 @@ const testConfig = {
         'when in action phase with no cards to discard and no cards in play and click "End turn"': {
             async setUp() {
                 this.matchController = FakeMatchController();
-                const { dispatch } = createController({ matchController: this.matchController });
-                controller.showPage();
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -639,8 +586,8 @@ const testConfig = {
         },
         'when in action phase with no cards to discard and 1 in play that can move': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 2,
@@ -657,8 +604,8 @@ const testConfig = {
         },
         'when in action phase with no cards to discard and 1 in play in opponent zone that can move': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 3,
@@ -678,8 +625,8 @@ const testConfig = {
         },
         'when in action phase with no cards to discard and 1 in play in opponent zone that can NOT move': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 2,
@@ -699,8 +646,8 @@ const testConfig = {
         },
         'when in action phase with no cards to discard and has 1 fast missile in play': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -728,8 +675,8 @@ const testConfig = {
         'when card has attack level 2 and attack last opponent station card that is NOT flipped': {
             async setUp() {
                 this.matchController = FakeMatchController();
-                const { dispatch } = createController({ matchController: this.matchController });
-                controller.showPage();
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 3,
                     currentPlayer: 'P1A',
@@ -758,8 +705,8 @@ const testConfig = {
         },
         'when opponent has 0 unflipped station cards': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 3,
@@ -781,8 +728,8 @@ const testConfig = {
         },
         'when you have 0 unflipped station cards': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 3,
@@ -806,8 +753,8 @@ const testConfig = {
         },
         'when moved card to opponent zone last turn': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 3,
@@ -827,8 +774,8 @@ const testConfig = {
         },
         'when moved card to opponent zone this turn': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 2,
@@ -848,8 +795,8 @@ const testConfig = {
         },
         'when moved Fast Missile to opponent zone THIS turn': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 2,
@@ -869,8 +816,8 @@ const testConfig = {
         },
         'when put down Fast missile this turn and select for attack': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -892,8 +839,8 @@ const testConfig = {
     'discard card requirement': {
         'when have discard card requirement': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -919,8 +866,8 @@ const testConfig = {
         },
         'when have draw card requirement with "waiting" set to true': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -949,8 +896,8 @@ const testConfig = {
     'damage own station card requirement': {
         'when have damageOwnStationCard requirement': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -977,8 +924,8 @@ const testConfig = {
         },
         'when in action phase with damageOwnStationCard requirement and a flipped station card and click on card in hand': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1000,8 +947,8 @@ const testConfig = {
         },
         'when in action phase with damageOwnStationCard requirement and an affordable card on hand and click on card in hand': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1023,8 +970,8 @@ const testConfig = {
         },
         'when have damageOwnStationCard requirement and 1 of 2 station cards is flipped': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -1045,8 +992,8 @@ const testConfig = {
         },
         'when have damageOwnStationCard requirement and click on station card ': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1074,8 +1021,8 @@ const testConfig = {
         'when have damageOwnStationCard requirement with count of 1 and click on station card': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = createController({ matchController: this.matchController });
-                controller.showPage();
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1109,8 +1056,8 @@ const testConfig = {
     'draw card requirement': {
         'when have draw card requirement': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -1130,8 +1077,8 @@ const testConfig = {
         },
         'when have a draw card requirement in the draw phase': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -1150,8 +1097,8 @@ const testConfig = {
         },
         'when have discard card requirement but a draw card requirement is the first': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 1,
@@ -1169,8 +1116,8 @@ const testConfig = {
     'Discovery:': {
         'when place down card "Discovery"': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1197,8 +1144,8 @@ const testConfig = {
         },
         'when move card "Discovery" from station to zone': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
@@ -1235,8 +1182,8 @@ const testConfig = {
         },
         'when move card "Discovery" from station to zone and cancels': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
@@ -1275,8 +1222,8 @@ const testConfig = {
         'when place down card "Discovery" and choose draw options': {
             async setUp() {
                 this.matchController = FakeMatchController();
-                const { dispatch } = createController({ matchController: this.matchController });
-                controller.showPage();
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1311,9 +1258,9 @@ const testConfig = {
         },
         'when place down card "Discovery" and choose discard option': {
             async setUp() {
-                this.matchController = FakeMatchController({ emit: stub().returns(new Promise(() => {})) });
-                const { dispatch } = createController({ matchController: this.matchController });
-                controller.showPage();
+                this.matchController = FakeMatchController({ emit: stub().returns(new Promise(() => { })) });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1340,8 +1287,8 @@ const testConfig = {
         'when place down card "Discovery" and cancels': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = createController({ matchController: this.matchController });
-                controller.showPage();
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1374,8 +1321,8 @@ const testConfig = {
     'Fatal Error:': {
         'when put down card Fatal Error': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1438,8 +1385,8 @@ const testConfig = {
         },
         'when move Fatal Error from station to zone': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
@@ -1480,8 +1427,8 @@ const testConfig = {
         'when put down card Fatal Error and then select opponent card in player zone': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = createController({ matchController: this.matchController });
-                controller.showPage();
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1531,8 +1478,8 @@ const testConfig = {
     'Trigger happy joe:': {
         'when moved to opponent zone last turn and has attacked station card once this turn and ready card again for attack': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 3,
                     currentPlayer: 'P1A',
@@ -1561,8 +1508,8 @@ const testConfig = {
     'Deadly sniper': {
         'when card was placed this turn': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1591,8 +1538,8 @@ const testConfig = {
         },
         'when was placed last turn': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
@@ -1618,8 +1565,8 @@ const testConfig = {
     // 'Expansion:': { //TODO What to do about this test? The card expansion is replaced with a new one with a different ability
     //     'when has expansion in play and has put down a station card and hold a card': {
     //         async setUp() {
-    //             const { dispatch } = createController();
-    //             controller.showPage();
+    //             const { dispatch } = this.createController();
+    //             this.controller.showPage();
     //             dispatch('restoreState', FakeState({
     //                 turn: 1,
     //                 currentPlayer: 'P1A',
@@ -1644,8 +1591,8 @@ const testConfig = {
     'Pursuiter:': {
         'when has card and an opponent card in home zone': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1662,8 +1609,8 @@ const testConfig = {
         },
         'when is NOT attack phase and has card and an opponent card in home zone': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1680,8 +1627,8 @@ const testConfig = {
         },
         'when has card THAT IS NOT PURSUITER and an opponent card in home zone': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1699,8 +1646,8 @@ const testConfig = {
         'when select card to sacrifice and selects other card': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = createController({ matchController: this.matchController });
-                controller.showPage();
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1720,8 +1667,8 @@ const testConfig = {
         },
         'when select card in home zone to sacrifice': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1763,8 +1710,8 @@ const testConfig = {
         },
         'when select card in opponent zone to sacrifice': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1800,8 +1747,8 @@ const testConfig = {
         },
         'when select card in opponent zone to sacrifice and opponent has energy shield': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1827,8 +1774,8 @@ const testConfig = {
         },
         'when select card to sacrifice and select a station card': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1856,8 +1803,8 @@ const testConfig = {
         'when select card to sacrifice and select a 4 station cards': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = createController({ matchController: this.matchController });
-                controller.showPage();
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1893,8 +1840,8 @@ const testConfig = {
         'when select card to sacrifice and opponent has 3 unflipped station cards and select all 3': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = createController({ matchController: this.matchController });
-                controller.showPage();
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
@@ -1927,8 +1874,8 @@ const testConfig = {
         },
         'when opponent has 1 station card and player has card in opponent zone with the ability to sacrifice itself': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 3,
                     currentPlayer: 'P1A',
@@ -1949,8 +1896,8 @@ const testConfig = {
         'when select card to sacrifice and opponent has 1 station card and select that card': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
-                const { dispatch } = createController({ matchController: this.matchController });
-                controller.showPage();
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
                 dispatch('restoreState', FakeState({
                     turn: 3,
                     currentPlayer: 'P1A',
@@ -1978,8 +1925,8 @@ const testConfig = {
     'The Shade:': {
         'when opponent card is The Shade and it has NOT attacked this turn': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 2,
@@ -1998,8 +1945,8 @@ const testConfig = {
         },
         'when PLAYER IS THE FIRST PLAYER and opponent card is The Shade and it has attacked last turn': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 2,
@@ -2019,8 +1966,8 @@ const testConfig = {
         },
         'when PLAYER IS THE SECOND PLAYER and opponent card is The Shade and it has attacked this turn': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 2,
@@ -2040,8 +1987,8 @@ const testConfig = {
         },
         'when PLAYER IS THE SECOND PLAYER and opponent card is The Shade and it has attacked last turn': {
             async setUp() {
-                const { dispatch } = createController();
-                controller.showPage();
+                const { dispatch } = this.createController();
+                this.controller.showPage();
 
                 dispatch('restoreState', FakeState({
                     turn: 2,
@@ -2061,191 +2008,3 @@ const testConfig = {
         }
     }
 };
-
-let methods = {
-    describe,
-    test,
-    beforeEach,
-    afterEach
-};
-let testContext = {
-    testContext: 'yeah'
-};
-let myStack = loopOverTestConfig(testConfig);
-let myTests = setItUp(myStack);
-for (let callback of myTests) {
-    callback();
-}
-
-function setItUp(stack, depth = 0) {
-
-    let callbacks = [];
-    while (stack.length > 0) {
-        let piece = stack.pop();
-
-        if (piece.method === 'beforeEach' || piece.method === 'afterEach') {
-            callbacks.push(function () {
-                methods[piece.method](piece.fn);
-            });
-        }
-        else if (piece.method === 'describe') {
-            let subCallbacks = setItUp(piece.stack, depth + 1);
-            if (piece.name.startsWith('=>')) {
-                callbacks.push(function () {
-                    methods[piece.method].only(piece.name, function () {
-                        for (let subCallback of subCallbacks) {
-                            subCallback();
-                        }
-                    });
-                });
-            }
-            else {
-                callbacks.push(function () {
-                    methods[piece.method](piece.name, function () {
-                        for (let subCallback of subCallbacks) {
-                            subCallback();
-                        }
-                    });
-                });
-            }
-        }
-        else if (piece.method === 'test') {
-            while (piece && piece.method === 'test') {
-                let pieceToUse = piece;
-                if (piece.name.startsWith('=>')) {
-                    callbacks.push(function () {
-                        methods[pieceToUse.method].only(pieceToUse.name, pieceToUse.fn);
-                    });
-                }
-                else {
-                    callbacks.push(function () {
-                        methods[pieceToUse.method](pieceToUse.name, pieceToUse.fn);
-                    });
-                }
-
-                piece = stack.pop();
-            }
-        }
-    }
-
-    return callbacks;
-}
-
-function loopOverTestConfig(config) {
-    let stack = [];
-
-    for (let key of Object.keys(config)) {
-        if (key === 'setUp') {
-            stack.push({ method: 'beforeEach', fn: config[key].bind(testContext) });
-        }
-        else if (key === 'tearDown') {
-            stack.push({ method: 'afterEach', fn: config[key].bind(testContext) });
-        }
-        else {
-            if (typeof config[key] === 'object') {
-                let subStack = loopOverTestConfig(config[key]);
-                stack.push({
-                    method: 'describe',
-                    name: key,
-                    stack: subStack
-                });
-            }
-            else if (typeof config[key] === 'function') {
-                stack.push({ method: 'test', name: key, fn: config[key].bind(testContext) });
-            }
-        }
-    }
-
-    return stack.reverse();
-}
-
-function createController(options = {}) {
-    controller = TestController(options);
-    return { dispatch: controller.dispatch };
-}
-
-function TestController({ playerIds = ['P1A', 'P2A'], matchId = 'M1A', ...pageDeps } = {}) {
-    const store = new Vuex.Store({});
-    const [ownId, opponentId] = playerIds;
-    const matchController = pageDeps.matchController || FakeMatchController();
-    pageDeps.matchControllerFactory = pageDeps.matchControllerFactory || FakeMatchControllerFactory({ matchController });
-    pageDeps.userRepository = pageDeps.userRepository || FakeUserRepository({ ownUser: { id: ownId } });
-    pageDeps.cardInfoRepository = {
-        getType() {},
-        getCost() {},
-        getImageUrl() {}
-    };
-    pageDeps.rootStore = store;
-    pageDeps.rawCardDataRepository = { init() {}, get: () => cardsJson };
-
-    const page = Page(pageDeps);
-
-    return {
-        dispatch(...args) {
-            pageDeps.matchControllerFactory.getStoreDispatch()(...args);
-        },
-        showPage() {
-            page.show({ matchId, opponentUser: { id: opponentId } });
-        },
-        tearDown() {
-            page.hide();
-        }
-    };
-}
-
-function FakeMatchControllerFactory({ matchController = FakeMatchController() } = {}) {
-    let _dispatch;
-    return {
-        create: ({ dispatch }) => {
-            _dispatch = dispatch;
-            return matchController;
-        },
-        getStoreDispatch: () => _dispatch
-    }
-}
-
-function FakeMatchController(options = {}) {
-    return defaults(options, {
-        start() {
-        },
-        emit: stub(),
-        stop() {}
-    });
-}
-
-function FakeState(options) {
-    const cardsInZone = options.cardsInZone || [];
-    options.cardsInZone = cardsInZone.map(c => createCard(c));
-    options.cardsInOpponentZone = (options.cardsInOpponentZone || []).map(c => createCard(c));
-    options.opponentCardsInZone = (options.opponentCardsInZone || []).map(c => createCard(c));
-    options.cardsOnHand = (options.cardsOnHand || []).map(c => createCard(c));
-
-    return defaults(options, {
-        stationCards: [{ place: 'draw' }], //Needed to not always show a Defeated screen
-        cardsOnHand: [],
-        cardsInZone: [],
-        cardsInOpponentZone: [],
-        discardedCards: [],
-        opponentCardCount: 0,
-        opponentDiscardedCards: [],
-        opponentStationCards: [{ place: 'draw' }], //Needed to not always show a Defeated screen
-        opponentCardsInZone: [],
-        opponentCardsInPlayerZone: [],
-        events: [],
-        requirements: [],
-        phase: 'wait',
-        turn: 1,
-        currentPlayer: 'P2A',
-        opponentRetreated: false,
-        playerRetreated: false,
-        playerOrder: ['P1A', 'P2A']
-    });
-}
-
-function FakeUserRepository({ ownUser }) {
-    return {
-        getOwnUser() {
-            return ownUser;
-        }
-    }
-}
