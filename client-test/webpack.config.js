@@ -3,10 +3,14 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 module.exports = {
     mode: 'development',
-    entry: ['./input.js'],
+    entry: {
+        legacyTest: path.join(__dirname, 'legacyTests', 'runAllLegacyTests.js'),
+        actionPhase: path.join(__dirname, 'tests', 'actionPhaseTest.js'),
+        misc: path.join(__dirname, 'tests', 'miscTest.js'),
+    },
     output: {
-        filename: 'output.test.js',
-        path: path.resolve(__dirname)
+        filename: '[name].test.js',
+        path: path.resolve(__dirname, 'build')
     },
     module: {
         rules: [
