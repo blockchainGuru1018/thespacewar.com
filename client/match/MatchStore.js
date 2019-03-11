@@ -43,7 +43,7 @@ module.exports = function (deps) {
     const clientCardFactory = deps.cardFactory
         || ClientCardFactory({ actionPointsCalculator, rawCardDataRepository });
 
-    const deckSize = Deck({ cardDataAssembler: CardDataAssembler({rawCardDataRepository })}).getCardCount() - MAGIC_NUMBER_TO_GET_DECK_SIZE_RIGHT;
+    const deckSize = getDeckSize(rawCardDataRepository);
 
     return {
         namespaced: true,
@@ -812,4 +812,8 @@ module.exports = function (deps) {
 
 function stationCardsByIsFlippedComparer(a, b) {
     return (a.flipped ? 1 : 0) - (b.flipped ? 1 : 0);
+}
+
+function getDeckSize(rawCardDataRepository) {
+    return Deck({ cardDataAssembler: CardDataAssembler({ rawCardDataRepository }) }).getCardCount() - MAGIC_NUMBER_TO_GET_DECK_SIZE_RIGHT;
 }
