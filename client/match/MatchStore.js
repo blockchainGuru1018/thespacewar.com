@@ -8,6 +8,8 @@ const MatchService = require("../../shared/match/MatchService.js");
 const CanThePlayer = require("../../shared/match/CanThePlayer.js");
 const PlayerRuleService = require("../../shared/match/PlayerRuleService.js");
 const ClientPlayerStateService = require("./ClientPlayerStateService");
+const CardDataAssembler = require('../../shared/CardDataAssembler.js');
+const Deck = require('../../server/deck/Deck.js');
 const mapFromClientToServerState = require('./mapFromClientToServerState.js');
 const localGameDataFacade = require('../utils/localGameDataFacade.js');
 const {
@@ -15,6 +17,7 @@ const {
     PHASES
 } = require('./phases.js');
 
+const MAGIC_NUMBER_TO_GET_DECK_SIZE_RIGHT = 1;
 const storeItemNameByServerItemName = {
     cardsInZone: 'playerCardsInZone',
     cardsInOpponentZone: 'playerCardsInOpponentZone',
@@ -36,8 +39,11 @@ module.exports = function (deps) {
     const cardInfoRepository = deps.cardInfoRepository;
     const actionPointsCalculator = deps.actionPointsCalculator || ActionPointsCalculator({ cardInfoRepository });
     const matchController = deps.matchController;
+    const rawCardDataRepository = deps.rawCardDataRepository;
     const clientCardFactory = deps.cardFactory
-        || ClientCardFactory({ actionPointsCalculator, rawCardDataRepository: deps.rawCardDataRepository });
+        || ClientCardFactory({ actionPointsCalculator, rawCardDataRepository });
+
+    const deckSize = Deck({ cardDataAssembler: CardDataAssembler({rawCardDataRepository })}).getCardCount() - MAGIC_NUMBER_TO_GET_DECK_SIZE_RIGHT;
 
     return {
         namespaced: true,
@@ -101,7 +107,8 @@ module.exports = function (deps) {
             playerStateService,
             opponentStateService,
             queryOpponentEvents,
-            matchService
+            matchService,
+            playerCardsInDeckCount
         },
         mutations: {
             setPlayerStationCards,
@@ -149,6 +156,7 @@ module.exports = function (deps) {
             cancelAttack,
             endAttack,
             selectAsRepairer,
+            cancelRepair,
             selectForRepair,
             damageStationCards //todo rename to "damageStationCardsForRequirement"
         }
@@ -322,6 +330,15 @@ module.exports = function (deps) {
         const serverState = mapFromClientToServerState(state)
         matchService.setState(serverState);
         return matchService;
+    }
+
+    function playerCardsInDeckCount(state, getters) {
+        return deckSize
+            - state.playerDiscardedCards.length
+            - state.playerCardsOnHand.length
+            - state.playerCardsInZone.length
+            - state.playerCardsInOpponentZone.length
+            - getters.allPlayerStationCards.length;
     }
 
     function queryOpponentEvents() {
@@ -680,6 +697,10 @@ module.exports = function (deps) {
 
     function selectAsRepairer({ state }, repairerCardId) {
         state.repairerCardId = repairerCardId;
+    }
+
+    function cancelRepair({ state }) {
+        state.repairerCardId = null;
     }
 
     function selectForRepair({ state, getters, dispatch }, cardToRepairId) {

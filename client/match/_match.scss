@@ -455,8 +455,18 @@
   }
 }
 
-.drawPile-draw {
+.drawPile-draw,
+.drawPile-discardTopTwo {
   background-color: rgba(0, 0, 0, .5);
+}
+
+.drawPile-cardCount {
+  position: absolute;
+  font-size: 23px;
+  color: rgba(255,255,255, .5);
+  font-family: "Space mono", monospace;
+  right: 10px;
+  top: 0px;
 }
 
 .match-background {

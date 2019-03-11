@@ -375,11 +375,11 @@
             "name": "Expansion",
             "price": "2",
             "type_card": "orange",
-            "detail": "Your opponent may draw 1 card.\r\nYou can play 2 extra station cards this turn.",
+            "detail": "Your opponent may draw 2 cards.\r\nYou can play 2 extra station cards this turn.",
             "defense": "0",
             "attack": "0",
             "number_copies": "1"
         }
     ],
-    "saveTime": 1552251095579
+    "saveTime": 1552334494553
 }

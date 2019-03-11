@@ -21,12 +21,12 @@ function PutDownDiscovery({
 
         if (choice === 'draw') {
             playerRequirementService.addDrawCardRequirement({
-                count: 4,
+                count: 3,
                 common: true,
                 cardCommonId: cardData.commonId
             });
             opponentRequirementService.addDrawCardRequirement({
-                count: 3,
+                count: 2,
                 common: true,
                 cardCommonId: cardData.commonId
             });
@@ -36,7 +36,7 @@ function PutDownDiscovery({
                 count: 1,
                 common: true,
                 cardCommonId: cardData.commonId
-            })
+            });
             opponentRequirementService.addDiscardCardRequirement({
                 count: 2,
                 common: true,

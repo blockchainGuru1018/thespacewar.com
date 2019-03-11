@@ -70,13 +70,14 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
 
     addDrawCardRequirement({ count, common = false, cardCommonId = null }) {
         const deckCardCount = this._playerStateService.getDeck().getCardCount();
+        const opponentDeckCardCount = this._opponentStateService.getDeck().getCardCount();
 
         const currentDrawCardRequirementsCount = this
             .getRequirements()
             .filter(r => r.type === 'drawCard')
             .reduce((total, requirement) => total + requirement.count, 0);
 
-        const maxDrawCount = deckCardCount - currentDrawCardRequirementsCount;
+        const maxDrawCount = (deckCardCount + opponentDeckCardCount) - currentDrawCardRequirementsCount;
         const countToDraw = Math.min(maxDrawCount, count);
         if (countToDraw > 0) {
             const requirement = { type: 'drawCard', count: countToDraw };

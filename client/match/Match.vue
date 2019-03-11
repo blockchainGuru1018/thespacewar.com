@@ -121,6 +121,9 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="drawPile-cardCount">
+                                {{ playerCardsInDeckCount }}
+                            </div>
                         </div>
                         <div class="field-discardPile">
                             <div class="card card-placeholder" v-if="!playerTopDiscardCard"/>
@@ -282,14 +285,15 @@
                 'playerCardsInOpponentZone',
                 'opponentDiscardedCards',
                 'opponentCardsInZone',
-                'opponentCardsInPlayerZone'
+                'opponentCardsInPlayerZone',
             ]),
             ...mapGetters([
                 'hasPutDownNonFreeCardThisTurn',
                 'actionPoints2',
                 'canPutDownCard',
                 'createCard',
-                'allPlayerStationCards'
+                'allPlayerStationCards',
+                'playerCardsInDeckCount'
             ]),
             ...mapCardState([
                 'transientPlayerCardsInHomeZone',
