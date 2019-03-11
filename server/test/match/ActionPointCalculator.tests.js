@@ -215,6 +215,18 @@ module.exports = testCase('ActionPointCalculator', {
 
             assert.equals(actionPoints, 2);
         }
+    },
+    'when has 0 action row station cards and has event cheatAddActionPoints with count 1 should have 1 action point'() {
+        const calculator = ActionPointCalculator({});
+
+        const actionPoints = calculator.calculate({
+            events: [{ type: 'cheatAddActionPoints', count: 1 }],
+            turn: 1,
+            phase: 'action',
+            actionStationCardsCount: 0
+        });
+
+        assert.equals(actionPoints, 1);
     }
 });
 

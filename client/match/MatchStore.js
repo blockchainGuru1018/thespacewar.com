@@ -150,7 +150,7 @@ module.exports = function (deps) {
             endAttack,
             selectAsRepairer,
             selectForRepair,
-            damageOwnStationCards
+            damageStationCards //todo rename to "damageStationCardsForRequirement"
         }
     };
 
@@ -689,8 +689,8 @@ module.exports = function (deps) {
         matchController.emit('repairCard', { repairerCardId, cardToRepairId });
     }
 
-    function damageOwnStationCards({}, targetIds) {
-        matchController.emit('damageOwnStationCards', { targetIds });
+    function damageStationCards({}, targetIds) {
+        matchController.emit('damageStationCards', { targetIds });
     }
 
     function retreat() {

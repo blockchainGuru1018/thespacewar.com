@@ -15,7 +15,7 @@ module.exports = function (deps) {
             waitingForOtherPlayerToFinishRequirements,
             firstRequirement,
             firstRequirementIsDiscardCard,
-            firstRequirementIsDamageOwnStationCard,
+            firstRequirementIsDamageStationCard,
             firstRequirementIsDrawCard,
             countInFirstRequirement,
             selectedCardsCount,
@@ -25,7 +25,7 @@ module.exports = function (deps) {
         actions: {
             selectStationCardForRequirement
         }
-    }
+    };
 
     function waitingForOtherPlayerToFinishRequirements(state, getters, rootState) {
         return rootState.match.requirements.some(r => r.waiting);
@@ -43,9 +43,9 @@ module.exports = function (deps) {
             && getters.firstRequirement.type === 'discardCard';
     }
 
-    function firstRequirementIsDamageOwnStationCard(state, getters) {
+    function firstRequirementIsDamageStationCard(state, getters) {
         return getters.firstRequirement
-            && getters.firstRequirement.type === 'damageOwnStationCard';
+            && getters.firstRequirement.type === 'damageStationCard';
     }
 
     function firstRequirementIsDrawCard(state, getters) {
@@ -59,7 +59,7 @@ module.exports = function (deps) {
     }
 
     function selectedCardsCount(state, getters) {
-        return getters.firstRequirementIsDamageOwnStationCard
+        return getters.firstRequirementIsDamageStationCard
             ? state.selectedStationCardIdsForRequirement.length
             : 0;
     }
@@ -78,7 +78,9 @@ module.exports = function (deps) {
         state.selectedStationCardIdsForRequirement.push(stationCard.id);
         if (getters.cardsLeftToSelect === 0) {
             const targetIds = state.selectedStationCardIdsForRequirement.slice();
-            rootStore.dispatch('match/damageOwnStationCards', targetIds);
+            state.selectedStationCardIdsForRequirement = [];
+
+            rootStore.dispatch('match/damageStationCards', targetIds);
         }
     }
 }

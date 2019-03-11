@@ -42,6 +42,9 @@ module.exports = function (deps) {
             }
         }
 
+        const cheatPoints = events.reduce((acc, e) => e.type === 'cheatAddActionPoints' ? acc + e.count : acc, 0);
+        actionPoints += cheatPoints;
+
         if (actionPoints < 0 && phase === 'action') {
             console.error(
                 'Player has negative action points but is in the Action phase. '

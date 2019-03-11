@@ -16,7 +16,7 @@ function AttackController(deps) {
     return {
         onAttack,
         onAttackStationCards,
-        onDamageOwnStationCard,
+        onDamageStationCard,
         onSacrifice
     }
 
@@ -109,29 +109,30 @@ function AttackController(deps) {
         }
     }
 
-    function onDamageOwnStationCard(playerId, { targetIds }) {
-        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+    function onDamageStationCard(playerId, { targetIds }) {
+        const opponentId = matchService.getOpponentId(playerId);
+        const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
 
-        const damageOwnStationCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'damageOwnStationCard' });
-        if (!damageOwnStationCardRequirement) {
+        const damageStationCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'damageStationCard' });
+        if (!damageStationCardRequirement) {
             throw new CheatError('Cannot damage station card');
         }
-        if (damageOwnStationCardRequirement.count < targetIds.length) {
+        if (damageStationCardRequirement.count < targetIds.length) {
             throw new CheatError('Cannot damage station card');
         }
 
         for (const targetId of targetIds) {
-            if (!playerStateService.hasCardInStationCards(targetId)) {
+            if (!opponentStateService.hasCardInStationCards(targetId)) {
                 throw new CheatError('Cannot damage station card');
             }
         }
 
         for (const targetId of targetIds) {
-            playerStateService.flipStationCard(targetId);
+            opponentStateService.flipStationCard(targetId);
         }
 
-        const requirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'damageOwnStationCard' });
+        const requirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'damageStationCard' });
         requirementUpdater.progressRequirementByCount(targetIds.length);
     }
 

@@ -168,7 +168,7 @@
                 'waitingForOtherPlayerToFinishRequirements',
                 'firstRequirement',
                 'firstRequirementIsDiscardCard',
-                'firstRequirementIsDamageOwnStationCard',
+                'firstRequirementIsDamageStationCard',
                 'firstRequirementIsDrawCard',
                 'cardsLeftToSelect',
                 'selectedCardsCount',
@@ -249,8 +249,8 @@
                     const cardsToDiscard = this.countInFirstRequirement;
                     return `Discard ${cardsToDiscard} ${pluralize('card', cardsToDiscard)}`;
                 }
-                else if (this.firstRequirementIsDamageOwnStationCard && this.cardsLeftToSelect > 0) {
-                    return `Select ${this.cardsLeftToSelect} of your own station cards to damage`;
+                else if (this.firstRequirementIsDamageStationCard && this.cardsLeftToSelect > 0) {
+                    return `Select ${this.cardsLeftToSelect} station ${pluralize('card', this.cardsLeftToSelect)} to damage`;
                 }
                 else if (this.firstRequirementIsDrawCard) {
                     return this.composeDrawOrMillText();

@@ -6,6 +6,7 @@ const MoveCardController = require('./controller/MoveCardController.js');
 const PutDownCardController = require('./controller/PutDownCardController.js');
 const DiscardCardController = require('./controller/DiscardCardController.js');
 const NextPhaseController = require('./controller/NextPhaseController.js');
+const CheatController = require('./controller/CheatController.js');
 const MatchComService = require('./service/MatchComService.js');
 const MatchService = require('../../shared/match/MatchService.js');
 const ServerQueryEvents = require('./ServerQueryEvents.js');
@@ -75,6 +76,7 @@ module.exports = function ({
     });
 
     const controllerDeps = {
+        logger,
         matchService,
         matchComService,
         restoreFromState,
@@ -104,6 +106,7 @@ module.exports = function ({
     const putDownCardController = PutDownCardController(controllerDeps);
     const discardCardController = DiscardCardController(controllerDeps);
     const nextPhaseController = NextPhaseController(controllerDeps);
+    const cheatController = CheatController(controllerDeps);
 
     const api = {
         id: matchId,
@@ -123,7 +126,7 @@ module.exports = function ({
         moveCard: moveCardController.onMoveCard,
         attack: attackController.onAttack,
         attackStationCard: attackController.onAttackStationCards, // TODO Rename attackStationCards (pluralized),
-        damageOwnStationCards: attackController.onDamageOwnStationCard,
+        damageStationCards: attackController.onDamageStationCard,
         sacrifice: attackController.onSacrifice,
         repairCard,
         retreat,
@@ -133,7 +136,8 @@ module.exports = function ({
         restoreFromState,
         toClientModel,
         hasEnded,
-    }
+        cheat: cheatController.onCheat
+    };
     return wrapApi({ api, stateChangeListener });
 
     function start() {
@@ -399,7 +403,7 @@ function registerPlayerStateServices({ players, matchService, actionPointsCalcul
             actionPointsCalculator,
             logger,
             cardFactory
-        })
+        });
         playerServiceProvider.registerService(PlayerServiceProvider.TYPE.state, playerId, playerStateService);
     }
 }
@@ -407,8 +411,13 @@ function registerPlayerStateServices({ players, matchService, actionPointsCalcul
 function registerPlayerRequirementServices(players, playerServiceProvider) {
     for (let player of players) {
         const playerId = player.id;
+        const opponentId = players.find(p => p.id !== playerId).id;
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        const playerRequirementService = new PlayerRequirementService({ playerStateService });
+        const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
+        const playerRequirementService = new PlayerRequirementService({
+            playerStateService,
+            opponentStateService
+        });
         playerServiceProvider.registerService(
             PlayerServiceProvider.TYPE.requirement,
             playerId,

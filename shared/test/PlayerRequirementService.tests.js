@@ -67,31 +67,32 @@ module.exports = bocha.testCase('PlayerRequirementService', {
     'when player has 2 station cards and adds 3 damage own station card requirements of count 1 should only add the first 2': function () {
         const state = createState({
             playerStateById: {
-                'P1A': {
+                'P2A': {
                     stationCards: [{ id: 'S1A', place: 'draw' }, { id: 'S2A', place: 'draw' }]
                 }
             }
         });
-        const service = createServiceForPlayer(state, 'P1A');
+        const service = createServiceForPlayer(state, 'P1A', 'P2A');
 
-        service.addCardRequirement({ type: 'damageOwnStationCard', count: 1 });
-        service.addCardRequirement({ type: 'damageOwnStationCard', count: 1 });
-        service.addCardRequirement({ type: 'damageOwnStationCard', count: 1 });
+        service.addCardRequirement({ type: 'damageStationCard', count: 1 });
+        service.addCardRequirement({ type: 'damageStationCard', count: 1 });
+        service.addCardRequirement({ type: 'damageStationCard', count: 1 });
 
         assert.equals(service.getRequirements(), [
-            { type: 'damageOwnStationCard', count: 1 },
-            { type: 'damageOwnStationCard', count: 1 }
+            { type: 'damageStationCard', count: 1 },
+            { type: 'damageStationCard', count: 1 }
         ]);
     }
 });
 
-function createServiceForPlayer(state, playerId) {
+function createServiceForPlayer(state, playerId, opponentId) {
     const matchService = new MatchService();
     matchService.setState(state);
     const playerServiceProvider = PlayerServiceProvider();
     const cardFactory = new ServerCardFactory({ matchService, playerServiceProvider, getFreshState: () => state });
     const playerStateService = new PlayerStateService({ playerId, matchService, cardFactory });
-    const playerRequirementService = new PlayerRequirementService({ playerStateService });
+    const opponentStateService = new PlayerStateService({ playerId: opponentId, matchService, cardFactory });
+    const playerRequirementService = new PlayerRequirementService({ playerStateService, opponentStateService });
     playerServiceProvider.registerService(PlayerServiceProvider.TYPE.state, playerId, playerStateService);
     playerServiceProvider.registerService(PlayerServiceProvider.TYPE.requirement, playerId, playerRequirementService);
 

@@ -456,7 +456,7 @@ module.exports = {
                     ],
                     requirements: [
                         sinon.match({ type: 'discardCard', common: true, count: 3 }),
-                        sinon.match({ type: 'damageOwnStationCard', common: true, count: 3 })
+                        sinon.match({ type: 'damageStationCard', common: true, count: 3 })
                     ],
                     events: [
                         sinon.match({ type: 'discardCard', cardId: 'C1A' }),
@@ -489,7 +489,7 @@ module.exports = {
                     ],
                     requirements: [
                         sinon.match({ type: 'discardCard', common: true, count: 3 }),
-                        sinon.match({ type: 'damageOwnStationCard', common: true, count: 3 })
+                        sinon.match({ type: 'damageStationCard', common: true, count: 3 })
                     ]
                 }));
             }
@@ -516,6 +516,42 @@ module.exports = {
             },
             'should NOT include requirements in state changed event to second player'() {
                 refute.defined(this.secondPlayerConnection.stateChanged.lastCall.args[0].requirements);
+            }
+        },
+        'when first player put down Supernova and first player has NO cards on hand': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stateChanged']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'action',
+                            cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: SupernovaCommonId })],
+                            stationCards: [{ id: 'S1A', place: 'draw', card: createCard({ id: 'S1A' }) }]
+                        },
+                        'P2A': {
+                            cardsOnHand: [createCard({ id: 'C2A' })],
+                            stationCards: [{ id: 'S2A', place: 'draw', card: createCard({ id: 'S2A' }) }]
+                        }
+                    }
+                }));
+
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
+            },
+            'first player: should ONLY include damageStationCard requirement'() {
+                assert.calledOnce(this.firstPlayerConnection.stateChanged);
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                    requirements: [
+                        sinon.match({ type: 'damageStationCard', common: true, count: 1 })
+                    ]
+                }));
+            },
+            'second player: discardCard requirement should NOT be common'() {
+                assert.calledOnce(this.secondPlayerConnection.stateChanged);
+                const discardCardRequirement = this.secondPlayerConnection.stateChanged.lastCall.args[0].requirements.find(r => r.type === 'discardCard');
+                refute('common' in discardCardRequirement, 'discardCard requirement should NOT be common');
             }
         },
         'when first player put down Supernova and both players has 1 flipped station card and 1 unflipped station card': {
@@ -548,14 +584,14 @@ module.exports = {
             'should send damage own station card requirement of 1 count to first player'() {
                 assert.calledOnce(this.firstPlayerConnection.stateChanged);
                 assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
-                    requirements: [sinon.match({ type: 'damageOwnStationCard', common: true, count: 1 })]
+                    requirements: [sinon.match({ type: 'damageStationCard', common: true, count: 1 })]
                 }));
             },
             'should send damage own station card requirement of 1 count to second player'() {
                 assert.calledOnce(this.secondPlayerConnection.stateChanged);
                 const requirements = this.secondPlayerConnection.stateChanged.lastCall.args[0].requirements
                 assert.equals(requirements.length, 1);
-                assert.match(requirements[0], { type: 'damageOwnStationCard', common: true, count: 1 });
+                assert.match(requirements[0], { type: 'damageStationCard', common: true, count: 1 });
             }
         }
     },

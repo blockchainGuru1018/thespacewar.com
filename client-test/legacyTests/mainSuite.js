@@ -43,7 +43,7 @@ module.exports = {
     tearDown() {
         getCardImageUrl.byCommonId.restore && getCardImageUrl.byCommonId.restore();
         this.controller && this.controller.tearDown();
-        
+
         for (let key of Object.keys(this)) {
             if (!keysToPreserve.includes(key)) {
                 delete this[key];
@@ -893,8 +893,8 @@ module.exports = {
             }
         }
     },
-    'damage own station card requirement': {
-        'when have damageOwnStationCard requirement': {
+    'damage station card requirement': {
+        'when have damageStationCard requirement': {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
@@ -905,7 +905,7 @@ module.exports = {
                     phase: 'draw',
                     stationCards: [{ place: 'draw' }, { place: 'draw' }, { place: 'draw' }],
                     opponentStationCards: [{ place: 'draw' }],
-                    requirements: [{ type: 'damageOwnStationCard', count: 2 }]
+                    requirements: [{ type: 'damageStationCard', count: 2 }]
                 }));
                 await timeout();
             },
@@ -916,13 +916,13 @@ module.exports = {
                 assert.elementCount('.nextPhaseButton-endTurn', 0);
             },
             'should show guide text'() {
-                assert.elementText('.guideText', 'Select 2 of your own station cards to damage');
+                assert.elementText('.guideText', 'Select 2 station cards to damage');
             },
-            'should NOT be able to select opponent station card'() {
-                assert.elementCount('.field-opponent .stationCard .selectable', 0);
+            'should NOT be able to select own station card'() {
+                assert.elementCount('.field-player .stationCard .selectable', 0);
             }
         },
-        'when in action phase with damageOwnStationCard requirement and a flipped station card and click on card in hand': {
+        'when in action phase with damageStationCard requirement and opponent has flipped station card and click on card in hand': {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
@@ -931,11 +931,11 @@ module.exports = {
                     currentPlayer: 'P1A',
                     phase: 'action',
                     cardsOnHand: [createCard({ id: 'C1A' })],
-                    stationCards: [
+                    requirements: [{ type: 'damageStationCard', count: 1 }],
+                    opponentStationCards: [
                         { place: 'draw' },
                         { card: createCard({ id: 'C2A' }), place: 'draw', flipped: true }
-                    ],
-                    requirements: [{ type: 'damageOwnStationCard', count: 1 }]
+                    ]
                 }));
                 await timeout();
 
@@ -945,7 +945,7 @@ module.exports = {
                 assert.elementCount('.stationCard .movable', 0);
             }
         },
-        'when in action phase with damageOwnStationCard requirement and an affordable card on hand and click on card in hand': {
+        'when in action phase with a damageStationCard requirement and opponent has station cards and has an affordable card on hand and click on card in hand': {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
@@ -954,11 +954,11 @@ module.exports = {
                     currentPlayer: 'P1A',
                     phase: 'action',
                     cardsOnHand: [createCard({ id: 'C1A' })],
-                    stationCards: [
+                    requirements: [{ type: 'damageStationCard', count: 1 }],
+                    opponentStationCards: [
                         { place: 'action' },
                         { card: createCard({ id: 'C2A' }), place: 'action', flipped: true }
-                    ],
-                    requirements: [{ type: 'damageOwnStationCard', count: 1 }]
+                    ]
                 }));
                 await timeout();
 
@@ -968,7 +968,7 @@ module.exports = {
                 assert.elementCount('.card-ghost', 0);
             }
         },
-        'when have damageOwnStationCard requirement and 1 of 2 station cards is flipped': {
+        'when have damageStationCard requirement and 1 of 2 opponent station cards is flipped': {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
@@ -977,20 +977,20 @@ module.exports = {
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'draw',
-                    stationCards: [
+                    requirements: [{ type: 'damageStationCard', count: 1 }],
+                    opponentStationCards: [
                         { place: 'draw' },
                         { card: createCard({ id: 'C2A' }), place: 'draw', flipped: true }
                     ],
-                    requirements: [{ type: 'damageOwnStationCard', count: 1 }]
                 }));
                 await timeout();
             },
             'should NOT be able to select flipped station card'() {
-                assert.elementCount('.field-player .stationCard--flipped', 1);
-                assert.elementCount('.field-player .stationCard--flipped .selectable', 0);
+                assert.elementCount('.field-opponent .stationCard--flipped', 1);
+                assert.elementCount('.field-opponent .stationCard--flipped .selectable', 0);
             }
         },
-        'when have damageOwnStationCard requirement and click on station card ': {
+        'when have damageStationCard requirement with count 2 and click on 1 station card ': {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
@@ -998,12 +998,12 @@ module.exports = {
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'draw',
-                    stationCards: [{ place: 'draw' }, { place: 'draw' }, { place: 'draw' }],
-                    requirements: [{ type: 'damageOwnStationCard', count: 2 }]
+                    requirements: [{ type: 'damageStationCard', count: 2 }],
+                    opponentStationCards: [{ place: 'draw' }, { place: 'draw' }, { place: 'draw' }],
                 }));
                 await timeout();
 
-                await click('.field-player .stationCard:eq(0) .selectable');
+                await click('.field-opponent .stationCard:eq(0) .selectable');
             },
             'should NOT show next phase button'() {
                 assert.elementCount('.nextPhaseButton', 0);
@@ -1012,13 +1012,16 @@ module.exports = {
                 assert.elementCount('.nextPhaseButton-endTurn', 0);
             },
             'should show guide text'() {
-                assert.elementText('.guideText', 'Select 1 of your own station cards to damage');
+                assert.elementText('.guideText', 'Select 1 station card to damage');
             },
-            'should have clicked station card selected'() {
-                assert.elementCount('.field-player .stationCard:eq(0).selected--danger', 1);
+            'should show clicked station card as selected'() {
+                assert.elementCount('.field-opponent .stationCard:eq(0).selected--danger', 1);
+            },
+            'should NOT be able to selected clicked station card'() {
+                assert.elementCount('.field-opponent .stationCard:eq(0) .selectable', 0);
             }
         },
-        'when have damageOwnStationCard requirement with count of 1 and click on station card': {
+        'when have damageStationCard requirement with count of 1 and click on station card and requirement is removed': {
             async setUp() {
                 this.matchController = FakeMatchController({ emit: stub() });
                 const { dispatch } = this.createController({ matchController: this.matchController });
@@ -1027,18 +1030,19 @@ module.exports = {
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'action',
-                    stationCards: [{ id: 'S1A', place: 'draw' }, { id: 'S2A', place: 'draw' }],
-                    requirements: [{ type: 'damageOwnStationCard', count: 1 }]
+                    requirements: [{ type: 'damageStationCard', count: 1 }],
+                    opponentStationCards: [{ id: 'S1A', place: 'draw' }, { id: 'S2A', place: 'draw' }],
                 }));
                 await timeout();
 
-                await click('.field-player .stationCard:eq(0) .selectable');
+                await click('.field-opponent .stationCard:eq(0) .selectable');
+                dispatch('stateChanged', {
+                    requirements: []
+                });
+                await timeout();
             },
             'should NOT show next phase button'() {
-                assert.elementCount('.nextPhaseButton', 0);
-            },
-            'should NOT show end turn button'() {
-                assert.elementCount('.nextPhaseButton-endTurn', 0);
+                assert.elementCount('.nextPhaseButton', 1);
             },
             'should NOT show guide text'() {
                 assert.elementCount('.guideText', 0);
@@ -1046,9 +1050,41 @@ module.exports = {
             'should NOT be able to select any station card'() {
                 assert.elementCount('.stationCard .selectable', 0);
             },
-            'should emit "damageOwnStationCards"'() {
-                assert.calledWith(this.matchController.emit, 'damageOwnStationCards', {
+            'should emit "damageStationCards"'() {
+                assert.calledWith(this.matchController.emit, 'damageStationCards', {
                     targetIds: ['S1A']
+                });
+            }
+        },
+        'when completed damageStationCard requirement and then get another one and select another station': {
+            async setUp() {
+                this.matchController = FakeMatchController({ emit: stub() });
+                const { dispatch } = this.createController({ matchController: this.matchController });
+                this.controller.showPage();
+                dispatch('restoreState', FakeState({
+                    turn: 1,
+                    currentPlayer: 'P1A',
+                    phase: 'action',
+                    requirements: [{ type: 'damageStationCard', count: 1 }],
+                    opponentStationCards: [
+                        { id: 'S1A', place: 'draw' },
+                        { id: 'S2A', place: 'draw' },
+                        { id: 'S3A', place: 'draw' }
+                    ],
+                }));
+                await timeout();
+                await click('.field-opponent .stationCard:eq(0) .selectable');
+                dispatch('stateChanged', {
+                    requirements: [{ type: 'damageStationCard', count: 1 }]
+                });
+                await timeout();
+
+                await click('.field-opponent .stationCard:eq(1) .selectable');
+            },
+            'should emit "damageStationCards" twice and second time with the second station card ID'() {
+                assert.calledTwiceWith(this.matchController.emit, 'damageStationCards');
+                assert.calledWith(this.matchController.emit, 'damageStationCards', {
+                    targetIds: ['S2A']
                 });
             }
         }

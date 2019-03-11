@@ -88,9 +88,9 @@ module.exports = function (deps) {
     function canSelectStationCards(state, getters) { //TODO Rename "canSelectStationCardsForRequirement"
         if (getters.waitingForOtherPlayerToFinishRequirements) return false;
 
-        const damageOwnStationCardRequirement = getFrom('firstRequirementIsDamageOwnStationCard', 'requirement');
+        const damageStationCardRequirement = getFrom('firstRequirementIsDamageStationCard', 'requirement');
         const cardsLeftToSelect = getFrom('cardsLeftToSelect', 'requirement');
-        return damageOwnStationCardRequirement && cardsLeftToSelect > 0;
+        return damageStationCardRequirement && cardsLeftToSelect > 0;
     }
 
     function canSelectCardsForActiveAction(state, getters, rootState) { //TODO This and the ones who use this might have to support this action for both opponent and player cards

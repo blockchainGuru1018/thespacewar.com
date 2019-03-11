@@ -9,6 +9,7 @@ const UserController = require('./user/UserController.js');
 const MatchRepository = require('./match/MatchRepository.js');
 const MatchController = require('./match/MatchController.js');
 const CardController = require('./card/CardController.js');
+const CheatController = require('./cheat/CheatController.js');
 const GitController = require('./git/GitController.js');
 const AssetsController = require('./assets/AssetsController.js');
 const ServerRawCardDataRepository = require('./card/ServerRawCardDataRepository.js');
@@ -50,7 +51,8 @@ async function run({ closeServer, exitProcess, inProduction = false }) {
         match: MatchController(deps),
         card: CardController(deps),
         git: GitController({ closeServer, exitProcess }),
-        assets: AssetsController(deps)
+        assets: AssetsController(deps),
+        cheat: CheatController(deps)
     };
     deps.controllers = controllers;
     const mappedControllers = wrapControllersWithRejectionProtection(controllers);
@@ -119,6 +121,8 @@ function setupRoutes(deps, controllers) {
 
     app.get('/icon/:iconName', controllers.assets.getIcon);
     app.get('/image/:imageName', controllers.assets.getImage);
+
+    app.post('/cheat', controllers.cheat.cheat);
 
     if (!deps.inProduction) {
         app.post('/restart', async (req, res) => {

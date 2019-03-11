@@ -16,6 +16,7 @@ const ClientRawCardDataRepository = require('./card/ClientRawCardDataRepository.
 const CardDataAssembler = require('../shared/CardDataAssembler.js');
 const CardInfoRepository = require('../shared/CardInfoRepository.js');
 const UserStore = require('./users/UserStore.js');
+require('./utils/cheatEngine.js');
 
 Vue.use(Vuex);
 Vue.use(PortalVue);
