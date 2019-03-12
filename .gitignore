@@ -1,4 +1,5 @@
 ./idea
 ./client/node_modules
 ./client-test/node_modules
+./client-test/build
 ./server/node_modules
