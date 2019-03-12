@@ -573,7 +573,7 @@ module.exports = function (deps) {
         state.playerCardsInZone.push(card);
     }
 
-    function discardCard({ state }, cardId) {
+    function discardCard({ state, getters, dispatch }, cardId) {
         const cardIndexOnHand = state.playerCardsOnHand.findIndex(c => c.id === cardId);
         const discardedCard = state.playerCardsOnHand[cardIndexOnHand];
         state.playerCardsOnHand.splice(cardIndexOnHand, 1);
@@ -587,6 +587,10 @@ module.exports = function (deps) {
             isSacrifice: true
         }));
         matchController.emit('discardCard', cardId);
+
+        if (getters.amountOfCardsToDiscard === 0) {
+            dispatch('goToNextPhase');
+        }
     }
 
     function setActionPoints({ state }, actionPoints) { // TODO Should be removed, all action points should be calculated through events
