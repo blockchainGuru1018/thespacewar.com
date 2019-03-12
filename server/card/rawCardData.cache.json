@@ -1,0 +1,385 @@
+{
+  "data": [
+    {
+      "id": "1",
+      "name": "The Exterminator",
+      "price": "6",
+      "type_card": "blue",
+      "detail": "Normal space ship.",
+      "defense": "7",
+      "attack": "5",
+      "number_copies": "1"
+    },
+    {
+      "id": "2",
+      "name": "The Dark Destroyer",
+      "price": "6",
+      "type_card": "blue",
+      "detail": "Opponent may draw 2 cards when this enters play.",
+      "defense": "10",
+      "attack": "7",
+      "number_copies": "1"
+    },
+    {
+      "id": "3",
+      "name": "Stormfalcon",
+      "price": "4",
+      "type_card": "blue",
+      "detail": "Normal space ship.",
+      "defense": "3",
+      "attack": "5",
+      "number_copies": "1"
+    },
+    {
+      "id": "4",
+      "name": "Titan",
+      "price": "5",
+      "type_card": "blue",
+      "detail": "Normal space ship.",
+      "defense": "8",
+      "attack": "3",
+      "number_copies": "1"
+    },
+    {
+      "id": "5",
+      "name": "Explosive Missile",
+      "price": "2",
+      "type_card": "red",
+      "detail": "Normal missile.",
+      "defense": "2",
+      "attack": "4",
+      "number_copies": "2"
+    },
+    {
+      "id": "6",
+      "name": "Fast Missile",
+      "price": "2",
+      "type_card": "red",
+      "detail": "Can move the first turn.",
+      "defense": "1",
+      "attack": "2",
+      "number_copies": "1"
+    },
+    {
+      "id": "7",
+      "name": "EMP Missile",
+      "price": "2",
+      "type_card": "red",
+      "detail": "Destroys Energy Shield or paralyzes space ship (turn the card and it cannot do anything until repaired).",
+      "defense": "2",
+      "attack": "0",
+      "number_copies": "2"
+    },
+    {
+      "id": "8",
+      "name": "Nuclear Missile",
+      "price": "2",
+      "type_card": "red",
+      "detail": "Each turn can either move or attack but not both.",
+      "defense": "3",
+      "attack": "10",
+      "number_copies": "1"
+    },
+    {
+      "id": "9",
+      "name": "Full Force Forward",
+      "price": "3",
+      "type_card": "violet",
+      "detail": "· +1 attack of your space ships (blue).\r\n· Your space ships can move the first turn     they enter play.",
+      "defense": "0",
+      "attack": "0",
+      "number_copies": "2"
+    },
+    {
+      "id": "11",
+      "name": "Good Karma",
+      "price": "2",
+      "type_card": "violet",
+      "detail": "Draw 3 extra cards in your draw phase, then after your draw phase discard 1 card from your hand.",
+      "defense": "0",
+      "attack": "0",
+      "number_copies": "2"
+    },
+    {
+      "id": "12",
+      "name": "Neutralization",
+      "price": "2",
+      "type_card": "violet",
+      "detail": "No other duration card has any effect.",
+      "defense": "0",
+      "attack": "0",
+      "number_copies": "1"
+    },
+    {
+      "id": "13",
+      "name": "Over Capacity",
+      "price": "2",
+      "type_card": "violet",
+      "detail": "You have no maximum hand size.",
+      "defense": "0",
+      "attack": "0",
+      "number_copies": "2"
+    },
+    {
+      "id": "14",
+      "name": "Excellent work",
+      "price": "2",
+      "type_card": "orange",
+      "detail": "Put down this card as an extra station card.\r\n[ OR ] Draw 3 cards.",
+      "defense": "0",
+      "attack": "0",
+      "number_copies": "3"
+    },
+    {
+      "id": "15",
+      "name": "Supernova",
+      "price": "10",
+      "type_card": "orange",
+      "detail": "All cards except station cards are destroyed. Each player receives 3 station damage.",
+      "defense": "0",
+      "attack": "0",
+      "number_copies": "1"
+    },
+    {
+      "id": "16",
+      "name": "Target Missed",
+      "price": "0",
+      "type_card": "orange",
+      "detail": "Play this card directly during enemy attack from space ship (not colisision, missile or cannon) to make it fail.",
+      "defense": "0",
+      "attack": "0",
+      "number_copies": "3"
+    },
+    {
+      "id": "17",
+      "name": "Missiles Launched",
+      "price": "5",
+      "type_card": "orange",
+      "detail": "Find 2 missile cards (red cards) from your draw or discard pile and play them without cost.",
+      "defense": "0",
+      "attack": "0",
+      "number_copies": "1"
+    },
+    {
+      "id": "18",
+      "name": "Perfect Plan",
+      "price": "2",
+      "type_card": "orange",
+      "detail": "Search for a card from the draw pile, discard pile or station cards and put it into your hand.",
+      "defense": "0",
+      "attack": "0",
+      "number_copies": "2"
+    },
+    {
+      "id": "19",
+      "name": "Pursuiter",
+      "price": "1",
+      "type_card": "blue",
+      "detail": "You may sacrifice Pursuiter from play instead of attacking to deal 4 damage to target in same zone (collision).",
+      "defense": "1",
+      "attack": "2",
+      "number_copies": "2"
+    },
+    {
+      "id": "20",
+      "name": "Grand Opportunity",
+      "price": "5",
+      "type_card": "orange",
+      "detail": "Draw 6 cards and then discard 2 cards from your hand.",
+      "defense": "0",
+      "attack": "0",
+      "number_copies": "1"
+    },
+    {
+      "id": "21",
+      "name": "Energy Shield",
+      "price": "3",
+      "type_card": "green",
+      "detail": "Protects base station. (You can only have one Energy Shield in play at the same time.)",
+      "defense": "5",
+      "attack": "0",
+      "number_copies": "3"
+    },
+    {
+      "id": "22",
+      "name": "Defense Cannon",
+      "price": "1",
+      "type_card": "green",
+      "detail": "Normal cannon.\r\n(Defense cards cannot move)",
+      "defense": "1",
+      "attack": "4",
+      "number_copies": "2"
+    },
+    {
+      "id": "24",
+      "name": "Trigger-Happy Joe",
+      "price": "2",
+      "type_card": "blue",
+      "detail": "Can attack 2 times per turn.",
+      "defense": "2",
+      "attack": "1",
+      "number_copies": "1"
+    },
+    {
+      "id": "25",
+      "name": "Thunderbolt",
+      "price": "2",
+      "type_card": "blue",
+      "detail": "Normal space ship.",
+      "defense": "3",
+      "attack": "2",
+      "number_copies": "1"
+    },
+    {
+      "id": "26",
+      "name": "The Gladiator",
+      "price": "2",
+      "type_card": "blue",
+      "detail": "Normal space ship.",
+      "defense": "2",
+      "attack": "3",
+      "number_copies": "1"
+    },
+    {
+      "id": "27",
+      "name": "The Shade",
+      "price": "4",
+      "type_card": "blue",
+      "detail": "The Shade cannot be attacked if it has not been attacking this turn.",
+      "defense": "4",
+      "attack": "3",
+      "number_copies": "1"
+    },
+    {
+      "id": "28",
+      "name": "Hunter",
+      "price": "3",
+      "type_card": "blue",
+      "detail": "Can move the first turn.",
+      "defense": "2",
+      "attack": "3",
+      "number_copies": "2"
+    },
+    {
+      "id": "29",
+      "name": "Small Repair Ship",
+      "price": "2",
+      "type_card": "blue",
+      "detail": "Can instead of doing attack repair 1 station damage or 3 other damage. Can move the first turn.",
+      "defense": "3",
+      "attack": "1",
+      "number_copies": "1"
+    },
+    {
+      "id": "30",
+      "name": "Big Repair Ship",
+      "price": "3",
+      "type_card": "blue",
+      "detail": "Can instead of doing attack repair 1 station damage or 5 other damage.",
+      "defense": "5",
+      "attack": "1",
+      "number_copies": "1"
+    },
+    {
+      "id": "31",
+      "name": "Luck",
+      "price": "0",
+      "type_card": "orange",
+      "detail": "Counter target card costing 2 or less.\r\n[ OR ] Draw 2 cards.",
+      "defense": "0",
+      "attack": "0",
+      "number_copies": "4"
+    },
+    {
+      "id": "32",
+      "name": "Battlestar",
+      "price": "3",
+      "type_card": "blue",
+      "detail": "Normal space ship.",
+      "defense": "4",
+      "attack": "2",
+      "number_copies": "2"
+    },
+    {
+      "id": "34",
+      "name": "Avoid",
+      "price": "2",
+      "type_card": "violet",
+      "detail": "Discard this card from table to counter card being played.",
+      "defense": "0",
+      "attack": "0",
+      "number_copies": "2"
+    },
+    {
+      "id": "37",
+      "name": "Disturbing Sensor",
+      "price": "4",
+      "type_card": "blue",
+      "detail": "· Enemy missiles can't move or attack.\r\n· If opponent after draw phase has more   than 1 card in hand, he or she           discards a card.",
+      "defense": "4",
+      "attack": "0",
+      "number_copies": "1"
+    },
+    {
+      "id": "38",
+      "name": "Fatal Error",
+      "price": "0",
+      "type_card": "orange",
+      "detail": "Destroy any card in play (on the table including station cards).\r\nYour opponent may draw 2 cards.",
+      "defense": "0",
+      "attack": "0",
+      "number_copies": "2"
+    },
+    {
+      "id": "39",
+      "name": "Deadly Sniper",
+      "price": "4",
+      "type_card": "blue",
+      "detail": "Long distance shooter.\r\n(Can after the first turn shoot targets in enemy zone from home zone)",
+      "defense": "4",
+      "attack": "2",
+      "number_copies": "1"
+    },
+    {
+      "id": "42",
+      "name": "Discovery",
+      "price": "0",
+      "type_card": "orange",
+      "detail": "Draw 3 cards and the opponent draws 2 cards. [ OR ] Discard 1 card and the opponent discards 2 cards.",
+      "defense": "0",
+      "attack": "0",
+      "number_copies": "2"
+    },
+    {
+      "id": "56",
+      "name": "The Liberator",
+      "price": "4",
+      "type_card": "blue",
+      "detail": "Normal space ship.",
+      "defense": "6",
+      "attack": "2",
+      "number_copies": "1"
+    },
+    {
+      "id": "64",
+      "name": "Destiny Decided",
+      "price": "2",
+      "type_card": "violet",
+      "detail": "No player can play any event (orange) card.",
+      "defense": "0",
+      "attack": "0",
+      "number_copies": "1"
+    },
+    {
+      "id": "66",
+      "name": "Expansion",
+      "price": "2",
+      "type_card": "orange",
+      "detail": "Your opponent may draw 1 card.\r\nYou can play 2 extra station cards this turn.",
+      "defense": "0",
+      "attack": "0",
+      "number_copies": "1"
+    }
+  ],
+  "saveTime": 1551977849053
+}
