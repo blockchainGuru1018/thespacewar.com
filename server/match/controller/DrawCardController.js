@@ -10,7 +10,7 @@ function DrawCardController(deps) {
     return {
         onDrawCard,
         onDiscardOpponentTopTwoCards
-    }
+    };
 
     function onDrawCard(playerId) {
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);

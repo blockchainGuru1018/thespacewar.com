@@ -22,7 +22,6 @@
     "@babel/preset-env": "^7.3.4",
     "babel-loader": "^8.0.4",
     "babel-polyfill": "^6.26.0",
-    "bocha": "^1.7.1",
     "css-loader": "^1.0.1",
     "express": "^4.16.4",
     "find": "^0.2.9",

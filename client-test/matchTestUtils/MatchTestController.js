@@ -33,4 +33,4 @@ module.exports = function TestController({ playerIds = ['P1A', 'P2A'], matchId =
             page.hide();
         }
     };
-}
+};

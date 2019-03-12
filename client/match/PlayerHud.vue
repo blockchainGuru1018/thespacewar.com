@@ -87,8 +87,7 @@
         </portal>
         <portal to="stationActionRow">
             <span class="stationRowDescription descriptionText">
-                Start turn with {{ actionPointsFromStationCards
-                }} action point{{actionPointsFromStationCards === 1 ? '' : 's'}}
+                Start turn with {{ actionPointsFromStationCards }} action point{{actionPointsFromStationCards === 1 ? '' : 's'}}
             </span>
         </portal>
         <portal to="stationHandSizeRow">
@@ -168,7 +167,7 @@
                 'waitingForOtherPlayerToFinishRequirements',
                 'firstRequirement',
                 'firstRequirementIsDiscardCard',
-                'firstRequirementIsDamageOwnStationCard',
+                'firstRequirementIsDamageStationCard',
                 'firstRequirementIsDrawCard',
                 'cardsLeftToSelect',
                 'selectedCardsCount',
@@ -249,8 +248,8 @@
                     const cardsToDiscard = this.countInFirstRequirement;
                     return `Discard ${cardsToDiscard} ${pluralize('card', cardsToDiscard)}`;
                 }
-                else if (this.firstRequirementIsDamageOwnStationCard && this.cardsLeftToSelect > 0) {
-                    return `Select ${this.cardsLeftToSelect} of your own station cards to damage`;
+                else if (this.firstRequirementIsDamageStationCard && this.cardsLeftToSelect > 0) {
+                    return `Select ${this.cardsLeftToSelect} station ${pluralize('card', this.cardsLeftToSelect)} to damage`;
                 }
                 else if (this.firstRequirementIsDrawCard) {
                     return this.composeDrawOrMillText();

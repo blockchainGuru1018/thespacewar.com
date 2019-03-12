@@ -11,7 +11,7 @@
                 </div>
                 <div v-else-if="predictedResultsIfAttacked.defenderDestroyed"
                      class="actionOverlay-predictedLethal actionOverlay-predictionText">
-                    🕱
+                    ⇒0
                 </div>
                 <div v-else
                      class="actionOverlay-predictedDamageChange actionOverlay-predictionText">
@@ -66,7 +66,7 @@
                  :class="['selectable', {'selectable--turnedAround': !isPlayerCard}]">
                 <div v-if="predictedResultsIfTargetForSacrifice.destroyed"
                      class="actionOverlay-predictedLethal actionOverlay-predictionText">
-                    🕱
+                    ⇒0
                 </div>
                 <div v-else class="actionOverlay-predictedDamageChange actionOverlay-predictionText">
                     {{ behaviourCard.defense - behaviourCard.damage }}
@@ -158,6 +158,9 @@
                 }
                 if (this.isActiveActionCard) {
                     classes.push('isActiveActionCard');
+                }
+                if (this.isRepairing) {
+                    classes.push('isRepairing');
                 }
                 if (this.card.paralyzed) {
                     classes.push('paralyzed');
@@ -261,6 +264,9 @@
             },
             isSelectedForAction() {
                 return this.selectedCardIdsForAction.includes(this.card.id);
+            },
+            isRepairing() {
+                return this.card.id === this.repairerCardId;
             },
             canSelectCardForAction() {
                 const cardIsTransient = this.transientPlayerCardsInHomeZone.some(c => c.id === this.card.id);
@@ -420,6 +426,10 @@
         outline: 2px solid red;
     }
 
+    .isRepairing {
+        outline: 2px solid rgba(100, 100, 255, 1);
+    }
+
     .actionOverlay-predictionText {
         font-family: "Space mono", monospace;
     }
@@ -429,7 +439,7 @@
     }
 
     .actionOverlay-predictedLethal {
-        font-size: 3em;
+        font-size: 1.5em;
     }
 
     .attackble-paralyzed {

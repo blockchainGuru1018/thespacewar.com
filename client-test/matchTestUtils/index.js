@@ -5,7 +5,7 @@ initVueAndPlugins();
 
 module.exports = {
     createController
-}
+};
 
 function createController(options = {}) {
     return MatchTestController(options);

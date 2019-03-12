@@ -7,8 +7,11 @@ module.exports = {
                 "Content-Type": "application/json; charset=utf-8"
             },
             body: JSON.stringify(data)
-        })
-        return response.json();
+        });
+
+        const contentType = response.headers.get("content-type");
+        let responseContentIsJSON = contentType && contentType.indexOf("application/json") !== -1;
+        return responseContentIsJSON ? response.json() : response.text();
     },
     async get(url) {
         let response = await fetch(url);

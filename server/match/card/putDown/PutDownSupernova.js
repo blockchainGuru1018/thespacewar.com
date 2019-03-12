@@ -1,5 +1,6 @@
 const Supernova = require('../../../../shared/card/Supernova.js');
 
+const discardCardCount = 3;
 PutDownSupernova.CommonId = Supernova.CommonId;
 
 function PutDownSupernova({
@@ -36,19 +37,26 @@ function PutDownSupernova({
 
         playerStateService.putDownEventCardInZone(cardData);
 
-        addPlayerRequirementsFromSupernova(playerId);
-        addPlayerRequirementsFromSupernova(opponentId);
+        const opponentRequirementService = playerServiceProvider.getRequirementServiceById(opponentId);
+        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
+
+        const bothPlayersCanDiscardSomeCard =
+            playerRequirementService.canAddDiscardCardRequirementWithCountOrLess(discardCardCount)
+            && opponentRequirementService.canAddDiscardCardRequirementWithCountOrLess(discardCardCount);
+
+        addRequirementsToPlayer({ playerId, bothPlayersCanDiscardSomeCard });
+        addRequirementsToPlayer({ playerId: opponentId, bothPlayersCanDiscardSomeCard });
     }
 
-    function addPlayerRequirementsFromSupernova(playerId) {
+    function addRequirementsToPlayer({ playerId, bothPlayersCanDiscardSomeCard }) {
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
         playerRequirementService.addDiscardCardRequirement({
-            count: 3,
-            common: true,
+            count: discardCardCount,
+            common: bothPlayersCanDiscardSomeCard,
             cardCommonId: Supernova.CommonId
         });
-        playerRequirementService.addDamageOwnStationCardRequirement({
-            count: 3,
+        playerRequirementService.addDamageStationCardRequirement({
+            count: discardCardCount,
             common: true,
             cardCommonId: Supernova.CommonId
         });

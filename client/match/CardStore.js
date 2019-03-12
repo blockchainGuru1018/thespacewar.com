@@ -291,7 +291,7 @@ module.exports = function (deps) {
             dispatch('match/cancelAttack', null, { root: true });
         }
         else if (rootState.match.repairerCardId) {
-            state.repairerCardId = null;
+            dispatch('match/cancelRepair', null, { root: true });
         }
         else if (state.activeAction) {
             dispatch('cancelCardAction');

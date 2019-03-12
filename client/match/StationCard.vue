@@ -2,30 +2,31 @@
     <div :class="['stationCardWrapper', {'stationCardWrapper--fullSize': stationCard.flipped && !isOpponentStationCard}]">
         <div :class="classes" :style="cardStyle">
             <div class="actionOverlays">
-                <div @click.stop="startPuttingDownCard({ location: 'zone', cardId: stationCard.id })"
-                     class="movable"
-                     v-if="canMoveCardToZone">
+                <div v-if="canMoveCardToZone"
+                     @click.stop="startPuttingDownCard({ location: 'zone', cardId: stationCard.id })"
+                     class="movable">
                     Move to zone
                 </div>
-                <div @click.stop="selectStationCardAsDefender(stationCard)"
-                     class="attackable"
-                     v-if="canBeSelectedAsDefender"/>
-                <div @click.stop="selectForRepair(stationCard.id)"
-                     class="selectForRepair actionOverlay"
-                     v-else-if="canBeSelectedForRepair"/>
-                <div @click.stop="selectStationCardForRequirement(stationCard)"
-                     class="selectable"
-                     v-if="canBeSelectedForRequirement"/>
-                <div @click.stop="selectCardForActiveAction(stationCard.id)"
-                     class="selectable"
-                     v-if="canSelectedCardForAction"/>
+
+                <div v-if="canBeSelectedAsDefender"
+                     @click.stop="selectStationCardAsDefender(stationCard)"
+                     class="attackable"/>
+                <div v-else-if="canBeSelectedForRepair"
+                     @click.stop="selectForRepair(stationCard.id)"
+                     class="selectForRepair actionOverlay"/>
+                <div v-else-if="canBeSelectedForRequirement"
+                     @click.stop="selectStationCardForRequirement(stationCard)"
+                     class="selectable"/>
+                <div v-else-if="canSelectedCardForAction"
+                     @click.stop="selectCardForActiveAction(stationCard.id)"
+                     class="selectable"/>
             </div>
         </div>
     </div>
 </template>
 <script>
     const Vuex = require('vuex');
-    const getCardImageUrl = require("../utils/getCardImageUrl.js")
+    const getCardImageUrl = require("../utils/getCardImageUrl.js");
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
     const {
         mapGetters: mapPermissionGetters,
@@ -129,9 +130,10 @@
                 return this.selectedStationCardIdsForRequirement.includes(this.stationCard.id);
             },
             canBeSelectedForRequirement() {
-                return !this.isOpponentStationCard
+                return this.isOpponentStationCard
                     && !this.stationCard.flipped
-                    && this.canSelectStationCards;
+                    && this.canSelectStationCards
+                    && !this.selectedForRequirement;
             },
             selectedForAction() {
                 return this.selectedCardIdsForAction.includes(this.stationCard.id);
@@ -144,7 +146,7 @@
                     cardData: this.stationCard,
                     isStationCard: true,
                     isOpponentCard: this.isOpponentStationCard
-                }
+                };
                 return this.checkIfCanBeSelectedForAction(options);
             }
         },

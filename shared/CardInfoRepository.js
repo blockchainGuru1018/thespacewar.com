@@ -8,7 +8,7 @@ module.exports = function (deps) {
         getCost,
         getImageUrl,
         getType
-    }
+    };
 
     function getCost(cardCommonId) {
         const card = getCard(cardCommonId);
