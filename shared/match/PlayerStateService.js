@@ -36,6 +36,10 @@ class PlayerStateService {
         return cardsToDrawOnTurnCount > cardDrawEvents.length;
     }
 
+    deckIsEmpty() {
+        return this.getDeck().getCardCount() === 0;
+    }
+
     canPutDownMoreStationCards() {
         const durationCards = this
             .getDurationCards()

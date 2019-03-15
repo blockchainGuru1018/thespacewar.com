@@ -17,7 +17,8 @@ function DrawCardController(deps) {
         const drawCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'drawCard' });
 
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        const cannotDrawMoreCards = !playerStateService.moreCardsCanBeDrawnForDrawPhase();
+        const cannotDrawMoreCards = !playerStateService.moreCardsCanBeDrawnForDrawPhase()
+            || playerStateService.deckIsEmpty();
         if (drawCardRequirement) {
             onDrawCardForRequirement({ playerId });
         }

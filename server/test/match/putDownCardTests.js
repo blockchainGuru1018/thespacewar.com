@@ -880,11 +880,47 @@ module.exports = {
                 }));
             }
         },
+        'when put down Discovery with choice "draw" but both players has NO cards left': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['restoreState']);
+                this.secondPlayerConnection = FakeConnection2(['restoreState']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'action',
+                            cardsOnHand: [
+                                createCard({ id: 'C1A', type: 'event', commonId: DiscoveryCommonId }),
+                            ]
+                        }
+                    },
+                    deckByPlayerId: {
+                        'P1A': FakeDeck.realDeckFromCards([]),
+                        'P2A': FakeDeck.realDeckFromCards([])
+                    }
+                }));
+
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A', choice: 'draw' });
+            },
+            'should NOT have any requirements'() {
+                this.match.refresh('P1A');
+                assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
+                    requirements: [],
+                }));
+            },
+            'should NOT have any requirements'() {
+                this.match.refresh('P2A');
+                assert.calledWith(this.secondPlayerConnection.restoreState, sinon.match({
+                    requirements: []
+                }));
+            }
+        },
         'when put down Discovery with choice "discard"': {
             setUp() {
                 this.firstPlayerConnection = FakeConnection2(['stateChanged']);
                 this.secondPlayerConnection = FakeConnection2(['stateChanged']);
-                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
                 this.match = createMatch({ players });
                 this.match.restoreFromState(createState({
                     playerStateById: {

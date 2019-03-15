@@ -15,7 +15,7 @@ function PutDownCardController(deps) {
 
     return {
         onNextPhase
-    }
+    };
 
     function onNextPhase(playerId) {
         canThePlayer = canThePlayerFactory.forPlayer(playerId);
@@ -48,9 +48,11 @@ function PutDownCardController(deps) {
             playerStateService.setPhase(nextPhase);
         }
 
-        const newPhase = playerStateService.getPhase();
+        const currentPlayerId = matchService.getCurrentPlayer();
+        const currentPlayerStateService = playerServiceProvider.getStateServiceById(currentPlayerId);
+        const newPhase = currentPlayerStateService.getPhase();
         if (newPhase === PHASES.draw) {
-            enterDrawPhaseForPlayer(playerId);
+            enterDrawPhaseForPlayer(currentPlayerId);
         }
     }
 
@@ -59,9 +61,29 @@ function PutDownCardController(deps) {
     }
 
     function enterDrawPhaseForPlayer(playerId) {
-        const requirementLists = getRequirementsFromDurationCards(playerId, 'requirementsWhenEnterDrawPhase');
-        if (requirementLists.length > 0) {
-            requirementLists.forEach(requirements => addCardRequirements({ playerId, requirements }));
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        if (playerStateService.deckIsEmpty()) {
+            const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
+            playerRequirementService.addRequirement({
+                type: 'damageStationCard',
+                common: true,
+                count: 0,
+                waiting: true,
+                reason: 'emptyDeck'
+            });
+
+            const opponentId = matchService.getOpponentId(playerId);
+            const opponentRequirementService = playerServiceProvider.getRequirementServiceById(opponentId);
+            opponentRequirementService.addDamageStationCardRequirement({
+                common: true,
+                count: 3,
+                reason: 'emptyDeck'
+            });
+        }
+
+        const requirementsFromDurationCards = getRequirementsFromDurationCards(playerId, 'requirementsWhenEnterDrawPhase');
+        if (requirementsFromDurationCards.length > 0) {
+            requirementsFromDurationCards.forEach(requirements => addCardRequirements({ playerId, requirements }));
         }
     }
 

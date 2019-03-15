@@ -17,7 +17,7 @@ const {
     PHASES
 } = require('./phases.js');
 
-const MAGIC_NUMBER_TO_GET_DECK_SIZE_RIGHT = 1;
+const MAGIC_NUMBER_TO_GET_DECK_SIZE_RIGHT = 0;
 const storeItemNameByServerItemName = {
     cardsInZone: 'playerCardsInZone',
     cardsInOpponentZone: 'playerCardsInOpponentZone',
@@ -588,7 +588,7 @@ module.exports = function (deps) {
         }));
         matchController.emit('discardCard', cardId);
 
-        if (getters.amountOfCardsToDiscard === 0) {
+        if (state.phase === PHASES.discard && getters.amountOfCardsToDiscard === 0) {
             dispatch('goToNextPhase');
         }
     }

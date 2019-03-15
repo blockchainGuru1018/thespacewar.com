@@ -145,6 +145,31 @@ module.exports = {
             assert.equals(args, { moreCardsCanBeDrawn: false });
         }
     },
+    'when has NO more cards but has 1 draw row station card and draws 1 card': {
+        setUp() {
+            this.firstPlayerConnection = FakeConnection2(['drawCards']);
+            this.secondPlayerConnection = FakeConnection2(['restoreState']);
+            const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
+            this.match = createMatch({ players });
+            this.match.restoreFromState(createState({
+                playerStateById: {
+                    'P1A': {
+                        phase: 'draw',
+                        stationCards: [{ place: 'draw', card: createCard() }]
+                    }
+                },
+                deckByPlayerId: {
+                    'P1A': FakeDeck.fromCards([])
+                }
+            }));
+
+            this.match.drawCard('P1A');
+        },
+        'should emit NO cards and that there are no more cards to draw'() {
+            const args = this.firstPlayerConnection.drawCards.lastCall.args[0];
+            assert.equals(args, { moreCardsCanBeDrawn: false });
+        }
+    },
     'when discard opponent top 2 cards and has more cards to draw': {
         async setUp() {
             this.firstPlayerConnection = FakeConnection2(['restoreState', 'drawCards', 'stateChanged']);

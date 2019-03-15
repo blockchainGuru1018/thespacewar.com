@@ -83,3 +83,26 @@ describe('when in discard phase and is required to discard 2 cards', async () =>
         refute.calledWith(matchController.emit, 'nextPhase');
     });
 });
+
+describe('when in action phase', async () => {
+    beforeEach(async () => {
+        const { dispatch, showPage } = controller;
+        showPage();
+        dispatch('restoreState', FakeState({
+            turn: 1,
+            currentPlayer: 'P1A',
+            phase: 'action',
+            cardsOnHand: [
+                createCard({ id: 'C1A' })
+            ],
+        }));
+        await timeout();
+    });
+
+    test('and discards card', async () => {
+        await click('.field-playerCardsOnHand .cardOnHand');
+        await click('.field-player .discardPile-cardGhost');
+
+        refute.calledWith(matchController.emit, 'nextPhase');
+    });
+});
