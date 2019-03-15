@@ -550,7 +550,8 @@ module.exports = {
             },
             'second player: discardCard requirement should NOT be common'() {
                 assert.calledOnce(this.secondPlayerConnection.stateChanged);
-                const discardCardRequirement = this.secondPlayerConnection.stateChanged.lastCall.args[0].requirements.find(r => r.type === 'discardCard');
+                const discardCardRequirement = this.secondPlayerConnection.stateChanged.lastCall.args[0].requirements.find(
+                    r => r.type === 'discardCard');
                 refute('common' in discardCardRequirement, 'discardCard requirement should NOT be common');
             }
         },
@@ -684,6 +685,45 @@ module.exports = {
             },
             'should NOT emit state changed with any requirements'() {
                 refute.defined(this.firstPlayerConnection.stateChanged.lastCall.args[0].requirements);
+            }
+        },
+        'when has already put down station card this turn and put down Excellent work': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['restoreState']);
+                const players = [Player('P1A', this.firstPlayerConnection)];
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    playerStateById: {
+                        'P1A': {
+                            turn: 1,
+                            phase: 'action',
+                            cardsOnHand: [
+                                createCard({ id: 'C2A', commonId: ExcellentWorkCommonId })
+                            ],
+                            stationCards: [
+                                { place: 'draw', id: 'C1A', card: createCard({ id: 'C1A' }) },
+                            ],
+                            events: [
+                                PutDownCardEvent({ turn: 1, location: 'station-draw', cardId: 'C1A' })
+                            ]
+                        },
+                    }
+                }));
+
+                const options = { location: 'station-draw', cardId: 'C2A' };
+                this.error = catchError(() => this.match.putDownCard('P1A', options));
+            },
+            'should NOT throw'() {
+                refute(this.error);
+            },
+            'should have added excellent work as station card'() {
+                this.match.refresh('P1A');
+                assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
+                    stationCards: [
+                        sinon.match({ id: 'C1A', place: 'draw' }),
+                        sinon.match({ id: 'C2A', place: 'draw' })
+                    ]
+                }));
             }
         }
     },

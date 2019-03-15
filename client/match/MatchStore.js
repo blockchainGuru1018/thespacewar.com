@@ -25,8 +25,6 @@ const storeItemNameByServerItemName = {
     cardsOnHand: 'playerCardsOnHand'
 };
 
-//TODO When move handsize station card to zone, a station card from draw station cards is removed.
-// But now always. Perhaps it filters on commonId? Or two cards had the same id somehow..?
 //TODO Sometimes when discarding a card in the discard phase an error is thrown in the console. Does not appear to affect gameplay.
 //TODO Fix: createCard method creates card for your OWN player, and not cards for the opponent. Yet they are used even for opponent cards in ZoneCard.vue.
 

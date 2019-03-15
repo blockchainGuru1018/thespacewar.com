@@ -20,7 +20,8 @@ const classes = [
     require('./NuclearMissile.js'),
     require('./DisturbingSensor.js'),
     require('./OverCapacity.js'),
-    require('./EmpMissile.js')
+    require('./EmpMissile.js'),
+    require('./ExcellentWork.js')
 ];
 
 const classByCardCommonId = {}

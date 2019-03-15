@@ -49,8 +49,11 @@ function PutDownCardController(deps) {
                 throw new CheatError('Cannot afford card');
             }
         }
-        else if (location.startsWith('station') && !playerStateService.canPutDownMoreStationCards()) {
-            throw new CheatError('Cannot put down more station cards this turn');
+        else if (location.startsWith('station')) {
+            const card = cardFactory.createCardForPlayer(cardData, playerId);
+            if (!card.canBePutDownAsExtraStationCard && !playerStateService.canPutDownMoreStationCards()) {
+                throw new CheatError('Cannot put down more station cards this turn');
+            }
         }
     }
 

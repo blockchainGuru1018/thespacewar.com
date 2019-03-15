@@ -144,14 +144,14 @@ function discardCardsAsPlayer(cardIds, playerId, match) {
 
 function createMatch(deps = {}) {
     if (deps.players && deps.players.length === 1) {
-        deps.players.push(createPlayer());
+        deps.players.push(Player('P2A'));
     }
     const deckFactory = deps.deckFactory || FakeDeckFactory.fromCards([createCard()]);
     const cardDataAssembler = deckFactory._getCardDataAssembler();
     defaults(deps, {
         deckFactory,
         cardInfoRepository: CardInfoRepository({ cardDataAssembler }),
-        players: [createPlayer(), createPlayer()],
+        players: [createPlayer('P1A'), createPlayer('P2A')],
         logger: {
             log: (...args) => console.log(...args)
         }

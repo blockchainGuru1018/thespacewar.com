@@ -331,7 +331,11 @@
                 return this.holdingCard && this.canDiscardCards;
             },
             stationCardGhostVisible() {
-                return this.holdingCard && this.canPutDownStationCards;
+                if (!this.holdingCard) return false;
+
+                //TODO Maybe there should be an individual permissions check that checks both these permission but receives the holding card
+                return this.canPutDownStationCards
+                    || this.createCard(this.holdingCard).canBePutDownAsExtraStationCard;
             },
             opponentTopDiscardCard() {
                 return this.opponentDiscardedCards[this.opponentDiscardedCards.length - 1];
