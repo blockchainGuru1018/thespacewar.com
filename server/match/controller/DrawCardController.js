@@ -18,12 +18,12 @@ function DrawCardController(deps) {
 
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         const cannotDrawMoreCards = !playerStateService.moreCardsCanBeDrawnForDrawPhase();
-        if (cannotDrawMoreCards) {
-            matchComService.emitToPlayer(playerId, 'drawCards', { moreCardsCanBeDrawn: false });
+        if (drawCardRequirement) {
+            onDrawCardForRequirement({ playerId });
         }
         else {
-            if (drawCardRequirement) {
-                onDrawCardForRequirement({ playerId });
+            if (cannotDrawMoreCards) {
+                matchComService.emitToPlayer(playerId, 'drawCards', { moreCardsCanBeDrawn: false });
             }
             else {
                 onDrawCardBecauseOfDrawPhase({ playerId });
