@@ -24,6 +24,7 @@ module.exports = function (deps) {
         drawSingle,
         draw,
         getCardCount,
+        getPossibleMillCount: () => Math.floor(getCardCount() / 2),
         _getDeck: () => [...deck],
         _restoreDeck: previousDeck => { deck = [...previousDeck] }
     };

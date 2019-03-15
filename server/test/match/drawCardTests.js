@@ -122,7 +122,8 @@ module.exports = {
     'when can draw 1 card and draws 2 cards': {
         setUp() {
             this.firstPlayerConnection = FakeConnection2(['drawCards']);
-            const players = [Player('P1A', this.firstPlayerConnection), Player('P2A')]
+            this.secondPlayerConnection = FakeConnection2(['restoreState']);
+            const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
             this.match = createMatch({ players });
             this.match.restoreFromState(createState({
                 playerStateById: {
@@ -148,7 +149,7 @@ module.exports = {
         async setUp() {
             this.firstPlayerConnection = FakeConnection2(['restoreState', 'drawCards', 'stateChanged']);
             this.secondPlayerConnection = FakeConnection2(['restoreState', 'stateChanged', 'setOpponentCardCount']);
-            const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+            const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
             this.match = createMatch({ players });
             this.match.restoreFromState(createState({
                 playerStateById: {
@@ -304,7 +305,7 @@ module.exports = {
     'when has COMMON draw card requirement with count 1 and draw card and second player is NOT waiting': {
         setUp() {
             this.firstPlayerConnection = FakeConnection2(['stateChanged']);
-            const players = [Player('P1A', this.firstPlayerConnection), Player('P2A')]
+            const players = [Player('P1A', this.firstPlayerConnection), Player('P2A')];
             this.match = createMatch({ players });
             this.match.restoreFromState(createState({
                 playerStateById: {
@@ -362,4 +363,4 @@ module.exports = {
             }));
         }
     }
-}
+};

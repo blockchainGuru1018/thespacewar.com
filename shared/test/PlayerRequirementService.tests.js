@@ -47,10 +47,11 @@ module.exports = bocha.testCase('PlayerRequirementService', {
             { type: 'discardCard', count: 1 }
         ]);
     },
-    'when player has 2 cards in deck and adds 3 draw card requirements of count 1 should only add the first 2': function () {
+    'when player has 2 cards in deck and opponent has 1 card in deck and adds 3 draw card requirements of count 1 should only add the first 2': function () {
         const state = createState({
             deckByPlayerId: {
-                'P1A': FakeDeck.fromCards([createCard({ id: 'C1A' }), createCard({ id: 'C2A' })])
+                'P1A': FakeDeck.fromCards([createCard({ id: 'C1A' }), createCard({ id: 'C2A' })]),
+                'P2A': FakeDeck.fromCards([createCard({ id: 'C3A' })])
             }
         });
         const service = createServiceForPlayer(state, 'P1A');
@@ -85,7 +86,7 @@ module.exports = bocha.testCase('PlayerRequirementService', {
     }
 });
 
-function createServiceForPlayer(state, playerId, opponentId) {
+function createServiceForPlayer(state, playerId = 'P1A', opponentId = 'P2A') {
     const matchService = new MatchService();
     matchService.setState(state);
     const playerServiceProvider = PlayerServiceProvider();

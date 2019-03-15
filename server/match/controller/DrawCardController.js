@@ -15,11 +15,19 @@ function DrawCardController(deps) {
     function onDrawCard(playerId) {
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
         const drawCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'drawCard' });
-        if (drawCardRequirement) {
-            onDrawCardForRequirement({ playerId });
+
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const cannotDrawMoreCards = !playerStateService.moreCardsCanBeDrawnForDrawPhase();
+        if (cannotDrawMoreCards) {
+            matchComService.emitToPlayer(playerId, 'drawCards', { moreCardsCanBeDrawn: false });
         }
         else {
-            onDrawCardBecauseOfDrawPhase({ playerId });
+            if (drawCardRequirement) {
+                onDrawCardForRequirement({ playerId });
+            }
+            else {
+                onDrawCardBecauseOfDrawPhase({ playerId });
+            }
         }
     }
 
@@ -33,15 +41,9 @@ function DrawCardController(deps) {
 
     function onDrawCardBecauseOfDrawPhase({ playerId }) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        const cannotDrawMoreCards = !playerStateService.moreCardsCanBeDrawnForDrawPhase();
-        if (cannotDrawMoreCards) {
-            matchComService.emitToPlayer(playerId, 'drawCards', { moreCardsCanBeDrawn: false });
-        }
-        else {
-            playerStateService.drawCard();
-            const moreCardsCanBeDrawn = playerStateService.moreCardsCanBeDrawnForDrawPhase();
-            matchComService.emitToPlayer(playerId, 'drawCards', { moreCardsCanBeDrawn });
-        }
+        playerStateService.drawCard();
+        const moreCardsCanBeDrawn = playerStateService.moreCardsCanBeDrawnForDrawPhase();
+        matchComService.emitToPlayer(playerId, 'drawCards', { moreCardsCanBeDrawn });
     }
 
     function onDiscardOpponentTopTwoCards(playerId) {
