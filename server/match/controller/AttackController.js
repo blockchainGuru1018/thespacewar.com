@@ -18,7 +18,7 @@ function AttackController(deps) {
         onAttackStationCards,
         onDamageStationCard,
         onSacrifice
-    }
+    };
 
     function onAttack(playerId, { attackerCardId, defenderCardId }) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);

@@ -223,6 +223,23 @@ module.exports = testCase('Cards', {
             });
 
             refute(this.card.canRepair());
+        },
+        'when is NOT in home zone and has flipped station card and has paralyzed card in same zone should be able to repair': function () {
+            this.card = createCard(SmallRepairShop, {
+                card: { id: 'C1A' },
+                matchService: {
+                    getTurn: () => 1
+                },
+                queryEvents: queryEventsFactory.withStubs(),
+                playerStateService: playerStateServiceFactory.withStubs({
+                    getPhase: () => 'attack',
+                    isCardInHomeZone: id => id !== 'C1A',
+                    hasFlippedStationCards: () => true,
+                    hasMatchingCardInSameZone: id => id === 'C1A'
+                })
+            });
+
+            assert(this.card.canRepair());
         }
     },
     'Pursuiter:': {

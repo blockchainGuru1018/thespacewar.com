@@ -19,12 +19,8 @@ module.exports = class RepairShip extends BaseCard {
         if (this._hasRepairedThisTurn()) return false;
         if (this._hasAttackedThisTurn()) return false;
 
-        if (this._playerStateService.hasFlippedStationCards()) {
-            return this._playerStateService.isCardInHomeZone(this.id);
-        }
-        else {
-            return this._hasCardInSameZoneThatCanBeRepaired();
-        }
+        return this._hasCardInSameZoneThatCanBeRepaired()
+            || this._canRepairFlippedStationCards();
     }
 
     repairCard(otherCardOrStationCard) {
@@ -69,5 +65,10 @@ module.exports = class RepairShip extends BaseCard {
         return this._playerStateService.hasMatchingCardInSameZone(this.id, card => {
             return card.canBeRepaired()
         });
+    }
+
+    _canRepairFlippedStationCards() {
+        return this._playerStateService.hasFlippedStationCards()
+            && this._playerStateService.isCardInHomeZone(this.id);
     }
 };
