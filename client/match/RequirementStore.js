@@ -13,6 +13,7 @@ module.exports = function (deps) {
         },
         getters: {
             waitingForOtherPlayerToFinishRequirements,
+            waitingRequirement,
             firstRequirement,
             firstRequirementIsDiscardCard,
             firstRequirementIsDamageStationCard,
@@ -27,8 +28,12 @@ module.exports = function (deps) {
         }
     };
 
-    function waitingForOtherPlayerToFinishRequirements(state, getters, rootState) {
-        return rootState.match.requirements.some(r => r.waiting);
+    function waitingForOtherPlayerToFinishRequirements(state, getters) {
+        return !!getters.waitingRequirement;
+    }
+
+    function waitingRequirement(state, getters, rootState) {
+        return rootState.match.requirements.find(r => r.waiting);
     }
 
     function firstRequirement(state, getters, rootState) {

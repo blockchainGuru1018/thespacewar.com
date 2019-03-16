@@ -14,6 +14,7 @@ const {
     catchError,
     createState
 } = require('./shared.js');
+const FakeDeck = require('../testUtils/FakeDeck.js');
 const DisturbingSensor = require('../../../shared/card/DisturbingSensor.js');
 const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
 const GoodKarmaCommonId = '11';
@@ -75,11 +76,12 @@ module.exports = {
             assert.calledWith(this.secondPlayerConnection.nextPlayer, { turn: 2, currentPlayer: 'P1A' });
         }
     },
-    'when first player has duration card in play and starting next turn': {
+    'when enter draw phase and has NO cards left in deck': {
         async setUp() {
-            this.firstPlayerConnection = FakeConnection2(['drawCards', 'restoreState']);
+            this.firstPlayerConnection = FakeConnection2(['restoreState']);
+            this.secondPlayerConnection = FakeConnection2(['restoreState']);
             this.match = createMatch({
-                players: [Player('P1A', this.firstPlayerConnection), Player('P2A')]
+                players: [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
             });
             this.match.restoreFromState(createState({
                 turn: 1,
@@ -87,24 +89,42 @@ module.exports = {
                 playerStateById: {
                     'P1A': {
                         phase: 'wait',
-                        cardsInZone: [createCard({ id: 'C1A', type: 'duration' })],
-                        events: [PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A' })]
+                        stationCards: [
+                            { card: createCard({ id: 'C1A' }) },
+                            { card: createCard({ id: 'C2A' }) },
+                            { card: createCard({ id: 'C3A' }) },
+                        ]
                     },
                     'P2A': {
                         phase: 'attack'
                     }
+                },
+                deckByPlayerId: {
+                    'P1A': FakeDeck.realDeckFromCards([])
                 }
             }));
 
             this.match.nextPhase('P2A');
         },
-        'should NOT emit draw card to the first player': function () {
-            refute.called(this.firstPlayerConnection.drawCards);
+        'should add damage station card requirement to second player'() {
+            this.match.refresh('P2A');
+            assert.calledWith(this.secondPlayerConnection.restoreState, sinon.match({
+                requirements: [{
+                    type: 'damageStationCard',
+                    count: sinon.match.number,
+                    common: true,
+                    reason: 'emptyDeck'
+                }]
+            }));
         },
-        'first player should NOT have any cards on hand': function () {
-            this.match.start();
-            const { cardsOnHand } = this.firstPlayerConnection.restoreState.firstCall.args[0];
-            assert.equals(cardsOnHand.length, 0);
+        'should add empty, but common, damage station card requirement to first player'() {
+            //TODO Requirements should be common when both players perform the same kind of action, but here only one is.
+            // The real intent is to have the first player wait for the other. Perhaps this could be implement in another
+            // way that doesnt break the abstraction?
+            this.match.refresh('P1A');
+            assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
+                requirements: [{ type: 'damageStationCard', count: 0, common: true, waiting: true, reason: 'emptyDeck' }]
+            }));
         }
     },
     'when first player is in the preparation phase and goes to next phase': {

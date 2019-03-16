@@ -24,7 +24,12 @@
             <div class="guideTextContainer">
                 <div class="guideText-waitingForOtherPlayer guideText guideText--small"
                      v-if="waitingForOtherPlayerToFinishRequirements">
-                    Waiting for other player...
+                    <template v-if="waitingRequirement.reason === 'emptyDeck'">
+                        Your opponent is dealing damage to your station
+                    </template>
+                    <template v-else>
+                        Waiting for other player...
+                    </template>
                 </div>
                 <div class="guideText guideText--small" v-else-if="actionGuideText">
                     <div :style="cardStyle"
@@ -165,6 +170,7 @@
             ]),
             ...mapRequirementGetters([
                 'waitingForOtherPlayerToFinishRequirements',
+                'waitingRequirement',
                 'firstRequirement',
                 'firstRequirementIsDiscardCard',
                 'firstRequirementIsDamageStationCard',

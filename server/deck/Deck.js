@@ -24,6 +24,7 @@ module.exports = function (deps) {
         drawSingle,
         draw,
         getCardCount,
+        getPossibleMillCount: () => Math.floor(getCardCount() / 2),
         _getDeck: () => [...deck],
         _restoreDeck: previousDeck => { deck = [...previousDeck] }
     };
@@ -33,8 +34,10 @@ module.exports = function (deps) {
     }
 
     function draw(count = 1) {
+        const countAvailableToDraw = Math.min(getCardCount(), count);
+
         let cards = [];
-        for (let i = 0; i < count; i++) {
+        for (let i = 0; i < countAvailableToDraw; i++) {
             let topCard = deck.pop();
             cards.push(topCard);
         }

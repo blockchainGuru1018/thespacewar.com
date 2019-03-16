@@ -27,8 +27,9 @@ function FakeDeck(deps) {
     return {
         draw,
         drawSingle,
-        getCardCount: () => cards.length
-    }
+        getCardCount: () => cards.length,
+        getPossibleMillCount: () => Math.floor(cards.length / 2),
+    };
 
     function drawSingle() {
         const card = cards.shift();

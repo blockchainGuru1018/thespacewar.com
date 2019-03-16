@@ -1,6 +1,5 @@
 const DiscardCardEvent = require('../../shared/event/DiscardCardEvent.js');
 const AttackEvent = require('../../shared/event/AttackEvent.js');
-const RepairCardEvent = require('../../shared/event/RepairCardEvent.js');
 const QueryEvents = require('../../shared/event/QueryEvents.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
 const ClientCardFactory = require('../card/ClientCardFactory.js');
@@ -8,8 +7,6 @@ const MatchService = require("../../shared/match/MatchService.js");
 const CanThePlayer = require("../../shared/match/CanThePlayer.js");
 const PlayerRuleService = require("../../shared/match/PlayerRuleService.js");
 const ClientPlayerStateService = require("./ClientPlayerStateService");
-const CardDataAssembler = require('../../shared/CardDataAssembler.js');
-const Deck = require('../../server/deck/Deck.js');
 const mapFromClientToServerState = require('./mapFromClientToServerState.js');
 const localGameDataFacade = require('../utils/localGameDataFacade.js');
 const {
@@ -17,7 +14,6 @@ const {
     PHASES
 } = require('./phases.js');
 
-const MAGIC_NUMBER_TO_GET_DECK_SIZE_RIGHT = 1;
 const storeItemNameByServerItemName = {
     cardsInZone: 'playerCardsInZone',
     cardsInOpponentZone: 'playerCardsInOpponentZone',
@@ -38,6 +34,7 @@ module.exports = function (deps) {
     const actionPointsCalculator = deps.actionPointsCalculator || ActionPointsCalculator({ cardInfoRepository });
     const matchController = deps.matchController;
     const rawCardDataRepository = deps.rawCardDataRepository;
+    const getDeckSize = deps.getDeckSize || require('./getDeckSize.js'); //TODO Move to util and then require util at the top
     const clientCardFactory = deps.cardFactory
         || ClientCardFactory({ actionPointsCalculator, rawCardDataRepository });
 
@@ -106,7 +103,8 @@ module.exports = function (deps) {
             opponentStateService,
             queryOpponentEvents,
             matchService,
-            playerCardsInDeckCount
+            playerCardsInDeckCount,
+            opponentCardsInDeckCount
         },
         mutations: {
             setPlayerStationCards,
@@ -337,6 +335,15 @@ module.exports = function (deps) {
             - state.playerCardsInZone.length
             - state.playerCardsInOpponentZone.length
             - getters.allPlayerStationCards.length;
+    }
+
+    function opponentCardsInDeckCount(state, getters) {
+        return deckSize
+            - state.opponentDiscardedCards.length
+            - state.opponentCardCount
+            - state.opponentCardsInZone.length
+            - state.opponentCardsInPlayerZone.length
+            - getters.allOpponentStationCards.length;
     }
 
     function queryOpponentEvents() {
@@ -586,7 +593,7 @@ module.exports = function (deps) {
         }));
         matchController.emit('discardCard', cardId);
 
-        if (getters.amountOfCardsToDiscard === 0) {
+        if (state.phase === PHASES.discard && getters.amountOfCardsToDiscard === 0) {
             dispatch('goToNextPhase');
         }
     }
@@ -810,12 +817,8 @@ module.exports = function (deps) {
         const phasesIncludingWaitInOrder = [...COMMON_PHASE_ORDER, PHASES.wait];
         return phasesIncludingWaitInOrder.indexOf(b) - phasesIncludingWaitInOrder.indexOf(a);
     }
-}
+};
 
 function stationCardsByIsFlippedComparer(a, b) {
     return (a.flipped ? 1 : 0) - (b.flipped ? 1 : 0);
-}
-
-function getDeckSize(rawCardDataRepository) {
-    return Deck({ cardDataAssembler: CardDataAssembler({ rawCardDataRepository }) }).getCardCount() - MAGIC_NUMBER_TO_GET_DECK_SIZE_RIGHT;
 }

@@ -3,7 +3,7 @@ const Vuex = resolveModuleWithPossibleDefault(require('vuex'));
 const FakeUserRepository = require('./FakeUserRepository.js');
 const FakeMatchControllerFactory = require('./FakeMatchControllerFactory');
 const FakeMatchController = require('./FakeMatchController');
-const Page = require('../../client/match/MatchPage.js');
+const MatchPage = require('../../client/match/MatchPage.js');
 const cardsJson = require('../../server/card/rawCardData.cache.json').data;
 
 module.exports = function TestController({ playerIds = ['P1A', 'P2A'], matchId = 'M1A', ...pageDeps } = {}) {
@@ -20,7 +20,7 @@ module.exports = function TestController({ playerIds = ['P1A', 'P2A'], matchId =
     pageDeps.rootStore = store;
     pageDeps.rawCardDataRepository = { init() { }, get: () => cardsJson };
 
-    const page = Page(pageDeps);
+    const page = MatchPage(pageDeps);
 
     return {
         dispatch(...args) {

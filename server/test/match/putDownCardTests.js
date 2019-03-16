@@ -904,7 +904,7 @@ module.exports = {
                 assert.calledOnce(this.firstPlayerConnection.stateChanged);
                 assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                     discardedCards: [sinon.match({ id: 'C1A' })],
-                    requirements: [sinon.match({ type: 'drawCard', count: 4, common: true })],
+                    requirements: [sinon.match({ type: 'drawCard', count: sinon.match.number, common: true })],
                     events: [
                         sinon.match({ type: 'putDownCard', cardId: 'C1A' }),
                         sinon.match({ type: 'discardCard', cardId: 'C1A' })
@@ -916,7 +916,43 @@ module.exports = {
                 assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
                     opponentDiscardedCards: [sinon.match({ id: 'C1A' })],
                     opponentCardCount: 0,
-                    requirements: [sinon.match({ type: 'drawCard', count: 3, common: true })]
+                    requirements: [sinon.match({ type: 'drawCard', count: sinon.match.number, common: true })]
+                }));
+            }
+        },
+        'when put down Discovery with choice "draw" but both players has NO cards left': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['restoreState']);
+                this.secondPlayerConnection = FakeConnection2(['restoreState']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'action',
+                            cardsOnHand: [
+                                createCard({ id: 'C1A', type: 'event', commonId: DiscoveryCommonId }),
+                            ]
+                        }
+                    },
+                    deckByPlayerId: {
+                        'P1A': FakeDeck.realDeckFromCards([]),
+                        'P2A': FakeDeck.realDeckFromCards([])
+                    }
+                }));
+
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A', choice: 'draw' });
+            },
+            'should NOT have any requirements'() {
+                this.match.refresh('P1A');
+                assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
+                    requirements: [],
+                }));
+            },
+            'should NOT have any requirements'() {
+                this.match.refresh('P2A');
+                assert.calledWith(this.secondPlayerConnection.restoreState, sinon.match({
+                    requirements: []
                 }));
             }
         },
@@ -924,7 +960,7 @@ module.exports = {
             setUp() {
                 this.firstPlayerConnection = FakeConnection2(['stateChanged']);
                 this.secondPlayerConnection = FakeConnection2(['stateChanged']);
-                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
                 this.match = createMatch({ players });
                 this.match.restoreFromState(createState({
                     playerStateById: {
@@ -950,13 +986,13 @@ module.exports = {
             'should emit stateChanged to first player'() {
                 assert.calledOnce(this.firstPlayerConnection.stateChanged);
                 assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
-                    requirements: [sinon.match({ type: 'discardCard', count: 1, common: true })],
+                    requirements: [sinon.match({ type: 'discardCard', count: sinon.match.number, common: true })],
                 }));
             },
             'should emit stateChanged to second player'() {
                 assert.calledOnce(this.secondPlayerConnection.stateChanged);
                 assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
-                    requirements: [sinon.match({ type: 'discardCard', count: 2, common: true })]
+                    requirements: [sinon.match({ type: 'discardCard', count: sinon.match.number, common: true })]
                 }));
             }
         }
