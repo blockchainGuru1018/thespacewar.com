@@ -634,6 +634,12 @@ module.exports = {
                 assert.equals(flippedCards.length, 1);
                 assert.match(flippedCards[0].card, { id: 'C2A' });
                 assert.match(flippedCards[0], { flipped: true, place: 'action' });
+            },
+            'player should have missile among discarded cards'() {
+                this.match.refresh('P1A');
+                assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
+                    discardedCards: [sinon.match({ id: 'C1A' })]
+                }));
             }
         }
     },

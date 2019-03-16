@@ -101,6 +101,10 @@ function AttackController(deps) {
         }
 
         playerStateService.registerAttack(attackerCardId);
+        if (attackerCard.type === 'missile') {
+            playerStateService.removeCard(attackerCardId);
+            playerStateService.discardCard(attackerCardData);
+        }
 
         const gameOver = opponentStateService.getStationCards().filter(s => !s.flipped) === 0
             || playerStateService.getStationCards().filter(s => !s.flipped).length === 0;

@@ -7,4 +7,4 @@ module.exports = function (attackerCard, defenderCard) {
         defenderDestroyed: cardAttack >= defenderTotalDefense,
         defenderDamage: defenderCurrentDamage + cardAttack
     };
-}
+};

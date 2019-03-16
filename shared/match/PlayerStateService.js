@@ -410,12 +410,8 @@ class PlayerStateService {
 
     registerAttack(attackerCardId) {
         const cardData = this.findCard(attackerCardId);
-        if (cardData.type === 'missile') {
-            this.removeCard(attackerCardId);
-        }
-
         const turn = this._matchService.getTurn();
-        const attackEvent = AttackEvent({ turn, attackerCardId, cardCommonId: cardData.commonId })
+        const attackEvent = AttackEvent({ turn, attackerCardId, cardCommonId: cardData.commonId });
         this.storeEvent(attackEvent);
     }
 
