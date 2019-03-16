@@ -17,11 +17,15 @@ const {
 let controller;
 let matchController;
 
+function setUpController(optionsAndPageDeps = {}) { //Has side effects to afford a convenient tear down
+    matchController = FakeMatchController();
+    controller = createController({ matchController, ...optionsAndPageDeps });
+
+    return controller;
+}
+
 beforeEach(() => {
     sinon.stub(getCardImageUrl, 'byCommonId').returns('/#');
-
-    matchController = FakeMatchController();
-    controller = createController({ matchController });
 });
 
 afterEach(() => {
@@ -34,7 +38,7 @@ afterEach(() => {
 
 describe('misc', async () => {
     test('when in "start" phase and click card on hand should NOT see ANY card ghosts', async () => {
-        const { dispatch, showPage } = controller;
+        const { dispatch, showPage } = setUpController();
         showPage();
         dispatch('restoreState', FakeState({
             turn: 1,
@@ -53,7 +57,7 @@ describe('misc', async () => {
 
 describe('when in discard phase and is required to discard 2 cards', async () => {
     beforeEach(async () => {
-        const { dispatch, showPage } = controller;
+        const { dispatch, showPage } = setUpController();
         showPage();
         dispatch('restoreState', FakeState({
             turn: 1,
@@ -86,7 +90,7 @@ describe('when in discard phase and is required to discard 2 cards', async () =>
 
 describe('when in action phase', async () => {
     beforeEach(async () => {
-        const { dispatch, showPage } = controller;
+        const { dispatch, showPage } = setUpController();
         showPage();
         dispatch('restoreState', FakeState({
             turn: 1,
@@ -109,7 +113,7 @@ describe('when in action phase', async () => {
 
 describe('when has damageStationCard requirement by emptyDeck and is waiting', async () => {
     beforeEach(async () => {
-        const { dispatch, showPage } = controller;
+        const { dispatch, showPage } = setUpController();
         showPage();
         dispatch('restoreState', FakeState({
             turn: 1,
@@ -125,4 +129,58 @@ describe('when has damageStationCard requirement by emptyDeck and is waiting', a
     test('should show special text', async () => {
         assert.elementText('.guideText', 'Your opponent is dealing damage to your station');
     });
+});
+
+describe('when has NO cards left and it is draw phase and opponent has 1 card left', async () => {
+    beforeEach(async () => {
+        const { dispatch, showPage } = setUpController({
+            getDeckSize: () => 2
+        });
+        showPage();
+        dispatch('restoreState', FakeState({
+            turn: 1,
+            currentPlayer: 'P1A',
+            phase: 'draw',
+            stationCards: [{ id: 'C1A', place: 'draw' }, { id: 'C2A', place: 'draw' }],
+            opponentStationCards: [{ id: 'C3A', place: 'draw' }]
+        }));
+        await timeout();
+    });
+
+    test('should NOT be able to draw card', async () => {
+        assert.elementCount('.drawPile-draw', 0);
+    });
+
+    test('should be able to mill', async () => {
+        assert.elementCount('.drawPile-discardTopTwo', 1);
+    });
+});
+
+describe('when has 1 card left and it is draw phase and opponent has NO cards left', async () => {
+    beforeEach(async () => {
+        const { dispatch, showPage } = setUpController({
+            getDeckSize: () => 2
+        });
+        showPage();
+        dispatch('restoreState', FakeState({
+            turn: 1,
+            currentPlayer: 'P1A',
+            phase: 'draw',
+            stationCards: [{ id: 'C1A', place: 'draw' }],
+            opponentStationCards: [{ id: 'C2A', place: 'draw' }, { id: 'C3A', place: 'draw' }]
+        }));
+        await timeout();
+    });
+
+    test('should be able to draw card', async () => {
+        assert.elementCount('.drawPile-draw', 1);
+    });
+
+    test('should NOT be able to mill', async () => {
+        assert.elementCount('.drawPile-discardTopTwo', 0);
+    });
+});
+
+describe('when both players are out of cards should', () => {
+    test.todo('should be able to SOMETHING???');
 });

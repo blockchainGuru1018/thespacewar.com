@@ -10,4 +10,4 @@ module.exports = function FakeMatchController(options = {}) {
         emit: stub(),
         stop() { }
     });
-}
+};

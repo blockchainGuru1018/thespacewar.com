@@ -19,10 +19,12 @@ module.exports = function (deps) {
             canSelectCardsForActiveAction,
             canMoveStationCards,
             canDrawCards,
-            canMill
+            canMill,
+            deckIsEmpty,
+            opponentDeckIsEmpty
         },
         actions: {}
-    }
+    };
 
     function isOwnTurn(state, getters, rootState) {
         const matchState = rootState.match;
@@ -31,6 +33,16 @@ module.exports = function (deps) {
 
     function waitingForOtherPlayerToFinishRequirements() {
         return getFrom('waitingForOtherPlayerToFinishRequirements', 'requirement');
+    }
+
+    function deckIsEmpty() {
+        let playerCardsInDeckCount = getFrom('playerCardsInDeckCount', 'match');
+        return playerCardsInDeckCount <= 0;
+    }
+
+    function opponentDeckIsEmpty() {
+        let opponentCardsInDeckCount = getFrom('opponentCardsInDeckCount', 'match');
+        return opponentCardsInDeckCount <= 0;
     }
 
     function canMoveCardsFromHand(state, getters) {
@@ -102,6 +114,7 @@ module.exports = function (deps) {
 
     function canDrawCards(state, getters, rootState) {
         if (getters.waitingForOtherPlayerToFinishRequirements) return false;
+        if (getters.deckIsEmpty) return false;
 
         return rootState.match.phase === 'draw'
             || getFrom('firstRequirementIsDrawCard', 'requirement');
@@ -109,8 +122,9 @@ module.exports = function (deps) {
 
     function canMill(state, getters, rootState) {
         if (getters.waitingForOtherPlayerToFinishRequirements) return false;
+        if (getters.opponentDeckIsEmpty) return false;
 
         return rootState.match.phase === 'draw'
             || getFrom('firstRequirementIsDrawCard', 'requirement');
     }
-}
+};
