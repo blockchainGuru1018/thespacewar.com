@@ -114,7 +114,9 @@ module.exports = function (deps) {
 
     function canDrawCards(state, getters, rootState) {
         if (getters.waitingForOtherPlayerToFinishRequirements) return false;
-        if (getters.deckIsEmpty) return false;
+        if (getters.deckIsEmpty) {
+            return getters.opponentDeckIsEmpty;
+        }
 
         return rootState.match.phase === 'draw'
             || getFrom('firstRequirementIsDrawCard', 'requirement');

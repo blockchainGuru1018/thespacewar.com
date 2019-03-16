@@ -181,6 +181,26 @@ describe('when has 1 card left and it is draw phase and opponent has NO cards le
     });
 });
 
-describe('when both players are out of cards should', () => {
-    test.todo('should be able to SOMETHING???');
+describe('when both players are out of cards', () => {
+    beforeEach(async () => {
+        const { dispatch, showPage } = setUpController({
+            getDeckSize: () => 1
+        });
+        showPage();
+        dispatch('restoreState', FakeState({
+            turn: 1,
+            currentPlayer: 'P1A',
+            phase: 'draw',
+            stationCards: [{ id: 'C1A', place: 'draw' }],
+            opponentStationCards: [{ id: 'C2A', place: 'draw' }]
+        }));
+        await timeout();
+    });
+
+    test('WORKAROUND: should be able to draw card', () => {
+        //notes: You must be able to proceed when no cards are available to go past the draw phase.
+        // In the future the draw phase could be skipped automatically.
+        // But for now the player has to "draw a card" which will trigger a next phase because no more cards are available to draw.
+        assert.elementCount('.drawPile-draw', 1);
+    });
 });
