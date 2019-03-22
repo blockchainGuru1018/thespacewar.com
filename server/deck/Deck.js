@@ -48,6 +48,14 @@ module.exports = function (deps) {
     function getCardCount() {
         return deck.length;
     }
+
+    function removeCard(cardId) {
+        const cardIndex = deck.findIndex(c => c.id === cardId);
+        if (cardIndex < 0) return null;
+
+        const [removedCard] = deck.splice(cardIndex, 1);
+        return removedCard;
+    }
 };
 
 function shuffle(array) {

@@ -13,6 +13,12 @@ class PlayerRequirementUpdater { //TODO Rename PlayerRequirements
         this._opponentRequirementService = opponentRequirementService;
     }
 
+    canProgressRequirementByCount(count) {
+        const requirement = this._get();
+        return requirement
+            && count <= requirement.count;
+    }
+
     progressRequirementByCount(count = 1) {
         const requirement = this._get();
         if (requirement.count > count) {

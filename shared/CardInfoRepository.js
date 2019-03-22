@@ -12,7 +12,8 @@ module.exports = function (deps) {
 
     function getCost(cardCommonId) {
         const card = getCard(cardCommonId);
-        return parseInt(card.cost, 10);
+        let costTextOrZero = card.cost || '0';
+        return parseInt(costTextOrZero, 10) || 0;
     }
 
     function getType(cardCommonId) {

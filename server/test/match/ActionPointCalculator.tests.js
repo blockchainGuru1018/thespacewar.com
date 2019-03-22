@@ -125,6 +125,22 @@ module.exports = testCase('ActionPointCalculator', {
 
         assert.equals(actionPoints, 5);
     },
+    'when has put down 1 card that was granted for free by event should NOT affect action point count'() {
+        const calculator = ActionPointCalculator({
+            cardInfoRepository: FakeCardInfoRepository([{ commonId: 'C1A', cost: 1 }])
+        });
+
+        const actionPoints = calculator.calculate({
+            events: [
+                PutDownCardEvent({ turn: 1, location: 'zone', cardCommonId: 'C1A', grantedForFreeByEvent: true })
+            ],
+            turn: 1,
+            phase: 'action',
+            actionStationCardsCount: 1
+        });
+
+        assert.equals(actionPoints, 2);
+    },
     'when in action phase and has discarded 1 card but was NOT a "sacrifice" should NOT get points for discard'() {
         const calculator = ActionPointCalculator({
             cardInfoRepository: FakeCardInfoRepository([{ commonId: 'C1A', cost: 1 }])

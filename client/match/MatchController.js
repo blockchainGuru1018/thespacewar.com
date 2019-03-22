@@ -9,7 +9,7 @@ module.exports = function (deps) { //TODO Rename MatchConnectionController or so
         start,
         stop,
         emit
-    }
+    };
 
     function start() {
         socket.on('match', onSocketMatchEvent);
@@ -44,4 +44,4 @@ module.exports = function (deps) { //TODO Rename MatchConnectionController or so
             emit('refresh');
         }
     }
-}
+};

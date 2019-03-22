@@ -3,6 +3,7 @@ const STORES = [
     require('./RequirementStore.js'),
     require('./PermissionStore.js'),
     require('./CardStore.js'),
+    require('./findCard/FindCardStore.js'),
     require('./loadingIndicator/LoadingIndicatorStore.js')
 ];
 const LOGGING_ENABLED = false;

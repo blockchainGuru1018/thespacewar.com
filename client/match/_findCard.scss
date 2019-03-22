@@ -1,0 +1,95 @@
+@import "cardVariables";
+
+.findCard {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  overflow: auto;
+}
+
+.findCard-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0 40px;
+}
+
+.findCard-headerText {
+  font-family: "Space Mono", monospace;
+  font-size: 72px;
+  color: white;
+  letter-spacing: .02em;
+}
+
+.findCard-requirementCard {
+  width: $cardWidth / 6;
+  height: $cardHeight / 6;
+  margin-right: 25px;
+}
+
+.findCard-requirementCard > img {
+  width: 100%;
+  height: 100%;
+}
+
+.findCard-groups {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.findCard-group {
+  margin-bottom: 30px;
+}
+
+.findCard-groupHeader {
+  font-size: 42px;
+  color: white;
+  font-family: "Space Mono", monospace;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.findCard-groupCards {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.findCard-card {
+  width: $cardWidth / 3;
+  height: $cardHeight / 3;
+  margin: 5px 0 5px 20px;
+  flex: 0 0 auto;
+
+  &:hover {
+    transform: scale(1.6);
+    box-shadow: 0px 0px 150px 10px #000;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  > img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.findCard-doneWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.findCard-done {
+  width: 200px;
+}

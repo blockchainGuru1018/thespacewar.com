@@ -1,8 +1,11 @@
-let bocha = require('bocha');
-let sinon = bocha.sinon;
-let assert = bocha.assert;
-let refute = bocha.refute;
-let defaults = bocha.defaults;
+const {
+    testCase,
+    sinon,
+    assert,
+    refute,
+    defaults,
+    stub
+} = require('bocha');
 const FakeCardDataAssembler = require("../../server/test/testUtils/FakeCardDataAssembler.js");//TODO Move to shared
 const createCard = FakeCardDataAssembler.createCard;
 const ServerCardFactory = require('../../server/card/ServerCardFactory.js');
@@ -14,7 +17,7 @@ const PlayerServiceProvider = require('../match/PlayerServiceProvider.js');
 
 const FullForceForwardCommonId = '9';
 
-module.exports = bocha.testCase('PlayerStateService', {
+module.exports = testCase('PlayerStateService', {
     'attack boost:': {
         'when has card Full Force Forward in play and a SPACE SHIP card asks for its attack boost': {
             async setUp() {
@@ -147,6 +150,74 @@ module.exports = bocha.testCase('PlayerStateService', {
             const result = service.cardCanMoveOnTurnWhenPutDown(card);
 
             refute(result);
+        }
+    },
+    'removeCardFromDeck:': {
+        'should remove card from deck': function () {
+            let deck = {
+                removeCard: stub()
+            };
+            const state = createState({
+                deckByPlayerId: { 'P1A': deck }
+            });
+            const service = createServiceForPlayer(state, 'P1A');
+
+            service.removeCardFromDeck('C1A');
+
+            assert.calledOnce(deck.removeCard);
+            assert.calledWith(deck.removeCard, 'C1A');
+        },
+        'should return card': function () {
+            const card = { id: 'C1A' };
+            let deck = {
+                removeCard: () => card
+            };
+            const state = createState({
+                deckByPlayerId: { 'P1A': deck }
+            });
+            const service = createServiceForPlayer(state, 'P1A');
+
+            const removedCard = service.removeCardFromDeck('C1A');
+
+            assert.equals(removedCard.id, 'C1A');
+        }
+    },
+    'removeCardFromDiscardPile': {
+        'should remove card from discard pile': function () {
+            const state = createState({
+                playerStateById: {
+                    'P1A': {
+                        discardedCards: [{ id: 'C1A' }]
+                    }
+                }
+            });
+            const service = createServiceForPlayer(state, 'P1A');
+
+            service.removeCardFromDiscardPile('C1A');
+
+            assert.equals(service.getDiscardedCards(), []);
+        },
+        'should return removed card': function () {
+            const state = createState({
+                playerStateById: {
+                    'P1A': {
+                        discardedCards: [{ id: 'C1A' }]
+                    }
+                }
+            });
+            const service = createServiceForPlayer(state, 'P1A');
+
+            const removedCard = service.removeCardFromDiscardPile('C1A');
+
+            assert.equals(removedCard.id, 'C1A');
+        },
+        'should return null when card does NOT exist': function () {
+            const state = createState();
+            const service = createServiceForPlayer(state, 'P1A');
+
+            const removedCard = service.removeCardFromDiscardPile('C1A');
+
+            assert(removedCard === null, 'Expected null got: ' + removedCard);
         }
     }
 });

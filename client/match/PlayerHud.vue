@@ -116,10 +116,16 @@
                  :style="cardStyle"
                  v-click-outside="hideEnlargedCard"/>
         </portal>
+        <portal to="match" v-if="firstRequirementIsFindCard">
+            <FindCard/>
+        </portal>
     </div>
 </template>
 <script>
     const Vuex = require('vuex');
+    const resolveModuleWithPossibleDefault = require('../../client/utils/resolveModuleWithPossibleDefault.js');
+    const FindCard = resolveModuleWithPossibleDefault(require('./FindCard.vue'));
+    const getCardImageUrl = require('../utils/getCardImageUrl.js');
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
     const {
         mapState: mapRequirementState,
@@ -175,6 +181,7 @@
                 'firstRequirementIsDiscardCard',
                 'firstRequirementIsDamageStationCard',
                 'firstRequirementIsDrawCard',
+                'firstRequirementIsFindCard',
                 'cardsLeftToSelect',
                 'selectedCardsCount',
                 'countInFirstRequirement',
@@ -229,7 +236,7 @@
                     return 'Start turn';
                 }
                 const cardDrawsOnTurn = this.queryEvents.getCardDrawsOnTurn(this.turn);
-                const hasDrawnEnoughCards = cardDrawsOnTurn.length === this.cardsToDrawInDrawPhase
+                const hasDrawnEnoughCards = cardDrawsOnTurn.length === this.cardsToDrawInDrawPhase;
                 if (this.phase === PHASES.draw && !hasDrawnEnoughCards) return '';
 
                 return `Go to ${(this.nextPhaseWithAction)} phase`;
@@ -309,6 +316,9 @@
             composeDrawOrMillText() {
                 return 'Draw card or Mill opponent';
             }
+        },
+        components: {
+            FindCard
         }
     };
 

@@ -1,32 +1,42 @@
 const ajax = require('./ajax.js');
 const localGameDataFacade = require('./localGameDataFacade.js');
 
-window.cheat = function (text) {
-    if (text.startsWith('addCard')) {
-        addCard(text.slice('addCard'.length));
+window.cheat = function (type, data) {
+    if (type === 'test_findCard') {
+        addCardsInDeckAsFindCardRequirement();
     }
-
-    if (text.startsWith('actionPoints')) {
-        actionPoints(text.slice('actionPoints'.length));
+    else {
+        sendCheatAndLogResult(type, data);
     }
 };
 
-function addCard(text) {
-    const [commonId, countText] = text.trim().split(',').map(s => s.trim());
-    const count = parseInt(countText, 10);
-    sendCheat('addCard', { commonId, count });
+async function addCardsInDeckAsFindCardRequirement() {
+    const cardsInDeck = await sendCheat('getCardsInDeck');
+    const result = await sendCheat('addRequirement', {
+        type: 'findCard',
+        count: 2,
+        common: false,
+        waiting: false,
+        cardGroups: [
+            { source: 'deck', cards: cardsInDeck }
+        ]
+    });
+
+    console.log('CHEAT RESULT', result);
 }
 
-function actionPoints(text) {
-    const actionPointsCount = parseInt(text, 10);
-    sendCheat('actionPoints', { actionPointsCount });
+async function sendCheatAndLogResult(type, data) {
+    const result = await sendCheat(type, data);
+    if (result) {
+        console.log('CHEAT RESULT', result);
+    }
 }
 
-function sendCheat(type, data) {
+async function sendCheat(type, data) {
     let ownUser = localGameDataFacade.getOwnUser();
     let ongoingMatch = localGameDataFacade.getOngoingMatch();
 
-    ajax.jsonPost('/cheat', {
+    return await ajax.jsonPost('/cheat', {
         type,
         data,
         playerId: ownUser.id,

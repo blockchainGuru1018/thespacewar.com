@@ -88,4 +88,4 @@ module.exports = function (deps) {
             rootStore.dispatch('match/damageStationCards', targetIds);
         }
     }
-}
+};

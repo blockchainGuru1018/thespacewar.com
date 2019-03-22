@@ -92,6 +92,16 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
         }
     }
 
+    addFindCardRequirement({ count, cardGroups, cardCommonId }) {
+        const totalCardCount = cardGroups.reduce((acc, group) => acc + group.cards.length, 0);
+        this.addRequirement({
+            type: 'findCard',
+            count: Math.min(totalCardCount, count),
+            cardGroups: cardGroups.filter(g => g.cards.length),
+            cardCommonId
+        });
+    }
+
     canAddDiscardCardRequirementWithCountOrLess(count) {
         return this.getCountOrMinimumAvailableForDiscardingCards(count) > 0;
     }
@@ -106,10 +116,6 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
 
         const maxDiscardCount = cardsOnHandCount - currentDiscardCardRequirementsCount;
         return Math.min(maxDiscardCount, maxCount);
-    }
-
-    canAddDrawCardRequirementWithCountOrLess(count) {
-        return this.getCountOrMinimumAvailableForDrawingCards(count) > 0;
     }
 
     getCountOrMinimumAvailableForDrawingCards(maxCount) {
@@ -132,17 +138,17 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
     }
 
     updateFirstMatchingRequirement({ type, common = null, waiting = null }, updateFn) {
-        const updatedState = this._playerStateService.update(playerState => {
+        this._playerStateService.update(playerState => {
             const requirements = playerState.requirements.slice();
             const requirement = this._findMatchingRequirement(
                 requirements,
                 { type, common, waiting }
             );
-            updateFn(requirement);
+            return updateFn(requirement);
         });
 
-        const requirements = updatedState.requirements.slice();
-        return this._findMatchingRequirement(requirements, { type, common, waiting });
+        const updatedRequirements = this.getRequirements();
+        return this._findMatchingRequirement(updatedRequirements, { type, common, waiting });
     }
 
     removeFirstMatchingRequirement({ type, common = null, waiting = null }) {

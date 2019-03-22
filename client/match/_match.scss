@@ -1,5 +1,6 @@
 @import "cardVariables";
 @import "icons";
+@import "buttons";
 
 .match {
   display: flex;
@@ -464,7 +465,7 @@
 .drawPile-cardCount {
   position: absolute;
   font-size: 23px;
-  color: rgba(255,255,255, .5);
+  color: rgba(255, 255, 255, .5);
   font-family: "Space mono", monospace;
   right: 10px;
   top: 0px;

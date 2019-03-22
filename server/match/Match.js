@@ -1,4 +1,5 @@
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
+const FindCardController = require('./controller/FindCardController.js');
 const DrawCardController = require('./controller/DrawCardController.js');
 const AttackController = require('./controller/AttackController.js');
 const DebugController = require('./DebugController.js');
@@ -101,6 +102,7 @@ module.exports = function ({
 
     const debugController = DebugController(controllerDeps);
     const drawCardController = DrawCardController(controllerDeps);
+    const findCardController = FindCardController(controllerDeps);
     const attackController = AttackController(controllerDeps);
     const moveCardController = MoveCardController(controllerDeps);
     const putDownCardController = PutDownCardController(controllerDeps);
@@ -126,8 +128,9 @@ module.exports = function ({
         moveCard: moveCardController.onMoveCard,
         attack: attackController.onAttack,
         attackStationCard: attackController.onAttackStationCards, // TODO Rename attackStationCards (pluralized),
-        damageStationCards: attackController.onDamageStationCard,
         sacrifice: attackController.onSacrifice,
+        damageStationCards: attackController.onDamageStationCard,
+        selectCardForFindCardRequirement: findCardController.onSelectCard,
         repairCard,
         retreat,
         updatePlayer: matchComService.updatePlayer.bind(matchComService),

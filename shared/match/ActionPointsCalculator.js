@@ -15,16 +15,12 @@ module.exports = function (deps) {
 
         actionPoints -= getCostOfDurationCardsLeftFromPreviousTurns(events, turn);
 
-        const eventsThisTurn = events.filter(e => e.turn === turn);
-        let hasPutDownZoneCardThatIsNotFree = false;
+        const eventsThisTurn = events.filter(e => e.turn === turn && !e.grantedForFreeByEvent);
         for (let event of eventsThisTurn) {
             if (event.type === 'putDownCard') {
                 if (event.location === 'zone') {
-                    const cardCost = cardInfoRepository.getCost(event.cardCommonId);
-                    if (cardCost > 0) {
-                        actionPoints -= cardCost;
-                        hasPutDownZoneCardThatIsNotFree = true;
-                    }
+                    const cardCost = getCostOfCard(event.cardCommonId);
+                    actionPoints -= cardCost;
                 }
                 else if (event.location === 'station-action') {
                     actionPoints -= 2;
@@ -80,4 +76,9 @@ module.exports = function (deps) {
             && event.location === 'zone'
             && cardInfoRepository.getType(event.cardCommonId) === 'duration';
     }
-}
+
+    function getCostOfCard(cardCommonId) {
+        const cardCost = cardInfoRepository.getCost(cardCommonId);
+        return cardCost || 0;
+    }
+};

@@ -7,7 +7,7 @@ module.exports = function (deps) {
         create,
         getOwnState,
         onAction
-    }
+    };
 
     async function create(req, res) {
         const playerId = req.body.playerId;

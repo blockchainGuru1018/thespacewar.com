@@ -17,18 +17,62 @@ const Logger = require('./utils/Logger.js');
 const http = require('http');
 const { port } = require('./settings.json');
 
+let inDevelopment;
 let app;
 let server;
 let socketMaster;
 let logger = new Logger();
 
+let restartListener = () => {};
+
 module.exports = {
+    onRestart,
     start: startServer,
+    close: closeServer,
     restart: restartServer
 };
 
-async function run({ closeServer, exitProcess, inProduction = false }) {
+function onRestart(listener) {
+    restartListener = listener;
+}
 
+function startServer(config) {
+    inDevelopment = config.inDevelopment;
+
+    return new Promise(async resolve => {
+        app = express();
+        app.use(bodyParser.json());
+
+        server = http.createServer(app);
+        socketMaster = SocketIO(server);
+
+        await run({ closeServer, exitProcess });
+
+        console.log(` - 2/2 Setting up server at port ${port}`)
+        server.listen(port, () => {
+            console.log(` - 2/2 SUCCESS, running on port ${port}\n`)
+            resolve();
+        });
+    });
+}
+
+function closeServer() {
+    server.close();
+    server = null;
+
+    socketMaster.close();
+    socketMaster = null;
+
+    logger.clear();
+
+    return new Promise(resolve => setTimeout(resolve, 1000));
+}
+
+async function restartServer() {
+    restartListener();
+}
+
+async function run({ closeServer, exitProcess }) {
     const rawCardDataRepository = ServerRawCardDataRepository();
 
     console.log(' - 1/2 Fetching fresh game data');
@@ -44,7 +88,6 @@ async function run({ closeServer, exitProcess, inProduction = false }) {
     deps.socketRepository = socketRepository;
     deps.userRepository = userRepository;
     deps.matchRepository = MatchRepository(deps);
-    deps.inProduction = inProduction;
 
     const controllers = {
         user: UserController(deps),
@@ -63,43 +106,6 @@ async function run({ closeServer, exitProcess, inProduction = false }) {
 
 function exitProcess() {
     process.exit();
-}
-
-function closeServer() {
-    server.close();
-    server = null;
-
-    socketMaster.close();
-    socketMaster = null;
-
-    logger.clear();
-
-    return new Promise(resolve => setTimeout(resolve, 1000));
-}
-
-function startServer({ production }) {
-    process.env.production = production;
-
-    return new Promise(async resolve => {
-        app = express();
-        app.use(bodyParser.json());
-
-        server = http.createServer(app);
-        socketMaster = SocketIO(server);
-
-        await run({ closeServer, exitProcess, inProduction: !!production });
-
-        console.log(` - 2/2 Setting up server at port ${port}`)
-        server.listen(port, () => {
-            console.log(` - 2/2 SUCCESS, running on port ${port}\n`)
-            resolve();
-        });
-    });
-}
-
-async function restartServer() {
-    await closeServer();
-    await startServer();
 }
 
 function setupRoutes(deps, controllers) {
@@ -124,10 +130,13 @@ function setupRoutes(deps, controllers) {
 
     app.post('/cheat', controllers.cheat.cheat);
 
-    if (!deps.inProduction) {
-        app.post('/restart', async (req, res) => {
-            await restartServer()
-            res.end();
+    if (inDevelopment) {
+        app.get('/restart', async (req, res) => {
+            await restartServer();
+
+            setTimeout(() => {
+                res.redirect('/');
+            }, 3000);
         });
         app.get('/logs', async (req, res) => {
             const matchLogs = deps.logger.readAll();
@@ -156,7 +165,8 @@ function setupSocketConnectionHandler(deps, controllers) {
                         playerId: userId,
                         matchId: ongoingMatch.id
                     });
-                } catch (error) {
+                }
+                catch (error) {
                     console.error('Error when registering connection for user: ' + error.message);
                     console.info('Raw error:', error);
                 }
@@ -166,7 +176,8 @@ function setupSocketConnectionHandler(deps, controllers) {
         connection.on('match', async data => {
             try {
                 await controllers.match.onAction(data);
-            } catch (error) {
+            }
+            catch (error) {
                 const rawErrorMessage = JSON.stringify(error, null, 4);
                 const dataString = JSON.stringify(data, null, 4);
                 const errorMessage = `(${new Date().toISOString()}) Error in action to match: ${error.message} - DATA: ${dataString} - RAW ERROR: ${rawErrorMessage}`

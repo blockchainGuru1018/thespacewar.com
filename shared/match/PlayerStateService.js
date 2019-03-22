@@ -276,7 +276,7 @@ class PlayerStateService {
         });
     }
 
-    putDownCardInZone(cardData) {
+    putDownCardInZone(cardData, { grantedForFreeByEvent = false } = {}) {
         const currentTurn = this._matchService.getTurn();
         this.update(playerState => {
             playerState.cardsInZone.push(cardData);
@@ -285,7 +285,8 @@ class PlayerStateService {
             turn: currentTurn,
             location: 'zone',
             cardId: cardData.id,
-            cardCommonId: cardData.commonId
+            cardCommonId: cardData.commonId,
+            grantedForFreeByEvent
         }));
     }
 
@@ -499,6 +500,23 @@ class PlayerStateService {
         });
     }
 
+    removeCardFromDeck(cardId) {
+        const deck = this.getDeck();
+        const card = deck.removeCard(cardId);
+        return card;
+    }
+
+    removeCardFromDiscardPile(cardId) {
+        const playerStateToRead = this.getPlayerState();
+        const cardIndex = playerStateToRead.discardedCards.findIndex(c => c.id === cardId);
+        if (cardIndex < 0) return null;
+
+        return this.update(playerState => {
+            const [removedCard] = playerState.discardedCards.splice(cardIndex, 1);
+            return removedCard;
+        });
+    }
+
     updateCardById(cardId, updateFn) {
         const playerState = this.getPlayerState();
         let zoneName;
@@ -549,8 +567,8 @@ class PlayerStateService {
                 return target[property];
             }
         });
-        updateFn(proxy);
-        return playerState;
+
+        return updateFn(proxy);
     }
 
     getPlayerState() {

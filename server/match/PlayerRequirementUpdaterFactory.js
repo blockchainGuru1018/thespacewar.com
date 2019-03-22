@@ -4,7 +4,7 @@ class PlayerRequirementUpdaterFactory {
 
     constructor({
         playerServiceProvider,
-        matchComService
+        matchComService //TODO Should use matchService
     }) {
         this._playerServiceProvider = playerServiceProvider;
         this._matchComService = matchComService;
