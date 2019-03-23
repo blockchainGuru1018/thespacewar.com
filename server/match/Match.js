@@ -62,7 +62,7 @@ module.exports = function ({
         logger,
         cardFactory,
         playerServiceProvider
-    })
+    });
     registerPlayerRequirementServices(players, playerServiceProvider);
     registerCanThePlayerServices(players, playerServiceProvider);
     registerPlayerRuleServices(players, playerServiceProvider);

@@ -68,12 +68,31 @@ class QueryEvents {
         });
     }
 
-    getStationCardsPutDownThisTurnCount(turn) {
+    getStationCardsPutDownThisTurnCount(turn) { //TODO Can remove?
         const putDownStationCardEvents = this._eventRepository.getAll().filter(e => {
             return e.turn === turn
                 && e.type === 'putDownCard'
                 && e.location.startsWith('station');
-        })
+        });
+        return putDownStationCardEvents.length;
+    }
+
+    getStationCardsPutDownThisTurn(turn) { //TODO Can remove?
+        const putDownStationCardEvents = this._eventRepository.getAll().filter(e => {
+            return e.turn === turn
+                && e.type === 'putDownCard'
+                && e.location.startsWith('station');
+        });
+        return putDownStationCardEvents;
+    }
+
+    getNonExtraStationCardsPutDownThisTurnCount(turn) {
+        const putDownStationCardEvents = this._eventRepository.getAll().filter(e => {
+            return e.turn === turn
+                && e.type === 'putDownCard'
+                && e.location.startsWith('station')
+                && !e.putDownAsExtraStationCard
+        });
         return putDownStationCardEvents.length;
     }
 

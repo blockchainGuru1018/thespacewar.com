@@ -725,6 +725,43 @@ module.exports = {
                     ]
                 }));
             }
+        },
+        'when put down excellent work as station card and then put down another card as station card': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['restoreState']);
+                const players = [Player('P1A', this.firstPlayerConnection)];
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    playerStateById: {
+                        'P1A': {
+                            turn: 1,
+                            phase: 'action',
+                            cardsOnHand: [
+                                createCard({ id: 'C1A', commonId: ExcellentWorkCommonId }),
+                                createCard({ id: 'C2A' }),
+                            ],
+                            stationCards: [],
+                            events: []
+                        },
+                    }
+                }));
+                this.match.putDownCard('P1A', { location: 'station-draw', cardId: 'C1A' });
+
+                const options = { location: 'station-draw', cardId: 'C2A' };
+                this.error = catchError(() => this.match.putDownCard('P1A', options));
+            },
+            'should NOT throw'() {
+                refute(this.error);
+            },
+            'should have added card as station card'() {
+                this.match.refresh('P1A');
+                assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
+                    stationCards: [
+                        sinon.match({ id: 'C1A', place: 'draw' }),
+                        sinon.match({ id: 'C2A', place: 'draw' })
+                    ]
+                }));
+            }
         }
     },
     'Grand Opportunity': {

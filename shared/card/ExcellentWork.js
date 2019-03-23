@@ -9,4 +9,4 @@ module.exports = class ExcellentWork extends BaseCard {
     get canBePutDownAsExtraStationCard() {
         return true;
     }
-}
+};

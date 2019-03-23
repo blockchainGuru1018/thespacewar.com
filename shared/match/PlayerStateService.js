@@ -6,6 +6,8 @@ const PutDownCardEvent = require('../PutDownCardEvent.js');
 const RepairCardEvent = require('../event/RepairCardEvent.js');
 const RemoveStationCardEvent = require('../event/RemoveStationCardEvent.js');
 
+const ALLOWED_STATION_CARDS_EACH_TURN = 1;
+
 class PlayerStateService {
 
     constructor({
@@ -45,11 +47,11 @@ class PlayerStateService {
             .getDurationCards()
             .map(c => this._createBehaviourCard(c));
         const extraAllowedStationCards = sum(durationCards, 'allowsToPutDownExtraStationCards');
-        const totalAllowedStationCards = extraAllowedStationCards + 1;
+        const totalAllowedStationCards = extraAllowedStationCards + ALLOWED_STATION_CARDS_EACH_TURN;
 
         let currentTurn = this._matchService.getTurn();
-        const stationCardsPutDownThisTurn = this._queryEvents.getStationCardsPutDownThisTurnCount(currentTurn)
-        return stationCardsPutDownThisTurn < totalAllowedStationCards;
+        const countOfNonExtraStationCards = this._queryEvents.getNonExtraStationCardsPutDownThisTurnCount(currentTurn);
+        return countOfNonExtraStationCards < totalAllowedStationCards;
     }
 
     getCardsInOpponentZone() {
@@ -255,6 +257,9 @@ class PlayerStateService {
     }
 
     addStationCard(cardData, location) {
+        const card = this._createBehaviourCard(cardData);
+        const putDownAsExtraStationCard = !!card.canBePutDownAsExtraStationCard;
+
         const stationLocation = location.split('-').pop();
         const stationCard = { place: stationLocation, card: cardData };
         this.update(playerState => {
@@ -265,7 +270,8 @@ class PlayerStateService {
             turn: currentTurn,
             location,
             cardId: cardData.id,
-            cardCommonId: cardData.commonId
+            cardCommonId: cardData.commonId,
+            putDownAsExtraStationCard
         }));
         return stationCard;
     }

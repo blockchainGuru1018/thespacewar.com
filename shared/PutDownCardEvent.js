@@ -1,4 +1,4 @@
-module.exports = function ({ turn, location, cardId, cardCommonId, grantedForFreeByEvent = false }) {
+module.exports = function ({ turn, location, cardId, cardCommonId, grantedForFreeByEvent = false, putDownAsExtraStationCard = false }) {
     return {
         type: 'putDownCard',
         created: new Date().toISOString(),
@@ -6,6 +6,7 @@ module.exports = function ({ turn, location, cardId, cardCommonId, grantedForFre
         location,
         cardId,
         cardCommonId,
-        grantedForFreeByEvent
+        grantedForFreeByEvent,
+        putDownAsExtraStationCard
     };
 };

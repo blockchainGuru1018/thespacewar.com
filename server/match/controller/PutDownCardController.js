@@ -14,7 +14,7 @@ function PutDownCardController(deps) {
 
     return {
         onPutDownCard
-    }
+    };
 
     function onPutDownCard(playerId, { location, cardId, choice }) {
         let currentPlayer = matchService.getCurrentPlayer();
@@ -26,7 +26,7 @@ function PutDownCardController(deps) {
         let cardData = playerStateService.findCardFromAnySource(cardId);
         if (!cardData) throw new CheatError(`Cannot find card`);
 
-        checkIfCanPutDownCard({ playerId, location, cardData })
+        checkIfCanPutDownCard({ playerId, location, cardData });
 
         removeCardFromCurrentLocation({ playerId, location, cardData });
 
@@ -108,12 +108,7 @@ function PutDownCardController(deps) {
                 }));
 
         for (const durationCard of durationCardsThatPermitExtraStationCards) {
-            playerStateService.storeEvent({
-                type: 'putDownExtraStationCard',
-                effectCardId: durationCard.id,
-                turn: currentTurn
-            });
-
+            addEventToKeepCountOfExtraStationCards(durationCard.id, playerId);
             addCardRequirements({
                 playerId,
                 requirements: durationCard.requirementsOnPutDownExtraStationCard
@@ -125,6 +120,15 @@ function PutDownCardController(deps) {
             'putDownOpponentStationCard',
             matchComService.prepareStationCardForClient(stationCard)
         ); //TODO Can this be removed?
+    }
+
+    function addEventToKeepCountOfExtraStationCards(durationCardId, playerId) {
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        playerStateService.storeEvent({
+            type: 'putDownExtraStationCard',
+            effectCardId: durationCardId,
+            turn: matchService.getTurn()
+        });
     }
 
     function addCardRequirements({ playerId, requirements }) { //TODO Duplicated from another controller. Perhaps this could move in to some service

@@ -1,11 +1,11 @@
 const BLACK_LIST_COMMON_IDS = [
     '16',
-    '17',
     '18',
     '64',
     '31',
     '34',
     '66',
+    '67'
 ];
 
 const FILTER_BLACK_LISTED_CARDS = true; //Mainly used for game testing while the game is pre-alpha
