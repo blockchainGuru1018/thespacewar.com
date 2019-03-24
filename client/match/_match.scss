@@ -1,6 +1,7 @@
 @import "cardVariables";
 @import "icons";
 @import "buttons";
+@import "flex";
 
 .match {
   display: flex;
@@ -386,6 +387,14 @@
   }
 }
 
+.card-emptyDeck {
+  width: $playerCardWidth;
+  height: $playerCardHeight;
+  border: 4px solid rgba(60, 60, 60, .16);
+  background: transparent;
+  z-index: $cardGhostZIndex;
+}
+
 .holdingCard {
   position: absolute;
   z-index: $holdingCardZIndex;
@@ -455,6 +464,11 @@
   &:hover {
     opacity: 1;
   }
+
+  &--hinted {
+    opacity: .2;
+    visibility: visible;
+  }
 }
 
 .drawPile-draw,
@@ -464,11 +478,14 @@
 
 .drawPile-cardCount {
   position: absolute;
+  right: 10px;
+  top: 0px;
+}
+
+.drawPile-cardCountText {
   font-size: 23px;
   color: rgba(255, 255, 255, .5);
   font-family: "Space mono", monospace;
-  right: 10px;
-  top: 0px;
 }
 
 .match-background {

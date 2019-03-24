@@ -114,12 +114,17 @@ module.exports = function (deps) {
 
     function canDrawCards(state, getters, rootState) {
         if (getters.waitingForOtherPlayerToFinishRequirements) return false;
+
+        let isDrawPhaseOrHasDrawCardRequirement = rootState.match.phase === 'draw'
+            || getFrom('firstRequirementIsDrawCard', 'requirement');
+        if (!isDrawPhaseOrHasDrawCardRequirement) return false;
+
         if (getters.deckIsEmpty) {
             return getters.opponentDeckIsEmpty;
         }
-
-        return rootState.match.phase === 'draw'
-            || getFrom('firstRequirementIsDrawCard', 'requirement');
+        else {
+            return true;
+        }
     }
 
     function canMill(state, getters, rootState) {

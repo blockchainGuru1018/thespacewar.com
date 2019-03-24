@@ -102,12 +102,12 @@
         </portal>
         <portal to="playerDrawPile">
             <span v-if="canDrawCards" class="playerDrawPileDescription descriptionText">
-                Click on draw pile to draw a card
+                Click to draw
             </span>
         </portal>
         <portal to="opponentDrawPile">
             <span v-if="canMill" class="opponentDrawPileDescription descriptionText">
-                Click on draw pile to mill 2 cards
+                Click to mill 2 cards
             </span>
         </portal>
         <portal to="match" v-if="enlargedCardVisible">

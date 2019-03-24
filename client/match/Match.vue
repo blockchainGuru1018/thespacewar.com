@@ -86,7 +86,7 @@
                         </div>
                         <div class="field-drawPile">
                             <portal-target name="opponentDrawPile"/>
-                            <div class="card card-faceDown">
+                            <div v-if="!opponentDeckIsEmpty" class="card card-faceDown">
                                 <div class="actionOverlays">
                                     <div @click="opponentDrawPileClick"
                                          class="drawPile-discardTopTwo actionOverlay"
@@ -95,6 +95,14 @@
                                     </div>
                                 </div>
                             </div>
+                            <div v-else-if="canMill" class="card card-emptyDeck">
+                                <div class="actionOverlays">
+                                    <div @click="opponentDrawPileClick" class="drawPile-discardTopTwo actionOverlay">
+                                        Mill 2
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-else class="card card-emptyDeck"/>
                         </div>
                     </div>
                     <div class="field-opponentCardsOnHand field-section">
@@ -112,7 +120,7 @@
                     <div class="field-piles field-section">
                         <div class="field-drawPile">
                             <portal-target name="playerDrawPile"/>
-                            <div class="card card-faceDown">
+                            <div v-if="playerCardsInDeckCount > 0" class="card card-faceDown">
                                 <div class="actionOverlays">
                                     <div @click="playerDrawPileClick"
                                          class="drawPile-draw actionOverlay"
@@ -121,7 +129,16 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="drawPile-cardCount">
+                            <div v-else-if="canDrawCards" class="card card-emptyDeck">
+                                <div class="actionOverlays">
+                                    <div @click="playerDrawPileClick"
+                                         class="drawPile-draw actionOverlay actionOverlay--hinted">
+                                        Pass
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-else class="card card-emptyDeck"/>
+                            <div class="drawPile-cardCount drawPile-cardCountText">
                                 {{ playerCardsInDeckCount }}
                             </div>
                         </div>
@@ -308,7 +325,8 @@
                 'canPutDownCards',
                 'canPutDownStationCards',
                 'canDrawCards',
-                'canMill'
+                'canMill',
+                'opponentDeckIsEmpty'
             ]),
             holdingCardStyle() {
                 if (!this.holdingCard) return {};
