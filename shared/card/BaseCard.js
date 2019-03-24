@@ -93,7 +93,7 @@ class BaseCard {
         if (!this.attack && !this.hasSpecialAttackForCardsInZones()) return false;
         if (!this._canThePlayer.attackWithThisCard(this)) return false;
         if (this.type === 'duration') return false;
-        const isAttackPhase = this._playerStateService.getPhase() === phases.PHASES.attack
+        const isAttackPhase = this._playerStateService.getPhase() === phases.PHASES.attack;
         if (!isAttackPhase) return false;
 
         const turn = this._matchService.getTurn();

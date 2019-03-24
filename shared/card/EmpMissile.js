@@ -20,7 +20,7 @@ module.exports = class EmpMissile extends BaseCard {
         if (!this.canAttack()) return false;
         if (!this._matchService.cardsAreInSameZone(this, otherCard)) return false;
 
-        return otherCard.type === 'spaceShip' || otherCard.CommonId === EnergyShield.CommonId;
+        return otherCard.type === 'spaceShip' || otherCard.commonId === EnergyShield.CommonId;
     }
 
     attackCard(defenderCard) {

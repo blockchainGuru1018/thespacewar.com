@@ -27,6 +27,10 @@ class PlayerStateService {
         this._stateTouchListeners = [];
     }
 
+    getPlayerId() {
+        return this._playerId;
+    }
+
     getPhase() {
         return this.getPlayerState().phase;
     }
@@ -52,6 +56,11 @@ class PlayerStateService {
         let currentTurn = this._matchService.getTurn();
         const countOfNonExtraStationCards = this._queryEvents.getNonExtraStationCardsPutDownThisTurnCount(currentTurn);
         return countOfNonExtraStationCards < totalAllowedStationCards;
+    }
+
+    getCardsInDeck() {
+        const deck = this.getDeck();
+        return deck ? deck.getAll() : [];
     }
 
     getCardsInOpponentZone() {

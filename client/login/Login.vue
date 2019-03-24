@@ -27,7 +27,9 @@
                 'login'
             ]),
             loginClick() {
-                this.login(this.username);
+                if (this.username.length > 0) {
+                    this.login(this.username);
+                }
             }
         }
     };

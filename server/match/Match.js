@@ -20,6 +20,7 @@ const CanThePlayer = require('../../shared/match/CanThePlayer.js');
 const PlayerRuleService = require('../../shared/match/PlayerRuleService.js');
 const obscureOpponentEvents = require('./service/obscureOpponentEvents.js');
 const PlayerServiceProvider = require('../../shared/match/PlayerServiceProvider.js');
+const RequirementFactory = require('./requirement/RequirementFactory.js');
 const { PHASES, TEMPORARY_START_PHASE } = require('../../shared/phases.js');
 
 module.exports = function ({
@@ -412,6 +413,7 @@ function registerPlayerStateServices({ players, matchService, actionPointsCalcul
 }
 
 function registerPlayerRequirementServices(players, playerServiceProvider) {
+    const requirementFactory = RequirementFactory({ playerServiceProvider });
     for (let player of players) {
         const playerId = player.id;
         const opponentId = players.find(p => p.id !== playerId).id;
@@ -419,7 +421,8 @@ function registerPlayerRequirementServices(players, playerServiceProvider) {
         const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
         const playerRequirementService = new PlayerRequirementService({
             playerStateService,
-            opponentStateService
+            opponentStateService,
+            requirementFactory
         });
         playerServiceProvider.registerService(
             PlayerServiceProvider.TYPE.requirement,

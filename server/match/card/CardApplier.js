@@ -4,7 +4,8 @@ const Commands = [
     require('./putDown/PutDownExcellentWork.js'),
     require('./putDown/PutDownGrandOpportunity.js'),
     require('./putDown/PutDownDiscovery.js'),
-    require('./putDown/PutDownFatalError.js')
+    require('./putDown/PutDownFatalError.js'),
+    require('./putDown/PutDownMissilesLaunched.js')
 ];
 
 module.exports = function CardApplier(deps) {
@@ -18,7 +19,7 @@ module.exports = function CardApplier(deps) {
 
     return {
         putDownEventCard
-    }
+    };
 
     function putDownEventCard(playerId, cardData, { choice = '' } = {}) {
         let command = getCommandForCard(cardData);
@@ -33,4 +34,4 @@ module.exports = function CardApplier(deps) {
     function getCommandForCard({ commonId }) {
         return commandsByCommonId[commonId];
     }
-}
+};

@@ -27,7 +27,9 @@ module.exports = function (deps) {
     function getCard(cardCommonId) {
         const card = getCards().find(c => c.commonId === cardCommonId);
         if (!card) {
-            console.error(`Could not find card with ID ${cardCommonId}`);
+            if (clientIsBrowser()) {
+                console.error(`Could not find card with ID ${cardCommonId}`);
+            }
             return {};
         }
         else {
@@ -43,3 +45,7 @@ module.exports = function (deps) {
         return cards;
     }
 };
+
+function clientIsBrowser() {
+    return !(typeof window === 'undefined');
+}

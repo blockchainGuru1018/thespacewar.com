@@ -2,10 +2,12 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
 
     constructor({
         playerStateService,
-        opponentStateService
+        opponentStateService,
+        requirementFactory
     }) {
         this._playerStateService = playerStateService;
         this._opponentStateService = opponentStateService;
+        this._requirementFactory = requirementFactory;
     }
 
     getRequirements() {
@@ -24,15 +26,19 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
         return this._findMatchingRequirement(requirements, { type, common, waiting });
     }
 
-    addCardRequirement({ type, count, common = false, cardCommonId = null }) {
+    addCardRequirement(requirement) {
+        const type = requirement.type;
         if (type === 'drawCard') {
-            this.addDrawCardRequirement({ count, common, cardCommonId });
+            this.addDrawCardRequirement(requirement);
         }
         else if (type === 'discardCard') {
-            this.addDiscardCardRequirement({ count, common, cardCommonId });
+            this.addDiscardCardRequirement(requirement);
         }
         else if (type === 'damageStationCard') {
-            this.addDamageStationCardRequirement({ count, common, cardCommonId });
+            this.addDamageStationCardRequirement(requirement);
+        }
+        else if (type === 'findCard') {
+            this.addFindCardRequirement(requirement);
         }
     }
 
@@ -100,6 +106,20 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
             cardGroups: cardGroups.filter(g => g.cards.length),
             cardCommonId
         });
+    }
+
+    addCardRequirementFromSpec(cardData, spec) {
+        const playerId = this._playerStateService.getPlayerId();
+        for (const requirementSpec of spec.forPlayer) {
+            const requirement = this._requirementFactory.create(playerId, cardData, requirementSpec);
+            this.addCardRequirement(requirement);
+        }
+
+        const opponentId = this._opponentStateService.getPlayerId();
+        for (const requirementSpec of spec.forOpponent) {
+            const requirement = this._requirementFactory.create(opponentId, cardData, requirementSpec);
+            this.addCardRequirement(requirement);
+        }
     }
 
     canAddDiscardCardRequirementWithCountOrLess(count) {

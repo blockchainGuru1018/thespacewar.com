@@ -1,0 +1,20 @@
+{
+  "requirementSpecsWhenPutDownInHomeZone": {
+    "forOpponent": [],
+    "forPlayer": [
+      {
+        "type": "findCard",
+        "count": 2,
+        "sources": [
+          "deck",
+          "discardPile"
+        ],
+        "filter": {
+          "type": [
+            "missile"
+          ]
+        }
+      }
+    ]
+  }
+}

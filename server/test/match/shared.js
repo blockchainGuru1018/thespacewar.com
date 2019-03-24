@@ -11,6 +11,7 @@ let FakeDeckFactory = require('../testUtils/FakeDeckFactory.js');
 let FakeCardDataAssembler = require('../testUtils/FakeCardDataAssembler.js');
 const createCard = FakeCardDataAssembler.createCard;
 const createDeckFromCards = FakeDeckFactory.createDeckFromCards;
+let CardDataAssembler = require('../../../shared/CardDataAssembler.js');
 let CardInfoRepository = require('../../../shared/CardInfoRepository.js');
 let Match = require('../../match/Match.js');
 
@@ -142,12 +143,12 @@ function discardCardsAsPlayer(cardIds, playerId, match) {
     }
 }
 
-function createMatch(deps = {}) {
+function createMatch(deps = {}, testCardData = []) {
     if (deps.players && deps.players.length === 1) {
         deps.players.push(Player('P2A'));
     }
     const deckFactory = deps.deckFactory || FakeDeckFactory.fromCards([createCard()]);
-    const cardDataAssembler = deckFactory._getCardDataAssembler();
+    const cardDataAssembler = CardDataAssembler({ rawCardDataRepository: { get: () => testCardData } });
     defaults(deps, {
         deckFactory,
         cardInfoRepository: CardInfoRepository({ cardDataAssembler }),
@@ -196,7 +197,8 @@ function FakeConnection2(namesOfActionsToStub = []) {
 function catchError(callback) {
     try {
         callback();
-    } catch (error) {
+    }
+    catch (error) {
         return error;
     }
 }

@@ -19,6 +19,7 @@ const {
     FakeDeck
 } = require('./shared.js');
 const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
+const MissilesLaunched = require('../../../shared/card/MissilesLaunched.js');
 const GrandOpportunityCommonId = '20';
 const ExcellentWorkCommonId = '14';
 const SupernovaCommonId = '15';
@@ -1337,7 +1338,7 @@ module.exports = {
             async setUp() {
                 this.firstPlayerConnection = FakeConnection2(['stateChanged']);
                 this.secondPlayerConnection = FakeConnection2(['stateChanged', 'restoreState']);
-                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
                 this.match = createMatch({ players });
                 this.match.restoreFromState(createState({
                     playerStateById: {
@@ -1385,5 +1386,42 @@ module.exports = {
                 }));
             }
         }
+    },
+    'when put down Missiles launched': {
+        async setUp() {
+            this.firstPlayerConnection = FakeConnection2(['stateChanged', 'restoreState']);
+            const players = [Player('P1A', this.firstPlayerConnection)];
+            this.match = createMatch({ players }, [{ id: MissilesLaunched.CommonId }]);
+            this.match.restoreFromState(createState({
+                playerStateById: {
+                    'P1A': {
+                        turn: 1,
+                        phase: 'action',
+                        cardsOnHand: [
+                            createCard({ id: 'C1A', type: 'event', commonId: MissilesLaunched.CommonId })
+                        ],
+                        discardedCards: [createCard({ id: 'C2A', type: 'missile' })]
+                    },
+                },
+                deckByPlayerId: {
+                    'P1A': FakeDeck.realDeckFromCards([createCard({ id: 'C3A', type: 'missile' })])
+                }
+            }));
+
+            this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
+        },
+        'should add requirement'() {
+            this.match.refresh('P1A');
+            assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
+                requirements: [
+                    sinon.match({
+                        cardGroups: [
+                            sinon.match({ source: 'deck', cards: [sinon.match.any] }),
+                            sinon.match({ source: 'discardPile', cards: [sinon.match.any] })
+                        ]
+                    })
+                ]
+            }));
+        }
     }
-}
+};

@@ -400,149 +400,179 @@ module.exports = testCase('Cards', {
             }
         }
     },
-    'when EmpMissile attacks spaceShip': {
-        setUp() {
-            this.card = createCard(EmpMissile, {
-                card: { id: 'C1A', attack: 1 },
-                playerId: 'P1A',
-                matchService: {
-                    getTurn: () => 2,
-                },
-                queryEvents: queryEventsFactory.withStubs({
-                    getAttacksOnTurn: () => [],
-                    hasMovedOnTurn: (cardId, turn) => cardId === 'C1A' && turn === 2,
-                    getMovesOnTurn: () => [MoveCardEvent({ turn: 2, cardId: 'C1A' })]
-                }),
-                playerStateService: playerStateServiceFactory.withStubs({
-                    getAttackBoostForCard: () => 0,
-                    getPhase: () => 'attack'
-                })
-            });
-            this.otherCard = createCard(BaseCard, { card: { type: 'spaceShip', damage: 0 } });
+    'EMP Missile:': {
+        'when EmpMissile attacks spaceShip': {
+            setUp() {
+                this.card = createCard(EmpMissile, {
+                    card: { id: 'C1A', attack: 1 },
+                    playerId: 'P1A',
+                    matchService: {
+                        getTurn: () => 2,
+                    },
+                    queryEvents: queryEventsFactory.withStubs({
+                        getAttacksOnTurn: () => [],
+                        hasMovedOnTurn: (cardId, turn) => cardId === 'C1A' && turn === 2,
+                        getMovesOnTurn: () => [MoveCardEvent({ turn: 2, cardId: 'C1A' })]
+                    }),
+                    playerStateService: playerStateServiceFactory.withStubs({
+                        getAttackBoostForCard: () => 0,
+                        getPhase: () => 'attack'
+                    })
+                });
+                this.otherCard = createCard(BaseCard, { card: { type: 'spaceShip', damage: 0 } });
 
-            this.card.attackCard(this.otherCard);
-        },
-        'should paralyze ship': function () {
-            assert(this.otherCard.paralyzed);
-        },
-        'should NOT damage ship': function () {
-            assert.equals(this.otherCard.damage, 0);
-        },
-        'should have destroyed self': function () {
-            assert(this.card.destroyed);
-        }
-    },
-    'when EmpMissile attacks Energy Shield': {
-        setUp() {
-            this.card = createCard(EmpMissile, {
-                card: { id: 'C1A', attack: 1 },
-                playerId: 'P1A',
-                matchService: {
-                    getTurn: () => 2,
-                },
-                queryEvents: queryEventsFactory.withStubs({
-                    getAttacksOnTurn: () => [],
-                    hasMovedOnTurn: (cardId, turn) => cardId === 'C1A' && turn === 2,
-                    getMovesOnTurn: () => [MoveCardEvent({ turn: 2, cardId: 'C1A' })]
-                }),
-                playerStateService: playerStateServiceFactory.withStubs({
-                    getAttackBoostForCard: () => 0,
-                    getPhase: () => 'attack'
-                })
-            });
-            this.otherCard = createCard(
-                EnergyShield,
-                { card: { commonId: EnergyShield.CommonId, type: 'defense', damage: 0 } }
-            );
-
-            this.card.attackCard(this.otherCard);
-        },
-        'should destroy ship': function () {
-            assert(this.otherCard.destroyed);
-        },
-        'should NOT paralyze ship': function () {
-            refute(this.otherCard.paralyzed);
-        },
-        'should have destroyed self': function () {
-            assert(this.card.destroyed);
-        }
-    },
-    'when EmpMissile attacks basic defense card': {
-        setUp() {
-            this.card = createCard(EmpMissile, {
-                card: { id: 'C1A' },
-                playerId: 'P1A',
-                matchService: {
-                    getTurn: () => 2,
-                },
-                queryEvents: queryEventsFactory.withStubs({
-                    getAttacksOnTurn: () => [],
-                    hasMovedOnTurn: (cardId, turn) => cardId === 'C1A' && turn === 2,
-                    getMovesOnTurn: () => [MoveCardEvent({ turn: 2, cardId: 'C1A' })]
-                }),
-                playerStateService: playerStateServiceFactory.withStubs({
-                    getAttackBoostForCard: () => 0,
-                    getPhase: () => 'attack'
-                })
-            });
-            this.otherCard = createCard(BaseCard, { card: { type: 'defense', damage: 0 } });
-
-            this.error = catchError(() => this.card.attackCard(this.otherCard));
-        },
-        'should NOT destroy ship': function () {
-            refute(this.otherCard.destroyed);
-        },
-        'should NOT damage ship': function () {
-            assert.equals(this.otherCard.damage, 0);
-        },
-        'should NOT paralyze ship': function () {
-            refute(this.otherCard.paralyzed);
-        },
-        'should have destroyed self': function () {
-            assert(this.card.destroyed);
-        }
-    },
-    'when EmpMissile should NOT be able to attack station cards'() {
-        this.card = createCard(EmpMissile, {
-            card: { id: 'C1A', type: 'missile' },
-            playerId: 'P1A',
-            matchService: {
-                getTurn: () => 1,
+                this.card.attackCard(this.otherCard);
             },
-            queryEvents: queryEventsFactory.withStubs({
-                getAttacksOnTurn: () => [],
-                hasMovedOnTurn: (cardId, turn) => cardId === 'C1A' && turn === 1,
-                getMovesOnTurn: () => [MoveCardEvent({ turn: 1, cardId: 'C1A' })]
-            }),
-            playerStateService: playerStateServiceFactory.withStubs({
-                getAttackBoostForCard: () => 0,
-                getPhase: () => 'attack',
-                isCardInHomeZone: () => false
-            })
-        });
-
-        refute(this.card.canAttackStationCards());
-    },
-    'when EmpMissile should NOT be able to attack paralyzed cards'() {
-        this.card = createCard(EmpMissile, {
-            card: { id: 'C1A', type: 'missile' },
-            playerId: 'P1A',
-            matchService: {
-                getTurn: () => 1,
+            'should paralyze ship': function () {
+                assert(this.otherCard.paralyzed);
             },
-            queryEvents: queryEventsFactory.withStubs({
-                getAttacksOnTurn: () => [],
-                hasMovedOnTurn: (cardId, turn) => cardId === 'C1A' && turn === 1,
-                getMovesOnTurn: () => [MoveCardEvent({ turn: 1, cardId: 'C1A' })]
-            }),
-            playerStateService: playerStateServiceFactory.withStubs({
-                getAttackBoostForCard: () => 0,
-                getPhase: () => 'attack',
-                isCardInHomeZone: () => false
-            })
-        });
+            'should NOT damage ship': function () {
+                assert.equals(this.otherCard.damage, 0);
+            },
+            'should have destroyed self': function () {
+                assert(this.card.destroyed);
+            }
+        },
+        'when EmpMissile attacks Energy Shield': {
+            setUp() {
+                this.card = createCard(EmpMissile, {
+                    card: { id: 'C1A', attack: 1 },
+                    playerId: 'P1A',
+                    matchService: {
+                        getTurn: () => 2,
+                    },
+                    queryEvents: queryEventsFactory.withStubs({
+                        getAttacksOnTurn: () => [],
+                        hasMovedOnTurn: (cardId, turn) => cardId === 'C1A' && turn === 2,
+                        getMovesOnTurn: () => [MoveCardEvent({ turn: 2, cardId: 'C1A' })]
+                    }),
+                    playerStateService: playerStateServiceFactory.withStubs({
+                        getAttackBoostForCard: () => 0,
+                        getPhase: () => 'attack'
+                    })
+                });
+                this.otherCard = createCard(
+                    EnergyShield,
+                    { card: { commonId: EnergyShield.CommonId, type: 'defense', damage: 0 } }
+                );
 
-        refute(this.card.canAttackCard({ canBeTargeted: () => true, paralyzed: true }));
+                this.card.attackCard(this.otherCard);
+            },
+            'should destroy ship': function () {
+                assert(this.otherCard.destroyed);
+            },
+            'should NOT paralyze ship': function () {
+                refute(this.otherCard.paralyzed);
+            },
+            'should have destroyed self': function () {
+                assert(this.card.destroyed);
+            }
+        },
+        'when EmpMissile attacks basic defense card': {
+            setUp() {
+                this.card = createCard(EmpMissile, {
+                    card: { id: 'C1A' },
+                    playerId: 'P1A',
+                    matchService: {
+                        getTurn: () => 2,
+                    },
+                    queryEvents: queryEventsFactory.withStubs({
+                        getAttacksOnTurn: () => [],
+                        hasMovedOnTurn: (cardId, turn) => cardId === 'C1A' && turn === 2,
+                        getMovesOnTurn: () => [MoveCardEvent({ turn: 2, cardId: 'C1A' })]
+                    }),
+                    playerStateService: playerStateServiceFactory.withStubs({
+                        getAttackBoostForCard: () => 0,
+                        getPhase: () => 'attack'
+                    })
+                });
+                this.otherCard = createCard(BaseCard, { card: { type: 'defense', damage: 0 } });
+
+                this.error = catchError(() => this.card.attackCard(this.otherCard));
+            },
+            'should NOT destroy ship': function () {
+                refute(this.otherCard.destroyed);
+            },
+            'should NOT damage ship': function () {
+                assert.equals(this.otherCard.damage, 0);
+            },
+            'should NOT paralyze ship': function () {
+                refute(this.otherCard.paralyzed);
+            },
+            'should have destroyed self': function () {
+                assert(this.card.destroyed);
+            }
+        },
+        'when EmpMissile should NOT be able to attack station cards'() {
+            this.card = createCard(EmpMissile, {
+                card: { id: 'C1A', type: 'missile' },
+                playerId: 'P1A',
+                matchService: {
+                    getTurn: () => 1,
+                },
+                queryEvents: queryEventsFactory.withStubs({
+                    getAttacksOnTurn: () => [],
+                    hasMovedOnTurn: (cardId, turn) => cardId === 'C1A' && turn === 1,
+                    getMovesOnTurn: () => [MoveCardEvent({ turn: 1, cardId: 'C1A' })]
+                }),
+                playerStateService: playerStateServiceFactory.withStubs({
+                    getAttackBoostForCard: () => 0,
+                    getPhase: () => 'attack',
+                    isCardInHomeZone: () => false
+                })
+            });
+
+            refute(this.card.canAttackStationCards());
+        },
+        'when EmpMissile should NOT be able to attack paralyzed cards'() {
+            this.card = createCard(EmpMissile, {
+                card: { id: 'C1A', type: 'missile' },
+                playerId: 'P1A',
+                matchService: {
+                    getTurn: () => 1,
+                },
+                queryEvents: queryEventsFactory.withStubs({
+                    getAttacksOnTurn: () => [],
+                    hasMovedOnTurn: (cardId, turn) => cardId === 'C1A' && turn === 1,
+                    getMovesOnTurn: () => [MoveCardEvent({ turn: 1, cardId: 'C1A' })]
+                }),
+                playerStateService: playerStateServiceFactory.withStubs({
+                    getAttackBoostForCard: () => 0,
+                    getPhase: () => 'attack',
+                    isCardInHomeZone: () => false
+                })
+            });
+
+            refute(this.card.canAttackCard({ canBeTargeted: () => true, paralyzed: true }));
+        },
+        'EMP Missile should be able to attack energy shields'() {
+            this.card = createCard(EmpMissile, {
+                card: { id: 'C1A', type: 'missile' },
+                playerId: 'P1A',
+                matchService: {
+                    getTurn: () => 1,
+                    cardsAreInSameZone: (card, otherCard) => card.id === 'C1A' && otherCard.id === 'C2A'
+                },
+                queryEvents: queryEventsFactory.withStubs({
+                    getAttacksOnTurn: () => [],
+                    hasMovedOnTurn: (cardId, turn) => cardId === 'C1A' && turn === 1,
+                    getMovesOnTurn: () => [MoveCardEvent({ turn: 1, cardId: 'C1A' })]
+                }),
+                playerStateService: playerStateServiceFactory.withStubs({
+                    getAttackBoostForCard: () => 0,
+                    getPhase: () => 'attack',
+                    isCardInHomeZone: () => false
+                })
+            });
+
+            let energyShield = {
+                id: 'C2A',
+                canBeTargeted: () => true,
+                type: 'defense',
+                commonId: EnergyShield.CommonId
+            };
+            assert(this.card.canAttackCard(energyShield));
+        },
     },
     'when card is paralyzed': {
         setUp() {
@@ -585,7 +615,8 @@ module.exports = testCase('Cards', {
 function catchError(callback) {
     try {
         callback();
-    } catch (error) {
+    }
+    catch (error) {
         return error;
     }
 }

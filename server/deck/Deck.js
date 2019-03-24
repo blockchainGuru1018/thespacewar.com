@@ -1,6 +1,5 @@
 const BLACK_LIST_COMMON_IDS = [
     '16',
-    '18',
     '64',
     '31',
     '34',
@@ -25,6 +24,8 @@ module.exports = function (deps) {
         draw,
         getCardCount,
         getPossibleMillCount: () => Math.floor(getCardCount() / 2),
+        getAll: () => [...deck],
+        removeCard,
         _getDeck: () => [...deck],
         _restoreDeck: previousDeck => { deck = [...previousDeck] }
     };

@@ -17,7 +17,6 @@ module.exports = function ({
 
     function createAll() {
         let rawCardData = rawCardDataRepository.get();
-
         let cards = [];
         for (let cardJson of rawCardData) {
             const copies = cardJson.number_copies ? parseInt(cardJson.number_copies) : 1;
@@ -33,7 +32,7 @@ module.exports = function ({
         let unmappedCardData = rawCardDataRepository.get();
         const cardJson = unmappedCardData.find(c => c.id === commonId.toString());
         if (!cardJson) {
-            console.error('Could not find card data for card with ID ' + commonId)
+            console.error('Could not find card data for card with ID ' + commonId);
             return {};
         }
         else {
