@@ -24,7 +24,7 @@ const classes = [
     require('./ExcellentWork.js')
 ];
 
-const classByCardCommonId = {}
+const classByCardCommonId = {};
 classes.forEach(c => {
     classByCardCommonId[c.CommonId] = c
 });

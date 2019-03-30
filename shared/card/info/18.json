@@ -4,17 +4,15 @@
     "forPlayer": [
       {
         "type": "findCard",
-        "count": 2,
+        "count": 1,
         "sources": [
           "deck",
-          "discardPile"
+          "discardPile",
+          "drawStationCards",
+          "actionStationCards",
+          "handSizeStationCards"
         ],
-        "target": "homeZone",
-        "filter": {
-          "type": [
-            "missile"
-          ]
-        }
+        "target": "hand"
       }
     ]
   }

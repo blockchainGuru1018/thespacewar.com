@@ -13,8 +13,17 @@ module.exports = function ({
         const selectedCardsCount = getSelectedCardsCount(cardGroups);
         validateIfCanProgressRequirementByCount(selectedCardsCount, playerId);
 
+        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
+        const requirement = playerRequirementService.getFirstMatchingRequirement({ type: 'findCard' });
+
+        if (requirement.target === 'homeZone') {
+            moveCardsToHomeZone(cardGroups, playerId);
+        }
+        else if (requirement.target === 'hand') {
+            moveCardsToHand(cardGroups, playerId);
+        }
+
         progressRequirementByCount(selectedCardsCount, playerId);
-        moveCardsToHomeZone(cardGroups, playerId);
     }
 
     function validateIfCanProgressRequirementByCount(count, playerId) {
@@ -40,6 +49,16 @@ module.exports = function ({
         }
     }
 
+    function moveCardsToHand(cardGroups, playerId) {
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        for (const group of cardGroups) {
+            for (const cardId of group.cardIds) {
+                const cardData = removeCardFromSource(cardId, group.source, playerId);
+                playerStateService.addCardToHand(cardData);
+            }
+        }
+    }
+
     function removeCardFromSource(cardId, source, playerId) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         if (source === 'deck') {
@@ -48,6 +67,16 @@ module.exports = function ({
         else if (source === 'discardPile') {
             return playerStateService.removeCardFromDiscardPile(cardId);
         }
+        else if (sourceIsStationCard(source)) {
+            let stationCard = playerStateService.removeStationCard(cardId);
+            return stationCard.card;
+        }
+    }
+
+    function sourceIsStationCard(source) {
+        return source === 'drawStationCards'
+            || source === 'actionStationCards'
+            || source === 'handSizeStationCards'
     }
 
     function getSelectedCardsCount(cardGroups) {

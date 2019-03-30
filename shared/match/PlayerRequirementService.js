@@ -98,13 +98,13 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
         }
     }
 
-    addFindCardRequirement({ count, cardGroups, cardCommonId }) {
+    addFindCardRequirement({ count, cardGroups, ...uncheckedProperties }) {
         const totalCardCount = cardGroups.reduce((acc, group) => acc + group.cards.length, 0);
         this.addRequirement({
+            ...uncheckedProperties,
             type: 'findCard',
             count: Math.min(totalCardCount, count),
-            cardGroups: cardGroups.filter(g => g.cards.length),
-            cardCommonId
+            cardGroups: cardGroups.filter(g => g.cards.length)
         });
     }
 

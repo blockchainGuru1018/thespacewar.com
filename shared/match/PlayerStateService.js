@@ -146,6 +146,24 @@ class PlayerStateService {
         return playerState.stationCards;
     }
 
+    getDrawStationCards() {
+        return this
+            .getStationCards()
+            .filter(s => s.place === 'draw');
+    }
+
+    getActionStationCards() {
+        return this
+            .getStationCards()
+            .filter(s => s.place === 'action');
+    }
+
+    getHandSizeStationCards() {
+        return this
+            .getStationCards()
+            .filter(s => s.place === 'handSize');
+    }
+
     getUnflippedStationCardsCount() {
         const playerState = this.getPlayerState();
         return playerState.stationCards.filter(s => !s.flipped).length;
@@ -504,6 +522,8 @@ class PlayerStateService {
             turn: this._matchService.getTurn(),
             phase: this.getPhase()
         }));
+
+        return stationCard;
     }
 
     removeCardFromHand(cardId) {

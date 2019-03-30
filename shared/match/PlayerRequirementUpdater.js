@@ -19,7 +19,7 @@ class PlayerRequirementUpdater { //TODO Rename PlayerRequirements
             && count <= requirement.count;
     }
 
-    progressRequirementByCount(count = 1) {
+    progressRequirementByCount(count = 1) { //TODO It is to unclear that this removes the requirement if has progressed the requirement so that it is "done"
         const requirement = this._get();
         if (requirement.count > count) {
             this._update(requirement => {

@@ -16,7 +16,8 @@ function FindCardRequirementFactory({
             type: requirementSpec.type,
             cardGroups: requirementSpec.sources.map(cardGroupFromSource),
             count: requirementSpec.count,
-            cardCommonId: cardData.commonId
+            cardCommonId: cardData.commonId,
+            target: requirementSpec.target
         };
     }
 

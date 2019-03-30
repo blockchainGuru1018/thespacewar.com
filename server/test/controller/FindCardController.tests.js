@@ -22,7 +22,10 @@ module.exports = testCase('FindCardController', {
                 putDownCardInZone: stub()
             });
             let playerServiceProvider = {
-                getStateServiceById: stub().returns(this.playerStateService)
+                getStateServiceById: stub().returns(this.playerStateService),
+                getRequirementServiceById: () => ({
+                    getFirstMatchingRequirement: () => ({ target: 'homeZone' })
+                })
             };
             this.playerRequirementUpdaterFactory = {
                 create: stub().returns(this.playerRequirementUpdater)
@@ -67,6 +70,11 @@ module.exports = testCase('FindCardController', {
         const controller = Controller({
             playerRequirementUpdaterFactory: {
                 create: () => playerRequirementUpdater
+            },
+            playerServiceProvider: {
+                getRequirementServiceById: () => ({
+                    getFirstMatchingRequirement: () => ({ target: 'homeZone' })
+                })
             }
         });
 
@@ -112,15 +120,56 @@ module.exports = testCase('FindCardController', {
                 refute.called(this.playerRequirementUpdater.progressRequirementByCount);
             }
         }
+    },
+    'when select 1 card from action station cards and target is hand': {
+        setUp() {
+            this.playerStateService = fakePlayerStateServiceFactory.withStubs({
+                removeStationCard: stub().returns({ card: { id: 'C1A' } }),
+                addCardToHand: stub()
+            });
+            let playerServiceProvider = {
+                getStateServiceById: stub().returns(this.playerStateService),
+                getRequirementServiceById: () => ({
+                    getFirstMatchingRequirement: () => ({ target: 'hand' })
+                })
+            };
+            const controller = Controller({ playerServiceProvider });
+
+            controller.onSelectCard('P1A', {
+                cardGroups: [
+                    { source: 'actionStationCards', cardIds: ['C1A'] }
+                ]
+            });
+        },
+        'should remove card from action station cards'() {
+            assert.calledOnce(this.playerStateService.removeStationCard);
+            assert.calledWith(this.playerStateService.removeStationCard, 'C1A');
+        },
+        'should add card to home zone'() {
+            assert.calledOnce(this.playerStateService.addCardToHand);
+            assert.calledWith(this.playerStateService.addCardToHand, sinon.match({ id: 'C1A' }));
+        }
     }
 });
 
 function Controller(deps = {}) {
     defaults(deps, {
-        playerServiceProvider: {
-            getStateServiceById: () => fakePlayerStateServiceFactory.withStubs()
+        playerServiceProvider: {},
+        playerRequirementUpdaterFactory: {
+            create: () => ({
+                canProgressRequirementByCount: () => true,
+                progressRequirementByCount: stub()
+            })
         }
     });
+
+    defaults(deps.playerServiceProvider, {
+        getStateServiceById: () => fakePlayerStateServiceFactory.withStubs(),
+        getRequirementServiceById: () => ({
+            getFirstMatchingRequirement: () => null
+        })
+    });
+
     return FindCardController(deps);
 }
 

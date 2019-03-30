@@ -12,7 +12,7 @@
             </div>
             <div class="findCard-groups" v-if="requirement">
                 <div v-for="group in filteredRequirement.cardGroups" class="findCard-group">
-                    <div class="findCard-groupHeader">{{ group.source === 'deck' ? 'Deck' : 'Discard pile' }}</div>
+                    <div class="findCard-groupHeader">{{ getCardGroupTitle(group) }}</div>
                     <div class="findCard-groupCards">
                         <div v-for="card in group.cards"
                              @click="cardClick(card, group)"
@@ -34,6 +34,14 @@
     const Vuex = require('vuex');
     const getCardImageUrl = require('../utils/getCardImageUrl');
     const findCardHelpers = Vuex.createNamespacedHelpers('findCard');
+
+    const nameBySource = { //TODO Do something clever with a the, future, new Source classes
+        'deck': 'Deck',
+        'discardPile': 'Discard pile',
+        'drawStationCards': 'Station cards (draw)',
+        'actionStationCards': 'Station cards (action points)',
+        'handSizeStationCards': 'Station cards (max cards)',
+    };
 
     module.exports = {
         computed: {
@@ -67,6 +75,9 @@
             },
             doneClick() {
                 this.done();
+            },
+            getCardGroupTitle(group) {
+                return nameBySource[group.source];
             }
         }
     };
