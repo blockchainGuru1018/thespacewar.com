@@ -12,7 +12,7 @@ module.exports = {
 function installNpmPackages() {
     const clientPath = path.join(__dirname, '..', 'client');
     const serverPath = path.join(__dirname, '..', 'server');
-    console.log(' (1/2) - Installing dependencies')
+    console.log(' (1/2) - Installing dependencies');
     child_process.execSync(`cd ${clientPath} && npm install && cd ${serverPath} && npm install`);
 }
 
