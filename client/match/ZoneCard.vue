@@ -64,15 +64,17 @@
             <div v-if="canSelectCardForAction"
                  @click.stop="selectCardForActiveAction(card.id)"
                  :class="['selectable', {'selectable--turnedAround': !isPlayerCard}]">
-                <div v-if="predictedResultsIfTargetForSacrifice.destroyed"
-                     class="actionOverlay-predictedLethal actionOverlay-predictionText">
-                    ⇒0
-                </div>
-                <div v-else class="actionOverlay-predictedDamageChange actionOverlay-predictionText">
-                    {{ behaviourCard.defense - behaviourCard.damage }}
-                    ⇒
-                    {{ behaviourCard.defense - predictedResultsIfTargetForSacrifice.damage }}
-                </div>
+                <template v-if="predictedResultsIfTargetForAction">
+                    <div v-if="predictedResultsIfTargetForAction.destroyed"
+                         class="actionOverlay-predictedLethal actionOverlay-predictionText">
+                        ⇒0
+                    </div>
+                    <div v-else class="actionOverlay-predictedDamageChange actionOverlay-predictionText">
+                        {{ behaviourCard.defense - behaviourCard.damage }}
+                        ⇒
+                        {{ behaviourCard.defense - predictedResultsIfTargetForSacrifice.damage }}
+                    </div>
+                </template>
             </div>
         </div>
         <div class="indicatorOverlays">
@@ -292,14 +294,31 @@
 
                 return this.repairerCard.simulateRepairingCard(this.behaviourCard);
             },
-            predictedResultsIfTargetForSacrifice() {
-                if (!this.activeAction && this.activeAction.name !== 'sacrifice') return null;
+            predictedResultsIfTargetForAction() {
+                if (!this.activeAction) return null;
 
+                if (this.activeAction.name === 'sacrifice') {
+                    return this.predictedResultsIfTargetForSacrifice;
+                }
+                else if (this.activeAction.name === 'destroyAnyCard') {
+                    return this.predictedResultsIfTargetForDestroyAnyCard;
+                }
+                else {
+                    return null;
+                }
+            },
+            predictedResultsIfTargetForSacrifice() {
                 const defense = this.behaviourCard.defense;
-                const damageAfter = (this.behaviourCard.damage + DAMAGE_WHEN_TARGET_FOR_SACRIFICE);
+                const damageAfter = this.behaviourCard.damage + DAMAGE_WHEN_TARGET_FOR_SACRIFICE;
                 return {
                     damage: damageAfter,
-                    destroyed: (defense - damageAfter) <= 0
+                    destroyed: defense - damageAfter <= 0
+                }
+            },
+            predictedResultsIfTargetForDestroyAnyCard() {
+                return {
+                    damage: this.behaviourCard.defense,
+                    destroyed: true
                 }
             }
         },
