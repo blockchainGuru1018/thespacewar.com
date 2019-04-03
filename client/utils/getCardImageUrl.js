@@ -1,5 +1,5 @@
 module.exports = {
     byCommonId(cardCommonId) {
-        return 'https://cards.thespacewar.com/card-' + cardCommonId + '.jpg';
+        return 'https://images.thespacewar.com/card-' + cardCommonId + '.jpg';
     }
 };
