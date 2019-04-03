@@ -12,7 +12,7 @@ module.exports = function ({
 
     function getImage(req, res) {
         const cardCommonId = req.params.cardId;
-        res.redirect('https://cards.thespacewar.com/card-' + cardCommonId + '.jpg');
+        res.redirect('https://images.thespacewar.com/card-' + cardCommonId + '.jpg');
     }
 
     function getBackImage(req, res) {
