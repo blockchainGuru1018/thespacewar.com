@@ -21,6 +21,7 @@
                                     :isOpponentStationCard="true"
                                     :key="card.id"
                                     :stationCard="card"
+                                    :isHoldingCard="!!holdingCard"
                                     v-for="card in opponentStation.drawCards"
                             />
                             <div class="stationCardWrapper stationCardWrapper--fullSize">
@@ -32,6 +33,7 @@
                                     :isOpponentStationCard="true"
                                     :key="card.id"
                                     :stationCard="card"
+                                    :isHoldingCard="!!holdingCard"
                                     v-for="card in opponentStation.actionCards"
                             />
                             <div class="stationCardWrapper stationCardWrapper--fullSize">
@@ -43,6 +45,7 @@
                                     :isOpponentStationCard="true"
                                     :key="card.id"
                                     :stationCard="card"
+                                    :isHoldingCard="!!holdingCard"
                                     v-for="card in opponentStation.handSizeCards"
                             />
                             <div class="stationCardWrapper stationCardWrapper--fullSize">
@@ -201,6 +204,7 @@
                             <portal-target name="stationDrawRow"/>
                             <station-card :key="card.id"
                                           :stationCard="card"
+                                          :isHoldingCard="!!holdingCard"
                                           v-for="card in playerVisibleDrawStationCards"/>
                             <div class="stationCardWrapper stationCardWrapper--fullSize">
                                 <CardGhost
@@ -215,6 +219,7 @@
                             <portal-target name="stationActionRow"/>
                             <station-card :key="card.id"
                                           :stationCard="card"
+                                          :isHoldingCard="!!holdingCard"
                                           v-for="card in playerVisibleActionStationCards"/>
                             <div class="stationCardWrapper stationCardWrapper--fullSize">
                                 <CardGhost
@@ -230,6 +235,7 @@
                             <station-card
                                     :key="card.id"
                                     :stationCard="card"
+                                    :isHoldingCard="!!holdingCard"
                                     v-for="card in playerVisibleHandSizeStationCards"/>
                             <div class="stationCardWrapper stationCardWrapper--fullSize">
                                 <CardGhost

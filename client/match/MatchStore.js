@@ -90,6 +90,8 @@ module.exports = function (deps) {
             attackerCanAttackStationCards,
             allPlayerCardsInOwnAndOpponentZone,
             allPlayerStationCards,
+            playerUnflippedStationCardCount,
+            opponentUnflippedStationCardCount,
             allPlayerDurationCards,
             allOpponentStationCards,
             createCard,
@@ -118,6 +120,7 @@ module.exports = function (deps) {
             askToDiscardOpponentTopTwoCards,
             saveMatch,
             restoreSavedMatch,
+            overwork,
 
             // local & remote
             discardCard,
@@ -129,7 +132,7 @@ module.exports = function (deps) {
             discardDurationCard,
             endGame,
 
-            // local
+            // local TODO many of these have since the start become only remote calls (barely changing any local state)
             stateChanged,
             restoreState,
             beginGame,
@@ -290,7 +293,7 @@ module.exports = function (deps) {
             for (let property of changedProperties) {
                 state[property] = clientState[property];
             }
-        }
+        };
         return new ClientPlayerStateService({
             updateStore,
             playerId: state.ownUser.id,
@@ -399,6 +402,14 @@ module.exports = function (deps) {
         ];
     }
 
+    function playerUnflippedStationCardCount(state, getters) {
+        return getters.allPlayerStationCards.filter(s => !s.flipped).length;
+    }
+
+    function opponentUnflippedStationCardCount(state, getters) {
+        return getters.allOpponentStationCards.filter(s => !s.flipped).length;
+    }
+
     function setPlayerStationCards(state, stationCards) {
         state.playerStation.drawCards = stationCards
             .filter(s => s.place === 'draw')
@@ -461,6 +472,10 @@ module.exports = function (deps) {
         });
         document.body.innerHTML = '<marquee><h1>Loading...</h1></marquee>';
         setTimeout(() => window.location.reload(), 3000);
+    }
+
+    function overwork() {
+        matchController.emit('overwork');
     }
 
     function stateChanged({ state, commit }, data) {
@@ -588,8 +603,7 @@ module.exports = function (deps) {
             turn: state.turn,
             phase: state.phase,
             cardId: cardId,
-            cardCommonId: discardedCard.commonId,
-            isSacrifice: true
+            cardCommonId: discardedCard.commonId
         }));
         matchController.emit('discardCard', cardId);
 
@@ -732,8 +746,7 @@ module.exports = function (deps) {
         const attackerCard = getters.attackerCard;
         state.selectedDefendingStationCards.push(id);
 
-        const unflippedStationCards = getters.allOpponentStationCards.filter(s => !s.flipped).length;
-        const selectedLastStationCard = unflippedStationCards === state.selectedDefendingStationCards.length;
+        const selectedLastStationCard = getters.opponentUnflippedStationCardCount === state.selectedDefendingStationCards.length;
         const selectedMaxTargetCount = state.selectedDefendingStationCards.length >= attackerCard.attack;
         if (selectedMaxTargetCount || selectedLastStationCard) {
             matchController.emit('attackStationCard', {

@@ -334,10 +334,10 @@ class PlayerStateService {
         this.discardCard(cardData);
     }
 
-    removeAndDiscardCardFromStationOrZone(cardId, discardCardOptions) {
+    removeAndDiscardCardFromStationOrZone(cardId) {
         const cardData = this.findCardFromAnySource(cardId);
         this.removeCardFromStationOrZones(cardId);
-        this.discardCard(cardData, discardCardOptions);
+        this.discardCard(cardData);
     }
 
     discardTopTwoCardsInDrawPile() {
@@ -353,7 +353,7 @@ class PlayerStateService {
         }
     }
 
-    discardCard(cardData, { isSacrifice = false } = {}) { //TODO isSacrifice does not mean the same as "sacrifice" instead of attacking, must be clarified somehow
+    discardCard(cardData) {
         const turn = this._matchService.getTurn();
         this.update(playerState => {
             playerState.discardedCards.push(cardData);
@@ -362,8 +362,7 @@ class PlayerStateService {
             turn,
             phase: this.getPhase(),
             cardId: cardData.id,
-            cardCommonId: cardData.commonId,
-            isSacrifice
+            cardCommonId: cardData.commonId
         }));
     }
 

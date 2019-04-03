@@ -3,14 +3,13 @@ const CheatError = require('../CheatError.js');
 function DiscardCardController(deps) {
 
     const {
-        matchComService,
         playerServiceProvider,
         playerRequirementUpdaterFactory
     } = deps;
 
     return {
         onDiscardCard
-    }
+    };
 
     function onDiscardCard(playerId, cardId) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
@@ -20,27 +19,17 @@ function DiscardCardController(deps) {
         const playerPhase = playerStateService.getPhase();
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
         const isRequiredDiscard = !!playerRequirementService.getFirstMatchingRequirement({ type: 'discardCard' });
-        const isSacrificialDiscard = playerPhase === 'action' && !isRequiredDiscard;
-        const discardAsPartOfDiscardPhase = playerPhase === 'discard';
+        const ordinaryDiscard = playerPhase === 'action' || playerPhase === 'discard';
 
         playerStateService.removeCardFromHand(cardId);
-        playerStateService.discardCard(discardedCard, { isSacrifice: isSacrificialDiscard });
+        playerStateService.discardCard(discardedCard);
 
         if (isRequiredDiscard) {
             onRequiredDiscard(playerId);
         }
-        else if (isSacrificialDiscard) {
-            onSacrificialDiscard(playerId);
-        }
-        else if (!discardAsPartOfDiscardPhase) {
+        else if (!ordinaryDiscard) {
             throw new CheatError('Illegal discard');
         }
-    }
-
-    function onSacrificialDiscard(playerId) {
-        const opponentId = matchComService.getOpponentId(playerId);
-        const opponentRequirementService = playerServiceProvider.getRequirementServiceById([opponentId]);
-        opponentRequirementService.addDrawCardRequirement({ count: 1 });
     }
 
     function onRequiredDiscard(playerId) {

@@ -1,3 +1,5 @@
+const canIssueOverwork = require('../../shared/match/overwork/canIssueOverwork.js');
+
 module.exports = function (deps) {
 
     const {
@@ -18,6 +20,7 @@ module.exports = function (deps) {
             canSelectStationCards,
             canSelectCardsForActiveAction,
             canMoveStationCards,
+            canIssueOverwork: canIssueOverworkGetter,
             canDrawCards,
             canMill,
             deckIsEmpty,
@@ -88,13 +91,21 @@ module.exports = function (deps) {
             && !hasRequirement;
     }
 
-    function canMoveStationCards(state, getters, rootState) {
+    function canMoveStationCards(state, getters, rootState) { //TODO This will collide with the ability to "move station cards between rows". This method is talking about moving it to the home zone, perhaps "playing station card"
         if (getters.waitingForOtherPlayerToFinishRequirements) return false;
 
         const hasActiveAction = rootState.card.activeAction;
         const hasRequirement = !!getFrom('firstRequirement', 'requirement');
         return !hasActiveAction
             && !hasRequirement;
+    }
+
+    function canIssueOverworkGetter(state, getters, rootState, rootGetters) {
+        return canIssueOverwork({
+            unflippedStationCardCount: rootGetters['match/playerUnflippedStationCardCount'],
+            phase: rootState.match.phase,
+            hasRequirements: rootState.match.requirements.length > 0
+        });
     }
 
     function canSelectStationCards(state, getters) { //TODO Rename "canSelectStationCardsForRequirement"

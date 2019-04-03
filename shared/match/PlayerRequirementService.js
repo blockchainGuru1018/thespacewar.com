@@ -157,6 +157,15 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
         });
     }
 
+    addEmptyCommonWaitingRequirement(requirement) {
+        this.addRequirement({
+            ...requirement,
+            count: 0,
+            common: true,
+            waiting: true
+        });
+    }
+
     updateFirstMatchingRequirement({ type, common = null, waiting = null }, updateFn) {
         this._playerStateService.update(playerState => {
             const requirements = playerState.requirements.slice();

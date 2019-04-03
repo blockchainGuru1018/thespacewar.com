@@ -7,6 +7,7 @@ const MoveCardController = require('./controller/MoveCardController.js');
 const PutDownCardController = require('./controller/PutDownCardController.js');
 const DiscardCardController = require('./controller/DiscardCardController.js');
 const NextPhaseController = require('./controller/NextPhaseController.js');
+const OverworkController = require('./controller/OverworkController.js');
 const CheatController = require('./controller/CheatController.js');
 const MatchComService = require('./service/MatchComService.js');
 const MatchService = require('../../shared/match/MatchService.js');
@@ -21,6 +22,7 @@ const PlayerRuleService = require('../../shared/match/PlayerRuleService.js');
 const obscureOpponentEvents = require('./service/obscureOpponentEvents.js');
 const PlayerServiceProvider = require('../../shared/match/PlayerServiceProvider.js');
 const RequirementFactory = require('./requirement/RequirementFactory.js');
+const PlayerOverworkFactory = require('../../shared/match/overwork/PlayerOverworkFactory.js');
 const { PHASES, TEMPORARY_START_PHASE } = require('../../shared/phases.js');
 
 module.exports = function ({
@@ -49,11 +51,7 @@ module.exports = function ({
     };
 
     const playerServiceProvider = PlayerServiceProvider();
-
-    const cardFactory = new ServerCardFactory({
-        playerServiceProvider,
-        getFreshState: () => state
-    });
+    const cardFactory = new ServerCardFactory({ playerServiceProvider, getFreshState: () => state });
     const matchService = new MatchService({ matchId, endMatch });
     matchService.setState(state);
     registerPlayerStateServices({
@@ -77,6 +75,12 @@ module.exports = function ({
         stateChangeListener
     });
 
+    const playerRequirementUpdaterFactory = new PlayerRequirementUpdaterFactory({
+        playerServiceProvider,
+        matchComService
+    });
+    const canThePlayerFactory = CanThePlayerFactory({ matchService, playerServiceProvider });
+    const playerOverworkFactory = PlayerOverworkFactory({ matchService, playerServiceProvider });
     const controllerDeps = {
         logger,
         matchService,
@@ -85,23 +89,14 @@ module.exports = function ({
         playerServiceProvider,
         cardFactory,
         stateChangeListener,
-        playerRequirementUpdaterFactory: new PlayerRequirementUpdaterFactory({
-            playerServiceProvider,
-            matchComService
-        }),
-        canThePlayerFactory: {
-            forPlayer(playerId) {
-                let opponentId = matchService.getOpponentId(playerId);
-                return new CanThePlayer({
-                    playerStateService: playerServiceProvider.getStateServiceById(playerId),
-                    opponentStateService: playerServiceProvider.getStateServiceById(opponentId),
-                });
-            }
-        },
-        rawCardDataRepository
+        playerRequirementUpdaterFactory,
+        canThePlayerFactory,
+        rawCardDataRepository,
+        playerOverworkFactory
     };
 
     const debugController = DebugController(controllerDeps);
+    const cheatController = CheatController(controllerDeps);
     const drawCardController = DrawCardController(controllerDeps);
     const findCardController = FindCardController(controllerDeps);
     const attackController = AttackController(controllerDeps);
@@ -109,7 +104,7 @@ module.exports = function ({
     const putDownCardController = PutDownCardController(controllerDeps);
     const discardCardController = DiscardCardController(controllerDeps);
     const nextPhaseController = NextPhaseController(controllerDeps);
-    const cheatController = CheatController(controllerDeps);
+    const overworkController = OverworkController(controllerDeps);
 
     const api = {
         id: matchId,
@@ -132,6 +127,7 @@ module.exports = function ({
         sacrifice: attackController.onSacrifice,
         damageStationCards: attackController.onDamageStationCard,
         selectCardForFindCardRequirement: findCardController.onSelectCard,
+        overwork: overworkController.overwork,
         repairCard,
         retreat,
         updatePlayer: matchComService.updatePlayer.bind(matchComService),
@@ -462,4 +458,20 @@ function CheatError(reason) {
     error.message = reason;
     error.type = 'CheatDetected';
     return error;
+}
+
+function CanThePlayerFactory({
+    matchService,
+    playerServiceProvider
+}) {
+
+    return {
+        forPlayer(playerId) {
+            let opponentId = matchService.getOpponentId(playerId);
+            return new CanThePlayer({
+                playerStateService: playerServiceProvider.getStateServiceById(playerId),
+                opponentStateService: playerServiceProvider.getStateServiceById(opponentId),
+            });
+        }
+    }
 }

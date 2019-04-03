@@ -1,0 +1,13 @@
+.overwork {
+  position: relative;
+  z-index: 2;
+  padding-left: 10px;
+  padding-right: 10px;
+
+  &:hover {
+    color: rgba(255, 255, 255, 1);
+    border: 1px solid #ff3646;
+    background: #ff3646;
+    cursor: pointer;
+  }
+}

@@ -26,15 +26,13 @@ module.exports = function (deps) {
                     actionPoints -= 2;
                 }
             }
-            else if (event.type === 'discardCard') {
-                if (event.phase === 'action' && event.isSacrifice) {
-                    actionPoints += 2;
-                }
-            }
             else if (event.type === 'removeStationCard') {
                 if (event.phase === 'action' && event.location === 'station-action') {
                     actionPoints += 2;
                 }
+            }
+            else if (event.type === 'overwork') {
+                actionPoints += 2;
             }
         }
 

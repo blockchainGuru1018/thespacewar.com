@@ -50,19 +50,11 @@ module.exports = {
             const { cardsOnHand } = this.firstPlayerConnection.restoreState.lastCall.args[0];
             assert.equals(cardsOnHand.length, 0);
         },
-        'when restore state of first player should have sacrificial discardCard event'() {
-            this.match.start();
-            const { events } = this.firstPlayerConnection.restoreState.lastCall.args[0];
-            const discardCardEvents = events.filter(e => e.type === 'discardCard');
-            assert.equals(discardCardEvents.length, 1);
-            assert(discardCardEvents[0].isSacrifice);
-        },
         'should emit state changed to second player'() {
             assert.calledOnce(this.secondPlayerConnection.stateChanged);
             assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
                 opponentDiscardedCards: [sinon.match({ id: 'C1A' })],
-                opponentCardCount: 0,
-                requirements: [{ type: 'drawCard', count: 1 }]
+                opponentCardCount: 0
             }));
         }
     },

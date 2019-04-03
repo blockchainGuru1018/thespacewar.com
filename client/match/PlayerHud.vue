@@ -49,7 +49,7 @@
                     {{ requirementGuideText }}
                 </div>
                 <div class="guideText" v-else-if="numberOfStationCardsToSelect > 0">
-                    Select {{ numberOfStationCardsToSelect}}
+                    Select {{ numberOfStationCardsToSelect }}
                     more station {{ numberOfStationCardsToSelect === 1 ? 'card' : 'cards' }}
                 </div>
                 <div v-else-if="phase === PHASES.preparation"
@@ -64,12 +64,23 @@
                     Discard {{ amountOfCardsToDiscard + (amountOfCardsToDiscard === 1 ? ' card' : ' cards')}} to
                     continue
                 </div>
-                <div class="playerActionPoints" v-else-if="showActionPoints">
-                    {{ playerActionPointsText }}
-                </div>
+                <template v-else-if="showActionPoints">
+                    <div class="playerActionPoints">
+                        {{ playerActionPointsText }}
+                    </div>
+                </template>
                 <div class="guideText" v-else-if="phase === PHASES.wait">
                     Enemy turn
                 </div>
+            </div>
+
+            <div class="overworkContainer">
+                <button v-if="canIssueOverwork"
+                        @click="overwork"
+                        title="Your opponent may flip 1 of your station cards & you receive 2 action points"
+                        class="overwork darkButton">
+                    Overwork
+                </button>
             </div>
         </portal>
         <portal to="match">
@@ -195,7 +206,8 @@
             ]),
             ...mapPermissionGetters([
                 'canDrawCards',
-                'canMill'
+                'canMill',
+                'canIssueOverwork'
             ]),
             showActionPoints() {
                 return ['action'].includes(this.phase);
@@ -299,7 +311,8 @@
         methods: {
             ...mapActions([
                 'goToNextPhase',
-                'endGame'
+                'endGame',
+                'overwork'
             ]),
             startClick() {
                 this.goToNextPhase();
@@ -422,6 +435,18 @@
             background-color: #ff3646;
             color: white;
         }
+    }
+
+    .overworkContainer {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+        z-index: 1;
+        width: 15%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .descriptionText {

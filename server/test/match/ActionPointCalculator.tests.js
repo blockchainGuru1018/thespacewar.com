@@ -171,20 +171,6 @@ module.exports = testCase('ActionPointCalculator', {
 
         assert.equals(actionPoints, 2);
     },
-    'when in action phase and has discarded 1 card and was a "sacrifice" should get 2 points for discard'() {
-        const calculator = ActionPointCalculator({
-            cardInfoRepository: FakeCardInfoRepository([{ commonId: 'C1A', cost: 1 }])
-        });
-
-        const actionPoints = calculator.calculate({
-            events: [DiscardCardEvent({ turn: 1, phase: 'action', cardCommonId: 'C1A', isSacrifice: true })],
-            turn: 1,
-            phase: 'action',
-            actionStationCardsCount: 1
-        });
-
-        assert.equals(actionPoints, 4);
-    },
     'duration cards': {
         'when has duration card in zone since previous turn should include card cost'() {
             const calculator = ActionPointCalculator({
@@ -232,17 +218,43 @@ module.exports = testCase('ActionPointCalculator', {
             assert.equals(actionPoints, 2);
         }
     },
-    'when has 0 action row station cards and has event cheatAddActionPoints with count 1 should have 1 action point'() {
-        const calculator = ActionPointCalculator({});
+    'when has 0 action row station cards': {
+        'and has event cheatAddActionPoints with count 1 should have 1 action point'() {
+            const calculator = ActionPointCalculator({});
 
-        const actionPoints = calculator.calculate({
-            events: [{ type: 'cheatAddActionPoints', count: 1 }],
-            turn: 1,
-            phase: 'action',
-            actionStationCardsCount: 0
-        });
+            const actionPoints = calculator.calculate({
+                events: [{ type: 'cheatAddActionPoints', count: 1 }],
+                turn: 1,
+                phase: 'action',
+                actionStationCardsCount: 0
+            });
 
-        assert.equals(actionPoints, 1);
+            assert.equals(actionPoints, 1);
+        },
+        'and has issued overwork this turn should have 2 action points'() {
+            const calculator = ActionPointCalculator({});
+
+            const actionPoints = calculator.calculate({
+                events: [{ type: 'overwork', turn: 1 }],
+                turn: 1,
+                phase: 'action',
+                actionStationCardsCount: 0
+            });
+
+            assert.equals(actionPoints, 2);
+        },
+        'and has issued overwork for previous turn should have 0 action points'() {
+            const calculator = ActionPointCalculator({});
+
+            const actionPoints = calculator.calculate({
+                events: [{ type: 'overwork', turn: 1 }],
+                turn: 2,
+                phase: 'action',
+                actionStationCardsCount: 0
+            });
+
+            assert.equals(actionPoints, 0);
+        }
     }
 });
 

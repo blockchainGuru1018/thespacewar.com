@@ -1,7 +1,7 @@
 <template>
     <div :class="['stationCardWrapper', {'stationCardWrapper--fullSize': stationCard.flipped && !isOpponentStationCard}]">
         <div :class="classes" :style="cardStyle">
-            <div class="actionOverlays">
+            <div class="actionOverlays" v-if="!isHoldingCard">
                 <div v-if="canMoveCardToZone"
                      @click.stop="startPuttingDownCard({ location: 'zone', cardId: stationCard.id })"
                      class="movable">
@@ -43,7 +43,8 @@
     module.exports = {
         props: [
             'stationCard',
-            'isOpponentStationCard'
+            'isOpponentStationCard',
+            'isHoldingCard'
         ],
         computed: {
             ...mapState([
@@ -64,7 +65,7 @@
             ...mapPermissionGetters([
                 'canSelectStationCards',
                 'canMoveStationCards',
-                'canSelectCardsForActiveAction',
+                'canSelectCardsForActiveAction'
             ]),
             ...mapCardState([
                 'checkIfCanBeSelectedForAction',
