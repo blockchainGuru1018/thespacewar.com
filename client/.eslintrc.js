@@ -17,5 +17,12 @@ module.exports = {
         'commonjs': true,
         'jest': true,
         'node': true
+    },
+    settings: {
+        'import/resolver': {
+            webpack: {
+                config: 'webpack.config.js'
+            },
+        },
     }
 };
