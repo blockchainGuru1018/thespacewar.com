@@ -135,7 +135,7 @@ module.exports = function (deps) {
                 .filter(id => opponentStationCards.some(s => s.id === id))
                 .length;
 
-            const hasSelectedOneCardFromAZone = state.selectedCardIdsForAction.length === 1 && selectedStationCardCount === 0
+            const hasSelectedOneCardFromAZone = state.selectedCardIdsForAction.length === 1 && selectedStationCardCount === 0;
             if (hasSelectedOneCardFromAZone) {
                 return false;
             }
@@ -163,7 +163,7 @@ module.exports = function (deps) {
         state.transientPlayerCardsInHomeZone = state.transientPlayerCardsInHomeZone.filter(c => c.id !== cardId);
     }
 
-    function startSacrifice({ state, getters, dispatch, rootState, rootGetters }, cardId) {
+    function startSacrifice({ state, dispatch, rootState, rootGetters }, cardId) {
         const cardData = rootGetters['match/findPlayerCardFromAllSources'](cardId);
         dispatch('showCardAction', {
             cardData,
@@ -210,11 +210,11 @@ module.exports = function (deps) {
         state.choiceCardId = cardData.id;
     }
 
-    function choiceDialogCancel({ state, dispatch }) {
+    function choiceDialogCancel({ dispatch }) {
         dispatch('_hideChoiceDialog');
     }
 
-    async function choiceDialogApplyChoice({ state, getters, commit, dispatch }, choice) {
+    async function choiceDialogApplyChoice({ state, getters, dispatch }, choice) {
         rootDispatch.loadingIndicator.show();
 
         const cardId = state.choiceCardId;
@@ -278,7 +278,7 @@ module.exports = function (deps) {
         dispatch('cancelCardAction');
     }
 
-    function showPutDownCardAction({ state, commit, dispatch }, {
+    function showPutDownCardAction({ state, dispatch }, {
         action,
         cardData,
         onFinish,
@@ -296,7 +296,7 @@ module.exports = function (deps) {
         dispatch('startHoldingCard', { cardData, showOnlyCardGhostsFor });
     }
 
-    async function selectGhostForActiveAction({ state, getters, dispatch }, location) {
+    async function selectGhostForActiveAction({ dispatch }, location) {
         rootDispatch.loadingIndicator.show();
         await onActiveActionFinish(location);
         rootDispatch.loadingIndicator.hide();
@@ -324,7 +324,7 @@ module.exports = function (deps) {
         }
     }
 
-    function putDownHoldingCard({ state, dispatch, rootGetters }, { location }) {
+    function putDownHoldingCard({ state, dispatch }, { location }) {
         const cardData = state.holdingCard;
         dispatch('cancelHoldingCard');
         dispatch('putDownCardOrShowChoiceOrAction', { location, cardData });
@@ -341,7 +341,7 @@ module.exports = function (deps) {
                 cardData,
                 action: card.actionWhenPutDownInHomeZone,
                 useTransientCard: true,
-                checkIfCanBeSelectedForAction: (actionCard, { cardData, isStationCard, isOpponentCard }) => {
+                checkIfCanBeSelectedForAction: (actionCard, { isOpponentCard }) => {
                     return isOpponentCard;
                 },
                 onFinish: targetCardIds => dispatch('putDownCard', { location, cardData, choice: targetCardIds[0] })
@@ -352,7 +352,7 @@ module.exports = function (deps) {
         }
     }
 
-    async function putDownCard({ state, rootState, dispatch, commit }, { cardData, choice = null, location }) {
+    async function putDownCard({ dispatch }, { cardData, choice = null, location }) {
         dispatch('_removeCardLocal', cardData.id);
         dispatch('_putDownCardLocal', { location, cardData });
         await putDownCardRemote({ location, cardId: cardData.id, choice });
