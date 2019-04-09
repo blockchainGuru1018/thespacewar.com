@@ -1,11 +1,21 @@
 <template>
     <div class="cardChoiceDialog-wrapper">
         <portal to="match">
-            <div @click.self="choiceDialogCancel" class="cardChoiceDialog-overlay" v-if="dialogVisible"/>
-            <div v-if="dialogVisible" class="cardChoiceDialog">
-                <button v-for="choice in choices"
-                        class="cardChoiceDialog-choice"
-                        @click="choiceDialogApplyChoice(choice.name)">
+            <div
+                v-if="dialogVisible"
+                class="cardChoiceDialog-overlay"
+                @click.self="choiceDialogCancel"
+            />
+            <div
+                v-if="dialogVisible"
+                class="cardChoiceDialog"
+            >
+                <button
+                    v-for="choice in choices"
+                    :key="choice.name"
+                    class="cardChoiceDialog-choice"
+                    @click="choiceDialogApplyChoice(choice.name)"
+                >
                     {{ choice.text }}
                 </button>
             </div>
@@ -14,17 +24,14 @@
 </template>
 <script>
     const Vuex = require('vuex');
+
     const {
         mapState: mapCardState,
         mapGetters: mapCardGetters,
-        mapMutations: mapCardMutations,
         mapActions: mapCardActions
     } = Vuex.createNamespacedHelpers('card');
     const {
-        mapState: mapMatchState,
-        mapGetters: mapMatchGetters,
-        mapMutations: mapMatchMutations,
-        mapActions: mapMatchActions
+        mapGetters: mapMatchGetters
     } = Vuex.createNamespacedHelpers('match');
 
     module.exports = {
