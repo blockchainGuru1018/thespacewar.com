@@ -64,10 +64,6 @@ function PutDownCardController(deps) {
             removeCardFromPlayerHand(playerId, cardId);
         }
         else if (playerStateService.hasCardInStationCards(cardId)) {
-            if (location !== 'zone') {
-                throw new CheatError('Cannot put down card');
-            }
-
             removeStationCardFromPlayer(playerId, cardId);
         }
     }
@@ -99,7 +95,7 @@ function PutDownCardController(deps) {
         const durationCardsThatPermitExtraStationCards = playerStateService
             .getDurationCards()
             .map(c => cardFactory.createCardForPlayer(c, playerId))
-            .filter(c => !!c.allowsToPutDownExtraStationCards
+            .filter(c => !!c.allowsToPutDownExtraStationCards //TODO Simplify this filter! Perhpas could replace getEvents().some... with some queryEvent class operation?
                 && !!c.requirementsOnPutDownExtraStationCard
                 && !playerStateService.getEvents().some(e => {
                     return e.turn === currentTurn

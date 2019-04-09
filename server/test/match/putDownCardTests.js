@@ -352,7 +352,7 @@ module.exports = {
             const players = [
                 Player('P1A', this.firstPlayerConnection),
                 Player('P2A', this.secondPlayerConnection)
-            ]
+            ];
             this.match = createMatch({ players });
             this.match.restoreFromState(createState({
                 playerStateById: {
@@ -399,7 +399,7 @@ module.exports = {
                 const players = [
                     Player('P1A', this.firstPlayerConnection),
                     Player('P2A', this.secondPlayerConnection)
-                ]
+                ];
                 this.match = createMatch({ players });
                 this.match.restoreFromState(createState({
                     playerStateById: {
@@ -591,7 +591,7 @@ module.exports = {
             },
             'should send damage own station card requirement of 1 count to second player'() {
                 assert.calledOnce(this.secondPlayerConnection.stateChanged);
-                const requirements = this.secondPlayerConnection.stateChanged.lastCall.args[0].requirements
+                const requirements = this.secondPlayerConnection.stateChanged.lastCall.args[0].requirements;
                 assert.equals(requirements.length, 1);
                 assert.match(requirements[0], { type: 'damageStationCard', common: true, count: 1 });
             }
@@ -602,7 +602,7 @@ module.exports = {
             setUp() {
                 this.firstPlayerConnection = FakeConnection2(['stateChanged']);
                 this.secondPlayerConnection = FakeConnection2(['stateChanged']);
-                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
                 this.match = createMatch({ players });
                 this.match.restoreFromState(createState({
                     playerStateById: {
@@ -620,24 +620,34 @@ module.exports = {
                     }
                 }));
 
-                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A', choice: 'draw' });
             },
-            'should emit stateChanged to first player'() {
-                assert.calledOnce(this.firstPlayerConnection.stateChanged);
+            'first player should get discarded cards'() {
                 assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
-                    discardedCards: [sinon.match({ id: 'C1A' })],
-                    requirements: [sinon.match({ type: 'drawCard', count: 3 })],
+                    discardedCards: [sinon.match({ id: 'C1A' })]
+                }));
+            },
+            'first player should get events'() {
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                     events: [
                         sinon.match({ type: 'putDownCard', cardId: 'C1A' }),
                         sinon.match({ type: 'discardCard', cardId: 'C1A' })
                     ]
                 }));
             },
-            'should emit stateChanged to second player'() {
-                assert.calledOnce(this.secondPlayerConnection.stateChanged);
+            'first player should get new requirement'() {
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                    requirements: [sinon.match({ type: 'drawCard', count: 3 })],
+                }));
+            },
+            'second player should get opponent card count'() {
+                assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                    opponentCardCount: 0
+                }));
+            },
+            'second player should opponent discarded cards'() {
                 assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
                     opponentDiscardedCards: [sinon.match({ id: 'C1A' })],
-                    opponentCardCount: 0
                 }));
             }
         },
@@ -657,7 +667,7 @@ module.exports = {
                     }
                 }));
 
-                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A', choice: 'draw' });
             },
             'should emit stateChanged to first player with requirement count of 1'() {
                 assert.calledOnce(this.firstPlayerConnection.stateChanged);
@@ -682,7 +692,7 @@ module.exports = {
                     }
                 }));
 
-                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A', choice: 'draw' });
             },
             'should NOT emit state changed with any requirements'() {
                 refute.defined(this.firstPlayerConnection.stateChanged.lastCall.args[0].requirements);
@@ -711,7 +721,7 @@ module.exports = {
                     }
                 }));
 
-                const options = { location: 'station-draw', cardId: 'C2A' };
+                const options = { location: 'station-draw', cardId: 'C2A', choice: 'draw' };
                 this.error = catchError(() => this.match.putDownCard('P1A', options));
             },
             'should NOT throw'() {
@@ -746,7 +756,7 @@ module.exports = {
                         },
                     }
                 }));
-                this.match.putDownCard('P1A', { location: 'station-draw', cardId: 'C1A' });
+                this.match.putDownCard('P1A', { location: 'station-draw', cardId: 'C1A', choice: 'draw' });
 
                 const options = { location: 'station-draw', cardId: 'C2A' };
                 this.error = catchError(() => this.match.putDownCard('P1A', options));
@@ -763,6 +773,45 @@ module.exports = {
                     ]
                 }));
             }
+        },
+        'when excellent work is in draw station row and is then moved to action station row': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['restoreState']);
+                const players = [Player('P1A', this.firstPlayerConnection)];
+                this.match = createMatch({ players });
+                this.match.restoreFromState(createState({
+                    playerStateById: {
+                        'P1A': {
+                            turn: 1,
+                            phase: 'action',
+                            stationCards: [
+                                { id: 'C1A', place: 'draw', card: createCard({ id: 'C1A' }) },
+                                {
+                                    id: 'C2A',
+                                    place: 'draw',
+                                    flipped: true,
+                                    card: createCard({ id: 'C2A', commonId: ExcellentWorkCommonId })
+                                }
+                            ],
+                            events: []
+                        },
+                    }
+                }));
+                const options = { location: 'station-action', cardId: 'C2A' };
+                this.error = catchError(() => this.match.putDownCard('P1A', options));
+            },
+            'should NOT throw'() {
+                refute(this.error);
+            },
+            'should have moved station card'() {
+                this.match.refresh('P1A');
+                assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
+                    stationCards: [
+                        sinon.match({ id: 'C1A', place: 'draw' }),
+                        sinon.match({ id: 'C2A', place: 'action' })
+                    ]
+                }));
+            }
         }
     },
     'Grand Opportunity': {
@@ -770,7 +819,7 @@ module.exports = {
             setUp() {
                 this.firstPlayerConnection = FakeConnection2(['stateChanged']);
                 this.secondPlayerConnection = FakeConnection2(['stateChanged']);
-                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
                 this.match = createMatch({ players });
                 this.match.restoreFromState(createState({
                     playerStateById: {
@@ -981,13 +1030,13 @@ module.exports = {
 
                 this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A', choice: 'draw' });
             },
-            'should NOT have any requirements'() {
+            'first player should NOT have any requirements'() {
                 this.match.refresh('P1A');
                 assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
                     requirements: [],
                 }));
             },
-            'should NOT have any requirements'() {
+            'second player should NOT have any requirements'() {
                 this.match.refresh('P2A');
                 assert.calledWith(this.secondPlayerConnection.restoreState, sinon.match({
                     requirements: []

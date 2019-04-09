@@ -1,4 +1,4 @@
-const PlayerRequirementUpdater = require('../../shared/match/PlayerRequirementUpdater.js');
+const PlayerRequirementUpdater = require('../../shared/match/requirement/PlayerRequirementUpdater.js');
 
 class PlayerRequirementUpdaterFactory {
 

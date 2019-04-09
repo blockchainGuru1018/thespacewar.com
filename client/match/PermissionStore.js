@@ -17,6 +17,7 @@ module.exports = function (deps) {
             canDiscardCards,
             canPutDownCards,
             canPutDownStationCards,
+            canPutDownMoreStationCards,
             canSelectStationCards,
             canSelectCardsForActiveAction,
             canMoveStationCards,
@@ -79,16 +80,17 @@ module.exports = function (deps) {
             && !hasRequirement;
     }
 
-    function canPutDownStationCards(state, getters, rootState, rootGetters) {
+    function canPutDownStationCards(state, getters, rootState) {
         if (getters.waitingForOtherPlayerToFinishRequirements) return false;
-
         const hasRequirement = !!getFrom('firstRequirement', 'requirement');
-        const playerStateService = rootGetters['match/playerStateService'];
-        const canPutDownMoreStationCards = playerStateService.canPutDownMoreStationCards();
+        if (hasRequirement) return false;
 
-        return rootState.match.phase === 'action'
-            && canPutDownMoreStationCards
-            && !hasRequirement;
+        return rootState.match.phase === 'action';
+    }
+
+    function canPutDownMoreStationCards(state, getters, rootState, rootGetters) {
+        const playerStateService = rootGetters['match/playerStateService'];
+        return playerStateService.canPutDownMoreStationCards();
     }
 
     function canMoveStationCards(state, getters, rootState) { //TODO This will collide with the ability to "move station cards between rows". This method is talking about moving it to the home zone, perhaps "playing station card"

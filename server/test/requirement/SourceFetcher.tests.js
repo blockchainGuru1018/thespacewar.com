@@ -3,7 +3,7 @@ let sinon = bocha.sinon;
 let testCase = bocha.testCase;
 let assert = bocha.assert;
 let refute = bocha.refute;
-const SourceFetcher = require('../../match/requirement/SourceFetcher.js');
+const SourceFetcher = require('../../../shared/match/requirement/SourceFetcher.js');
 
 module.exports = testCase('SourceFetcher', {
     'can get draw station cards': function () {

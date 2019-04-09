@@ -13,7 +13,7 @@ const MatchComService = require('./service/MatchComService.js');
 const MatchService = require('../../shared/match/MatchService.js');
 const ServerQueryEvents = require('./ServerQueryEvents.js');
 const PlayerStateService = require('../../shared/match/PlayerStateService.js');
-const PlayerRequirementService = require('../../shared/match/PlayerRequirementService.js');
+const PlayerRequirementService = require('../../shared/match/requirement/PlayerRequirementService.js');
 const PlayerRequirementUpdaterFactory = require('./PlayerRequirementUpdaterFactory.js');
 const ServerCardFactory = require('../card/ServerCardFactory.js');
 const StateChangeListener = require('../../shared/match/StateChangeListener.js');
@@ -21,7 +21,7 @@ const CanThePlayer = require('../../shared/match/CanThePlayer.js');
 const PlayerRuleService = require('../../shared/match/PlayerRuleService.js');
 const obscureOpponentEvents = require('./service/obscureOpponentEvents.js');
 const PlayerServiceProvider = require('../../shared/match/PlayerServiceProvider.js');
-const RequirementFactory = require('./requirement/RequirementFactory.js');
+const RequirementFactory = require('../../shared/match/requirement/RequirementFactory.js');
 const PlayerOverworkFactory = require('../../shared/match/overwork/PlayerOverworkFactory.js');
 const { PHASES, TEMPORARY_START_PHASE } = require('../../shared/phases.js');
 

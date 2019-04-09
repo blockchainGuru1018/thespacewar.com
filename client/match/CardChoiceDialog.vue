@@ -33,17 +33,11 @@
                 'choiceCardId'
             ]),
             ...mapCardGetters([
-                'choiceCardData',
+                'choices'
             ]),
             ...mapMatchGetters([
                 'createCard'
             ]),
-            choices() {
-                if (!this.choiceCardId) return [];
-
-                const card = this.createCard(this.choiceCardData);
-                return card.choicesWhenPutDownInHomeZone;
-            },
             dialogVisible() {
                 return this.choices.length > 0;
             }

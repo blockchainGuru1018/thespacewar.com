@@ -19,7 +19,7 @@ module.exports = function (deps) { //TODO Rename MatchConnectionController or so
     }
 
     function emit(action, value) {
-        console.log(`\n[${new Date().toISOString()}] MatchController.emit(${action}, ${value})`);
+        console.log(`\n[${new Date().toISOString()}] MatchController.emit(${action}, ${JSON.stringify(value, null, 4)})`);
         socket.emit('match', {
             matchId,
             playerId: ownUserId,

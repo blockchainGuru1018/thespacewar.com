@@ -10,12 +10,8 @@ class MissilesLaunched extends BaseCard {
         return "17";
     }
 
-    static get info() {
+    static get Info() {
         return info;
-    }
-
-    get requirementSpecsWhenPutDownInHomeZone() {
-        return info.requirementSpecsWhenPutDownInHomeZone;
     }
 }
 

@@ -4,19 +4,24 @@ PutDownExcellentWork.CommonId = ExcellentWork.CommonId;
 
 function PutDownExcellentWork({
     playerServiceProvider,
-    matchService
 }) {
 
     return {
         forPlayer
     };
 
-    function forPlayer(playerId, cardData) {
+    function forPlayer(playerId, cardData, { choice = '' } = {}) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
 
-        playerStateService.putDownEventCardInZone(cardData);
-        playerRequirementService.addDrawCardRequirement({ count: 3, cardCommonId: cardData.commonId });
+        if (choice === 'draw') {
+            playerStateService.putDownEventCardInZone(cardData);
+            let requirement = ExcellentWork.Info.choiceToRequirement.draw;
+            playerRequirementService.addDrawCardRequirement(requirement);
+        }
+        else {
+            throw new Error('Excellent work requires that the player makes a choice, no choice was provided');
+        }
     }
 }
 

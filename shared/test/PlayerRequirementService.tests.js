@@ -10,7 +10,7 @@ const PlayerStateService = require('../match/PlayerStateService.js');
 const MatchService = require('../match/MatchService.js');
 const FakeDeckFactory = require('../../server/test/testUtils/FakeDeckFactory.js')
 const PlayerServiceProvider = require('../match/PlayerServiceProvider.js');
-const PlayerRequirementService = require('../match/PlayerRequirementService.js');
+const PlayerRequirementService = require('../match/requirement/PlayerRequirementService.js');
 const FakeDeck = require("../../server/test/testUtils/FakeDeck.js")
 
 module.exports = bocha.testCase('PlayerRequirementService', {
@@ -83,6 +83,43 @@ module.exports = bocha.testCase('PlayerRequirementService', {
             { type: 'damageStationCard', count: 1 },
             { type: 'damageStationCard', count: 1 }
         ]);
+    },
+    'find card:': {
+        'should create findCard requirement with only cardGroups that has any cards': function () {
+            const service = createServiceForPlayer(createState(), 'P1A', 'P2A');
+
+            service.addFindCardRequirement({
+                count: 1,
+                cardGroups: [
+                    { source: 'deck', cards: [{}] },
+                    { source: 'discardPile', cards: [] }
+                ],
+                cardCommonId: '1'
+            });
+
+            assert.equals(service.getRequirements(), [{
+                type: 'findCard', count: 1, cardGroups: [
+                    { source: 'deck', cards: [{}] }
+                ],
+                cardCommonId: '1'
+            }]);
+        },
+        'should count is 2 but has only 1 card should add requirement with count of 1': function () {
+            const service = createServiceForPlayer(createState(), 'P1A', 'P2A');
+
+            service.addFindCardRequirement({
+                count: 2,
+                cardGroups: [{ source: 'deck', cards: [{}] }],
+                cardCommonId: '1'
+            });
+
+            let requirements = service.getRequirements();
+            assert.equals(requirements.length, 1);
+            assert.match(requirements[0], {
+                type: 'findCard',
+                count: 1
+            });
+        }
     }
 });
 

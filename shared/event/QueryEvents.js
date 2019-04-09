@@ -60,32 +60,6 @@ class QueryEvents {
         });
     }
 
-    getAllMoves(cardId) {
-        const events = this._eventRepository.getAll();
-        return events.filter(event => {
-            return event.type === 'moveCard'
-                && event.cardId === cardId;
-        });
-    }
-
-    getStationCardsPutDownThisTurnCount(turn) { //TODO Can remove?
-        const putDownStationCardEvents = this._eventRepository.getAll().filter(e => {
-            return e.turn === turn
-                && e.type === 'putDownCard'
-                && e.location.startsWith('station');
-        });
-        return putDownStationCardEvents.length;
-    }
-
-    getStationCardsPutDownThisTurn(turn) { //TODO Can remove?
-        const putDownStationCardEvents = this._eventRepository.getAll().filter(e => {
-            return e.turn === turn
-                && e.type === 'putDownCard'
-                && e.location.startsWith('station');
-        });
-        return putDownStationCardEvents;
-    }
-
     getNonExtraStationCardsPutDownThisTurnCount(turn) {
         const putDownStationCardEvents = this._eventRepository.getAll().filter(e => {
             return e.turn === turn

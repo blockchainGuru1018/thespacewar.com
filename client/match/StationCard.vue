@@ -3,7 +3,7 @@
         <div :class="classes" :style="cardStyle">
             <div class="actionOverlays" v-if="!isHoldingCard">
                 <div v-if="canMoveCardToZone"
-                     @click.stop="startPuttingDownCard({ location: 'zone', cardId: stationCard.id })"
+                     @click.stop="putDownCardOrShowChoiceOrAction({ location: 'zone', cardData: stationCard.card })"
                      class="movable">
                     Move to zone
                 </div>
@@ -161,7 +161,7 @@
             ]),
             ...mapCardActions([
                 'selectCardForActiveAction',
-                'startPuttingDownCard'
+                'putDownCardOrShowChoiceOrAction'
             ]),
         }
     };

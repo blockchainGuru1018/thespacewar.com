@@ -15,7 +15,7 @@ function PutDownPerfectPlan({
         playerStateService.putDownEventCardInZone(cardData);
 
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
-        let spec = PerfectPlan.info.requirementSpecsWhenPutDownInHomeZone;
+        let spec = PerfectPlan.Info.requirementSpecsWhenPutDownInHomeZone;
         playerRequirementService.addCardRequirementFromSpec(cardData, spec);
     }
 }

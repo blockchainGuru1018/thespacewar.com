@@ -10,11 +10,7 @@ module.exports = class PerfectPlan extends BaseCard {
         return "18";
     }
 
-    static get info() {
+    static get Info() {
         return info;
-    }
-
-    get requirementSpecsWhenPutDownInHomeZone() {
-        return info.requirementSpecsWhenPutDownInHomeZone;
     }
 };

@@ -285,7 +285,6 @@
     module.exports = {
         data() {
             return {
-                holdingCard: null,
                 elementHoveredOver: null,
                 mousePosition: { x: 0, y: 0 },
                 touchPosition: { x: 0, y: 0 },
@@ -320,16 +319,20 @@
             ]),
             ...mapCardState([
                 'transientPlayerCardsInHomeZone',
-                'hiddenStationCardIds'
+                'hiddenStationCardIds',
+                'showOnlyCardGhostsFor',
+                'holdingCard'
             ]),
             ...mapCardGetters({
-                cardChoiceDialogCardData: 'choiceCardData'
+                cardChoiceDialogCardData: 'choiceCardData',
+                activeActionName: 'activeActionName'
             }),
             ...mapPermissionGetters([
                 'canMoveCardsFromHand',
                 'canDiscardCards',
                 'canPutDownCards',
                 'canPutDownStationCards',
+                'canPutDownMoreStationCards',
                 'canDrawCards',
                 'canMill',
                 'opponentDeckIsEmpty'
@@ -348,18 +351,28 @@
             playerZoneCardGhostVisible() {
                 return this.holdingCard
                     && this.canPutDownCards
-                    && this.canPutDownCard(this.holdingCard.id)
-                    && this.canAffordCard(this.holdingCard);
+                    && this.canPutDownHoldingCard
+                    && this.canAffordHoldingCard
+                    && (!this.showOnlyCardGhostsFor || this.showOnlyCardGhostsFor.includes('homeZone'));
+            },
+            canPutDownHoldingCard() {
+                return this.canPutDownCard(this.holdingCard);
+            },
+            canAffordHoldingCard() {
+                return this.canAffordCard(this.holdingCard);
             },
             discardPileCardGhostVisible() {
-                return this.holdingCard && this.canDiscardCards;
+                return this.holdingCard
+                    && this.canDiscardCards
+                    && (!this.showOnlyCardGhostsFor || this.showOnlyCardGhostsFor.includes('discardPile'));
             },
             stationCardGhostVisible() {
                 if (!this.holdingCard) return false;
+                if (!this.canPutDownStationCards) return false;
+                if (this.showOnlyCardGhostsFor && !this.showOnlyCardGhostsFor.includes('playerStation')) return false;
 
-                //TODO Maybe there should be an individual permissions check that checks both these permission but receives the holding card
-                return this.canPutDownStationCards
-                    || this.createCard(this.holdingCard).canBePutDownAsExtraStationCard;
+                return this.canPutDownMoreStationCards
+                    || this.activeActionName === 'putDownCard';
             },
             opponentTopDiscardCard() {
                 return this.opponentDiscardedCards[this.opponentDiscardedCards.length - 1];
@@ -386,7 +399,6 @@
         },
         methods: {
             ...mapActions([
-                'discardCard',
                 'selectAsDefender',
                 'retreat',
                 'askToDrawCard',
@@ -398,36 +410,34 @@
                 showCardChoiceDialog: 'showChoiceDialog',
                 showCardAction: 'showCardAction',
                 putDownCard: 'putDownCard',
-                startPuttingDownCard: 'startPuttingDownCard',
-                cancelCurrentUserInteraction: 'cancelCurrentUserInteraction'
+                putDownHoldingCard: 'putDownHoldingCard',
+                cancelHoldingCard: 'cancelHoldingCard',
+                startHoldingCard: 'startHoldingCard',
+                discardHoldingCard: 'discardHoldingCard',
+                cancelCurrentUserInteraction: 'cancelCurrentUserInteraction',
+                selectGhostForActiveAction: 'selectGhostForActiveAction'
             }),
             canAffordCard(card) {
                 return this.actionPoints2 >= card.cost;
             },
-            playerCardClick(card) {
-                this.holdingCard = card;
+            playerCardClick(cardData) {
+                this.startHoldingCard({ cardData });
             },
             cardGhostClick(location) {
-                if (!this.holdingCard) throw Error('Should not be able to click on card ghost without holding a card');
+                if (!this.holdingCard) throw new Error('Should not be able to click on card ghost without holding a card');
 
-                const cardData = this.holdingCard;
-
-                if (location === 'discard') {
-                    this.discardCard(this.holdingCard.id);
+                if (this.activeActionName === 'putDownCard') {
+                    this.selectGhostForActiveAction(location);
+                }
+                else if (location === 'discard') {
+                    this.discardHoldingCard();
                 }
                 else {
-                    this.startPuttingDownCard({ location, cardId: cardData.id });
+                    this.putDownHoldingCard({ location });
                 }
-
-                this.holdingCard = null;
             },
             emptyClick() {
-                if (this.holdingCard) {
-                    this.holdingCard = null;
-                }
-                else {
-                    this.cancelCurrentUserInteraction();
-                }
+                this.cancelCurrentUserInteraction();
             },
             getOpponentCardStyle(index) {
                 const cardCount = this.opponentCardCount;

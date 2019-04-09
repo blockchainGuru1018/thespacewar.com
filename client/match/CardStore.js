@@ -1,3 +1,4 @@
+const Vue = require('vue');
 const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
 
 const falsyOp = () => false;
@@ -17,53 +18,96 @@ module.exports = function (deps) {
         namespaced: true,
         name: 'card',
         state: {
+            holdingCard: null,
+
+            //choice dialog
             choiceCardId: null,
+
+            //active action
             activeActionCardData: null,
             activeAction: null,
             selectedCardIdsForAction: [],
+            checkIfCanBeSelectedForAction: falsyOp,
+
+            // utils/transient cards
             transientPlayerCardsInHomeZone: [],
             hiddenCardIdsOnHand: [],
             hiddenStationCardIds: [],
-            checkIfCanBeSelectedForAction: falsyOp
+
+            // ghosts
+            showOnlyCardGhostsFor: null
+        },
+        mutations: {
+            SET_HOLDING_CARD
         },
         getters: {
+            //choice dialog
             choiceCardData,
+            choices,
+
+            //active action
+            activeActionName,
             activeActionCard,
             activeActionCardImageUrl,
-            canSelectMoreCardsForAction
+            canSelectMoreCardsForAction,
         },
         actions: {
             // Utils/Transient cards
             moveCardToZoneAsTransient,
             removeTransientCard,
 
-            // Card choices
+            // Card choices todo move to store?
             showChoiceDialog,
             choiceDialogApplyChoice,
+            _applyChoicePutDownAsExtraStationCard,
             choiceDialogCancel,
+            _hideChoiceDialog,
 
-            // Card action
+            // Card action todo move to store?
+            showPutDownCardAction,
+            selectGhostForActiveAction,
             showCardAction,
             selectCardForActiveAction,
             cancelCardAction,
 
-            // Sacrifice
+            // Sacrifice todo move to store?
             startSacrifice,
             _completeSacrifice,
 
-            // PutDownCard
-            startPuttingDownCard, //Use this and not "putDownCard", this will in turn call putdowncard
-            putDownCard, //TODO Need better naming scheme for when putting down a card and for actually sending event to matchController
+            // PutDownCard todo move to store?
+            putDownCardOrShowChoiceOrAction,
+            putDownCard,
+            _removeCardLocal,
+            _putDownCardLocal,
+            _addPutDownCardEvent,
 
-            // Cancel any action, note: move to own store?
+            //Holding card
+            putDownHoldingCard,
+            discardHoldingCard,
+            startHoldingCard,
+            cancelHoldingCard,
+
+            //Misc
             cancelCurrentUserInteraction,
-
-            _hideChoiceDialog,
         }
     };
 
+    function SET_HOLDING_CARD(state, holdingCard) {
+        state.holdingCard = holdingCard;
+    }
+
     function choiceCardData(state, getters, rootState, rootGetters) {
         return rootGetters['match/findPlayerCardFromAllSources'](state.choiceCardId);
+    }
+
+    function choices(state, getters, rootState, rootGetters) {
+        if (!state.choiceCardId) return [];
+        const card = rootGetters['match/createCard'](getters.choiceCardData);
+        return card.choicesWhenPutDownInHomeZone;
+    }
+
+    function activeActionName(state) {
+        return state.activeAction ? state.activeAction.name : '';
     }
 
     function activeActionCard(state, getters, rootState, rootGetters) {
@@ -161,28 +205,6 @@ module.exports = function (deps) {
         }
     }
 
-    function startPuttingDownCard({ dispatch, rootGetters }, { location, cardId }) {
-        const cardData = rootGetters['match/findPlayerCardFromAllSources'](cardId);
-        const card = rootGetters['match/createCard'](cardData)
-        if (location === 'zone' && card.choicesWhenPutDownInHomeZone) {
-            dispatch('showChoiceDialog', cardData);
-        }
-        else if (location === 'zone' && card.actionWhenPutDownInHomeZone) {
-            dispatch('showCardAction', {
-                cardData,
-                action: card.actionWhenPutDownInHomeZone,
-                useTransientCard: true,
-                checkIfCanBeSelectedForAction: (actionCard, { cardData, isStationCard, isOpponentCard }) => {
-                    return isOpponentCard;
-                },
-                onFinish: targetCardIds => dispatch('putDownCard', { location, cardId, choice: targetCardIds[0] })
-            });
-        }
-        else {
-            dispatch('putDownCard', { location, cardId });
-        }
-    }
-
     function showChoiceDialog({ state, dispatch }, cardData) {
         dispatch('moveCardToZoneAsTransient', cardData);
         state.choiceCardId = cardData.id;
@@ -192,13 +214,43 @@ module.exports = function (deps) {
         dispatch('_hideChoiceDialog');
     }
 
-    async function choiceDialogApplyChoice({ state, dispatch }, choice) {
+    async function choiceDialogApplyChoice({ state, getters, commit, dispatch }, choice) {
         rootDispatch.loadingIndicator.show();
-        const choiceCardId = state.choiceCardId;
+
+        const cardId = state.choiceCardId;
+        const cardData = getters.choiceCardData;
+        const choices = getters.choices;
         dispatch('_hideChoiceDialog');
-        await dispatch('putDownCard', { location: 'zone', choice, cardId: choiceCardId });
-        dispatch('removeTransientCard', choiceCardId);
+
+        if (choice === 'putDownAsExtraStationCard') {
+            let choiceData = choices.find(c => c.name === 'putDownAsExtraStationCard');
+            dispatch('_applyChoicePutDownAsExtraStationCard', { cardData, choiceData });
+        }
+        else {
+            await dispatch('putDownCard', { location: 'zone', choice, cardData });
+        }
+
+        dispatch('removeTransientCard', cardId);
         rootDispatch.loadingIndicator.hide();
+    }
+
+    async function _applyChoicePutDownAsExtraStationCard({ dispatch }, { cardData, choiceData }) {
+        await Vue.nextTick(); //WORKAROUND: Wait for click event to bubble up so that it wont cancel the action set below
+
+        dispatch('showPutDownCardAction', {
+            cardData: cardData,
+            action: choiceData.action,
+            onFinish: PutDownExtraStationCardFinishHandler(),
+            showOnlyCardGhostsFor: ['playerStation'],
+            setHiddenStationCardIds: [choiceData.id]
+        });
+
+        function PutDownExtraStationCardFinishHandler() {
+            return location => {
+                let choice = 'putDownAsExtraStationCard';
+                dispatch('putDownCard', { cardData, choice, location });
+            };
+        }
     }
 
     function showCardAction({ state, getters, dispatch },
@@ -226,23 +278,92 @@ module.exports = function (deps) {
         dispatch('cancelCardAction');
     }
 
-    function cancelCardAction({ state, dispatch }) {
-        onActiveActionFinish = null;
-        dispatch('removeTransientCard', state.activeActionCardData.id);
-        state.activeActionCardData = null;
-        state.activeAction = null;
-        state.checkIfCanBeSelectedForAction = falsyOp;
-        state.selectedCardIdsForAction = [];
+    function showPutDownCardAction({ state, commit, dispatch }, {
+        action,
+        cardData,
+        onFinish,
+        showOnlyCardGhostsFor = null,
+        hideStationCardIds = []
+    }) {
+        onActiveActionFinish = onFinish;
+
+        state.activeActionCardData = cardData;
+        state.activeAction = action;
+
+        state.hiddenStationCardIdsForAction = hideStationCardIds;
+        state.hiddenStationCardIds.push(...hideStationCardIds);
+
+        dispatch('startHoldingCard', { cardData, showOnlyCardGhostsFor });
     }
 
-    async function putDownCard({ state, rootState, dispatch, commit }, { cardId, choice = null, location }) { //TODO Should not directly manipulate state of MatchStore
-        const matchState = rootState.match;
+    async function selectGhostForActiveAction({ state, getters, dispatch }, location) {
+        rootDispatch.loadingIndicator.show();
+        await onActiveActionFinish(location);
+        rootDispatch.loadingIndicator.hide();
 
+        dispatch('cancelCardAction');
+    }
+
+    function cancelCardAction({ state, dispatch }) {
+        onActiveActionFinish = null;
+
+        dispatch('removeTransientCard', state.activeActionCardData.id);
+
+        state.activeActionCardData = null;
+        state.activeAction = null;
+
+        state.checkIfCanBeSelectedForAction = falsyOp;
+
+        state.selectedCardIdsForAction = [];
+
+        state.hiddenStationCardIds = state.hiddenStationCardIds.filter(id => !state.hiddenStationCardIdsForAction.includes(id));
+        state.hiddenStationCardIdsForAction = [];
+
+        if (state.holdingCard) {
+            dispatch('cancelHoldingCard');
+        }
+    }
+
+    function putDownHoldingCard({ state, dispatch, rootGetters }, { location }) {
+        const cardData = state.holdingCard;
+        dispatch('cancelHoldingCard');
+        dispatch('putDownCardOrShowChoiceOrAction', { location, cardData });
+    }
+
+    function putDownCardOrShowChoiceOrAction({ dispatch, rootGetters }, { location, cardData }) {
+        const card = rootGetters['match/createCard'](cardData);
+
+        if (location === 'zone' && card.choicesWhenPutDownInHomeZone) {
+            dispatch('showChoiceDialog', cardData);
+        }
+        else if (location === 'zone' && card.actionWhenPutDownInHomeZone) {
+            dispatch('showCardAction', {
+                cardData,
+                action: card.actionWhenPutDownInHomeZone,
+                useTransientCard: true,
+                checkIfCanBeSelectedForAction: (actionCard, { cardData, isStationCard, isOpponentCard }) => {
+                    return isOpponentCard;
+                },
+                onFinish: targetCardIds => dispatch('putDownCard', { location, cardData, choice: targetCardIds[0] })
+            });
+        }
+        else {
+            dispatch('putDownCard', { location, cardData });
+        }
+    }
+
+    async function putDownCard({ state, rootState, dispatch, commit }, { cardData, choice = null, location }) {
+        dispatch('_removeCardLocal', cardData.id);
+        dispatch('_putDownCardLocal', { location, cardData });
+        await putDownCardRemote({ location, cardId: cardData.id, choice });
+    }
+
+    async function _removeCardLocal({ rootState, commit }, cardId) {
+        const matchState = rootState.match;
         const cardIndexOnHand = matchState.playerCardsOnHand.findIndex(c => c.id === cardId);
         const cardOnHand = matchState.playerCardsOnHand[cardIndexOnHand];
         const allPlayerStationCards = getFrom('allPlayerStationCards', 'match');
         const stationCard = allPlayerStationCards.find(s => s.id === cardId);
-        const cardData = cardOnHand || stationCard.card;
 
         if (cardOnHand) {
             matchState.playerCardsOnHand.splice(cardIndexOnHand, 1);
@@ -250,20 +371,12 @@ module.exports = function (deps) {
         else if (stationCard) {
             commit('match/setPlayerStationCards', allPlayerStationCards.filter(s => s.id !== cardId), { root: true });
         }
+    }
 
-        matchState.events.push(PutDownCardEvent({
-            turn: matchState.turn,
-            location,
-            cardId,
-            cardCommonId: cardData.commonId
-        }));
+    async function _putDownCardLocal({ rootState, dispatch }, { location, cardData }) { //TODO Should not directly modify another modules state
+        const matchState = rootState.match;
 
-        if (choice) {
-            matchController.emit('putDownCard', { location, cardId, choice });
-        }
-        else {
-            matchController.emit('putDownCard', { location, cardId });
-        }
+        dispatch('_addPutDownCardEvent', { location, cardData });
 
         if (location.startsWith('station')) {
             if (location === 'station-draw') {
@@ -286,6 +399,25 @@ module.exports = function (deps) {
         }
     }
 
+    function _addPutDownCardEvent({ rootState }, { location, cardData }) {
+        const matchState = rootState.match;
+        matchState.events.push(PutDownCardEvent({
+            turn: matchState.turn,
+            location,
+            cardId: cardData.id,
+            cardCommonId: cardData.commonId
+        }));
+    }
+
+    async function putDownCardRemote({ location, cardId, choice }) {
+        matchController.emit('putDownCard', { location, cardId, choice });
+    }
+
+    function discardHoldingCard({ state, dispatch }) {
+        dispatch('match/discardCard', state.holdingCard.id, { root: true });
+        dispatch('cancelHoldingCard');
+    }
+
     function cancelCurrentUserInteraction({ state, rootState, dispatch }) {
         if (rootState.match.attackerCardId) {
             dispatch('match/cancelAttack', null, { root: true });
@@ -296,10 +428,28 @@ module.exports = function (deps) {
         else if (state.activeAction) {
             dispatch('cancelCardAction');
         }
+        else if (state.holdingCard) {
+            dispatch('cancelHoldingCard');
+        }
+    }
+
+    function startHoldingCard({ state, commit }, { cardData, showOnlyCardGhostsFor = null }) {
+        state.showOnlyCardGhostsFor = showOnlyCardGhostsFor;
+        commit('SET_HOLDING_CARD', cardData);
+    }
+
+    function cancelHoldingCard({ state, commit }) {
+        state.showOnlyCardGhostsFor = null;
+
+        if (state.holdingCard) {
+            const holdingCardId = state.holdingCard.id;
+            state.hiddenStationCardIds = state.hiddenStationCardIds.filter(id => id !== holdingCardId);
+            commit('SET_HOLDING_CARD', null);
+        }
     }
 
     function _hideChoiceDialog({ state, dispatch }) {
         dispatch('removeTransientCard', state.choiceCardId);
         state.choiceCardId = null;
     }
-}
+};

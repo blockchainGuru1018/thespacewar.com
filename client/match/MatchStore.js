@@ -262,8 +262,7 @@ module.exports = function (deps) {
     }
 
     function canPutDownCard(state, getters) {
-        return cardId => {
-            let card = state.playerCardsOnHand.find(c => c.id === cardId);
+        return card => {
             const canOnlyHaveOneInHomeZone = getters.createCard(card).canOnlyHaveOneInHomeZone();
             if (canOnlyHaveOneInHomeZone) {
                 return !state.playerCardsInZone.some(c => c.commonId === card.commonId);
