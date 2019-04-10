@@ -1,15 +1,11 @@
 let bocha = require('bocha');
-let sinon = bocha.sinon;
 let testCase = bocha.testCase;
 let assert = bocha.assert;
-let refute = bocha.refute;
 let FakeCardDataAssembler = require('../testUtils/FakeCardDataAssembler.js');
 const createCard = FakeCardDataAssembler.createCard;
 let CardInfoRepository = require('../../../shared/CardInfoRepository.js');
 let ActionPointCalculator = require('../../../shared/match/ActionPointsCalculator.js');
 let DiscardCardEvent = require('../../../shared/event/DiscardCardEvent.js');
-let MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
-let AttackEvent = require('../../../shared/event/AttackEvent.js');
 let PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
 let RemoveStationCardEvent = require('../../../shared/event/RemoveStationCardEvent.js');
 
@@ -255,6 +251,20 @@ module.exports = testCase('ActionPointCalculator', {
 
             assert.equals(actionPoints, 0);
         }
+    },
+    'putDownCard events with property "putDownAsExtraStationCard" should claim cost of the card put down'() {
+        const calculator = ActionPointCalculator({
+            cardInfoRepository: FakeCardInfoRepository([{ commonId: 'C1A', cost: 1 }])
+        });
+
+        const actionPoints = calculator.calculate({
+            events: [{ type: 'putDownCard', turn: 1, cardCommonId: 'C1A', putDownAsExtraStationCard: true }],
+            turn: 1,
+            phase: 'action',
+            actionStationCardsCount: 1
+        });
+
+        assert.equals(actionPoints, 1);
     }
 });
 

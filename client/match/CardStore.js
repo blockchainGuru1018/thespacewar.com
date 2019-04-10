@@ -76,6 +76,7 @@ module.exports = function (deps) {
 
             // PutDownCard todo move to store?
             putDownCardOrShowChoiceOrAction,
+            putDownCardAsExtraStationCard,
             putDownCard,
             _removeCardLocal,
             _putDownCardLocal,
@@ -240,17 +241,10 @@ module.exports = function (deps) {
         dispatch('showPutDownCardAction', {
             cardData: cardData,
             action: choiceData.action,
-            onFinish: PutDownExtraStationCardFinishHandler(),
+            onFinish: location => dispatch('putDownCardAsExtraStationCard', { cardData, location }),
             showOnlyCardGhostsFor: ['playerStation'],
             setHiddenStationCardIds: [choiceData.id]
         });
-
-        function PutDownExtraStationCardFinishHandler() {
-            return location => {
-                let choice = 'putDownAsExtraStationCard';
-                dispatch('putDownCard', { cardData, choice, location });
-            };
-        }
     }
 
     function showCardAction({ state, getters, dispatch },
@@ -352,8 +346,18 @@ module.exports = function (deps) {
         }
     }
 
+    async function putDownCardAsExtraStationCard({ dispatch }, { cardData, location }) {
+        const choice = 'putDownAsExtraStationCard';
+
+        dispatch('_removeCardLocal', cardData.id);
+        dispatch('_addPutDownCardEvent', { location, cardData, putDownAsExtraStationCard: true });
+        dispatch('_putDownCardLocal', { location, cardData });
+        await putDownCardRemote({ location, cardId: cardData.id, choice });
+    }
+
     async function putDownCard({ dispatch }, { cardData, choice = null, location }) {
         dispatch('_removeCardLocal', cardData.id);
+        dispatch('_addPutDownCardEvent', { location, cardData });
         dispatch('_putDownCardLocal', { location, cardData });
         await putDownCardRemote({ location, cardId: cardData.id, choice });
     }
@@ -376,8 +380,6 @@ module.exports = function (deps) {
     async function _putDownCardLocal({ rootState, dispatch }, { location, cardData }) { //TODO Should not directly modify another modules state
         const matchState = rootState.match;
 
-        dispatch('_addPutDownCardEvent', { location, cardData });
-
         if (location.startsWith('station')) {
             if (location === 'station-draw') {
                 matchState.playerStation.drawCards.push(cardData);
@@ -399,13 +401,14 @@ module.exports = function (deps) {
         }
     }
 
-    function _addPutDownCardEvent({ rootState }, { location, cardData }) {
+    function _addPutDownCardEvent({ rootState }, { location, cardData, putDownAsExtraStationCard = false }) {
         const matchState = rootState.match;
         matchState.events.push(PutDownCardEvent({
             turn: matchState.turn,
             location,
             cardId: cardData.id,
-            cardCommonId: cardData.commonId
+            cardCommonId: cardData.commonId,
+            putDownAsExtraStationCard
         }));
     }
 

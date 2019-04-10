@@ -70,7 +70,7 @@ function PutDownCardController(deps) {
 
     function putDownCardAtNewLocation({ playerId, location, cardData, choice }) {
         if (location.startsWith('station')) {
-            putDownStationCard({ playerId, cardData, location });
+            putDownStationCard({ playerId, cardData, location, choice });
         }
         else {
             if (location === 'zone' && cardData.type === 'event') {
@@ -87,9 +87,9 @@ function PutDownCardController(deps) {
         }
     }
 
-    function putDownStationCard({ playerId, cardData, location }) {
+    function putDownStationCard({ playerId, cardData, location, choice }) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        const stationCard = playerStateService.addStationCard(cardData, location);
+        const stationCard = playerStateService.addStationCard(cardData, location, { putDownAsExtraStationCard: choice === 'putDownAsExtraStationCard' });
 
         const currentTurn = matchService.getTurn();
         const durationCardsThatPermitExtraStationCards = playerStateService

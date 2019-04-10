@@ -18,7 +18,7 @@ module.exports = function (deps) {
         const eventsThisTurn = events.filter(e => e.turn === turn && !e.grantedForFreeByEvent);
         for (let event of eventsThisTurn) {
             if (event.type === 'putDownCard') {
-                if (event.location === 'zone') {
+                if (shouldReducePointsByCostOfCard(event)) {
                     const cardCost = getCostOfCard(event.cardCommonId);
                     actionPoints -= cardCost;
                 }
@@ -66,6 +66,11 @@ module.exports = function (deps) {
         }
 
         return totalCost;
+    }
+
+    function shouldReducePointsByCostOfCard(putDownCardEventFromCurrentTUrn) {
+        return putDownCardEventFromCurrentTUrn.location === 'zone'
+            || putDownCardEventFromCurrentTUrn.putDownAsExtraStationCard;
     }
 
     function eventIsPutDownDurationCardInZone(event, turn) {

@@ -283,10 +283,7 @@ class PlayerStateService {
         });
     }
 
-    addStationCard(cardData, location) {
-        const card = this._createBehaviourCard(cardData);
-        const putDownAsExtraStationCard = !!card.canBePutDownAsExtraStationCard;
-
+    addStationCard(cardData, location, { putDownAsExtraStationCard = false } = {}) {
         const stationLocation = location.split('-').pop();
         const stationCard = { place: stationLocation, card: cardData };
         this.update(playerState => {
