@@ -890,8 +890,8 @@ module.exports = {
                 assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                     discardedCards: [sinon.match({ id: 'C1A' })],
                     requirements: [
-                        sinon.match({ type: 'drawCard', count: 6 }),
-                        sinon.match({ type: 'discardCard', count: 2 })
+                        sinon.match({ type: 'drawCard', count: sinon.match.number }),
+                        sinon.match({ type: 'discardCard', count: sinon.match.number })
                     ],
                     events: [
                         sinon.match({ type: 'putDownCard', cardId: 'C1A' }),
