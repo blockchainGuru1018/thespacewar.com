@@ -297,6 +297,23 @@ module.exports = testCase('Cards', {
             });
 
             refute(this.card.canTargetCardForSacrifice(stationCard));
+        },
+        'when pursuiter was put down this turn should NOT be sacrificable'() {
+            this.card = createCard(Pursuiter, {
+                card: { id: 'C1A', attack: 1 },
+                playerId: 'P1A',
+                matchService: {
+                    getTurn: () => 1
+                },
+                queryEvents: queryEventsFactory.withStubs({
+                    getTurnWhenCardWasPutDown: () => 1
+                }),
+                playerStateService: playerStateServiceFactory.withStubs({
+                    getPhase: () => 'attack'
+                })
+            });
+
+            refute(this.card.canBeSacrificed());
         }
     },
     'Nuclear missile:': {

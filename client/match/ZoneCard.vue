@@ -219,7 +219,7 @@
             canAttackSomeCardInSameZone() {
                 return this.canAttackCardInZone || this.canAttackStationCards;
             },
-            canTargetCardInZoneForSacrifice() {
+            canTargetCardInZoneForSacrifice() { //TODO This should be done on the card that can sacrifice
                 const card = this.createCard(this.card);
                 return this.zoneOpponentRow
                     .map(cardData => {

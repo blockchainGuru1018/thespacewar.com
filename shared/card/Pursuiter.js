@@ -14,8 +14,13 @@ module.exports = class Pursuiter extends BaseCard {
         if (this.paralyzed) return false;
 
         const currentTurn = this._matchService.getTurn();
-        const attacksOnTurn = this._queryEvents.getAttacksOnTurn(this.id, currentTurn)
-        const playerPhase = this._playerStateService.getPhase()
-        return playerPhase === PHASES.attack && attacksOnTurn.length === 0;
+        const turnWhenWasPutDown = this._queryEvents.getTurnWhenCardWasPutDown(this.id);
+        if (turnWhenWasPutDown === currentTurn) return false;
+
+        const attacksOnTurn = this._queryEvents.getAttacksOnTurn(this.id, currentTurn);
+        if (attacksOnTurn.length > 0) return false;
+
+        const playerPhase = this._playerStateService.getPhase();
+        return playerPhase === PHASES.attack;
     }
 };
