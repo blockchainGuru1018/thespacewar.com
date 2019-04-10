@@ -3,6 +3,7 @@ const createCard = FakeCardDataAssembler.createCard;
 const getCardImageUrl = require('../../client/utils/getCardImageUrl.js');
 const FakeState = require('../matchTestUtils/FakeState.js');
 const FakeMatchController = require('../matchTestUtils/FakeMatchController.js');
+const Neutralization = require('../../shared/card/Neutralization.js');
 const { createController } = require('../matchTestUtils/index.js');
 const {
     assert,
@@ -204,3 +205,27 @@ describe('when both players are out of cards', () => {
         assert.elementCount('.drawPile-draw', 1);
     });
 });
+
+describe('when has duration card Neutralization and other duration card', () => {
+    beforeEach(async () => {
+        const { dispatch, showPage } = setUpController({
+            getDeckSize: () => 1
+        });
+        showPage();
+        dispatch('restoreState', FakeState({
+            turn: 1,
+            currentPlayer: 'P1A',
+            phase: 'draw',
+            cardsInZone: [
+                { id: 'C1A', type: 'duration', commonId: Neutralization.CommonId },
+                { id: 'C2A', type: 'duration' }
+            ]
+        }));
+        await timeout();
+    });
+
+    test('other, now disabled, duration card should have a disabled overlay', () => {
+        assert.elementCount('.playerCardsInZone .card:eq(1) .cardDisabledOverlay', 1);
+    });
+});
+

@@ -268,7 +268,7 @@ class PlayerStateService {
         const cardInOpponentZone = playerState.cardsInOpponentZone.find(c => c.id === cardId);
         if (cardInOpponentZone) return cardInOpponentZone;
 
-        const cardInStation = playerState.stationCards.find(s => s.card.id === cardId);
+        const cardInStation = playerState.stationCards.find(s => getStationCardId(s) === cardId);
         if (cardInStation) return cardInStation.card;
 
         const cardOnHand = playerState.cardsOnHand.find(c => c.id === cardId);

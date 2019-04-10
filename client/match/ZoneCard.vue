@@ -1,6 +1,12 @@
 <template>
     <div :style="cardStyle" :data-type="card.type || ''" :class="classes" ref="card">
         <div @click="enlargeClick" class="enlargeIcon"/>
+        <div v-if="disabled" class="cardDisabledOverlay">
+            <span class="cardDisabledOverlay-text"
+                  :style="disabledOverlayTextStyle">
+                X
+            </span>
+        </div>
         <div class="actionOverlays">
             <div v-if="canBeSelectedAsDefender"
                  @click.stop="selectAsDefender(card)"
@@ -94,14 +100,10 @@
     const {
         mapState: mapCardState,
         mapGetters: mapCardGetters,
-        mapMutations: mapCardMutations,
         mapActions: mapCardActions
     } = Vuex.createNamespacedHelpers('card');
     const {
-        mapState: mapPermissionState,
-        mapGetters: mapPermissionGetters,
-        mapMutations: mapPermissionMutations,
-        mapActions: mapPermissionActions
+        mapGetters: mapPermissionGetters
     } = Vuex.createNamespacedHelpers('permission');
     const vClickOutside = require('v-click-outside');
     const getCardImageUrl = require("../utils/getCardImageUrl.js")
@@ -117,8 +119,7 @@
         ],
         data() {
             return {
-                damageTextFontSize: 0,
-                wasPutDownTurn: null,
+                cardWidth: 0,
                 showEnlargedCard: false
             }
         },
@@ -135,7 +136,8 @@
                 'allOpponentStationCards',
                 'createCard',
                 'attackerCard',
-                'repairerCard'
+                'repairerCard',
+                'canThePlayer'
             ]),
             ...mapPermissionGetters([
                 'canSelectCardsForActiveAction',
@@ -169,6 +171,10 @@
                 }
                 return classes;
             },
+            disabled() {
+                return this.card.type === 'duration'
+                    && !this.canThePlayer.useThisDurationCard(this.card.id);
+            },
             cardStyle() {
                 const cardUrl = getCardImageUrl.byCommonId(this.card.commonId);
                 return {
@@ -176,9 +182,16 @@
                 };
             },
             damageTextStyle() {
+                const fontSize = Math.round(this.cardWidth * .25);
                 return {
-                    fontSize: this.damageTextFontSize + 'px'
+                    fontSize: fontSize + 'px'
                 }
+            },
+            disabledOverlayTextStyle() {
+                const fontSize = Math.round(this.cardWidth * 1.55);
+                return {
+                    fontSize: fontSize + 'px'
+                };
             },
             isPlayerCard() {
                 return this.ownerId === this.ownUser.id;
@@ -354,20 +367,12 @@
                 this.startSacrifice(this.card.id);
             }
         },
-        created() {
-            const putDownEventForThisCard = this.events.find(e => {
-                return e.type === 'putDownCard'
-                    && e.cardId === this.card.id;
-            });
-            this.wasPutDownTurn = putDownEventForThisCard ? putDownEventForThisCard.turn : 0;
-        },
         mounted() {
             if (!this.$refs.card) {
                 throw Error(`Failed to render ZoneCard component with card data: ${JSON.stringify(this.card)}`);
             }
             else {
-                let cardWidth = this.$refs.card.offsetWidth;
-                this.damageTextFontSize = Math.round(cardWidth * .25);
+                this.cardWidth = this.$refs.card.offsetWidth;
             }
         },
         directives: {

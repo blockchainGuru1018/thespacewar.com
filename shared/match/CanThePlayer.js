@@ -11,8 +11,13 @@ class CanThePlayer {
     }
 
     useThisDurationCard(cardId) {
-        return !this._playerStateService.hasDurationCardOfType(Neutralization.CommonId)
+        const cardData = this._findCardFromOpponentOrPlayer(cardId);
+        if (cardData && cardData.commonId === Neutralization.CommonId) return true;
+
+        let noPlayerHasNeutralizationInPlay = !this._playerStateService.hasDurationCardOfType(Neutralization.CommonId)
             && !this._opponentStateService.hasDurationCardOfType(Neutralization.CommonId);
+
+        return noPlayerHasNeutralizationInPlay;
     }
 
     moveThisCard(card) {
@@ -29,6 +34,11 @@ class CanThePlayer {
                 .hasMatchingCardInSomeZone(card => card.preventsOpponentMissilesFromAttacking);
         }
         return true;
+    }
+
+    _findCardFromOpponentOrPlayer(cardId) {
+        return this._playerStateService.findCardFromAnySource(cardId)
+            || this._opponentStateService.findCardFromAnySource(cardId);
     }
 }
 

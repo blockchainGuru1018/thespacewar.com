@@ -8,6 +8,7 @@ module.exports = function (clientState) {
                 events: clientState.events,
                 cardsInZone: clientState.playerCardsInZone,
                 cardsInOpponentZone: clientState.playerCardsInOpponentZone,
+                cardsOnHand: clientState.playerCardsOnHand,
                 stationCards: [
                     ...clientState.playerStation.drawCards,
                     ...clientState.playerStation.actionCards,
@@ -19,6 +20,7 @@ module.exports = function (clientState) {
                 events: clientState.opponentEvents,
                 cardsInZone: clientState.opponentCardsInZone,
                 cardsInOpponentZone: clientState.opponentCardsInPlayerZone,
+                cardsOnHand: new Array(clientState.opponentCardCount).fill({}),
                 stationCards: [
                     ...clientState.opponentStation.drawCards,
                     ...clientState.opponentStation.actionCards,

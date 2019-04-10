@@ -77,3 +77,21 @@
 .selectable--turnedAround {
   transform: rotate(180deg);
 }
+
+.cardDisabledOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .cardDisabledOverlay-text {
+    font-family: "Space mono";
+    color: rgba(255, 0, 0, 0.6);
+    position: relative;
+    bottom: 2px;
+  }
+}

@@ -10,7 +10,7 @@ module.exports = class TheShade extends BaseCard {
     }
 
     canBeTargeted() {
-        const playerOrder = this._matchService.getPlayerOrder()
+        const playerOrder = this._matchService.getPlayerOrder();
         const isLastPlayer = playerOrder[playerOrder.length - 1] === this.playerId;
         const currentTurn = this._matchInfoRepository.getTurn();
 
