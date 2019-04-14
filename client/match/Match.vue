@@ -1,28 +1,54 @@
 <template>
     <div class="match-wrapper">
-        <div :class="['match', `currentPhase--${phase}`]" ref="match">
+        <div
+            ref="match"
+            :class="['match', `currentPhase--${phase}`]"
+        >
             <div class="match-overlay"/>
             <div class="match-backgroundWrapper">
-                <img class="match-background" src="/image/space4.PNG"/>
+                <img
+                    class="match-background"
+                    src="/image/space4.PNG"
+                >
                 <div class="match-backgroundOverlay"/>
             </div>
             <div class="match-header">
-                <button @click="reloadPage" class="icon-reload"/>
-                <button @click="restoreSavedMatch" class="match-smallButton">Restore match</button>
-                <button @click="saveMatch" class="match-smallButton--success match-smallButton">Save match</button>
-                <button @click="retreat" class="match-retreatButton match-smallButton">Retreat</button>
-                <h1 :title="`Match ID: ${matchId}`">{{ ownUser.name }} v.s. {{ opponentUser.name }}</h1>
+                <button
+                    class="icon-reload"
+                    @click="reloadPage"
+                />
+                <button
+                    class="match-smallButton"
+                    @click="restoreSavedMatch"
+                >
+                    Restore match
+                </button>
+                <button
+                    class="match-smallButton--success match-smallButton"
+                    @click="saveMatch"
+                >
+                    Save match
+                </button>
+                <button
+                    class="match-retreatButton match-smallButton"
+                    @click="retreat"
+                >
+                    Retreat
+                </button>
+                <h1 :title="`Match ID: ${matchId}`">
+                    {{ ownUser.name }} v.s. {{ opponentUser.name }}
+                </h1>
             </div>
             <div class="field">
                 <div class="field-opponent">
                     <div class="field-opponentStation opponentStationCards field-station field-section">
                         <div class="field-stationRow">
                             <station-card
-                                    :isOpponentStationCard="true"
-                                    :key="card.id"
-                                    :stationCard="card"
-                                    :isHoldingCard="!!holdingCard"
-                                    v-for="card in opponentStation.drawCards"
+                                v-for="card in opponentStation.drawCards"
+                                :key="card.id"
+                                :is-opponent-station-card="true"
+                                :station-card="card"
+                                :is-holding-card="!!holdingCard"
                             />
                             <div class="stationCardWrapper stationCardWrapper--fullSize">
                                 <div class="card card-placeholder"/>
@@ -30,11 +56,11 @@
                         </div>
                         <div class="field-stationRow">
                             <station-card
-                                    :isOpponentStationCard="true"
-                                    :key="card.id"
-                                    :stationCard="card"
-                                    :isHoldingCard="!!holdingCard"
-                                    v-for="card in opponentStation.actionCards"
+                                v-for="card in opponentStation.actionCards"
+                                :key="card.id"
+                                :is-opponent-station-card="true"
+                                :station-card="card"
+                                :is-holding-card="!!holdingCard"
                             />
                             <div class="stationCardWrapper stationCardWrapper--fullSize">
                                 <div class="card card-placeholder"/>
@@ -42,11 +68,11 @@
                         </div>
                         <div class="field-stationRow">
                             <station-card
-                                    :isOpponentStationCard="true"
-                                    :key="card.id"
-                                    :stationCard="card"
-                                    :isHoldingCard="!!holdingCard"
-                                    v-for="card in opponentStation.handSizeCards"
+                                v-for="card in opponentStation.handSizeCards"
+                                :key="card.id"
+                                :is-opponent-station-card="true"
+                                :station-card="card"
+                                :is-holding-card="!!holdingCard"
                             />
                             <div class="stationCardWrapper stationCardWrapper--fullSize">
                                 <div class="card card-placeholder"/>
@@ -56,207 +82,300 @@
                     <div class="field-zoneRows field-opponentZoneRows">
                         <div class="opponentCardsInZone field-opponentZoneRow field-zone field-section">
                             <template v-for="n in opponentCardsInZone.length">
-                                <zone-card :card="opponentCardsInZone[n - 1]"
-                                           :key="opponentCardsInZone[n - 1].id"
-                                           :ownerId="opponentUser.id"
-                                           :zoneOpponentRow="playerCardsInOpponentZone"
-                                           :zonePlayerRow="opponentCardsInZone"
-                                           class="card--turnedAround"
-                                           v-if="n <= opponentCardsInZone.length"/>
+                                <zone-card
+                                    v-if="n <= opponentCardsInZone.length"
+                                    :key="opponentCardsInZone[n - 1].id"
+                                    :card="opponentCardsInZone[n - 1]"
+                                    :owner-id="opponentUser.id"
+                                    :zone-opponent-row="playerCardsInOpponentZone"
+                                    :zone-player-row="opponentCardsInZone"
+                                    class="card--turnedAround"
+                                />
                             </template>
-                            <div class="card card-placeholder" v-if="opponentCardsInZone.length === 0"/>
+                            <div
+                                v-if="opponentCardsInZone.length === 0"
+                                class="card card-placeholder"
+                            />
                         </div>
                         <div class="playerCardsInOpponentZone field-opponentZoneRow field-zone field-section">
                             <template v-for="n in playerCardsInOpponentZone.length">
-                                <zone-card :card="playerCardsInOpponentZone[n - 1]"
-                                           :key="playerCardsInOpponentZone[n - 1].id"
-                                           :ownerId="ownUser.id"
-                                           :zoneOpponentRow="opponentCardsInZone"
-                                           :zonePlayerRow="playerCardsInOpponentZone"
-                                           v-if="n <= playerCardsInOpponentZone.length"/>
+                                <zone-card
+                                    v-if="n <= playerCardsInOpponentZone.length"
+                                    :key="playerCardsInOpponentZone[n - 1].id"
+                                    :card="playerCardsInOpponentZone[n - 1]"
+                                    :owner-id="ownUser.id"
+                                    :zone-opponent-row="opponentCardsInZone"
+                                    :zone-player-row="playerCardsInOpponentZone"
+                                />
                             </template>
-                            <div class="card card-placeholder" v-if="playerCardsInOpponentZone.length === 0"/>
+                            <div
+                                v-if="playerCardsInOpponentZone.length === 0"
+                                class="card card-placeholder"
+                            />
                         </div>
                     </div>
                     <div class="field-piles field-section">
                         <div class="field-discardPile">
-                            <div class="card card-placeholder"
-                                 v-if="!opponentTopDiscardCard"/>
-                            <div :data-cardId="opponentTopDiscardCard.id"
-                                 :style="getCardImageStyle(opponentTopDiscardCard)"
-                                 class="card card--turnedAround"
-                                 v-else/>
+                            <div
+                                v-if="!opponentTopDiscardCard"
+                                class="card card-placeholder"
+                            />
+                            <div
+                                v-else
+                                :data-cardId="opponentTopDiscardCard.id"
+                                :style="getCardImageStyle(opponentTopDiscardCard)"
+                                class="card card--turnedAround"
+                            />
                         </div>
                         <div class="field-drawPile">
                             <portal-target name="opponentDrawPile"/>
-                            <div v-if="!opponentDeckIsEmpty" class="card card-faceDown">
+                            <div
+                                v-if="!opponentDeckIsEmpty"
+                                class="card card-faceDown"
+                            >
                                 <div class="actionOverlays">
-                                    <div @click="opponentDrawPileClick"
-                                         class="drawPile-discardTopTwo actionOverlay"
-                                         v-if="canMill">
+                                    <div
+                                        v-if="canMill"
+                                        class="drawPile-discardTopTwo actionOverlay"
+                                        @click="opponentDrawPileClick"
+                                    >
                                         Mill 2
                                     </div>
                                 </div>
                             </div>
-                            <div v-else-if="canMill" class="card card-emptyDeck">
+                            <div
+                                v-else-if="canMill"
+                                class="card card-emptyDeck"
+                            >
                                 <div class="actionOverlays">
-                                    <div @click="opponentDrawPileClick" class="drawPile-discardTopTwo actionOverlay">
+                                    <div
+                                        class="drawPile-discardTopTwo actionOverlay"
+                                        @click="opponentDrawPileClick"
+                                    >
                                         Mill 2
                                     </div>
                                 </div>
                             </div>
-                            <div v-else class="card card-emptyDeck"/>
+                            <div
+                                v-else
+                                class="card card-emptyDeck"
+                            />
+                            <div class="drawPile-cardCount drawPile-cardCountText">
+                                {{ opponentCardsInDeckCount }}
+                            </div>
                         </div>
                     </div>
                     <div class="field-opponentCardsOnHand field-section">
                         <div
-                                :style="getOpponentCardStyle(n - 1)"
-                                class="card card-faceDown"
-                                v-for="n in opponentCardCount"/>
+                            v-for="n in opponentCardCount"
+                            :key="n"
+                            :style="getOpponentCardStyle(n - 1)"
+                            class="card card-faceDown"
+                        />
                     </div>
                 </div>
                 <div class="field-dividerWrapper">
                     <div class="field-divider"/>
-                    <portal-target class="field-dividerContent" name="player-top" tag="div"/>
+                    <portal-target
+                        class="field-dividerContent"
+                        name="player-top"
+                        tag="div"
+                    />
                 </div>
                 <div class="field-player">
                     <div class="field-piles field-section">
                         <div class="field-drawPile">
                             <portal-target name="playerDrawPile"/>
-                            <div v-if="playerCardsInDeckCount > 0" class="card card-faceDown">
+                            <div
+                                v-if="playerCardsInDeckCount > 0"
+                                class="card card-faceDown"
+                            >
                                 <div class="actionOverlays">
-                                    <div @click="playerDrawPileClick"
-                                         class="drawPile-draw actionOverlay"
-                                         v-if="canDrawCards">
+                                    <div
+                                        v-if="canDrawCards"
+                                        class="drawPile-draw actionOverlay"
+                                        @click="playerDrawPileClick"
+                                    >
                                         Draw
                                     </div>
                                 </div>
                             </div>
-                            <div v-else-if="canDrawCards" class="card card-emptyDeck">
+                            <div
+                                v-else-if="canDrawCards"
+                                class="card card-emptyDeck"
+                            >
                                 <div class="actionOverlays">
-                                    <div @click="playerDrawPileClick"
-                                         class="drawPile-draw actionOverlay actionOverlay--hinted">
+                                    <div
+                                        class="drawPile-draw actionOverlay actionOverlay--hinted"
+                                        @click="playerDrawPileClick"
+                                    >
                                         Pass
                                     </div>
                                 </div>
                             </div>
-                            <div v-else class="card card-emptyDeck"/>
+                            <div
+                                v-else
+                                class="card card-emptyDeck"
+                            />
                             <div class="drawPile-cardCount drawPile-cardCountText">
                                 {{ playerCardsInDeckCount }}
                             </div>
                         </div>
                         <div class="field-discardPile">
-                            <div class="card card-placeholder" v-if="!playerTopDiscardCard"/>
-                            <div :data-cardId="playerTopDiscardCard.id"
-                                 :style="getCardImageStyle(playerTopDiscardCard)"
-                                 class="card"
-                                 v-else/>
-                            <CardGhost :elementHoveredOver="elementHoveredOver"
-                                       @click="cardGhostClick"
-                                       class="discardPile-cardGhost"
-                                       location="discard"
-                                       v-if="discardPileCardGhostVisible"/>
+                            <div
+                                v-if="!playerTopDiscardCard"
+                                class="card card-placeholder"
+                            />
+                            <div
+                                v-else
+                                :data-cardId="playerTopDiscardCard.id"
+                                :style="getCardImageStyle(playerTopDiscardCard)"
+                                class="card"
+                            />
+                            <CardGhost
+                                v-if="discardPileCardGhostVisible"
+                                :element-hovered-over="elementHoveredOver"
+                                class="discardPile-cardGhost"
+                                location="discard"
+                                @click="cardGhostClick"
+                            />
                         </div>
                     </div>
                     <div class="field-zoneRows field-playerZoneRows">
                         <div class="opponentCardsInPlayerZone field-zone field-section">
                             <template v-for="n in opponentCardsInPlayerZone.length">
-                                <zone-card :card="opponentCardsInPlayerZone[n - 1]"
-                                           :key="opponentCardsInPlayerZone[n - 1].id"
-                                           :ownerId="opponentUser.id"
-                                           :zoneOpponentRow="playerCardsInZone"
-                                           :zonePlayerRow="opponentCardsInPlayerZone"
-                                           class="card--turnedAround"
-                                           v-if="n <= opponentCardsInPlayerZone.length"/>
+                                <zone-card
+                                    v-if="n <= opponentCardsInPlayerZone.length"
+                                    :key="opponentCardsInPlayerZone[n - 1].id"
+                                    :card="opponentCardsInPlayerZone[n - 1]"
+                                    :owner-id="opponentUser.id"
+                                    :zone-opponent-row="playerCardsInZone"
+                                    :zone-player-row="opponentCardsInPlayerZone"
+                                    class="card--turnedAround"
+                                />
                             </template>
-                            <div class="card card-placeholder" v-if="opponentCardsInPlayerZone.length === 0"/>
+                            <div
+                                v-if="opponentCardsInPlayerZone.length === 0"
+                                class="card card-placeholder"
+                            />
                         </div>
                         <div class="playerCardsInZone field-playerZoneCards field-zone field-section">
                             <template v-for="n in visiblePlayerCards.length">
-                                <zone-card :card="(visiblePlayerCards[n - 1])"
-                                           :isHomeZone="true"
-                                           :key="visiblePlayerCards[n - 1].id"
-                                           :ownerId="ownUser.id"
-                                           :zoneOpponentRow="opponentCardsInPlayerZone"
-                                           :zonePlayerRow="visiblePlayerCards"
-                                           v-if="n <= visiblePlayerCards.length"/>
+                                <zone-card
+                                    v-if="n <= visiblePlayerCards.length"
+                                    :key="visiblePlayerCards[n - 1].id"
+                                    :card="(visiblePlayerCards[n - 1])"
+                                    :is-home-zone="true"
+                                    :owner-id="ownUser.id"
+                                    :zone-opponent-row="opponentCardsInPlayerZone"
+                                    :zone-player-row="visiblePlayerCards"
+                                />
                             </template>
 
                             <template v-if="visiblePlayerCards.length === 0">
                                 <CardGhost
-                                        :elementHoveredOver="elementHoveredOver"
-                                        @click="cardGhostClick"
-                                        location="zone"
-                                        v-if="playerZoneCardGhostVisible"
+                                    v-if="playerZoneCardGhostVisible"
+                                    :element-hovered-over="elementHoveredOver"
+                                    location="zone"
+                                    @click="cardGhostClick"
                                 />
-                                <div class="card card-placeholder" v-else/>
+                                <div
+                                    v-else
+                                    class="card card-placeholder"
+                                />
                             </template>
                             <CardGhost
-                                    :elementHoveredOver="elementHoveredOver"
-                                    @click="cardGhostClick"
-                                    class="card-ghost--leftAbsolute"
-                                    location="zone"
-                                    v-else-if="playerZoneCardGhostVisible"/>
+                                v-else-if="playerZoneCardGhostVisible"
+                                :element-hovered-over="elementHoveredOver"
+                                class="card-ghost--leftAbsolute"
+                                location="zone"
+                                @click="cardGhostClick"
+                            />
                         </div>
                     </div>
                     <div class="playerStationCards field-playerStation field-station field-section">
                         <div class="field-stationRow">
                             <portal-target name="stationDrawRow"/>
-                            <station-card :key="card.id"
-                                          :stationCard="card"
-                                          :isHoldingCard="!!holdingCard"
-                                          v-for="card in playerVisibleDrawStationCards"/>
+                            <station-card
+                                v-for="card in playerVisibleDrawStationCards"
+                                :key="card.id"
+                                :station-card="card"
+                                :is-holding-card="!!holdingCard"
+                            />
                             <div class="stationCardWrapper stationCardWrapper--fullSize">
                                 <CardGhost
-                                        :elementHoveredOver="elementHoveredOver"
-                                        @click="cardGhostClick"
-                                        location="station-draw"
-                                        v-if="stationCardGhostVisible"/>
-                                <div class="card card-placeholder" v-else/>
+                                    v-if="stationCardGhostVisible"
+                                    :element-hovered-over="elementHoveredOver"
+                                    location="station-draw"
+                                    @click="cardGhostClick"
+                                />
+                                <div
+                                    v-else
+                                    class="card card-placeholder"
+                                />
                             </div>
                         </div>
                         <div class="field-stationRow">
                             <portal-target name="stationActionRow"/>
-                            <station-card :key="card.id"
-                                          :stationCard="card"
-                                          :isHoldingCard="!!holdingCard"
-                                          v-for="card in playerVisibleActionStationCards"/>
+                            <station-card
+                                v-for="card in playerVisibleActionStationCards"
+                                :key="card.id"
+                                :station-card="card"
+                                :is-holding-card="!!holdingCard"
+                            />
                             <div class="stationCardWrapper stationCardWrapper--fullSize">
                                 <CardGhost
-                                        :elementHoveredOver="elementHoveredOver"
-                                        @click="cardGhostClick"
-                                        location="station-action"
-                                        v-if="stationCardGhostVisible"/>
-                                <div class="card card-placeholder" v-else/>
+                                    v-if="stationCardGhostVisible"
+                                    :element-hovered-over="elementHoveredOver"
+                                    location="station-action"
+                                    @click="cardGhostClick"
+                                />
+                                <div
+                                    v-else
+                                    class="card card-placeholder"
+                                />
                             </div>
                         </div>
                         <div class="field-stationRow">
                             <portal-target name="stationHandSizeRow"/>
                             <station-card
-                                    :key="card.id"
-                                    :stationCard="card"
-                                    :isHoldingCard="!!holdingCard"
-                                    v-for="card in playerVisibleHandSizeStationCards"/>
+                                v-for="card in playerVisibleHandSizeStationCards"
+                                :key="card.id"
+                                :station-card="card"
+                                :is-holding-card="!!holdingCard"
+                            />
                             <div class="stationCardWrapper stationCardWrapper--fullSize">
                                 <CardGhost
-                                        :elementHoveredOver="elementHoveredOver"
-                                        @click="cardGhostClick"
-                                        location="station-handSize"
-                                        v-if="stationCardGhostVisible"/>
-                                <div class="card card-placeholder" v-else/>
+                                    v-if="stationCardGhostVisible"
+                                    :element-hovered-over="elementHoveredOver"
+                                    location="station-handSize"
+                                    @click="cardGhostClick"
+                                />
+                                <div
+                                    v-else
+                                    class="card card-placeholder"
+                                />
                             </div>
                         </div>
                     </div>
                     <PlayerCardsOnHand
-                            :holdingCard="holdingCard"
-                            @cardClick="playerCardClick"/>
+                        :holding-card="holdingCard"
+                        @cardClick="playerCardClick"
+                    />
                     <player-hud/>
                 </div>
             </div>
-            <div :style="holdingCardStyle" class="card holdingCard" v-if="holdingCard"/>
+            <div
+                v-if="holdingCard"
+                :style="holdingCardStyle"
+                class="card holdingCard"
+            />
             <card-choice-dialog/>
             <loading-indicator/>
-            <portal-target multiple name="match"/>
+            <portal-target
+                multiple
+                name="match"
+            />
         </div>
     </div>
 </template>
@@ -315,6 +434,7 @@
                 'canPutDownCard',
                 'createCard',
                 'allPlayerStationCards',
+                'opponentCardsInDeckCount',
                 'playerCardsInDeckCount'
             ]),
             ...mapCardState([
