@@ -1,34 +1,40 @@
 <template>
     <div class="field-playerCardsOnHand field-section">
-        <div v-if="!holdingCard"
-             v-for="card, index in playerVisibleCardsOnHand"
-             :data-index="index"
-             :style="getCardHoverActivatorStyle(card, index)"
-             @click.stop="playerCardClick(card)"
-             @mouseenter="mouseEnterCardAtIndex(index)"
-             @mouseleave="mouseLeaveCardAtIndex(index)"
-             class="cardHoverActivator cardOnHand"
-             ref="cardHoverActivator"/>
-        <div v-if="!holdingCard && index === hoveringOverCardAtIndex"
-             v-for="card, index in playerVisibleCardsOnHand"
-             :data-index="index"
-             :style="getCardHoverBlowUpStyle(card, index)"
-             @click.stop="playerCardClick(card)"
-             @mouseenter="mouseEnterCardAtIndex(index)"
-             @mouseleave="mouseLeaveCardAtIndex(index)"
-             class="cardHoverBlowUp"
-             ref="cardHoverBlowUp"/>
-        <div v-if="card !== holdingCard"
-             v-for="card, index in playerVisibleCardsOnHand"
-             :class="getPlayerCardClasses(card)"
-             :style="getCardOnHandStyle(card, index)"
-             @click="switchCardClick(card)"/>
+        <div
+            v-for="{card, index} in visibleCardHoverActivators"
+            :key="`hoverActivator-${card.id}`"
+            ref="cardHoverActivator"
+            :data-index="index"
+            :style="getCardHoverActivatorStyle(card, index)"
+            class="cardHoverActivator cardOnHand"
+            @click.stop="playerCardClick(card)"
+            @mouseenter="mouseEnterCardAtIndex(index)"
+            @mouseleave="mouseLeaveCardAtIndex(index)"
+        />
+        <div
+            v-for="{card, index} in visibleCardBlowUps"
+            :key="`blowUp-${card.id}`"
+            ref="cardHoverBlowUp"
+            :data-index="index"
+            :style="getCardHoverBlowUpStyle(card, index)"
+            class="cardHoverBlowUp"
+            @click.stop="playerCardClick(card)"
+            @mouseenter="mouseEnterCardAtIndex(index)"
+            @mouseleave="mouseLeaveCardAtIndex(index)"
+        />
+        <div
+            v-for="{card, index} in playerVisibleCardsOnHandNotIncludingHoldingCard"
+            :key="card.id"
+            :class="getPlayerCardClasses(card)"
+            :style="getCardOnHandStyle(card, index)"
+            @click="switchCardClick(card)"
+        />
     </div>
 </template>
 <script>
     const Vuex = require('vuex');
     const getCardImageUrl = require("../utils/getCardImageUrl.js");
-    const { mapState } = Vuex.createNamespacedHelpers('match');
+    const matchHelpers = Vuex.createNamespacedHelpers('match');
     const { mapGetters: mapPermissionGetters } = Vuex.createNamespacedHelpers('permission');
     const { mapState: mapCardState } = Vuex.createNamespacedHelpers('card');
 
@@ -40,18 +46,40 @@
             };
         },
         computed: {
-            ...mapState([
+            ...matchHelpers.mapState([
                 'playerCardsOnHand'
+            ]),
+            ...matchHelpers.mapGetters([
+                'canThePlayer'
             ]),
             ...mapCardState([
                 'hiddenCardIdsOnHand',
             ]),
             ...mapPermissionGetters([
-                'canMoveCardsFromHand',
+                'canMoveCardsFromHand'
             ]),
             playerVisibleCardsOnHand() {
                 return this.playerCardsOnHand.filter(card => !this.hiddenCardIdsOnHand.some(id => id === card.id));
-            }
+            },
+            playerVisibleCardsOnHandNotIncludingHoldingCard() { //TODO Fix naming scheme as "visible" should REALLY mean visible and not what it is now.
+                return this.playerVisibleCardsOnHand
+                    .map((card, index) => ({ card, index }))
+                    .filter(({ card }) => card !== this.holdingCard);
+            },
+            visibleCardHoverActivators() {
+                if (this.holdingCard) return [];
+
+                return this
+                    .playerVisibleCardsOnHand
+                    .map((card, index) => ({ card, index }))
+            },
+            visibleCardBlowUps() {
+                if (this.holdingCard) return [];
+
+                return this.playerVisibleCardsOnHand
+                    .map((card, index) => ({ card, index }))
+                    .filter(({ index }) => index === this.hoveringOverCardAtIndex);
+            },
         },
         methods: {
             switchCardClick(card) {

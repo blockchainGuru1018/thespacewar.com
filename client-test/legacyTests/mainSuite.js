@@ -1630,12 +1630,12 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
                 dispatch('restoreState', FakeState({
-                    turn: 1,
+                    turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
                     cardsInZone: [{ id: 'C1A', type: 'spaceShip', commonId: PursuiterCommonId }],
                     opponentCardsInPlayerZone: [{ id: 'C2A' }],
-                    events: [PutDownCardEvent({ turn: 1, location: 'station-draw', cardId: 'C1A' })]
+                    events: [PutDownCardEvent({ turn: 1, cardId: 'C1A' })]
                 }));
                 await timeout();
             },
@@ -1643,35 +1643,17 @@ module.exports = {
                 assert.elementCount('.playerCardsInZone .sacrifice', 1);
             }
         },
-        'when is NOT attack phase and has card and an opponent card in home zone': {
-            async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
-                dispatch('restoreState', FakeState({
-                    turn: 1,
-                    currentPlayer: 'P1A',
-                    phase: 'action',
-                    cardsInZone: [{ id: 'C1A', type: 'spaceShip', commonId: PursuiterCommonId }],
-                    opponentCardsInPlayerZone: [{ id: 'C2A' }],
-                    events: [PutDownCardEvent({ turn: 1, location: 'station-draw', cardId: 'C1A' })]
-                }));
-                await timeout();
-            },
-            'should NOT be able to sacrifice own card'() {
-                assert.elementCount('.playerCardsInZone .sacrifice', 0);
-            }
-        },
         'when has card THAT IS NOT PURSUITER and an opponent card in home zone': {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
                 dispatch('restoreState', FakeState({
-                    turn: 1,
+                    turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
                     cardsInZone: [{ id: 'C1A', type: 'spaceShip' }],
                     opponentCardsInPlayerZone: [{ id: 'C2A' }],
-                    events: [PutDownCardEvent({ turn: 1, location: 'station-draw', cardId: 'C1A' })]
+                    events: [PutDownCardEvent({ turn: 1, cardId: 'C1A' })]
                 }));
                 await timeout();
             },
@@ -1685,12 +1667,12 @@ module.exports = {
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
                 dispatch('restoreState', FakeState({
-                    turn: 1,
+                    turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
                     cardsInZone: [{ id: 'C1A', type: 'spaceShip', commonId: PursuiterCommonId }],
                     opponentCardsInPlayerZone: [{ id: 'C2A' }],
-                    events: [PutDownCardEvent({ turn: 1, location: 'station-draw', cardId: 'C1A' })]
+                    events: [PutDownCardEvent({ turn: 1, cardId: 'C1A' })]
                 }));
                 await timeout();
 
@@ -1706,7 +1688,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
                 dispatch('restoreState', FakeState({
-                    turn: 1,
+                    turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
                     cardsInZone: [
@@ -1749,7 +1731,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
                 dispatch('restoreState', FakeState({
-                    turn: 1,
+                    turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
                     cardsInOpponentZone: [{ id: 'C1A', type: 'spaceShip', commonId: PursuiterCommonId }],
@@ -1786,7 +1768,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
                 dispatch('restoreState', FakeState({
-                    turn: 1,
+                    turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
                     cardsInOpponentZone: [{ id: 'C1A', type: 'spaceShip', commonId: PursuiterCommonId }],
@@ -1813,7 +1795,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
                 dispatch('restoreState', FakeState({
-                    turn: 1,
+                    turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
                     cardsInOpponentZone: [{ id: 'C1A', type: 'spaceShip', commonId: PursuiterCommonId }],
@@ -1842,7 +1824,7 @@ module.exports = {
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
                 dispatch('restoreState', FakeState({
-                    turn: 1,
+                    turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
                     cardsInOpponentZone: [{ id: 'C1A', type: 'spaceShip', commonId: PursuiterCommonId }],
@@ -1879,7 +1861,7 @@ module.exports = {
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
                 dispatch('restoreState', FakeState({
-                    turn: 1,
+                    turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
                     cardsInOpponentZone: [{ id: 'C1A', type: 'spaceShip', commonId: PursuiterCommonId }],

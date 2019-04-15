@@ -1,25 +1,43 @@
 <template>
-    <div :class="['stationCardWrapper', {'stationCardWrapper--fullSize': stationCard.flipped && !isOpponentStationCard}]">
-        <div :class="classes" :style="cardStyle">
-            <div class="actionOverlays" v-if="!isHoldingCard">
-                <div v-if="canMoveCardToZone"
-                     @click.stop="putDownCardOrShowChoiceOrAction({ location: 'zone', cardData: stationCard.card })"
-                     class="movable">
+    <div
+        :class="['stationCardWrapper', {'stationCardWrapper--fullSize': stationCard.flipped && !isOpponentStationCard}]"
+    >
+        <div
+            :class="classes"
+            :style="cardStyle"
+        >
+            <div
+                v-if="!isHoldingCard"
+                class="actionOverlays"
+            >
+                <div
+                    v-if="canMoveCardToZone"
+                    class="movable"
+                    @click.stop="putDownCardOrShowChoiceOrAction({ location: 'zone', cardData: stationCard.card })"
+                >
                     Move to zone
                 </div>
 
-                <div v-if="canBeSelectedAsDefender"
-                     @click.stop="selectStationCardAsDefender(stationCard)"
-                     class="attackable"/>
-                <div v-else-if="canBeSelectedForRepair"
-                     @click.stop="selectForRepair(stationCard.id)"
-                     class="selectForRepair actionOverlay"/>
-                <div v-else-if="canBeSelectedForRequirement"
-                     @click.stop="selectStationCardForRequirement(stationCard)"
-                     class="selectable"/>
-                <div v-else-if="canSelectedCardForAction"
-                     @click.stop="selectCardForActiveAction(stationCard.id)"
-                     class="selectable"/>
+                <div
+                    v-if="canBeSelectedAsDefender"
+                    class="attackable"
+                    @click.stop="selectStationCardAsDefender(stationCard)"
+                />
+                <div
+                    v-else-if="canBeSelectedForRepair"
+                    class="selectForRepair actionOverlay"
+                    @click.stop="selectForRepair(stationCard.id)"
+                />
+                <div
+                    v-else-if="canBeSelectedForRequirement"
+                    class="selectable"
+                    @click.stop="selectStationCardForRequirement(stationCard)"
+                />
+                <div
+                    v-else-if="canSelectedCardForAction"
+                    class="selectable"
+                    @click.stop="selectCardForActiveAction(stationCard.id)"
+                />
             </div>
         </div>
     </div>
@@ -60,7 +78,8 @@
             ...mapGetters([
                 'attackerCanAttackStationCards',
                 'actionPoints2',
-                'createCard'
+                'createCard',
+                'canPutDownCard'
             ]),
             ...mapPermissionGetters([
                 'canSelectStationCards',
@@ -98,12 +117,13 @@
                 }
                 return {};
             },
-            canMoveCardToZone() {
-                return this.phase === 'action'
+            canMoveCardToZone() { //TODO Needs to check "canPutDownCard"
+                return !this.isOpponentStationCard
                     && this.stationCard.flipped
+                    && this.phase === 'action'
                     && this.actionPoints2 >= this.stationCard.card.cost
-                    && !this.isOpponentStationCard
-                    && this.canMoveStationCards;
+                    && this.canMoveStationCards
+                    && this.canPutDownCard(this.stationCard.card)
             },
             selectedWithDanger() {
                 return this.selectedAsDefender

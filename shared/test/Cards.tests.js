@@ -314,6 +314,42 @@ module.exports = testCase('Cards', {
             });
 
             refute(this.card.canBeSacrificed());
+        },
+        'when has attacked this turn should NOT be able to sacrifice'() {
+            this.card = createCard(Pursuiter, {
+                card: { id: 'C1A', attack: 1 },
+                playerId: 'P1A',
+                matchService: {
+                    getTurn: () => 2
+                },
+                queryEvents: queryEventsFactory.withStubs({
+                    getTurnWhenCardWasPutDown: () => 1,
+                    getAttacksOnTurn: () => [{}]
+                }),
+                playerStateService: playerStateServiceFactory.withStubs({
+                    getPhase: () => 'attack'
+                })
+            });
+
+            refute(this.card.canBeSacrificed());
+        },
+        'when is NOT attack phase should NOT be able to sacrifice'() {
+            this.card = createCard(Pursuiter, {
+                card: { id: 'C1A', attack: 1 },
+                playerId: 'P1A',
+                matchService: {
+                    getTurn: () => 2
+                },
+                queryEvents: queryEventsFactory.withStubs({
+                    getTurnWhenCardWasPutDown: () => 1,
+                    getAttacksOnTurn: () => []
+                }),
+                playerStateService: playerStateServiceFactory.withStubs({
+                    getPhase: () => 'draw'
+                })
+            });
+
+            refute(this.card.canBeSacrificed());
         }
     },
     'Nuclear missile:': {

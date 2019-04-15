@@ -262,12 +262,12 @@ module.exports = function (deps) {
     }
 
     function canPutDownCard(state, getters) {
-        return card => {
-            const canOnlyHaveOneInHomeZone = getters.createCard(card).canOnlyHaveOneInHomeZone();
+        return cardData => {
+            const canOnlyHaveOneInHomeZone = getters.createCard(cardData).canOnlyHaveOneInHomeZone();
             if (canOnlyHaveOneInHomeZone) {
-                return !state.playerCardsInZone.some(c => c.commonId === card.commonId);
+                return !state.playerCardsInZone.some(c => c.commonId === cardData.commonId);
             }
-            return true;
+            return getters.canThePlayer.putDownThisCard(cardData);
         };
     }
 

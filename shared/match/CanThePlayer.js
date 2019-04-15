@@ -1,5 +1,8 @@
 const Neutralization = require('../card/Neutralization.js');
 
+//TODO Idea for interface. Each method takes cardData, but if necessary or ideal they have a
+// sibling method with the same name and a suffix "byId" that get the cardData and runs the other method.
+// In an ideal world it would only take real "behaviourCards", that is NOT cardData but an instance of BaseCard.
 class CanThePlayer {
 
     constructor({
@@ -10,6 +13,7 @@ class CanThePlayer {
         this._opponentStateService = opponentStateService;
     }
 
+    //TODO This could do as "putDownThisEventCard" and check for properties on instantiated cards instead of checking against static properties.
     useThisDurationCard(cardId) {
         const cardData = this._findCardFromOpponentOrPlayer(cardId);
         if (cardData && cardData.commonId === Neutralization.CommonId) return true;
@@ -18,6 +22,21 @@ class CanThePlayer {
             && !this._opponentStateService.hasDurationCardOfType(Neutralization.CommonId);
 
         return noPlayerHasNeutralizationInPlay;
+    }
+
+    putDownThisCard(cardData) {
+        if (cardData.type === 'event') {
+            return this.putDownThisEventCard(cardData.id);
+        }
+
+        return true;
+    }
+
+    putDownThisEventCard(cardData) {
+        let somePlayerHasCardThatPreventsEventCards = this._playerStateService.hasMatchingCardInSomeZone(card => card.preventsAnyPlayerFromPlayingAnEventCard)
+            || this._opponentStateService.hasMatchingCardInSomeZone(card => card.preventsAnyPlayerFromPlayingAnEventCard);
+
+        return !somePlayerHasCardThatPreventsEventCards;
     }
 
     moveThisCard(card) {

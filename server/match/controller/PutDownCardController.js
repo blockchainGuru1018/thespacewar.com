@@ -81,7 +81,7 @@ function PutDownCardController(deps) {
             }
 
             const card = cardFactory.createCardForPlayer(cardData, playerId);
-            if (!!card.requirementsWhenPutDownInHomeZone) {
+            if (card.requirementsWhenPutDownInHomeZone) {
                 addCardRequirementsOnPutDownInHomeZone({ playerId, card });
             }
         }
