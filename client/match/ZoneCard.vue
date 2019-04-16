@@ -1,81 +1,125 @@
 <template>
-    <div :style="cardStyle" :data-type="card.type || ''" :class="classes" ref="card">
-        <div @click="enlargeClick" class="enlargeIcon"/>
-        <div v-if="disabled" class="cardDisabledOverlay">
-            <span class="cardDisabledOverlay-text"
-                  :style="disabledOverlayTextStyle">
+    <div
+        ref="card"
+        :style="cardStyle"
+        :data-type="card.type || ''"
+        :class="classes"
+    >
+        <div
+            class="enlargeIcon"
+            @click="enlargeClick"
+        />
+        <div
+            v-if="disabled"
+            class="cardDisabledOverlay"
+        >
+            <span
+                class="cardDisabledOverlay-text"
+                :style="disabledOverlayTextStyle"
+            >
                 X
             </span>
         </div>
         <div class="actionOverlays">
-            <div v-if="canBeSelectedAsDefender"
-                 @click.stop="selectAsDefender(card)"
-                 class="attackable actionOverlay actionOverlay--turnedAround">
-                <div v-if="predictedResultsIfAttacked.defenderParalyzed"
-                     class="attackble-paralyzed actionOverlay-predictionText">
+            <div
+                v-if="canBeSelectedAsDefender"
+                class="attackable actionOverlay actionOverlay--turnedAround"
+                @click.stop="selectAsDefender(card)"
+            >
+                <div
+                    v-if="predictedResultsIfAttacked.defenderParalyzed"
+                    class="attackble-paralyzed actionOverlay-predictionText"
+                >
                     Paralyze
                 </div>
-                <div v-else-if="predictedResultsIfAttacked.defenderDestroyed"
-                     class="actionOverlay-predictedLethal actionOverlay-predictionText">
+                <div
+                    v-else-if="predictedResultsIfAttacked.defenderDestroyed"
+                    class="actionOverlay-predictedLethal actionOverlay-predictionText"
+                >
                     ⇒0
                 </div>
-                <div v-else
-                     class="actionOverlay-predictedDamageChange actionOverlay-predictionText">
+                <div
+                    v-else
+                    class="actionOverlay-predictedDamageChange actionOverlay-predictionText"
+                >
                     {{ behaviourCard.defense - behaviourCard.damage }}
                     ⇒
                     {{ behaviourCard.defense - predictedResultsIfAttacked.defenderDamage }}
                 </div>
             </div>
-            <div v-else-if="canBeSelectedForRepair"
-                 @click.stop="selectForRepair(card.id)"
-                 class="selectForRepair actionOverlay">
-                <div v-if="behaviourCard.paralyzed != predictedResultsIfRepaired.paralyzed"
-                     class="selectForRepair-reActivate actionOverlay-predictionText">
+            <div
+                v-else-if="canBeSelectedForRepair"
+                class="selectForRepair actionOverlay"
+                @click.stop="selectForRepair(card.id)"
+            >
+                <div
+                    v-if="behaviourCard.paralyzed != predictedResultsIfRepaired.paralyzed"
+                    class="selectForRepair-reActivate actionOverlay-predictionText"
+                >
                     Re-activate
                 </div>
-                <div v-if="behaviourCard.damage != predictedResultsIfRepaired.damage"
-                     class="actionOverlay-predictedDamageChange actionOverlay-predictionText">
+                <div
+                    v-if="behaviourCard.damage != predictedResultsIfRepaired.damage"
+                    class="actionOverlay-predictedDamageChange actionOverlay-predictionText"
+                >
                     {{ behaviourCard.defense - behaviourCard.damage }}
                     ⇒
                     {{ behaviourCard.defense - predictedResultsIfRepaired.damage }}
                 </div>
             </div>
             <template v-else-if="canSelectAction">
-                <div v-if="canMove"
-                     @click.stop="moveClick"
-                     class="movable actionOverlay">
+                <div
+                    v-if="canMove"
+                    class="movable actionOverlay"
+                    @click.stop="moveClick"
+                >
                     Move
                 </div>
-                <div v-if="canAttack"
-                     @click.stop="readyToAttackClick"
-                     class="readyToAttack actionOverlay">
+                <div
+                    v-if="canAttack"
+                    class="readyToAttack actionOverlay"
+                    @click.stop="readyToAttackClick"
+                >
                     Attack
                 </div>
-                <div v-if="canRepair"
-                     @click="selectAsRepairer(card.id)"
-                     class="repair actionOverlay">
+                <div
+                    v-if="canRepair"
+                    class="repair actionOverlay"
+                    @click="selectAsRepairer(card.id)"
+                >
                     Repair
                 </div>
-                <div v-if="canBeSacrificed"
-                     @click="sacrifice(card.id)"
-                     class="sacrifice actionOverlay">
+                <div
+                    v-if="canBeSacrificed"
+                    class="sacrifice actionOverlay"
+                    @click="sacrifice(card.id)"
+                >
                     Sacrifice
                 </div>
-                <div v-if="canBeDiscarded"
-                     @click.stop="discardClick"
-                     class="discard actionOverlay">
+                <div
+                    v-if="canBeDiscarded"
+                    class="discard actionOverlay"
+                    @click.stop="discardClick"
+                >
                     Discard
                 </div>
             </template>
-            <div v-if="canSelectCardForAction"
-                 @click.stop="selectCardForActiveAction(card.id)"
-                 :class="['selectable', {'selectable--turnedAround': !isPlayerCard}]">
+            <div
+                v-if="canSelectCardForAction"
+                :class="['selectable', {'selectable--turnedAround': !isPlayerCard}]"
+                @click.stop="selectCardForActiveAction(card.id)"
+            >
                 <template v-if="predictedResultsIfTargetForAction">
-                    <div v-if="predictedResultsIfTargetForAction.destroyed"
-                         class="actionOverlay-predictedLethal actionOverlay-predictionText">
+                    <div
+                        v-if="predictedResultsIfTargetForAction.destroyed"
+                        class="actionOverlay-predictedLethal actionOverlay-predictionText"
+                    >
                         ⇒0
                     </div>
-                    <div v-else class="actionOverlay-predictedDamageChange actionOverlay-predictionText">
+                    <div
+                        v-else
+                        class="actionOverlay-predictedDamageChange actionOverlay-predictionText"
+                    >
                         {{ behaviourCard.defense - behaviourCard.damage }}
                         ⇒
                         {{ behaviourCard.defense - predictedResultsIfTargetForSacrifice.damage }}
@@ -84,13 +128,24 @@
             </div>
         </div>
         <div class="indicatorOverlays">
-            <div v-if="card.damage && card.damage > 0" class="card-damageIndicator" :style="damageTextStyle">
+            <div
+                v-if="card.damage && card.damage > 0"
+                class="card-damageIndicator"
+                :style="damageTextStyle"
+            >
                 -{{ card.damage }}
             </div>
         </div>
-        <portal to="match" v-if="showEnlargedCard">
+        <portal
+            v-if="showEnlargedCard"
+            to="match"
+        >
             <div class="dimOverlay"/>
-            <div class="card card--enlarged" :style="cardStyle" v-click-outside="hideEnlargedCard"/>
+            <div
+                v-click-outside="hideEnlargedCard"
+                class="card card--enlarged"
+                :style="cardStyle"
+            />
         </portal>
     </div>
 </template>
@@ -137,7 +192,7 @@
                 'createCard',
                 'attackerCard',
                 'repairerCard',
-                'canThePlayer'
+                'getCanThePlayer'
             ]),
             ...mapPermissionGetters([
                 'canSelectCardsForActiveAction',
@@ -172,8 +227,7 @@
                 return classes;
             },
             disabled() {
-                return this.card.type === 'duration'
-                    && !this.canThePlayer.useThisDurationCard(this.card.id);
+                return !this.getCanThePlayer(this.ownerId).useThisCard(this.card);
             },
             cardStyle() {
                 const cardUrl = getCardImageUrl.byCommonId(this.card.commonId);

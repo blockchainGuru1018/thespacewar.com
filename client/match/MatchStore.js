@@ -101,7 +101,9 @@ module.exports = function (deps) {
             queryEvents,
             canPutDownCard,
             playerRuleService,
+            getCanThePlayer,
             canThePlayer,
+            canTheOpponent,
             playerStateService,
             opponentStateService,
             queryOpponentEvents,
@@ -281,12 +283,27 @@ module.exports = function (deps) {
         });
     }
 
+    function getCanThePlayer(state, getters) {
+        return playerId => playerId === state.ownUser.id
+            ? getters.canThePlayer
+            : getters.canTheOpponent
+    }
+
     function canThePlayer(state, getters) {
         return new CanThePlayer({
             matchService: getters.matchService,
             queryEvents: getters.queryEvents,
             playerStateService: getters.playerStateService,
             opponentStateService: getters.opponentStateService,
+        });
+    }
+
+    function canTheOpponent(state, getters) {
+        return new CanThePlayer({
+            matchService: getters.matchService,
+            queryEvents: getters.queryEvents,
+            playerStateService: getters.opponentStateService,
+            opponentStateService: getters.playerStateService,
         });
     }
 

@@ -19,6 +19,19 @@ class CanThePlayer {
         this._opponentStateService = opponentStateService;
     }
 
+    useThisCard(card) { //TODO Does this express enough that event cards should'nt be checked against this? They are not "used" only "putDown".
+        if (card.type === 'duration') {
+            return this.useThisDurationCard(card.id);
+        }
+        else if (card.type === 'defense') {
+            return this.attackWithThisCard(card);
+        }
+        else {
+            return this.moveThisCard(card)
+                && this.attackWithThisCard(card)
+        }
+    }
+
     //TODO This could do as "putDownThisEventCard" and check for properties on instantiated cards instead of checking against static properties.
     useThisDurationCard(cardId) {
         const cardData = this._findCardFromOpponentOrPlayer(cardId);
@@ -59,16 +72,14 @@ class CanThePlayer {
 
     moveThisCard(card) {
         if (card.type === 'missile') {
-            return !this._opponentStateService
-                .hasMatchingCardInSomeZone(card => card.preventsOpponentMissilesFromMoving);
+            return !this._opponentStateService.hasMatchingCardInSomeZone(card => card.preventsOpponentMissilesFromMoving);
         }
         return true;
     }
 
     attackWithThisCard(card) {
         if (card.type === 'missile') {
-            return !this._opponentStateService
-                .hasMatchingCardInSomeZone(card => card.preventsOpponentMissilesFromAttacking);
+            return !this._opponentStateService.hasMatchingCardInSomeZone(card => card.preventsOpponentMissilesFromAttacking);
         }
         return true;
     }
