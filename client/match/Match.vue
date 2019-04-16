@@ -271,23 +271,10 @@
                                     :zone-player-row="visiblePlayerCards"
                                 />
                             </template>
-
-                            <template v-if="visiblePlayerCards.length === 0">
-                                <CardGhost
-                                    v-if="playerZoneCardGhostVisible"
-                                    :element-hovered-over="elementHoveredOver"
-                                    location="zone"
-                                    @click="cardGhostClick"
-                                />
-                                <div
-                                    v-else
-                                    class="card card-placeholder"
-                                />
-                            </template>
                             <CardGhost
-                                v-else-if="playerZoneCardGhostVisible"
+                                v-if="playerZoneCardGhostVisible"
                                 :element-hovered-over="elementHoveredOver"
-                                class="card-ghost--leftAbsolute"
+                                class="card-ghost--zone"
                                 location="zone"
                                 @click="cardGhostClick"
                             />
