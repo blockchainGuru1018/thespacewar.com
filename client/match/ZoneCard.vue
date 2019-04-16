@@ -208,7 +208,7 @@
                 'activeActionCard'
             ]),
             behaviourCard() {
-                return this.createCard(this.card);
+                return this.createCard(this.card, { playerId: this.ownerId });
             },
             classes() {
                 const classes = ['card'];
@@ -227,7 +227,7 @@
                 return classes;
             },
             disabled() {
-                return !this.getCanThePlayer(this.ownerId).useThisCard(this.card);
+                return !this.behaviourCard.canBeUsed(this.card);
             },
             cardStyle() {
                 const cardUrl = getCardImageUrl.byCommonId(this.card.commonId);

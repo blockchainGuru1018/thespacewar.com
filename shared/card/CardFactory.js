@@ -17,7 +17,7 @@ module.exports = class CardFactory {
     createCardForPlayer(cardData, playerId) {
         const state = this._matchService.getState();
         const Constructor = getCardConstructor(cardData);
-        const stateServiceById = this._playerServiceProvider.getStateServiceById(playerId)
+        const stateServiceById = this._playerServiceProvider.getStateServiceById(playerId);
         return new Constructor({
             card: cardData,
             playerId,

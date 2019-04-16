@@ -41,19 +41,6 @@ class MatchService {
         return firstPlayerId === playerId ? this.getLastPlayerId() : firstPlayerId;
     }
 
-    getZoneWhereCardIs(cardId) {
-        for (let playerId of Object.keys(this._state.playerStateById)) {
-            const playerState = this._state.playerStateById[playerId];
-            for (let card of playerState.cardsInZone) {
-                if (card.id === cardId) return playerState.cardsInZone;
-            }
-            for (let card of playerState.cardsInOpponentZone) {
-                if (card.id === cardId) return playerState.cardsInOpponentZone;
-            }
-        }
-        return null;
-    }
-
     isPlayerCardInHomeZone(playerId, cardId) {
         return this._state.playerStateById[playerId].cardsInZone.some(c => c.id === cardId);
     }

@@ -146,6 +146,10 @@ class BaseCard {
             && !this._hasMovedThisTurn();
     }
 
+    canBeUsed() {
+        return this._canThePlayer.useThisCard(this);
+    }
+
     canMove(alternativeConditions = {}) {
         if (this.type === 'defense') return false;
         if (this.type === 'duration') return false;
