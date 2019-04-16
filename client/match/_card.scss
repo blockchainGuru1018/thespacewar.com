@@ -87,6 +87,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  pointer-events: none;
+  -webkit-font-smoothing: antialiased;
 
   .cardDisabledOverlay-text {
     font-family: "Space mono";
