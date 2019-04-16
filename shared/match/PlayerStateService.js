@@ -63,6 +63,10 @@ class PlayerStateService {
             .cardsInZone;
     }
 
+    hasDurationCardInPlay() {
+        return this.getDurationCards().length > 0;
+    }
+
     getDurationCards() {
         return this
             .getCardsInZone()

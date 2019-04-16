@@ -1,5 +1,6 @@
 const CheatError = require('../CheatError.js');
-const { COMMON_PHASE_ORDER, PHASES } = require('../../../shared/phases.js');
+const { PHASES } = require('../../../shared/phases.js');
+const whatIsNextPhase = require('../../../shared/match/whatIsNextPhase.js');
 
 function PutDownCardController(deps) {
 
@@ -40,7 +41,10 @@ function PutDownCardController(deps) {
             endTurnForCurrentPlayer();
         }
         else {
-            const nextPhase = getNextPhase(playerStateService.getPhase());
+            const nextPhase = whatIsNextPhase({
+                hasDurationCardInPlay: playerStateService.hasDurationCardInPlay(),
+                currentPhase: playerStateService.getPhase()
+            });
             playerStateService.setPhase(nextPhase);
         }
 
@@ -50,10 +54,6 @@ function PutDownCardController(deps) {
         if (newPhase === PHASES.draw) {
             enterDrawPhaseForPlayer(currentPlayerId);
         }
-    }
-
-    function getNextPhase(currentPhase) {
-        return COMMON_PHASE_ORDER[(COMMON_PHASE_ORDER.indexOf(currentPhase) + 1)];
     }
 
     function enterDrawPhaseForPlayer(playerId) {
@@ -153,9 +153,7 @@ function PutDownCardController(deps) {
 
         const newCurrentPlayerId = matchService.getCurrentPlayer();
         const currentPlayerStateService = playerServiceProvider.getStateServiceById(newCurrentPlayerId);
-        const hasDurationCardInPlay = currentPlayerStateService.getDurationCards().length;
-        const nextPhase = hasDurationCardInPlay ? PHASES.preparation : PHASES.draw;
-        currentPlayerStateService.setPhase(nextPhase);
+        currentPlayerStateService.setPhase(PHASES.draw);
 
         emitNextPlayer();
     }

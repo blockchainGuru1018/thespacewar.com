@@ -123,7 +123,13 @@ module.exports = {
             // way that doesnt break the abstraction?
             this.match.refresh('P1A');
             assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
-                requirements: [{ type: 'damageStationCard', count: 0, common: true, waiting: true, reason: 'emptyDeck' }]
+                requirements: [{
+                    type: 'damageStationCard',
+                    count: 0,
+                    common: true,
+                    waiting: true,
+                    reason: 'emptyDeck'
+                }]
             }));
         }
     },
@@ -147,10 +153,10 @@ module.exports = {
 
             this.match.nextPhase('P1A');
         },
-        'should be in draw phase': function () {
+        'should be in action phase': function () {
             this.match.start();
             const { phase } = this.firstPlayerConnection.restoreState.lastCall.args[0];
-            assert.equals(phase, 'draw');
+            assert.equals(phase, 'action');
         }
     },
     'Neutralization:': {

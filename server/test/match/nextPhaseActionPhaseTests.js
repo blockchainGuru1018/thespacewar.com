@@ -19,6 +19,8 @@ const GoodKarma = require('../../../shared/card/GoodKarma.js');
 const FakeDeck = require('../testUtils/FakeDeck.js');
 const EnergyShieldId = '21';
 const GoodKarmaCommonId = '11';
+const { COMMON_PHASE_ORDER } = require('../../../shared/phases.js');
+const LastPhase = COMMON_PHASE_ORDER[COMMON_PHASE_ORDER.length - 1];
 
 module.exports = {
     'when put down a station card in action row and then put down card in zone': {
@@ -125,8 +127,11 @@ module.exports = {
                 currentPlayer: 'P1A',
                 playerStateById: {
                     'P1A': {
-                        phase: 'preparation',
+                        phase: 'wait',
                         cardsInZone: [createCard({ id: 'C1A', type: 'duration', commonId: GoodKarmaCommonId })]
+                    },
+                    'P2A': {
+                        phase: LastPhase
                     }
                 },
                 deckByPlayerId: {

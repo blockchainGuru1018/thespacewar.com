@@ -7,7 +7,8 @@ const PHASES = {
     wait: 'wait'
 };
 
-const COMMON_PHASE_ORDER = [PHASES.draw, PHASES.action, PHASES.discard, PHASES.attack];
+const COMMON_PHASE_ORDER = [PHASES.draw, PHASES.preparation, PHASES.action, PHASES.discard, PHASES.attack];
+//TODO Improve name "preparation" phase to anything better really
 
 const TEMPORARY_START_PHASE = 'start';
 

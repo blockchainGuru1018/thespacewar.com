@@ -10,6 +10,7 @@ const ClientPlayerStateService = require("./ClientPlayerStateService");
 const EventFactory = require('../../shared/event/EventFactory.js');
 const mapFromClientToServerState = require('./mapFromClientToServerState.js');
 const localGameDataFacade = require('../utils/localGameDataFacade.js');
+const whatIsNextPhase = require('../../shared/match/whatIsNextPhase.js');
 const {
     COMMON_PHASE_ORDER,
     PHASES
@@ -165,32 +166,41 @@ module.exports = function (deps) {
         }
     };
 
-    function nextPhase(state) {
-        let nextPhase = getNextPhaseValue(state.phase);
+    function nextPhase(state, getters) {
+        let nextPhase = whatIsNextPhase({
+            hasDurationCardInPlay: getters.playerStateService.hasDurationCardInPlay(),
+            currentPhase: state.phase
+        });
         return nextPhase || 'wait';
     }
 
     function nextPhaseWithAction(state, getters) {
         let nextPhase = getters.nextPhase;
         if (nextPhase === PHASES.discard && getters.amountOfCardsToDiscard === 0) {
-            nextPhase = getNextPhaseValue(PHASES.discard);
+            nextPhase = whatIsNextPhase({
+                hasDurationCardsInPlay: getters.playerStateService.hasDurationCardsInPlay,
+                currentPhase: PHASES.discard
+            });
         }
         if (nextPhase === PHASES.attack) {
             const someCardCanMove = state.playerCardsInZone
                 .map(c => getters.createCard(c))
-                .some(c => c.canMove({ phase: 'attack' }))
+                .some(c => c.canMove({ phase: PHASES.attack }))
             const noEnemiesAndNoCardsCanMoveInHomeZone = state.opponentCardsInPlayerZone.length === 0 && !someCardCanMove;
 
             const someCardCanMoveInOpponentZone = state.playerCardsInOpponentZone
                 .map(c => getters.createCard(c))
-                .some(c => c.canMove({ phase: 'attack' }))
+                .some(c => c.canMove({ phase: PHASES.attack }))
             const noEnemiesAndNoCardsCanMoveInOpponentZone = state.opponentCardsInZone.length === 0 && !someCardCanMoveInOpponentZone;
 
             const noActionsInAttackPhase =
                 (state.playerCardsInZone.length === 0 || noEnemiesAndNoCardsCanMoveInHomeZone)
                 && (state.playerCardsInOpponentZone.length === 0 || noEnemiesAndNoCardsCanMoveInOpponentZone);
             if (noActionsInAttackPhase) {
-                nextPhase = getNextPhaseValue(PHASES.attack);
+                nextPhase = whatIsNextPhase({
+                    hasDurationCardsInPlay: getters.playerStateService.hasDurationCardsInPlay,
+                    currentPhase: PHASES.attack
+                })
             }
         }
 
@@ -846,10 +856,6 @@ module.exports = function (deps) {
     function deleteMatchLocalDataAndReturnToStart() {
         localGameDataFacade.removeOngoingMatch();
         route('start');
-    }
-
-    function getNextPhaseValue(currentPhase) {
-        return COMMON_PHASE_ORDER[COMMON_PHASE_ORDER.indexOf(currentPhase) + 1]
     }
 
     function getNumberOfPhasesBetween(a, b) {
