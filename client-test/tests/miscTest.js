@@ -112,26 +112,6 @@ describe('when in action phase', async () => {
     });
 });
 
-describe('when has damageStationCard requirement by emptyDeck and is waiting', async () => {
-    beforeEach(async () => {
-        const { dispatch, showPage } = setUpController();
-        showPage();
-        dispatch('restoreState', FakeState({
-            turn: 1,
-            currentPlayer: 'P1A',
-            phase: 'action',
-            requirements: [
-                { type: 'damageStationCard', waiting: true, common: true, count: 0, reason: 'emptyDeck' }
-            ]
-        }));
-        await timeout();
-    });
-
-    test('should show special text', async () => {
-        assert.elementText('.guideText', 'Your opponent is dealing damage to your station');
-    });
-});
-
 describe('when has NO cards left and it is draw phase and opponent has 1 card left', async () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController({

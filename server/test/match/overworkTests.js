@@ -15,6 +15,7 @@ const {
 const BaseCard = require('../../../shared/card/BaseCard.js');
 const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
 const MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
+const StateAsserter = require('../testUtils/StateAsserter.js');
 
 module.exports = {
     'overwork': {
@@ -48,24 +49,6 @@ module.exports = {
         }
     }
 };
-
-function StateAsserter(gameMatch, playerConnection, playerId) {
-
-    return {
-        start,
-        hasRequirement
-    };
-
-    function start() {
-        gameMatch.refresh(playerId);
-    }
-
-    function hasRequirement(requirement) {
-        assert.calledWith(playerConnection.restoreState, sinon.match({
-            requirements: sinon.match([sinon.match(requirement)])
-        }));
-    }
-}
 
 function stationCard({ place = 'draw', flipped, id }) {
     return {

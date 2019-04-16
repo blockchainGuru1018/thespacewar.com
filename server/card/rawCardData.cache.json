@@ -108,7 +108,7 @@
             "detail": "No other duration card has any effect.",
             "defense": "0",
             "attack": "0",
-            "number_copies": "1"
+            "number_copies": "2"
         },
         {
             "id": "13",
@@ -175,7 +175,7 @@
             "name": "Pursuiter",
             "price": "1",
             "type_card": "blue",
-            "detail": "You may sacrifice Pursuiter from play instead of attacking to deal 4 damage to target in same zone (collision).",
+            "detail": "Can after first turn be sacrificed instead of attacking to deal 4 damage to target in same zone (collision).",
             "defense": "1",
             "attack": "2",
             "number_copies": "2"
@@ -183,9 +183,9 @@
         {
             "id": "20",
             "name": "Grand Opportunity",
-            "price": "5",
+            "price": "4",
             "type_card": "orange",
-            "detail": "Draw 6 cards and then discard 2 cards from your hand.",
+            "detail": "Draw 5 cards and then discard 1 card from your hand.",
             "defense": "0",
             "attack": "0",
             "number_copies": "1"
@@ -208,7 +208,7 @@
             "detail": "Normal cannon.\r\n(Defense cards cannot move)",
             "defense": "1",
             "attack": "4",
-            "number_copies": "2"
+            "number_copies": "1"
         },
         {
             "id": "24",
@@ -246,8 +246,8 @@
             "price": "4",
             "type_card": "blue",
             "detail": "The Shade cannot be attacked if it has not been attacking this turn.",
-            "defense": "4",
-            "attack": "3",
+            "defense": "3",
+            "attack": "4",
             "number_copies": "1"
         },
         {
@@ -258,7 +258,7 @@
             "detail": "Can move the first turn.",
             "defense": "2",
             "attack": "3",
-            "number_copies": "2"
+            "number_copies": "1"
         },
         {
             "id": "29",
@@ -316,7 +316,7 @@
             "price": "4",
             "type_card": "blue",
             "detail": "· Enemy missiles can't move or attack.\r\n· If opponent after draw phase has more   than 1 card in hand, he or she           discards a card.",
-            "defense": "4",
+            "defense": "3",
             "attack": "0",
             "number_copies": "1"
         },
@@ -379,7 +379,17 @@
             "defense": "0",
             "attack": "0",
             "number_copies": "1"
+        },
+        {
+            "id": "67",
+            "name": "Sabotage",
+            "price": "0",
+            "type_card": "orange",
+            "detail": "Opponent may draw 1 card. See the cards from the opponents hand and then discard 1 card from hand or flipped station card.",
+            "defense": "0",
+            "attack": "0",
+            "number_copies": "1"
         }
     ],
-    "saveTime": 1553330994334
+    "saveTime": 1555412536828
 }

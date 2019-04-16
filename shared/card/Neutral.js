@@ -1,4 +1,4 @@
-module.exports = function Neutral(deps) {
+module.exports = function Neutral(deps) { //TODO Can this class be removed?
 
     const baseCard = deps.card;
 

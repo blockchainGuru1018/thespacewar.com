@@ -6,8 +6,6 @@ const PutDownCardEvent = require('../PutDownCardEvent.js');
 const RepairCardEvent = require('../event/RepairCardEvent.js');
 const RemoveStationCardEvent = require('../event/RemoveStationCardEvent.js');
 
-const ALLOWED_STATION_CARDS_EACH_TURN = 1;
-
 class PlayerStateService {
 
     constructor({
@@ -16,13 +14,15 @@ class PlayerStateService {
         queryEvents,
         actionPointsCalculator,
         logger,
-        cardFactory
+        cardFactory,
+        eventFactory
     }) {
         this._playerId = playerId;
         this._matchService = matchService;
         this._queryEvents = queryEvents;
         this._actionPointsCalculator = actionPointsCalculator;
         this._cardFactory = cardFactory;
+        this._eventFactory = eventFactory;
         this._logger = logger || { log: (...args) => console.log('PlayerStateService logger: ', ...args) };
         this._stateTouchListeners = [];
     }
@@ -44,18 +44,6 @@ class PlayerStateService {
 
     deckIsEmpty() {
         return this.getDeck().getCardCount() === 0;
-    }
-
-    canPutDownMoreStationCards() {
-        const durationCards = this
-            .getDurationCards()
-            .map(c => this._createBehaviourCard(c));
-        const extraAllowedStationCards = sum(durationCards, 'allowsToPutDownExtraStationCards');
-        const totalAllowedStationCards = extraAllowedStationCards + ALLOWED_STATION_CARDS_EACH_TURN;
-
-        let currentTurn = this._matchService.getTurn();
-        const countOfNonExtraStationCards = this._queryEvents.getNonExtraStationCardsPutDownThisTurnCount(currentTurn);
-        return countOfNonExtraStationCards < totalAllowedStationCards;
     }
 
     getCardsInDeck() {
@@ -322,6 +310,14 @@ class PlayerStateService {
 
     putDownEventCardInZone(cardData) {
         const currentTurn = this._matchService.getTurn();
+
+        const card = this._createBehaviourCard(cardData);
+        card.eventSpecsWhenPutDownInHomeZone
+            .map(this._eventFactory.fromSpec)
+            .forEach(event => {
+                this.storeEvent(event);
+            });
+
         this.storeEvent(PutDownCardEvent({
             turn: currentTurn,
             location: 'zone',

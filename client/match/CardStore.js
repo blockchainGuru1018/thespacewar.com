@@ -401,8 +401,19 @@ module.exports = function (deps) {
         }
     }
 
-    function _addPutDownCardEvent({ rootState }, { location, cardData, putDownAsExtraStationCard = false }) {
+    function _addPutDownCardEvent({ rootState, rootGetters },
+        { location, cardData, putDownAsExtraStationCard = false }) {
         const matchState = rootState.match;
+        const eventFactory = rootGetters['match/eventFactory'];
+
+        const card = rootGetters['match/createCard'](cardData);
+
+        card.eventSpecsWhenPutDownInHomeZone
+            .map(eventFactory.fromSpec)
+            .forEach(event => {
+                matchState.events.push(event);
+            });
+
         matchState.events.push(PutDownCardEvent({
             turn: matchState.turn,
             location,

@@ -60,14 +60,28 @@ class QueryEvents {
         });
     }
 
-    getNonExtraStationCardsPutDownThisTurnCount(turn) {
-        const putDownStationCardEvents = this._eventRepository.getAll().filter(e => {
-            return e.turn === turn
-                && e.type === 'putDownCard'
-                && e.location.startsWith('station')
-                && !e.putDownAsExtraStationCard
-        });
-        return putDownStationCardEvents.length;
+    countNonPaidExtraStationCardsPutDownOnTurn(turn) {
+        return this._eventRepository
+            .getAll()
+            .filter(e => {
+                return e.turn === turn
+                    && e.type === 'putDownCard'
+                    && e.location.startsWith('station')
+                    && !e.putDownAsExtraStationCard
+            })
+            .length;
+    }
+
+    countFreeExtraStationCardsGrantedOnTurn(turn) {
+        return this._eventRepository
+            .getAll()
+            .filter(e => {
+                return e.turn === turn
+                    && e.type === 'freeExtraStationCardGranted';
+            })
+            .reduce((acc, event) => {
+                return acc + event.count
+            }, 0);
     }
 
     getCardDrawsOnTurn(turn, { byEvent = false } = {}) {

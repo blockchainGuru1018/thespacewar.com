@@ -7,6 +7,7 @@ const MatchService = require("../../shared/match/MatchService.js");
 const CanThePlayer = require("../../shared/match/CanThePlayer.js");
 const PlayerRuleService = require("../../shared/match/PlayerRuleService.js");
 const ClientPlayerStateService = require("./ClientPlayerStateService");
+const EventFactory = require('../../shared/event/EventFactory.js');
 const mapFromClientToServerState = require('./mapFromClientToServerState.js');
 const localGameDataFacade = require('../utils/localGameDataFacade.js');
 const {
@@ -104,6 +105,7 @@ module.exports = function (deps) {
             playerStateService,
             opponentStateService,
             queryOpponentEvents,
+            eventFactory,
             matchService,
             playerCardsInDeckCount,
             opponentCardsInDeckCount
@@ -281,6 +283,8 @@ module.exports = function (deps) {
 
     function canThePlayer(state, getters) {
         return new CanThePlayer({
+            matchService: getters.matchService,
+            queryEvents: getters.queryEvents,
             playerStateService: getters.playerStateService,
             opponentStateService: getters.opponentStateService,
         });
@@ -320,6 +324,12 @@ module.exports = function (deps) {
                     return clientCardFactory.fromVuexStore(cardData, state, { playerId });
                 }
             }
+        });
+    }
+
+    function eventFactory(state, getters) {
+        return EventFactory({
+            matchService: getters.matchService
         });
     }
 

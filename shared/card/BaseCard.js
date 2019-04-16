@@ -243,6 +243,10 @@ class BaseCard {
         return true;
     }
 
+    get eventSpecsWhenPutDownInHomeZone() {
+        return [];
+    }
+
     _hasMovedThisTurn() {
         let currentTurn = this._matchService.getTurn();
         return this._queryEvents.hasMovedOnTurn(this.id, currentTurn);

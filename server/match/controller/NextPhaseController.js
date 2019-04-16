@@ -8,17 +8,13 @@ function PutDownCardController(deps) {
         matchComService,
         cardFactory,
         playerServiceProvider,
-        canThePlayerFactory
     } = deps;
-
-    let canThePlayer;
 
     return {
         onNextPhase
     };
 
     function onNextPhase(playerId) {
-        canThePlayer = canThePlayerFactory.forPlayer(playerId);
         if (playerId !== matchService.getCurrentPlayer()) {
             throw new CheatError('Switching phase when not your own turn');
         }
@@ -98,6 +94,7 @@ function PutDownCardController(deps) {
     }
 
     function getRequirementsFromDurationCards(playerId, key) {
+        const canThePlayer = playerServiceProvider.getCanThePlayerServiceById(playerId);
         return playerServiceProvider
             .getStateServiceById(playerId)
             .getDurationCards()

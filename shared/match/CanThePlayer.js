@@ -1,14 +1,20 @@
 const Neutralization = require('../card/Neutralization.js');
 
+const ALLOWED_STATION_CARDS_EACH_TURN = 1;
+
 //TODO Idea for interface. Each method takes cardData, but if necessary or ideal they have a
 // sibling method with the same name and a suffix "byId" that get the cardData and runs the other method.
 // In an ideal world it would only take real "behaviourCards", that is NOT cardData but an instance of BaseCard.
 class CanThePlayer {
 
     constructor({
+        matchService,
+        queryEvents,
         playerStateService,
         opponentStateService
     } = {}) {
+        this._matchService = matchService;
+        this._queryEvents = queryEvents;
         this._playerStateService = playerStateService;
         this._opponentStateService = opponentStateService;
     }
@@ -33,10 +39,22 @@ class CanThePlayer {
     }
 
     putDownThisEventCard(cardData) {
-        let somePlayerHasCardThatPreventsEventCards = this._playerStateService.hasMatchingCardInSomeZone(card => card.preventsAnyPlayerFromPlayingAnEventCard)
-            || this._opponentStateService.hasMatchingCardInSomeZone(card => card.preventsAnyPlayerFromPlayingAnEventCard);
+        let somePlayerHasCardThatPreventsEventCards = this._playerStateService.hasMatchingCardInSomeZone(
+            card => card.preventsAnyPlayerFromPlayingAnEventCard)
+            || this._opponentStateService.hasMatchingCardInSomeZone(
+                card => card.preventsAnyPlayerFromPlayingAnEventCard);
 
         return !somePlayerHasCardThatPreventsEventCards;
+    }
+
+    putDownMoreStationCards() {
+        const currentTurn = this._matchService.getTurn();
+
+        const extraFreeStationCards = this._queryEvents.countFreeExtraStationCardsGrantedOnTurn(currentTurn);
+        const totalAllowedStationCards = extraFreeStationCards + ALLOWED_STATION_CARDS_EACH_TURN;
+
+        const putDownStationCards = this._queryEvents.countNonPaidExtraStationCardsPutDownOnTurn(currentTurn);
+        return putDownStationCards < totalAllowedStationCards;
     }
 
     moveThisCard(card) {
@@ -62,3 +80,7 @@ class CanThePlayer {
 }
 
 module.exports = CanThePlayer;
+
+function sum(arr, accessorKey) {
+    return arr.reduce((acc, v) => acc + (v[accessorKey] || 0), 0);
+}

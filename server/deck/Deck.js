@@ -3,7 +3,6 @@ const BLACK_LIST_COMMON_IDS = [
     '64',
     '31',
     '34',
-    '66',
     '67'
 ];
 

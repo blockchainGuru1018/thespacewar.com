@@ -35,6 +35,7 @@ function PutDownCardController(deps) {
 
     function checkIfCanPutDownCard({ playerId, location, cardData }) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const canThePlayer = playerServiceProvider.getCanThePlayerServiceById(playerId);
         if (location === 'zone') {
             const canOnlyHaveOneOfCardInZone = cardFactory
                 .createCardForPlayer(cardData, playerId)
@@ -51,13 +52,13 @@ function PutDownCardController(deps) {
         }
         else if (location.startsWith('station')) {
             const card = cardFactory.createCardForPlayer(cardData, playerId);
-            if (!card.canBePutDownAsExtraStationCard && !playerStateService.canPutDownMoreStationCards()) {
+            if (!card.canBePutDownAsExtraStationCard && !canThePlayer.putDownMoreStationCards()) {
                 throw new CheatError('Cannot put down more station cards this turn');
             }
         }
     }
 
-    function removeCardFromCurrentLocation({ playerId, location, cardData }) {
+    function removeCardFromCurrentLocation({ playerId, cardData }) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         const cardId = cardData.id;
         if (playerStateService.hasCardOnHand(cardId)) {

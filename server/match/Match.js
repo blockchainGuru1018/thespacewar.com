@@ -23,6 +23,7 @@ const obscureOpponentEvents = require('./service/obscureOpponentEvents.js');
 const PlayerServiceProvider = require('../../shared/match/PlayerServiceProvider.js');
 const RequirementFactory = require('../../shared/match/requirement/RequirementFactory.js');
 const PlayerOverworkFactory = require('../../shared/match/overwork/PlayerOverworkFactory.js');
+const EventFactory = require('../../shared/event/EventFactory.js');
 const { PHASES, TEMPORARY_START_PHASE } = require('../../shared/phases.js');
 
 module.exports = function ({
@@ -54,16 +55,21 @@ module.exports = function ({
     const cardFactory = new ServerCardFactory({ playerServiceProvider, getFreshState: () => state });
     const matchService = new MatchService({ matchId, endMatch });
     matchService.setState(state);
+
+    const eventFactory = EventFactory({ matchService });
+    const canThePlayerFactory = CanThePlayerFactory({ matchService, playerServiceProvider });
+
     registerPlayerStateServices({
         players,
         matchService,
         actionPointsCalculator,
         logger,
         cardFactory,
-        playerServiceProvider
+        playerServiceProvider,
+        eventFactory
     });
     registerPlayerRequirementServices(players, playerServiceProvider);
-    registerCanThePlayerServices(players, playerServiceProvider);
+    registerCanThePlayerServices({ players, playerServiceProvider, canThePlayerFactory });
     registerPlayerRuleServices(players, playerServiceProvider);
 
     const stateChangeListener = new StateChangeListener({ playerServiceProvider, matchService, logger });
@@ -79,7 +85,6 @@ module.exports = function ({
         playerServiceProvider,
         matchComService
     });
-    const canThePlayerFactory = CanThePlayerFactory({ matchService, playerServiceProvider });
     const playerOverworkFactory = PlayerOverworkFactory({ matchService, playerServiceProvider });
     const controllerDeps = {
         logger,
@@ -90,7 +95,6 @@ module.exports = function ({
         cardFactory,
         stateChangeListener,
         playerRequirementUpdaterFactory,
-        canThePlayerFactory,
         rawCardDataRepository,
         playerOverworkFactory
     };
@@ -393,7 +397,7 @@ function repairRequirements({
     }
 }
 
-function registerPlayerStateServices({ players, matchService, actionPointsCalculator, logger, cardFactory, playerServiceProvider }) {
+function registerPlayerStateServices({ players, matchService, actionPointsCalculator, logger, cardFactory, playerServiceProvider, eventFactory }) {
     for (let player of players) {
         const playerId = player.id;
         const playerStateService = new PlayerStateService({
@@ -402,7 +406,8 @@ function registerPlayerStateServices({ players, matchService, actionPointsCalcul
             queryEvents: new ServerQueryEvents({ playerId, matchService }),
             actionPointsCalculator,
             logger,
-            cardFactory
+            cardFactory,
+            eventFactory
         });
         playerServiceProvider.registerService(PlayerServiceProvider.TYPE.state, playerId, playerStateService);
     }
@@ -428,14 +433,10 @@ function registerPlayerRequirementServices(players, playerServiceProvider) {
     }
 }
 
-function registerCanThePlayerServices(players, playerServiceProvider) {
+function registerCanThePlayerServices({ players, playerServiceProvider, canThePlayerFactory }) {
     for (let player of players) {
         const playerId = player.id;
-        const opponentId = players.find(p => p.id !== playerId).id;
-        let canThePlayer = new CanThePlayer({
-            playerStateService: playerServiceProvider.getStateServiceById(playerId),
-            opponentStateService: playerServiceProvider.getStateServiceById(opponentId),
-        });
+        let canThePlayer = canThePlayerFactory.forPlayer(playerId);
         playerServiceProvider.registerService(PlayerServiceProvider.TYPE.canThePlayer, playerId, canThePlayer);
     }
 }
@@ -469,6 +470,8 @@ function CanThePlayerFactory({
         forPlayer(playerId) {
             let opponentId = matchService.getOpponentId(playerId);
             return new CanThePlayer({
+                matchService,
+                queryEvents: new ServerQueryEvents({ playerId, matchService }),
                 playerStateService: playerServiceProvider.getStateServiceById(playerId),
                 opponentStateService: playerServiceProvider.getStateServiceById(opponentId),
             });

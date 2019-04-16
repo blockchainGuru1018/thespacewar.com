@@ -1,13 +1,22 @@
 const path = require('path');
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const testFolder = './tests/';
+const glob = require('glob');
+
+const entry = {
+    legacyTest: path.join(__dirname, 'legacyTests', 'runAllLegacyTests.js')
+};
+
+const testFilePaths = glob.sync(path.join(__dirname, testFolder, '**/*Test.js'));
+console.log('testFilePaths', testFilePaths);
+for (const filePath of testFilePaths) {
+    const name = filePath.split('/').pop().split('.').shift().split('Test').shift();
+    entry[name] = filePath;
+}
 
 module.exports = {
     mode: 'development',
-    entry: {
-        legacyTest: path.join(__dirname, 'legacyTests', 'runAllLegacyTests.js'),
-        actionPhase: path.join(__dirname, 'tests', 'actionPhaseTest.js'),
-        misc: path.join(__dirname, 'tests', 'miscTest.js'),
-    },
+    entry,
     output: {
         filename: '[name].test.js',
         path: path.resolve(__dirname, 'build')

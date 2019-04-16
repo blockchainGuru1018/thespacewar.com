@@ -21,7 +21,10 @@ const classes = [
     require('./DisturbingSensor.js'),
     require('./OverCapacity.js'),
     require('./EmpMissile.js'),
-    require('./ExcellentWork.js')
+    require('./ExcellentWork.js'),
+    require('./MissilesLaunched.js'),
+    require('./PerfectPlan.js'),
+    require('./DestinyDecided.js')
 ];
 
 const classByCardCommonId = {};

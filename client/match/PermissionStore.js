@@ -89,8 +89,8 @@ module.exports = function (deps) {
     }
 
     function canPutDownMoreStationCards(state, getters, rootState, rootGetters) {
-        const playerStateService = rootGetters['match/playerStateService'];
-        return playerStateService.canPutDownMoreStationCards();
+        const canThePlayer = rootGetters['match/canThePlayer'];
+        return canThePlayer.putDownMoreStationCards();
     }
 
     function canMoveStationCards(state, getters, rootState) { //TODO This will collide with the ability to "move station cards between rows". This method is talking about moving it to the home zone, perhaps "playing station card"

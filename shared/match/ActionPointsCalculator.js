@@ -68,9 +68,9 @@ module.exports = function (deps) {
         return totalCost;
     }
 
-    function shouldReducePointsByCostOfCard(putDownCardEventFromCurrentTUrn) {
-        return putDownCardEventFromCurrentTUrn.location === 'zone'
-            || putDownCardEventFromCurrentTUrn.putDownAsExtraStationCard;
+    function shouldReducePointsByCostOfCard(putDownCardEventFromCurrentTurn) {
+        return putDownCardEventFromCurrentTurn.location === 'zone'
+            || putDownCardEventFromCurrentTurn.putDownAsExtraStationCard;
     }
 
     function eventIsPutDownDurationCardInZone(event, turn) {

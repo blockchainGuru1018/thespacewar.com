@@ -6,14 +6,14 @@ module.exports = class Expansion extends BaseCard {
     }
 
     static get CommonId() {
-        return '40';
+        return '66';
     }
 
-    get allowsToPutDownExtraStationCards() {
-        return 1;
+    get eventSpecsWhenPutDownInHomeZone() {
+        return [{ type: 'freeExtraStationCardGranted', count: 2 }];
     }
 
-    get requirementsOnPutDownExtraStationCard() {
+    get requirementsWhenPutDownInHomeZone() {
         return {
             forOpponent: [
                 { type: 'drawCard', count: 2 }

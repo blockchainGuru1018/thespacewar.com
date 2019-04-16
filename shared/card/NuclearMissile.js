@@ -1,6 +1,6 @@
 const BaseCard = require('./BaseCard.js');
 
-module.exports = class FullForceForward extends BaseCard {
+module.exports = class NuclearMissile extends BaseCard {
     constructor(deps) {
         super(deps);
     }

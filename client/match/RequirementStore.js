@@ -18,6 +18,7 @@ module.exports = function (deps) {
             firstRequirementIsDiscardCard,
             firstRequirementIsDamageStationCard,
             firstRequirementIsDrawCard,
+            firstRequirementIsFindCard,
             countInFirstRequirement,
             selectedCardsCount,
             cardsLeftToSelect,
@@ -56,6 +57,11 @@ module.exports = function (deps) {
     function firstRequirementIsDrawCard(state, getters) {
         return getters.firstRequirement
             && getters.firstRequirement.type === 'drawCard';
+    }
+
+    function firstRequirementIsFindCard(state, getters) {
+        return getters.firstRequirement
+            && getters.firstRequirement.type === 'findCard';
     }
 
     function countInFirstRequirement(state, getters) {

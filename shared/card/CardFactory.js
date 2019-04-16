@@ -28,7 +28,7 @@ module.exports = class CardFactory {
             canThePlayer: this._playerServiceProvider.getCanThePlayerServiceById(playerId)
         });
     }
-}
+};
 
 function getCardConstructor({ commonId }) {
     return classByCardCommonId[commonId] || BaseCard;
