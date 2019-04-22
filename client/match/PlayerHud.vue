@@ -57,7 +57,7 @@
                     Discard any duration card you don't want to pay for
                 </div>
                 <div class="guideText-drawCard guideText guideText--small" v-else-if="phase === PHASES.draw">
-                    Draw card or Mill opponent
+                    {{ composeDrawOrMillText() }}
                 </div>
                 <div v-else-if="inDiscardPhaseAndMustDiscardCard"
                      class="guideText-drawCard guideText guideText--small">
@@ -272,14 +272,12 @@
                 if (this.firstRequirementIsDiscardCard) {
                     const cardsToDiscard = this.countInFirstRequirement;
                     return `Discard ${cardsToDiscard} ${pluralize('card', cardsToDiscard)}`;
-                }
-                else if (this.firstRequirementIsDamageStationCard && this.cardsLeftToSelect > 0) {
-                    return `Select ${this.cardsLeftToSelect} station ${pluralize('card', this.cardsLeftToSelect)} to damage`;
-                }
-                else if (this.firstRequirementIsDrawCard) {
+                } else if (this.firstRequirementIsDamageStationCard && this.cardsLeftToSelect > 0) {
+                    return `Select ${this.cardsLeftToSelect} station ${pluralize('card',
+                        this.cardsLeftToSelect)} to damage`;
+                } else if (this.firstRequirementIsDrawCard) {
                     return this.composeDrawOrMillText();
-                }
-                else {
+                } else {
                     return '';
                 }
             },
@@ -295,13 +293,11 @@
                     return {
                         backgroundImage: `url(${this.activeActionCardImageUrl})`
                     };
-                }
-                else if (this.requirementCardImageUrl) {
+                } else if (this.requirementCardImageUrl) {
                     return {
                         backgroundImage: `url(${this.requirementCardImageUrl})`
                     };
-                }
-                else {
+                } else {
                     return {
                         display: 'none'
                     };

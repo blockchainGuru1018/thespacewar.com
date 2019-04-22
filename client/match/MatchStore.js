@@ -39,6 +39,7 @@ module.exports = function (deps) {
     const getDeckSize = deps.getDeckSize || require('./getDeckSize.js'); //TODO Move to util and then require util at the top
     const clientCardFactory = deps.cardFactory
         || ClientCardFactory({ actionPointsCalculator, rawCardDataRepository });
+    const ai = deps.ai;
 
     const deckSize = getDeckSize(rawCardDataRepository);
 
@@ -76,7 +77,8 @@ module.exports = function (deps) {
             opponentEvents: [],
             attackerCardId: null,
             selectedDefendingStationCards: [],
-            repairerCardId: null
+            repairerCardId: null,
+            aiStarted: false
         },
         getters: {
             nextPhase,
@@ -162,7 +164,8 @@ module.exports = function (deps) {
             selectAsRepairer,
             cancelRepair,
             selectForRepair,
-            damageStationCards //todo rename to "damageStationCardsForRequirement"
+            damageStationCards, //todo rename to "damageStationCardsForRequirement",
+            startAI
         }
     };
 
@@ -478,11 +481,9 @@ module.exports = function (deps) {
         const location = stationCard.place;
         if (location === 'draw') {
             state.opponentStation.drawCards.push(stationCard);
-        }
-        else if (location === 'action') {
+        } else if (location === 'action') {
             state.opponentStation.actionCards.push(stationCard);
-        }
-        else if (location === 'handSize') {
+        } else if (location === 'handSize') {
             state.opponentStation.handSizeCards.push(stationCard);
         }
     }
@@ -518,11 +519,9 @@ module.exports = function (deps) {
         for (let key of Object.keys(data)) {
             if (key === 'stationCards') {
                 commit('setPlayerStationCards', data[key]);
-            }
-            else if (key === 'opponentStationCards') {
+            } else if (key === 'opponentStationCards') {
                 commit('setOpponentStationCards', data[key]);
-            }
-            else {
+            } else {
                 const localKey = storeItemNameByServerItemName[key] || key;
                 state[localKey] = data[key];
             }
@@ -536,8 +535,7 @@ module.exports = function (deps) {
         if (currentPlayer === state.ownUser.id) {
             const hasDurationCardInPlay = state.playerCardsInZone.some(c => c.type === 'duration');
             state.phase = hasDurationCardInPlay ? PHASES.preparation : PHASES.draw;
-        }
-        else {
+        } else {
             state.phase = PHASES.wait;
         }
     }
@@ -670,8 +668,7 @@ module.exports = function (deps) {
         const stationCard = getters.allOpponentStationCards.find(s => s.id === card.id);
         if (!!stationCard) {
             commit('setOpponentStationCards', getters.allOpponentStationCards.filter(s => s.id !== card.id));
-        }
-        else {
+        } else {
             state.opponentCardCount -= 1;
         }
 
@@ -732,8 +729,7 @@ module.exports = function (deps) {
         if (defenderCardWasDestroyed) {
             let defenderCardIndex = defenderCardZone.findIndex(c => c.id === defenderCardId);
             defenderCardZone.splice(defenderCardIndex, 1);
-        }
-        else {
+        } else {
             defenderCard.damage = newDamage;
         }
 
@@ -812,8 +808,7 @@ module.exports = function (deps) {
         const cardInZoneIndex = state.playerCardsInZone.findIndex(c => c.id === cardId);
         if (cardInZoneIndex >= 0) {
             state.playerCardsInZone.splice(cardInZoneIndex, 1);
-        }
-        else {
+        } else {
             const cardInOpponentZoneIndex = state.playerCardsInOpponentZone.findIndex(c => c.id === cardId);
             if (cardInOpponentZoneIndex >= 0) {
                 state.playerCardsInOpponentZone.splice(cardInOpponentZoneIndex, 1);
@@ -861,6 +856,11 @@ module.exports = function (deps) {
     function getNumberOfPhasesBetween(a, b) {
         const phasesIncludingWaitInOrder = [...COMMON_PHASE_ORDER, PHASES.wait];
         return phasesIncludingWaitInOrder.indexOf(b) - phasesIncludingWaitInOrder.indexOf(a);
+    }
+
+    function startAI({ state }) {
+        state.aiStarted = true;
+        ai.start();
     }
 };
 

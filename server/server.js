@@ -165,8 +165,7 @@ function setupSocketConnectionHandler(deps, controllers) {
                         playerId: userId,
                         matchId: ongoingMatch.id
                     });
-                }
-                catch (error) {
+                } catch (error) {
                     console.error('Error when registering connection for user: ' + error.message);
                     console.info('Raw error:', error);
                 }
@@ -176,8 +175,7 @@ function setupSocketConnectionHandler(deps, controllers) {
         connection.on('match', async data => {
             try {
                 await controllers.match.onAction(data);
-            }
-            catch (error) {
+            } catch (error) {
                 const rawErrorMessage = JSON.stringify(error, null, 4);
                 const dataString = JSON.stringify(data, null, 4);
                 const errorMessage = `(${new Date().toISOString()}) Error in action to match: ${error.message} - DATA: ${dataString} - RAW ERROR: ${rawErrorMessage}`

@@ -151,8 +151,7 @@ module.exports = function ({
             for (let player of players) {
                 emitRestoreStateForPlayer(player.id);
             }
-        }
-        else {
+        } else {
             state.playersReady++;
             if (state.playersReady === players.length) {
                 players.forEach((player, index) => startGameForPlayer(player.id, { isFirstPlayer: index === 0 }));
@@ -370,8 +369,7 @@ function wrapApi({ api, stateChangeListener }) {
                 stateChangeListener.snapshot();
                 return result;
             };
-        }
-        else {
+        } else {
             wrappedApi[name] = api[name];
         }
     }
@@ -387,8 +385,7 @@ function repairRequirements({
     while (!!playerWaitingRequirement !== !!opponentWaitingRequirement) {
         if (playerWaitingRequirement) {
             playerRequirementUpdater.removeFirstMatchingRequirement({ waiting: true });
-        }
-        else {
+        } else {
             opponentRequirementUpdater.removeFirstMatchingRequirement({ waiting: true });
         }
 

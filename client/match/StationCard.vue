@@ -1,42 +1,42 @@
 <template>
     <div
-        :class="['stationCardWrapper', {'stationCardWrapper--fullSize': stationCard.flipped && !isOpponentStationCard}]"
+            :class="['stationCardWrapper', {'stationCardWrapper--fullSize': stationCard.flipped && !isOpponentStationCard}]"
     >
         <div
-            :class="classes"
-            :style="cardStyle"
+                :class="classes"
+                :style="cardStyle"
         >
             <div
-                v-if="!isHoldingCard"
-                class="actionOverlays"
+                    class="actionOverlays"
+                    v-if="!isHoldingCard"
             >
                 <div
-                    v-if="canMoveCardToZone"
-                    class="movable"
-                    @click.stop="putDownCardOrShowChoiceOrAction({ location: 'zone', cardData: stationCard.card })"
+                        @click.stop="putDownCardOrShowChoiceOrAction({ location: 'zone', cardData: stationCard.card })"
+                        class="movable"
+                        v-if="canMoveCardToZone"
                 >
                     Move to zone
                 </div>
 
                 <div
-                    v-if="canBeSelectedAsDefender"
-                    class="attackable"
-                    @click.stop="selectStationCardAsDefender(stationCard)"
+                        @click.stop="selectStationCardAsDefender(stationCard)"
+                        class="attackable"
+                        v-if="canBeSelectedAsDefender"
                 />
                 <div
-                    v-else-if="canBeSelectedForRepair"
-                    class="selectForRepair actionOverlay"
-                    @click.stop="selectForRepair(stationCard.id)"
+                        @click.stop="selectForRepair(stationCard.id)"
+                        class="selectForRepair actionOverlay"
+                        v-else-if="canBeSelectedForRepair"
                 />
                 <div
-                    v-else-if="canBeSelectedForRequirement"
-                    class="selectable"
-                    @click.stop="selectStationCardForRequirement(stationCard)"
+                        @click.stop="selectStationCardForRequirement(stationCard)"
+                        class="selectable"
+                        v-else-if="canBeSelectedForRequirement"
                 />
                 <div
-                    v-else-if="canSelectedCardForAction"
-                    class="selectable"
-                    @click.stop="selectCardForActiveAction(stationCard.id)"
+                        @click.stop="selectCardForActiveAction(stationCard.id)"
+                        class="selectable"
+                        v-else-if="canSelectedCardForAction"
                 />
             </div>
         </div>
@@ -101,8 +101,7 @@
 
                 if (this.stationCard.flipped) {
                     classes.push('stationCard--flipped');
-                }
-                else {
+                } else {
                     classes.push('card-faceDown');
                 }
 

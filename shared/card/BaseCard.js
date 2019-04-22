@@ -107,6 +107,7 @@ class BaseCard {
     canAttackStationCards() {
         if (!this.canAttack()) return false;
         if (!this.attack) return false;
+        if (!this._canThePlayer.attackStationCards()) return false;
 
         const turn = this._matchService.getTurn();
         const isInHomeZone = this.isInHomeZone();
@@ -135,8 +136,7 @@ class BaseCard {
 
         if (otherCard.isStationCard()) {
             return this.canTargetStationCardsForSacrifice();
-        }
-        else {
+        } else {
             return this._matchService.cardsAreInSameZone(this, otherCard);
         }
     }
@@ -170,8 +170,7 @@ class BaseCard {
     canBeRepaired() {
         if (this.isStationCard()) {
             return this.isFlipped();
-        }
-        else {
+        } else {
             return !!this.damage || this.paralyzed;
         }
     }

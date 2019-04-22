@@ -56,6 +56,10 @@
     background-color: #66bdff;
     outline: 0;
   }
+
+  &:disabled {
+    opacity: .5;
+  }
 }
 
 .match-smallButton--success {

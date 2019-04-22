@@ -22,11 +22,9 @@ class CanThePlayer {
     useThisCard(card) { //TODO Does this express enough that event cards should'nt be checked against this? They are not "used" only "putDown".
         if (card.type === 'duration') {
             return this.useThisDurationCard(card.id);
-        }
-        else if (card.type === 'defense') {
+        } else if (card.type === 'defense') {
             return this.attackWithThisCard(card);
-        }
-        else {
+        } else {
             return this.moveThisCard(card)
                 && this.attackWithThisCard(card)
         }
@@ -72,16 +70,22 @@ class CanThePlayer {
 
     moveThisCard(card) {
         if (card.type === 'missile') {
-            return !this._opponentStateService.hasMatchingCardInSomeZone(card => card.preventsOpponentMissilesFromMoving);
+            return !this._opponentStateService.hasMatchingCardInSomeZone(
+                card => card.preventsOpponentMissilesFromMoving);
         }
         return true;
     }
 
     attackWithThisCard(card) {
         if (card.type === 'missile') {
-            return !this._opponentStateService.hasMatchingCardInSomeZone(card => card.preventsOpponentMissilesFromAttacking);
+            return !this._opponentStateService.hasMatchingCardInSomeZone(
+                card => card.preventsOpponentMissilesFromAttacking);
         }
         return true;
+    }
+
+    attackStationCards() {
+        return !this._opponentStateService.hasMatchingCardInHomeZone(c => c.stopsStationAttack())
     }
 
     _findCardFromOpponentOrPlayer(cardId) {

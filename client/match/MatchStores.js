@@ -6,6 +6,7 @@ const STORES = [
     require('./findCard/FindCardStore.js'),
     require('./loadingIndicator/LoadingIndicatorStore.js')
 ];
+const AI = require('./AI.js');
 const LOGGING_ENABLED = false;
 
 module.exports = function (deps) {
@@ -20,6 +21,7 @@ module.exports = function (deps) {
     deps.rootDispatch = createRootDispatch(rootStore);
     deps.getFrom = createRootGetFrom(rootStore);
     deps.matchController = matchController;
+    deps.ai = AI({ rootStore, matchController });
 
     for (const Store of STORES) {
         const store = createStore(Store, deps);
@@ -89,8 +91,7 @@ function createRootDispatch(rootStore) {
                 if (!target.store) {
                     target.store = property;
                     return reciever;
-                }
-                else {
+                } else {
                     let storeName = target.store;
                     target.store = '';
                     return (...args) => rootStore.dispatch(`${storeName}/${property}`, ...args);
