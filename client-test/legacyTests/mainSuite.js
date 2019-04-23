@@ -182,42 +182,6 @@ module.exports = {
             }
         }
     },
-    'enlarge': {
-        'when has 1 card in own zone and click enlarge icon on it': {
-            async setUp() {
-                const { dispatch } = this.createController();
-                this.controller.showPage();
-                dispatch('restoreState', FakeState({
-                    turn: 2,
-                    currentPlayer: 'P1A',
-                    cardsInZone: [{ id: 'C1A' }],
-                    events: [PutDownCardEvent({ turn: 1, cardId: 'C1A' })]
-                }));
-                await timeout();
-
-                await click('.field-playerZoneCards .card .enlargeIcon');
-            },
-            'should show enlarged version of card'() {
-                assert.elementCount('.card--enlarged', 1);
-            }
-        },
-        'when enlarged version of card is visible and click on overlay should hide enlarged card': async function () {
-            const { dispatch } = this.createController();
-            this.controller.showPage();
-            dispatch('restoreState', FakeState({
-                turn: 2,
-                currentPlayer: 'P1A',
-                cardsInZone: [{ id: 'C1A' }],
-                events: [PutDownCardEvent({ turn: 1, cardId: 'C1A' })]
-            }));
-            await timeout();
-            await click('.field-playerZoneCards .card .enlargeIcon');
-
-            await click('.dimOverlay');
-
-            assert.elementCount('.card--enlarged', 0);
-        }
-    },
     'behaviour - Small Repair Shop': {
         'when has card in zone and a damaged card in same zone BUT is action phase': {
             async setUp() {

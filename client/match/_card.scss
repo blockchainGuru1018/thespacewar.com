@@ -8,11 +8,6 @@
   background: white;
   background-size: 100% 100%;
   box-sizing: border-box;
-
-  //&:not(.card-faceDown):hover {
-  //  transform: scale(2);
-  //  z-index: 1;
-  //}
 }
 
 .actionOverlays {
@@ -91,9 +86,20 @@
   -webkit-font-smoothing: antialiased;
 
   .cardDisabledOverlay-text {
-    font-family: "Space mono";
+    font-family: "Space mono", sans-serif;
     color: rgba(255, 0, 0, 0.6);
     position: relative;
     bottom: 2px;
+  }
+}
+
+.card.card--expandable {
+  &:active:hover {
+    transition: transform .75s cubic-bezier(0.95, 0.05, 0.795, 0.035) !important;
+    transform: scale(1.1);
+  }
+
+  &.card--turnedAround:active:hover {
+    transform: rotate(180deg) scale(1.1) !important;
   }
 }

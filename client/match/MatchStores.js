@@ -4,7 +4,8 @@ const STORES = [
     require('./PermissionStore.js'),
     require('./CardStore.js'),
     require('./findCard/FindCardStore.js'),
-    require('./loadingIndicator/LoadingIndicatorStore.js')
+    require('./loadingIndicator/LoadingIndicatorStore.js'),
+    require('../expandedCard/ExpandedCardStore.js')
 ];
 const AI = require('./AI.js');
 const LOGGING_ENABLED = false;
@@ -91,7 +92,8 @@ function createRootDispatch(rootStore) {
                 if (!target.store) {
                     target.store = property;
                     return reciever;
-                } else {
+                }
+                else {
                     let storeName = target.store;
                     target.store = '';
                     return (...args) => rootStore.dispatch(`${storeName}/${property}`, ...args);

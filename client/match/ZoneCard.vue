@@ -1,13 +1,14 @@
 <template>
     <div
         ref="card"
+        v-longpress="cardLongpress"
         :style="cardStyle"
         :data-type="card.type || ''"
         :class="classes"
     >
         <div
             class="enlargeIcon"
-            @click="enlargeClick"
+            @click="enlargeIconClick"
         />
         <div
             v-if="disabled"
@@ -136,17 +137,6 @@
                 -{{ card.damage }}
             </div>
         </div>
-        <portal
-            v-if="showEnlargedCard"
-            to="match"
-        >
-            <div class="dimOverlay"/>
-            <div
-                v-click-outside="hideEnlargedCard"
-                class="card card--enlarged"
-                :style="cardStyle"
-            />
-        </portal>
     </div>
 </template>
 <script>
@@ -160,8 +150,11 @@
     const {
         mapGetters: mapPermissionGetters
     } = Vuex.createNamespacedHelpers('permission');
+    const expandedCardHelpers = Vuex.createNamespacedHelpers('expandedCard');
     const vClickOutside = require('v-click-outside');
-    const getCardImageUrl = require("../utils/getCardImageUrl.js")
+    const longpress = require('../utils/longpress.js');
+    const getCardImageUrl = require("../utils/getCardImageUrl.js");
+
     const DAMAGE_WHEN_TARGET_FOR_SACRIFICE = 4;
 
     module.exports = {
@@ -174,8 +167,7 @@
         ],
         data() {
             return {
-                cardWidth: 0,
-                showEnlargedCard: false
+                cardWidth: 0
             }
         },
         computed: {
@@ -211,7 +203,7 @@
                 return this.createCard(this.card, { playerId: this.ownerId });
             },
             classes() {
-                const classes = ['card'];
+                const classes = ['card', 'card--expandable'];
                 if (this.selectedAsAttacker) {
                     classes.push('selectedAsAttacker');
                 }
@@ -348,7 +340,7 @@
                     cardData: this.card,
                     isStationCard: false,
                     isOpponentCard: !this.isPlayerCard
-                }
+                };
                 return this.checkIfCanBeSelectedForAction(options);
             },
             predictedResultsIfAttacked() {
@@ -402,6 +394,9 @@
                 'startSacrifice',
                 'selectCardForActiveAction',
             ]),
+            ...expandedCardHelpers.mapActions([
+                'expandCard'
+            ]),
             moveClick() {
                 this.moveCard(this.card);
             },
@@ -411,14 +406,14 @@
             discardClick() {
                 this.discardDurationCard(this.card);
             },
-            enlargeClick() {
-                this.showEnlargedCard = true;
-            },
-            hideEnlargedCard() {
-                this.showEnlargedCard = false;
-            },
             sacrifice() {
                 this.startSacrifice(this.card.id);
+            },
+            cardLongpress() {
+                this.expandCard(this.card);
+            },
+            enlargeIconClick() {
+                this.expandCard(this.card);
             }
         },
         mounted() {
@@ -430,18 +425,17 @@
             }
         },
         directives: {
-            clickOutside: vClickOutside.directive
+            clickOutside: vClickOutside.directive,
+            longpress
         }
     };
 </script>
 <style scoped lang="scss">
     @import "miscVariables";
     @import "card";
-    @import "enlargeCard";
 
     .card {
         position: relative;
-        transition: transform .1s cubic-bezier(0, 0.07, 0.12, 1.04) !important;
         flex: 0 0 auto;
     }
 
@@ -533,6 +527,7 @@
     }
 
     .paralyzed {
+        transition: transform .1s cubic-bezier(0, 0.07, 0.12, 1.04) !important;
         margin-right: 4% !important;
         margin-left: 4% !important;
         transform: rotate(90deg) !important;

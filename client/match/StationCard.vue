@@ -1,42 +1,43 @@
 <template>
     <div
-            :class="['stationCardWrapper', {'stationCardWrapper--fullSize': stationCard.flipped && !isOpponentStationCard}]"
+        :class="['stationCardWrapper', {'stationCardWrapper--fullSize': stationCard.flipped && !isOpponentStationCard}]"
     >
         <div
-                :class="classes"
-                :style="cardStyle"
+            v-longpress="cardLongpress"
+            :class="classes"
+            :style="cardStyle"
         >
             <div
-                    class="actionOverlays"
-                    v-if="!isHoldingCard"
+                class="actionOverlays"
+                v-if="!isHoldingCard"
             >
                 <div
-                        @click.stop="putDownCardOrShowChoiceOrAction({ location: 'zone', cardData: stationCard.card })"
-                        class="movable"
-                        v-if="canMoveCardToZone"
+                    @click.stop="putDownCardOrShowChoiceOrAction({ location: 'zone', cardData: stationCard.card })"
+                    class="movable"
+                    v-if="canMoveCardToZone"
                 >
                     Move to zone
                 </div>
 
                 <div
-                        @click.stop="selectStationCardAsDefender(stationCard)"
-                        class="attackable"
-                        v-if="canBeSelectedAsDefender"
+                    @click.stop="selectStationCardAsDefender(stationCard)"
+                    class="attackable"
+                    v-if="canBeSelectedAsDefender"
                 />
                 <div
-                        @click.stop="selectForRepair(stationCard.id)"
-                        class="selectForRepair actionOverlay"
-                        v-else-if="canBeSelectedForRepair"
+                    @click.stop="selectForRepair(stationCard.id)"
+                    class="selectForRepair actionOverlay"
+                    v-else-if="canBeSelectedForRepair"
                 />
                 <div
-                        @click.stop="selectStationCardForRequirement(stationCard)"
-                        class="selectable"
-                        v-else-if="canBeSelectedForRequirement"
+                    @click.stop="selectStationCardForRequirement(stationCard)"
+                    class="selectable"
+                    v-else-if="canBeSelectedForRequirement"
                 />
                 <div
-                        @click.stop="selectCardForActiveAction(stationCard.id)"
-                        class="selectable"
-                        v-else-if="canSelectedCardForAction"
+                    @click.stop="selectCardForActiveAction(stationCard.id)"
+                    class="selectable"
+                    v-else-if="canSelectedCardForAction"
                 />
             </div>
         </div>
@@ -57,6 +58,8 @@
         mapState: mapCardState,
         mapActions: mapCardActions
     } = Vuex.createNamespacedHelpers('card');
+    const expandedCardHelpers = Vuex.createNamespacedHelpers('expandedCard');
+    const longpress = require('../utils/longpress.js');
 
     module.exports = {
         props: [
@@ -100,8 +103,9 @@
                 }
 
                 if (this.stationCard.flipped) {
-                    classes.push('stationCard--flipped');
-                } else {
+                    classes.push('stationCard--flipped', 'card--expandable');
+                }
+                else {
                     classes.push('card-faceDown');
                 }
 
@@ -182,6 +186,17 @@
                 'selectCardForActiveAction',
                 'putDownCardOrShowChoiceOrAction'
             ]),
+            ...expandedCardHelpers.mapActions([
+                'expandCard'
+            ]),
+            cardLongpress() {
+                if (this.stationCard.flipped) {
+                    this.expandCard(this.stationCard.card);
+                }
+            }
+        },
+        directives: {
+            longpress
         }
     };
 </script>
