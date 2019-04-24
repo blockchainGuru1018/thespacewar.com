@@ -1,8 +1,5 @@
 <template>
     <div class="field-playerHud">
-
-        <!-- THIS IS A TEST 2019-04-24 -->
-
         <portal to="player-top" v-if="!gameHasEnded">
             <div class="nextPhaseButtonContainer">
                 <button v-if="phase === 'start'"
