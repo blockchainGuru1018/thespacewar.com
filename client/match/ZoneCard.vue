@@ -6,10 +6,15 @@
         :data-type="card.type || ''"
         :class="classes"
     >
-        <div
-            class="enlargeIcon"
-            @click="enlargeIconClick"
-        />
+        <div class="indicatorOverlays">
+            <div
+                v-if="card.damage && card.damage > 0"
+                class="card-damageIndicator"
+                :style="damageTextStyle"
+            >
+                -{{ card.damage }}
+            </div>
+        </div>
         <div
             v-if="disabled"
             class="cardDisabledOverlay"
@@ -21,11 +26,17 @@
                 X
             </span>
         </div>
-        <div class="actionOverlays">
+        <div
+            class="enlargeIcon"
+            @click="enlargeIconClick"
+        />
+        <div
+            class="actionOverlays"
+        >
             <div
                 v-if="canBeSelectedAsDefender"
                 class="attackable actionOverlay actionOverlay--turnedAround"
-                @click.stop="selectAsDefender(card)"
+                @click="selectAsDefender(card)"
             >
                 <div
                     v-if="predictedResultsIfAttacked.defenderParalyzed"
@@ -51,7 +62,7 @@
             <div
                 v-else-if="canBeSelectedForRepair"
                 class="selectForRepair actionOverlay"
-                @click.stop="selectForRepair(card.id)"
+                @click="selectForRepair(card.id)"
             >
                 <div
                     v-if="behaviourCard.paralyzed != predictedResultsIfRepaired.paralyzed"
@@ -100,7 +111,7 @@
                 <div
                     v-if="canBeDiscarded"
                     class="discard actionOverlay"
-                    @click.stop="discardClick"
+                    @click="discardClick"
                 >
                     Discard
                 </div>
@@ -108,7 +119,7 @@
             <div
                 v-if="canSelectCardForAction"
                 :class="['selectable', {'selectable--turnedAround': !isPlayerCard}]"
-                @click.stop="selectCardForActiveAction(card.id)"
+                @click="selectCardForActiveAction(card.id)"
             >
                 <template v-if="predictedResultsIfTargetForAction">
                     <div
@@ -126,15 +137,6 @@
                         {{ behaviourCard.defense - predictedResultsIfTargetForSacrifice.damage }}
                     </div>
                 </template>
-            </div>
-        </div>
-        <div class="indicatorOverlays">
-            <div
-                v-if="card.damage && card.damage > 0"
-                class="card-damageIndicator"
-                :style="damageTextStyle"
-            >
-                -{{ card.damage }}
             </div>
         </div>
     </div>
