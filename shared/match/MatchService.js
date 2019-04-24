@@ -60,7 +60,7 @@ class MatchService {
 
     goToNextPlayer() {
         const playerOrder = this.getPlayerOrder();
-        const currentPlayerId = this.getCurrentPlayer()
+        const currentPlayerId = this.getCurrentPlayer();
         const currentPlayerIndex = playerOrder.indexOf(currentPlayerId);
         if (currentPlayerIndex === playerOrder.length - 1) {
             throw new Error('Cannot go to next player. There are no more players for this turn.');
@@ -68,6 +68,12 @@ class MatchService {
 
         this.update(state => {
             state.currentPlayer = playerOrder[currentPlayerIndex + 1];
+        });
+    }
+
+    switchControlOfTurn(playerIdTakingControl) {
+        this.update(state => {
+            state.currentPlayer = playerIdTakingControl;
         });
     }
 

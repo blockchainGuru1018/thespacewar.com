@@ -5,10 +5,11 @@ const prepareOpponentState = require('./prepareOpponentState.js');
 
 class MatchComService {
 
-    constructor({ matchId, players, logger, playerServiceProvider, stateChangeListener }) {
+    constructor({ matchId, players, logger, matchService, playerServiceProvider, stateChangeListener }) {
         this._matchId = matchId;
         this._players = players;
         this._logger = logger;
+        this._matchService = matchService;
         this._playerServiceProvider = playerServiceProvider;
 
         stateChangeListener.listenForSnapshots(this._onSnapshot.bind(this));
@@ -74,6 +75,27 @@ class MatchComService {
         return model;
     }
 
+    emitCurrentStateToPlayers() {
+        for (const player of this.getPlayers()) {
+            const playerId = player.id;
+            const playerState = this._getPlayerState(playerId);
+
+            let opponentId = this.getOpponentId(playerId);
+            const opponentState = this._getPlayerState(opponentId);
+
+            const data = {
+                currentPlayer: this._matchService.getCurrentPlayer(),
+                turn: this._matchService.getTurn(),
+                ...preparePlayerState(playerState),
+                ...prepareOpponentState(opponentState)
+            };
+
+            if (Object.keys(data).length > 0) {
+                this.emitToPlayer(playerId, 'stateChanged', data);
+            }
+        }
+    }
+
     _getPlayer(playerId) {
         return this._players.find(p => p.id === playerId);
     }
@@ -97,6 +119,11 @@ class MatchComService {
                 this.emitToPlayer(playerId, 'stateChanged', data);
             }
         }
+    }
+
+    _getPlayerState(playerId) {
+        const playerStateService = this._playerServiceProvider.getStateServiceById(playerId);
+        return playerStateService.getPlayerState();
     }
 
     _getPlayerChangedState(playerId, playerChangedKeys) {

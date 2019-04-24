@@ -403,7 +403,8 @@ class PlayerStateService {
                 });
                 stationCardToRepair.flipped = cardToRepair.flipped;
             });
-        } else {
+        }
+        else {
             this.updateCardById(cardToRepairId, card => {
                 Object.assign(card, cardToRepair.getCardData());
             });
@@ -433,7 +434,8 @@ class PlayerStateService {
         if (newTargetDamage >= targetDefense) {
             this.removeCard(targetCardId);
             this.discardCard(targetCardData);
-        } else {
+        }
+        else {
             this.updateCardById(targetCardId, card => {
                 card.damage = newTargetDamage;
             });
@@ -464,7 +466,8 @@ class PlayerStateService {
 
             const turn = this._matchService.getTurn();
             this.storeEvent(MoveCardEvent({ turn, cardId, cardCommonId: updatedCardCommonId }));
-        } else {
+        }
+        else {
             throw new Error(`Failed to move card with ID: ${cardId}`);
         }
     }
@@ -476,9 +479,10 @@ class PlayerStateService {
     }
 
     removeCardFromStationOrZones(cardId) {
-        if (!!this.findStationCard(cardId)) {
+        if (this.findStationCard(cardId)) {
             this.removeStationCard(cardId);
-        } else if (this.findCard(cardId)) {
+        }
+        else if (this.findCard(cardId)) {
             this.removeCard(cardId);
         }
     }
@@ -490,7 +494,8 @@ class PlayerStateService {
         if (cardIndexInHomeZone >= 0) {
             zoneName = 'cardsInZone';
             cardIndex = cardIndexInHomeZone;
-        } else {
+        }
+        else {
             const cardInOpponentZoneIndex = this.getCardsInOpponentZone().findIndex(c => c.id === cardId);
             if (cardInOpponentZoneIndex >= 0) {
                 zoneName = 'cardsInOpponentZone';
@@ -552,7 +557,8 @@ class PlayerStateService {
         let zoneName;
         if (playerState.cardsInZone.find(c => c.id === cardId)) {
             zoneName = 'cardsInZone';
-        } else if (playerState.cardsInOpponentZone.find(c => c.id === cardId)) {
+        }
+        else if (playerState.cardsInOpponentZone.find(c => c.id === cardId)) {
             zoneName = 'cardsInOpponentZone';
         }
 

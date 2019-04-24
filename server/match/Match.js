@@ -77,6 +77,7 @@ module.exports = function ({
         matchId,
         players,
         logger,
+        matchService,
         playerServiceProvider,
         stateChangeListener
     });
@@ -117,9 +118,8 @@ module.exports = function ({
             return matchComService.getPlayers();
         },
         start,
-        refresh,
-        getOwnState: getPlayerState,
         nextPhase: nextPhaseController.onNextPhase,
+        toggleControlOfTurn: nextPhaseController.onToggleControlOfTurn,
         putDownCard: putDownCardController.onPutDownCard,
         drawCard: drawCardController.onDrawCard,
         discardOpponentTopTwoCards: drawCardController.onDiscardOpponentTopTwoCards,
@@ -134,6 +134,9 @@ module.exports = function ({
         overwork: overworkController.overwork,
         repairCard,
         retreat,
+
+        refresh,
+        getOwnState: getPlayerState,
         updatePlayer: matchComService.updatePlayer.bind(matchComService),
         saveMatch: debugController.onSaveMatch,
         restoreSavedMatch: debugController.onRestoreSavedMatch,
@@ -151,7 +154,8 @@ module.exports = function ({
             for (let player of players) {
                 emitRestoreStateForPlayer(player.id);
             }
-        } else {
+        }
+        else {
             state.playersReady++;
             if (state.playersReady === players.length) {
                 players.forEach((player, index) => startGameForPlayer(player.id, { isFirstPlayer: index === 0 }));
@@ -369,7 +373,8 @@ function wrapApi({ api, stateChangeListener }) {
                 stateChangeListener.snapshot();
                 return result;
             };
-        } else {
+        }
+        else {
             wrappedApi[name] = api[name];
         }
     }
@@ -385,7 +390,8 @@ function repairRequirements({
     while (!!playerWaitingRequirement !== !!opponentWaitingRequirement) {
         if (playerWaitingRequirement) {
             playerRequirementUpdater.removeFirstMatchingRequirement({ waiting: true });
-        } else {
+        }
+        else {
             opponentRequirementUpdater.removeFirstMatchingRequirement({ waiting: true });
         }
 

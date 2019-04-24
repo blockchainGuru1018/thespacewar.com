@@ -12,7 +12,8 @@ function PutDownCardController(deps) {
     } = deps;
 
     return {
-        onNextPhase
+        onNextPhase,
+        onToggleControlOfTurn
     };
 
     function onNextPhase(playerId) {
@@ -54,6 +55,18 @@ function PutDownCardController(deps) {
         if (newPhase === PHASES.draw) {
             enterDrawPhaseForPlayer(currentPlayerId);
         }
+    }
+
+    function onToggleControlOfTurn(playerId) {
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const playerPhase = playerStateService.getPhase();
+        if (playerPhase !== PHASES.wait) return;
+
+        let isCurrentPlayer = matchService.getCurrentPlayer() === playerId;
+        const nextPlayerToReceiveControl = isCurrentPlayer ? matchService.getOpponentId(playerId) : playerId;
+        matchService.switchControlOfTurn(nextPlayerToReceiveControl);
+
+        matchComService.emitCurrentStateToPlayers();
     }
 
     function enterDrawPhaseForPlayer(playerId) {
