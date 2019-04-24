@@ -2,6 +2,7 @@ const child_process = require('child_process');
 const path = require('path');
 const spawnIndependently = require('./spawnIndependently.js');
 
+const PRODUCTION = true;
 const USING_PM2 = true;
 
 module.exports = {
@@ -17,7 +18,7 @@ function installNpmPackages() {
 }
 
 function startServer() {
-    const startServerFileName = process.env.production ? 'startInProduction.js' : 'startInDevelopment.js';
+    const startServerFileName = PRODUCTION ? 'startInProduction.js' : 'startInDevelopment.js';
     const serverFilePath = path.join(__dirname, '..', 'scripts', startServerFileName);
     console.log(' (2/2) - Starting server using ' + (USING_PM2 ? 'pm2' : 'node'));
     if (USING_PM2) {
