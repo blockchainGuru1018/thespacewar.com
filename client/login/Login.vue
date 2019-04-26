@@ -1,9 +1,9 @@
 <template>
     <div class="login">
         <input @keydown.exact.enter="loginClick"
-               class="login-username"
-               placeholder="username"
-               v-model="username"/>
+            class="login-username"
+            placeholder="username"
+            v-model="username"/>
         <button :style="{opacity: username.length >= 3 ? 1 : 0}" @click="loginClick" class="login-submit">></button>
     </div>
 </template>
@@ -30,7 +30,29 @@
                 if (this.username.length > 0) {
                     this.login(this.username);
                 }
+            },
+            keydown(event) {
+                if (!event.altKey) return;
+
+                if (event.code === 'Digit1') {
+                    this.username = 'Mr.A';
+                    this.loginClick();
+                }
+                else if (event.code === 'Digit2') {
+                    this.username = 'Mr.B';
+                    this.loginClick();
+
+                    setTimeout(() => {
+                        document.querySelectorAll('.user')[1].click();
+                    }, 800);
+                }
             }
+        },
+        mounted() {
+            window.addEventListener('keydown', this.keydown);
+        },
+        destroyed() {
+            window.removeEventListener('keydown', this.keydown);
         }
     };
 </script>

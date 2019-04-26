@@ -1,3 +1,4 @@
+const { PHASES } = require('./phases.js');
 const canIssueOverwork = require('../../shared/match/overwork/canIssueOverwork.js');
 
 module.exports = function (deps) {
@@ -12,6 +13,8 @@ module.exports = function (deps) {
         state: {},
         getters: {
             isOwnTurn,
+            opponentHasControlOfPlayersTurn,
+            playerHasControlOfOpponentsTurn,
             waitingForOtherPlayerToFinishRequirements,
             canMoveCardsFromHand,
             canDiscardCards,
@@ -30,9 +33,17 @@ module.exports = function (deps) {
         actions: {}
     };
 
-    function isOwnTurn(state, getters, rootState) {
+    function isOwnTurn(state, getters, rootState) { //TODO "isOwnTurn" is confusing as you can take control of another players turn, this would be true then but it wouldnt be "your turn".
         const matchState = rootState.match;
         return matchState.ownUser.id === matchState.currentPlayer;
+    }
+
+    function opponentHasControlOfPlayersTurn(state, getters, rootState, rootGetters) {
+        return rootGetters['match/turnControl'].opponentHasControlOfPlayersTurn();
+    }
+
+    function playerHasControlOfOpponentsTurn(state, getters, rootState, rootGetters) {
+        return rootGetters['match/turnControl'].playerHasControlOfOpponentsTurn();
     }
 
     function waitingForOtherPlayerToFinishRequirements() {
@@ -70,14 +81,8 @@ module.exports = function (deps) {
         }
     }
 
-    function canPutDownCards(state, getters, rootState) {
-        if (getters.waitingForOtherPlayerToFinishRequirements) return false;
-
-        const hasRequirement = !!getFrom('firstRequirement', 'requirement');
-        const isActionPhase = rootState.match.phase === 'action'
-        return getters.isOwnTurn
-            && isActionPhase
-            && !hasRequirement;
+    function canPutDownCards(state, getters, rootState, rootGetters) {
+        return rootGetters['match/playerRuleService'].canPutDownCardsInHomeZone();
     }
 
     function canPutDownStationCards(state, getters, rootState) {

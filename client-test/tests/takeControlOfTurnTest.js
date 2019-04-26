@@ -1,18 +1,10 @@
-const FakeCardDataAssembler = require('../../server/test/testUtils/FakeCardDataAssembler.js');
-const createCard = FakeCardDataAssembler.createCard;
 const getCardImageUrl = require('../../client/utils/getCardImageUrl.js');
 const FakeState = require('../matchTestUtils/FakeState.js');
 const FakeMatchController = require('../matchTestUtils/FakeMatchController.js');
-const ExcellentWork = require('../../shared/card/ExcellentWork.js');
-const Expansion = require('../../shared/card/Expansion.js');
-const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
-const CardInfoRepository = require('../../shared/CardInfoRepository.js');
 const { createController } = require('../matchTestUtils/index.js');
 const {
     assert,
-    refute,
     timeout,
-    stub,
     dom: {
         click
     }
@@ -42,7 +34,7 @@ describe('when phase is wait but is current player', async () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
-        dispatch('restoreState', FakeState({
+        dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'wait'
@@ -60,7 +52,7 @@ describe('when phase is wait and is NOT current player', async () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
-        dispatch('restoreState', FakeState({
+        dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P2A',
             phase: 'wait'
@@ -74,11 +66,30 @@ describe('when phase is wait and is NOT current player', async () => {
     });
 });
 
+// TODO describe('when phase is wait but opponents phase is "start"', async () => {
+//     beforeEach(async () => {
+//         const { dispatch, showPage } = setUpController();
+//         showPage();
+//         dispatch('stateChanged', FakeState({
+//             turn: 1,
+//             currentPlayer: 'P2A',
+//             phase: 'wait',
+//             opponentPhase: 'start'
+//         }));
+//         await timeout();
+//     });
+//
+//     test('guide text should mention that it is the opponents turn', async () => {
+//         assert.elementText('.guideText', 'Enemy turn');
+//         assert.elementText('.guideText-subText', 'press space to take control');
+//     });
+// });
+
 describe('when phase is action but is not current player', async () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
-        dispatch('restoreState', FakeState({
+        dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P2A',
             phase: 'action'
@@ -89,5 +100,45 @@ describe('when phase is action but is not current player', async () => {
     test('guide text should mention that you do NOT have control', async () => {
         assert.elementText('.guideText', 'Your opponent has taken control');
         assert.elementText('.guideText-subText', 'wait to have it back');
+    });
+});
+
+describe('when has taken control of the turn and is holding a 0 cost card', async () => {
+    beforeEach(async () => {
+        const { dispatch, showPage } = setUpController();
+        showPage();
+        dispatch('stateChanged', FakeState({
+            turn: 1,
+            currentPlayer: 'P1A',
+            phase: 'wait',
+            cardsOnHand: [{ id: 'C1A', cost: 0 }]
+        }));
+        await timeout();
+
+        await click('.field-playerCardsOnHand .cardOnHand');
+    });
+
+    test('should show zone ghost', async () => {
+        assert.elementCount('.playerCardsInZone .card-ghost', 1);
+    });
+});
+
+describe('when has taken control of the turn and is holding a card costing more than 0', async () => {
+    beforeEach(async () => {
+        const { dispatch, showPage } = setUpController();
+        showPage();
+        dispatch('stateChanged', FakeState({
+            turn: 1,
+            currentPlayer: 'P1A',
+            phase: 'wait',
+            cardsOnHand: [{ id: 'C1A', cost: 1 }]
+        }));
+        await timeout();
+
+        await click('.field-playerCardsOnHand .cardOnHand');
+    });
+
+    test('should NOT show zone ghost', async () => {
+        assert.elementCount('.playerCardsInZone .card-ghost', 0);
     });
 });

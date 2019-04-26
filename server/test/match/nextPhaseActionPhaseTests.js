@@ -25,7 +25,7 @@ const LastPhase = COMMON_PHASE_ORDER[COMMON_PHASE_ORDER.length - 1];
 module.exports = {
     'when put down a station card in action row and then put down card in zone': {
         async setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState']);
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
             this.match = createMatch({ players: [Player('P1A', this.firstPlayerConnection), Player('P2A')] });
             this.match.restoreFromState(createState({
                 playerStateById: {
@@ -48,14 +48,14 @@ module.exports = {
             assert.equals(this.error.message, 'Cannot afford card');
         },
         'when restore state should NOT have card in zone': function () {
-            this.match.start();
-            let { cardsInZone } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            this.match.refresh('P1A');
+            let { cardsInZone } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
             assert.equals(cardsInZone.length, 0);
         }
     },
     'when has Energy shield in home zone and put down another Energy shield': {
         async setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState']);
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
             this.match = createMatch({ players: [Player('P1A', this.firstPlayerConnection), Player('P2A')] });
             this.match.restoreFromState(createState({
                 playerStateById: {
@@ -81,7 +81,7 @@ module.exports = {
     },
     'when has Energy shield in home zone and put down another Energy shield as station card': {
         async setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState']);
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
             this.match = createMatch({ players: [Player('P1A', this.firstPlayerConnection), Player('P2A')] });
             this.match.restoreFromState(createState({
                 playerStateById: {
@@ -101,7 +101,7 @@ module.exports = {
     },
     'when does NOT have Energy shield in home zone and put down an Energy shield in zone': {
         async setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState']);
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
             this.match = createMatch({ players: [Player('P1A', this.firstPlayerConnection), Player('P2A')] });
             this.match.restoreFromState(createState({
                 playerStateById: {
@@ -120,7 +120,7 @@ module.exports = {
     },
     'when has card "Good karma" in play and enters draw phase': {
         setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
             this.match = createMatch({ players: [Player('P1A', this.firstPlayerConnection), Player('P2A')] });
             this.match.restoreFromState(createState({
                 turn: 1,
@@ -152,15 +152,15 @@ module.exports = {
             }));
         },
         'when restore state should have requirement'() {
-            this.match.start();
-            assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
+            this.match.refresh('P1A');
+            assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                 requirements: [sinon.match({ type: 'drawCard', count: GoodKarmaDrawCardRequirementCount() })]
             }));
         }
     },
     'when has card "Good karma" in play and leaves draw phase': {
         setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
             this.match = createMatch({ players: [Player('P1A', this.firstPlayerConnection), Player('P2A')] });
             this.match.restoreFromState(createState({
                 turn: 1,
@@ -185,8 +185,8 @@ module.exports = {
             }));
         },
         'when restore state should have requirement'() {
-            this.match.start();
-            assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
+            this.match.refresh('P1A');
+            assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                 requirements: [sinon.match({ type: 'discardCard', count: GoodKarmaDiscardCardRequirementCount() })]
             }));
         }

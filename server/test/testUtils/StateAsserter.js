@@ -18,13 +18,13 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
     }
 
     function hasStationCard(cardId) {
-        assert.calledWith(playerConnection.restoreState, sinon.match({
+        assert.calledWith(playerConnection.stateChanged, sinon.match({
             stationCards: sinon.match.some(sinon.match({ id: cardId }))
         }));
     }
 
     function hasRequirement(requirement) {
-        assert.calledWith(playerConnection.restoreState, sinon.match({
+        assert.calledWith(playerConnection.stateChanged, sinon.match({
             requirements: sinon.match([sinon.match(requirement)])
         }));
     }

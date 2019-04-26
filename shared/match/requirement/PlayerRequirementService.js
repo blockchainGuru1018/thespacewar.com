@@ -11,10 +11,17 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
     }
 
     getRequirements() {
-        return this._playerStateService
-            .getPlayerState()
+        return this._playerStateService.getPlayerState()
             .requirements
             .slice();
+    }
+
+    hasAnyRequirement() {
+        return this.getRequirements().length > 0;
+    }
+
+    isWaitingOnOpponentFinishingRequirement() {
+        return this.getRequirements().some(r => r.waiting);
     }
 
     getFirstMatchingRequirement({ type, common = null, waiting = null }) {

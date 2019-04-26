@@ -36,6 +36,14 @@ class MatchService {
         return playerOrder[playerOrder.length - 1];
     }
 
+    getRetreatedPlayerId() {
+        return this._state.retreatedPlayerId;
+    }
+
+    hasGameEnded() {
+        return this._state.ended;
+    }
+
     getOpponentId(playerId) {
         const firstPlayerId = this.getFirstPlayerId();
         return firstPlayerId === playerId ? this.getLastPlayerId() : firstPlayerId;
@@ -68,12 +76,6 @@ class MatchService {
 
         this.update(state => {
             state.currentPlayer = playerOrder[currentPlayerIndex + 1];
-        });
-    }
-
-    switchControlOfTurn(playerIdTakingControl) {
-        this.update(state => {
-            state.currentPlayer = playerIdTakingControl;
         });
     }
 

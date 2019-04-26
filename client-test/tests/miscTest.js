@@ -40,7 +40,7 @@ describe('misc', async () => {
     test('when in "start" phase and click card on hand should NOT see ANY card ghosts', async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
-        dispatch('restoreState', FakeState({
+        dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'start',
@@ -59,7 +59,7 @@ describe('when in discard phase and is required to discard 2 cards', async () =>
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
-        dispatch('restoreState', FakeState({
+        dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'discard',
@@ -92,7 +92,7 @@ describe('when in action phase', async () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
-        dispatch('restoreState', FakeState({
+        dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'action',
@@ -117,7 +117,7 @@ describe('when has NO cards left and it is draw phase and opponent has 1 card le
             getDeckSize: () => 2
         });
         showPage();
-        dispatch('restoreState', FakeState({
+        dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'draw',
@@ -142,7 +142,7 @@ describe('when has 1 card left and it is draw phase and opponent has NO cards le
             getDeckSize: () => 2
         });
         showPage();
-        dispatch('restoreState', FakeState({
+        dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'draw',
@@ -167,7 +167,7 @@ describe('when both players are out of cards', () => {
             getDeckSize: () => 1
         });
         showPage();
-        dispatch('restoreState', FakeState({
+        dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'draw',

@@ -78,8 +78,8 @@ module.exports = {
     },
     'when enter draw phase and has NO cards left in deck': {
         async setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState']);
-            this.secondPlayerConnection = FakeConnection2(['restoreState']);
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['stateChanged']);
             this.match = createMatch({
                 players: [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
             });
@@ -108,7 +108,7 @@ module.exports = {
         },
         'should add damage station card requirement to second player'() {
             this.match.refresh('P2A');
-            assert.calledWith(this.secondPlayerConnection.restoreState, sinon.match({
+            assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
                 requirements: [{
                     type: 'damageStationCard',
                     count: sinon.match.number,
@@ -122,7 +122,7 @@ module.exports = {
             // The real intent is to have the first player wait for the other. Perhaps this could be implement in another
             // way that doesnt break the abstraction?
             this.match.refresh('P1A');
-            assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
+            assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                 requirements: [{
                     type: 'damageStationCard',
                     count: 0,
@@ -135,7 +135,7 @@ module.exports = {
     },
     'when first player is in the preparation phase and goes to next phase': {
         async setUp() {
-            this.firstPlayerConnection = FakeConnection2(['drawCards', 'restoreState']);
+            this.firstPlayerConnection = FakeConnection2(['drawCards', 'stateChanged']);
             this.match = createMatch({
                 players: [Player('P1A', this.firstPlayerConnection), Player('P2A')]
             });
@@ -154,8 +154,8 @@ module.exports = {
             this.match.nextPhase('P1A');
         },
         'should be in action phase': function () {
-            this.match.start();
-            const { phase } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            this.match.refresh('P1A');
+            const { phase } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
             assert.equals(phase, 'action');
         }
     },

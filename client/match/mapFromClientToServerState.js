@@ -2,6 +2,9 @@ module.exports = function (clientState) {
     const state = {
         turn: clientState.turn,
         playerOrder: clientState.playerOrder,
+        currentPlayer: clientState.currentPlayer,
+        ended: clientState.ended,
+        retreatedPlayerId: clientState.retreatedPlayerId,
         playerStateById: {
             [clientState.ownUser.id]: {
                 phase: clientState.phase,
@@ -13,7 +16,8 @@ module.exports = function (clientState) {
                     ...clientState.playerStation.drawCards,
                     ...clientState.playerStation.actionCards,
                     ...clientState.playerStation.handSizeCards
-                ]
+                ],
+                requirements: clientState.requirements
             },
             [clientState.opponentUser.id]: {
                 phase: 'wait',

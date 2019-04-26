@@ -5,8 +5,11 @@ const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculato
 const ClientCardFactory = require('../card/ClientCardFactory.js');
 const MatchService = require("../../shared/match/MatchService.js");
 const CanThePlayer = require("../../shared/match/CanThePlayer.js");
+const TurnControl = require("../../shared/match/TurnControl.js");
+const PlayerPhase = require("../../shared/match/PlayerPhase.js");
 const PlayerRuleService = require("../../shared/match/PlayerRuleService.js");
 const ClientPlayerStateService = require("./ClientPlayerStateService");
+const PlayerRequirementService = require('../../shared/match/requirement/PlayerRequirementService.js');
 const EventFactory = require('../../shared/event/EventFactory.js');
 const mapFromClientToServerState = require('./mapFromClientToServerState.js');
 const localGameDataFacade = require('../utils/localGameDataFacade.js');
@@ -65,6 +68,7 @@ module.exports = function (deps) {
                 handSizeCards: []
             },
             playerCardsInOpponentZone: [],
+            opponentPhase: '',
             opponentCardCount: 0,
             opponentDiscardedCards: [],
             opponentStation: {
@@ -78,7 +82,9 @@ module.exports = function (deps) {
             attackerCardId: null,
             selectedDefendingStationCards: [],
             repairerCardId: null,
-            aiStarted: false
+            aiStarted: false,
+            ended: false,
+            retreatedPlayerId: null
         },
         getters: {
             nextPhase,
@@ -107,13 +113,18 @@ module.exports = function (deps) {
             getCanThePlayer,
             canThePlayer,
             canTheOpponent,
+            turnControl,
+            playerPhase,
+            playerRequirementService,
             playerStateService,
             opponentStateService,
             queryOpponentEvents,
             eventFactory,
             matchService,
             playerCardsInDeckCount,
-            opponentCardsInDeckCount
+            opponentCardsInDeckCount,
+            opponentRetreated,
+            playerRetreated
         },
         mutations: {
             setPlayerStationCards,
@@ -141,7 +152,6 @@ module.exports = function (deps) {
 
             // local TODO many of these have since the start become only remote calls (barely changing any local state)
             stateChanged,
-            restoreState,
             beginGame,
             placeCardInZone,
             opponentDiscardedDurationCard,
@@ -155,7 +165,6 @@ module.exports = function (deps) {
             selectAsAttacker,
             selectAsDefender,
             opponentAttackedCard,
-            opponentRetreated,
             registerAttack,
             removePlayerCard,
             updatePlayerCard,
@@ -280,10 +289,13 @@ module.exports = function (deps) {
 
     function canPutDownCard(state, getters) {
         return cardData => {
+
+            //TODO Incorporate this into canThePlayer.putDownThisCard
             const canOnlyHaveOneInHomeZone = getters.createCard(cardData).canOnlyHaveOneInHomeZone();
             if (canOnlyHaveOneInHomeZone) {
                 return !state.playerCardsInZone.some(c => c.commonId === cardData.commonId);
             }
+
             return getters.canThePlayer.putDownThisCard(cardData);
         };
     }
@@ -292,7 +304,10 @@ module.exports = function (deps) {
         return new PlayerRuleService({
             playerStateService: getters.playerStateService,
             opponentStateService: getters.opponentStateService,
-            canThePlayer: getters.canThePlayer
+            playerRequirementService: getters.playerRequirementService,
+            canThePlayer: getters.canThePlayer,
+            turnControl: getters.turnControl,
+            playerPhase: getters.playerPhase
         });
     }
 
@@ -303,11 +318,12 @@ module.exports = function (deps) {
     }
 
     function canThePlayer(state, getters) {
-        return new CanThePlayer({
+        return createCanThePlayer({
             matchService: getters.matchService,
             queryEvents: getters.queryEvents,
             playerStateService: getters.playerStateService,
             opponentStateService: getters.opponentStateService,
+            turnControl: getters.turnControl
         });
     }
 
@@ -317,6 +333,26 @@ module.exports = function (deps) {
             queryEvents: getters.queryEvents,
             playerStateService: getters.opponentStateService,
             opponentStateService: getters.playerStateService,
+        });
+    }
+
+    function turnControl(state, getters) {
+        return new TurnControl({
+            matchService: getters.matchService,
+            playerStateService: getters.playerStateService,
+            opponentStateService: getters.opponentStateService
+        });
+    }
+
+    function playerPhase(state, getters) {
+        return new PlayerPhase({ playerStateService: getters.playerStateService });
+    }
+
+    function playerRequirementService(state, getters) {
+        return new PlayerRequirementService({ //TODO Separate the read requirements part from the add requirement part?
+            playerStateService: getters.playerStateService,
+            opponentStateService: getters.opponentStateService,
+            requirementFactory: {}
         });
     }
 
@@ -365,7 +401,7 @@ module.exports = function (deps) {
 
     function matchService(state) {
         const matchService = new MatchService();
-        const serverState = mapFromClientToServerState(state)
+        const serverState = mapFromClientToServerState(state);
         matchService.setState(serverState);
         return matchService;
     }
@@ -386,6 +422,14 @@ module.exports = function (deps) {
             - state.opponentCardsInZone.length
             - state.opponentCardsInPlayerZone.length
             - getters.allOpponentStationCards.length;
+    }
+
+    function playerRetreated(state) {
+        return state.ended && state.retreatedPlayerId === state.ownUser.id;
+    }
+
+    function opponentRetreated(state) {
+        return state.ended && state.retreatedPlayerId !== state.ownUser.id;
     }
 
     function queryOpponentEvents() {
@@ -481,9 +525,11 @@ module.exports = function (deps) {
         const location = stationCard.place;
         if (location === 'draw') {
             state.opponentStation.drawCards.push(stationCard);
-        } else if (location === 'action') {
+        }
+        else if (location === 'action') {
             state.opponentStation.actionCards.push(stationCard);
-        } else if (location === 'handSize') {
+        }
+        else if (location === 'handSize') {
             state.opponentStation.handSizeCards.push(stationCard);
         }
     }
@@ -519,9 +565,11 @@ module.exports = function (deps) {
         for (let key of Object.keys(data)) {
             if (key === 'stationCards') {
                 commit('setPlayerStationCards', data[key]);
-            } else if (key === 'opponentStationCards') {
+            }
+            else if (key === 'opponentStationCards') {
                 commit('setOpponentStationCards', data[key]);
-            } else {
+            }
+            else {
                 const localKey = storeItemNameByServerItemName[key] || key;
                 state[localKey] = data[key];
             }
@@ -535,57 +583,10 @@ module.exports = function (deps) {
         if (currentPlayer === state.ownUser.id) {
             const hasDurationCardInPlay = state.playerCardsInZone.some(c => c.type === 'duration');
             state.phase = hasDurationCardInPlay ? PHASES.preparation : PHASES.draw;
-        } else {
+        }
+        else {
             state.phase = PHASES.wait;
         }
-    }
-
-    function restoreState({ state, commit }, restoreState) {
-        const {
-            stationCards,
-            cardsOnHand,
-            cardsInZone,
-            cardsInOpponentZone,
-            discardedCards,
-            opponentCardCount,
-            opponentDiscardedCards,
-            opponentStationCards,
-            opponentCardsInZone,
-            opponentCardsInPlayerZone,
-            opponentEvents,
-            events,
-            phase,
-            requirements,
-            turn,
-            currentPlayer,
-            opponentRetreated,
-            playerRetreated,
-            playerOrder
-        } = restoreState;
-
-        if (opponentRetreated || playerRetreated) {
-            deleteMatchLocalDataAndReturnToStart();
-            return;
-        }
-
-        commit('setPlayerStationCards', stationCards);
-        commit('setPlayerCardsOnHand', cardsOnHand);
-        state.playerCardsInZone = cardsInZone;
-        state.playerDiscardedCards = discardedCards;
-        state.playerCardsInOpponentZone = cardsInOpponentZone;
-        state.opponentCardCount = opponentCardCount;
-        state.opponentDiscardedCards = opponentDiscardedCards;
-        state.opponentCardsInZone = opponentCardsInZone;
-        state.opponentCardsInPlayerZone = opponentCardsInPlayerZone;
-        state.opponentEvents = opponentEvents;
-        commit('setOpponentStationCards', opponentStationCards);
-
-        state.events = events;
-        state.requirements = requirements;
-        state.turn = turn;
-        state.currentPlayer = currentPlayer;
-        state.playerOrder = playerOrder;
-        state.phase = phase;
     }
 
     async function beginGame({ state, commit, dispatch }, beginningState) {
@@ -596,7 +597,8 @@ module.exports = function (deps) {
             opponentStationCards,
             phase,
             currentPlayer,
-            playerOrder
+            playerOrder,
+            opponentPhase
         } = beginningState;
         commit('setPlayerStationCards', stationCards);
         commit('setPlayerCardsOnHand', cardsOnHand);
@@ -605,6 +607,7 @@ module.exports = function (deps) {
         state.phase = phase;
         state.currentPlayer = currentPlayer;
         state.playerOrder = playerOrder;
+        state.opponentPhase = opponentPhase;
 
         dispatch('persistOngoingMatch');
     }
@@ -668,7 +671,8 @@ module.exports = function (deps) {
         const stationCard = getters.allOpponentStationCards.find(s => s.id === card.id);
         if (!!stationCard) {
             commit('setOpponentStationCards', getters.allOpponentStationCards.filter(s => s.id !== card.id));
-        } else {
+        }
+        else {
             state.opponentCardCount -= 1;
         }
 
@@ -729,7 +733,8 @@ module.exports = function (deps) {
         if (defenderCardWasDestroyed) {
             let defenderCardIndex = defenderCardZone.findIndex(c => c.id === defenderCardId);
             defenderCardZone.splice(defenderCardIndex, 1);
-        } else {
+        }
+        else {
             defenderCard.damage = newDamage;
         }
 
@@ -771,7 +776,6 @@ module.exports = function (deps) {
 
     function retreat() {
         matchController.emit('retreat');
-        deleteMatchLocalDataAndReturnToStart();
     }
 
     function selectStationCardAsDefender({ state, getters, dispatch }, { id }) {
@@ -808,7 +812,8 @@ module.exports = function (deps) {
         const cardInZoneIndex = state.playerCardsInZone.findIndex(c => c.id === cardId);
         if (cardInZoneIndex >= 0) {
             state.playerCardsInZone.splice(cardInZoneIndex, 1);
-        } else {
+        }
+        else {
             const cardInOpponentZoneIndex = state.playerCardsInOpponentZone.findIndex(c => c.id === cardId);
             if (cardInOpponentZoneIndex >= 0) {
                 state.playerCardsInOpponentZone.splice(cardInOpponentZoneIndex, 1);
@@ -840,10 +845,6 @@ module.exports = function (deps) {
         }
     }
 
-    function opponentRetreated() {
-        deleteMatchLocalDataAndReturnToStart();
-    }
-
     function endGame() {
         deleteMatchLocalDataAndReturnToStart();
     }
@@ -866,4 +867,14 @@ module.exports = function (deps) {
 
 function stationCardsByIsFlippedComparer(a, b) {
     return (a.flipped ? 1 : 0) - (b.flipped ? 1 : 0);
+}
+
+function createCanThePlayer({ matchService, playerStateService, opponentStateService, queryEvents, turnControl }) {
+    return new CanThePlayer({
+        matchService,
+        queryEvents,
+        playerStateService,
+        opponentStateService,
+        turnControl
+    });
 }

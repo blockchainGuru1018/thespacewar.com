@@ -1,6 +1,7 @@
 const CheatError = require('../CheatError.js');
 const { PHASES } = require('../../../shared/phases.js');
 const whatIsNextPhase = require('../../../shared/match/whatIsNextPhase.js');
+const PlayerServiceProvider = require('../../../shared/match/PlayerServiceProvider.js');
 
 function PutDownCardController(deps) {
 
@@ -58,14 +59,10 @@ function PutDownCardController(deps) {
     }
 
     function onToggleControlOfTurn(playerId) {
-        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        const playerPhase = playerStateService.getPhase();
-        if (playerPhase !== PHASES.wait) return;
+        const turnControl = playerServiceProvider.byTypeAndId(PlayerServiceProvider.TYPE.turnControl, playerId);
+        if (!turnControl.canToggleControlOfTurn()) throw new CheatError('Cannot toggle control of turn');
 
-        let isCurrentPlayer = matchService.getCurrentPlayer() === playerId;
-        const nextPlayerToReceiveControl = isCurrentPlayer ? matchService.getOpponentId(playerId) : playerId;
-        matchService.switchControlOfTurn(nextPlayerToReceiveControl);
-
+        turnControl.toggleControlOfTurn();
         matchComService.emitCurrentStateToPlayers();
     }
 

@@ -38,7 +38,7 @@ describe('when has unflipped 2 station cards and click overwork', async () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
-        dispatch('restoreState', FakeState({
+        dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'action',
@@ -61,7 +61,7 @@ describe('when has 1 unflipped station card', async () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
-        dispatch('restoreState', FakeState({
+        dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'action',

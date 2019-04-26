@@ -56,7 +56,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -75,7 +75,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -95,7 +95,7 @@ module.exports = {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     cardsInZone: [{ id: 'C1A', type: 'duration' }]
                 }));
 
@@ -108,7 +108,7 @@ module.exports = {
                 this.matchController = FakeMatchController({ emit: stub() });
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     phase: 'preparation',
                     currentPlayer: 'P1A',
                     cardsInZone: [{ id: 'C1A', type: 'duration' }, { id: 'C2A', type: 'duration' }]
@@ -132,7 +132,7 @@ module.exports = {
                 this.matchController = FakeMatchController({ emit: stub() });
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     phase: 'preparation',
                     currentPlayer: 'P1A'
                 }));
@@ -149,7 +149,7 @@ module.exports = {
                 this.matchController = FakeMatchController({ emit: stub() });
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     phase: 'preparation',
                     currentPlayer: 'P1A',
                     cardsInZone: [{ id: 'C1A', type: 'duration' }]
@@ -166,7 +166,7 @@ module.exports = {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     currentPlayer: 'P2A',
                     opponentCardsInZone: [{ id: 'C1A' }]
                 }));
@@ -191,7 +191,7 @@ module.exports = {
                 ];
                 const { dispatch } = this.createController();
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'action',
@@ -213,7 +213,7 @@ module.exports = {
                 ];
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -274,7 +274,7 @@ module.exports = {
                 this.matchController = FakeMatchController({ emit: stub() });
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -310,7 +310,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     cardsInZone: [{ id: 'C1A', commonId: SmallRepairShopId }, { id: 'C2A', damage: 1 }],
@@ -327,7 +327,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     cardsInZone: [{ id: SmallRepairShopId }],
@@ -351,7 +351,7 @@ module.exports = {
                 ];
                 const { dispatch } = this.createController();
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 3,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -375,7 +375,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'draw',
@@ -402,7 +402,7 @@ module.exports = {
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'draw',
@@ -436,7 +436,7 @@ module.exports = {
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'draw'
@@ -466,7 +466,7 @@ module.exports = {
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'draw'
@@ -501,7 +501,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'draw',
@@ -518,7 +518,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'action'
@@ -535,7 +535,7 @@ module.exports = {
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'action'
@@ -553,7 +553,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'action',
@@ -571,7 +571,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 3,
                     currentPlayer: 'P1A',
                     phase: 'action',
@@ -592,7 +592,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'action',
@@ -613,7 +613,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'action',
@@ -641,7 +641,7 @@ module.exports = {
                 this.matchController = FakeMatchController();
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 3,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -672,7 +672,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 3,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -695,7 +695,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 3,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -720,7 +720,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 3,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -741,7 +741,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -762,7 +762,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -783,7 +783,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -806,7 +806,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'draw',
@@ -833,7 +833,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'draw',
@@ -863,7 +863,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'draw',
@@ -890,7 +890,7 @@ module.exports = {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'action',
@@ -913,7 +913,7 @@ module.exports = {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'action',
@@ -937,7 +937,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'draw',
@@ -958,7 +958,7 @@ module.exports = {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'draw',
@@ -990,7 +990,7 @@ module.exports = {
                 this.matchController = FakeMatchController({ emit: stub() });
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'action',
@@ -1025,7 +1025,7 @@ module.exports = {
                 this.matchController = FakeMatchController({ emit: stub() });
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'action',
@@ -1059,7 +1059,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'action',
@@ -1080,7 +1080,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'draw',
@@ -1100,7 +1100,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'action',
@@ -1118,7 +1118,7 @@ module.exports = {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'action',
@@ -1146,7 +1146,7 @@ module.exports = {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'action',
@@ -1184,7 +1184,7 @@ module.exports = {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'action',
@@ -1224,7 +1224,7 @@ module.exports = {
                 this.matchController = FakeMatchController();
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'action',
@@ -1261,7 +1261,7 @@ module.exports = {
                 this.matchController = FakeMatchController({ emit: stub().returns(new Promise(() => { })) });
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'action',
@@ -1289,7 +1289,7 @@ module.exports = {
                 this.matchController = FakeMatchController({ emit: stub() });
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'action',
@@ -1323,7 +1323,7 @@ module.exports = {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'action',
@@ -1387,7 +1387,7 @@ module.exports = {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'action',
@@ -1429,7 +1429,7 @@ module.exports = {
                 this.matchController = FakeMatchController({ emit: stub() });
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'action',
@@ -1480,7 +1480,7 @@ module.exports = {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 3,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -1510,7 +1510,7 @@ module.exports = {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -1540,7 +1540,7 @@ module.exports = {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -1567,7 +1567,7 @@ module.exports = {
     //         async setUp() {
     //             const { dispatch } = this.createController();
     //             this.controller.showPage();
-    //             dispatch('restoreState', FakeState({
+    //             dispatch('stateChanged', FakeState({
     //                 turn: 1,
     //                 currentPlayer: 'P1A',
     //                 phase: 'action',
@@ -1593,7 +1593,7 @@ module.exports = {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -1611,7 +1611,7 @@ module.exports = {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -1630,7 +1630,7 @@ module.exports = {
                 this.matchController = FakeMatchController({ emit: stub() });
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -1651,7 +1651,7 @@ module.exports = {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -1694,7 +1694,7 @@ module.exports = {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -1731,7 +1731,7 @@ module.exports = {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -1758,7 +1758,7 @@ module.exports = {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -1787,7 +1787,7 @@ module.exports = {
                 this.matchController = FakeMatchController({ emit: stub() });
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -1824,7 +1824,7 @@ module.exports = {
                 this.matchController = FakeMatchController({ emit: stub() });
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -1858,7 +1858,7 @@ module.exports = {
             async setUp() {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 3,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -1880,7 +1880,7 @@ module.exports = {
                 this.matchController = FakeMatchController({ emit: stub() });
                 const { dispatch } = this.createController({ matchController: this.matchController });
                 this.controller.showPage();
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 3,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -1910,7 +1910,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -1930,7 +1930,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -1951,7 +1951,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
@@ -1972,7 +1972,7 @@ module.exports = {
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
-                dispatch('restoreState', FakeState({
+                dispatch('stateChanged', FakeState({
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',

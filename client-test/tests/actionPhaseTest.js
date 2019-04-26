@@ -31,7 +31,7 @@ describe('action phase', () => {
         beforeEach(async () => {
             const { dispatch, showPage } = controller;
             showPage();
-            dispatch('restoreState', FakeState({
+            dispatch('stateChanged', FakeState({
                 turn: 1,
                 currentPlayer: 'P1A',
                 phase: 'action',

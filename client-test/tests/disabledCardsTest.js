@@ -38,7 +38,7 @@ describe('when has duration card Neutralization and other duration card', () => 
             getDeckSize: () => 1
         });
         showPage();
-        dispatch('restoreState', FakeState({
+        dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'draw',
@@ -61,7 +61,7 @@ describe('when has Disturbing Sensor and a missile in play and opponent has a mi
             getDeckSize: () => 1
         });
         showPage();
-        dispatch('restoreState', FakeState({
+        dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'draw',

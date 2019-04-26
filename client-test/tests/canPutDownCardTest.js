@@ -37,7 +37,7 @@ describe('when has Destiny decided in play and hold event card', async () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
-        dispatch('restoreState', FakeState({
+        dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'action',
@@ -58,7 +58,7 @@ describe('when does NOT have Destiny decided in play and hold event card', async
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
-        dispatch('restoreState', FakeState({
+        dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'action',
@@ -78,7 +78,7 @@ describe('when has Destiny decided in play and has event card as flipped station
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
-        dispatch('restoreState', FakeState({
+        dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'action',

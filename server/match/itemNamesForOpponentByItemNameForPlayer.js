@@ -2,7 +2,8 @@ const itemNamesForOpponentByItemNameForPlayer = {
     stationCards: 'opponentStationCards',
     cardsInZone: 'opponentCardsInZone',
     cardsInOpponentZone: 'opponentCardsInPlayerZone',
-    discardedCards: 'opponentDiscardedCards'
+    discardedCards: 'opponentDiscardedCards',
+    phase: 'opponentPhase'
 };
 
 module.exports = itemNamesForOpponentByItemNameForPlayer;

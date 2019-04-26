@@ -22,7 +22,7 @@ module.exports = {
         'when player is attacking station with attack level of 5 and opponent has an Energy Shield': {
             setUp() {
                 this.firstPlayerConnection = FakeConnection2(['stateChanged']);
-                this.secondPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stateChanged']);
                 this.match = createMatch({
                     players: [
                         Player('P1A', this.firstPlayerConnection),
@@ -66,19 +66,19 @@ module.exports = {
                 });
             },
             'opponent should have 0 station cards flipped'() {
-                this.match.start();
-                const { stationCards } = this.secondPlayerConnection.restoreState.lastCall.args[0];
+                this.match.refresh('P2A');
+                const { stationCards } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
                 const flippedCards = stationCards.filter(s => s.flipped);
                 assert.equals(flippedCards, []);
             },
             'opponent should NOT have energy shield in zone'() {
-                this.match.start();
-                const { cardsInZone } = this.secondPlayerConnection.restoreState.lastCall.args[0];
+                this.match.refresh('P2A');
+                const { cardsInZone } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
                 assert.equals(cardsInZone, []);
             },
             'opponent should have energy shield in discard pile'() {
-                this.match.start();
-                const { discardedCards } = this.secondPlayerConnection.restoreState.lastCall.args[0];
+                this.match.refresh('P2A');
+                const { discardedCards } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
                 assert.equals(discardedCards.length, 1);
                 assert.equals(discardedCards[0].id, 'C2A');
             },
@@ -118,7 +118,7 @@ module.exports = {
         'when player is attacking station with attack level of 4 and opponent has an Energy Shield': {
             setUp() {
                 this.firstPlayerConnection = FakeConnection2(['stateChanged']);
-                this.secondPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stateChanged']);
                 this.match = createMatch({
                     players: [
                         Player('P1A', this.firstPlayerConnection),
@@ -162,20 +162,20 @@ module.exports = {
                 });
             },
             'opponent should have 0 station cards flipped'() {
-                this.match.start();
-                const { stationCards } = this.secondPlayerConnection.restoreState.lastCall.args[0];
+                this.match.refresh('P2A');
+                const { stationCards } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
                 const flippedCards = stationCards.filter(s => s.flipped);
                 assert.equals(flippedCards, []);
             },
             'opponent should have energy shield in zone with 4 damage'() {
-                this.match.start();
-                const { cardsInZone } = this.secondPlayerConnection.restoreState.lastCall.args[0];
+                this.match.refresh('P2A');
+                const { cardsInZone } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
                 assert.equals(cardsInZone.length, 1);
                 assert.match(cardsInZone[0], { id: 'C2A', damage: 4 });
             },
             'opponent should NOT have energy shield in discard pile'() {
-                this.match.start();
-                const { discardedCards } = this.secondPlayerConnection.restoreState.lastCall.args[0];
+                this.match.refresh('P2A');
+                const { discardedCards } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
                 assert.equals(discardedCards.length, 0);
             },
             'should emit stateChanged to second player once'() {
@@ -204,7 +204,7 @@ module.exports = {
         'when player is attacking station with attack level of 5 and opponent has an Energy Shield with 1 damage': {
             setUp() {
                 this.firstPlayerConnection = FakeConnection2(['stateChanged']);
-                this.secondPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stateChanged']);
                 this.match = createMatch({
                     players: [
                         Player('P1A', this.firstPlayerConnection),
@@ -251,19 +251,19 @@ module.exports = {
                 });
             },
             'opponent should NOT have any station card flipped'() {
-                this.match.start();
-                const { stationCards } = this.secondPlayerConnection.restoreState.lastCall.args[0];
+                this.match.refresh('P2A');
+                const { stationCards } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
                 const flippedCards = stationCards.filter(s => s.flipped);
                 assert.equals(flippedCards.length, 0);
             },
             'opponent should NOT have energy shield in zone'() {
-                this.match.start();
-                const { cardsInZone } = this.secondPlayerConnection.restoreState.lastCall.args[0];
+                this.match.refresh('P2A');
+                const { cardsInZone } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
                 assert.equals(cardsInZone.length, 0);
             },
             'opponent should have energy shield in discard pile'() {
-                this.match.start();
-                const { discardedCards } = this.secondPlayerConnection.restoreState.lastCall.args[0];
+                this.match.refresh('P2A');
+                const { discardedCards } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
                 assert.equals(discardedCards.length, 1);
                 assert.match(discardedCards[0], { id: 'C2A' });
             },

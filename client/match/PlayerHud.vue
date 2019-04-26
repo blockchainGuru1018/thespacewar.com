@@ -43,7 +43,7 @@
                     </template>
                 </div>
                 <div
-                    v-else-if="opponentHasControlOfYourTurn"
+                    v-else-if="opponentHasControlOfPlayersTurn"
                     class="guideText-wrapper"
                 >
                     <div class="guideText">
@@ -62,7 +62,7 @@
                         class="guideTextCardWrapper card"
                         @click="showEnlargedCard"
                     >
-                        <div class="enlargeIcon enlargeIcon--small" />
+                        <div class="enlargeIcon enlargeIcon--small"/>
                     </div>
                     {{ actionGuideText }}
                 </div>
@@ -75,7 +75,7 @@
                         :style="cardStyle"
                         @click="showEnlargedCard"
                     >
-                        <div class="enlargeIcon enlargeIcon--small" />
+                        <div class="enlargeIcon enlargeIcon--small"/>
                     </div>
                     {{ requirementGuideText }}
                 </div>
@@ -197,7 +197,7 @@
             v-if="enlargedCardVisible"
             to="match"
         >
-            <div class="dimOverlay" />
+            <div class="dimOverlay"/>
             <div
                 v-click-outside="hideEnlargedCard"
                 class="card card--enlarged"
@@ -208,7 +208,7 @@
             v-if="firstRequirementIsFindCard"
             to="match"
         >
-            <FindCard />
+            <FindCard/>
         </portal>
     </div>
 </template>
@@ -248,7 +248,9 @@
                 'amountOfCardsToDiscard',
                 'queryEvents',
                 'allOpponentStationCards',
-                'allPlayerStationCards'
+                'allPlayerStationCards',
+                'playerRetreated',
+                'opponentRetreated'
             ]),
             ...mapRequirementGetters([
                 'waitingForOtherPlayerToFinishRequirements',
@@ -272,14 +274,10 @@
             ...mapPermissionGetters([
                 'canDrawCards',
                 'canMill',
-                'canIssueOverwork'
+                'canIssueOverwork',
+                'opponentHasControlOfPlayersTurn',
+                'playerHasControlOfOpponentsTurn'
             ]),
-            opponentHasControlOfYourTurn() {
-                return !this.isOwnTurn && this.phase !== PHASES.wait;
-            },
-            youHaveControlOfYourOpponentsTurn() {
-                return this.isOwnTurn && this.phase === PHASES.wait;
-            },
             showActionPoints() {
                 return ['action'].includes(this.phase);
             },
@@ -290,10 +288,10 @@
                 return this.hasWonGame || this.hasLostGame;
             },
             hasWonGame() {
-                return this.allOpponentStationCards.filter(s => !s.flipped).length === 0;
+                return this.opponentRetreated || this.allOpponentStationCards.filter(s => !s.flipped).length === 0;
             },
             hasLostGame() {
-                return this.allPlayerStationCards.filter(s => !s.flipped).length === 0;
+                return this.playerRetreated || this.allPlayerStationCards.filter(s => !s.flipped).length === 0;
             },
             PHASES() {
                 return PHASES;
@@ -363,13 +361,13 @@
                 return '';
             },
             textOnWaitPhase() {
-                if (this.youHaveControlOfYourOpponentsTurn) {
+                if (this.playerHasControlOfOpponentsTurn) {
                     return 'Put down any 0-cost card';
                 }
                 return 'Enemy turn';
             },
             subTextOnWaitPhase() {
-                if (this.youHaveControlOfYourOpponentsTurn) {
+                if (this.playerHasControlOfOpponentsTurn) {
                     return 'press space to return control';
                 }
                 return 'press space to take control';

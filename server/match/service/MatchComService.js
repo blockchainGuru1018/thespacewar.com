@@ -11,8 +11,13 @@ class MatchComService {
         this._logger = logger;
         this._matchService = matchService;
         this._playerServiceProvider = playerServiceProvider;
+        this._emittedAllState = false;
 
         stateChangeListener.listenForSnapshots(this._onSnapshot.bind(this));
+    }
+
+    callEnded() {
+        this._emittedAllState = false;
     }
 
     getPlayers() {
@@ -76,6 +81,8 @@ class MatchComService {
     }
 
     emitCurrentStateToPlayers() {
+        this._emittedAllState = true;
+
         for (const player of this.getPlayers()) {
             const playerId = player.id;
             const playerState = this._getPlayerState(playerId);
@@ -84,6 +91,8 @@ class MatchComService {
             const opponentState = this._getPlayerState(opponentId);
 
             const data = {
+                ended: this._matchService.hasGameEnded(),
+                retreatedPlayerId: this._matchService.getRetreatedPlayerId(),
                 currentPlayer: this._matchService.getCurrentPlayer(),
                 turn: this._matchService.getTurn(),
                 ...preparePlayerState(playerState),
@@ -101,6 +110,8 @@ class MatchComService {
     }
 
     _onSnapshot(snapshot) {
+        if (this._emittedAllState) return;
+
         for (const player of this.getPlayers()) {
             const playerId = player.id;
             const playerChangedKeys = snapshot.changedKeysByPlayerId[playerId];

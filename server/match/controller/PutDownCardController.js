@@ -1,5 +1,6 @@
 const CheatError = require('../CheatError.js');
 const CardApplier = require('../card/CardApplier.js');
+const PlayerServiceProvider = require('../../../shared/match/PlayerServiceProvider.js');
 
 function PutDownCardController(deps) {
 
@@ -37,6 +38,11 @@ function PutDownCardController(deps) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         const canThePlayer = playerServiceProvider.getCanThePlayerServiceById(playerId);
         if (location === 'zone') {
+            const ruleService = playerServiceProvider.byTypeAndId(PlayerServiceProvider.TYPE.rule, playerId);
+            if (!ruleService.canPutDownCardsInHomeZone()) {
+                throw new CheatError('Cannot put down card');
+            }
+
             const canOnlyHaveOneOfCardInZone = cardFactory
                 .createCardForPlayer(cardData, playerId)
                 .canOnlyHaveOneInHomeZone();
