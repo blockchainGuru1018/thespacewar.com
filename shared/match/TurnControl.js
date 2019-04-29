@@ -1,11 +1,19 @@
-const { PHASES } = require('../phases.js');
-
 module.exports = class TurnControl {
 
-    constructor({ matchService, playerStateService, opponentStateService }) {
+    constructor({
+        matchService,
+        playerStateService,
+        opponentStateService,
+        opponentPhase,
+        playerPhase
+    }) {
         this._matchService = matchService;
+
         this._playerStateService = playerStateService;
+        this._playerPhase = playerPhase;
+
         this._opponentStateService = opponentStateService;
+        this._opponentPhase = opponentPhase;
     }
 
     toggleControlOfTurn() {
@@ -37,8 +45,7 @@ module.exports = class TurnControl {
     }
 
     canTakeControlOfTurn() {
-        if (this._playerStateService.getPhase() !== 'wait') return false;
-
+        if (!this._playerPhase.isWait() || this._opponentPhase.isStart()) return false;
         return this.opponentHasControlOfOwnTurn();
     }
 
@@ -50,27 +57,27 @@ module.exports = class TurnControl {
         const playerStateService = this._playerStateService;
 
         return this._matchService.getCurrentPlayer() === playerStateService.getPlayerId()
-            && playerStateService.getPhase() !== PHASES.wait;
+            && !this._playerPhase.isWait();
     }
 
     opponentHasControlOfOwnTurn() {
         const opponentStateService = this._opponentStateService;
 
         return this._matchService.getCurrentPlayer() === opponentStateService.getPlayerId()
-            && opponentStateService.getPhase() !== PHASES.wait;
+            && !this._opponentPhase.isWait();
     }
 
     playerHasControlOfOpponentsTurn() {
         const playerStateService = this._playerStateService;
 
         return this._matchService.getCurrentPlayer() === playerStateService.getPlayerId()
-            && playerStateService.getPhase() === PHASES.wait;
+            && this._playerPhase.isWait();
     }
 
     opponentHasControlOfPlayersTurn() {
         const playerStateService = this._playerStateService;
 
         return this._matchService.getCurrentPlayer() !== playerStateService.getPlayerId()
-            && playerStateService.getPhase() !== PHASES.wait;
+            && !this._playerPhase.isWait();
     }
 };
