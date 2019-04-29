@@ -3,7 +3,7 @@ const TYPE = {
     requirement: 'requirement',
     canThePlayer: 'canThePlayer',
     rule: 'rule',
-    playerPhase: 'playerPhase',
+    phase: 'phase',
     turnControl: 'turnControl'
 };
 

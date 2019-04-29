@@ -20,7 +20,7 @@ module.exports = function (clientState) {
                 requirements: clientState.requirements
             },
             [clientState.opponentUser.id]: {
-                phase: 'wait',
+                phase: clientState.opponentPhase,
                 events: clientState.opponentEvents,
                 cardsInZone: clientState.opponentCardsInZone,
                 cardsInOpponentZone: clientState.opponentCardsInPlayerZone,

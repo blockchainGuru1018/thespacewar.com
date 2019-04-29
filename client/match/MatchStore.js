@@ -115,6 +115,7 @@ module.exports = function (deps) {
             canTheOpponent,
             turnControl,
             playerPhase,
+            opponentPhase,
             playerRequirementService,
             playerStateService,
             opponentStateService,
@@ -340,12 +341,18 @@ module.exports = function (deps) {
         return new TurnControl({
             matchService: getters.matchService,
             playerStateService: getters.playerStateService,
-            opponentStateService: getters.opponentStateService
+            playerPhase: getters.playerPhase,
+            opponentStateService: getters.opponentStateService,
+            opponentPhase: getters.opponentPhase
         });
     }
 
     function playerPhase(state, getters) {
         return new PlayerPhase({ playerStateService: getters.playerStateService });
+    }
+
+    function opponentPhase(state, getters) {
+        return new PlayerPhase({ playerStateService: getters.opponentStateService });
     }
 
     function playerRequirementService(state, getters) {

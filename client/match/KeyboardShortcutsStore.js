@@ -1,6 +1,6 @@
 module.exports = function ({
     rootStore,
-    businessLogicExperiment
+    matchController
 }) {
 
     return {
@@ -16,8 +16,10 @@ module.exports = function ({
     }
 
     function onKeyDown(event) {
-        if (event.key === ' ') { //TODO Is event.key available in all relevant browsers?
-            businessLogicExperiment.toggleControlOfTurn();
+        if (event.key === ' ') {
+            if (rootStore.getters['match/turnControl'].canToggleControlOfTurn()) {
+                matchController.emit('toggleControlOfTurn');
+            }
         }
     }
 };

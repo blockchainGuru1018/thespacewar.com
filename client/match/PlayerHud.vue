@@ -111,7 +111,7 @@
                     </div>
                 </template>
                 <div
-                    v-else-if="phase === PHASES.wait"
+                    v-else-if="turnControl.canToggleControlOfTurn()"
                     class="guideText-wrapper"
                 >
                     <div class="guideText">
@@ -250,7 +250,8 @@
                 'allOpponentStationCards',
                 'allPlayerStationCards',
                 'playerRetreated',
-                'opponentRetreated'
+                'opponentRetreated',
+                'turnControl'
             ]),
             ...mapRequirementGetters([
                 'waitingForOtherPlayerToFinishRequirements',

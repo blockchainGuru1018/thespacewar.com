@@ -8,7 +8,6 @@ const STORES = [
     require('./loadingIndicator/LoadingIndicatorStore.js'),
     require('../expandedCard/ExpandedCardStore.js')
 ];
-const BusinessLogicExperiment = require('./BusinessLogicExperiment.js');
 const AI = require('./AI.js');
 const LOGGING_ENABLED = false;
 
@@ -25,7 +24,6 @@ module.exports = function (deps) {
     deps.getFrom = createRootGetFrom(rootStore);
     deps.matchController = matchController;
     deps.ai = AI({ rootStore, matchController });
-    deps.businessLogicExperiment = BusinessLogicExperiment({ matchController });
 
     for (const Store of STORES) {
         const store = createStore(Store, deps);

@@ -411,14 +411,24 @@ function registerPlayerStateServices({ players, matchService, actionPointsCalcul
 function registerMiscPlayerServices({ players, matchService, playerServiceProvider }) {
     for (const player of players) {
         const playerId = player.id;
-        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
 
-        const playerPhase = new PlayerPhase({ playerStateService });
-        playerServiceProvider.registerService(ServiceTypes.playerPhase, player.id, playerPhase);
+        const playerPhase = new PlayerPhase({
+            playerStateService: playerServiceProvider.getStateServiceById(playerId)
+        });
+        playerServiceProvider.registerService(ServiceTypes.phase, playerId, playerPhase);
+    }
 
+    for (const player of players) {
+        const playerId = player.id;
         const opponentId = matchService.getOpponentId(playerId);
-        const opponentStateService = playerServiceProvider.byTypeAndId(ServiceTypes.state, opponentId);
-        const turnControl = new TurnControl({ matchService, opponentStateService, playerStateService });
+
+        const turnControl = new TurnControl({
+            matchService,
+            opponentStateService: playerServiceProvider.byTypeAndId(ServiceTypes.state, opponentId),
+            playerStateService: playerServiceProvider.getStateServiceById(playerId),
+            playerPhase: playerServiceProvider.byTypeAndId(ServiceTypes.phase, playerId),
+            opponentPhase: playerServiceProvider.byTypeAndId(ServiceTypes.phase, opponentId)
+        });
         playerServiceProvider.registerService(ServiceTypes.turnControl, player.id, turnControl);
     }
 }
@@ -457,7 +467,7 @@ function registerPlayerRuleServices({ players, playerServiceProvider }) {
             opponentStateService: playerServiceProvider.getStateServiceById(opponentId),
             canThePlayer: playerServiceProvider.getCanThePlayerServiceById(playerId),
             turnControl: playerServiceProvider.byTypeAndId(ServiceTypes.turnControl, playerId),
-            playerPhase: playerServiceProvider.byTypeAndId(ServiceTypes.playerPhase, playerId)
+            playerPhase: playerServiceProvider.byTypeAndId(ServiceTypes.phase, playerId)
         });
 
         playerServiceProvider.registerService(ServiceTypes.rule, playerId, ruleService);
