@@ -13,6 +13,7 @@ module.exports = function ({
     function create(playerId) {
         const opponentId = matchService.getOpponentId(playerId);
         return PlayerOverwork({
+            matchService,
             overworkEventFactory: overworkEventFactory(playerId),
             playerStateService: playerStateService(playerId),
             playerRequirementService: playerRequirementService(playerId),

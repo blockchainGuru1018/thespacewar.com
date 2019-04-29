@@ -1,5 +1,4 @@
 module.exports = function ({
-    playerServiceProvider,
     playerOverworkFactory
 }) {
 
@@ -9,6 +8,8 @@ module.exports = function ({
 
     function overwork(playerId) {
         const playerOverwork = playerOverworkFactory.create(playerId);
-        playerOverwork.overwork();
+        if (playerOverwork.canIssueOverwork()) {
+            playerOverwork.overwork();
+        }
     }
 };

@@ -109,6 +109,8 @@ module.exports = function (deps) {
 
     function canIssueOverworkGetter(state, getters, rootState, rootGetters) {
         return canIssueOverwork({
+            playerId: rootState.match.ownUser.id,
+            currentPlayer: rootState.match.currentPlayer,
             unflippedStationCardCount: rootGetters['match/playerUnflippedStationCardCount'],
             phase: rootState.match.phase,
             hasRequirements: rootState.match.requirements.length > 0

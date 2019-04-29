@@ -1,6 +1,8 @@
+const canIssueOverworkFn = require('./canIssueOverwork.js'); //TODO This should perhaps just be an internal method
 const CheatError = require('../../../server/match/CheatError.js');
 
 module.exports = function ({
+    matchService,
     playerStateService,
     playerRequirementService,
     opponentRequirementService,
@@ -8,8 +10,19 @@ module.exports = function ({
 }) {
 
     return {
+        canIssueOverwork,
         overwork
     };
+
+    function canIssueOverwork() {
+        return canIssueOverworkFn({
+            playerId: playerStateService.getPlayerId(),
+            currentPlayer: matchService.getCurrentPlayer(),
+            unflippedStationCardCount: playerStateService.getUnflippedStationCardsCount(),
+            hasRequirements: playerRequirementService.hasAnyRequirement(),
+            phase: playerStateService.getPhase()
+        });
+    }
 
     function overwork() {
         let unflippedStationCardsCount = playerStateService.getUnflippedStationCardsCount();

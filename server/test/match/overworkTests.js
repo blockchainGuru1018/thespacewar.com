@@ -1,20 +1,9 @@
 const {
-    bocha: {
-        assert,
-        refute,
-        sinon
-    },
-    createCard,
-    createDeckFromCards,
     Player,
     createMatch,
     FakeConnection2,
-    catchError,
     createState,
 } = require('./shared.js');
-const BaseCard = require('../../../shared/card/BaseCard.js');
-const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
-const MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
 const StateAsserter = require('../testUtils/StateAsserter.js');
 
 module.exports = {
@@ -32,6 +21,7 @@ module.exports = {
                 this.match.restoreFromState(createState({
                     playerStateById: {
                         'P1A': {
+                            phase: 'action',
                             stationCards: [
                                 stationCard({ id: 'C1A', flipped: false }),
                                 stationCard({ id: 'C2A', flipped: false })
