@@ -26,6 +26,7 @@ module.exports = {
                 playerStateById: {
                     turn: 1,
                     'P1A': {
+                        phase: 'action',
                         cardsOnHand: [createCard({ id: 'C2A' })],
                         stationCards: [
                             stationCard({ id: 'C1A', flipped: false })

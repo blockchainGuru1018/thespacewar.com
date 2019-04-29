@@ -18,11 +18,6 @@ function PutDownCardController(deps) {
     };
 
     function onPutDownCard(playerId, { location, cardId, choice }) {
-        let currentPlayer = matchService.getCurrentPlayer();
-        if (playerId !== currentPlayer) {
-            throw new CheatError('Cannot put down card when it is not your turn');
-        }
-
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         let cardData = playerStateService.findCardFromAnySource(cardId);
         if (!cardData) throw new CheatError(`Cannot find card`);
@@ -37,8 +32,9 @@ function PutDownCardController(deps) {
     function checkIfCanPutDownCard({ playerId, location, cardData }) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         const canThePlayer = playerServiceProvider.getCanThePlayerServiceById(playerId);
+        const ruleService = playerServiceProvider.byTypeAndId(PlayerServiceProvider.TYPE.rule, playerId);
+
         if (location === 'zone') {
-            const ruleService = playerServiceProvider.byTypeAndId(PlayerServiceProvider.TYPE.rule, playerId);
             if (!ruleService.canPutDownCardsInHomeZone()) {
                 throw new CheatError('Cannot put down card');
             }
@@ -57,6 +53,10 @@ function PutDownCardController(deps) {
             }
         }
         else if (location.startsWith('station')) {
+            if (!ruleService.canPutDownStationCards()) {
+                throw new CheatError('Cannot put down card');
+            }
+
             const card = cardFactory.createCardForPlayer(cardData, playerId);
             if (!card.canBePutDownAsExtraStationCard && !canThePlayer.putDownMoreStationCards()) {
                 throw new CheatError('Cannot put down more station cards this turn');

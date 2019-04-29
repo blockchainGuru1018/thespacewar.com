@@ -25,6 +25,14 @@ class PlayerRuleService {
             || this._turnControl.playerHasControlOfOpponentsTurn();
     }
 
+    canPutDownStationCards() {
+        let playerRequirements = this._playerRequirementService;
+        if (playerRequirements.hasAnyRequirement()) return false;
+        if (playerRequirements.isWaitingOnOpponentFinishingRequirement()) return false;
+
+        return this._playerPhase.onActionPhase();
+    }
+
     getMaximumHandSize() {
         const playerStateService = this._playerStateService;
         const cardsThatGrantUnlimitedHandSize = playerStateService
