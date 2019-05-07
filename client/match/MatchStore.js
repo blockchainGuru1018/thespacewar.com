@@ -349,11 +349,14 @@ module.exports = function (deps) {
     }
 
     function playerPhase(state, getters) {
-        return new PlayerPhase({ playerStateService: getters.playerStateService });
+        return new PlayerPhase({ matchService: getters.matchService, playerStateService: getters.playerStateService });
     }
 
     function opponentPhase(state, getters) {
-        return new PlayerPhase({ playerStateService: getters.opponentStateService });
+        return new PlayerPhase({
+            matchService: getters.matchService,
+            playerStateService: getters.opponentStateService
+        });
     }
 
     function playerRequirementService(state, getters) {

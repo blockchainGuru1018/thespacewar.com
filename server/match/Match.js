@@ -427,6 +427,7 @@ function registerMiscPlayerServices({ players, matchService, playerServiceProvid
         const playerId = player.id;
 
         const playerPhase = new PlayerPhase({
+            matchService,
             playerStateService: playerServiceProvider.getStateServiceById(playerId)
         });
         playerServiceProvider.registerService(ServiceTypes.phase, playerId, playerPhase);

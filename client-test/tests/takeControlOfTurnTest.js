@@ -44,7 +44,7 @@ describe('when phase is wait but is current player', async () => {
 
     test('guide text should mention that you have taken control', async () => {
         assert.elementText('.guideText', 'Put down any 0-cost card');
-        assert.elementText('.guideText-subText', 'press space to return control');
+        assert.elementText('.toggleControlOfTurn', 'Release control');
     });
 });
 
@@ -62,28 +62,9 @@ describe('when phase is wait and is NOT current player', async () => {
 
     test('guide text should mention that it is the opponents turn', async () => {
         assert.elementText('.guideText', 'Enemy turn');
-        assert.elementText('.guideText-subText', 'press space to take control');
+        assert.elementText('.toggleControlOfTurn', 'Take control');
     });
 });
-
-// TODO describe('when phase is wait but opponents phase is "start"', async () => {
-//     beforeEach(async () => {
-//         const { dispatch, showPage } = setUpController();
-//         showPage();
-//         dispatch('stateChanged', FakeState({
-//             turn: 1,
-//             currentPlayer: 'P2A',
-//             phase: 'wait',
-//             opponentPhase: 'start'
-//         }));
-//         await timeout();
-//     });
-//
-//     test('guide text should mention that it is the opponents turn', async () => {
-//         assert.elementText('.guideText', 'Enemy turn');
-//         assert.elementText('.guideText-subText', 'press space to take control');
-//     });
-// });
 
 describe('when phase is action but is not current player', async () => {
     beforeEach(async () => {

@@ -2,11 +2,21 @@ const { PHASES } = require('../phases.js');
 
 module.exports = class PlayerPhase {
 
-    constructor({ playerStateService }) {
+    constructor({ matchService, playerStateService }) {
+        this._matchService = matchService;
         this._playerStateService = playerStateService;
     }
 
-    isActionPhase() {
+    isFirstDraw() {
+        return this._playerStateService.getPhase() === PHASES.draw
+            && this._matchService.getTurn() === 1;
+    }
+
+    isDraw() {
+        return this._playerStateService.getPhase() === PHASES.draw;
+    }
+
+    isAction() {
         return this._playerStateService.getPhase() === PHASES.action;
     }
 

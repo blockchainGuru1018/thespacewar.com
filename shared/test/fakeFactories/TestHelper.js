@@ -68,6 +68,7 @@ module.exports = function (state) {
 
     function playerPhase(playerId) {
         return new PlayerPhase({
+            matchService: api.matchService(),
             playerStateService: playerStateServiceFactory.fromIdAndState(playerId, state)
         });
     }

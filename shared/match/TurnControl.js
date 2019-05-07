@@ -55,8 +55,10 @@ module.exports = class TurnControl {
     }
 
     canTakeControlOfTurn() {
-        if (!this._playerPhase.isWait() || this._opponentPhase.isStart()) return false;
-        return this.opponentHasControlOfOwnTurn();
+        return !this._opponentPhase.isStart()
+            && !this._opponentPhase.isFirstDraw()
+            && this._playerPhase.isWait()
+            && this.opponentHasControlOfOwnTurn();
     }
 
     canReleaseControlOfTurn() {

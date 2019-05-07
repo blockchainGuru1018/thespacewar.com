@@ -73,7 +73,6 @@ module.exports = {
     },
     'when player has NOT taken control of the turn and put down a station card': {
         async setUp() {
-
             this.firstPlayerConnection = FakeConnection2(['stateChanged']);
             this.match = createMatch({ players: [Player('P1A', this.firstPlayerConnection)] });
             this.match.restoreFromState(createState({

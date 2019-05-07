@@ -21,7 +21,7 @@ class PlayerRuleService {
         if (playerRequirements.hasAnyRequirement()) return false;
         if (playerRequirements.isWaitingOnOpponentFinishingRequirement()) return false;
 
-        return (this._turnControl.playerHasControlOfOwnTurn() && this._playerPhase.isActionPhase())
+        return (this._turnControl.playerHasControlOfOwnTurn() && this._playerPhase.isAction())
             || this._turnControl.playerHasControlOfOpponentsTurn();
     }
 
@@ -30,7 +30,7 @@ class PlayerRuleService {
         if (playerRequirements.hasAnyRequirement()) return false;
         if (playerRequirements.isWaitingOnOpponentFinishingRequirement()) return false;
 
-        return this._playerPhase.isActionPhase();
+        return this._playerPhase.isAction();
     }
 
     getMaximumHandSize() {
