@@ -38,6 +38,10 @@ class BaseCard {
         return this._card.type;
     }
 
+    get cost() {
+        return this._card.cost;
+    }
+
     get attack() {
         const boost = this._playerStateService.getAttackBoostForCard(this);
         return this._card.attack + boost;
@@ -136,7 +140,8 @@ class BaseCard {
 
         if (otherCard.isStationCard()) {
             return this.canTargetStationCardsForSacrifice();
-        } else {
+        }
+        else {
             return this._matchService.cardsAreInSameZone(this, otherCard);
         }
     }
@@ -170,7 +175,8 @@ class BaseCard {
     canBeRepaired() {
         if (this.isStationCard()) {
             return this.isFlipped();
-        } else {
+        }
+        else {
             return !!this.damage || this.paralyzed;
         }
     }
@@ -244,6 +250,10 @@ class BaseCard {
 
     canMoveAndAttackOnSameTurn() {
         return true;
+    }
+
+    canCounterCard() {
+        return false;
     }
 
     get eventSpecsWhenPutDownInHomeZone() {

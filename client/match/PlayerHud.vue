@@ -1,29 +1,36 @@
 <template>
     <div class="field-playerHud">
-        <portal to="player-top" v-if="!gameHasEnded">
+        <portal
+            v-if="!gameHasEnded"
+            to="player-top"
+        >
             <div class="nextPhaseButtonContainer">
                 <button v-if="phase === 'start'"
-                    @click="startClick"
-                    class="playerHud-phaseText nextPhaseButton">
+
+                    class="playerHud-phaseText nextPhaseButton"@click="startClick"
+                >
                     Start
                 </button>
                 <template v-else-if="canGoToNextTurn">
-                    <button class="playerHud-phaseText nextPhaseButton"
+                    <button
+                        v-if="nextPhaseButtonText" class="playerHud-phaseText nextPhaseButton"
                         @click="nextPhaseClick"
-                        v-if="nextPhaseButtonText">
+                        >
                         {{ nextPhaseButtonText }}
                     </button>
                     <button v-else-if="endTurnButtonVisible"
-                        @click="nextPhaseClick"
-                        class="playerHud-phaseText nextPhaseButton nextPhaseButton-endTurn">
+
+                        class="playerHud-phaseText nextPhaseButton nextPhaseButton-endTurn"@click="nextPhaseClick"
+                    >
                         End turn
                     </button>
                 </template>
             </div>
 
             <div class="guideTextContainer">
-                <div class="guideText-waitingForOtherPlayer guideText guideText--small"
-                    v-if="waitingForOtherPlayerToFinishRequirements">
+                <div
+                    v-if="waitingForOtherPlayerToFinishRequirements" class="guideText-waitingForOtherPlayer guideText guideText--small"
+                    >
                     <template v-if="waitingRequirement.reason === 'emptyDeck'">
                         Your opponent is dealing damage to your station
                     </template>
@@ -31,37 +38,63 @@
                         Waiting for other player...
                     </template>
                 </div>
-                <div class="guideText guideText--small" v-else-if="actionGuideText">
+                <div
+                    v-else-if="actionGuideText"
+                    class="guideText guideText--small"
+                >
                     <div :style="cardStyle"
-                        @click="showEnlargedCard"
-                        class="guideTextCardWrapper card">
+                        class="guideTextCardWrapper card"@click="showEnlargedCard"
+                        >
                         <div class="enlargeIcon enlargeIcon--small"/>
                     </div>
                     {{ actionGuideText }}
                 </div>
-                <div class="guideText guideText--small"
-                    v-else-if="requirementGuideText">
-                    <div :style="cardStyle"
+                <div
+                    v-else-if="requirementGuideText"class="guideText guideText--small"
+                >
+                    <div
+                        class="guideTextCardWrapper card" :style="cardStyle"
                         @click="showEnlargedCard"
-                        class="guideTextCardWrapper card">
+                        >
                         <div class="enlargeIcon enlargeIcon--small"/>
                     </div>
                     {{ requirementGuideText }}
                 </div>
-                <div class="guideText" v-else-if="numberOfStationCardsToSelect > 0">
+                <div
+                    v-else-if="numberOfStationCardsToSelect > 0"
+                    class="guideText"
+                >
                     Select {{ numberOfStationCardsToSelect }}
                     more station {{ numberOfStationCardsToSelect === 1 ? 'card' : 'cards' }}
                 </div>
-                <div v-else-if="phase === PHASES.preparation"
-                    class="guideText-discardDurationCards guideText guideText--small">
+                <div
+                    v-else-if="opponentHasControlOfPlayersTurn"
+                    class="guideText-wrapper"
+                >
+                    <div class="guideText">
+                        Your opponent has taken control
+                    </div>
+                    <div class="guideText-subText">
+                        wait to have it back
+                    </div>
+                </div>
+                <div
+                    v-else-if="phase === PHASES.preparation"
+                    class="guideText-discardDurationCards guideText guideText--small"
+                >
                     Discard any duration card you don't want to pay for
                 </div>
-                <div class="guideText-drawCard guideText guideText--small" v-else-if="phase === PHASES.draw">
+                <div
+                    v-else-if="phase === PHASES.draw"
+                    class="guideText-drawCard guideText guideText--small"
+                >
                     {{ composeDrawOrMillText() }}
                 </div>
-                <div v-else-if="inDiscardPhaseAndMustDiscardCard"
-                    class="guideText-drawCard guideText guideText--small">
-                    Discard {{ amountOfCardsToDiscard + (amountOfCardsToDiscard === 1 ? ' card' : ' cards')}} to
+                <div
+                    v-else-if="inDiscardPhaseAndMustDiscardCard"
+                    class="guideText-drawCard guideText guideText--small"
+                >
+                    Discard {{ amountOfCardsToDiscard + (amountOfCardsToDiscard === 1 ? ' card' : ' cards') }} to
                     continue
                 </div>
                 <template v-else-if="showActionPoints">
@@ -69,93 +102,123 @@
                         {{ playerActionPointsText }}
                     </div>
                 </template>
-                <div class="guideText" v-else-if="phase === PHASES.wait">
-                    Enemy turn
+                <div
+                    v-else-if="turnControl.canToggleControlOfTurn()"
+                    class="guideText-wrapper"
+                >
+                    <div class="guideText">
+                        {{ textOnWaitPhase }}
+                    </div>
+                    <div class="guideText-subText">
+                        <button
+                            @click="toggleControlOfTurn"
+                            @keydown.space.stop.prevent="toggleControlOfTurn"
+                            class="toggleControlOfTurn darkButton">
+                            {{ turnControlButtonText }}
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <div class="overworkContainer">
                 <button v-if="canIssueOverwork"
-                    @click="overwork"
+
                     title="Your opponent may flip 1 of your station cards & you receive 2 action points"
-                    class="overwork darkButton">
+                    class="overwork darkButton"@click="overwork"
+                >
                     Overwork
                 </button>
             </div>
         </portal>
         <portal to="match">
-            <div class="endGameOverlay" v-if="gameHasEnded">
-                <div class="defeatText endGameText" v-if="hasLostGame">
+            <div
+                v-if="gameHasEnded"
+                class="endGameOverlay"
+            >
+                <div
+                    v-if="hasLostGame"
+                    class="defeatText endGameText"
+                >
                     DEFEAT
                 </div>
-                <div class="victoryText endGameText" v-else-if="hasWonGame">
+                <div
+                    v-else-if="hasWonGame"
+                    class="victoryText endGameText"
+                >
                     VICTORY
                 </div>
-                <button @click="endGame" class="endGameButton">
+                <button
+                    class="endGameButton"
+                    @click="endGame"
+                >
                     End game
                 </button>
             </div>
         </portal>
         <portal to="stationDrawRow">
             <span class="stationRowDescription descriptionText">
-                Draw {{ cardsToDrawInDrawPhase }} card{{cardsToDrawInDrawPhase === 1 ? '' : 's'}} each turn
+                Draw {{ cardsToDrawInDrawPhase }} card{{ cardsToDrawInDrawPhase === 1 ? '' : 's' }} each turn
             </span>
         </portal>
         <portal to="stationActionRow">
             <span class="stationRowDescription descriptionText">
-                Start turn with {{ actionPointsFromStationCards }} action point{{actionPointsFromStationCards === 1 ? '' : 's'}}
+                Start turn with {{ actionPointsFromStationCards }} action point{{ actionPointsFromStationCards === 1 ? '' : 's' }}
             </span>
         </portal>
         <portal to="stationHandSizeRow">
             <span class="stationRowDescription descriptionText">
-                Max {{ maxHandSize }} card{{maxHandSize === 1 ? '' : 's'}} on hand
+                Max {{ maxHandSize }} card{{ maxHandSize === 1 ? '' : 's' }} on hand
             </span>
         </portal>
         <portal to="playerDrawPile">
-            <span v-if="canDrawCards" class="playerDrawPileDescription descriptionText">
+            <span
+                v-if="canDrawCards"
+                class="playerDrawPileDescription descriptionText"
+            >
                 Click to draw
             </span>
         </portal>
         <portal to="opponentDrawPile">
-            <span v-if="canMill" class="opponentDrawPileDescription descriptionText">
+            <span
+                v-if="canMill"
+                class="opponentDrawPileDescription descriptionText"
+            >
                 Click to mill 2 cards
             </span>
         </portal>
-        <portal to="match" v-if="enlargedCardVisible">
+        <portal
+            v-if="enlargedCardVisible"
+            to="match"
+        >
             <div class="dimOverlay"/>
-            <div class="card card--enlarged"
+            <div
+                v-click-outside="hideEnlargedCard" class="card card--enlarged"
                 :style="cardStyle"
-                v-click-outside="hideEnlargedCard"/>
+                />
         </portal>
-        <portal to="match" v-if="firstRequirementIsFindCard">
+        <portal
+            v-if="firstRequirementIsFindCard"
+            to="match"
+        >
             <FindCard/>
+        </portal>
+        <portal
+            v-if="firstRequirementIsCounterCard"
+            to="match"
+        >
+            <CounterCard/>
         </portal>
     </div>
 </template>
 <script>
     const Vuex = require('vuex');
     const resolveModuleWithPossibleDefault = require('../../client/utils/resolveModuleWithPossibleDefault.js');
-    const FindCard = resolveModuleWithPossibleDefault(require('./FindCard.vue'));
-    const getCardImageUrl = require('../utils/getCardImageUrl.js');
+    const FindCard = resolveModuleWithPossibleDefault(require('./findCard/FindCard.vue'));
+    const CounterCard = resolveModuleWithPossibleDefault(require('./counterCard/CounterCard.vue'));
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
-    const {
-        mapState: mapRequirementState,
-        mapGetters: mapRequirementGetters,
-        mapMutations: mapRequirementMutations,
-        mapActions: mapRequirementActions
-    } = Vuex.createNamespacedHelpers('requirement');
-    const {
-        mapState: mapCardState,
-        mapGetters: mapCardGetters,
-        mapMutations: mapCardMutations,
-        mapActions: mapCardActions
-    } = Vuex.createNamespacedHelpers('card');
-    const {
-        mapState: mapPermissionState,
-        mapGetters: mapPermissionGetters,
-        mapMutations: mapPermissionMutations,
-        mapActions: mapPermissionActions
-    } = Vuex.createNamespacedHelpers('permission');
+    const { mapGetters: mapPermissionGetters } = Vuex.createNamespacedHelpers('permission');
+    const cardHelpers = Vuex.createNamespacedHelpers('card');
+    const requirementHelpers = Vuex.createNamespacedHelpers('requirement');
     const { PHASES } = require('./phases.js');
 
     module.exports = {
@@ -183,9 +246,12 @@
                 'amountOfCardsToDiscard',
                 'queryEvents',
                 'allOpponentStationCards',
-                'allPlayerStationCards'
+                'allPlayerStationCards',
+                'playerRetreated',
+                'opponentRetreated',
+                'turnControl'
             ]),
-            ...mapRequirementGetters([
+            ...requirementHelpers.mapGetters([
                 'waitingForOtherPlayerToFinishRequirements',
                 'waitingRequirement',
                 'firstRequirement',
@@ -193,21 +259,24 @@
                 'firstRequirementIsDamageStationCard',
                 'firstRequirementIsDrawCard',
                 'firstRequirementIsFindCard',
+                'firstRequirementIsCounterCard',
                 'cardsLeftToSelect',
                 'selectedCardsCount',
                 'countInFirstRequirement',
                 'requirementCardImageUrl'
             ]),
-            ...mapCardState([
+            ...cardHelpers.mapState([
                 'activeAction',
             ]),
-            ...mapCardGetters([
+            ...cardHelpers.mapGetters([
                 'activeActionCardImageUrl'
             ]),
             ...mapPermissionGetters([
                 'canDrawCards',
                 'canMill',
-                'canIssueOverwork'
+                'canIssueOverwork',
+                'opponentHasControlOfPlayersTurn',
+                'playerHasControlOfOpponentsTurn'
             ]),
             showActionPoints() {
                 return ['action'].includes(this.phase);
@@ -219,10 +288,10 @@
                 return this.hasWonGame || this.hasLostGame;
             },
             hasWonGame() {
-                return this.allOpponentStationCards.filter(s => !s.flipped).length === 0;
+                return this.opponentRetreated || this.allOpponentStationCards.filter(s => !s.flipped).length === 0;
             },
             hasLostGame() {
-                return this.allPlayerStationCards.filter(s => !s.flipped).length === 0;
+                return this.playerRetreated || this.allPlayerStationCards.filter(s => !s.flipped).length === 0;
             },
             PHASES() {
                 return PHASES;
@@ -260,7 +329,8 @@
                 return this.actionPoints2 >= 0
                     && !this.firstRequirement
                     && !this.inDiscardPhaseAndMustDiscardCard
-                    && this.phase !== PHASES.wait;
+                    && this.phase !== PHASES.wait
+                    && !this.turnControl.opponentHasControlOfPlayersTurn();
             },
             numberOfStationCardsToSelect() {
                 if (!this.attackerCard) return 0;
@@ -291,6 +361,18 @@
                 }
                 return '';
             },
+            textOnWaitPhase() {
+                if (this.playerHasControlOfOpponentsTurn) {
+                    return 'Put down any 0-cost card';
+                }
+                return 'Enemy turn';
+            },
+            turnControlButtonText() {
+                if (this.playerHasControlOfOpponentsTurn) {
+                    return 'Release control';
+                }
+                return 'Take control';
+            },
             cardStyle() {
                 if (this.activeActionCardImageUrl) {
                     return {
@@ -313,7 +395,8 @@
             ...mapActions([
                 'goToNextPhase',
                 'endGame',
-                'overwork'
+                'overwork',
+                'toggleControlOfTurn'
             ]),
             startClick() {
                 this.goToNextPhase();
@@ -332,7 +415,8 @@
             }
         },
         components: {
-            FindCard
+            FindCard,
+            CounterCard
         }
     };
 
@@ -340,9 +424,6 @@
         return count === 1 ? word : word + 's';
     }
 
-    function capitalize(word) {
-        return word.substr(0, 1).toUpperCase() + word.substr(1);
-    }
 </script>
 <style scoped lang="scss">
     @import "card";

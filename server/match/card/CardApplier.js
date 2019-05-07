@@ -6,7 +6,8 @@ const Commands = [
     require('./putDown/PutDownDiscovery.js'),
     require('./putDown/PutDownFatalError.js'),
     require('./putDown/PutDownMissilesLaunched.js'),
-    require('./putDown/PutDownPerfectPlan.js')
+    require('./putDown/PutDownPerfectPlan.js'),
+    require('./putDown/PutDownLuck.js'),
 ];
 
 module.exports = function CardApplier(deps) {

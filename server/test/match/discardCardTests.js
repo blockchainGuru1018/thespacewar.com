@@ -20,7 +20,7 @@ const {
 module.exports = {
     'when is action phase and first player discards card': {
         setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
             this.secondPlayerConnection = FakeConnection2(['stateChanged']);
             const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
             this.match = createMatch({ players });
@@ -46,8 +46,8 @@ module.exports = {
             }));
         },
         'when restore state of first player should NOT have discarded card on hand'() {
-            this.match.start();
-            const { cardsOnHand } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            this.match.refresh('P1A');
+            const { cardsOnHand } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
             assert.equals(cardsOnHand.length, 0);
         },
         'should emit state changed to second player'() {
@@ -60,7 +60,7 @@ module.exports = {
     },
     'when discard card in action phase and has discard card requirement of 2 cards': {
         setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
             this.secondPlayerConnection = FakeConnection2(['stateChanged']);
             const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
             this.match = createMatch({ players });
@@ -85,13 +85,13 @@ module.exports = {
             }));
         },
         'first player should NOT have discarded card on hand'() {
-            this.match.start();
-            const { cardsOnHand } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            this.match.refresh('P1A');
+            const { cardsOnHand } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
             assert.equals(cardsOnHand.length, 0);
         },
         'first player should have requirement to discard 1 card'() {
-            this.match.start();
-            const { requirements } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            this.match.refresh('P1A');
+            const { requirements } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
             assert.equals(requirements.length, 1);
             assert.equals(requirements[0], { type: 'discardCard', count: 1 });
         },
@@ -107,7 +107,7 @@ module.exports = {
     },
     'when discard card in action phase and has discard card requirement of 1 card': {
         setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
             this.match = createMatch({ players: [Player('P1A', this.firstPlayerConnection), Player('P2A')] });
             this.match.restoreFromState(createState({
                 playerStateById: {
@@ -127,8 +127,8 @@ module.exports = {
             }));
         },
         'first player should NOT have requirement to discard 1 card'() {
-            this.match.start();
-            const { requirements } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            this.match.refresh('P1A');
+            const { requirements } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
             assert.equals(requirements.length, 1);
             assert.equals(requirements[0], { type: 'otherType', count: 3 });
         }

@@ -36,6 +36,14 @@ class MatchService {
         return playerOrder[playerOrder.length - 1];
     }
 
+    getRetreatedPlayerId() {
+        return this._state.retreatedPlayerId;
+    }
+
+    hasGameEnded() {
+        return this._state.ended;
+    }
+
     getOpponentId(playerId) {
         const firstPlayerId = this.getFirstPlayerId();
         return firstPlayerId === playerId ? this.getLastPlayerId() : firstPlayerId;
@@ -60,7 +68,7 @@ class MatchService {
 
     goToNextPlayer() {
         const playerOrder = this.getPlayerOrder();
-        const currentPlayerId = this.getCurrentPlayer()
+        const currentPlayerId = this.getCurrentPlayer();
         const currentPlayerIndex = playerOrder.indexOf(currentPlayerId);
         if (currentPlayerIndex === playerOrder.length - 1) {
             throw new Error('Cannot go to next player. There are no more players for this turn.');
@@ -90,6 +98,10 @@ class MatchService {
 
     storeEvent(playerId, event) {
         this.getPlayerState(playerId).events.push(event);
+    }
+
+    getGameStartTime() {
+        return this._state.gameStartTime;
     }
 }
 

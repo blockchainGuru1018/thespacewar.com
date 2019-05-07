@@ -42,7 +42,7 @@ describe('when has already put down station card this turn and holding Excellent
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
-        dispatch('restoreState', FakeState({
+        dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'action',
@@ -78,7 +78,7 @@ describe('when has already put down station card this turn and holding Excellent
         beforeEach(async () => {
             const { dispatch, showPage } = setUpController();
             showPage();
-            dispatch('restoreState', FakeState({
+            dispatch('stateChanged', FakeState({
                 turn: 1,
                 currentPlayer: 'P1A',
                 phase: 'action',
@@ -112,7 +112,7 @@ describe('when has NOT put down station card this turn and holding Excellent wor
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
-        dispatch('restoreState', FakeState({
+        dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'action',
@@ -139,7 +139,7 @@ describe('putting down card and selecting choice "Put down as extra station card
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
-        dispatch('restoreState', FakeState({
+        dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'action',
@@ -167,7 +167,7 @@ describe('have put down Excellent work and selected "Put down as extra station c
                 ])
             });
             showPage();
-            dispatch('restoreState', FakeState({
+            dispatch('stateChanged', FakeState({
                 turn: 1,
                 currentPlayer: 'P1A',
                 phase: 'action',
@@ -198,7 +198,7 @@ describe('when has excellent work as flipped station card and move it to zone', 
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
-        dispatch('restoreState', FakeState({
+        dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'action',
@@ -225,7 +225,7 @@ describe('have put down "Expansion" and is holding another card', async () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
-        dispatch('restoreState', FakeState({
+        dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'action',
@@ -253,7 +253,7 @@ describe('have put down "Expansion" and put down 3 station cards and is holding 
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
-        dispatch('restoreState', FakeState({
+        dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'action',

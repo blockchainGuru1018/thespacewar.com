@@ -24,12 +24,13 @@ const whitelist = [
     'cardsInOpponentZone',
     'stationCards',
     'cardsOnHand',
-    'events'
+    'events',
+    'phase'
 ];
 
 const statePreparer = StatePreparer({
     whitelist,
     obscureHandlerByKey: obscurerByKey,
     alternateItemNames: itemNamesForOpponentByItemNameForPlayer
-})
+});
 module.exports = statePreparer.prepare;

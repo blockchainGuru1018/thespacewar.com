@@ -3,11 +3,34 @@ class PlayerRuleService {
     constructor({
         playerStateService,
         opponentStateService,
-        canThePlayer
+        canThePlayer,
+        playerRequirementService,
+        playerPhase,
+        turnControl
     } = {}) {
         this._playerStateService = playerStateService;
+        this._playerRequirementService = playerRequirementService;
+        this._turnControl = turnControl;
+        this._playerPhase = playerPhase;
         this._opponentStateService = opponentStateService;
         this._canThePlayer = canThePlayer;
+    }
+
+    canPutDownCardsInHomeZone() {
+        let playerRequirements = this._playerRequirementService;
+        if (playerRequirements.hasAnyRequirement()) return false;
+        if (playerRequirements.isWaitingOnOpponentFinishingRequirement()) return false;
+
+        return (this._turnControl.playerHasControlOfOwnTurn() && this._playerPhase.isAction())
+            || this._turnControl.playerHasControlOfOpponentsTurn();
+    }
+
+    canPutDownStationCards() {
+        let playerRequirements = this._playerRequirementService;
+        if (playerRequirements.hasAnyRequirement()) return false;
+        if (playerRequirements.isWaitingOnOpponentFinishingRequirement()) return false;
+
+        return this._playerPhase.isAction();
     }
 
     getMaximumHandSize() {

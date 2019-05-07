@@ -25,4 +25,4 @@ module.exports = function StatePreparer({ whitelist, obscureHandlerByKey, altern
     function getFinalKey(key) {
         return (alternateItemNames && alternateItemNames[key]) ? alternateItemNames[key] : key;
     }
-}
+};

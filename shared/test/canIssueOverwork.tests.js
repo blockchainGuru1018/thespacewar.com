@@ -33,5 +33,14 @@ module.exports = testCase('canIssueOverwork', {
             unflippedStationCardCount: 2,
             hasRequirements: true
         }));
+    },
+    'when is action phase but is NOT the current player (the player in control)': function () {
+        refute(canIssueOverwork({
+            playerId: 'P1A',
+            currentPlayer: 'P2A',
+            phase: 'action',
+            unflippedStationCardCount: 2,
+            hasRequirements: false
+        }));
     }
 });

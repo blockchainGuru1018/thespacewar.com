@@ -29,6 +29,7 @@ function FakeDeck(deps) {
         drawSingle,
         getCardCount: () => cards.length,
         getPossibleMillCount: () => Math.floor(cards.length / 2),
+        _getDeck: () => [...cards]
     };
 
     function drawSingle() {

@@ -11,6 +11,7 @@ const NuclearMissile = require('../card/NuclearMissile.js');
 const EmpMissile = require('../card/EmpMissile.js');
 const EnergyShield = require('../card/EnergyShield.js');
 const Pursuiter = require('../card/Pursuiter.js');
+const CanCounterCardsWithCostOrLess = require('../card/mixins/CanCounterCardsWithCostOrLess.js');
 const canThePlayerFactory = require('./fakeFactories/canThePlayerFactory.js');
 const playerStateServiceFactory = require('./fakeFactories/playerStateServiceFactory.js');
 const queryEventsFactory = require('./fakeFactories/queryEventsFactory.js');
@@ -661,6 +662,20 @@ module.exports = testCase('Cards', {
         },
         'can be repaired'() {
             assert(this.card.canBeRepaired());
+        }
+    },
+    'can counter cards costing 2 or less': {
+        'can counter card costing 2'() {
+            const card = createCard(CanCounterCardsWithCostOrLess(2, BaseCard), {});
+            assert(card.canCounterCard({ cost: 2 }));
+        },
+        'can NOT counter card costing 3'() {
+            const card = createCard(CanCounterCardsWithCostOrLess(2, BaseCard), {});
+            refute(card.canCounterCard({ cost: 3 }));
+        },
+        'can counter card costing 0'() {
+            const card = createCard(CanCounterCardsWithCostOrLess(2, BaseCard), {});
+            assert(card.canCounterCard({ cost: 0 }));
         }
     }
 });

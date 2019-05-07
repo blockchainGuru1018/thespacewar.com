@@ -22,8 +22,8 @@ const FakeDeck = require('../testUtils/FakeDeck.js');
 module.exports = {
     'when in draw phase and has 1 card in station draw-row': {
         setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState', 'drawCards', 'stateChanged']);
-            this.secondPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
+            this.firstPlayerConnection = FakeConnection2(['drawCards', 'stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['stateChanged']);
             const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
             this.match = createMatch({ players });
             this.match.restoreFromState(createState({
@@ -50,8 +50,8 @@ module.exports = {
             }));
         },
         'first player should have new card on hand'() {
-            this.match.start();
-            const { cardsOnHand } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            this.match.refresh('P1A');
+            const { cardsOnHand } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
             assert.equals(cardsOnHand.length, 1);
             assert.equals(cardsOnHand[0].id, 'C1A');
         },
@@ -70,8 +70,8 @@ module.exports = {
     },
     'when in draw phase and has 2 cards in station draw-row': {
         setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState', 'drawCards', 'stateChanged']);
-            this.secondPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
+            this.firstPlayerConnection = FakeConnection2(['drawCards', 'stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['stateChanged']);
             const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
             this.match = createMatch({ players });
             this.match.restoreFromState(createState({
@@ -101,8 +101,8 @@ module.exports = {
             }));
         },
         'first player should have new card on hand'() {
-            this.match.start();
-            const { cardsOnHand } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            this.match.refresh('P1A');
+            const { cardsOnHand } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
             assert.equals(cardsOnHand.length, 1);
             assert.equals(cardsOnHand[0].id, 'C1A');
         },
@@ -122,7 +122,7 @@ module.exports = {
     'when can draw 1 card and draws 2 cards': {
         setUp() {
             this.firstPlayerConnection = FakeConnection2(['drawCards']);
-            this.secondPlayerConnection = FakeConnection2(['restoreState']);
+            this.secondPlayerConnection = FakeConnection2(['stateChanged']);
             const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
             this.match = createMatch({ players });
             this.match.restoreFromState(createState({
@@ -148,7 +148,7 @@ module.exports = {
     'when has NO more cards but has 1 draw row station card and draws 1 card': {
         setUp() {
             this.firstPlayerConnection = FakeConnection2(['drawCards']);
-            this.secondPlayerConnection = FakeConnection2(['restoreState']);
+            this.secondPlayerConnection = FakeConnection2(['stateChanged']);
             const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
             this.match = createMatch({ players });
             this.match.restoreFromState(createState({
@@ -172,8 +172,8 @@ module.exports = {
     },
     'when discard opponent top 2 cards and has more cards to draw': {
         async setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState', 'drawCards', 'stateChanged']);
-            this.secondPlayerConnection = FakeConnection2(['restoreState', 'stateChanged', 'setOpponentCardCount']);
+            this.firstPlayerConnection = FakeConnection2(['drawCards', 'stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['stateChanged', 'setOpponentCardCount']);
             const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
             this.match = createMatch({ players });
             this.match.restoreFromState(createState({
@@ -201,8 +201,8 @@ module.exports = {
             assert.calledWith(this.firstPlayerConnection.drawCards, sinon.match({ moreCardsCanBeDrawn: true }));
         },
         'first player should NOT have new card on hand'() {
-            this.match.start();
-            const { cardsOnHand } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            this.match.refresh('P1A');
+            const { cardsOnHand } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
             assert.equals(cardsOnHand.length, 0);
         },
         'should NOT emit setOpponentCardCount to second player'() {
@@ -234,8 +234,8 @@ module.exports = {
     },
     'when has draw card requirement with count 1 and draw card': {
         setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState', 'drawCards', 'stateChanged']);
-            this.secondPlayerConnection = FakeConnection2(['restoreState', 'stateChanged', 'setOpponentCardCount']);
+            this.firstPlayerConnection = FakeConnection2(['drawCards', 'stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['stateChanged', 'setOpponentCardCount']);
             const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
             this.match = createMatch({ players });
             this.match.restoreFromState(createState({
@@ -269,8 +269,8 @@ module.exports = {
     },
     'when has draw card requirement with count 1 and mill opponent': {
         setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState', 'drawCards', 'stateChanged']);
-            this.secondPlayerConnection = FakeConnection2(['restoreState', 'stateChanged', 'setOpponentCardCount']);
+            this.firstPlayerConnection = FakeConnection2(['drawCards', 'stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['stateChanged', 'setOpponentCardCount']);
             const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
             this.match = createMatch({ players });
             this.match.restoreFromState(createState({
@@ -305,8 +305,8 @@ module.exports = {
     },
     'when has draw card requirement with count 2 and draw card': {
         setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState', 'drawCards', 'stateChanged']);
-            this.secondPlayerConnection = FakeConnection2(['restoreState', 'stateChanged', 'setOpponentCardCount']);
+            this.firstPlayerConnection = FakeConnection2(['drawCards', 'stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['stateChanged', 'setOpponentCardCount']);
             const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
             this.match = createMatch({ players });
             this.match.restoreFromState(createState({

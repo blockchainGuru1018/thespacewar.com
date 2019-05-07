@@ -1,7 +1,9 @@
 class QueryEvents {
 
-    constructor({ eventRepository }) {
+    constructor({ eventRepository, opponentEventRepository, matchService }) {
         this._eventRepository = eventRepository;
+        this._opponentEventRepository = opponentEventRepository;
+        this._matchService = matchService;
     }
 
     hasMovedOnPreviousTurn(cardId, currentTurn) {
@@ -21,6 +23,53 @@ class QueryEvents {
     _turnCountSinceMoveLast(cardId, currentTurn, events) {
         const moveCardEvent = events.slice().reverse().find(e => e.type === 'moveCard' && e.cardId === cardId);
         return currentTurn - moveCardEvent.turn;
+    }
+
+    lastTookControlWithinTimeFrameSincePutDownCard(opponentCardId, millisecondsTimeFrame) {
+        const timeSinceOpponentCardWasPutDown = this.getTimeWhenOpponentCardWasPutDown(opponentCardId);
+        const playerEventsInReverse = this._eventRepository.getAll().slice().reverse();
+
+        const indexOfLatestTakingOfControl = playerEventsInReverse.findIndex(e => {
+            return e.type === 'takeControlOfOpponentsTurn'
+        });
+        const indexOfLatestReleaseOfControl = playerEventsInReverse.findIndex(e => {
+            return e.type === 'releaseControlOfOpponentsTurn'
+        });
+        if (indexOfLatestTakingOfControl > indexOfLatestReleaseOfControl) {
+            const takeControlOfOpponentsTurnEvent = playerEventsInReverse[indexOfLatestTakingOfControl];
+            const timeDifference = takeControlOfOpponentsTurnEvent.created - timeSinceOpponentCardWasPutDown;
+            return timeDifference >= 0 && timeDifference <= millisecondsTimeFrame;
+        }
+        else {
+            let timeDifference = Date.now() - timeSinceOpponentCardWasPutDown;
+            return timeDifference <= millisecondsTimeFrame;
+        }
+    }
+
+    getTimeWhenOpponentCardWasPutDown(opponentCardId) {
+        const events = this._opponentEventRepository.getAll();
+        const putDownEventForThisCard = events.find(e => {
+            return e.type === 'putDownCard'
+                && e.cardId === opponentCardId;
+        });
+        if (!putDownEventForThisCard) {
+            return this._matchService.getGameStartTime();
+        }
+        return putDownEventForThisCard.created;
+    }
+
+    wasOpponentCardAtLatestPutDownInHomeZone(opponentCardId) {
+        const eventsInReverse = this._opponentEventRepository.getAll().slice().reverse();
+        const event = eventsInReverse.find(e => e.type === 'putDownCard' && e.cardId === opponentCardId);
+        return event.location === 'zone';
+    }
+
+    wasOpponentCardAtLatestPutDownAsExtraStationCard(opponentCardId) {
+        const eventsInReverse = this._opponentEventRepository.getAll().slice().reverse();
+        const event = eventsInReverse.find(e => e.type === 'putDownCard' && e.cardId === opponentCardId);
+
+        return event.location.startsWith('station-')
+            && event.putDownAsExtraStationCard;
     }
 
     getTurnWhenCardWasPutDown(cardId) {

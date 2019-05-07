@@ -99,7 +99,7 @@ function createMatchAndGoToFirstAttackPhase(deps = {}) {
     match.nextPhase(firstPlayer.id);
 
     let firstPlayerCards = null;
-    firstPlayer.connection.on('restoreState', state => {
+    firstPlayer.connection.on('stateChanged', state => {
         firstPlayerCards = state.cardsOnHand;
     });
     match.start();
@@ -125,7 +125,7 @@ function createMatchAndGoToSecondAttackPhase(deps = {}) {
 
     const [_, secondPlayer] = match.players;
     let secondPlayerCards = null;
-    secondPlayer.connection.on('restoreState', state => {
+    secondPlayer.connection.on('stateChanged', state => {
         secondPlayerCards = state.cardsOnHand;
     });
     match.start();

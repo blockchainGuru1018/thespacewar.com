@@ -186,7 +186,7 @@
                 'createCard',
                 'attackerCard',
                 'repairerCard',
-                'getCanThePlayer'
+                'canThePlayer'
             ]),
             ...mapPermissionGetters([
                 'canSelectCardsForActiveAction',
@@ -253,7 +253,8 @@
             canSelectAction() {
                 if (!this.isPlayerCard) return false;
 
-                return !this.attackerCardId
+                return this.canThePlayer.performCardActions()
+                    && !this.attackerCardId
                     && !this.repairerCardId
                     && !this.activeAction;
             },

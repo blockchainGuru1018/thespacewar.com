@@ -445,6 +445,9 @@ module.exports = function (deps) {
         else if (state.holdingCard) {
             dispatch('cancelHoldingCard');
         }
+        else if(state.choiceCardId) {
+            dispatch('choiceDialogCancel');
+        }
     }
 
     function startHoldingCard({ state, commit }, { cardData, showOnlyCardGhostsFor = null }) {

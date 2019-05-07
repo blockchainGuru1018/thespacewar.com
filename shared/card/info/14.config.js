@@ -2,11 +2,15 @@ const CommonId = '14';
 const DrawCardsCount = 3;
 
 module.exports = {
-    'choiceToRequirement': {
+    CommonId,
+    'choiceToRequirementSpec': {
         'draw': {
-            'type': 'drawCard',
-            'count': DrawCardsCount,
-            'cardCommonId': CommonId
+            forOpponent: [],
+            forPlayer: [{
+                'type': 'drawCard',
+                'count': DrawCardsCount,
+                'cardCommonId': CommonId
+            }]
         }
     },
     'choicesWhenPutDownInHomeZone': [

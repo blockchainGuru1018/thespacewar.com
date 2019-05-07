@@ -13,8 +13,8 @@ const StateAsserter = require('../testUtils/StateAsserter.js');
 
 module.exports = {
     async setUp() {
-        const firstPlayerConnection = FakeConnection2(['restoreState']);
-        const secondPlayerConnection = FakeConnection2(['restoreState']);
+        const firstPlayerConnection = FakeConnection2(['stateChanged']);
+        const secondPlayerConnection = FakeConnection2(['stateChanged']);
         const players = [Player('P1A', firstPlayerConnection), Player('P2A', secondPlayerConnection)];
         this.match = createMatch({ players });
         this.firstPlayerAsserter = StateAsserter(this.match, firstPlayerConnection, 'P1A');
@@ -26,6 +26,7 @@ module.exports = {
                 playerStateById: {
                     turn: 1,
                     'P1A': {
+                        phase: 'action',
                         cardsOnHand: [createCard({ id: 'C2A' })],
                         stationCards: [
                             stationCard({ id: 'C1A', flipped: false })
@@ -41,7 +42,7 @@ module.exports = {
             refute(this.error);
         },
         'should add station card'() {
-            this.firstPlayerAsserter.start();
+            this.firstPlayerAsserter.send();
             this.firstPlayerAsserter.hasStationCard('C2A');
         }
     }

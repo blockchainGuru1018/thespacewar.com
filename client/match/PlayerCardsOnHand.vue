@@ -1,5 +1,5 @@
 <template>
-    <div class="field-playerCardsOnHand field-section">
+    <div class="field-playerCardsOnHand playerCardsOnHand field-section">
         <div
             v-for="{card, index} in visibleCardHoverActivators"
             :key="`hoverActivator-${card.id}`"

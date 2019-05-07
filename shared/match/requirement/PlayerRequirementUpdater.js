@@ -15,8 +15,7 @@ class PlayerRequirementUpdater { //TODO Rename PlayerRequirements
 
     canProgressRequirementByCount(count) {
         const requirement = this._get();
-        return requirement
-            && count <= requirement.count;
+        return requirement && count <= requirement.count;
     }
 
     progressRequirementByCount(count = 1) { //TODO It is to unclear that this removes the requirement if has progressed the requirement so that it is "done"

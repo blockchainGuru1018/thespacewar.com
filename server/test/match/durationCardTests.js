@@ -55,7 +55,7 @@ module.exports = {
         let error = catchError(() => this.match.attack('P1A', { attackerCardId: 'C1A', defenderCardId: 'C2A' }));
 
         assert(error);
-        assert.equals(error.message, 'Cannot attack with card');
+        assert.equals(error.message, 'Cannot attack');
     },
     'when try to attack a duration card should throw error': function () {
         this.match = createMatch({ players: [Player('P1A'), Player('P2A')] });
@@ -82,7 +82,7 @@ module.exports = {
     },
     'when player is in the preparation phase and discards duration card': {
         setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
             this.secondPlayerConnection = FakeConnection2(['stateChanged']);
             this.match = createMatch({
                 players: [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
@@ -101,13 +101,13 @@ module.exports = {
             this.match.discardDurationCard('P1A', 'C1A');
         },
         'first player should NOT have card in zone'() {
-            this.match.start();
-            const { cardsInZone } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            this.match.refresh('P1A');
+            const { cardsInZone } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
             assert.equals(cardsInZone.length, 0);
         },
         'first player should have card among discarded cards'() {
-            this.match.start();
-            const { discardedCards } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            this.match.refresh('P1A');
+            const { discardedCards } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
             assert.equals(discardedCards.length, 1);
             assert.match(discardedCards[0], { id: 'C1A' });
         },
@@ -127,7 +127,7 @@ module.exports = {
     },
     'when in preparation phase and has less than 0 action points and go to the next phase': {
         setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState']);
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
             this.secondPlayerConnection = FakeConnection2(['opponentDiscardedDurationCard']);
             this.match = createMatch({
                 actionPointsCalculator: {
@@ -155,7 +155,7 @@ module.exports = {
     },
     'when player is NOT in preparation phase but discards duration card should throw error': {
         setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState']);
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
             this.secondPlayerConnection = FakeConnection2(['opponentDiscardedDurationCard']);
             this.match = createMatch({
                 actionPointsCalculator: {

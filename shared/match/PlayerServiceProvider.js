@@ -2,8 +2,10 @@ const TYPE = {
     state: 'state',
     requirement: 'requirement',
     canThePlayer: 'canThePlayer',
-    rule: 'rule'
-}
+    rule: 'rule',
+    phase: 'phase',
+    turnControl: 'turnControl'
+};
 
 PlayerServiceProvider.TYPE = TYPE;
 
@@ -14,6 +16,7 @@ function PlayerServiceProvider() {
     return {
         TYPE,
         registerService,
+        byTypeAndId,
         getStateServiceById,
         getRequirementServiceById,
         getCanThePlayerServiceById,
@@ -22,6 +25,10 @@ function PlayerServiceProvider() {
 
     function registerService(type, playerId, service) {
         servicesByTypeAndPlayerId[`${type}:${playerId}`] = service;
+    }
+
+    function byTypeAndId(playerServiceType, playerId) {
+        return servicesByTypeAndPlayerId[`${playerServiceType}:${playerId}`];
     }
 
     function getStateServiceById(playerId) {

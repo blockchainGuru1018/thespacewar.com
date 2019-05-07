@@ -18,7 +18,9 @@ function ServerCardFactory({
         matchService.setState(getFreshState());
 
         const eventRepository = EventRepository({ playerId, playerServiceProvider });
-        const queryEvents = new QueryEvents({ eventRepository });
+        const opponentId = matchService.getOpponentId(playerId);
+        const opponentEventRepository = EventRepository({ playerId: opponentId, playerServiceProvider });
+        const queryEvents = new QueryEvents({ eventRepository, opponentEventRepository, matchService });
         const cardFactory = new CardFactory({ matchService, playerServiceProvider, queryEvents });
         return cardFactory.createCardForPlayer(cardData, playerId);
     }

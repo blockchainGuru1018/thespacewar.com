@@ -68,7 +68,8 @@ module.exports = function ({
 
     function initFakeLoadingProgress({ state, getters }) {
         progressIntervalId = setInterval(() => {
-            state.progress += Math.random() < .5 ? Math.random() < .5 ? .4 : .8 : 1.6;
+            // state.progress += Math.random() < .5 ? Math.random() < .5 ? .4 : .8 : 1.6;
+            state.progress += 100;
             if (getters.loadingDone) {
                 clearInterval(progressIntervalId);
             }

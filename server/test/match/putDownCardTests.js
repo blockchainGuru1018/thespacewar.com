@@ -62,15 +62,15 @@ module.exports = {
     },
     'when have just started game': {
         async setUp() {
-            const restoreState = stub();
-            const connection = FakeConnection({ restoreState });
+            const stateChanged = stub();
+            const connection = FakeConnection({ stateChanged });
             const player = createPlayer({ id: 'P1A', cost: 1, connection });
             let match = createMatch({ players: [player] });
             match.start();
             match.start();
 
             match.start();
-            this.state = restoreState.firstCall.args[0];
+            this.state = stateChanged.firstCall.args[0];
         },
         'should have 7 cards on hand': function () {
             assert.equals(this.state.cardsOnHand.length, 7);
@@ -81,9 +81,6 @@ module.exports = {
             assert.equals(this.state.stationCards.filter(c => c.place === 'action').length, 3);
             assert.equals(this.state.stationCards.filter(c => c.place === 'handSize').length, 1);
         },
-        'should have 6 action points equal to the amound of station cards * 2': function () {
-            assert.equals(this.state.actionPoints, 6);
-        },
         'should be first players turn': function () {
             assert.equals(this.state.currentPlayer, 'P1A');
         },
@@ -93,8 +90,8 @@ module.exports = {
     },
     'when can afford card:': {
         async setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState']);
-            this.secondPlayerConnection = FakeConnection2(['putDownOpponentCard', 'restoreState']);
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['stateChanged']);
             this.match = createMatch({
                 players: [
                     createPlayer({ id: 'P1A', connection: this.firstPlayerConnection }),
@@ -117,19 +114,19 @@ module.exports = {
             this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
         },
         'should put card in zone'() {
-            this.match.start();
-            let state = this.firstPlayerConnection.restoreState.firstCall.args[0];
+            this.match.refresh('P1A');
+            let state = this.firstPlayerConnection.stateChanged.firstCall.args[0];
             assert.equals(state.cardsInZone.length, 1);
             assert.equals(state.cardsInZone[0].id, 'C1A');
         },
         'should remove card from hand'() {
-            this.match.start();
-            let state = this.firstPlayerConnection.restoreState.firstCall.args[0];
+            this.match.refresh('P1A');
+            let state = this.firstPlayerConnection.stateChanged.firstCall.args[0];
             assert.equals(state.cardsOnHand.length, 0);
         },
         'should add event'() {
-            this.match.start();
-            let state = this.firstPlayerConnection.restoreState.firstCall.args[0];
+            this.match.refresh('P1A');
+            let state = this.firstPlayerConnection.stateChanged.firstCall.args[0];
             assert.equals(state.events.length, 1);
             assert.match(state.events[0], {
                 type: 'putDownCard',
@@ -138,14 +135,9 @@ module.exports = {
                 cardId: 'C1A'
             });
         },
-        'should emit zone card to other player'() {
-            let event = this.secondPlayerConnection.putDownOpponentCard.lastCall.args[0];
-            assert.equals(event.location, 'zone');
-            assert.match(event.card, { id: 'C1A' });
-        },
         'when second player restore state should get zone card'() {
-            this.match.start();
-            const { opponentCardsInZone } = this.secondPlayerConnection.restoreState.lastCall.args[0];
+            this.match.refresh('P2A');
+            const { opponentCardsInZone } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
             assert(opponentCardsInZone);
             assert.equals(opponentCardsInZone.length, 1);
             assert.match(opponentCardsInZone[0], { id: 'C1A' });
@@ -177,13 +169,13 @@ module.exports = {
 
         let error = catchError(() => match.putDownCard('P2A', { location: 'zone', cardId: 'C2A' }));
 
-        assert.equals(error.message, 'Cannot put down card when it is not your turn');
+        assert.equals(error.message, 'Cannot put down card');
         assert.equals(error.type, 'CheatDetected');
     },
     'when has 1 flipped action station card and put down that station card': {
         setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState']);
-            this.secondPlayerConnection = FakeConnection2(['restoreState', 'putDownOpponentCard']);
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['stateChanged']);
             this.match = createMatch({
                 players: [
                     Player('P1A', this.firstPlayerConnection),
@@ -209,8 +201,8 @@ module.exports = {
             this.match.putDownCard('P1A', { location: 'zone', cardId: 'C2A' });
         },
         'when restore state should have card on hand and not among station cards'() {
-            this.match.start();
-            const { stationCards, cardsInZone } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            this.match.refresh('P1A');
+            const { stationCards, cardsInZone } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
 
             assert.equals(stationCards.length, 1);
             assert.equals(stationCards[0].id, 'C1A');
@@ -219,18 +211,13 @@ module.exports = {
             assert.equals(cardsInZone[0].id, 'C2A');
         },
         'when second player restore state the opponent should have 1 more card in play and 1 less action station card'() {
-            this.match.start();
-            const { opponentCardsInZone, opponentStationCards } = this.secondPlayerConnection.restoreState.lastCall.args[0];
+            this.match.refresh('P2A');
+            const { opponentCardsInZone, opponentStationCards } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
             assert.equals(opponentCardsInZone.length, 1);
             assert.equals(opponentCardsInZone[0].id, 'C2A');
 
             assert.equals(opponentStationCards.length, 1);
             assert.equals(opponentStationCards[0].id, 'C1A');
-        },
-        'should emit put down opponent card'() {
-            const { location, card } = this.secondPlayerConnection.putDownOpponentCard.lastCall.args[0];
-            assert.equals(location, 'zone');
-            assert.equals(card.id, 'C2A');
         }
     },
     'when try to move flipped station card to zone but cannot afford card should throw'() {
@@ -279,8 +266,8 @@ module.exports = {
     },
     'when has 1 flipped event station card and put down that station card': {
         setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState']);
-            this.secondPlayerConnection = FakeConnection2(['restoreState', 'stateChanged']);
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['stateChanged']);
             this.match = createMatch({
                 players: [
                     Player('P1A', this.firstPlayerConnection),
@@ -305,25 +292,25 @@ module.exports = {
             this.match.putDownCard('P1A', { location: 'zone', cardId: 'C2A' });
         },
         'first player should NOT have card among station cards'() {
-            this.match.start();
-            const { stationCards } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            this.match.refresh('P1A');
+            const { stationCards } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
             assert.equals(stationCards.length, 1);
             assert.equals(stationCards[0].id, 'C1A');
         },
         'first player should NOT have card in zone'() {
-            this.match.start();
-            const { cardsInZone } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            this.match.refresh('P1A');
+            const { cardsInZone } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
             assert.equals(cardsInZone.length, 0);
         },
         'first player should have card in discard pile'() {
-            this.match.start();
-            const { discardedCards } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            this.match.refresh('P1A');
+            const { discardedCards } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
             assert.equals(discardedCards.length, 1);
             assert.equals(discardedCards[0].id, 'C2A');
         },
         'when second player restore state the opponent should have 0 cards in play and 1 less action station card and 1 more card in discarded pile'() {
-            this.match.start();
-            const { opponentDiscardedCards, opponentCardsInZone, opponentStationCards } = this.secondPlayerConnection.restoreState.lastCall.args[0];
+            this.match.refresh('P2A');
+            const { opponentDiscardedCards, opponentCardsInZone, opponentStationCards } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
 
             assert.equals(opponentDiscardedCards.length, 1);
             assert.equals(opponentDiscardedCards[0].id, 'C2A');
@@ -347,7 +334,7 @@ module.exports = {
     },
     'when put down event card from hand to own zone': {
         setUp() {
-            this.firstPlayerConnection = FakeConnection2(['restoreState']);
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
             this.secondPlayerConnection = FakeConnection2(['stateChanged']);
             const players = [
                 Player('P1A', this.firstPlayerConnection),
@@ -368,19 +355,19 @@ module.exports = {
             this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
         },
         'first player should have card in discard pile'() {
-            this.match.start();
-            const { discardedCards } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            this.match.refresh('P1A');
+            const { discardedCards } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
             assert.equals(discardedCards.length, 1);
             assert.match(discardedCards[0], { id: 'C1A' });
         },
         'first player should NOT have card in zone'() {
-            this.match.start();
-            const { cardsInZone } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            this.match.refresh('P1A');
+            const { cardsInZone } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
             assert.equals(cardsInZone.length, 0);
         },
         'first player should NOT have card on hand'() {
-            this.match.start();
-            const { cardsOnHand } = this.firstPlayerConnection.restoreState.lastCall.args[0];
+            this.match.refresh('P1A');
+            const { cardsOnHand } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
             assert.equals(cardsOnHand.length, 0);
         },
         'should emit state changed with opponent discarded cards and card count to second player'() {
@@ -700,7 +687,7 @@ module.exports = {
         },
         'when has already put down station card this turn and put down Excellent work': {
             setUp() {
-                this.firstPlayerConnection = FakeConnection2(['restoreState']);
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
                 const players = [Player('P1A', this.firstPlayerConnection)];
                 this.match = createMatch({ players });
                 this.match.restoreFromState(createState({
@@ -729,7 +716,7 @@ module.exports = {
             },
             'should have added excellent work as station card'() {
                 this.match.refresh('P1A');
-                assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                     stationCards: [
                         sinon.match({ id: 'C1A', place: 'draw' }),
                         sinon.match({ id: 'C2A', place: 'draw' })
@@ -739,7 +726,7 @@ module.exports = {
         },
         'when put down excellent work as extra station card and then put down another card as station card': {
             setUp() {
-                this.firstPlayerConnection = FakeConnection2(['restoreState']);
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
                 const players = [Player('P1A', this.firstPlayerConnection)];
                 this.match = createMatch({ players });
                 this.match.restoreFromState(createState({
@@ -770,7 +757,7 @@ module.exports = {
             },
             'should have added card as station card'() {
                 this.match.refresh('P1A');
-                assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                     stationCards: [
                         sinon.match({ id: 'C1A', place: 'draw' }),
                         sinon.match({ id: 'C2A', place: 'draw' })
@@ -780,7 +767,7 @@ module.exports = {
         },
         'when put down excellent work but NOT as extra station card and then put down another card as station card': {
             setUp() {
-                this.firstPlayerConnection = FakeConnection2(['restoreState']);
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
                 const players = [Player('P1A', this.firstPlayerConnection)];
                 this.match = createMatch({ players });
                 this.match.restoreFromState(createState({
@@ -806,7 +793,7 @@ module.exports = {
             },
             'should NOT have added card as station card'() {
                 this.match.refresh('P1A');
-                assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                     stationCards: [
                         sinon.match({ id: 'C1A', place: 'draw' })
                     ]
@@ -815,7 +802,7 @@ module.exports = {
         },
         'when excellent work is in draw station row and is then moved to action station row': {
             setUp() {
-                this.firstPlayerConnection = FakeConnection2(['restoreState']);
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
                 const players = [Player('P1A', this.firstPlayerConnection)];
                 this.match = createMatch({ players });
                 this.match.restoreFromState(createState({
@@ -844,7 +831,7 @@ module.exports = {
             },
             'should have moved station card'() {
                 this.match.refresh('P1A');
-                assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                     stationCards: [
                         sinon.match({ id: 'C1A', place: 'draw' }),
                         sinon.match({ id: 'C2A', place: 'action' })
@@ -1048,8 +1035,8 @@ module.exports = {
         },
         'when put down Discovery with choice "draw" but both players has NO cards left': {
             setUp() {
-                this.firstPlayerConnection = FakeConnection2(['restoreState']);
-                this.secondPlayerConnection = FakeConnection2(['restoreState']);
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                this.secondPlayerConnection = FakeConnection2(['stateChanged']);
                 const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
                 this.match = createMatch({ players });
                 this.match.restoreFromState(createState({
@@ -1071,13 +1058,13 @@ module.exports = {
             },
             'first player should NOT have any requirements'() {
                 this.match.refresh('P1A');
-                assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                     requirements: [],
                 }));
             },
             'second player should NOT have any requirements'() {
                 this.match.refresh('P2A');
-                assert.calledWith(this.secondPlayerConnection.restoreState, sinon.match({
+                assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
                     requirements: []
                 }));
             }
@@ -1307,7 +1294,7 @@ module.exports = {
     },
     'when put down Missiles launched': {
         async setUp() {
-            this.firstPlayerConnection = FakeConnection2(['stateChanged', 'restoreState']);
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
             const players = [Player('P1A', this.firstPlayerConnection)];
             this.match = createMatch({ players }, [{ id: MissilesLaunched.CommonId }]);
             this.match.restoreFromState(createState({
@@ -1330,7 +1317,7 @@ module.exports = {
         },
         'should add requirement'() {
             this.match.refresh('P1A');
-            assert.calledWith(this.firstPlayerConnection.restoreState, sinon.match({
+            assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                 requirements: [
                     sinon.match({
                         cardGroups: [

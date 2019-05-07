@@ -1,3 +1,4 @@
+const { PHASES } = require('./phases.js');
 const canIssueOverwork = require('../../shared/match/overwork/canIssueOverwork.js');
 
 module.exports = function (deps) {
@@ -12,6 +13,8 @@ module.exports = function (deps) {
         state: {},
         getters: {
             isOwnTurn,
+            opponentHasControlOfPlayersTurn,
+            playerHasControlOfOpponentsTurn,
             waitingForOtherPlayerToFinishRequirements,
             canMoveCardsFromHand,
             canDiscardCards,
@@ -30,9 +33,17 @@ module.exports = function (deps) {
         actions: {}
     };
 
-    function isOwnTurn(state, getters, rootState) {
+    function isOwnTurn(state, getters, rootState) { //TODO "isOwnTurn" is confusing as you can take control of another players turn, this would be true then but it wouldnt be "your turn".
         const matchState = rootState.match;
         return matchState.ownUser.id === matchState.currentPlayer;
+    }
+
+    function opponentHasControlOfPlayersTurn(state, getters, rootState, rootGetters) {
+        return rootGetters['match/turnControl'].opponentHasControlOfPlayersTurn();
+    }
+
+    function playerHasControlOfOpponentsTurn(state, getters, rootState, rootGetters) {
+        return rootGetters['match/turnControl'].playerHasControlOfOpponentsTurn();
     }
 
     function waitingForOtherPlayerToFinishRequirements() {
@@ -70,14 +81,8 @@ module.exports = function (deps) {
         }
     }
 
-    function canPutDownCards(state, getters, rootState) {
-        if (getters.waitingForOtherPlayerToFinishRequirements) return false;
-
-        const hasRequirement = !!getFrom('firstRequirement', 'requirement');
-        const isActionPhase = rootState.match.phase === 'action'
-        return getters.isOwnTurn
-            && isActionPhase
-            && !hasRequirement;
+    function canPutDownCards(state, getters, rootState, rootGetters) {
+        return rootGetters['match/playerRuleService'].canPutDownCardsInHomeZone();
     }
 
     function canPutDownStationCards(state, getters, rootState) {
@@ -104,6 +109,8 @@ module.exports = function (deps) {
 
     function canIssueOverworkGetter(state, getters, rootState, rootGetters) {
         return canIssueOverwork({
+            playerId: rootState.match.ownUser.id,
+            currentPlayer: rootState.match.currentPlayer,
             unflippedStationCardCount: rootGetters['match/playerUnflippedStationCardCount'],
             phase: rootState.match.phase,
             hasRequirements: rootState.match.requirements.length > 0
@@ -118,7 +125,7 @@ module.exports = function (deps) {
         return damageStationCardRequirement && cardsLeftToSelect > 0;
     }
 
-    function canSelectCardsForActiveAction(state, getters, rootState) { //TODO This and the ones who use this might have to support this action for both opponent and player cards
+    function canSelectCardsForActiveAction(state, getters, rootState) {
         const activeAction = rootState.card.activeAction;
         if (!activeAction) return false;
 

@@ -11,10 +11,17 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
     }
 
     getRequirements() {
-        return this._playerStateService
-            .getPlayerState()
+        return this._playerStateService.getPlayerState()
             .requirements
             .slice();
+    }
+
+    hasAnyRequirement() {
+        return this.getRequirements().length > 0;
+    }
+
+    isWaitingOnOpponentFinishingRequirement() {
+        return this.getRequirements().some(r => r.waiting);
     }
 
     getFirstMatchingRequirement({ type, common = null, waiting = null }) {
@@ -39,6 +46,9 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
         }
         else if (type === 'findCard') {
             this.addFindCardRequirement(requirement);
+        }
+        else if (type === 'counterCard') {
+            this.addCounterCardRequirement(requirement);
         }
     }
 
@@ -103,6 +113,16 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
         this.addRequirement({
             ...uncheckedProperties,
             type: 'findCard',
+            count: Math.min(totalCardCount, count),
+            cardGroups: cardGroups.filter(g => g.cards.length)
+        });
+    }
+
+    addCounterCardRequirement({ count, cardGroups, ...uncheckedProperties }) {
+        const totalCardCount = cardGroups.reduce((acc, group) => acc + group.cards.length, 0);
+        this.addRequirement({
+            ...uncheckedProperties,
+            type: 'counterCard',
             count: Math.min(totalCardCount, count),
             cardGroups: cardGroups.filter(g => g.cards.length)
         });

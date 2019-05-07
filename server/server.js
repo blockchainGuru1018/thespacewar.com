@@ -142,6 +142,10 @@ function setupRoutes(deps, controllers) {
             const matchLogs = deps.logger.readAll();
             res.end(matchLogs);
         });
+        app.get('/master-log', (req, res) => {
+            const masterLog = deps.logger.readMasterLog();
+            res.end(masterLog);
+        });
         app.get('/logs/:type', async (req, res) => {
             const matchLogs = deps.logger.read(type);
             res.end(matchLogs);
@@ -155,7 +159,7 @@ function setupSocketConnectionHandler(deps, controllers) {
 
     socketMaster.on('connection', async connection => {
         connection.on('registerConnection', async ({ userId }) => {
-            console.log(' -- registering connection for user', userId)
+            console.log(' -- registering connection for user', userId);
             socketRepository.setForUser(userId, connection);
 
             const ongoingMatch = matchRepository.getForUser(userId);

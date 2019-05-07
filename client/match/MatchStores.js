@@ -3,7 +3,9 @@ const STORES = [
     require('./RequirementStore.js'),
     require('./PermissionStore.js'),
     require('./CardStore.js'),
+    require('./KeyboardShortcutsStore.js'),
     require('./findCard/FindCardStore.js'),
+    require('./counterCard/CounterCardStore.js'),
     require('./loadingIndicator/LoadingIndicatorStore.js'),
     require('../expandedCard/ExpandedCardStore.js')
 ];
@@ -32,6 +34,8 @@ module.exports = function (deps) {
 
     matchController.start();
 
+    initStores(stores, rootStore);
+
     return {
         destroyAll
     };
@@ -41,6 +45,14 @@ module.exports = function (deps) {
         matchController.stop();
     }
 };
+
+function initStores(stores, rootStore) {
+    for (const store of stores) {
+        if (store.actions && store.actions.init) {
+            rootStore.dispatch(`${store.name}/init`);
+        }
+    }
+}
 
 function createMatchDispatch(rootStore) {
     return (actionName, data) => rootStore.dispatch(`match/${actionName}`, data);

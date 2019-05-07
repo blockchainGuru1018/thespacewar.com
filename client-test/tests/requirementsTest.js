@@ -38,7 +38,7 @@ describe('when has damageStationCard requirement by emptyDeck and is waiting', a
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
-        dispatch('restoreState', FakeState({
+        dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'action',
@@ -59,7 +59,7 @@ describe('when has find card requirement', () => {
         beforeEach(async () => {
             const { dispatch, showPage } = setUpController();
             showPage();
-            dispatch('restoreState', FakeState({
+            dispatch('stateChanged', FakeState({
                 turn: 1,
                 currentPlayer: 'P1A',
                 phase: 'action',
@@ -112,7 +112,7 @@ describe('when has find card requirement', () => {
         beforeEach(async () => {
             const { dispatch, showPage } = setUpController();
             showPage();
-            dispatch('restoreState', FakeState({
+            dispatch('stateChanged', FakeState({
                 turn: 1,
                 currentPlayer: 'P1A',
                 phase: 'action',
@@ -142,7 +142,7 @@ describe('when has find card requirement', () => {
         beforeEach(async () => {
             const { dispatch, showPage } = setUpController();
             showPage();
-            dispatch('restoreState', FakeState({
+            dispatch('stateChanged', FakeState({
                 turn: 1,
                 currentPlayer: 'P1A',
                 phase: 'action',
@@ -190,7 +190,7 @@ describe('when has find card requirement', () => {
         beforeEach(async () => {
             const { dispatch, showPage } = setUpController();
             showPage();
-            dispatch('restoreState', FakeState({
+            dispatch('stateChanged', FakeState({
                 turn: 1,
                 currentPlayer: 'P1A',
                 phase: 'action',
@@ -238,7 +238,7 @@ describe('when has find card requirement', () => {
         beforeEach(async () => {
             const { dispatch, showPage } = setUpController();
             showPage();
-            dispatch('restoreState', FakeState({
+            dispatch('stateChanged', FakeState({
                 turn: 1,
                 currentPlayer: 'P1A',
                 phase: 'action',

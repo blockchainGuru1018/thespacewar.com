@@ -29,4 +29,4 @@ module.exports = function FakeState(options) {
         playerRetreated: false,
         playerOrder: ['P1A', 'P2A']
     });
-}
+};
