@@ -117,11 +117,13 @@
                     <div class="guideText">
                         {{ textOnWaitPhase }}
                     </div>
-                    <div
-                        v-if="subTextOnWaitPhase"
-                        class="guideText-subText"
-                    >
-                        {{ subTextOnWaitPhase }}
+                    <div class="guideText-subText">
+                        <button
+                            @click="toggleControlOfTurn"
+                            @keydown.space.stop.prevent="toggleControlOfTurn"
+                            class="toggleControlOfTurn darkButton">
+                            {{ turnControlButtonText }}
+                        </button>
                     </div>
                 </div>
             </div>
@@ -374,11 +376,11 @@
                 }
                 return 'Enemy turn';
             },
-            subTextOnWaitPhase() {
+            turnControlButtonText() {
                 if (this.playerHasControlOfOpponentsTurn) {
-                    return 'press space to return control';
+                    return 'Release control';
                 }
-                return 'press space to take control';
+                return 'Take control';
             },
             cardStyle() {
                 if (this.activeActionCardImageUrl) {
@@ -402,7 +404,8 @@
             ...mapActions([
                 'goToNextPhase',
                 'endGame',
-                'overwork'
+                'overwork',
+                'toggleControlOfTurn'
             ]),
             startClick() {
                 this.goToNextPhase();

@@ -140,6 +140,7 @@ module.exports = function (deps) {
             saveMatch,
             restoreSavedMatch,
             overwork,
+            toggleControlOfTurn,
 
             // local & remote
             discardCard,
@@ -570,6 +571,10 @@ module.exports = function (deps) {
 
     function overwork() {
         matchController.emit('overwork');
+    }
+
+    function toggleControlOfTurn() {
+        matchController.emit('toggleControlOfTurn');
     }
 
     function stateChanged({ state, commit, dispatch }, data) {
