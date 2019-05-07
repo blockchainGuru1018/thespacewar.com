@@ -371,16 +371,6 @@
             "number_copies": "1"
         },
         {
-            "id": "66",
-            "name": "Expansion",
-            "price": "2",
-            "type_card": "orange",
-            "detail": "Your opponent may draw 2 cards.\r\nYou can play 2 extra station cards this turn.",
-            "defense": "0",
-            "attack": "0",
-            "number_copies": "1"
-        },
-        {
             "id": "67",
             "name": "Sabotage",
             "price": "0",
@@ -388,8 +378,8 @@
             "detail": "Opponent may draw 1 card. See the cards from the opponents hand and then discard 1 card from hand or flipped station card.",
             "defense": "0",
             "attack": "0",
-            "number_copies": "1"
+            "number_copies": "2"
         }
     ],
-    "saveTime": 1557243769156
+    "saveTime": 1557270675482
 }
