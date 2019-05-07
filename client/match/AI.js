@@ -14,15 +14,19 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
     let ended = false;
     let lost = false;
     let lifelineId;
+    let todo = [];
 
     return {
         start
-    }
+    };
 
     function start() {
+        startQueueWork();
+
         rootStore.watch(() => rootStore.state.match.phase, onPhaseChange);
         rootStore.watch(() => rootStore.state.match.requirements, onRequirementsChange);
         rootStore.watch(() => rootStore.state.match.stationCards, onStationCardsChange);
+        rootStore.watch(() => rootStore.state.match.currentPlayer, onCurrentPlayerChange);
 
         onPhaseChange(rootStore.state.match.phase);
 
@@ -43,9 +47,10 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
         const state = rootStore.state.match;
         if (state.phase !== PHASES.wait) return;
 
-        if (hasSomeRequirement()) {
-            await handleRequirements();
-        }
+        whileConditionThinkWhatToDo(
+            () => hasSomeRequirement(),
+            () => handleRequirements()
+        );
     }
 
     async function onStationCardsChange() {
@@ -57,34 +62,61 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
             .length;
 
         if (unflippedStationCardCount === 0) {
-            await handleGameEnded();
+            doAllLater(...handleGameEnded());
         }
     }
 
-    async function handleGameEnded() {
-        await wait(5000);
-
-        ended = true;
-        lost = hasLostGame();
-        clearInterval(lifelineId);
-
-        $('.endGameButton').click();
-        if (lost) {
-            await wait(1000);
-            const secondUserInLobby = $$('.user')[1];
-            secondUserInLobby.click();
-
-            await wait(1000);
-            $('.startAi').click();
-        } else {
-            await wait(2000);
-            $('.startAi').click();
+    async function onCurrentPlayerChange() {
+        if (opponentHasControl()) {
+            clearMind();
+        }
+        else {
+            await onPhaseChange(rootStore.state.match.phase);
         }
     }
 
-    async function onPhaseChange(phase) {
+    function handleGameEnded() {
+        return [
+            () => waitMilliseconds(5000),
+            () => {
+                ended = true;
+                lost = hasLostGame();
+                kill();
+
+                $('.endGameButton').click();
+
+                if (lost) {
+                    doAllLater([
+                        () => waitMilliseconds(1000),
+                        () => {
+                            const secondUserInLobby = $$('.user')[1];
+                            secondUserInLobby.click();
+                        },
+                        () => {
+                            waitMilliseconds(1000)
+                        },
+                        () => {
+                            $('.startAi').click();
+                        }
+                    ]);
+                }
+                else {
+                    doAllLater([
+                        () => waitMilliseconds(2000),
+                        () => $('.startAi').click()
+                    ]);
+                }
+            }
+        ];
+    }
+
+    function onPhaseChange(phase) {
         if (ended) {
-            clearInterval(lifelineId);
+            kill();
+            return;
+        }
+        if (opponentHasControl()) {
+            clearMind();
             return;
         }
 
@@ -92,71 +124,149 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
         const state = rootStore.state.match;
 
         if (gameHasEnded()) {
-            await handleGameEnded();
-        } else if (hasSomeRequirement()) {
-            await handleRequirements();
-            setTimeout(() => onPhaseChange(state.phase));
-        } else if (phase === 'start') {
-            matchController.emit('nextPhase');
-        } else if (phase === 'draw') {
-            while (hasDrawCardRequirement())
-                matchController.emit('drawCard');
-
-            matchController.emit('drawCard');
-            await wait(WaitTime);
-            if (state.phase === 'draw')
-                setTimeout(() => onPhaseChange('draw'));
-
-        } else if (phase === 'action') {
-            const cardToPutDownInStation = leastExpensiveAffordableCardOnHand();
-            if (cardToPutDownInStation) {
-                matchController.emit('putDownCard', {
-                    cardId: cardToPutDownInStation.id,
-                    location: 'station-' + randomStationRow()
-                });
-                await wait(WaitTime);
-            }
-
-            let tries = 0;
-            while (getActionPoints() > 0 && tries <= 3) {
-                const card = mostExpensiveAffordableCardOnHand();
-                if (card) {
-                    putDownCardInHomeZone(card);
-                    await wait(WaitTime);
-                }
-
-                tries++;
-            }
-
-            matchController.emit('nextPhase');
-        } else if (phase === 'discard') {
-            if (mustDiscardCard()) {
-                const card = leastExpensiveCardOnHand();
-                matchController.emit('discardCard', card.id);
-
-                await wait(WaitTime);
-                if (state.phase === 'discard')
-                    setTimeout(() => onPhaseChange('discard'));
-            } else {
-                matchController.emit('nextPhase');
-            }
-        } else if (phase === 'attack') {
-            if (hasOpponentCardsInHomeZone()) {
-                await defendHomeZone();
-            }
-
-            for (const card of getCardsInHomeZone()) {
-                moveCard(card);
-                await wait(WaitTime);
-            }
-
-            for (const card of getAllCardsThatCanAttack()) {
-                attackFirstPossibleTargetWithCard(card);
-                await wait(WaitTime);
-            }
-
-            matchController.emit('nextPhase');
+            doAllLater(...handleGameEnded());
         }
+        else if (hasSomeRequirement()) {
+            whileConditionThinkWhatToDo(() => hasSomeRequirement(), () => handleRequirements());
+        }
+        else if (phase === 'start') {
+            doLater(() => matchController.emit('nextPhase'));
+        }
+        else if (phase === 'draw') {
+            whileConditionToThisAndAfterDoThat(
+                () => hasDrawCardRequirement(),
+                () => matchController.emit('drawCard'),
+                () => {
+                    doAllLater([
+                        () => matchController.emit('drawCard'),
+                        () => wait(),
+                        () => {
+                            // if (state.phase === 'draw') doLater(() => onPhaseChange('draw'));
+                        }
+                    ]);
+                }
+            );
+        }
+        else if (phase === 'action') {
+            doAllLater([
+                () => {
+                    const cardToPutDownInStation = leastExpensiveAffordableCardOnHand();
+                    if (cardToPutDownInStation) {
+                        doAllFirst([
+                            () => matchController.emit('putDownCard', {
+                                cardId: cardToPutDownInStation.id,
+                                location: 'station-' + randomStationRow()
+                            }),
+                            () => wait()
+                        ]);
+                    }
+                },
+                () => {
+                    let tries = 0;
+                    whileConditionThinkWhatToDoAndAfterDoThis(
+                        () => getActionPoints() > 0 && tries <= 3,
+                        () => {
+                            const jobs = [];
+
+                            const card = mostExpensiveAffordableCardOnHand();
+                            if (card) {
+                                jobs.push(
+                                    ...putDownCardInHomeZone(card),
+                                    () => wait()
+                                );
+                            }
+
+                            jobs.push(() => tries++);
+
+                            return jobs;
+                        },
+                        () => {
+                            matchController.emit('nextPhase');
+                        }
+                    );
+                }
+            ]);
+        }
+        else if (phase === 'discard') {
+            if (mustDiscardCard()) {
+                doAllLater([
+                    () => {
+                        const card = leastExpensiveCardOnHand();
+                        matchController.emit('discardCard', card.id);
+                    },
+                    () => wait(),
+                    () => {
+                        // if (state.phase === 'discard') doLater(() => onPhaseChange('discard'));
+                    },
+                    () => wait()
+                ]);
+            }
+            else {
+                doLater(() => matchController.emit('nextPhase'));
+            }
+        }
+        else if (phase === 'attack') {
+            if (hasOpponentCardsInHomeZone()) {
+                doAllLater(defendHomeZone());
+            }
+
+            getCardsInHomeZone()
+                .forEach(card => {
+                    doAllLater([
+                        ...moveCard(card),
+                        () => wait()
+                    ]);
+                });
+
+            getAllCardsThatCanAttack()
+                .forEach(card => {
+                    doAllLater([
+                        ...attackFirstPossibleTargetWithCard(card),
+                        () => wait()
+                    ]);
+                });
+
+            doLater(() => matchController.emit('nextPhase'));
+        }
+    }
+
+    async function startQueueWork() {
+        await work();
+
+        async function work() {
+            const nextJob = todo.shift();
+            console.log('nextJob?', nextJob);
+            if (nextJob) {
+                await nextJob();
+            }
+
+            setTimeout(work, WaitTime);
+        }
+    }
+
+    function kill() {
+        clearInterval(lifelineId);
+        clearMind();
+    }
+
+    function clearMind() {
+        todo = [];
+    }
+
+    function doLater(callback) {
+        todo.push(callback);
+    }
+
+    function doFirst(callback) {
+        todo.unshift(callback);
+    }
+
+    function doAllFirst(callbacks) {
+        todo.unshift(...callbacks);
+    }
+
+    function doAllLater(callbacks) {
+        todo.push(...callbacks);
     }
 
     function randomStationRow() {
@@ -166,27 +276,30 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
     }
 
     function hasOpponentCardsInHomeZone() {
-        const cardsInOpponentZone = getOpponentStateService().getCardsInOpponentZone()
+        const cardsInOpponentZone = getOpponentStateService().getCardsInOpponentZone();
         return cardsInOpponentZone.length > 0;
     }
 
     function moveCard(card) {
-        if (!card.canMove()) return;
+        if (!card.canMove()) return [];
 
         const cardIsMissile = card.type === 'missile';
-        const wantsToMove = Math.random() > behaviour.aggressiveness
+        const wantsToMove = Math.random() > behaviour.aggressiveness;
 
         if (wantsToMove || cardIsMissile) {
-            matchController.emit('moveCard', card.id);
+            return [() => matchController.emit('moveCard', card.id)];
+        }
+        else {
+            return [];
         }
     }
 
-    async function defendHomeZone() {
-        const availableDefenders = getAllCardsThatCanAttack({ homeZone: true, opponentZone: false });
-        for (const defender of availableDefenders) {
-            attackFirstPossibleTargetWithCard(defender);
-            await wait(WaitTime);
-        }
+    function defendHomeZone() {
+        return getAllCardsThatCanAttack({ homeZone: true, opponentZone: false })
+            .flatMap(defender => [
+                ...attackFirstPossibleTargetWithCard(defender),
+                () => wait
+            ]);
     }
 
     function getAllCardsThatCanAttack({ homeZone = true, opponentZone = true } = {}) {
@@ -195,7 +308,7 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
             ...(homeZone ? playerStateService.getCardsInZone() : []),
             ...(opponentZone ? playerStateService.getCardsInOpponentZone() : [])
         ];
-        const cards = cardsData.map(cardData => playerStateService._createBehaviourCard(cardData));
+        const cards = cardsData.map(cardData => playerStateService.createBehaviourCard(cardData));
         return cards.filter(card => {
             return card.canAttack()
                 && (card.canAttackCardsInOtherZone() || canAttackSomeCardInSameZone(card))
@@ -211,8 +324,10 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
                 .filter(s => !s.flipped)
                 .slice(0, card.attack)
                 .map(s => s.id);
-            matchController.emit('attackStationCard', { attackerCardId, targetStationCardIds });
-        } else {
+
+            return [() => matchController.emit('attackStationCard', { attackerCardId, targetStationCardIds })];
+        }
+        else {
             let defenderCardId;
             if (canAttackCardInZone(card)) {
                 const opponentStateService = rootStore.getters['match/opponentStateService'];
@@ -220,32 +335,39 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
                     ? opponentStateService.getCardsInOpponentZone()
                     : opponentStateService.getCardsInZone();
                 const opponentCardsInZone = opponentCardsDataInZone
-                    .map(data => opponentStateService._createBehaviourCard(data));
+                    .map(data => opponentStateService.createBehaviourCard(data));
                 defenderCardId = opponentCardsInZone.find(c => card.canAttackCard(c)).id;
-            } else if (card.canAttackCardsInOtherZone()) {
+            }
+            else if (card.canAttackCardsInOtherZone()) {
                 const opponentStateService = rootStore.getters['match/opponentStateService'];
                 const opponentCardsDataInZone = card.isInHomeZone()
                     ? opponentStateService.getCardsInZone()
                     : opponentStateService.getCardsInOpponentZone();
                 const opponentCardsInZone = opponentCardsDataInZone
-                    .map(data => opponentStateService._createBehaviourCard(data));
+                    .map(data => opponentStateService.createBehaviourCard(data));
                 defenderCardId = opponentCardsInZone.find(c => card.canAttackCard(c)).id;
             }
 
-            matchController.emit('attack', { attackerCardId, defenderCardId });
+            return [() => matchController.emit('attack', { attackerCardId, defenderCardId })];
         }
     }
 
-    async function handleRequirements() {
+    function handleRequirements() {
         if (hasWaitingRequirement()) {
-            while (hasWaitingRequirement()) {
-                lastRun = Date.now();
-                await wait(WaitTime);
-            }
-        } else if (hasDrawCardRequirement()) {
-            matchController.emit('drawCard');
-            await wait(WaitTime);
-        } else if (hasDamageStationCardRequirement()) {
+            return [
+                () => whileConditionDoThis(
+                    () => hasWaitingRequirement(),
+                    () => lastRun = Date.now()
+                )
+            ];
+        }
+        else if (hasDrawCardRequirement()) {
+            return [
+                () => matchController.emit('drawCard'),
+                () => wait()
+            ];
+        }
+        else if (hasDamageStationCardRequirement()) {
             const requirement = getDamageStationCardRequirement();
             const opponentStateService = rootStore.getters['match/opponentStateService'];
             const targetIds = opponentStateService
@@ -253,17 +375,26 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
                 .filter(s => !s.flipped)
                 .map(s => s.id)
                 .slice(0, requirement.count);
-            matchController.emit('damageStationCards', { targetIds });
 
-            await wait(WaitTime);
-        } else if (hasDiscardCardRequirement()) {
+            return [
+                () => matchController.emit('damageStationCards', { targetIds }),
+                () => wait()
+            ];
+        }
+        else if (hasDiscardCardRequirement()) {
             const requirement = getDiscardCardRequirement();
-            for (let i = 0; i < requirement.count; i++) {
-                const card = leastExpensiveCardOnHand();
-                matchController.emit('discardCard', card.id);
-            }
-
-            await wait(WaitTime);
+            return flatMap(
+                range(0, requirement.count - 1),
+                () => [
+                    () => {
+                        const card = leastExpensiveCardOnHand();
+                        matchController.emit('discardCard', card.id);
+                    },
+                    () => wait()
+                ]);
+        }
+        else {
+            return [];
         }
     }
 
@@ -278,7 +409,7 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
             : opponentStateService.getCardsInZone();
 
         const opponentCardsInZone = opponentCardsDataInZone
-            .map(data => opponentStateService._createBehaviourCard(data));
+            .map(data => opponentStateService.createBehaviourCard(data));
 
         const attackableTargets = opponentCardsInZone.filter(target => {
             return card.canAttackCard(target)
@@ -297,7 +428,7 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
         const playerStateService = getPlayerStateService()
         return playerStateService
             .getCardsInZone()
-            .map(data => playerStateService._createBehaviourCard(data));
+            .map(data => playerStateService.createBehaviourCard(data));
     }
 
     function getPlayerStateService() {
@@ -348,10 +479,16 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
     }
 
     function putDownCardInHomeZone({ id }) {
-        matchController.emit('putDownCard', {
-            cardId: id,
-            location: 'zone'
-        });
+        return [
+            () => matchController.emit('putDownCard', {
+                cardId: id,
+                location: 'zone'
+            })
+        ]
+    }
+
+    function opponentHasControl() {
+        return rootStore.getters['match/turnControl'].opponentHasControlOfPlayersTurn()
     }
 
     function hasSomeRequirement() {
@@ -415,10 +552,84 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
         const playerStateService = rootStore.getters['match/playerStateService'];
         return playerStateService.getStationCards().filter(s => !s.flipped).length === 0;
     }
+
+    function waitForQueue() {
+        return new Promise(resolve => {
+            const intervalId = setInterval(() => {
+                if (todo.length === 0) {
+                    clearInterval(intervalId);
+                    resolve();
+                }
+            }, WaitTime / 2);
+            // await waitMilliseconds(WaitTime);
+        });
+    }
+
+    function whileConditionToThisAndAfterDoThat(condition, job, onDone) {
+        doAllFirst([
+            job,
+            () => {
+                if (condition()) whileConditionToThisAndAfterDoThat(condition, job);
+                else doFirst(onDone);
+            }
+        ]);
+    }
+
+    function whileConditionThinkWhatToDo(condition, getJobs) {
+        const jobs = getJobs();
+        doAllFirst([
+            ...jobs,
+            () => {
+                if (condition()) whileConditionThinkWhatToDo(condition, getJobs);
+            }
+        ]);
+    }
+
+    function whileConditionThinkWhatToDoAndAfterDoThis(condition, getJobs, onDone) {
+        const jobs = getJobs();
+        doAllFirst([
+            ...jobs,
+            () => {
+                if (condition()) whileConditionThinkWhatToDoAndAfterDoThis(condition, getJobs, onDone);
+                else doFirst(onDone);
+            }
+        ]);
+    }
+
+    function whileConditionDoThis(condition, job) {
+        doAllFirst([
+            job,
+            () => {
+                if (condition()) {
+                    whileConditionToThisAndAfterDoThat(condition, job);
+                }
+            }
+        ]);
+    }
+
+    function range(start, end) {
+        const numbers = [];
+        for (let i = start; i <= end; i++) {
+            numbers.push(i);
+        }
+        return numbers;
+    }
+
+    async function wait() {
+        await waitMilliseconds(WaitTime);
+    }
 };
 
-function wait(milliseconds) {
+function waitMilliseconds(milliseconds) {
     return new Promise(resolve => {
         setTimeout(resolve, milliseconds);
     });
+}
+
+function flatMap(collection, fn) {
+    const result = [];
+    for (item of collection) {
+        result.push(fn(item));
+    }
+    return result;
 }
