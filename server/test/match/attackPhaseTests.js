@@ -192,7 +192,7 @@ module.exports = {
         },
         'should throw error': function () {
             assert(this.error);
-            assert.equals(this.error.message, 'Cannot attack when not in attack phase');
+            assert.equals(this.error.message, 'Cannot attack');
         },
         'when second player restore state should have card undamaged and still in own zone'() {
             this.match.refresh('P2A');
@@ -432,13 +432,13 @@ module.exports = {
                 }
             }));
 
-            const attackOptions = { attackerCardId: 'C1A', defenderCardId: 'C2A' }
+            const attackOptions = { attackerCardId: 'C1A', defenderCardId: 'C2A' };
             this.match.attack('P1A', attackOptions);
             this.error = catchError(() => this.match.attack('P1A', attackOptions));
         },
         'should throw error'() {
             assert(this.error);
-            assert.equals(this.error.message, 'Cannot attack with card');
+            assert.equals(this.error.message, 'Cannot attack');
         },
         'when second player restore state should still have attacked card'() {
             this.match.refresh('P2A');

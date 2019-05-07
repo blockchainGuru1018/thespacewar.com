@@ -55,7 +55,7 @@ module.exports = {
         let error = catchError(() => this.match.attack('P1A', { attackerCardId: 'C1A', defenderCardId: 'C2A' }));
 
         assert(error);
-        assert.equals(error.message, 'Cannot attack with card');
+        assert.equals(error.message, 'Cannot attack');
     },
     'when try to attack a duration card should throw error': function () {
         this.match = createMatch({ players: [Player('P1A'), Player('P2A')] });

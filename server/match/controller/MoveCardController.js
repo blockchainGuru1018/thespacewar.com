@@ -1,3 +1,4 @@
+const PlayerServiceProvider = require('../../../shared/match/PlayerServiceProvider.js');
 const CheatError = require('../CheatError.js');
 
 module.exports = function (deps) {
@@ -13,6 +14,9 @@ module.exports = function (deps) {
     };
 
     function onMoveCard(playerId, cardId) {
+        let cannotMove = playerServiceProvider.byTypeAndId(PlayerServiceProvider.TYPE.canThePlayer, playerId).moveCards();
+        if (!cannotMove) throw new CheatError('Cannot move');
+
         let playerStateService = playerServiceProvider.getStateServiceById(playerId);
         const cardData = playerStateService.findCard(cardId);
         const card = cardFactory.createCardForPlayer(cardData, playerId);

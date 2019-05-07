@@ -339,7 +339,8 @@
                 return this.actionPoints2 >= 0
                     && !this.firstRequirement
                     && !this.inDiscardPhaseAndMustDiscardCard
-                    && this.phase !== PHASES.wait;
+                    && this.phase !== PHASES.wait
+                    && !this.turnControl.opponentHasControlOfPlayersTurn();
             },
             numberOfStationCardsToSelect() {
                 if (!this.attackerCard) return 0;

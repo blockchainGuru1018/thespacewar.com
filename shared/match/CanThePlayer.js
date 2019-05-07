@@ -98,7 +98,19 @@ class CanThePlayer {
         return !this._opponentStateService.hasMatchingCardInHomeZone(c => c.stopsStationAttack())
     }
 
-    performCardActions() { //TODO Does this convey that actions are referring to those overlaid on cards like Attack/Move/Sacrifice ?
+    attackCards() {
+        return this.performCardActions();
+    }
+
+    moveCards() {
+        return this.performCardActions();
+    }
+
+    sacrificeCards() {
+        return this.performCardActions();
+    }
+
+    performCardActions() {
         return this._turnControl.playerHasControlOfOwnTurn();
     }
 

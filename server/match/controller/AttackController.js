@@ -1,4 +1,5 @@
 const CheatError = require('../CheatError.js');
+const PlayerServiceProvider = require("../../../shared/match/PlayerServiceProvider.js");
 const { PHASES } = require('../../../shared/phases.js');
 
 const MAX_COLLISION_TARGETS_ON_SACRIFICE = 4;
@@ -21,14 +22,13 @@ function AttackController(deps) {
     };
 
     function onAttack(playerId, { attackerCardId, defenderCardId }) {
+        let cannotAttack = playerServiceProvider.byTypeAndId(PlayerServiceProvider.TYPE.canThePlayer, playerId).attackCards();
+        if (!cannotAttack) throw new CheatError('Cannot attack');
+
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        const playerPhase = playerStateService.getPhase();
-        if (playerPhase !== PHASES.attack) throw new CheatError('Cannot attack when not in attack phase');
-
         const attackerCardData = playerStateService.findCard(attackerCardId);
-
         const attackerCard = cardFactory.createCardForPlayer(attackerCardData, playerId);
-        if (!attackerCard.canAttack()) throw new CheatError('Cannot attack with card');
+        if (!attackerCard.canAttack()) throw new CheatError('Cannot attack');
 
         const opponentId = matchComService.getOpponentId(playerId);
         const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
@@ -69,6 +69,9 @@ function AttackController(deps) {
     }
 
     function onAttackStationCards(playerId, { attackerCardId, targetStationCardIds }) {
+        let cannotAttackStationCards = playerServiceProvider.byTypeAndId(PlayerServiceProvider.TYPE.canThePlayer, playerId).attackStationCards();
+        if (!cannotAttackStationCards) throw new CheatError('Cannot attack station cards');
+
         let opponentId = matchComService.getOpponentId(playerId);
         let opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
         let opponentState = opponentStateService.getPlayerState();
@@ -143,6 +146,9 @@ function AttackController(deps) {
     function onSacrifice(playerId, { cardId, targetCardId, targetCardIds }) {
         if (!!targetCardIds && !!targetCardId) throw new CheatError('Cannot sacrifice');
 
+        let cannotSacrifice = playerServiceProvider.byTypeAndId(PlayerServiceProvider.TYPE.canThePlayer, playerId).sacrificeCards();
+        if (!cannotSacrifice) throw new CheatError('Cannot sacrifice');
+
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         const opponentId = matchService.getOpponentId(playerId);
         const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
@@ -198,12 +204,11 @@ function AttackController(deps) {
             .getStationCards()
             .filter(card => !card.flipped)
             .length;
-        const isBelowTargetLimit = validTargetIdCount < MAX_COLLISION_TARGETS_ON_SACRIFICE
+        const isBelowTargetLimit = validTargetIdCount < MAX_COLLISION_TARGETS_ON_SACRIFICE;
         const hasMoreAvailableTargets = availableTargetCount > validTargetIdCount;
-        if (isBelowTargetLimit && hasMoreAvailableTargets) {
-            return false;
-        }
-        return true;
+
+        return !isBelowTargetLimit
+            || !hasMoreAvailableTargets;
     }
 
     function onStationCollisionFromSacrifice({ playerId, targetCardIds }) {
