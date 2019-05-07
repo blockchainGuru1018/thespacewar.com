@@ -43,17 +43,6 @@
                     </template>
                 </div>
                 <div
-                    v-else-if="opponentHasControlOfPlayersTurn"
-                    class="guideText-wrapper"
-                >
-                    <div class="guideText">
-                        Your opponent has taken control
-                    </div>
-                    <div class="guideText-subText">
-                        wait to have it back
-                    </div>
-                </div>
-                <div
                     v-else-if="actionGuideText"
                     class="guideText guideText--small"
                 >
@@ -85,6 +74,17 @@
                 >
                     Select {{ numberOfStationCardsToSelect }}
                     more station {{ numberOfStationCardsToSelect === 1 ? 'card' : 'cards' }}
+                </div>
+                <div
+                    v-else-if="opponentHasControlOfPlayersTurn"
+                    class="guideText-wrapper"
+                >
+                    <div class="guideText">
+                        Your opponent has taken control
+                    </div>
+                    <div class="guideText-subText">
+                        wait to have it back
+                    </div>
                 </div>
                 <div
                     v-else-if="phase === PHASES.preparation"

@@ -572,7 +572,7 @@ module.exports = function (deps) {
         matchController.emit('overwork');
     }
 
-    function stateChanged({ state, commit }, data) {
+    function stateChanged({ state, commit, dispatch }, data) {
         for (let key of Object.keys(data)) {
             if (key === 'stationCards') {
                 commit('setPlayerStationCards', data[key]);
@@ -583,6 +583,10 @@ module.exports = function (deps) {
             else {
                 const localKey = storeItemNameByServerItemName[key] || key;
                 state[localKey] = data[key];
+            }
+
+            if (key === 'currentPlayer' && data[key] !== state.ownUser.id) {
+                dispatch('card/cancelCurrentUserInteraction', null, { root: true });
             }
         }
     }

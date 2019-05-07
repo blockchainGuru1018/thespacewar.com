@@ -25,7 +25,7 @@ class CanThePlayer {
         this._turnControl = turnControl;
     }
 
-    useThisCard(card) { //TODO Does this express enough that event cards should'nt be checked against this? They are not "used" only "putDown".
+    useThisCard(card) { //TODO Does this express enough that event cards should'nt be checked against this? They are not "used" only "putDown". Also this is "can not be used" as for example disabled by Neutralization.
         if (card.type === 'duration') {
             return this.useThisDurationCard(card.id);
         }
@@ -96,6 +96,10 @@ class CanThePlayer {
 
     attackStationCards() {
         return !this._opponentStateService.hasMatchingCardInHomeZone(c => c.stopsStationAttack())
+    }
+
+    performCardActions() { //TODO Does this convey that actions are referring to those overlaid on cards like Attack/Move/Sacrifice ?
+        return this._turnControl.playerHasControlOfOwnTurn();
     }
 
     counterCard({ id: cardId }) {
