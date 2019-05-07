@@ -47,6 +47,9 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
         else if (type === 'findCard') {
             this.addFindCardRequirement(requirement);
         }
+        else if (type === 'counterCard') {
+            this.addCounterCardRequirement(requirement);
+        }
     }
 
     addDiscardCardRequirement({ count, common = false, cardCommonId = null }) {
@@ -110,6 +113,16 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
         this.addRequirement({
             ...uncheckedProperties,
             type: 'findCard',
+            count: Math.min(totalCardCount, count),
+            cardGroups: cardGroups.filter(g => g.cards.length)
+        });
+    }
+
+    addCounterCardRequirement({ count, cardGroups, ...uncheckedProperties }) {
+        const totalCardCount = cardGroups.reduce((acc, group) => acc + group.cards.length, 0);
+        this.addRequirement({
+            ...uncheckedProperties,
+            type: 'counterCard',
             count: Math.min(totalCardCount, count),
             cardGroups: cardGroups.filter(g => g.cards.length)
         });

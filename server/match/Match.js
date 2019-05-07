@@ -26,6 +26,8 @@ const PlayerServiceProvider = require('../../shared/match/PlayerServiceProvider.
 const RequirementFactory = require('../../shared/match/requirement/RequirementFactory.js');
 const PlayerOverworkFactory = require('../../shared/match/overwork/PlayerOverworkFactory.js');
 const EventFactory = require('../../shared/event/EventFactory.js');
+const CardDataAssembler = require('../../shared/CardDataAssembler.js');
+const StateSerializer = require('./StateSerializer.js');
 const { PHASES, TEMPORARY_START_PHASE } = require('../../shared/phases.js');
 
 const ServiceTypes = PlayerServiceProvider.TYPE;
@@ -44,6 +46,7 @@ module.exports = function ({
     const playerOrder = players.map(p => p.id);
 
     const state = {
+        gameStartTime: Date.now(),
         turn: 1,
         currentPlayer: players[0].id,
         playerOrder,
@@ -79,7 +82,7 @@ module.exports = function ({
         matchService,
         playerServiceProvider
     });
-    registerPlayerRequirementServices(players, playerServiceProvider);
+    registerPlayerRequirementServices({ players, matchService, playerServiceProvider });
     registerCanThePlayerServices({ players, playerServiceProvider, canThePlayerFactory });
     registerPlayerRuleServices({ players, playerServiceProvider });
 
@@ -98,6 +101,9 @@ module.exports = function ({
         matchComService
     });
     const playerOverworkFactory = PlayerOverworkFactory({ matchService, playerServiceProvider });
+
+    const cardDataAssembler = CardDataAssembler({ rawCardDataRepository });
+    const stateSerializer = StateSerializer({ cardDataAssembler, restoreFromState });
     const controllerDeps = {
         logger,
         matchService,
@@ -108,7 +114,8 @@ module.exports = function ({
         stateChangeListener,
         playerRequirementUpdaterFactory,
         rawCardDataRepository,
-        playerOverworkFactory
+        playerOverworkFactory,
+        stateSerializer
     };
 
     const debugController = DebugController(controllerDeps);
@@ -122,16 +129,27 @@ module.exports = function ({
     const nextPhaseController = NextPhaseController(controllerDeps);
     const overworkController = OverworkController(controllerDeps);
 
-    const api = {
+    const unwrappedApi = {
         id: matchId,
         matchId, //TODO Remove all uses
         get players() {
             return matchComService.getPlayers();
         },
         start,
+        refresh,
+        getOwnState: getPlayerState,
+        restoreFromState,
+        toClientModel,
+        hasEnded,
+        saveMatch: debugController.onSaveMatch,
+        updatePlayer: matchComService.updatePlayer.bind(matchComService)
+    };
+    const api = {
         nextPhase: nextPhaseController.onNextPhase,
         toggleControlOfTurn: nextPhaseController.onToggleControlOfTurn,
         putDownCard: putDownCardController.onPutDownCard,
+        counterCard: putDownCardController.counterCard,
+        cancelCounterCard: putDownCardController.cancelCounterCard,
         drawCard: drawCardController.onDrawCard,
         discardOpponentTopTwoCards: drawCardController.onDiscardOpponentTopTwoCards,
         discardCard: discardCardController.onDiscardCard, //TODO Rename discardFromHand
@@ -145,18 +163,13 @@ module.exports = function ({
         overwork: overworkController.overwork,
         repairCard,
         retreat,
-
-        refresh,
-        getOwnState: getPlayerState,
-        updatePlayer: matchComService.updatePlayer.bind(matchComService),
-        saveMatch: debugController.onSaveMatch,
         restoreSavedMatch: debugController.onRestoreSavedMatch,
-        restoreFromState,
-        toClientModel,
-        hasEnded,
         cheat: cheatController.onCheat
     };
-    return wrapApi({ api, matchComService, stateChangeListener });
+    return {
+        ...unwrappedApi,
+        ...wrapApi({ api, matchComService, stateChangeListener })
+    };
 
     function start() {
         const players = matchComService.getPlayers();
@@ -211,6 +224,7 @@ module.exports = function ({
     function restoreFromState(restoreState) {
         for (let key of Object.keys(restoreState)) {
             state[key] = restoreState[key];
+            matchService.setState(state);
         }
 
         state.playersReady = 2;
@@ -433,8 +447,12 @@ function registerMiscPlayerServices({ players, matchService, playerServiceProvid
     }
 }
 
-function registerPlayerRequirementServices(players, playerServiceProvider) {
-    const requirementFactory = RequirementFactory({ playerServiceProvider });
+function registerPlayerRequirementServices({ players, matchService, playerServiceProvider }) {
+    const requirementFactory = RequirementFactory({
+        playerServiceProvider,
+        matchService
+    });
+
     for (let player of players) {
         const playerId = player.id;
         const opponentId = players.find(p => p.id !== playerId).id;

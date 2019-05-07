@@ -125,7 +125,7 @@ module.exports = function (deps) {
         return damageStationCardRequirement && cardsLeftToSelect > 0;
     }
 
-    function canSelectCardsForActiveAction(state, getters, rootState) { //TODO This and the ones who use this might have to support this action for both opponent and player cards
+    function canSelectCardsForActiveAction(state, getters, rootState) {
         const activeAction = rootState.card.activeAction;
         if (!activeAction) return false;
 

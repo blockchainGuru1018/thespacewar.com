@@ -9,4 +9,4 @@ module.exports = function EventRepository({
             return service.getEvents();
         }
     };
-}
+};

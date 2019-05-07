@@ -17,7 +17,7 @@ function DebugController(deps) {
     return {
         onSaveMatch,
         onRestoreSavedMatch
-    }
+    };
 
     function onSaveMatch(playerId, saveName) {
         let filePath = path.join(SAVE_FOLDER, `${saveName}.json`);

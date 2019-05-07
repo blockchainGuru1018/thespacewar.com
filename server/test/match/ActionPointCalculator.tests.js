@@ -265,6 +265,20 @@ module.exports = testCase('ActionPointCalculator', {
         });
 
         assert.equals(actionPoints, 1);
+    },
+    'counterCard event should claim cost of the card put down'() {
+        const calculator = ActionPointCalculator({
+            cardInfoRepository: FakeCardInfoRepository([{ commonId: 'C1A', cost: 1 }])
+        });
+
+        const actionPoints = calculator.calculate({
+            events: [{ type: 'counterCard', turn: 1, counteredCardCommonId: 'C1A' }],
+            turn: 1,
+            phase: 'action',
+            actionStationCardsCount: 1
+        });
+
+        assert.equals(actionPoints, 1);
     }
 });
 

@@ -195,7 +195,7 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
             ...(homeZone ? playerStateService.getCardsInZone() : []),
             ...(opponentZone ? playerStateService.getCardsInOpponentZone() : [])
         ];
-        const cards = cardsData.map(cardData => playerStateService._createBehaviourCard(cardData));
+        const cards = cardsData.map(cardData => playerStateService.createBehaviourCard(cardData));
         return cards.filter(card => {
             return card.canAttack()
                 && (card.canAttackCardsInOtherZone() || canAttackSomeCardInSameZone(card))
@@ -220,7 +220,7 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
                     ? opponentStateService.getCardsInOpponentZone()
                     : opponentStateService.getCardsInZone();
                 const opponentCardsInZone = opponentCardsDataInZone
-                    .map(data => opponentStateService._createBehaviourCard(data));
+                    .map(data => opponentStateService.createBehaviourCard(data));
                 defenderCardId = opponentCardsInZone.find(c => card.canAttackCard(c)).id;
             } else if (card.canAttackCardsInOtherZone()) {
                 const opponentStateService = rootStore.getters['match/opponentStateService'];
@@ -228,7 +228,7 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
                     ? opponentStateService.getCardsInZone()
                     : opponentStateService.getCardsInOpponentZone();
                 const opponentCardsInZone = opponentCardsDataInZone
-                    .map(data => opponentStateService._createBehaviourCard(data));
+                    .map(data => opponentStateService.createBehaviourCard(data));
                 defenderCardId = opponentCardsInZone.find(c => card.canAttackCard(c)).id;
             }
 
@@ -278,7 +278,7 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
             : opponentStateService.getCardsInZone();
 
         const opponentCardsInZone = opponentCardsDataInZone
-            .map(data => opponentStateService._createBehaviourCard(data));
+            .map(data => opponentStateService.createBehaviourCard(data));
 
         const attackableTargets = opponentCardsInZone.filter(target => {
             return card.canAttackCard(target)
@@ -297,7 +297,7 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
         const playerStateService = getPlayerStateService()
         return playerStateService
             .getCardsInZone()
-            .map(data => playerStateService._createBehaviourCard(data));
+            .map(data => playerStateService.createBehaviourCard(data));
     }
 
     function getPlayerStateService() {

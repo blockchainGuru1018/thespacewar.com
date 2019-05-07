@@ -99,6 +99,10 @@ class MatchService {
     storeEvent(playerId, event) {
         this.getPlayerState(playerId).events.push(event);
     }
+
+    getGameStartTime() {
+        return this._state.gameStartTime;
+    }
 }
 
 module.exports = MatchService;

@@ -26,6 +26,11 @@ module.exports = class TurnControl {
     }
 
     takeControlOfOpponentsTurn() {
+        this._playerStateService.storeEvent({
+            type: 'takeControlOfOpponentsTurn',
+            created: Date.now()
+        });
+
         const playerId = this._playerStateService.getPlayerId();
         this._matchService.update(state => {
             state.currentPlayer = playerId;
@@ -33,6 +38,11 @@ module.exports = class TurnControl {
     }
 
     releaseControlOfOpponentsTurn() {
+        this._playerStateService.storeEvent({
+            type: 'releaseControlOfOpponentsTurn',
+            created: Date.now()
+        });
+
         const opponentId = this._opponentStateService.getPlayerId();
         this._matchService.update(state => {
             state.currentPlayer = opponentId;

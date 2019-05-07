@@ -2,11 +2,13 @@ class Logger {
 
     constructor() {
         this._logsByType = {};
+        this._masterLog = [];
     }
 
-    log(message, type = 'normal') {
-        this._logsByType[type] = this._logsByType[type] || [];
-        this._logsByType[type].push(message);
+    log(message, prefix = 'normal') {
+        this._logsByType[prefix] = this._logsByType[prefix] || [];
+        this._logsByType[prefix].push(message);
+        this._masterLog.push(`[${prefix}]\t${message}`);
     }
 
     read(type = 'normal') {
@@ -20,6 +22,10 @@ class Logger {
             all.push(...this._logsByType[type]);
         }
         return all.join('\n');
+    }
+
+    readMasterLog() {
+        return this._masterLog.join('\n');
     }
 
     clear() {

@@ -390,6 +390,7 @@
         mapGetters: mapCardGetters,
         mapActions: mapCardActions
     } = Vuex.createNamespacedHelpers('card');
+    const requirementHelpers = Vuex.createNamespacedHelpers('requirement');
     const expandedCardHelpers = Vuex.createNamespacedHelpers('expandedCard');
     const longpress = require('../utils/longpress.js');
     const resolveModule = require('../utils/resolveModuleWithPossibleDefault.js');
@@ -459,6 +460,10 @@
                 'canDrawCards',
                 'canMill',
                 'opponentDeckIsEmpty'
+            ]),
+            ...requirementHelpers.mapGetters([
+                'firstRequirement',
+                'firstRequirementIsCounterCard'
             ]),
             holdingCardStyle() {
                 if (!this.holdingCard) return {};
@@ -551,8 +556,7 @@
                 this.startHoldingCard({ cardData });
             },
             cardGhostClick(location) {
-                if (!this.holdingCard) throw new Error(
-                    'Should not be able to click on card ghost without holding a card');
+                if (!this.holdingCard) throw new Error('Should not be able to click on card ghost without holding a card');
 
                 if (this.activeActionName === 'putDownCard') {
                     this.selectGhostForActiveAction(location);

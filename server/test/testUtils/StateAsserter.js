@@ -8,12 +8,12 @@ module.exports = StateAsserter;
 function StateAsserter(gameMatch, playerConnection, playerId) {
 
     return {
-        start,
+        send,
         hasStationCard,
         hasRequirement
     };
 
-    function start() {
+    function send() {
         gameMatch.refresh(playerId);
     }
 

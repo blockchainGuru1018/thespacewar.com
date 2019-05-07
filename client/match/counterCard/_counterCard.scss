@@ -1,6 +1,6 @@
-@import "cardVariables";
+@import "../cardVariables";
 
-.findCard {
+.counterCard {
   position: fixed;
   top: 0;
   left: 0;
@@ -10,41 +10,47 @@
   overflow: auto;
 }
 
-.findCard-header {
+.counterCard-header {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px 0 40px;
 }
 
-.findCard-headerText {
+.counterCard-headerText {
   font-family: "Space Mono", monospace;
   font-size: 72px;
   color: white;
   letter-spacing: .02em;
 }
 
-.findCard-requirementCard {
+.counterCard-requirementCard {
   width: $cardWidth / 6;
   height: $cardHeight / 6;
   margin-right: 25px;
 }
 
-.findCard-requirementCard > img {
+.counterCard-requirementCard > img {
   width: 100%;
   height: 100%;
 }
 
-.findCard-groups {
+.counterCard-groups {
   max-width: 800px;
   margin: 0 auto;
 }
 
-.findCard-group {
+.counterCard-group {
   margin-bottom: 30px;
+
+  &--centered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
-.findCard-groupHeader {
+.counterCard-groupHeader {
   font-size: 42px;
   color: white;
   font-family: "Space Mono", monospace;
@@ -53,18 +59,22 @@
   align-items: center;
 }
 
-.findCard-groupCards {
+.counterCard-groupCards {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
 }
 
-.findCard-card {
+.counterCard-card {
   width: $cardWidth / 3;
   height: $cardHeight / 3;
   margin: 5px 0 5px 20px;
   flex: 0 0 auto;
+
+  &:first-child {
+    margin-left: 0;
+  }
 
   &:hover {
     transform: scale(1.6);
@@ -79,7 +89,7 @@
   }
 }
 
-.findCard-doneWrapper {
+.counterCard-cancelWrapper {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -90,6 +100,7 @@
   bottom: 0;
 }
 
-.findCard-done {
-  width: 200px;
+.counterCard-cancel {
+  padding: 10px 40px;
+  margin: 0 auto;
 }

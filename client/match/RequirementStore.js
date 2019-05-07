@@ -1,9 +1,8 @@
-module.exports = function (deps) {
-
-    const {
-        rootStore,
-        cardInfoRepository
-    } = deps;
+module.exports = function ({
+    rootStore,
+    cardInfoRepository,
+    matchController
+}) {
 
     return {
         name: 'requirement',
@@ -19,6 +18,7 @@ module.exports = function (deps) {
             firstRequirementIsDamageStationCard,
             firstRequirementIsDrawCard,
             firstRequirementIsFindCard,
+            firstRequirementIsCounterCard,
             countInFirstRequirement,
             selectedCardsCount,
             cardsLeftToSelect,
@@ -62,6 +62,11 @@ module.exports = function (deps) {
     function firstRequirementIsFindCard(state, getters) {
         return getters.firstRequirement
             && getters.firstRequirement.type === 'findCard';
+    }
+
+    function firstRequirementIsCounterCard(state, getters) {
+        return getters.firstRequirement
+            && getters.firstRequirement.type === 'counterCard';
     }
 
     function countInFirstRequirement(state, getters) {

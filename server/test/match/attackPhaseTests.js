@@ -12,7 +12,7 @@ const {
     catchError,
     createState,
 } = require('./shared.js');
-let PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
+let PutDownCardEvent = require('../../../shared/PutDownCardEvent.js').forTest;
 let MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
 const PursuiterCommonId = '19';
 const EnergyShieldCommonId = '21';
@@ -30,7 +30,7 @@ module.exports = {
                     'P1A': {
                         phase: 'attack',
                         cardsInZone: [createCard({ id: 'C1A' })],
-                        events: [{ type: 'putDownCard', cardId: 'C1A', turn: 1 }]
+                        events: [PutDownCardEvent({ cardId: 'C1A', turn: 1 })]
                     }
                 }
             }));
@@ -1304,8 +1304,6 @@ module.exports = {
                 assert.equals(this.error.message, 'Cannot sacrifice');
             }
         }
-
-        //TODO ENERGY SHIELD SHOULD BLOCK COLLISION WITH STATION BACKEND(DONE) AND GUI
     },
     'sacrifice and target station': {
         'when sacrifice card against 4 target station cards': {

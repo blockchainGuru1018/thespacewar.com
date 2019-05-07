@@ -98,6 +98,15 @@ class CanThePlayer {
         return !this._opponentStateService.hasMatchingCardInHomeZone(c => c.stopsStationAttack())
     }
 
+    counterCard({ id: cardId }) {
+        const isOpponentCard = this._opponentStateService.hasCard(cardId);
+        if (!isOpponentCard) return false;
+        if (!this._queryEvents.lastTookControlWithinTimeFrameSincePutDownCard(cardId, 5000)) return false;
+
+        return this._queryEvents.wasOpponentCardAtLatestPutDownInHomeZone(cardId)
+            || this._queryEvents.wasOpponentCardAtLatestPutDownAsExtraStationCard(cardId);
+    }
+
     _findCardFromOpponentOrPlayer(cardId) {
         return this._playerStateService.findCardFromAnySource(cardId)
             || this._opponentStateService.findCardFromAnySource(cardId);

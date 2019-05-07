@@ -142,6 +142,10 @@ function setupRoutes(deps, controllers) {
             const matchLogs = deps.logger.readAll();
             res.end(matchLogs);
         });
+        app.get('/master-log', (req, res) => {
+            const masterLog = deps.logger.readMasterLog();
+            res.end(masterLog);
+        });
         app.get('/logs/:type', async (req, res) => {
             const matchLogs = deps.logger.read(type);
             res.end(matchLogs);
@@ -155,7 +159,7 @@ function setupSocketConnectionHandler(deps, controllers) {
 
     socketMaster.on('connection', async connection => {
         connection.on('registerConnection', async ({ userId }) => {
-            console.log(' -- registering connection for user', userId)
+            console.log(' -- registering connection for user', userId);
             socketRepository.setForUser(userId, connection);
 
             const ongoingMatch = matchRepository.getForUser(userId);
@@ -165,7 +169,8 @@ function setupSocketConnectionHandler(deps, controllers) {
                         playerId: userId,
                         matchId: ongoingMatch.id
                     });
-                } catch (error) {
+                }
+                catch (error) {
                     console.error('Error when registering connection for user: ' + error.message);
                     console.info('Raw error:', error);
                 }
@@ -175,7 +180,8 @@ function setupSocketConnectionHandler(deps, controllers) {
         connection.on('match', async data => {
             try {
                 await controllers.match.onAction(data);
-            } catch (error) {
+            }
+            catch (error) {
                 const rawErrorMessage = JSON.stringify(error, null, 4);
                 const dataString = JSON.stringify(data, null, 4);
                 const errorMessage = `(${new Date().toISOString()}) Error in action to match: ${error.message} - DATA: ${dataString} - RAW ERROR: ${rawErrorMessage}`

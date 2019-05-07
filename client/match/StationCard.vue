@@ -37,7 +37,7 @@
                 <div
                     @click.stop="selectCardForActiveAction(stationCard.id)"
                     class="selectable"
-                    v-else-if="canSelectedCardForAction"
+                    v-else-if="canSelectCardForAction"
                 />
             </div>
         </div>
@@ -162,7 +162,7 @@
             selectedForAction() {
                 return this.selectedCardIdsForAction.includes(this.stationCard.id);
             },
-            canSelectedCardForAction() {
+            canSelectCardForAction() {
                 if (!this.canSelectCardsForActiveAction) return false;
                 if (this.selectedForAction) return false;
 

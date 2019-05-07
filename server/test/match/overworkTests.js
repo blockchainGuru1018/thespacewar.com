@@ -33,7 +33,7 @@ module.exports = {
                 this.match.overwork('P1A');
             },
             'should add 1 damage station card requirement to opponent': function () {
-                this.secondPlayerAsserter.start();
+                this.secondPlayerAsserter.send();
                 this.secondPlayerAsserter.hasRequirement({ type: 'damageStationCard', count: 1 });
             }
         }

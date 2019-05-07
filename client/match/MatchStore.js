@@ -156,10 +156,7 @@ module.exports = function (deps) {
             beginGame,
             placeCardInZone,
             opponentDiscardedDurationCard,
-            putDownOpponentCard,
-            putDownOpponentStationCard,
             opponentMovedCard,
-            setOpponentCardCount,
             nextPlayer,
             persistOngoingMatch,
             drawCards,
@@ -281,11 +278,14 @@ module.exports = function (deps) {
         }
     }
 
-    function queryEvents(state) {
+    function queryEvents(state, getters) {
         const eventRepository = {
             getAll: () => state.events
         };
-        return new QueryEvents({ eventRepository });
+        const opponentEventRepository = {
+            getAll: () => state.opponentEvents
+        };
+        return new QueryEvents({ eventRepository, opponentEventRepository, matchService: getters.matchService });
     }
 
     function canPutDownCard(state, getters) {
@@ -439,11 +439,15 @@ module.exports = function (deps) {
         return state.ended && state.retreatedPlayerId !== state.ownUser.id;
     }
 
-    function queryOpponentEvents() {
+    function queryOpponentEvents(state, getters) {
         return new QueryEvents({
             eventRepository: {
                 getAll: () => state.opponentEvents
-            }
+            },
+            opponentEventRepository: {
+                getAll: () => state.events
+            },
+            matchService: getters.matchService
         });
     }
 
@@ -664,33 +668,10 @@ module.exports = function (deps) {
         matchController.emit('moveCard', id);
     }
 
-    function setOpponentCardCount({ state }, opponentCardCount) {
-        state.opponentCardCount = opponentCardCount;
-    }
-
     function opponentDiscardedDurationCard({ state }, { card }) {
         state.opponentDiscardedCards.push(card);
         const cardIndexInZone = state.opponentCardsInZone.findIndex(c => c.id === card.id);
         state.opponentCardsInZone.splice(cardIndexInZone, 1);
-    }
-
-    function putDownOpponentCard({ state, getters, commit }, { location, card }) {
-        const stationCard = getters.allOpponentStationCards.find(s => s.id === card.id);
-        if (!!stationCard) {
-            commit('setOpponentStationCards', getters.allOpponentStationCards.filter(s => s.id !== card.id));
-        }
-        else {
-            state.opponentCardCount -= 1;
-        }
-
-        if (location === 'zone') {
-            state.opponentCardsInZone.push(card);
-        }
-    }
-
-    function putDownOpponentStationCard({ state, commit }, stationCard) {
-        state.opponentCardCount -= 1;
-        commit('addOpponentStationCards', stationCard);
     }
 
     function opponentMovedCard({ state }, cardId) {
@@ -700,7 +681,7 @@ module.exports = function (deps) {
     }
 
     function persistOngoingMatch({ state }) {
-        const playerIds = [state.ownUser.id, state.opponentUser.id]
+        const playerIds = [state.ownUser.id, state.opponentUser.id];
         const matchData = { id: matchId, playerIds };
 
         localGameDataFacade.setOngoingMatch(matchData);

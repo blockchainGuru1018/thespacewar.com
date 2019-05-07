@@ -8,13 +8,20 @@ function PutDownCardController(deps) {
         matchService,
         matchComService,
         cardFactory,
-        playerServiceProvider
+        playerServiceProvider,
+        stateSerializer,
+        restoreFromState,
+        playerRequirementUpdaterFactory
     } = deps;
+
+    const stateCardIdTuples = [];
 
     const cardApplier = CardApplier({ playerServiceProvider, matchService });
 
     return {
-        onPutDownCard
+        onPutDownCard,
+        cancelCounterCard,
+        counterCard
     };
 
     function onPutDownCard(playerId, { location, cardId, choice }) {
@@ -24,9 +31,58 @@ function PutDownCardController(deps) {
 
         checkIfCanPutDownCard({ playerId, location, cardData });
 
-        removeCardFromCurrentLocation({ playerId, location, cardData });
+        const state = stateSerializer.serialize(matchService.getState());
+        stateCardIdTuples.push([state, cardId, Date.now()]);
 
+        removeCardFromCurrentLocation({ playerId, location, cardData });
         putDownCardAtNewLocation({ playerId, location, cardData, choice });
+    }
+
+    function cancelCounterCard(playerId, { cardId }) {
+        validateIfCanProgressCounterCardRequirementByCount(0, playerId);
+
+        const storedStateJson = stateCardIdTuples.slice().reverse().find(([_, id]) => id === cardId)[0];
+        const restoredState = stateSerializer.parse(storedStateJson);
+        restoreFromState(restoredState);
+
+        matchComService.emitCurrentStateToPlayers();
+    }
+
+    function counterCard(playerId, { cardId, targetCardId }) {
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        let cardData = playerStateService.findCardFromAnySource(cardId);
+        if (!cardData) throw new CheatError(`Cannot find card`);
+        if (![Luck.CommonId].includes(cardData.commonId)) throw new CheatError(`Cannot counter with that card`);
+        validateIfCanProgressCounterCardRequirementByCount(1, playerId);
+
+        progressRequirementByCount(1, playerId); //TODO Is this necessary? As the game resets below, also the requirement should reset...
+
+        if (cardData.commonId === '31') {
+            const storedStateJson = stateCardIdTuples.slice().reverse().find(([_, id]) => id === targetCardId)[0];
+            const restoredState = stateSerializer.parse(storedStateJson);
+            restoreFromState(restoredState);
+
+            const opponentId = matchService.getOpponentId(playerId);
+            const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
+            opponentStateService.counterCard(targetCardId);
+
+            playerStateService.useToCounter(cardId);
+
+            matchComService.emitCurrentStateToPlayers();
+        }
+    }
+
+    function validateIfCanProgressCounterCardRequirementByCount(count, playerId) {
+        const playerRequirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'counterCard' });
+        let canProgressRequirement = playerRequirementUpdater.canProgressRequirementByCount(count);
+        if (!canProgressRequirement) {
+            throw new CheatError('Cannot counter card');
+        }
+    }
+
+    function progressRequirementByCount(count, playerId) {
+        const playerRequirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'counterCard' });
+        playerRequirementUpdater.progressRequirementByCount(count);
     }
 
     function checkIfCanPutDownCard({ playerId, location, cardData }) {
@@ -96,55 +152,7 @@ function PutDownCardController(deps) {
 
     function putDownStationCard({ playerId, cardData, location, choice }) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        const stationCard = playerStateService.addStationCard(cardData, location, { putDownAsExtraStationCard: choice === 'putDownAsExtraStationCard' });
-
-        const currentTurn = matchService.getTurn();
-        const durationCardsThatPermitExtraStationCards = playerStateService
-            .getDurationCards()
-            .map(c => cardFactory.createCardForPlayer(c, playerId))
-            .filter(c => !!c.allowsToPutDownExtraStationCards //TODO Simplify this filter! Perhpas could replace getEvents().some... with some queryEvent class operation?
-                && !!c.requirementsOnPutDownExtraStationCard
-                && !playerStateService.getEvents().some(e => {
-                    return e.turn === currentTurn
-                        && e.type === 'putDownExtraStationCard'
-                        && e.effectCardId === c.id
-                }));
-
-        for (const durationCard of durationCardsThatPermitExtraStationCards) {
-            addEventToKeepCountOfExtraStationCards(durationCard.id, playerId);
-            addCardRequirements({
-                playerId,
-                requirements: durationCard.requirementsOnPutDownExtraStationCard
-            });
-        }
-
-        matchComService.emitToOpponentOf(
-            playerId,
-            'putDownOpponentStationCard',
-            matchComService.prepareStationCardForClient(stationCard)
-        ); //TODO Can this be removed?
-    }
-
-    function addEventToKeepCountOfExtraStationCards(durationCardId, playerId) {
-        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        playerStateService.storeEvent({
-            type: 'putDownExtraStationCard',
-            effectCardId: durationCardId,
-            turn: matchService.getTurn()
-        });
-    }
-
-    function addCardRequirements({ playerId, requirements }) { //TODO Duplicated from another controller. Perhaps this could move in to some service
-        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
-        for (const requirement of requirements.forPlayer) {
-            playerRequirementService.addCardRequirement(requirement);
-        }
-
-        const opponentId = matchComService.getOpponentId(playerId);
-        const opponentRequirementService = playerServiceProvider.getRequirementServiceById(opponentId);
-        for (const requirement of requirements.forOpponent) {
-            opponentRequirementService.addCardRequirement(requirement);
-        }
+        playerStateService.addStationCard(cardData, location, { putDownAsExtraStationCard: choice === 'putDownAsExtraStationCard' });
     }
 
     function removeCardFromPlayerHand(playerId, cardId) {
@@ -185,7 +193,6 @@ function PutDownCardController(deps) {
     function putDownCardInZone({ playerId, cardData }) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         playerStateService.putDownCardInZone(cardData);
-        matchComService.emitToOpponentOf(playerId, 'putDownOpponentCard', { location: 'zone', card: cardData });
     }
 }
 

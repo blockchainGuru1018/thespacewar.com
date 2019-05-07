@@ -19,7 +19,7 @@ class PlayerStateService {
     }) {
         this._playerId = playerId;
         this._matchService = matchService;
-        this._queryEvents = queryEvents;
+        this._queryEvents = queryEvents; //TODO Uses of this should be moved to "CanThePlayer" or "PlayerRuleService"
         this._actionPointsCalculator = actionPointsCalculator;
         this._cardFactory = cardFactory;
         this._eventFactory = eventFactory;
@@ -89,21 +89,31 @@ class PlayerStateService {
 
     hasMatchingCardInSomeZone(matcher) {
         return this.hasMatchingCardInHomeZone(matcher)
-            || this.getCardsInOpponentZone().map(c => this._createBehaviourCard(c)).some(matcher);
+            || this.getCardsInOpponentZone().map(c => this.createBehaviourCard(c)).some(matcher);
     }
 
     hasMatchingCardInHomeZone(matcher) {
-        return this.getCardsInZone().map(c => this._createBehaviourCard(c)).some(matcher);
+        return this.getCardsInZone().map(c => this.createBehaviourCard(c)).some(matcher);
     }
 
     hasMatchingCardInSameZone(sameZoneAsCardId, matcher) {
         const targetZone = this.isCardInHomeZone(sameZoneAsCardId) ? this.getCardsInZone() : this.getCardsInOpponentZone();
-        return targetZone.map(c => this._createBehaviourCard(c)).some(matcher);
+        return targetZone.map(c => this.createBehaviourCard(c)).some(matcher);
     }
 
     getMatchingBehaviourCards(matcher) { //TODO This now returns behaviour cards, to have it return card data would be a hassle. Perhaps the responsibility to create cards could lie within playerStateService?
-        return this.getCardsInZone().map(c => this._createBehaviourCard(c)).filter(matcher)
-            || this.getCardsInOpponentZone().map(c => this._createBehaviourCard(c)).filter(matcher);
+        return [
+            ...this.getCardsInZone().map(c => this.createBehaviourCard(c)).filter(matcher),
+            ...this.getCardsInOpponentZone().map(c => this.createBehaviourCard(c)).filter(matcher)
+        ];
+    }
+
+    getMatchingBehaviourCardsPutDownAnywhere(matcher) {
+        const matchingCardsInZone = this.getCardsInZone().map(c => this.createBehaviourCard(c)).filter(matcher);
+        const matchingCardsInOpponentZone = this.getCardsInOpponentZone().map(c => this.createBehaviourCard(c)).filter(matcher);
+        const matchingDiscardedCards = this.getDiscardedCards().map(c => this.createBehaviourCard(c)).filter(matcher);
+        const matchingStationCards = this.getStationCards().filter(s => !!s.card).map(s => s.card).map(c => this.createBehaviourCard(c)).filter(matcher);
+        return [...matchingCardsInZone, ...matchingCardsInOpponentZone, ...matchingDiscardedCards, ...matchingStationCards];
     }
 
     hasDurationCardOfType(cardCommonId) {
@@ -117,7 +127,7 @@ class PlayerStateService {
     hasCardThatStopsStationAttack() {
         return this
             .getCardsInZone()
-            .map(c => this._createBehaviourCard(c))
+            .map(c => this.createBehaviourCard(c))
             .some(c => c.stopsStationAttack());
     }
 
@@ -205,7 +215,7 @@ class PlayerStateService {
 
     getAttackBoostForCard(card) {
         if (card.type === 'spaceShip') {
-            const durationCards = this.getDurationCards().map(c => this._createBehaviourCard(c));
+            const durationCards = this.getDurationCards().map(c => this.createBehaviourCard(c));
             return sum(durationCards, 'friendlySpaceShipAttackBonus');
         }
         return 0;
@@ -213,7 +223,7 @@ class PlayerStateService {
 
     cardCanMoveOnTurnWhenPutDown(card) {
         if (card.type === 'spaceShip') {
-            const durationCards = this.getDurationCards().map(c => this._createBehaviourCard(c));
+            const durationCards = this.getDurationCards().map(c => this.createBehaviourCard(c));
             return durationCards.some(c => c.allowsFriendlySpaceShipsToMoveTurnWhenPutDown);
         }
         return false;
@@ -255,7 +265,7 @@ class PlayerStateService {
             || null;
     }
 
-    findCardFromAnySource(cardId) {
+    findCardFromAnySource(cardId) { //TODO Very few should actually use this, or provide some filter object as to be more specific
         const playerState = this.getPlayerState();
 
         const cardInZone = playerState.cardsInZone.find(c => c.id === cardId);
@@ -269,6 +279,9 @@ class PlayerStateService {
 
         const cardOnHand = playerState.cardsOnHand.find(c => c.id === cardId);
         if (cardOnHand) return cardOnHand;
+
+        const discardedCard = playerState.discardedCards.find(c => c.id === cardId);
+        if (discardedCard) return discardedCard;
 
         return null;
     }
@@ -319,7 +332,7 @@ class PlayerStateService {
     putDownEventCardInZone(cardData) {
         const currentTurn = this._matchService.getTurn();
 
-        const card = this._createBehaviourCard(cardData);
+        const card = this.createBehaviourCard(cardData);
         card.eventSpecsWhenPutDownInHomeZone
             .map(this._eventFactory.fromSpec)
             .forEach(event => {
@@ -352,6 +365,21 @@ class PlayerStateService {
         for (let card of cards) {
             this.discardCard(card);
         }
+    }
+
+    useToCounter(cardId) {
+        const cardData = this.removeCardFromStationOrHand(cardId);
+        this.discardCard(cardData);
+    }
+
+    counterCard(cardId) { //TODO This should _always_ be called after has countered card and restored state to before that card was played. What could be a more descriptive name for this method?
+        const cardData = this.removeCardFromStationOrHand(cardId);
+        this.discardCard(cardData);
+        this.storeEvent({
+            type: 'counterCard',
+            turn: this._matchService.getTurn(),
+            counteredCardCommonId: cardData.commonId,
+        });
     }
 
     discardCard(cardData) {
@@ -391,8 +419,8 @@ class PlayerStateService {
     }
 
     repairCard(repairerCardId, cardToRepairId) {
-        const cardToRepair = this._createBehaviourCardById(cardToRepairId);
-        const repairerCard = this._createBehaviourCardById(repairerCardId);
+        const cardToRepair = this.createBehaviourCardById(cardToRepairId);
+        const repairerCard = this.createBehaviourCardById(repairerCardId);
         repairerCard.repairCard(cardToRepair);
 
         if (cardToRepair.isStationCard()) {
@@ -428,7 +456,7 @@ class PlayerStateService {
 
     registerCardCollisionFromSacrifice(targetCardId) {
         const targetCardData = this.findCard(targetCardId);
-        const targetCard = this._createBehaviourCard(targetCardData);
+        const targetCard = this.createBehaviourCard(targetCardData);
         const newTargetDamage = targetCard.damage ? targetCard.damage + 4 : 4;
         const targetDefense = targetCard.defense || 0;
         if (newTargetDamage >= targetDefense) {
@@ -480,15 +508,28 @@ class PlayerStateService {
 
     removeCardFromStationOrZones(cardId) {
         if (this.findStationCard(cardId)) {
-            this.removeStationCard(cardId);
+            const removedStationCard = this.removeStationCard(cardId);
+            return removedStationCard.card;
         }
         else if (this.findCard(cardId)) {
-            this.removeCard(cardId);
+            return this.removeCard(cardId);
         }
+        return null;
+    }
+
+    removeCardFromStationOrHand(cardId) {
+        if (this.findStationCard(cardId)) {
+            const removedStationCard = this.removeStationCard(cardId);
+            return removedStationCard.card;
+        }
+        else if (this.findCardFromHand(cardId)) {
+            return this.removeCardFromHand(cardId);
+        }
+        return null;
     }
 
     removeCard(cardId) { // TODO Rename removeFromZones/removeFromAllZones/removeFromPlay
-        let cardIndexInHomeZone = this.getCardsInZone().findIndex(c => c.id === cardId);
+        const cardIndexInHomeZone = this.getCardsInZone().findIndex(c => c.id === cardId);
         let zoneName;
         let cardIndex;
         if (cardIndexInHomeZone >= 0) {
@@ -503,12 +544,17 @@ class PlayerStateService {
             }
         }
 
+        let removedCard = null;
+
         if (zoneName) {
             this.update(playerState => {
-                let zone = playerState[zoneName];
+                const zone = playerState[zoneName];
+                removedCard = zone[cardIndex];
                 zone.splice(cardIndex, 1);
             });
         }
+
+        return removedCard;
     }
 
     removeStationCard(cardId) {
@@ -527,12 +573,17 @@ class PlayerStateService {
     }
 
     removeCardFromHand(cardId) {
+        let removedCard = null;
+
         this.update(playerState => {
             const cardIndex = playerState.cardsOnHand.findIndex(c => c.id === cardId);
             if (cardIndex >= 0) {
+                removedCard = playerState.cardsOnHand[cardIndex];
                 playerState.cardsOnHand.splice(cardIndex, 1);
             }
         });
+
+        return removedCard;
     }
 
     removeCardFromDeck(cardId) {
@@ -620,12 +671,12 @@ class PlayerStateService {
         }
     }
 
-    _createBehaviourCardById(cardId) {
+    createBehaviourCardById(cardId) {
         const cardData = this.findCardFromAnySource(cardId);
         return this._cardFactory.createCardForPlayer(cardData, this._playerId);
     }
 
-    _createBehaviourCard(cardData) {
+    createBehaviourCard(cardData) {
         return this._cardFactory.createCardForPlayer(cardData, this._playerId);
     }
 }

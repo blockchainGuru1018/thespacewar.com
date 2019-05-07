@@ -24,7 +24,8 @@ const classes = [
     require('./ExcellentWork.js'),
     require('./MissilesLaunched.js'),
     require('./PerfectPlan.js'),
-    require('./DestinyDecided.js')
+    require('./DestinyDecided.js'),
+    require('./Luck.js')
 ];
 
 const classByCardCommonId = {};

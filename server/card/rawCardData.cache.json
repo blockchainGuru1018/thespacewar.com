@@ -3,9 +3,9 @@
         {
             "id": "1",
             "name": "The Exterminator",
-            "price": "6",
+            "price": "5",
             "type_card": "blue",
-            "detail": "Normal space ship.",
+            "detail": "Slow (each turn can either move or attack but not both)",
             "defense": "7",
             "attack": "5",
             "number_copies": "1"
@@ -13,9 +13,9 @@
         {
             "id": "2",
             "name": "The Dark Destroyer",
-            "price": "6",
+            "price": "8",
             "type_card": "blue",
-            "detail": "Opponent may draw 2 cards when this enters play.",
+            "detail": "Destroy any card when this enters play.\r\nSlow (each turn can either move or attack but not both).",
             "defense": "10",
             "attack": "7",
             "number_copies": "1"
@@ -75,7 +75,7 @@
             "name": "Nuclear Missile",
             "price": "2",
             "type_card": "red",
-            "detail": "Each turn can either move or attack but not both.",
+            "detail": "Slow (each turn can either move or attack but not both)",
             "defense": "3",
             "attack": "10",
             "number_copies": "1"
@@ -265,7 +265,7 @@
             "name": "Small Repair Ship",
             "price": "2",
             "type_card": "blue",
-            "detail": "Can instead of doing attack repair 1 station damage or 3 other damage. Can move the first turn.",
+            "detail": "Can instead of doing attack repair 1 station damage or 3 other damage.\r\nCan move the first turn.",
             "defense": "3",
             "attack": "1",
             "number_copies": "1"
@@ -325,7 +325,7 @@
             "name": "Fatal Error",
             "price": "0",
             "type_card": "orange",
-            "detail": "Destroy any card in play (on the table including station cards).\r\nYour opponent may draw 2 cards.",
+            "detail": "Destroy any card (on the table including station cards).\r\nYour opponent may draw 2 cards.",
             "defense": "0",
             "attack": "0",
             "number_copies": "2"
@@ -391,5 +391,5 @@
             "number_copies": "1"
         }
     ],
-    "saveTime": 1556549713215
+    "saveTime": 1557178093870
 }

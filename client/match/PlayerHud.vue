@@ -210,17 +210,23 @@
         >
             <FindCard/>
         </portal>
+        <portal
+            v-if="firstRequirementIsCounterCard"
+            to="match"
+        >
+            <CounterCard/>
+        </portal>
     </div>
 </template>
 <script>
     const Vuex = require('vuex');
     const resolveModuleWithPossibleDefault = require('../../client/utils/resolveModuleWithPossibleDefault.js');
-    const FindCard = resolveModuleWithPossibleDefault(require('./FindCard.vue'));
-
+    const FindCard = resolveModuleWithPossibleDefault(require('./findCard/FindCard.vue'));
+    const CounterCard = resolveModuleWithPossibleDefault(require('./counterCard/CounterCard.vue'));
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
-    const { mapGetters: mapRequirementGetters } = Vuex.createNamespacedHelpers('requirement');
-    const { mapState: mapCardState, mapGetters: mapCardGetters } = Vuex.createNamespacedHelpers('card');
     const { mapGetters: mapPermissionGetters } = Vuex.createNamespacedHelpers('permission');
+    const cardHelpers = Vuex.createNamespacedHelpers('card');
+    const requirementHelpers = Vuex.createNamespacedHelpers('requirement');
     const { PHASES } = require('./phases.js');
 
     module.exports = {
@@ -253,7 +259,7 @@
                 'opponentRetreated',
                 'turnControl'
             ]),
-            ...mapRequirementGetters([
+            ...requirementHelpers.mapGetters([
                 'waitingForOtherPlayerToFinishRequirements',
                 'waitingRequirement',
                 'firstRequirement',
@@ -261,15 +267,16 @@
                 'firstRequirementIsDamageStationCard',
                 'firstRequirementIsDrawCard',
                 'firstRequirementIsFindCard',
+                'firstRequirementIsCounterCard',
                 'cardsLeftToSelect',
                 'selectedCardsCount',
                 'countInFirstRequirement',
                 'requirementCardImageUrl'
             ]),
-            ...mapCardState([
+            ...cardHelpers.mapState([
                 'activeAction',
             ]),
-            ...mapCardGetters([
+            ...cardHelpers.mapGetters([
                 'activeActionCardImageUrl'
             ]),
             ...mapPermissionGetters([
@@ -414,7 +421,8 @@
             }
         },
         components: {
-            FindCard
+            FindCard,
+            CounterCard
         }
     };
 

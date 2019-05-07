@@ -91,7 +91,7 @@ module.exports = {
     'when can afford card:': {
         async setUp() {
             this.firstPlayerConnection = FakeConnection2(['stateChanged']);
-            this.secondPlayerConnection = FakeConnection2(['putDownOpponentCard', 'stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['stateChanged']);
             this.match = createMatch({
                 players: [
                     createPlayer({ id: 'P1A', connection: this.firstPlayerConnection }),
@@ -135,11 +135,6 @@ module.exports = {
                 cardId: 'C1A'
             });
         },
-        'should emit zone card to other player'() {
-            let event = this.secondPlayerConnection.putDownOpponentCard.lastCall.args[0];
-            assert.equals(event.location, 'zone');
-            assert.match(event.card, { id: 'C1A' });
-        },
         'when second player restore state should get zone card'() {
             this.match.refresh('P2A');
             const { opponentCardsInZone } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
@@ -180,7 +175,7 @@ module.exports = {
     'when has 1 flipped action station card and put down that station card': {
         setUp() {
             this.firstPlayerConnection = FakeConnection2(['stateChanged']);
-            this.secondPlayerConnection = FakeConnection2(['stateChanged', 'putDownOpponentCard']);
+            this.secondPlayerConnection = FakeConnection2(['stateChanged']);
             this.match = createMatch({
                 players: [
                     Player('P1A', this.firstPlayerConnection),
@@ -223,11 +218,6 @@ module.exports = {
 
             assert.equals(opponentStationCards.length, 1);
             assert.equals(opponentStationCards[0].id, 'C1A');
-        },
-        'should emit put down opponent card'() {
-            const { location, card } = this.secondPlayerConnection.putDownOpponentCard.lastCall.args[0];
-            assert.equals(location, 'zone');
-            assert.equals(card.id, 'C2A');
         }
     },
     'when try to move flipped station card to zone but cannot afford card should throw'() {

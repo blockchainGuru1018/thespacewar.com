@@ -1,7 +1,8 @@
-const info = require('./info/14.config.js');
+const info = require('./info/31.config.js');
 const BaseCard = require('./BaseCard.js');
+const CanCounterCardsWithCostOrLess = require('./mixins/CanCounterCardsWithCostOrLess.js');
 
-module.exports = class ExcellentWork extends BaseCard {
+module.exports = class Luck extends CanCounterCardsWithCostOrLess(2, BaseCard) {
 
     static get CommonId() {
         return info.CommonId;
@@ -13,9 +14,5 @@ module.exports = class ExcellentWork extends BaseCard {
 
     get choicesWhenPutDownInHomeZone() {
         return info.choicesWhenPutDownInHomeZone;
-    }
-
-    get canBePutDownAsExtraStationCard() {
-        return true;
     }
 };

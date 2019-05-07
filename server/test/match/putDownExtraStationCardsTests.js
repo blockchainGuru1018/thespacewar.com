@@ -42,7 +42,7 @@ module.exports = {
             refute(this.error);
         },
         'should add station card'() {
-            this.firstPlayerAsserter.start();
+            this.firstPlayerAsserter.send();
             this.firstPlayerAsserter.hasStationCard('C2A');
         }
     }

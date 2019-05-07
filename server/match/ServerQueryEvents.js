@@ -9,7 +9,13 @@ class ServerQueryEvents extends QueryEvents {
         const eventRepository = {
             getAll: () => matchService.getPlayerState(playerId).events
         };
-        super({ eventRepository });
+
+        const opponentId = matchService.getOpponentId(playerId);
+        const opponentEventRepository = {
+            getAll: () => matchService.getPlayerState(opponentId).events
+        };
+
+        super({ eventRepository, opponentEventRepository, matchService });
     }
 }
 
