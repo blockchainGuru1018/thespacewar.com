@@ -74,6 +74,9 @@ module.exports = function (deps) {
             startSacrifice,
             _completeSacrifice,
 
+            // Trigger dormant effect todo move to store?
+            triggerDormantEffect,
+
             // PutDownCard todo move to store?
             putDownCardOrShowChoiceOrAction,
             putDownCardAsExtraStationCard,
@@ -204,6 +207,10 @@ module.exports = function (deps) {
         else {
             matchController.emit('sacrifice', { cardId, targetCardIds });
         }
+    }
+
+    function triggerDormantEffect(actionContext, cardId) {
+        matchController.emit('triggerDormantEffect', cardId);
     }
 
     function showChoiceDialog({ state, dispatch }, cardData) {
@@ -445,7 +452,7 @@ module.exports = function (deps) {
         else if (state.holdingCard) {
             dispatch('cancelHoldingCard');
         }
-        else if(state.choiceCardId) {
+        else if (state.choiceCardId) {
             dispatch('choiceDialogCancel');
         }
     }

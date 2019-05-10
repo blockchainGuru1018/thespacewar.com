@@ -25,7 +25,8 @@ module.exports = class CardFactory {
             matchInfoRepository: MatchInfoRepository(state),
             matchService: this._matchService,
             playerStateService: stateServiceById,
-            canThePlayer: this._playerServiceProvider.getCanThePlayerServiceById(playerId)
+            canThePlayer: this._playerServiceProvider.getCanThePlayerServiceById(playerId),
+            playerRequirementService: this._playerServiceProvider.getRequirementServiceById(playerId)
         });
     }
 };

@@ -109,6 +109,17 @@
                     Sacrifice
                 </div>
                 <div
+                    v-if="canTriggerDormantEffect"
+                    class="triggerDormantEffect actionOverlay"
+                    @click="triggerDormantEffect(card.id)">
+                    <span v-if="card.commonId === '34'">
+                        Use to counter
+                    </span>
+                    <span v-else>
+                        Use
+                    </span>
+                </div>
+                <div
                     v-if="canBeDiscarded"
                     class="discard actionOverlay"
                     @click="discardClick"
@@ -253,8 +264,7 @@
             canSelectAction() {
                 if (!this.isPlayerCard) return false;
 
-                return this.canThePlayer.performCardActions()
-                    && !this.attackerCardId
+                return !this.attackerCardId
                     && !this.repairerCardId
                     && !this.activeAction;
             },
@@ -277,6 +287,9 @@
                 const card = this.createCard(this.card);
                 return card.canBeSacrificed()
                     && (card.canTargetStationCardsForSacrifice() || this.canTargetCardInZoneForSacrifice);
+            },
+            canTriggerDormantEffect() {
+                return this.canThePlayer.triggerCardsDormantEffect(this.behaviourCard);
             },
             canAttackSomeCardInSameZone() {
                 return this.canAttackCardInZone || this.canAttackStationCards;
@@ -396,6 +409,7 @@
             ...mapCardActions([
                 'startSacrifice',
                 'selectCardForActiveAction',
+                'triggerDormantEffect'
             ]),
             ...expandedCardHelpers.mapActions([
                 'expandCard'
@@ -493,7 +507,7 @@
         background-color: rgba(255, 100, 100, .5);
     }
 
-    .selectForRepair {
+    .selectForRepair, .triggerDormantEffect {
         background-color: rgba(100, 100, 255, .5);
     }
 

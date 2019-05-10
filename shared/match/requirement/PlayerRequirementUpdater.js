@@ -28,7 +28,7 @@ class PlayerRequirementUpdater { //TODO Rename PlayerRequirements
         else if (requirement.common) {
             if (this._opponentHasMatchingAndWaitingRequirement()) {
                 this._removeOpponentMatchingAndWaitingRequirement();
-                this._remove();
+                this.remove();
             }
             else {
                 this._update(requirement => {
@@ -38,8 +38,12 @@ class PlayerRequirementUpdater { //TODO Rename PlayerRequirements
             }
         }
         else {
-            this._remove();
+            this.remove();
         }
+    }
+
+    remove() {
+        return this._playerRequirementService.removeFirstMatchingRequirement(this._requirementMatchCondition)
     }
 
     _opponentHasMatchingAndWaitingRequirement() {
@@ -64,10 +68,6 @@ class PlayerRequirementUpdater { //TODO Rename PlayerRequirements
 
     _update(updateFn) {
         this._playerRequirementService.updateFirstMatchingRequirement(this._requirementMatchCondition, updateFn);
-    }
-
-    _remove() {
-        return this._playerRequirementService.removeFirstMatchingRequirement(this._requirementMatchCondition)
     }
 
 }

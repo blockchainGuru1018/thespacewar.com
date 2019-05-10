@@ -16,7 +16,7 @@ function PutDownPerfectPlan({
 
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
         let spec = PerfectPlan.Info.requirementSpecsWhenPutDownInHomeZone;
-        playerRequirementService.addCardRequirementFromSpec(cardData, spec);
+        playerRequirementService.addCardRequirementFromSpec({cardData, spec});
     }
 }
 

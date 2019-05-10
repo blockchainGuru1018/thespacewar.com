@@ -65,6 +65,11 @@ module.exports = class TurnControl {
         return this.playerHasControlOfOpponentsTurn();
     }
 
+    playerHasControl() {
+        return this.playerHasControlOfOpponentsTurn()
+            || this.playerHasControlOfOwnTurn();
+    }
+
     playerHasControlOfOwnTurn() {
         const playerStateService = this._playerStateService;
 

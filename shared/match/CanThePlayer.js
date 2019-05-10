@@ -25,6 +25,12 @@ class CanThePlayer {
         this._turnControl = turnControl;
     }
 
+    triggerCardsDormantEffect(card) {
+        return this._turnControl.playerHasControl()
+            && card.canTriggerDormantEffect()
+            && this.useThisCard(card);
+    }
+
     useThisCard(card) { //TODO Does this express enough that event cards should'nt be checked against this? They are not "used" only "putDown". Also this is "can not be used" as for example disabled by Neutralization.
         if (card.type === 'duration') {
             return this.useThisDurationCard(card.id);
@@ -99,18 +105,14 @@ class CanThePlayer {
     }
 
     attackCards() {
-        return this.performCardActions();
+        return this._turnControl.playerHasControlOfOwnTurn();
     }
 
     moveCards() {
-        return this.performCardActions();
+        return this._turnControl.playerHasControlOfOwnTurn();
     }
 
     sacrificeCards() {
-        return this.performCardActions();
-    }
-
-    performCardActions() {
         return this._turnControl.playerHasControlOfOwnTurn();
     }
 

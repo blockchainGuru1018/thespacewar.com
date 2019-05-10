@@ -8,6 +8,7 @@ const PutDownCardController = require('./controller/PutDownCardController.js');
 const DiscardCardController = require('./controller/DiscardCardController.js');
 const NextPhaseController = require('./controller/NextPhaseController.js');
 const OverworkController = require('./controller/OverworkController.js');
+const TriggerDormantEffect = require('./command/TriggerDormantEffect.js');
 const CheatController = require('./controller/CheatController.js');
 const MatchComService = require('./service/MatchComService.js');
 const MatchService = require('../../shared/match/MatchService.js');
@@ -61,8 +62,9 @@ module.exports = function ({
     };
 
     const playerServiceProvider = PlayerServiceProvider();
-    const cardFactory = new ServerCardFactory({ playerServiceProvider, getFreshState: () => state });
     const matchService = new MatchService({ matchId, endMatch });
+    const requirementFactory = RequirementFactory({ playerServiceProvider, matchService });
+    const cardFactory = new ServerCardFactory({ playerServiceProvider, getFreshState: () => state });
     matchService.setState(state);
 
     const eventFactory = EventFactory({ matchService });
@@ -82,7 +84,7 @@ module.exports = function ({
         matchService,
         playerServiceProvider
     });
-    registerPlayerRequirementServices({ players, matchService, playerServiceProvider });
+    registerPlayerRequirementServices({ players, requirementFactory, playerServiceProvider });
     registerCanThePlayerServices({ players, playerServiceProvider, canThePlayerFactory });
     registerPlayerRuleServices({ players, playerServiceProvider });
 
@@ -161,6 +163,7 @@ module.exports = function ({
         damageStationCards: attackController.onDamageStationCard,
         selectCardForFindCardRequirement: findCardController.onSelectCard,
         overwork: overworkController.overwork,
+        triggerDormantEffect: PlayerCommand(TriggerDormantEffect, controllerDeps),
         repairCard,
         retreat,
         restoreSavedMatch: debugController.onRestoreSavedMatch,
@@ -448,12 +451,7 @@ function registerMiscPlayerServices({ players, matchService, playerServiceProvid
     }
 }
 
-function registerPlayerRequirementServices({ players, matchService, playerServiceProvider }) {
-    const requirementFactory = RequirementFactory({
-        playerServiceProvider,
-        matchService
-    });
-
+function registerPlayerRequirementServices({ players, requirementFactory, playerServiceProvider }) {
     for (let player of players) {
         const playerId = player.id;
         const opponentId = players.find(p => p.id !== playerId).id;
@@ -518,4 +516,15 @@ function CanThePlayerFactory({
             });
         }
     }
+}
+
+function PlayerCommand(Command, deps) {
+    return (playerId, ...args) => {
+        const playerServiceProvider = deps.playerServiceProvider;
+        const command = Command({
+            playerStateService: playerServiceProvider.byTypeAndId(ServiceTypes.state, playerId),
+            canThePlayer: playerServiceProvider.byTypeAndId(ServiceTypes.canThePlayer, playerId)
+        });
+        return command(...args);
+    };
 }

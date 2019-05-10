@@ -2,9 +2,8 @@ FindCardRequirementFactory.type = 'findCard';
 
 function FindCardRequirementFactory({
     sourceFetcher,
-    playerRequirementService,
     requirementSpec,
-    cardData
+    card
 }) {
 
     return {
@@ -16,7 +15,7 @@ function FindCardRequirementFactory({
             type: requirementSpec.type,
             cardGroups: requirementSpec.sources.map(cardGroupFromSource),
             count: requirementSpec.count,
-            cardCommonId: cardData.commonId,
+            cardCommonId: card.commonId,
             target: requirementSpec.target
         };
     }

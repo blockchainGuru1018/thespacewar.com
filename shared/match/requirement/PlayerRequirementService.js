@@ -128,16 +128,20 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
         });
     }
 
-    addCardRequirementFromSpec(cardData, spec) {
+    addCardRequirementFromSpec({ card = null, cardData = null, spec }) {
+        if (!card && !cardData) throw new Error('Either card or cardData has to be provided when adding card requirement from spec');
+
         const playerId = this._playerStateService.getPlayerId();
+        card = card || this._playerStateService.createBehaviourCard(cardData);
+
         for (const requirementSpec of spec.forPlayer) {
-            const requirement = this._requirementFactory.create(playerId, cardData, requirementSpec);
+            const requirement = this._requirementFactory.create(playerId, card, requirementSpec);
             this.addCardRequirement(requirement);
         }
 
         const opponentId = this._opponentStateService.getPlayerId();
         for (const requirementSpec of spec.forOpponent) {
-            const requirement = this._requirementFactory.create(opponentId, cardData, requirementSpec);
+            const requirement = this._requirementFactory.create(opponentId, card, requirementSpec);
             this.addCardRequirement(requirement);
         }
     }

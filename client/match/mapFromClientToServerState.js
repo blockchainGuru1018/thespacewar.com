@@ -12,6 +12,7 @@ module.exports = function (clientState) {
                 cardsInZone: clientState.playerCardsInZone,
                 cardsInOpponentZone: clientState.playerCardsInOpponentZone,
                 cardsOnHand: clientState.playerCardsOnHand,
+                discardedCards: clientState.playerDiscardedCards,
                 stationCards: [
                     ...clientState.playerStation.drawCards,
                     ...clientState.playerStation.actionCards,
@@ -25,6 +26,7 @@ module.exports = function (clientState) {
                 cardsInZone: clientState.opponentCardsInZone,
                 cardsInOpponentZone: clientState.opponentCardsInPlayerZone,
                 cardsOnHand: new Array(clientState.opponentCardCount).fill({}),
+                discardedCards: clientState.opponentDiscardedCards,
                 stationCards: [
                     ...clientState.opponentStation.drawCards,
                     ...clientState.opponentStation.actionCards,

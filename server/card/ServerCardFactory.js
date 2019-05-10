@@ -5,7 +5,8 @@ const EventRepository = require('../../shared/event/EventRepository.js');
 
 function ServerCardFactory({
     getFreshState,
-    playerServiceProvider
+    playerServiceProvider,
+    requirementFactory
 }) {
 
     const matchService = new MatchService();
@@ -21,7 +22,7 @@ function ServerCardFactory({
         const opponentId = matchService.getOpponentId(playerId);
         const opponentEventRepository = EventRepository({ playerId: opponentId, playerServiceProvider });
         const queryEvents = new QueryEvents({ eventRepository, opponentEventRepository, matchService });
-        const cardFactory = new CardFactory({ matchService, playerServiceProvider, queryEvents });
+        const cardFactory = new CardFactory({ matchService, playerServiceProvider, queryEvents, requirementFactory });
         return cardFactory.createCardForPlayer(cardData, playerId);
     }
 }

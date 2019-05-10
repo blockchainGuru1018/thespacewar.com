@@ -17,7 +17,7 @@ function PutDownLuck({
         const spec = Luck.Info.choiceToRequirementSpec[choice];
         if (spec) {
             const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
-            playerRequirementService.addCardRequirementFromSpec(cardData, spec);
+            playerRequirementService.addCardRequirementFromSpec({cardData, spec});
         }
     }
 }

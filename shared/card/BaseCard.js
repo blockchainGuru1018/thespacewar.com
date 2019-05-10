@@ -256,6 +256,10 @@ class BaseCard {
         return false;
     }
 
+    canTriggerDormantEffect() {
+        return false;
+    }
+
     get eventSpecsWhenPutDownInHomeZone() {
         return [];
     }

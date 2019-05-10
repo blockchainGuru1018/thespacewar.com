@@ -2,7 +2,6 @@ const DiscardCardEvent = require('../../shared/event/DiscardCardEvent.js');
 const AttackEvent = require('../../shared/event/AttackEvent.js');
 const QueryEvents = require('../../shared/event/QueryEvents.js');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
-const ClientCardFactory = require('../card/ClientCardFactory.js');
 const MatchService = require("../../shared/match/MatchService.js");
 const CanThePlayer = require("../../shared/match/CanThePlayer.js");
 const TurnControl = require("../../shared/match/TurnControl.js");
@@ -10,6 +9,8 @@ const PlayerPhase = require("../../shared/match/PlayerPhase.js");
 const PlayerRuleService = require("../../shared/match/PlayerRuleService.js");
 const ClientPlayerStateService = require("./ClientPlayerStateService");
 const PlayerRequirementService = require('../../shared/match/requirement/PlayerRequirementService.js');
+const CardFactory = require('../../shared/card/CardFactory.js');
+const ClientPlayerServiceProvider = require('./ClientPlayerServiceProvider.js');
 const EventFactory = require('../../shared/event/EventFactory.js');
 const mapFromClientToServerState = require('./mapFromClientToServerState.js');
 const localGameDataFacade = require('../utils/localGameDataFacade.js');
@@ -19,6 +20,8 @@ const {
     PHASES
 } = require('./phases.js');
 
+const ClientLimitNotice = { note: 'not_allowed_on_client' };
+
 const storeItemNameByServerItemName = {
     cardsInZone: 'playerCardsInZone',
     cardsInOpponentZone: 'playerCardsInOpponentZone',
@@ -27,7 +30,6 @@ const storeItemNameByServerItemName = {
 };
 
 //TODO Sometimes when discarding a card in the discard phase an error is thrown in the console. Does not appear to affect gameplay.
-//TODO Fix: createCard method creates card for your OWN player, and not cards for the opponent. Yet they are used even for opponent cards in ZoneCard.vue.
 
 module.exports = function (deps) {
 
@@ -40,8 +42,6 @@ module.exports = function (deps) {
     const matchController = deps.matchController;
     const rawCardDataRepository = deps.rawCardDataRepository;
     const getDeckSize = deps.getDeckSize || require('./getDeckSize.js'); //TODO Move to util and then require util at the top
-    const clientCardFactory = deps.cardFactory
-        || ClientCardFactory({ actionPointsCalculator, rawCardDataRepository });
     const ai = deps.ai;
 
     const deckSize = getDeckSize(rawCardDataRepository);
@@ -107,6 +107,8 @@ module.exports = function (deps) {
             createCard,
             findPlayerCard,
             findPlayerCardFromAllSources,
+            cardFactory,
+            playerServiceProvider,
             queryEvents,
             canPutDownCard,
             playerRuleService,
@@ -251,9 +253,10 @@ module.exports = function (deps) {
         });
     }
 
-    function createCard(state) {
+    function createCard(state, getters) {
         return (cardData, { isOpponent = false, playerId = null } = {}) => {
-            return clientCardFactory.fromVuexStore(cardData, state, { isOpponent, playerId });
+            const id = playerId || isOpponent ? state.opponentUser.id : state.ownUser.id;
+            return getters.cardFactory.createCardForPlayer(cardData, id);
         };
     }
 
@@ -279,16 +282,6 @@ module.exports = function (deps) {
         }
     }
 
-    function queryEvents(state, getters) {
-        const eventRepository = {
-            getAll: () => state.events
-        };
-        const opponentEventRepository = {
-            getAll: () => state.opponentEvents
-        };
-        return new QueryEvents({ eventRepository, opponentEventRepository, matchService: getters.matchService });
-    }
-
     function canPutDownCard(state, getters) {
         return cardData => {
 
@@ -300,6 +293,19 @@ module.exports = function (deps) {
 
             return getters.canThePlayer.putDownThisCard(cardData);
         };
+    }
+
+    function cardFactory(state, getters) {
+        return new CardFactory({
+            matchService: getters.matchService,
+            playerServiceProvider: getters.playerServiceProvider,
+            requirementFactory: ClientLimitNotice,
+            queryEvents: getters.queryEvents
+        });
+    }
+
+    function playerServiceProvider(...getterArgs) {
+        return ClientPlayerServiceProvider(...getterArgs);
     }
 
     function playerRuleService(state, getters) {
@@ -380,11 +386,7 @@ module.exports = function (deps) {
             matchService: getters.matchService,
             actionPointsCalculator,
             queryEvents: getters.queryEvents,
-            cardFactory: {
-                createCardForPlayer: (cardData, playerId) => {
-                    return clientCardFactory.fromVuexStore(cardData, state, { playerId });
-                }
-            }
+            cardFactory: getters.cardFactory,
         });
     }
 
@@ -396,11 +398,29 @@ module.exports = function (deps) {
             playerId: state.opponentUser.id,
             matchService: getters.matchService,
             queryEvents: getters.queryOpponentEvents,
-            cardFactory: {
-                createCardForPlayer: (cardData, playerId) => {
-                    return clientCardFactory.fromVuexStore(cardData, state, { playerId });
-                }
-            }
+            cardFactory: getters.cardFactory
+        });
+    }
+
+    function queryEvents(state, getters) {
+        const eventRepository = {
+            getAll: () => state.events
+        };
+        const opponentEventRepository = {
+            getAll: () => state.opponentEvents
+        };
+        return new QueryEvents({ eventRepository, opponentEventRepository, matchService: getters.matchService });
+    }
+
+    function queryOpponentEvents(state, getters) {
+        return new QueryEvents({
+            eventRepository: {
+                getAll: () => state.opponentEvents
+            },
+            opponentEventRepository: {
+                getAll: () => state.events
+            },
+            matchService: getters.matchService
         });
     }
 
@@ -441,18 +461,6 @@ module.exports = function (deps) {
 
     function opponentRetreated(state) {
         return state.ended && state.retreatedPlayerId !== state.ownUser.id;
-    }
-
-    function queryOpponentEvents(state, getters) {
-        return new QueryEvents({
-            eventRepository: {
-                getAll: () => state.opponentEvents
-            },
-            opponentEventRepository: {
-                getAll: () => state.events
-            },
-            matchService: getters.matchService
-        });
     }
 
     function attackerCard(state, getters) {

@@ -17,7 +17,7 @@ function PutDownExcellentWork({
         if (choice === 'draw') {
             playerStateService.putDownEventCardInZone(cardData);
             let spec = ExcellentWork.Info.choiceToRequirementSpec.draw;
-            playerRequirementService.addCardRequirementFromSpec(cardData, spec);
+            playerRequirementService.addCardRequirementFromSpec({ cardData, spec });
         }
         else {
             throw new Error('Excellent work requires that the player makes a choice, no choice or an invalid choice was provided');

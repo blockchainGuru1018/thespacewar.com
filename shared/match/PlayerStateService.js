@@ -368,7 +368,7 @@ class PlayerStateService {
     }
 
     useToCounter(cardId) {
-        const cardData = this.removeCardFromStationOrHand(cardId);
+        const cardData = this.removeCardFromStationHandOrHomeZone(cardId);
         this.discardCard(cardData);
     }
 
@@ -528,6 +528,20 @@ class PlayerStateService {
         return null;
     }
 
+    removeCardFromStationHandOrHomeZone(cardId) {
+        if (this.findStationCard(cardId)) {
+            const removedStationCard = this.removeStationCard(cardId);
+            return removedStationCard.card;
+        }
+        else if (this.findCardFromHand(cardId)) {
+            return this.removeCardFromHand(cardId);
+        }
+        else if (this.getCardsInZone().find(c => c.id === cardId)) {
+            return this.removeCardFromHomeZone(cardId);
+        }
+        return null;
+    }
+
     removeCard(cardId) { // TODO Rename removeFromZones/removeFromAllZones/removeFromPlay
         const cardIndexInHomeZone = this.getCardsInZone().findIndex(c => c.id === cardId);
         let zoneName;
@@ -551,6 +565,20 @@ class PlayerStateService {
                 const zone = playerState[zoneName];
                 removedCard = zone[cardIndex];
                 zone.splice(cardIndex, 1);
+            });
+        }
+
+        return removedCard;
+    }
+
+    removeCardFromHomeZone(cardId) {
+        let removedCard = null;
+
+        const cardIndex = this.getCardsInZone().findIndex(c => c.id === cardId);
+        if (cardIndex >= 0) {
+            this.update(playerState => {
+                removedCard = playerState.cardsInZone[cardIndex];
+                playerState['cardsInZone'].splice(cardIndex, 1);
             });
         }
 

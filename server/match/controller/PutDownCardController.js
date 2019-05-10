@@ -41,10 +41,15 @@ function PutDownCardController(deps) {
 
     function cancelCounterCard(playerId, { cardId }) {
         validateIfCanProgressCounterCardRequirementByCount(0, playerId);
+        removeCounterCardRequirment(playerId);
 
-        const storedStateJson = stateCardIdTuples.slice().reverse().find(([_, id]) => id === cardId)[0];
-        const restoredState = stateSerializer.parse(storedStateJson);
-        restoreFromState(restoredState);
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const card = playerStateService.createBehaviourCardById(cardId);
+        if (card.type === 'event') {
+            const storedStateJson = stateCardIdTuples.slice().reverse().find(([_, id]) => id === cardId)[0];
+            const restoredState = stateSerializer.parse(storedStateJson);
+            restoreFromState(restoredState);
+        }
 
         matchComService.emitCurrentStateToPlayers();
     }
@@ -53,12 +58,17 @@ function PutDownCardController(deps) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         let cardData = playerStateService.findCardFromAnySource(cardId);
         if (!cardData) throw new CheatError(`Cannot find card`);
-        if (![Luck.CommonId].includes(cardData.commonId)) throw new CheatError(`Cannot counter with that card`);
+        const canThePlayer = playerServiceProvider.byTypeAndId(PlayerServiceProvider.TYPE.canThePlayer, playerId);
+        if (!canThePlayer.counterCard({ id: targetCardId })) throw new CheatError('Cannot counter card');
+
         validateIfCanProgressCounterCardRequirementByCount(1, playerId);
+        progressCounterCardRequirementByCount(1, playerId); //TODO Is this necessary? As the game resets below, also the requirement should reset...
 
-        progressRequirementByCount(1, playerId); //TODO Is this necessary? As the game resets below, also the requirement should reset...
-
-        if (cardData.commonId === '31') {
+        const card = playerStateService.createBehaviourCard(cardData);
+        const opponentId = matchService.getOpponentId(playerId);
+        const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
+        const targetCard = opponentStateService.createBehaviourCardById(targetCardId);
+        if (card.canCounterCard(targetCard)) {
             const storedStateJson = stateCardIdTuples.slice().reverse().find(([_, id]) => id === targetCardId)[0];
             const restoredState = stateSerializer.parse(storedStateJson);
             restoreFromState(restoredState);
@@ -81,9 +91,14 @@ function PutDownCardController(deps) {
         }
     }
 
-    function progressRequirementByCount(count, playerId) {
+    function progressCounterCardRequirementByCount(count, playerId) {
         const playerRequirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'counterCard' });
         playerRequirementUpdater.progressRequirementByCount(count);
+    }
+
+    function removeCounterCardRequirment(playerId) {
+        const playerRequirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'counterCard' });
+        playerRequirementUpdater.remove();
     }
 
     function checkIfCanPutDownCard({ playerId, location, cardData }) {

@@ -17,7 +17,7 @@ module.exports = function ({
         create
     };
 
-    function create(playerId, cardData, requirementSpec) {
+    function create(playerId, card, requirementSpec) {
         const Constructor = factories.find(f => f.type === requirementSpec.type);
         if (!Constructor) return { ...requirementSpec };
 
@@ -34,7 +34,7 @@ module.exports = function ({
                 filter: requirementSpec.filter
             }),
             requirementSpec,
-            cardData
+            card
         });
         return factory.create();
     }

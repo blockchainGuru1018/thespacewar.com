@@ -15,7 +15,7 @@ function PutDownMissilesLaunched({
         playerStateService.putDownEventCardInZone(cardData);
 
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
-        playerRequirementService.addCardRequirementFromSpec(cardData, MissilesLaunched.Info.requirementSpecsWhenPutDownInHomeZone);
+        playerRequirementService.addCardRequirementFromSpec({ cardData, spec: MissilesLaunched.Info.requirementSpecsWhenPutDownInHomeZone});
     }
 }
 
