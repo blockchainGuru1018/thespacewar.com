@@ -1,5 +1,5 @@
 const PlayerServiceProvider = require('../../match/PlayerServiceProvider.js');
-const ServerCardFactory = require('../../../server/card/ServerCardFactory.js');
+const CardFactory = require('../../card/CardFactory.js');
 const PlayerStateService = require('../../match/PlayerStateService.js');
 const MatchService = require('../../match/MatchService.js');
 
@@ -24,7 +24,7 @@ function fromIdAndState(playerId, state) {
     const matchService = new MatchService();
     matchService.setState(state);
     const playerServiceProvider = PlayerServiceProvider();
-    const cardFactory = new ServerCardFactory({ matchService, playerServiceProvider, getFreshState: () => state });
+    const cardFactory = new CardFactory({ matchService, playerServiceProvider });
     const playerStateService = new PlayerStateService({ playerId, matchService, cardFactory });
     playerServiceProvider.registerService(PlayerServiceProvider.TYPE.state, playerId, playerServiceProvider);
     return playerStateService;

@@ -298,9 +298,7 @@ module.exports = function (deps) {
     function cardFactory(state, getters) {
         return new CardFactory({
             matchService: getters.matchService,
-            playerServiceProvider: getters.playerServiceProvider,
-            requirementFactory: ClientLimitNotice,
-            queryEvents: getters.queryEvents
+            playerServiceProvider: getters.playerServiceProvider
         });
     }
 

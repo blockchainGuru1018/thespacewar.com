@@ -1,14 +1,11 @@
 let bocha = require('bocha');
-let sinon = bocha.sinon;
 let assert = bocha.assert;
-let refute = bocha.refute;
 let defaults = bocha.defaults;
 const FakeCardDataAssembler = require("../../server/test/testUtils/FakeCardDataAssembler.js");//TODO Move to shared
 const createCard = FakeCardDataAssembler.createCard;
-const ServerCardFactory = require('../../server/card/ServerCardFactory.js');
+const CardFactory = require('../card/CardFactory.js');
 const PlayerStateService = require('../match/PlayerStateService.js');
 const PlayerRuleService = require('../match/PlayerRuleService.js');
-const BaseCard = require('../card/BaseCard.js');
 const MatchService = require('../match/MatchService.js');
 const FakeDeckFactory = require('../../server/test/testUtils/FakeDeckFactory.js')
 const PlayerServiceProvider = require('../match/PlayerServiceProvider.js');
@@ -20,7 +17,7 @@ module.exports = bocha.testCase('PlayerRuleService', {
                 createCardForPlayer: cardData => {
                     if (cardData.id === 'C1A') return { id: 'C1A', type: 'duration', grantsUnlimitedHandSize: true };
                 }
-            }
+            };
             const playerState = createPlayerState({ cardsInZone: [createCard({ id: 'C1A' })] });
             const matchService = createMatchService({ getPlayerState: () => playerState })
             const playerStateService = new PlayerStateService({ matchService, cardFactory });
@@ -36,7 +33,7 @@ module.exports = bocha.testCase('PlayerRuleService', {
                 createCardForPlayer: cardData => {
                     if (cardData.id === 'C1A') return { id: 'C1A', type: 'duration', grantsUnlimitedHandSize: true };
                 }
-            }
+            };
             const playerState = createPlayerState({ cardsInZone: [createCard({ id: 'C1A' })], stationCards: [] });
             const matchService = createMatchService({ getPlayerState: () => playerState })
             const playerStateService = new PlayerStateService({ matchService, cardFactory });
@@ -87,7 +84,7 @@ function createServiceForPlayer(playerId, state) {
     const matchService = new MatchService();
     matchService.setState(state);
     const playerServiceProvider = PlayerServiceProvider();
-    const cardFactory = new ServerCardFactory({ matchService, playerServiceProvider, getFreshState: () => state });
+    const cardFactory = new CardFactory({ matchService, playerServiceProvider });
     const playerStateService = new PlayerStateService({ playerId, matchService, cardFactory });
     playerServiceProvider.registerService(PlayerServiceProvider.TYPE.state, playerId, playerServiceProvider);
     const canThePlayer = { useThisDurationCard() {} };

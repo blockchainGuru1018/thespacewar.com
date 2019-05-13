@@ -1,20 +1,13 @@
 const {
     bocha: {
-        stub,
         assert,
         refute,
         sinon
     },
-    FakeDeckFactory,
     createCard,
-    createPlayers,
     Player,
-    createPlayer,
-    createMatchAndGoToFirstActionPhase,
     createMatch,
-    FakeConnection,
     FakeConnection2,
-    catchError,
     createState,
 } = require('./shared.js');
 const FakeDeck = require('../testUtils/FakeDeck.js');
@@ -24,7 +17,7 @@ module.exports = {
         setUp() {
             this.firstPlayerConnection = FakeConnection2(['drawCards', 'stateChanged']);
             this.secondPlayerConnection = FakeConnection2(['stateChanged']);
-            const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+            const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
             this.match = createMatch({ players });
             this.match.restoreFromState(createState({
                 playerStateById: {

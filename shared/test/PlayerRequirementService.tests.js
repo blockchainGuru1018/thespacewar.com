@@ -5,7 +5,7 @@ let refute = bocha.refute;
 let defaults = bocha.defaults;
 const FakeCardDataAssembler = require("../../server/test/testUtils/FakeCardDataAssembler.js");//TODO Move to shared
 const createCard = FakeCardDataAssembler.createCard;
-const ServerCardFactory = require('../../server/card/ServerCardFactory.js');
+const CardFactory = require('../card/CardFactory.js');
 const PlayerStateService = require('../match/PlayerStateService.js');
 const MatchService = require('../match/MatchService.js');
 const FakeDeckFactory = require('../../server/test/testUtils/FakeDeckFactory.js')
@@ -127,7 +127,7 @@ function createServiceForPlayer(state, playerId = 'P1A', opponentId = 'P2A') {
     const matchService = new MatchService();
     matchService.setState(state);
     const playerServiceProvider = PlayerServiceProvider();
-    const cardFactory = new ServerCardFactory({ matchService, playerServiceProvider, getFreshState: () => state });
+    const cardFactory = new CardFactory({ matchService, playerServiceProvider });
     const playerStateService = new PlayerStateService({ playerId, matchService, cardFactory });
     const opponentStateService = new PlayerStateService({ playerId: opponentId, matchService, cardFactory });
     const playerRequirementService = new PlayerRequirementService({ playerStateService, opponentStateService });

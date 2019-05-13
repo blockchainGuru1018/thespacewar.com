@@ -1,7 +1,6 @@
 const CheatError = require('../CheatError.js');
 const CardApplier = require('../card/CardApplier.js');
 const PlayerServiceProvider = require('../../../shared/match/PlayerServiceProvider.js');
-const Luck = require('../../../shared/card/Luck.js');
 
 function PutDownCardController(deps) {
 

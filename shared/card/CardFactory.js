@@ -1,29 +1,38 @@
 const BaseCard = require('./BaseCard.js');
 const classByCardCommonId = require('./classByCardCommonId.js');
 const MatchInfoRepository = require('../match/MatchInfoRepository.js');
+const EventRepository = require('../event/EventRepository.js');
+const QueryEvents = require('../event/QueryEvents.js');
 
 module.exports = class CardFactory {
 
     constructor({
         matchService,
-        playerServiceProvider,
-        queryEvents
+        playerServiceProvider
     }) {
         this._matchService = matchService;
         this._playerServiceProvider = playerServiceProvider;
-        this._queryEvents = queryEvents;
     }
 
     createCardForPlayer(cardData, playerId) {
-        const state = this._matchService.getState();
+        const matchService = this._matchService;
+
+        const state = matchService.getState();
         const Constructor = getCardConstructor(cardData);
         const stateServiceById = this._playerServiceProvider.getStateServiceById(playerId);
+
+        const playerServiceProvider = this._playerServiceProvider;
+        const eventRepository = EventRepository({ playerId, playerServiceProvider });
+        const opponentId = matchService.getOpponentId(playerId);
+        const opponentEventRepository = EventRepository({ playerId: opponentId, playerServiceProvider });
+        const queryEvents = new QueryEvents({ eventRepository, opponentEventRepository, matchService });
+
         return new Constructor({
             card: cardData,
             playerId,
-            queryEvents: this._queryEvents,
+            queryEvents,
             matchInfoRepository: MatchInfoRepository(state),
-            matchService: this._matchService,
+            matchService: matchService,
             playerStateService: stateServiceById,
             canThePlayer: this._playerServiceProvider.getCanThePlayerServiceById(playerId),
             playerRequirementService: this._playerServiceProvider.getRequirementServiceById(playerId)

@@ -49,7 +49,7 @@ class CanThePlayer {
         const cardData = this._findCardFromOpponentOrPlayer(cardId);
         if (cardData && cardData.commonId === Neutralization.CommonId) return true;
 
-        let noPlayerHasNeutralizationInPlay = !this._playerStateService.hasDurationCardOfType(Neutralization.CommonId)
+        const noPlayerHasNeutralizationInPlay = !this._playerStateService.hasDurationCardOfType(Neutralization.CommonId)
             && !this._opponentStateService.hasDurationCardOfType(Neutralization.CommonId);
 
         return noPlayerHasNeutralizationInPlay;

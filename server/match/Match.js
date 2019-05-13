@@ -11,24 +11,13 @@ const OverworkController = require('./controller/OverworkController.js');
 const TriggerDormantEffect = require('./command/TriggerDormantEffect.js');
 const CheatController = require('./controller/CheatController.js');
 const MatchComService = require('./service/MatchComService.js');
-const MatchService = require('../../shared/match/MatchService.js');
-const ServerQueryEvents = require('./ServerQueryEvents.js');
-const PlayerStateService = require('../../shared/match/PlayerStateService.js');
-const PlayerRequirementService = require('../../shared/match/requirement/PlayerRequirementService.js');
 const PlayerRequirementUpdaterFactory = require('./PlayerRequirementUpdaterFactory.js');
-const ServerCardFactory = require('../card/ServerCardFactory.js');
 const StateChangeListener = require('../../shared/match/StateChangeListener.js');
-const CanThePlayer = require('../../shared/match/CanThePlayer.js');
-const TurnControl = require('../../shared/match/TurnControl.js');
-const PlayerPhase = require('../../shared/match/PlayerPhase.js');
-const PlayerRuleService = require('../../shared/match/PlayerRuleService.js');
-const obscureOpponentEvents = require('./service/obscureOpponentEvents.js');
 const PlayerServiceProvider = require('../../shared/match/PlayerServiceProvider.js');
-const RequirementFactory = require('../../shared/match/requirement/RequirementFactory.js');
 const PlayerOverworkFactory = require('../../shared/match/overwork/PlayerOverworkFactory.js');
-const EventFactory = require('../../shared/event/EventFactory.js');
 const CardDataAssembler = require('../../shared/CardDataAssembler.js');
 const StateSerializer = require('./StateSerializer.js');
+const PlayerServiceFactory = require('../../shared/match/PlayerServiceFactory.js');
 const { PHASES, TEMPORARY_START_PHASE } = require('../../shared/phases.js');
 
 const ServiceTypes = PlayerServiceProvider.TYPE;
@@ -61,33 +50,14 @@ module.exports = function ({
         }
     };
 
-    const playerServiceProvider = PlayerServiceProvider();
-    const matchService = new MatchService({ matchId, endMatch });
-    const requirementFactory = RequirementFactory({ playerServiceProvider, matchService });
-    const cardFactory = new ServerCardFactory({ playerServiceProvider, getFreshState: () => state });
-    matchService.setState(state);
-
-    const eventFactory = EventFactory({ matchService });
-    const canThePlayerFactory = CanThePlayerFactory({ matchService, playerServiceProvider });
-
-    registerPlayerStateServices({
-        players,
-        matchService,
+    const playerServiceFactory = PlayerServiceFactory({
+        state,
+        endMatch,
         actionPointsCalculator,
-        logger,
-        cardFactory,
-        playerServiceProvider,
-        eventFactory
+        logger
     });
-    registerMiscPlayerServices({
-        players,
-        matchService,
-        playerServiceProvider
-    });
-    registerPlayerRequirementServices({ players, requirementFactory, playerServiceProvider });
-    registerCanThePlayerServices({ players, playerServiceProvider, canThePlayerFactory });
-    registerPlayerRuleServices({ players, playerServiceProvider });
-
+    const matchService = playerServiceFactory.matchService();
+    const playerServiceProvider = playerServiceFactory.playerServiceProvider();
     const stateChangeListener = new StateChangeListener({ playerServiceProvider, matchService, logger });
     const matchComService = new MatchComService({
         matchId,
@@ -112,7 +82,7 @@ module.exports = function ({
         matchComService,
         restoreFromState,
         playerServiceProvider,
-        cardFactory,
+        cardFactory: playerServiceFactory.cardFactory(),
         stateChangeListener,
         playerRequirementUpdaterFactory,
         rawCardDataRepository,
@@ -206,6 +176,7 @@ module.exports = function ({
 
     function repairCard(playerId, { repairerCardId, cardToRepairId }) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const cardFactory = playerServiceFactory.cardFactory();
 
         const repairerCardData = playerStateService.findCard(repairerCardId);
         const repairerCard = cardFactory.createCardForPlayer(repairerCardData, playerId);
@@ -290,18 +261,6 @@ module.exports = function ({
         player.connection.emit('match', { matchId, action, value });
     }
 
-    function getActionPointsForPlayer(playerId) {
-        const playerState = getPlayerState(playerId);
-        const playerStationCards = getPlayerStationCards(playerId);
-        const actionStationCardsCount = playerStationCards.filter(s => s.place === 'action').length;
-        return actionPointsCalculator.calculate({
-            phase: playerState.phase,
-            events: playerState.events,
-            turn: state.turn,
-            actionStationCardsCount
-        });
-    }
-
     function toClientModel() {
         const players = matchComService.getPlayers();
         return {
@@ -324,25 +283,6 @@ module.exports = function ({
         return playerState.cardsOnHand.length;
     }
 
-    function getOpponentDiscardedCards(playerId) {
-        const opponentId = getOpponentId(playerId);
-        return getPlayerDiscardedCards(opponentId);
-    }
-
-    function getPlayerDiscardedCards(playerId) {
-        const playerState = getPlayerState(playerId);
-        return playerState.discardedCards;
-    }
-
-    function getOpponentStationCards(playerId) {
-        return getPlayerStationCards(getOpponentId(playerId));
-    }
-
-    function getPlayerStationCards(playerId) {
-        const playerState = getPlayerState(playerId);
-        return playerState.stationCards;
-    }
-
     function prepareStationCardsForClient(stationCards) {
         return stationCards.map(prepareStationCardForClient);
     }
@@ -362,10 +302,6 @@ module.exports = function ({
     function getOpponentId(playerId) {
         const players = matchComService.getPlayers();
         return players.find(p => p.id !== playerId).id;
-    }
-
-    function getOpponentState(playerId) {
-        return getPlayerState(getOpponentId(playerId));
     }
 };
 
@@ -409,113 +345,11 @@ function repairRequirements({ playerRequirementService, opponentRequirementServi
     }
 }
 
-function registerPlayerStateServices({ players, matchService, actionPointsCalculator, logger, cardFactory, playerServiceProvider, eventFactory }) {
-    for (let player of players) {
-        const playerId = player.id;
-        const playerStateService = new PlayerStateService({
-            playerId,
-            matchService,
-            queryEvents: new ServerQueryEvents({ playerId, matchService }),
-            actionPointsCalculator,
-            logger,
-            cardFactory,
-            eventFactory
-        });
-        playerServiceProvider.registerService(ServiceTypes.state, playerId, playerStateService);
-    }
-}
-
-function registerMiscPlayerServices({ players, matchService, playerServiceProvider }) {
-    for (const player of players) {
-        const playerId = player.id;
-
-        const playerPhase = new PlayerPhase({
-            matchService,
-            playerStateService: playerServiceProvider.getStateServiceById(playerId)
-        });
-        playerServiceProvider.registerService(ServiceTypes.phase, playerId, playerPhase);
-    }
-
-    for (const player of players) {
-        const playerId = player.id;
-        const opponentId = matchService.getOpponentId(playerId);
-
-        const turnControl = new TurnControl({
-            matchService,
-            opponentStateService: playerServiceProvider.byTypeAndId(ServiceTypes.state, opponentId),
-            playerStateService: playerServiceProvider.getStateServiceById(playerId),
-            playerPhase: playerServiceProvider.byTypeAndId(ServiceTypes.phase, playerId),
-            opponentPhase: playerServiceProvider.byTypeAndId(ServiceTypes.phase, opponentId)
-        });
-        playerServiceProvider.registerService(ServiceTypes.turnControl, player.id, turnControl);
-    }
-}
-
-function registerPlayerRequirementServices({ players, requirementFactory, playerServiceProvider }) {
-    for (let player of players) {
-        const playerId = player.id;
-        const opponentId = players.find(p => p.id !== playerId).id;
-        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
-        const playerRequirementService = new PlayerRequirementService({
-            playerStateService,
-            opponentStateService,
-            requirementFactory
-        });
-        playerServiceProvider.registerService(ServiceTypes.requirement, playerId, playerRequirementService);
-    }
-}
-
-function registerCanThePlayerServices({ players, playerServiceProvider, canThePlayerFactory }) {
-    for (let player of players) {
-        const playerId = player.id;
-        let canThePlayer = canThePlayerFactory.forPlayer(playerId);
-        playerServiceProvider.registerService(ServiceTypes.canThePlayer, playerId, canThePlayer);
-    }
-}
-
-function registerPlayerRuleServices({ players, playerServiceProvider }) {
-    for (let player of players) {
-        const playerId = player.id;
-        const opponentId = players.find(p => p.id !== playerId).id;
-        let ruleService = new PlayerRuleService({
-            playerStateService: playerServiceProvider.getStateServiceById(playerId),
-            playerRequirementService: playerServiceProvider.byTypeAndId(ServiceTypes.requirement, playerId),
-            opponentStateService: playerServiceProvider.getStateServiceById(opponentId),
-            canThePlayer: playerServiceProvider.getCanThePlayerServiceById(playerId),
-            turnControl: playerServiceProvider.byTypeAndId(ServiceTypes.turnControl, playerId),
-            playerPhase: playerServiceProvider.byTypeAndId(ServiceTypes.phase, playerId)
-        });
-
-        playerServiceProvider.registerService(ServiceTypes.rule, playerId, ruleService);
-    }
-}
-
 function CheatError(reason) {
     const error = new Error(reason);
     error.message = reason;
     error.type = 'CheatDetected';
     return error;
-}
-
-function CanThePlayerFactory({
-    matchService,
-    playerServiceProvider
-}) {
-
-    return {
-        forPlayer(playerId) {
-            let opponentId = matchService.getOpponentId(playerId);
-            let playerStateService = playerServiceProvider.getStateServiceById(playerId);
-            return new CanThePlayer({
-                matchService,
-                queryEvents: new ServerQueryEvents({ playerId, matchService }),
-                playerStateService,
-                opponentStateService: playerServiceProvider.getStateServiceById(opponentId),
-                turnControl: playerServiceProvider.byTypeAndId(ServiceTypes.turnControl, playerId)
-            });
-        }
-    }
 }
 
 function PlayerCommand(Command, deps) {

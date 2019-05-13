@@ -8,7 +8,7 @@ const {
 } = require('bocha');
 const FakeCardDataAssembler = require("../../server/test/testUtils/FakeCardDataAssembler.js");//TODO Move to shared
 const createCard = FakeCardDataAssembler.createCard;
-const ServerCardFactory = require('../../server/card/ServerCardFactory.js');
+const CardFactory = require('../card/CardFactory.js');
 const PlayerStateService = require('../match/PlayerStateService.js');
 const BaseCard = require('../card/BaseCard.js');
 const MatchService = require('../match/MatchService.js');
@@ -230,7 +230,7 @@ function createServiceForPlayer(state, playerId) {
     const matchService = new MatchService();
     matchService.setState(state);
     const playerServiceProvider = PlayerServiceProvider();
-    const cardFactory = new ServerCardFactory({ matchService, playerServiceProvider, getFreshState: () => state });
+    const cardFactory = new CardFactory({ matchService, playerServiceProvider });
     const playerStateService = new PlayerStateService({ playerId, matchService, cardFactory });
     playerServiceProvider.registerService(PlayerServiceProvider.TYPE.state, playerId, playerServiceProvider);
 
