@@ -62,9 +62,7 @@ function PutDownCardController(deps) {
         const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
         const targetCard = opponentStateService.createBehaviourCardById(targetCardId);
         if (card.canCounterCard(targetCard)) {
-            const storedStateJson = stateCardIdTuples.slice().reverse().find(([_, id]) => id === targetCardId)[0];
-            const restoredState = stateSerializer.parse(storedStateJson);
-            restoreFromState(restoredState);
+            stateMemento.revertStateToBeforeCardWasPutDown(targetCardId);
 
             const opponentId = matchService.getOpponentId(playerId);
             const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);

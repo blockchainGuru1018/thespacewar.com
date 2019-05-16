@@ -70,6 +70,47 @@ module.exports = {
                 });
             }
         },
+        'when put down Luck and choose counter and then select card to counter': {
+            async setUp() {
+                this.match.restoreFromState(createState({
+                    currentPlayer: 'P2A',
+                    turn: 2,
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'wait',
+                            cardsOnHand: [
+                                createCard({ id: 'C2A', type: 'event', commonId: Luck.CommonId, cost: 0 })
+                            ]
+                        },
+                        'P2A': {
+                            phase: 'action',
+                            cardsOnHand: [
+                                createCard({ id: 'C1A', cost: 2 })
+                            ],
+                            stationCards: [
+                                { id: 'S1A', card: createCard({ id: 'S1A' }), place: 'action' },
+                            ],
+                            events: [
+                                { type: 'putDownCard', turn: 1, location: 'station-action', cardId: 'S1A' }
+                            ]
+                        }
+                    }
+                }));
+                this.match.putDownCard('P2A', { cardId: 'C1A', location: 'zone' });
+                this.match.toggleControlOfTurn('P1A');
+                this.match.putDownCard('P1A', { cardId: 'C2A', location: 'zone', choice: 'counter' });
+
+                this.match.counterCard('P1A', { cardId: 'C2A', targetCardId: 'C1A' });
+            },
+            'first player should have moved card used to counter into the discard pile'() {
+                this.firstPlayerAsserter.send('P1A');
+                this.firstPlayerAsserter.hasDiscardedCard('C2A');
+            },
+            'second player should have countered card in discard pile'() {
+                this.secondPlayerAsserter.send('P2A');
+                this.secondPlayerAsserter.hasDiscardedCard('C1A');
+            }
+        },
         'when put down Target Missed': {
             async setUp() {
                 this.match.restoreFromState(createState({
