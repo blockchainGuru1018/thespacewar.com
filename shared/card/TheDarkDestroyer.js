@@ -1,6 +1,7 @@
 const BaseCard = require('./BaseCard.js');
+const Slow = require('./mixins/Slow.js');
 
-module.exports = class TheDarkDestroyer extends BaseCard {
+module.exports = class TheDarkDestroyer extends Slow(BaseCard) {
     constructor(deps) {
         super(deps);
     }
