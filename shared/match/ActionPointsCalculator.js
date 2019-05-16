@@ -20,7 +20,8 @@ module.exports = function ({ cardInfoRepository }) {
                     const cardCost = getCostOfCard(event.cardCommonId);
                     actionPoints -= cardCost;
                 }
-                else if (event.location === 'station-action') {
+
+                if (event.location === 'station-action') {
                     actionPoints -= 2;
                 }
             }
