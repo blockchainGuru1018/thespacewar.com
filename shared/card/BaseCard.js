@@ -162,10 +162,10 @@ class BaseCard {
 
         const phase = alternativeConditions.phase || this._playerStateService.getPhase();
         if (phase !== 'attack') return false;
-
         if (!this._canThePlayer.moveThisCard(this)) return false;
 
         if (this._hasMovedThisTurn()) return false;
+        if (!this.canMoveAndAttackOnSameTurn() && this._hasAttackedThisTurn()) return false;
 
         const putDownOnTurn = this._queryEvents.getTurnWhenCardWasPutDown(this.id);
         const turn = this._matchService.getTurn();
@@ -265,8 +265,14 @@ class BaseCard {
     }
 
     _hasMovedThisTurn() {
-        let currentTurn = this._matchService.getTurn();
+        const currentTurn = this._matchService.getTurn();
         return this._queryEvents.hasMovedOnTurn(this.id, currentTurn);
+    }
+
+    _hasAttackedThisTurn() {
+        const currentTurn = this._matchService.getTurn();
+        const attacksOnTurn = this._queryEvents.getAttacksOnTurn(this.id, currentTurn).length;
+        return attacksOnTurn > 0;
     }
 }
 

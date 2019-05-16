@@ -6,6 +6,7 @@ const {
 } = require('bocha');
 const MoveCardEvent = require('../event/MoveCardEvent.js');
 const BaseCard = require('../card/BaseCard.js');
+const Slow = require('../card/mixins/Slow.js');
 const SmallRepairShop = require('../card/SmallRepairShop.js');
 const NuclearMissile = require('../card/NuclearMissile.js');
 const EmpMissile = require('../card/EmpMissile.js');
@@ -392,6 +393,28 @@ module.exports = testCase('Cards', {
             });
 
             refute(this.card.canAttack());
+        }
+    },
+    'Slow (general behaviour, cannot move and attack on the same turn)': {
+        'when card has attacked this turn some NOT be able to move': function () {
+            this.card = createCard(Slow(BaseCard), {
+                card: { id: 'C1A', attack: 1 },
+                playerId: 'P1A',
+                matchService: {
+                    getTurn: () => 2,
+                },
+                queryEvents: queryEventsFactory.withStubs({
+                    getAttacksOnTurn: () => [{}],
+                    hasMovedOnTurn: () => false,
+                    getMovesOnTurn: () => [],
+                    getTurnWhenCardWasPutDown: cardId => cardId === 'C1A'
+                }),
+                playerStateService: playerStateServiceFactory.withStubs({
+                    getPhase: () => 'attack'
+                })
+            });
+
+            refute(this.card.canMove());
         }
     },
     'Disturbing sensor:': {
