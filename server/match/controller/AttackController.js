@@ -1,6 +1,5 @@
 const CheatError = require('../CheatError.js');
 const PlayerServiceProvider = require("../../../shared/match/PlayerServiceProvider.js");
-const { PHASES } = require('../../../shared/phases.js');
 
 const MAX_COLLISION_TARGETS_ON_SACRIFICE = 4;
 
@@ -10,20 +9,118 @@ function AttackController(deps) {
         matchService,
         matchComService,
         cardFactory,
+        stateSerializer,
         playerServiceProvider,
+        playerServiceFactory,
+        stateMemento,
         playerRequirementUpdaterFactory
     } = deps;
 
     return {
         onAttack,
+        counterAttack,
+        cancelCounterAttack,
         onAttackStationCards,
         onDamageStationCard,
         onSacrifice
     };
 
     function onAttack(playerId, { attackerCardId, defenderCardId }) {
-        let cannotAttack = playerServiceProvider.byTypeAndId(PlayerServiceProvider.TYPE.canThePlayer, playerId).attackCards();
-        if (!cannotAttack) throw new CheatError('Cannot attack');
+        validateAttack({ playerId, attackerCardId, defenderCardId });
+
+        const stateBeforeAttack = stateSerializer.serialize(matchService.getState());
+
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const opponentId = matchService.getOpponentId(playerId);
+        const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
+        const defenderCard = opponentStateService.createBehaviourCardById(defenderCardId);
+        const attackerCard = playerStateService.createBehaviourCardById(attackerCardId);
+        attackerCard.attackCard(defenderCard);
+
+        matchComService.emitToPlayer(opponentId, 'opponentAttackedCard', {
+            attackerCardId,
+            defenderCardId,
+            newDamage: defenderCard.damage,
+            defenderCardWasDestroyed: defenderCard.destroyed,
+            attackerCardWasDestroyed: attackerCard.destroyed
+        });
+        const event = playerStateService.registerAttack({ attackerCardId, defenderCardId });
+
+        const attackData = { attackerCardId, defenderCardId, time: event.created };
+        stateMemento.saveStateForAttackData(stateBeforeAttack, attackData);
+
+        if (defenderCard.destroyed) {
+            const cardData = opponentStateService.removeCard(defenderCardId);
+            opponentStateService.discardCard(cardData);
+        }
+        else {
+            opponentStateService.updateCardById(defenderCardId, card => {
+                Object.assign(card, defenderCard.getCardData());
+            });
+        }
+
+        if (attackerCard.destroyed) {
+            const cardData = playerStateService.removeCard(attackerCardId);
+            playerStateService.discardCard(cardData);
+        }
+        else {
+            playerStateService.updateCardById(attackerCardId, card => {
+                Object.assign(card, attackerCard.getCardData());
+            });
+        }
+    }
+
+    function counterAttack(playerId, { attackIndex }) {
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+
+        validateIfCanProgressCounterAttackRequirementByCount(1, playerId);
+        const playerRequirementService = playerServiceFactory.playerRequirementService(playerId);
+        const counterAttackRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'counterAttack' });
+        const attackData = counterAttackRequirement.attacks[attackIndex];
+        if (!attackData) {
+            throw new CheatError('Cannot find attack at index in requirement');
+        }
+
+        progressCounterCardRequirementByCount(1, playerId);
+
+        stateMemento.revertStateToBeforeAttack(attackData);
+
+        const opponentId = matchService.getOpponentId(playerId);
+        const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
+        opponentStateService.registerAttackCountered({
+            attackerCardId: attackData.attackerCardData.id,
+            defenderCardId: attackData.defenderCardData.id
+        });
+
+        const cardUsedToCounterId = counterAttackRequirement.cardId;
+        playerStateService.useToCounter(cardUsedToCounterId);
+
+        matchComService.emitCurrentStateToPlayers();
+    }
+
+    function cancelCounterAttack(playerId, { cardId }) {
+        validateIfCanProgressCounterAttackRequirementByCount(0, playerId);
+        stateMemento.revertStateToBeforeCardWasPutDown(cardId);
+        matchComService.emitCurrentStateToPlayers();
+    }
+
+    function validateIfCanProgressCounterAttackRequirementByCount(count, playerId) {
+        const playerRequirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'counterAttack' });
+        let canProgressRequirement = playerRequirementUpdater.canProgressRequirementByCount(count);
+        if (!canProgressRequirement) {
+            throw new CheatError('Cannot counter attack');
+        }
+    }
+
+    function progressCounterCardRequirementByCount(count, playerId) {
+        const playerRequirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'counterAttack' });
+        playerRequirementUpdater.progressRequirementByCount(count);
+    }
+
+    function validateAttack({ playerId, attackerCardId, defenderCardId }) {
+        const canThePlayer = playerServiceProvider.byTypeAndId(PlayerServiceProvider.TYPE.canThePlayer, playerId);
+        const canAttack = canThePlayer.attackCards();
+        if (!canAttack) throw new CheatError('Cannot attack');
 
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         const attackerCardData = playerStateService.findCard(attackerCardId);
@@ -35,37 +132,6 @@ function AttackController(deps) {
         const defenderCardData = opponentStateService.findCard(defenderCardId);
         const defenderCard = cardFactory.createCardForPlayer(defenderCardData, opponentId);
         if (!attackerCard.canAttackCard(defenderCard)) throw new CheatError('Cannot attack that card');
-
-        attackerCard.attackCard(defenderCard);
-
-        matchComService.emitToPlayer(opponentId, 'opponentAttackedCard', {
-            attackerCardId,
-            defenderCardId,
-            newDamage: defenderCard.damage,
-            defenderCardWasDestroyed: defenderCard.destroyed,
-            attackerCardWasDestroyed: attackerCard.destroyed
-        });
-        playerStateService.registerAttack(attackerCardId);
-
-        if (defenderCard.destroyed) {
-            opponentStateService.removeCard(defenderCardId);
-            opponentStateService.discardCard(defenderCardData);
-        }
-        else {
-            opponentStateService.updateCardById(defenderCardId, card => {
-                Object.assign(card, defenderCard.getCardData());
-            });
-        }
-
-        if (attackerCard.destroyed) {
-            playerStateService.removeCard(attackerCardId);
-            playerStateService.discardCard(attackerCardData);
-        }
-        else {
-            playerStateService.updateCardById(attackerCardId, card => {
-                Object.assign(card, attackerCard.getCardData());
-            });
-        }
     }
 
     function onAttackStationCards(playerId, { attackerCardId, targetStationCardIds }) {
@@ -103,7 +169,7 @@ function AttackController(deps) {
             opponentStateService.flipStationCard(targetCardId);
         }
 
-        playerStateService.registerAttack(attackerCardId);
+        playerStateService.registerAttack({ attackerCardId, targetStationCardIds });
         if (attackerCard.type === 'missile') {
             playerStateService.removeCard(attackerCardId);
             playerStateService.discardCard(attackerCardData);

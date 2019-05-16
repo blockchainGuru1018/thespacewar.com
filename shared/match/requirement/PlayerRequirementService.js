@@ -3,11 +3,13 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
     constructor({
         playerStateService,
         opponentStateService,
-        requirementFactory
+        playerRequirementFactory,
+        opponentRequirementFactory
     }) {
         this._playerStateService = playerStateService;
         this._opponentStateService = opponentStateService;
-        this._requirementFactory = requirementFactory;
+        this._playerRequirementFactory = playerRequirementFactory;
+        this._opponentRequirementFactory = opponentRequirementFactory;
     }
 
     getRequirements() {
@@ -49,6 +51,9 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
         }
         else if (type === 'counterCard') {
             this.addCounterCardRequirement(requirement);
+        }
+        else if (type === 'counterAttack') {
+            this.addCounterAttackRequirement(requirement);
         }
     }
 
@@ -128,20 +133,27 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
         });
     }
 
+    addCounterAttackRequirement({ count, attacks, ...uncheckedProperties }) {
+        this.addRequirement({
+            ...uncheckedProperties,
+            type: 'counterAttack',
+            count: Math.min(attacks.length, count),
+            attacks
+        });
+    }
+
     addCardRequirementFromSpec({ card = null, cardData = null, spec }) {
         if (!card && !cardData) throw new Error('Either card or cardData has to be provided when adding card requirement from spec');
 
-        const playerId = this._playerStateService.getPlayerId();
         card = card || this._playerStateService.createBehaviourCard(cardData);
 
         for (const requirementSpec of spec.forPlayer) {
-            const requirement = this._requirementFactory.create(playerId, card, requirementSpec);
+            const requirement = this._playerRequirementFactory.create(card, requirementSpec);
             this.addCardRequirement(requirement);
         }
 
-        const opponentId = this._opponentStateService.getPlayerId();
         for (const requirementSpec of spec.forOpponent) {
-            const requirement = this._requirementFactory.create(opponentId, card, requirementSpec);
+            const requirement = this._opponentRequirementFactory.create(card, requirementSpec);
             this.addCardRequirement(requirement);
         }
     }

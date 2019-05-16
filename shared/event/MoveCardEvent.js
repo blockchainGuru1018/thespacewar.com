@@ -5,12 +5,12 @@ MoveCardEvent.hasMoved = (cardId, events) => {
 MoveCardEvent.turnCountSinceMove = (cardId, currentTurn, events) => {
     const moveCardEvent = events.find(e => e.type === 'moveCard' && e.cardId === cardId);
     return currentTurn - moveCardEvent.turn;
-}
+};
 
 function MoveCardEvent({ turn, cardId, cardCommonId }) {
     return {
         type: 'moveCard',
-        created: new Date().toISOString(),
+        created: Date.now(),
         turn,
         cardId,
         cardCommonId

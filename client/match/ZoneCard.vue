@@ -269,11 +269,14 @@
                     && !this.activeAction;
             },
             canMove() {
+                if (!this.canThePlayer.moveCards()) return false;
+
                 const card = this.createCard(this.card);
                 return card.canMove();
             },
             canAttack() {
                 if (this.attackerCardId) return false;
+                if (!this.canThePlayer.attackCards()) return false;
 
                 const card = this.createCard(this.card);
                 if (!card.canAttack()) return false;
@@ -284,6 +287,8 @@
                 return true;
             },
             canBeSacrificed() {
+                if (!this.canThePlayer.sacrificeCards()) return false;
+
                 const card = this.createCard(this.card);
                 return card.canBeSacrificed()
                     && (card.canTargetStationCardsForSacrifice() || this.canTargetCardInZoneForSacrifice);
@@ -325,10 +330,14 @@
                     && this.attackerCard.canAttackCard(card);
             },
             canBeDiscarded() {
+                if (!this.canThePlayer.discardCards()) return false;
+
                 return this.card.type === 'duration'
                     && this.phase === 'preparation';
             },
             canRepair() {
+                if (!this.canThePlayer.repairCards()) return false;
+
                 return this
                     .createCard(this.card)
                     .canRepair();

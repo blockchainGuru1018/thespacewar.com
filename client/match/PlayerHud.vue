@@ -5,22 +5,23 @@
             to="player-top"
         >
             <div class="nextPhaseButtonContainer">
-                <button v-if="phase === 'start'"
-
-                    class="playerHud-phaseText nextPhaseButton"@click="startClick"
+                <button
+                    v-if="phase === 'start'"
+                    class="playerHud-phaseText nextPhaseButton" @click="startClick"
                 >
                     Start
                 </button>
                 <template v-else-if="canGoToNextTurn">
                     <button
-                        v-if="nextPhaseButtonText" class="playerHud-phaseText nextPhaseButton"
+                        v-if="nextPhaseButtonText"
+                        class="playerHud-phaseText nextPhaseButton"
                         @click="nextPhaseClick"
-                        >
+                    >
                         {{ nextPhaseButtonText }}
                     </button>
-                    <button v-else-if="endTurnButtonVisible"
-
-                        class="playerHud-phaseText nextPhaseButton nextPhaseButton-endTurn"@click="nextPhaseClick"
+                    <button
+                        v-else-if="endTurnButtonVisible"
+                        class="playerHud-phaseText nextPhaseButton nextPhaseButton-endTurn" @click="nextPhaseClick"
                     >
                         End turn
                     </button>
@@ -29,8 +30,9 @@
 
             <div class="guideTextContainer">
                 <div
-                    v-if="waitingForOtherPlayerToFinishRequirements" class="guideText-waitingForOtherPlayer guideText guideText--small"
-                    >
+                    v-if="waitingForOtherPlayerToFinishRequirements"
+                    class="guideText-waitingForOtherPlayer guideText guideText--small"
+                >
                     <template v-if="waitingRequirement.reason === 'emptyDeck'">
                         Your opponent is dealing damage to your station
                     </template>
@@ -42,20 +44,23 @@
                     v-else-if="actionGuideText"
                     class="guideText guideText--small"
                 >
-                    <div :style="cardStyle"
-                        class="guideTextCardWrapper card"@click="showEnlargedCard"
-                        >
+                    <div
+                        :style="cardStyle"
+                        class="guideTextCardWrapper card" @click="showEnlargedCard"
+                    >
                         <div class="enlargeIcon enlargeIcon--small"/>
                     </div>
                     {{ actionGuideText }}
                 </div>
                 <div
-                    v-else-if="requirementGuideText"class="guideText guideText--small"
+                    v-else-if="requirementGuideText"
+                    class="guideText guideText--small"
                 >
                     <div
-                        class="guideTextCardWrapper card" :style="cardStyle"
+                        class="guideTextCardWrapper card"
+                        :style="cardStyle"
                         @click="showEnlargedCard"
-                        >
+                    >
                         <div class="enlargeIcon enlargeIcon--small"/>
                     </div>
                     {{ requirementGuideText }}
@@ -121,10 +126,11 @@
             </div>
 
             <div class="overworkContainer">
-                <button v-if="canIssueOverwork"
-
+                <button
+                    v-if="canIssueOverwork"
                     title="Your opponent may flip 1 of your station cards & you receive 2 action points"
-                    class="overwork darkButton"@click="overwork"
+                    class="overwork darkButton"
+                    @click="overwork"
                 >
                     Overwork
                 </button>
@@ -194,7 +200,7 @@
             <div
                 v-click-outside="hideEnlargedCard" class="card card--enlarged"
                 :style="cardStyle"
-                />
+            />
         </portal>
         <portal
             v-if="firstRequirementIsFindCard"
@@ -208,6 +214,12 @@
         >
             <CounterCard/>
         </portal>
+        <portal
+            v-if="firstRequirementIsCounterAttack"
+            to="match"
+        >
+            <CounterAttack/>
+        </portal>
     </div>
 </template>
 <script>
@@ -215,6 +227,7 @@
     const resolveModuleWithPossibleDefault = require('../../client/utils/resolveModuleWithPossibleDefault.js');
     const FindCard = resolveModuleWithPossibleDefault(require('./findCard/FindCard.vue'));
     const CounterCard = resolveModuleWithPossibleDefault(require('./counterCard/CounterCard.vue'));
+    const CounterAttack = resolveModuleWithPossibleDefault(require('./counterAttack/CounterAttack.vue'));
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
     const { mapGetters: mapPermissionGetters } = Vuex.createNamespacedHelpers('permission');
     const cardHelpers = Vuex.createNamespacedHelpers('card');
@@ -260,6 +273,7 @@
                 'firstRequirementIsDrawCard',
                 'firstRequirementIsFindCard',
                 'firstRequirementIsCounterCard',
+                'firstRequirementIsCounterAttack',
                 'cardsLeftToSelect',
                 'selectedCardsCount',
                 'countInFirstRequirement',
@@ -416,7 +430,8 @@
         },
         components: {
             FindCard,
-            CounterCard
+            CounterCard,
+            CounterAttack
         }
     };
 

@@ -15,9 +15,8 @@ const PlayerRequirementUpdaterFactory = require('./PlayerRequirementUpdaterFacto
 const StateChangeListener = require('../../shared/match/StateChangeListener.js');
 const PlayerServiceProvider = require('../../shared/match/PlayerServiceProvider.js');
 const PlayerOverworkFactory = require('../../shared/match/overwork/PlayerOverworkFactory.js');
-const CardDataAssembler = require('../../shared/CardDataAssembler.js');
-const StateSerializer = require('./StateSerializer.js');
 const PlayerServiceFactory = require('../../shared/match/PlayerServiceFactory.js');
+const GameServiceFactory = require('../../shared/match/GameServiceFactory.js');
 const { PHASES, TEMPORARY_START_PHASE } = require('../../shared/phases.js');
 
 const ServiceTypes = PlayerServiceProvider.TYPE;
@@ -50,6 +49,11 @@ module.exports = function ({
         }
     };
 
+    const gameServiceFactory = GameServiceFactory({
+        state,
+        endMatch,
+        rawCardDataRepository
+    });
     const playerServiceFactory = PlayerServiceFactory({
         state,
         endMatch,
@@ -74,8 +78,7 @@ module.exports = function ({
     });
     const playerOverworkFactory = PlayerOverworkFactory({ matchService, playerServiceProvider });
 
-    const cardDataAssembler = CardDataAssembler({ rawCardDataRepository });
-    const stateSerializer = StateSerializer({ cardDataAssembler, restoreFromState });
+    const stateSerializer = gameServiceFactory.stateSerializer();
     const controllerDeps = {
         logger,
         matchService,
@@ -87,7 +90,9 @@ module.exports = function ({
         playerRequirementUpdaterFactory,
         rawCardDataRepository,
         playerOverworkFactory,
-        stateSerializer
+        stateSerializer,
+        playerServiceFactory,
+        stateMemento: gameServiceFactory.stateMemento()
     };
 
     const debugController = DebugController(controllerDeps);
@@ -128,6 +133,8 @@ module.exports = function ({
         discardDurationCard,
         moveCard: moveCardController.onMoveCard,
         attack: attackController.onAttack,
+        counterAttack: attackController.counterAttack,
+        cancelCounterAttack: attackController.cancelCounterAttack,
         attackStationCard: attackController.onAttackStationCards, // TODO Rename attackStationCards (pluralized),
         sacrifice: attackController.onSacrifice,
         damageStationCards: attackController.onDamageStationCard,

@@ -1,7 +1,5 @@
-
 function PutDownNotImplementedEventCard({
     playerServiceProvider,
-    matchService
 }) {
 
     return {

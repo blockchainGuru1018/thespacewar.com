@@ -9,10 +9,11 @@ const EventRepository = require('../event/EventRepository2.js');
 const PlayerServiceProvider = require('./PlayerServiceProvider.js');
 const PlayerStateService = require('./PlayerStateService.js');
 const CardFactory = require('../card/CardFactory.js');
-const RequirementFactory = require('./requirement/RequirementFactory.js');
 const EventFactory = require('../event/EventFactory.js');
 const PlayerRequirementService = require('./requirement/PlayerRequirementService.js');
+const PlayerRequirementFactory = require('./requirement/PlayerRequirementFactory.js');
 const PlayerRuleService = require('./PlayerRuleService.js');
+const QueryAttacks = require('./requirement/QueryAttacks.js');
 
 const ServiceTypes = PlayerServiceProvider.TYPE;
 
@@ -23,21 +24,23 @@ module.exports = function ({ state, logger, endMatch, actionPointsCalculator }) 
     let playerServiceProvider;
 
     const api = {
+        _cache: objectsByNameAndPlayerId,
         playerServiceProvider: () => playerServiceProvider,
         cardFactory: cached(cardFactory),
         matchService: cached(matchService),
+        queryAttacks: cached(queryAttacks),
         playerStateService: cached(playerStateService),
         playerRequirementService: cached(playerRequirementService),
         playerRuleService: cached(playerRuleService),
         playerPhase: cached(playerPhase),
         turnControl: cached(turnControl),
+        playerRequirementFactory: cached(playerRequirementFactory),
         canThePlayer: cached(canThePlayer),
         sourceFetcher: cached(sourceFetcher),
         eventRepository: cached(eventRepository),
         eventFactory: cached(eventFactory),
         opponentId: cached(opponentId),
         queryEvents: cached(queryEvents),
-        requirementFactory: cached(requirementFactory),
         actionPointsCalculator: () => actionPointsCalculator
     };
 
@@ -81,39 +84,6 @@ module.exports = function ({ state, logger, endMatch, actionPointsCalculator }) 
 
     return api;
 
-    function turnControl(playerId) {
-        return new TurnControl({
-            matchService: api.matchService(),
-            playerStateService: api.playerStateService(playerId),
-            opponentStateService: api.playerStateService(api.opponentId(playerId)),
-            playerPhase: api.playerPhase(playerId),
-            opponentPhase: api.playerPhase(api.opponentId(playerId)),
-        });
-    }
-
-    function sourceFetcher(playerId) {
-        let canThePlayer1 = api.canThePlayer(playerId);
-        return SourceFetcher({
-            playerStateService: api.playerStateService(playerId),
-            opponentStateService: api.playerStateService(opponentId(playerId)),
-            canThePlayer: canThePlayer1
-        });
-    }
-
-    function canThePlayer(playerId) {
-        return new CanThePlayer({
-            matchService: api.matchService(),
-            queryEvents: api.queryEvents(playerId),
-            opponentStateService: api.playerStateService(api.opponentId(playerId)),
-            playerStateService: api.playerStateService(playerId),
-            turnControl: api.turnControl(playerId)
-        });
-    }
-
-    function queryEvents(playerId) {
-        return new ServerQueryEvents({ playerId, matchService: api.matchService() });
-    }
-
     function playerPhase(playerId) {
         return new PlayerPhase({
             matchService: api.matchService(),
@@ -140,6 +110,66 @@ module.exports = function ({ state, logger, endMatch, actionPointsCalculator }) 
         });
     }
 
+    function playerRequirementService(playerId) {
+        const opponentId = api.opponentId(playerId);
+        return new PlayerRequirementService({
+            playerStateService: api.playerStateService(playerId),
+            opponentStateService: api.playerStateService(opponentId),
+            playerRequirementFactory: api.playerRequirementFactory(playerId),
+            opponentRequirementFactory: api.playerRequirementFactory(opponentId)
+        });
+    }
+
+    function playerRequirementFactory(playerId) {
+        return PlayerRequirementFactory({
+            sourceFetcher: api.sourceFetcher(playerId),
+            queryAttacks: api.queryAttacks(playerId),
+            opponentStateService: api.playerStateService(api.opponentId(playerId)),
+            playerStateService: api.playerStateService(playerId)
+        });
+    }
+
+    function sourceFetcher(playerId) {
+        return SourceFetcher({
+            playerStateService: api.playerStateService(playerId),
+            opponentStateService: api.playerStateService(opponentId(playerId)),
+            canThePlayer: api.canThePlayer(playerId)
+        });
+    }
+
+    function canThePlayer(playerId) {
+        return new CanThePlayer({
+            matchService: api.matchService(),
+            queryEvents: api.queryEvents(playerId),
+            opponentStateService: api.playerStateService(api.opponentId(playerId)),
+            playerStateService: api.playerStateService(playerId),
+            turnControl: api.turnControl(playerId)
+        });
+    }
+
+    function turnControl(playerId) {
+        return new TurnControl({
+            matchService: api.matchService(),
+            playerStateService: api.playerStateService(playerId),
+            opponentStateService: api.playerStateService(api.opponentId(playerId)),
+            playerPhase: api.playerPhase(playerId),
+            opponentPhase: api.playerPhase(api.opponentId(playerId)),
+        });
+    }
+
+    function queryEvents(playerId) {
+        return new ServerQueryEvents({ playerId, matchService: api.matchService() });
+    }
+
+    function queryAttacks(playerId) {
+        let opponentId = api.opponentId(playerId);
+        return QueryAttacks({
+            opponentStateService: api.playerStateService(opponentId),
+            playerEventRepository: api.eventRepository(playerId),
+            opponentEventRepository: api.eventRepository(opponentId)
+        })
+    }
+
     function playerStateService(playerId) {
         return new PlayerStateService({
             playerId,
@@ -150,19 +180,6 @@ module.exports = function ({ state, logger, endMatch, actionPointsCalculator }) 
             eventFactory: api.eventFactory(),
             logger
         });
-    }
-
-    function playerRequirementService(playerId) {
-        const opponentId = api.opponentId(playerId);
-        return new PlayerRequirementService({
-            playerStateService: api.playerStateService(playerId),
-            opponentStateService: api.playerStateService(opponentId),
-            requirementFactory: api.requirementFactory()
-        });
-    }
-
-    function requirementFactory() {
-        return RequirementFactory({ playerServiceProvider, matchService: api.matchService() });
     }
 
     function playerRuleService(playerId) {

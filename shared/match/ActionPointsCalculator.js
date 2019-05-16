@@ -1,8 +1,6 @@
 const PHASES_AFTER_ACTION_PHASE = ['discard', 'attack', 'wait'];
 
-module.exports = function (deps) {
-
-    const cardInfoRepository = deps.cardInfoRepository;
+module.exports = function ({ cardInfoRepository }) {
 
     return {
         calculate

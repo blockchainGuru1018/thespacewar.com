@@ -6,101 +6,56 @@ const SourceFetcher = require('../../match/requirement/SourceFetcher.js');
 const CanThePlayer = require('../../match/CanThePlayer.js');
 const QueryEvents = require('../../event/QueryEvents.js');
 const EventRepository = require('../../event/EventRepository2.js');
+const PlayerServiceFactory = require('../../match/PlayerServiceFactory.js');
+const GameServiceFactory = require('../../match/GameServiceFactory.js');
+const CardDataAssembler = require('../../CardDataAssembler.js');
+const CardInfoRepository = require('../../CardInfoRepository.js');
+const ActionPointsCalculator = require('../../match/ActionPointsCalculator.js');
 
-module.exports = function (state) {
+module.exports = function (state, {
+    testCardData = []
+} = {}) {
 
-    let objectsByNameAndPlayerId = {};
+    const cardDataAssembler = CardDataAssembler({ rawCardDataRepository: { get: () => testCardData } });
+    const cardInfoRepository = CardInfoRepository({ cardDataAssembler });
+    const actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository });
+
+    const logger = {
+        log: (...args) => console.log(...args)
+    };
+    const endMatch = () => console.log('Trying to endMatch in the tests');
+
+    const gameServiceFactory = GameServiceFactory({
+        state,
+        logger,
+        endMatch,
+        actionPointsCalculator
+    });
+    const playerServiceFactory = PlayerServiceFactory({
+        state,
+        logger,
+        endMatch,
+        actionPointsCalculator
+    });
 
     const api = {
-        stub,
-        matchService: cached(matchService),
-        playerPhase: cached(playerPhase),
-        playerStateService: cached(playerStateService),
-        turnControl: cached(turnControl),
-        sourceFetcher: cached(sourceFetcher),
-        canThePlayer: cached(canThePlayer),
-        eventRepository: cached(eventRepository),
-        opponentId: cached(opponentId),
-        queryEvents: cached(queryEvents)
+        stub
     };
-    return api;
+    const apiProxy = new Proxy(api, {
+        get(target, prop, receiver) {
+            if (prop in playerServiceFactory) {
+                return playerServiceFactory[prop];
+            }
+            else if (prop in gameServiceFactory) {
+                return gameServiceFactory[prop];
+            }
+            return target[prop];
+        }
+    });
+    return apiProxy;
 
     function stub(name, playerId, object) {
-        objectsByNameAndPlayerId[name + ':' + playerId] = object;
-    }
-
-    function turnControl(playerId) {
-        return new TurnControl({
-            matchService: api.matchService(),
-            playerStateService: api.playerStateService(playerId),
-            opponentStateService: api.playerStateService(api.opponentId(playerId)),
-            playerPhase: api.playerPhase(playerId),
-            opponentPhase: api.playerPhase(api.opponentId(playerId)),
-        });
-    }
-
-    function sourceFetcher(playerId) {
-        let canThePlayer1 = api.canThePlayer(playerId);
-        return SourceFetcher({
-            playerStateService: api.playerStateService(playerId),
-            opponentStateService: api.playerStateService(opponentId(playerId)),
-            canThePlayer: canThePlayer1
-        });
-    }
-
-    function canThePlayer(playerId) {
-        return new CanThePlayer({
-            matchService: api.matchService(),
-            queryEvents: api.queryEvents(playerId),
-            opponentStateService: api.playerStateService(api.opponentId(playerId)),
-            playerStateService: api.playerStateService(playerId),
-            turnControl: api.turnControl(playerId)
-        });
-    }
-
-    function queryEvents(playerId) {
-        return new QueryEvents({
-            eventRepository: api.eventRepository(playerId),
-            opponentEventRepository: api.eventRepository(api.opponentId(playerId)),
-            matchService: api.matchService(playerId)
-        });
-    }
-
-    function playerPhase(playerId) {
-        return new PlayerPhase({
-            matchService: api.matchService(),
-            playerStateService: playerStateServiceFactory.fromIdAndState(playerId, state)
-        });
-    }
-
-    function eventRepository(playerId) {
-        return EventRepository({ playerStateService: api.playerStateService(playerId) });
-    }
-
-    function opponentId(playerId) {
-        return api.matchService().getOpponentId(playerId);
-    }
-
-    function playerStateService(playerId) {
-        return playerStateServiceFactory.fromIdAndState(playerId, state);
-    }
-
-    function matchService() {
-        let matchService = new MatchService();
-        matchService.setState(state);
-        return matchService;
-    }
-
-    function cached(constructor) {
-        const name = constructor.name;
-        return (playerId) => {
-            const key = name + ':' + playerId;
-            const existingCopy = objectsByNameAndPlayerId[key];
-            if (existingCopy) return existingCopy;
-
-            const result = constructor(playerId);
-            objectsByNameAndPlayerId[key] = result;
-            return result;
-        };
+        gameServiceFactory._cache[name + ':' + playerId] = object;
+        playerServiceFactory._cache[name + ':' + playerId] = object;
     }
 };

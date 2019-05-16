@@ -7,7 +7,7 @@
                     <img :src="getCardImageUrl({commonId: requirement.cardCommonId})"/>
                 </div>
                 <div class="counterCard-headerText">
-                    Select card to counter
+                    {{ cards.length > 0 ? 'Select card to counter' : 'No card to counter' }}
                 </div>
             </div>
             <div

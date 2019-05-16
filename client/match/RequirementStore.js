@@ -19,6 +19,7 @@ module.exports = function ({
             firstRequirementIsDrawCard,
             firstRequirementIsFindCard,
             firstRequirementIsCounterCard,
+            firstRequirementIsCounterAttack,
             countInFirstRequirement,
             selectedCardsCount,
             cardsLeftToSelect,
@@ -67,6 +68,11 @@ module.exports = function ({
     function firstRequirementIsCounterCard(state, getters) {
         return getters.firstRequirement
             && getters.firstRequirement.type === 'counterCard';
+    }
+
+    function firstRequirementIsCounterAttack(state, getters) {
+        return getters.firstRequirement
+            && getters.firstRequirement.type === 'counterAttack';
     }
 
     function countInFirstRequirement(state, getters) {

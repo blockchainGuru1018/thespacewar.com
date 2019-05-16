@@ -1,0 +1,100 @@
+@import "../cardVariables";
+
+.counterAttack {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  overflow: auto;
+}
+
+.counterAttack-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0 40px;
+}
+
+.counterAttack-headerText {
+  font-family: "Space Mono", monospace;
+  font-size: 72px;
+  color: white;
+  letter-spacing: .02em;
+}
+
+.counterAttack-requirementCard {
+  width: $cardWidth / 6;
+  height: $cardHeight / 6;
+  margin-right: 25px;
+}
+
+.counterAttack-requirementCard > img {
+  width: 100%;
+  height: 100%;
+}
+
+.counterAttack-attacks {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.counterAttack-attack {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    transform: scale(1.05);
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  & > span {
+    font-size: 48px;
+    font-weight: bold;
+    color: rgba(255, 54, 70, 1);
+    margin: 0 14px;
+  }
+}
+
+.counterAttack-card {
+  width: $cardWidth / 3;
+  height: $cardHeight / 3;
+  flex: 0 0 auto;
+
+  &:first-child {
+    margin-left: 0;
+  }
+
+  > img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.counterAttack-cancelAloneWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.counterAttack-cancelWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.counterAttack-cancel {
+  padding: 10px 40px;
+  margin: 0 auto;
+}

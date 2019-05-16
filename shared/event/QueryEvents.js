@@ -27,23 +27,18 @@ class QueryEvents {
 
     lastTookControlWithinTimeFrameSincePutDownCard(opponentCardId, millisecondsTimeFrame) {
         const timeSinceOpponentCardWasPutDown = this.getTimeWhenOpponentCardWasPutDown(opponentCardId);
-        const playerEventsInReverse = this._eventRepository.getAll().slice().reverse();
+        const playerEvents = this._eventRepository.getAll().slice();
 
-        const indexOfLatestTakingOfControl = playerEventsInReverse.findIndex(e => {
-            return e.type === 'takeControlOfOpponentsTurn'
-        });
-        const indexOfLatestReleaseOfControl = playerEventsInReverse.findIndex(e => {
-            return e.type === 'releaseControlOfOpponentsTurn'
-        });
+        const indexOfLatestTakingOfControl = findLastIndex(playerEvents, e => e.type === 'takeControlOfOpponentsTurn');
+        const indexOfLatestReleaseOfControl = findLastIndex(playerEvents, e => e.type === 'releaseControlOfOpponentsTurn');
+
         if (indexOfLatestTakingOfControl > indexOfLatestReleaseOfControl) {
-            const takeControlOfOpponentsTurnEvent = playerEventsInReverse[indexOfLatestTakingOfControl];
+            const takeControlOfOpponentsTurnEvent = playerEvents[indexOfLatestTakingOfControl];
             const timeDifference = takeControlOfOpponentsTurnEvent.created - timeSinceOpponentCardWasPutDown;
             return timeDifference >= 0 && timeDifference <= millisecondsTimeFrame;
         }
-        else {
-            let timeDifference = Date.now() - timeSinceOpponentCardWasPutDown;
-            return timeDifference <= millisecondsTimeFrame;
-        }
+
+        return false;
     }
 
     getTimeWhenOpponentCardWasPutDown(opponentCardId) {
@@ -141,6 +136,12 @@ class QueryEvents {
                 && event.byEvent === byEvent;
         });
     }
+}
+
+function findLastIndex(collection, selector) {
+    const indexInReverseCollection = collection.slice().reverse().findIndex(selector);
+    if (indexInReverseCollection === -1) return -1;
+    return (collection.length - 1) - indexInReverseCollection;
 }
 
 module.exports = QueryEvents;

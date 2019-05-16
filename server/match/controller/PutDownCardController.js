@@ -9,12 +9,9 @@ function PutDownCardController(deps) {
         matchComService,
         cardFactory,
         playerServiceProvider,
-        stateSerializer,
-        restoreFromState,
+        stateMemento,
         playerRequirementUpdaterFactory
     } = deps;
-
-    const stateCardIdTuples = [];
 
     const cardApplier = CardApplier({ playerServiceProvider, matchService });
 
@@ -31,8 +28,7 @@ function PutDownCardController(deps) {
 
         checkIfCanPutDownCard({ playerId, location, cardData });
 
-        const state = stateSerializer.serialize(matchService.getState());
-        stateCardIdTuples.push([state, cardId, Date.now()]);
+        stateMemento.saveStateForCardId(cardId);
 
         removeCardFromCurrentLocation({ playerId, location, cardData });
         putDownCardAtNewLocation({ playerId, location, cardData, choice });
@@ -45,9 +41,7 @@ function PutDownCardController(deps) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         const card = playerStateService.createBehaviourCardById(cardId);
         if (card.type === 'event') {
-            const storedStateJson = stateCardIdTuples.slice().reverse().find(([_, id]) => id === cardId)[0];
-            const restoredState = stateSerializer.parse(storedStateJson);
-            restoreFromState(restoredState);
+            stateMemento.revertStateToBeforeCardWasPutDown(cardId);
         }
 
         matchComService.emitCurrentStateToPlayers();

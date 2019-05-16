@@ -1,7 +1,7 @@
 function RemoveStationCardEvent({ stationCard, turn, phase }) {
     return {
         type: 'removeStationCard',
-        created: new Date().toISOString(),
+        created: Date.now(),
         turn,
         phase,
         location: `station-${stationCard.place}`,

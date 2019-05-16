@@ -260,6 +260,14 @@ class PlayerStateService {
             || null;
     }
 
+    findCardFromZonesAndDiscardPile(cardId) {
+        const playerState = this.getPlayerState();
+        return playerState.cardsInZone.find(c => c.id === cardId)
+            || playerState.cardsInOpponentZone.find(c => c.id === cardId)
+            || playerState.discardedCards.find(c => c.id === cardId)
+            || null;
+    }
+
     findCardFromHand(cardId) {
         return this.getPlayerState().cardsOnHand.find(c => c.id === cardId)
             || null;
@@ -372,6 +380,22 @@ class PlayerStateService {
         this.discardCard(cardData);
     }
 
+    registerAttackCountered({ attackerCardId, defenderCardId = null, targetStationCardIds = null }) {
+        const cardData = this.findCard(attackerCardId);
+        const turn = this._matchService.getTurn();
+        const attackEvent = AttackEvent({
+            turn,
+            attackerCardId,
+            defenderCardId,
+            targetStationCardIds,
+            cardCommonId: cardData.commonId,
+            countered: true
+        });
+        this.storeEvent(attackEvent);
+
+        return attackEvent;
+    }
+
     counterCard(cardId) { //TODO This should _always_ be called after has countered card and restored state to before that card was played. What could be a more descriptive name for this method?
         const cardData = this.removeCardFromStationOrHand(cardId);
         this.discardCard(cardData);
@@ -470,11 +494,19 @@ class PlayerStateService {
         }
     }
 
-    registerAttack(attackerCardId) {
+    registerAttack({ attackerCardId, defenderCardId = null, targetStationCardIds = null }) {
         const cardData = this.findCard(attackerCardId);
         const turn = this._matchService.getTurn();
-        const attackEvent = AttackEvent({ turn, attackerCardId, cardCommonId: cardData.commonId });
+        const attackEvent = AttackEvent({
+            turn,
+            attackerCardId,
+            defenderCardId,
+            targetStationCardIds,
+            cardCommonId: cardData.commonId
+        });
         this.storeEvent(attackEvent);
+
+        return attackEvent;
     }
 
     moveCard(cardId) {

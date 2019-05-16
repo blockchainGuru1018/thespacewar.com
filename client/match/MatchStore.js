@@ -717,12 +717,12 @@ module.exports = function (deps) {
         state.attackerCardId = card.id;
     }
 
-    function selectAsDefender({ state, dispatch, getters }, card) {
+    function selectAsDefender({ state, dispatch }, card) {
         const attackerCardId = state.attackerCardId;
-        const defenderCardId = card.id
+        const defenderCardId = card.id;
         matchController.emit('attack', { attackerCardId, defenderCardId });
 
-        dispatch('registerAttack', state.attackerCardId);
+        dispatch('registerAttack', { attackerCardId, defenderCardId });
     }
 
     function opponentAttackedCard({ state }, {
@@ -786,21 +786,19 @@ module.exports = function (deps) {
 
     function selectStationCardAsDefender({ state, getters, dispatch }, { id }) {
         const attackerCard = getters.attackerCard;
-        state.selectedDefendingStationCards.push(id);
+        const targetStationCardIds = state.selectedDefendingStationCards;
+        targetStationCardIds.push(id);
 
-        const selectedLastStationCard = getters.opponentUnflippedStationCardCount === state.selectedDefendingStationCards.length;
-        const selectedMaxTargetCount = state.selectedDefendingStationCards.length >= attackerCard.attack;
+        const selectedLastStationCard = getters.opponentUnflippedStationCardCount === targetStationCardIds.length;
+        const selectedMaxTargetCount = targetStationCardIds.length >= attackerCard.attack;
+        const attackerCardId = state.attackerCardId;
         if (selectedMaxTargetCount || selectedLastStationCard) {
-            matchController.emit('attackStationCard', {
-                attackerCardId: state.attackerCardId,
-                targetStationCardIds: state.selectedDefendingStationCards
-            });
-
-            dispatch('registerAttack', state.attackerCardId);
+            matchController.emit('attackStationCard', { attackerCardId, targetStationCardIds });
+            dispatch('registerAttack', { attackerCardId, targetStationCardIds });
         }
     }
 
-    function registerAttack({ state, getters, dispatch }, attackerCardId) {
+    function registerAttack({ state, getters, dispatch }, { attackerCardId, defenderCardId = null, targetStationCardIds = null }) {
         const cardData = getters.allPlayerCardsInOwnAndOpponentZone.find(c => c.id === attackerCardId);
         if (cardData.type === 'missile') {
             dispatch('removePlayerCard', attackerCardId);
@@ -808,6 +806,8 @@ module.exports = function (deps) {
         state.events.push(AttackEvent({
             turn: state.turn,
             attackerCardId,
+            defenderCardId,
+            targetStationCardIds,
             cardCommonId: cardData.commonId
         }));
 

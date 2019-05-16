@@ -1,3 +1,5 @@
+const TakeControlEvent = require("../event/TurnControlEvent.js");
+
 module.exports = class TurnControl {
 
     constructor({
@@ -26,10 +28,7 @@ module.exports = class TurnControl {
     }
 
     takeControlOfOpponentsTurn() {
-        this._playerStateService.storeEvent({
-            type: 'takeControlOfOpponentsTurn',
-            created: Date.now()
-        });
+        this._playerStateService.storeEvent(TakeControlEvent.takeControlOfOpponentsTurn());
 
         const playerId = this._playerStateService.getPlayerId();
         this._matchService.update(state => {
@@ -38,10 +37,7 @@ module.exports = class TurnControl {
     }
 
     releaseControlOfOpponentsTurn() {
-        this._playerStateService.storeEvent({
-            type: 'releaseControlOfOpponentsTurn',
-            created: Date.now()
-        });
+        this._playerStateService.storeEvent(TakeControlEvent.releaseControlOfOpponentsTurn());
 
         const opponentId = this._opponentStateService.getPlayerId();
         this._matchService.update(state => {

@@ -116,6 +116,14 @@ class CanThePlayer {
         return this._turnControl.playerHasControlOfOwnTurn();
     }
 
+    repairCards() {
+        return this._turnControl.playerHasControlOfOwnTurn();
+    }
+
+    discardCards() {
+        return this._turnControl.playerHasControlOfOwnTurn();
+    }
+
     counterCard({ id: cardId }) {
         const isOpponentCard = this._opponentStateService.hasCard(cardId);
         if (!isOpponentCard) return false;

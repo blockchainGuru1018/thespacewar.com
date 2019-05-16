@@ -148,10 +148,12 @@ function createMatch(deps = {}, testCardData = []) {
         deps.players.push(Player('P2A'));
     }
     const deckFactory = deps.deckFactory || FakeDeckFactory.fromCards([createCard()]);
-    const cardDataAssembler = CardDataAssembler({ rawCardDataRepository: { get: () => testCardData } });
+    const rawCardDataRepository = { get: () => testCardData };
+    const cardDataAssembler = CardDataAssembler({ rawCardDataRepository });
     defaults(deps, {
         deckFactory,
         cardInfoRepository: CardInfoRepository({ cardDataAssembler }),
+        rawCardDataRepository,
         players: [createPlayer('P1A'), createPlayer('P2A')],
         logger: {
             log: (...args) => console.log(...args)

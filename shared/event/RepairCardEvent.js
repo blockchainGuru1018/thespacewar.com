@@ -1,7 +1,7 @@
 module.exports = function ({ turn, cardId, cardCommonId, repairedCardId, repairedCardCommonId }) {
     return {
         type: 'repairCard',
-        created: new Date().toISOString(),
+        created: Date.now(),
         turn,
         cardId,
         cardCommonId,

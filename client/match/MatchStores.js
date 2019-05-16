@@ -6,6 +6,7 @@ const STORES = [
     require('./KeyboardShortcutsStore.js'),
     require('./findCard/FindCardStore.js'),
     require('./counterCard/CounterCardStore.js'),
+    require('./counterAttack/CounterAttackStore.js'),
     require('./loadingIndicator/LoadingIndicatorStore.js'),
     require('../expandedCard/ExpandedCardStore.js')
 ];

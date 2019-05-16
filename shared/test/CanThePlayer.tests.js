@@ -1,19 +1,14 @@
 let {
-    sinon,
     testCase,
-    defaults,
     refute,
     assert
 } = require('bocha');
 const FakeCardDataAssembler = require('../../server/test/testUtils/FakeCardDataAssembler.js');
 const createCardData = FakeCardDataAssembler.createCard;
 const BaseCard = require('../card/BaseCard.js');
-const DisturbingSensor = require('../card/DisturbingSensor.js');
 const CanThePlayer = require('../match/CanThePlayer.js');
 const TestHelper = require('./fakeFactories/TestHelper.js');
 const createState = require('./fakeFactories/createState.js');
-const PutDownCardEvent = require('../PutDownCardEvent.js');
-const DiscardCardEvent = require('../event/DiscardCardEvent.js');
 
 const {
     createCard
