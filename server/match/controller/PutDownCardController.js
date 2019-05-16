@@ -143,11 +143,17 @@ function PutDownCardController(deps) {
             putDownStationCard({ playerId, cardData, location, choice });
         }
         else {
-            if (location === 'zone' && cardData.type === 'event') {
-                cardApplier.putDownEventCard(playerId, cardData, { choice });
+            if (cardApplier.hasCommandForCard(cardData)) {
+                cardApplier.putDownCard(playerId, cardData, { choice });
             }
-            else if (location === 'zone') {
-                putDownCardInZone({ playerId, cardData });
+            else {
+                if (location === 'zone' && cardData.type === 'event') {
+                    const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+                    playerStateService.putDownEventCardInZone(cardData);
+                }
+                else if (location === 'zone') {
+                    putDownCardInZone({ playerId, cardData });
+                }
             }
 
             const card = cardFactory.createCardForPlayer(cardData, playerId);

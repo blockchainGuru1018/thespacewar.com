@@ -1,8 +1,8 @@
-const FatalError = require('../../../../shared/card/FatalError.js');
+const TheDarkDestroyer = require('../../../../shared/card/TheDarkDestroyer.js');
 
-PutDownFatalError.CommonId = FatalError.CommonId;
+PutDownTheDarkDestroyer.CommonId = TheDarkDestroyer.CommonId;
 
-function PutDownFatalError({
+function PutDownTheDarkDestroyer({
     playerServiceProvider,
     matchService
 }) {
@@ -13,7 +13,7 @@ function PutDownFatalError({
 
     function forPlayer(playerId, cardData, { choice: targetCardId } = {}) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        playerStateService.putDownEventCardInZone(cardData);
+        playerStateService.putDownCardInZone(cardData);
 
         const opponentId = matchService.getOpponentId(playerId);
         const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
@@ -23,4 +23,4 @@ function PutDownFatalError({
     }
 }
 
-module.exports = PutDownFatalError;
+module.exports = PutDownTheDarkDestroyer;

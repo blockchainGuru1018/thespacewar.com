@@ -1235,38 +1235,10 @@ module.exports = {
                 }));
             }
         },
-        'when put down Fatal Error with choice matching player card': {
-            setUp() {
-                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
-                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A')]
-                this.match = createMatch({ players });
-                this.match.restoreFromState(createState({
-                    playerStateById: {
-                        'P1A': {
-                            phase: 'action',
-                            cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: FatalErrorCommonId })],
-                            cardsInZone: [createCard({ id: 'C2A', defense: 1 })]
-                        }
-                    }
-                }));
-
-                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A', choice: 'C2A' });
-            },
-            'should emit card moved to discard pile for first player'() {
-                assert.calledOnce(this.firstPlayerConnection.stateChanged);
-                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
-                    cardsInZone: [],
-                    discardedCards: [
-                        sinon.match({ id: 'C1A' }),
-                        sinon.match({ id: 'C2A' })
-                    ]
-                }));
-            }
-        },
         'when put down Fatal Error with invalid card id as choice': {
             setUp() {
                 this.secondPlayerConnection = FakeConnection2(['stateChanged']);
-                const players = [Player('P1A'), Player('P2A', this.secondPlayerConnection)]
+                const players = [Player('P1A'), Player('P2A', this.secondPlayerConnection)];
                 this.match = createMatch({ players });
                 this.match.restoreFromState(createState({
                     playerStateById: {

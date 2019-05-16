@@ -467,7 +467,7 @@ eval("const info = __webpack_require__(/*! ./info/16.config.js */ \"../shared/ca
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("const BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nconst Slow = __webpack_require__(/*! ./mixins/Slow.js */ \"../shared/card/mixins/Slow.js\");\n\nmodule.exports = class TheDarkDestroyer extends Slow(BaseCard) {\n  constructor(deps) {\n    super(deps);\n  }\n\n  static get CommonId() {\n    return '2';\n  }\n\n  get requirementsWhenPutDownInHomeZone() {\n    return {\n      forOpponent: [{\n        type: 'drawCard',\n        count: 2\n      }],\n      forPlayer: []\n    };\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/TheDarkDestroyer.js?");
+eval("const BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nconst Slow = __webpack_require__(/*! ./mixins/Slow.js */ \"../shared/card/mixins/Slow.js\");\n\nmodule.exports = class TheDarkDestroyer extends Slow(BaseCard) {\n  constructor(deps) {\n    super(deps);\n  }\n\n  static get CommonId() {\n    return '2';\n  }\n\n  get actionWhenPutDownInHomeZone() {\n    return {\n      showCardImage: true,\n      showTransientCardInHomeZone: true,\n      name: 'destroyAnyCard',\n      text: 'Select any card to destroy'\n    };\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/TheDarkDestroyer.js?");
 
 /***/ }),
 

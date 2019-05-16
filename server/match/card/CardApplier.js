@@ -8,7 +8,8 @@ const Commands = [
     require('./putDown/PutDownMissilesLaunched.js'),
     require('./putDown/PutDownPerfectPlan.js'),
     require('./putDown/PutDownLuck.js'),
-    require('./putDown/PutDownTargetMissed.js')
+    require('./putDown/PutDownTargetMissed.js'),
+    require('./putDown/PutDownTheDarkDestroyer.js')
 ];
 
 module.exports = function CardApplier(deps) {
@@ -21,10 +22,15 @@ module.exports = function CardApplier(deps) {
     }
 
     return {
-        putDownEventCard
+        hasCommandForCard,
+        putDownCard
     };
 
-    function putDownEventCard(playerId, cardData, { choice = '' } = {}) {
+    function hasCommandForCard({ commonId }) {
+        return getCommandForCard({ commonId });
+    }
+
+    function putDownCard(playerId, cardData, { choice = '' } = {}) {
         let command = getCommandForCard(cardData);
         if (command) {
             command.forPlayer(playerId, cardData, { choice });

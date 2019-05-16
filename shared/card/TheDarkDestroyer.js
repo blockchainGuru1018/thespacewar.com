@@ -10,10 +10,12 @@ module.exports = class TheDarkDestroyer extends Slow(BaseCard) {
         return '2';
     }
 
-    get requirementsWhenPutDownInHomeZone() {
+    get actionWhenPutDownInHomeZone() {
         return {
-            forOpponent: [{ type: 'drawCard', count: 2 }],
-            forPlayer: []
-        };
+            showCardImage: true,
+            showTransientCardInHomeZone: true,
+            name: 'destroyAnyCard',
+            text: 'Select any card to destroy'
+        }
     }
 };
