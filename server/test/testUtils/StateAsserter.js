@@ -10,6 +10,7 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
     return {
         send,
         hasStationCard,
+        hasUnflippedStationCard,
         hasDiscardedCard,
         hasCardInZone,
         countMatchingAttacks,
@@ -43,6 +44,12 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
     function hasStationCard(cardId) {
         assert.calledWith(playerConnection.stateChanged, sinon.match({
             stationCards: sinon.match.some(sinon.match({ id: cardId }))
+        }));
+    }
+
+    function hasUnflippedStationCard(cardId) {
+        assert.calledWith(playerConnection.stateChanged, sinon.match({
+            stationCards: sinon.match.some(sinon.match({ id: cardId, flipped: sinon.match.undefined }))
         }));
     }
 

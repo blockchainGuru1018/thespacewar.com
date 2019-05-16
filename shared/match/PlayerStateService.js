@@ -273,7 +273,7 @@ class PlayerStateService {
             || null;
     }
 
-    findCardFromAnySource(cardId) { //TODO Very few should actually use this, or provide some filter object as to be more specific
+    findCardFromAnySource(cardId) {
         const playerState = this.getPlayerState();
 
         const cardInZone = playerState.cardsInZone.find(c => c.id === cardId);

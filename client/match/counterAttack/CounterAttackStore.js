@@ -34,10 +34,10 @@ module.exports = function ({
     }
 
     function findIndexOfAttackInRequirement(state, getters) {
-        return ({ attackerCardData, defenderCardData, time }) => {
+        return ({ attackerCardData, defenderCardsData, time }) => {
             return getters.attacks.findIndex(attack => {
                 return attack.attackerCardData.id === attackerCardData.id
-                    && attack.defenderCardData.id === defenderCardData.id
+                    && attack.defenderCardsData.every(aCardData => defenderCardsData.some(bCardData => bCardData.id === aCardData.id))
                     && attack.time === time;
             });
         };

@@ -7,7 +7,7 @@
                     <img :src="getCardImageUrl({commonId: requirement.cardCommonId})"/>
                 </div>
                 <div class="counterAttack-headerText">
-                    {{ attacks.length > 0 ? 'Select card to counter' : 'No attack to counter' }}
+                    {{ attacks.length > 0 ? 'Select attack to counter' : 'No attack to counter' }}
                 </div>
             </div>
             <template v-if="attacks.length > 0">
@@ -18,9 +18,21 @@
                         class="counterAttack-attack"
                         @click="attackClick(attack)"
                     >
-                        <img :src="getCardImageUrl(attack.attackerCardData)" class="counterAttack-card">
+                        <img
+                            :src="getCardImageUrl(attack.attackerCardData)"
+                            class="counterAttack-card"
+                        >
                         <span>⟶</span>
-                        <img :src="getCardImageUrl(attack.defenderCardData)" class="counterAttack-card">
+                        <div
+                            :class="['counterAttack-attackDefenderCards', {'counterAttack-attackDefenderCards--many': attack.defenderCardsData.length > 1}]"
+                        >
+                            <img
+                                v-for="defenderCardData in attack.defenderCardsData"
+                                :key="defenderCardData.id"
+                                :src="getCardImageUrl(defenderCardData)"
+                                class="counterAttack-card"
+                            >
+                        </div>
                     </div>
                 </div>
                 <div class="counterAttack-cancelWrapper">

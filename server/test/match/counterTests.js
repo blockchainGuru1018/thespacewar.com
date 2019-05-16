@@ -15,6 +15,7 @@ const {
 const StateAsserter = require('../testUtils/StateAsserter.js');
 const Luck = require('../../../shared/card/Luck.js');
 const TargetMissed = require('../../../shared/card/TargetMissed.js');
+const MoveCardEvent = require("../../../shared/event/MoveCardEvent.js");
 
 module.exports = {
     'counter:': {
@@ -105,7 +106,7 @@ module.exports = {
                     count: 1,
                     attacks: [{
                         attackerCardData: sinon.match({ id: 'C3A' }),
-                        defenderCardData: sinon.match({ id: 'C1A' }),
+                        defenderCardsData: [sinon.match({ id: 'C1A' })],
                         time: sinon.match.any
                     }]
                 });
@@ -154,6 +155,57 @@ module.exports = {
                     countered: true,
                     attackerCardId: 'C3A',
                     defenderCardId: 'C1A'
+                });
+            }
+        },
+        'when put down Target Missed and select station attack to counter': {
+            async setUp() {
+                this.match.restoreFromState(createState({
+                    currentPlayer: 'P2A',
+                    turn: 2,
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'wait',
+                            stationCards: [
+                                { place: 'draw', card: createCard({ id: 'S1A' }) },
+                                { place: 'draw', card: createCard({ id: 'S2A' }) }
+                            ],
+                            cardsOnHand: [
+                                createCard({ id: 'C2A', type: 'event', commonId: TargetMissed.CommonId, cost: 0 })
+                            ]
+                        },
+                        'P2A': {
+                            phase: 'attack',
+                            cardsInOpponentZone: [
+                                createCard({ id: 'C3A', type: 'spaceShip', attack: 2 })
+                            ],
+                            events: [
+                                MoveCardEvent({ turn: 1, cardId: 'C3A' })
+                            ]
+                        }
+                    }
+                }));
+                this.match.attackStationCard('P2A', { attackerCardId: 'C3A', targetStationCardIds: ['S1A', 'S2A'] });
+                this.match.toggleControlOfTurn('P1A');
+                this.match.putDownCard('P1A', { cardId: 'C2A', location: 'zone' });
+
+                this.match.counterAttack('P1A', { attackIndex: 0 });
+            },
+            'should have moved card used to counter into the discard pile'() {
+                this.firstPlayerAsserter.send('P1A');
+                this.firstPlayerAsserter.hasDiscardedCard('C2A');
+            },
+            'should have station card unflipped'() {
+                this.firstPlayerAsserter.send('P1A');
+                this.firstPlayerAsserter.hasUnflippedStationCard('S1A');
+                this.firstPlayerAsserter.hasUnflippedStationCard('S2A');
+            },
+            'should have countered attack'() {
+                this.firstPlayerAsserter.send('P2A');
+                this.secondPlayerAsserter.countMatchingAttacks(1, {
+                    countered: true,
+                    attackerCardId: 'C3A',
+                    targetStationCardIds: ['S1A', 'S2A']
                 });
             }
         }

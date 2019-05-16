@@ -24,23 +24,27 @@ module.exports = function ({
         restoreFromState(restoredState);
     }
 
-    function saveStateForAttackData(stateBeforeAttack, attackData) {
-        stateAttackDataTuples.push([stateBeforeAttack, attackData, Date.now()]);
+    function saveStateForAttackData(stateBeforeAttack, { attackerCardId, defenderCardIds, time }) {
+        stateAttackDataTuples.push([
+            stateBeforeAttack,
+            { attackerCardId, defenderCardIds, time },
+            Date.now()
+        ]);
     }
 
-    function revertStateToBeforeAttack({ attackerCardData, defenderCardData, time }) {
-        const storedStateJson = findStateFromDataKey({ attackerCardData, defenderCardData, time });
+    function revertStateToBeforeAttack({ attackerCardData, defenderCardsData, time }) {
+        const storedStateJson = findStateFromDataKey({ attackerCardData, defenderCardsData, time });
         const restoredState = stateSerializer.parse(storedStateJson);
         restoreFromState(restoredState);
     }
 
-    function findStateFromDataKey({ attackerCardData, defenderCardData, time }) {
+    function findStateFromDataKey({ attackerCardData, defenderCardsData, time }) {
         const stateDataTuple = stateAttackDataTuples
             .slice()
             .reverse()
             .find(([_, dataKey]) => {
                 return dataKey.attackerCardId === attackerCardData.id
-                    && dataKey.defenderCardId === defenderCardData.id
+                    && dataKey.defenderCardIds.every(cardId => defenderCardsData.some(cardData => cardData.id === cardId))
                     && dataKey.time === time;
             });
         return stateDataTuple[0];

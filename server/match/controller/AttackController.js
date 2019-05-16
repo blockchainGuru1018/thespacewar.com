@@ -46,7 +46,7 @@ function AttackController(deps) {
         });
         const event = playerStateService.registerAttack({ attackerCardId, defenderCardId });
 
-        const attackData = { attackerCardId, defenderCardId, time: event.created };
+        const attackData = { attackerCardId, defenderCardIds: [defenderCardId], time: event.created };
         stateMemento.saveStateForAttackData(stateBeforeAttack, attackData);
 
         if (defenderCard.destroyed) {
@@ -74,6 +74,7 @@ function AttackController(deps) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
 
         validateIfCanProgressCounterAttackRequirementByCount(1, playerId);
+
         const playerRequirementService = playerServiceFactory.playerRequirementService(playerId);
         const counterAttackRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'counterAttack' });
         const attackData = counterAttackRequirement.attacks[attackIndex];
@@ -87,10 +88,16 @@ function AttackController(deps) {
 
         const opponentId = matchService.getOpponentId(playerId);
         const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
-        opponentStateService.registerAttackCountered({
+        const options = {
             attackerCardId: attackData.attackerCardData.id,
-            defenderCardId: attackData.defenderCardData.id
-        });
+        };
+        if (attackData.targetedStation) {
+            options.targetStationCardIds = attackData.defenderCardsData.map(cardData => cardData.id);
+        }
+        else {
+            options.defenderCardId = attackData.defenderCardsData[0].id;
+        }
+        opponentStateService.registerAttackCountered(options);
 
         const cardUsedToCounterId = counterAttackRequirement.cardId;
         playerStateService.useToCounter(cardUsedToCounterId);
@@ -135,6 +142,40 @@ function AttackController(deps) {
     }
 
     function onAttackStationCards(playerId, { attackerCardId, targetStationCardIds }) {
+        validateAttackOnStationCards(playerId, { attackerCardId, targetStationCardIds });
+
+        let opponentId = matchComService.getOpponentId(playerId);
+        let opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
+        const targetStationCards = opponentStateService.getStationCards().filter(s => targetStationCardIds.includes(s.card.id));
+        if (!targetStationCards.length) return;
+
+        const stateBeforeAttack = stateSerializer.serialize(matchService.getState());
+
+        for (let targetCardId of targetStationCardIds) {
+            opponentStateService.flipStationCard(targetCardId);
+        }
+
+        let playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const event = playerStateService.registerAttack({ attackerCardId, targetStationCardIds });
+
+        const attackData = { attackerCardId, defenderCardIds: targetStationCardIds, time: event.created };
+        stateMemento.saveStateForAttackData(stateBeforeAttack, attackData);
+
+        const attackerCardData = playerStateService.findCard(attackerCardId);
+        const attackerCard = cardFactory.createCardForPlayer(attackerCardData, playerId);
+        if (attackerCard.type === 'missile') {
+            playerStateService.removeCard(attackerCardId);
+            playerStateService.discardCard(attackerCardData);
+        }
+
+        const gameOver = opponentStateService.getStationCards().filter(s => !s.flipped) === 0
+            || playerStateService.getStationCards().filter(s => !s.flipped).length === 0;
+        if (gameOver) {
+            matchService.endMatch();
+        }
+    }
+
+    function validateAttackOnStationCards(playerId, { attackerCardId, targetStationCardIds }) {
         let cannotAttackStationCards = playerServiceProvider.byTypeAndId(PlayerServiceProvider.TYPE.canThePlayer, playerId).attackStationCards();
         if (!cannotAttackStationCards) throw new CheatError('Cannot attack station cards');
 
@@ -160,25 +201,8 @@ function AttackController(deps) {
         }
 
         const targetStationCards = opponentStationCards.filter(s => targetStationCardIds.includes(s.card.id));
-        if (!targetStationCards.length) return;
         if (targetStationCards.some(c => c.flipped)) {
             throw new CheatError('Cannot attack a flipped station card');
-        }
-
-        for (let targetCardId of targetStationCardIds) {
-            opponentStateService.flipStationCard(targetCardId);
-        }
-
-        playerStateService.registerAttack({ attackerCardId, targetStationCardIds });
-        if (attackerCard.type === 'missile') {
-            playerStateService.removeCard(attackerCardId);
-            playerStateService.discardCard(attackerCardData);
-        }
-
-        const gameOver = opponentStateService.getStationCards().filter(s => !s.flipped) === 0
-            || playerStateService.getStationCards().filter(s => !s.flipped).length === 0;
-        if (gameOver) {
-            matchService.endMatch();
         }
     }
 

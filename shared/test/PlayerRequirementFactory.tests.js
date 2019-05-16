@@ -47,7 +47,7 @@ module.exports = testCase('PlayerRequirementFactory', {
         assert.match(requirement.attacks[0], {
             time: attackEventTime,
             attackerCardData: { id: 'C3A' },
-            defenderCardData: { id: 'C2A' }
+            defenderCardsData: [{ id: 'C2A' }]
         });
     }
 });

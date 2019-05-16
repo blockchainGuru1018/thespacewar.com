@@ -25,11 +25,22 @@ function CounterAttackRequirementFactory({
     function attacks() {
         const attackEvents = queryAttacks.canBeCountered();
         return attackEvents.map(event => {
-            return {
+            const attack = {
                 attackerCardData: opponentStateService.findCardFromZonesAndDiscardPile(event.attackerCardId),
-                defenderCardData: playerStateService.findCardFromZonesAndDiscardPile(event.defenderCardId),
                 time: event.created
             };
+
+            if (event.defenderCardId) {
+                attack.defenderCardsData = [playerStateService.findCardFromZonesAndDiscardPile(event.defenderCardId)];
+            }
+            else {
+                attack.targetedStation = true;
+                attack.defenderCardsData = event.targetStationCardIds.map(cardId => {
+                    return playerStateService.findCardFromAnySource(cardId);
+                });
+            }
+
+            return attack;
         });
     }
 }

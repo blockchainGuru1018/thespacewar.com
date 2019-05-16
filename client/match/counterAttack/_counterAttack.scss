@@ -75,6 +75,16 @@
   }
 }
 
+.counterAttack-attackDefenderCards {
+  display: flex;
+  flex-wrap: wrap;
+
+  &--many .counterAttack-card {
+    width: $cardWidth / 6;
+    height: $cardHeight / 6;
+  }
+}
+
 .counterAttack-cancelAloneWrapper {
   display: flex;
   flex-direction: column;
