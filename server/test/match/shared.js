@@ -6,14 +6,15 @@ let {
     refute,
     defaults
 } = require('bocha');
-let FakeDeck = require('../testUtils/FakeDeck.js');
-let FakeDeckFactory = require('../testUtils/FakeDeckFactory.js');
-let FakeCardDataAssembler = require('../testUtils/FakeCardDataAssembler.js');
+const FakeDeck = require('../testUtils/FakeDeck.js');
+const FakeDeckFactory = require('../testUtils/FakeDeckFactory.js');
+const FakeCardDataAssembler = require('../testUtils/FakeCardDataAssembler.js');
 const createCard = FakeCardDataAssembler.createCard;
 const createDeckFromCards = FakeDeckFactory.createDeckFromCards;
-let CardDataAssembler = require('../../../shared/CardDataAssembler.js');
-let CardInfoRepository = require('../../../shared/CardInfoRepository.js');
-let Match = require('../../match/Match.js');
+const CardDataAssembler = require('../../../shared/CardDataAssembler.js');
+const CardInfoRepository = require('../../../shared/CardInfoRepository.js');
+const GameConfig = require('../../../shared/match/GameConfig.js');
+const Match = require('../../match/Match.js');
 
 module.exports = {
     bocha: {
@@ -151,6 +152,10 @@ function createMatch(deps = {}, testCardData = []) {
     const rawCardDataRepository = { get: () => testCardData };
     const cardDataAssembler = CardDataAssembler({ rawCardDataRepository });
     defaults(deps, {
+        gameConfig: GameConfig({
+            amountOfCardsInStartHand: 6,
+            overworkIsActive: true
+        }),
         deckFactory,
         cardInfoRepository: CardInfoRepository({ cardDataAssembler }),
         rawCardDataRepository,

@@ -1,4 +1,3 @@
-const playerStateServiceFactory = require("../test/fakeFactories/playerStateServiceFactory.js");
 const PlayerPhase = require('./PlayerPhase.js');
 const MatchService = require('./MatchService.js');
 const TurnControl = require('./TurnControl.js');
@@ -14,10 +13,12 @@ const PlayerRequirementService = require('./requirement/PlayerRequirementService
 const PlayerRequirementFactory = require('./requirement/PlayerRequirementFactory.js');
 const PlayerRuleService = require('./PlayerRuleService.js');
 const QueryAttacks = require('./requirement/QueryAttacks.js');
+const OverworkEventFactory = require('./overwork/event/OverworkEventFactory.js');
+const PlayerOverwork = require('./overwork/PlayerOverwork.js');
 
 const ServiceTypes = PlayerServiceProvider.TYPE;
 
-module.exports = function ({ state, logger, endMatch, actionPointsCalculator }) {
+module.exports = function ({ state, logger, endMatch, gameConfig, actionPointsCalculator }) {
 
     const objectsByNameAndPlayerId = {};
 
@@ -26,6 +27,8 @@ module.exports = function ({ state, logger, endMatch, actionPointsCalculator }) 
     const api = {
         _cache: objectsByNameAndPlayerId,
         playerServiceProvider: () => playerServiceProvider,
+        playerOverwork: cached(playerOverwork),
+        overworkEventFactory: cached(overworkEventFactory),
         cardFactory: cached(cardFactory),
         matchService: cached(matchService),
         queryAttacks: cached(queryAttacks),
@@ -84,10 +87,28 @@ module.exports = function ({ state, logger, endMatch, actionPointsCalculator }) 
 
     return api;
 
+    function playerOverwork(playerId) {
+        return PlayerOverwork({
+            matchService: api.matchService(),
+            overworkEventFactory: api.overworkEventFactory(playerId),
+            playerStateService: api.playerStateService(playerId),
+            playerRequirementService: api.playerRequirementService(playerId),
+            opponentRequirementService: api.playerRequirementService(api.opponentId(playerId)),
+            gameConfig
+        });
+    }
+
+    function overworkEventFactory(playerId) {
+        return OverworkEventFactory({
+            matchService: api.matchService(),
+            playerStateService: api.playerStateService(playerId)
+        });
+    }
+
     function playerPhase(playerId) {
         return new PlayerPhase({
             matchService: api.matchService(),
-            playerStateService: playerStateServiceFactory.fromIdAndState(playerId, state)
+            playerStateService: api.playerStateService(playerId)
         });
     }
 
@@ -194,7 +215,7 @@ module.exports = function ({ state, logger, endMatch, actionPointsCalculator }) 
     }
 
     function matchService() {
-        let matchService = new MatchService({ endMatch });
+        let matchService = new MatchService({ endMatch, gameConfig });
         matchService.setState(state);
         return matchService;
     }

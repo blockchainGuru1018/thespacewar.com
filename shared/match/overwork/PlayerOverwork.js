@@ -6,7 +6,8 @@ module.exports = function ({
     playerStateService,
     playerRequirementService,
     opponentRequirementService,
-    overworkEventFactory
+    overworkEventFactory,
+    gameConfig
 }) {
 
     return {
@@ -15,6 +16,8 @@ module.exports = function ({
     };
 
     function canIssueOverwork() {
+        if (!gameConfig.overworkIsActive()) throw new CheatError('Overwork is disabled');
+
         return canIssueOverworkFn({
             playerId: playerStateService.getPlayerId(),
             currentPlayer: matchService.getCurrentPlayer(),

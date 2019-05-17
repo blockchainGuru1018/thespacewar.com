@@ -1,3 +1,4 @@
+const gameConfig = require('../shared/gameConfig.json');
 const serverRelativePath = '../server/server.js';
 let server = require(serverRelativePath);
 
@@ -5,7 +6,7 @@ init();
 
 function init() {
     server.onRestart(onServerRestart);
-    server.start({ inDevelopment: true });
+    server.start({ inDevelopment: true, gameConfig });
 }
 
 async function onServerRestart() {

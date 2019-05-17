@@ -13,6 +13,7 @@ const CheatController = require('./cheat/CheatController.js');
 const GitController = require('./git/GitController.js');
 const AssetsController = require('./assets/AssetsController.js');
 const ServerRawCardDataRepository = require('./card/ServerRawCardDataRepository.js');
+const GameConfig = require('../shared/match/GameConfig.js');
 const Logger = require('./utils/Logger.js');
 const http = require('http');
 const { port } = require('./settings.json');
@@ -46,7 +47,7 @@ function startServer(config) {
         server = http.createServer(app);
         socketMaster = SocketIO(server);
 
-        await run({ closeServer, exitProcess });
+        await run({ config, closeServer, exitProcess });
 
         console.log(` - 2/2 Setting up server at port ${port}`)
         server.listen(port, () => {
@@ -72,7 +73,7 @@ async function restartServer() {
     restartListener();
 }
 
-async function run({ closeServer, exitProcess }) {
+async function run({ config, closeServer, exitProcess }) {
     const rawCardDataRepository = ServerRawCardDataRepository();
 
     console.log(' - 1/2 Fetching fresh game data');
@@ -83,7 +84,8 @@ async function run({ closeServer, exitProcess }) {
     const userRepository = UserRepository({ socketMaster });
     const deps = {
         logger,
-        rawCardDataRepository
+        rawCardDataRepository,
+        gameConfig: GameConfig.fromConfig(config.gameConfig)
     };
     deps.socketRepository = socketRepository;
     deps.userRepository = userRepository;

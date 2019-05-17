@@ -3,7 +3,7 @@ const StateMemento = require('./StateMemento.js');
 const CardDataAssembler = require('../CardDataAssembler.js');
 const StateSerializer = require('../../server/match/StateSerializer.js');
 
-module.exports = function ({ state, endMatch, rawCardDataRepository }) {
+module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig }) {
 
     const objectsByNameAndPlayerId = {};
 
@@ -35,7 +35,7 @@ module.exports = function ({ state, endMatch, rawCardDataRepository }) {
     }
 
     function matchService() {
-        let matchService = new MatchService({ endMatch });
+        let matchService = new MatchService({ gameConfig, endMatch });
         matchService.setState(state);
         return matchService;
     }

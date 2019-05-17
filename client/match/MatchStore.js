@@ -12,6 +12,7 @@ const PlayerRequirementService = require('../../shared/match/requirement/PlayerR
 const CardFactory = require('../../shared/card/CardFactory.js');
 const ClientPlayerServiceProvider = require('./ClientPlayerServiceProvider.js');
 const EventFactory = require('../../shared/event/EventFactory.js');
+const GameConfig = require('../../shared/match/GameConfig.js');
 const mapFromClientToServerState = require('./mapFromClientToServerState.js');
 const localGameDataFacade = require('../utils/localGameDataFacade.js');
 const whatIsNextPhase = require('../../shared/match/whatIsNextPhase.js');
@@ -50,6 +51,7 @@ module.exports = function (deps) {
         namespaced: true,
         name: 'match',
         state: {
+            gameConfigEntity: null,
             turn: 1,
             currentPlayer: null,
             phase: '',
@@ -127,7 +129,9 @@ module.exports = function (deps) {
             playerCardsInDeckCount,
             opponentCardsInDeckCount,
             opponentRetreated,
-            playerRetreated
+            playerRetreated,
+            overworkEnabled,
+            gameConfig
         },
         mutations: {
             setPlayerStationCards,
@@ -367,7 +371,7 @@ module.exports = function (deps) {
         return new PlayerRequirementService({ //TODO Separate the read requirements part from the add requirement part?
             playerStateService: getters.playerStateService,
             opponentStateService: getters.opponentStateService,
-            requirementFactory: {}
+            requirementFactory: ClientLimitNotice
         });
     }
 
@@ -459,6 +463,18 @@ module.exports = function (deps) {
 
     function opponentRetreated(state) {
         return state.ended && state.retreatedPlayerId !== state.ownUser.id;
+    }
+
+    function overworkEnabled(state, getters) {
+        return getters.gameConfig.overworkIsActive();
+    }
+
+    function gameConfig(state) {
+        if (!state.gameConfigEntity) {
+            return GameConfig.notLoaded();
+        }
+
+        return GameConfig(state.gameConfigEntity);
     }
 
     function attackerCard(state, getters) {

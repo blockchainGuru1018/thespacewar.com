@@ -95,6 +95,7 @@ class MatchComService {
                 retreatedPlayerId: this._matchService.getRetreatedPlayerId(),
                 currentPlayer: this._matchService.getCurrentPlayer(),
                 turn: this._matchService.getTurn(),
+                gameConfigEntity: this._matchService.getGameConfigEntity(),
                 ...preparePlayerState(playerState),
                 ...prepareOpponentState(opponentState)
             };

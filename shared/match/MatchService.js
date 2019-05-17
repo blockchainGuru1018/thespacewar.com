@@ -1,9 +1,11 @@
 class MatchService {
 
     constructor({
+        gameConfig,
         endMatch = () => {}
     } = {}) {
         this._state = {};
+        this._gameConfig = gameConfig;
         this.endMatch = endMatch;
     }
 
@@ -102,6 +104,10 @@ class MatchService {
 
     getGameStartTime() {
         return this._state.gameStartTime;
+    }
+
+    getGameConfigEntity() {
+        return this._gameConfig.entity();
     }
 }
 

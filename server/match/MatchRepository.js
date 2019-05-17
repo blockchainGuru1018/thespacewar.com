@@ -8,7 +8,8 @@ module.exports = function ({
     logger,
     userRepository,
     socketRepository,
-    rawCardDataRepository
+    rawCardDataRepository,
+    gameConfig
 }) {
 
     const cardDataAssembler = CardDataAssembler({ rawCardDataRepository });
@@ -50,6 +51,7 @@ module.exports = function ({
             cardInfoRepository,
             logger,
             rawCardDataRepository,
+            gameConfig,
             endMatch: () => end(matchId)
         });
         matchById.set(matchId, match);

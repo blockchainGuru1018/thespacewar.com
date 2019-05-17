@@ -22,14 +22,15 @@ const { PHASES, TEMPORARY_START_PHASE } = require('../../shared/phases.js');
 const ServiceTypes = PlayerServiceProvider.TYPE;
 
 module.exports = function ({
-    logger,
+    players,
+    matchId,
     deckFactory,
     cardInfoRepository,
-    matchId,
-    players,
-    actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository }),
+    logger,
+    rawCardDataRepository,
     endMatch,
-    rawCardDataRepository
+    gameConfig,
+    actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository })
 }) {
 
     const playerOrder = players.map(p => p.id);
@@ -52,13 +53,15 @@ module.exports = function ({
     const gameServiceFactory = GameServiceFactory({
         state,
         endMatch,
-        rawCardDataRepository
+        rawCardDataRepository,
+        gameConfig
     });
     const playerServiceFactory = PlayerServiceFactory({
         state,
         endMatch,
         actionPointsCalculator,
-        logger
+        logger,
+        gameConfig
     });
     const matchService = playerServiceFactory.matchService();
     const playerServiceProvider = playerServiceFactory.playerServiceProvider();
@@ -76,7 +79,7 @@ module.exports = function ({
         playerServiceProvider,
         matchComService
     });
-    const playerOverworkFactory = PlayerOverworkFactory({ matchService, playerServiceProvider });
+    const playerOverworkFactory = PlayerOverworkFactory({ playerServiceFactory });
 
     const stateSerializer = gameServiceFactory.stateSerializer();
     const controllerDeps = {
