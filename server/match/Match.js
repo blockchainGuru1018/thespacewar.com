@@ -159,15 +159,16 @@ module.exports = function ({
         const gameHasAlreadyStarted = state.playersReady >= players.length;
         if (gameHasAlreadyStarted) {
             players.forEach(player => repairPotentiallyInconsistentState(player.id));
+            matchComService.emitCurrentStateToPlayers();
         }
         else {
             state.playersReady++;
             if (state.playersReady === players.length) {
                 players.forEach((player, index) => startGameForPlayer(player.id, { isFirstPlayer: index === 0 }));
+                matchComService.emitCurrentStateToPlayers();
             }
         }
 
-        matchComService.emitCurrentStateToPlayers();
     }
 
     function refresh(playerId) {
@@ -223,15 +224,15 @@ module.exports = function ({
     }
 
     function startGameForPlayer(playerId, { isFirstPlayer }) {
-        let playerDeck = state.deckByPlayerId[playerId];
-        let stationCards = [
+        const playerDeck = state.deckByPlayerId[playerId];
+        const stationCards = [
             { card: playerDeck.drawSingle(), place: 'draw' },
             { card: playerDeck.drawSingle(), place: 'action' },
             { card: playerDeck.drawSingle(), place: 'action' },
             { card: playerDeck.drawSingle(), place: 'action' },
             { card: playerDeck.drawSingle(), place: 'handSize' }
         ];
-        let cardsOnHand = playerDeck.draw(7);
+        const cardsOnHand = playerDeck.draw(gameConfig.amountOfCardsInStartHand());
         state.playerStateById[playerId] = {
             cardsOnHand,
             stationCards,
