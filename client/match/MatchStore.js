@@ -47,6 +47,8 @@ module.exports = function (deps) {
 
     const deckSize = getDeckSize(rawCardDataRepository);
 
+    let gameHasBegun = false;
+
     return {
         namespaced: true,
         name: 'match',
@@ -160,7 +162,6 @@ module.exports = function (deps) {
 
             // local TODO many of these have since the start become only remote calls (barely changing any local state)
             stateChanged,
-            beginGame,
             placeCardInZone,
             opponentDiscardedDurationCard,
             opponentMovedCard,
@@ -619,6 +620,11 @@ module.exports = function (deps) {
                 dispatch('card/cancelCurrentUserInteraction', null, { root: true });
             }
         }
+
+        if (!gameHasBegun) {
+            gameHasBegun = true;
+            dispatch('persistOngoingMatch');
+        }
     }
 
     function nextPlayer({ state }, { turn, currentPlayer }) {
@@ -632,29 +638,6 @@ module.exports = function (deps) {
         else {
             state.phase = PHASES.wait;
         }
-    }
-
-    async function beginGame({ state, commit, dispatch }, beginningState) {
-        const {
-            stationCards,
-            cardsOnHand,
-            opponentCardCount,
-            opponentStationCards,
-            phase,
-            currentPlayer,
-            playerOrder,
-            opponentPhase
-        } = beginningState;
-        commit('setPlayerStationCards', stationCards);
-        commit('setPlayerCardsOnHand', cardsOnHand);
-        commit('setOpponentStationCards', opponentStationCards);
-        state.opponentCardCount = opponentCardCount;
-        state.phase = phase;
-        state.currentPlayer = currentPlayer;
-        state.playerOrder = playerOrder;
-        state.opponentPhase = opponentPhase;
-
-        dispatch('persistOngoingMatch');
     }
 
     function goToNextPhase({ state, getters }) {

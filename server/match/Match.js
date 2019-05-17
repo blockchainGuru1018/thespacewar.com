@@ -159,15 +159,15 @@ module.exports = function ({
         const gameHasAlreadyStarted = state.playersReady >= players.length;
         if (gameHasAlreadyStarted) {
             players.forEach(player => repairPotentiallyInconsistentState(player.id));
-            matchComService.emitCurrentStateToPlayers();
         }
         else {
             state.playersReady++;
             if (state.playersReady === players.length) {
                 players.forEach((player, index) => startGameForPlayer(player.id, { isFirstPlayer: index === 0 }));
-                players.forEach(player => emitBeginGameForPlayer(player.id));
             }
         }
+
+        matchComService.emitCurrentStateToPlayers();
     }
 
     function refresh(playerId) {
@@ -245,32 +245,6 @@ module.exports = function ({
         };
     }
 
-    function emitBeginGameForPlayer(playerId) {
-        const playerStateService = playerServiceProvider.byTypeAndId(ServiceTypes.state, playerId);
-        const stationCards = playerStateService.getStationCards();
-
-        const opponentId = matchService.getOpponentId(playerId);
-        const opponentStateService = playerServiceProvider.byTypeAndId(ServiceTypes.state, opponentId);
-        const opponentStationCards = opponentStateService.getStationCards();
-
-        emitToPlayer(playerId, 'beginGame', {
-            stationCards: prepareStationCardsForClient(stationCards),
-            cardsOnHand: playerStateService.getCardsOnHand(),
-            phase: playerStateService.getPhase(),
-            currentPlayer: state.currentPlayer,
-            playerOrder: state.playerOrder,
-            opponentPhase: opponentStateService.getPhase(),
-            opponentCardCount: getOpponentCardCount(playerId),
-            opponentStationCards: prepareStationCardsForClient(opponentStationCards)
-        });
-    }
-
-    function emitToPlayer(playerId, action, value) {
-        const players = matchComService.getPlayers();
-        const player = players.find(p => p.id === playerId);
-        player.connection.emit('match', { matchId, action, value });
-    }
-
     function toClientModel() {
         const players = matchComService.getPlayers();
         return {
@@ -281,37 +255,6 @@ module.exports = function ({
 
     function hasEnded() {
         return state.ended;
-    }
-
-    function getOpponentCardCount(playerId) {
-        const opponentId = getOpponentId(playerId);
-        return getPlayerCardCount(opponentId);
-    }
-
-    function getPlayerCardCount(playerId) {
-        const playerState = getPlayerState(playerId);
-        return playerState.cardsOnHand.length;
-    }
-
-    function prepareStationCardsForClient(stationCards) {
-        return stationCards.map(prepareStationCardForClient);
-    }
-
-    function prepareStationCardForClient(stationCard) {
-        let model = {
-            id: stationCard.card.id,
-            place: stationCard.place
-        };
-        if (stationCard.flipped) {
-            model.flipped = true;
-            model.card = stationCard.card;
-        }
-        return model;
-    }
-
-    function getOpponentId(playerId) {
-        const players = matchComService.getPlayers();
-        return players.find(p => p.id !== playerId).id;
     }
 };
 
