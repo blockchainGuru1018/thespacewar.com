@@ -1,4 +1,4 @@
-const DEFAULT_CONFIG = require('../gameConfig.json');
+const DEFAULT_CONFIG = require('../gameConfig.js');
 
 GameConfig.notLoaded = () => ({
     entity: notLoaded,

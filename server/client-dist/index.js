@@ -86,6 +86,17 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "../config.json":
+/*!**********************!*\
+  !*** ../config.json ***!
+  \**********************/
+/*! exports provided: AMOUNT_OF_CARDS_IN_START_HAND, OVERWORK_IS_ACTIVE, MAXIMUM_STATION_CARDS, STATION_CARDS_AT_START, default */
+/***/ (function(module) {
+
+eval("module.exports = {\"AMOUNT_OF_CARDS_IN_START_HAND\":7,\"OVERWORK_IS_ACTIVE\":true,\"MAXIMUM_STATION_CARDS\":999,\"STATION_CARDS_AT_START\":4};\n\n//# sourceURL=webpack:///../config.json?");
+
+/***/ }),
+
 /***/ "../server/deck/Deck.js":
 /*!******************************!*\
   !*** ../server/deck/Deck.js ***!
@@ -757,14 +768,14 @@ eval("function TurnControlEvent({\n  type\n}) {\n  return {\n    type,\n    crea
 
 /***/ }),
 
-/***/ "../shared/gameConfig.json":
-/*!*********************************!*\
-  !*** ../shared/gameConfig.json ***!
-  \*********************************/
-/*! exports provided: AMOUNT_OF_CARDS_IN_START_HAND, OVERWORK_IS_ACTIVE, MAXIMUM_STATION_CARDS, STATION_CARDS_AT_START, default */
-/***/ (function(module) {
+/***/ "../shared/gameConfig.js":
+/*!*******************************!*\
+  !*** ../shared/gameConfig.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
-eval("module.exports = {\"AMOUNT_OF_CARDS_IN_START_HAND\":7,\"OVERWORK_IS_ACTIVE\":true,\"MAXIMUM_STATION_CARDS\":999,\"STATION_CARDS_AT_START\":4};\n\n//# sourceURL=webpack:///../shared/gameConfig.json?");
+eval("const config = __webpack_require__(/*! ../config.json */ \"../config.json\");\n\nmodule.exports = config;\n\n//# sourceURL=webpack:///../shared/gameConfig.js?");
 
 /***/ }),
 
@@ -797,7 +808,7 @@ eval("const Neutralization = __webpack_require__(/*! ../card/Neutralization.js *
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("const DEFAULT_CONFIG = __webpack_require__(/*! ../gameConfig.json */ \"../shared/gameConfig.json\");\n\nGameConfig.notLoaded = () => ({\n  entity: notLoaded,\n  amountOfCardsInStartHand: notLoaded,\n  overworkIsActive: notLoaded\n});\n\nGameConfig.fromConfig = ({\n  AMOUNT_OF_CARDS_IN_START_HAND,\n  OVERWORK_IS_ACTIVE\n} = {}) => {\n  return GameConfig({\n    amountOfCardsInStartHand: AMOUNT_OF_CARDS_IN_START_HAND,\n    overworkIsActive: OVERWORK_IS_ACTIVE\n  });\n};\n\nfunction GameConfig({\n  amountOfCardsInStartHand = DEFAULT_CONFIG.AMOUNT_OF_CARDS_IN_START_HAND,\n  overworkIsActive = DEFAULT_CONFIG.OVERWORK_IS_ACTIVE\n}) {\n  return {\n    entity: () => ({\n      amountOfCardsInStartHand,\n      overworkIsActive\n    }),\n    amountOfCardsInStartHand: () => amountOfCardsInStartHand,\n    overworkIsActive: () => overworkIsActive\n  };\n}\n\nfunction notLoaded() {\n  throw new Error('Trying to access the game config before it has finished downloading');\n}\n\nmodule.exports = GameConfig;\n\n//# sourceURL=webpack:///../shared/match/GameConfig.js?");
+eval("const DEFAULT_CONFIG = __webpack_require__(/*! ../gameConfig.js */ \"../shared/gameConfig.js\");\n\nGameConfig.notLoaded = () => ({\n  entity: notLoaded,\n  amountOfCardsInStartHand: notLoaded,\n  overworkIsActive: notLoaded\n});\n\nGameConfig.fromConfig = ({\n  AMOUNT_OF_CARDS_IN_START_HAND,\n  OVERWORK_IS_ACTIVE\n} = {}) => {\n  return GameConfig({\n    amountOfCardsInStartHand: AMOUNT_OF_CARDS_IN_START_HAND,\n    overworkIsActive: OVERWORK_IS_ACTIVE\n  });\n};\n\nfunction GameConfig({\n  amountOfCardsInStartHand = DEFAULT_CONFIG.AMOUNT_OF_CARDS_IN_START_HAND,\n  overworkIsActive = DEFAULT_CONFIG.OVERWORK_IS_ACTIVE\n}) {\n  return {\n    entity: () => ({\n      amountOfCardsInStartHand,\n      overworkIsActive\n    }),\n    amountOfCardsInStartHand: () => amountOfCardsInStartHand,\n    overworkIsActive: () => overworkIsActive\n  };\n}\n\nfunction notLoaded() {\n  throw new Error('Trying to access the game config before it has finished downloading');\n}\n\nmodule.exports = GameConfig;\n\n//# sourceURL=webpack:///../shared/match/GameConfig.js?");
 
 /***/ }),
 

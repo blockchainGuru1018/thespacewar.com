@@ -1,4 +1,4 @@
-const gameConfig = require('../shared/gameConfig.json');
+const gameConfig = require('../shared/gameConfig.js');
 const server = require('../server/server.js');
 
 server.start({

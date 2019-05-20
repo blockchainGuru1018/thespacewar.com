@@ -1,4 +1,4 @@
-const gameConfig = require('../shared/gameConfig.json');
+const gameConfig = require('../shared/gameConfig.js');
 const serverRelativePath = '../server/server.js';
 let server = require(serverRelativePath);
 
