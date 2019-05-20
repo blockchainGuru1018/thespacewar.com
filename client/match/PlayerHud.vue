@@ -1,5 +1,8 @@
 <template>
-    <div class="field-playerHud">
+    <div
+        v-if="!choosingStartingPlayer"
+        class="field-playerHud"
+    >
         <portal
             v-if="!gameHasEnded"
             to="player-top"
@@ -7,7 +10,8 @@
             <div class="nextPhaseButtonContainer">
                 <button
                     v-if="phase === 'start'"
-                    class="playerHud-phaseText nextPhaseButton" @click="startClick"
+                    class="playerHud-phaseText nextPhaseButton"
+                    @click="startClick"
                 >
                     Start
                 </button>
@@ -28,9 +32,15 @@
                 </template>
             </div>
 
-            <div class="guideTextContainer">
+            <div class="guideTextContainer" v-if="!choosingStartingPlayer">
                 <div
-                    v-if="waitingForOtherPlayerToFinishRequirements"
+                    v-if="waitingForOtherPlayerToSelectStartingPlayer"
+                    class="guideText-waitingForOtherPlayer guideText guideText--small"
+                >
+                    Waiting for other player...
+                </div>
+                <div
+                    v-else-if="waitingForOtherPlayerToFinishRequirements"
                     class="guideText-waitingForOtherPlayer guideText guideText--small"
                 >
                     <template v-if="waitingRequirement.reason === 'emptyDeck'">
@@ -48,7 +58,7 @@
                         :style="cardStyle"
                         class="guideTextCardWrapper card" @click="showEnlargedCard"
                     >
-                        <div class="enlargeIcon enlargeIcon--small"/>
+                        <div class="enlargeIcon enlargeIcon--small" />
                     </div>
                     {{ actionGuideText }}
                 </div>
@@ -61,7 +71,7 @@
                         :style="cardStyle"
                         @click="showEnlargedCard"
                     >
-                        <div class="enlargeIcon enlargeIcon--small"/>
+                        <div class="enlargeIcon enlargeIcon--small" />
                     </div>
                     {{ requirementGuideText }}
                 </div>
@@ -196,7 +206,7 @@
             v-if="enlargedCardVisible"
             to="match"
         >
-            <div class="dimOverlay"/>
+            <div class="dimOverlay" />
             <div
                 v-click-outside="hideEnlargedCard" class="card card--enlarged"
                 :style="cardStyle"
@@ -206,19 +216,19 @@
             v-if="firstRequirementIsFindCard"
             to="match"
         >
-            <FindCard/>
+            <FindCard />
         </portal>
         <portal
             v-if="firstRequirementIsCounterCard"
             to="match"
         >
-            <CounterCard/>
+            <CounterCard />
         </portal>
         <portal
             v-if="firstRequirementIsCounterAttack"
             to="match"
         >
-            <CounterAttack/>
+            <CounterAttack />
         </portal>
     </div>
 </template>
@@ -242,6 +252,7 @@
         },
         computed: {
             ...mapState([
+                'mode',
                 'currentPlayer',
                 'phase',
                 'ownUser',
@@ -292,6 +303,12 @@
                 'opponentHasControlOfPlayersTurn',
                 'playerHasControlOfOpponentsTurn'
             ]),
+            choosingStartingPlayer() {
+                return this.mode === 'chooseStartingPlayer' && this.isOwnTurn;
+            },
+            waitingForOtherPlayerToSelectStartingPlayer() {
+                return this.mode === 'chooseStartingPlayer' && !this.isOwnTurn;
+            },
             showActionPoints() {
                 return ['action'].includes(this.phase);
             },

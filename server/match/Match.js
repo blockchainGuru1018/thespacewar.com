@@ -17,6 +17,7 @@ const PlayerServiceProvider = require('../../shared/match/PlayerServiceProvider.
 const PlayerOverworkFactory = require('../../shared/match/overwork/PlayerOverworkFactory.js');
 const PlayerServiceFactory = require('../../shared/match/PlayerServiceFactory.js');
 const GameServiceFactory = require('../../shared/match/GameServiceFactory.js');
+const MatchMode = require('../../shared/match/MatchMode.js');
 const { PHASES, TEMPORARY_START_PHASE } = require('../../shared/phases.js');
 
 const ServiceTypes = PlayerServiceProvider.TYPE;
@@ -41,6 +42,7 @@ module.exports = function ({
     ];
 
     const state = {
+        mode: MatchMode.firstMode,
         gameStartTime: Date.now(),
         turn: 1,
         currentPlayer: firstPlayerId,
@@ -130,6 +132,7 @@ module.exports = function ({
         updatePlayer: matchComService.updatePlayer.bind(matchComService)
     };
     const api = {
+        selectPlayerToStart: nextPhaseController.selectPlayerToStart,
         nextPhase: nextPhaseController.onNextPhase,
         toggleControlOfTurn: nextPhaseController.onToggleControlOfTurn,
         putDownCard: putDownCardController.onPutDownCard,

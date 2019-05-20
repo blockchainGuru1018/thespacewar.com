@@ -16,6 +16,7 @@ const GameConfig = require('../../shared/match/GameConfig.js');
 const mapFromClientToServerState = require('./mapFromClientToServerState.js');
 const localGameDataFacade = require('../utils/localGameDataFacade.js');
 const whatIsNextPhase = require('../../shared/match/whatIsNextPhase.js');
+const MatchMode = require('../../shared/match/MatchMode.js');
 const {
     COMMON_PHASE_ORDER,
     PHASES
@@ -53,6 +54,7 @@ module.exports = function (deps) {
         namespaced: true,
         name: 'match',
         state: {
+            mode: MatchMode.firstMode,
             gameConfigEntity: null,
             turn: 1,
             currentPlayer: null,

@@ -108,7 +108,8 @@ module.exports = function ({ state, logger, endMatch, gameConfig, actionPointsCa
     function playerPhase(playerId) {
         return new PlayerPhase({
             matchService: api.matchService(),
-            playerStateService: api.playerStateService(playerId)
+            playerStateService: api.playerStateService(playerId),
+            opponentStateService: api.playerStateService(api.opponentId(playerId))
         });
     }
 

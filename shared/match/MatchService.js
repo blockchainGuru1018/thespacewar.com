@@ -25,6 +25,10 @@ class MatchService {
         return this._state.currentPlayer;
     }
 
+    setCurrentPlayer(playerId) {
+        return this._state.currentPlayer = playerId;
+    }
+
     getPlayerOrder() {
         return this._state.playerOrder;
     }
@@ -108,6 +112,18 @@ class MatchService {
 
     getGameConfigEntity() {
         return this._gameConfig.entity();
+    }
+
+    mode() {
+        return this._state.mode;
+    }
+
+    startGame() {
+        this._state.mode = 'game';
+    }
+
+    setFirstPlayer(playerId) {
+        this._state.playerOrder = [playerId, this.getOpponentId(playerId)];
     }
 }
 

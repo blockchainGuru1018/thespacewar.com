@@ -10,12 +10,23 @@ function PutDownCardController(deps) {
         matchComService,
         cardFactory,
         playerServiceProvider,
+        playerServiceFactory
     } = deps;
 
     return {
+        selectPlayerToStart,
         onNextPhase,
         onToggleControlOfTurn
     };
+
+    function selectPlayerToStart(playerId, { playerToStartId }) {
+        const opponentPhase = playerServiceFactory.playerPhase(playerToStartId);
+        opponentPhase.selectToStart();
+
+        matchService.startGame();
+
+        matchComService.emitCurrentStateToPlayers();
+    }
 
     function onNextPhase(playerId) {
         if (playerId !== matchService.getCurrentPlayer()) {

@@ -8,7 +8,8 @@ const STORES = [
     require('./counterCard/CounterCardStore.js'),
     require('./counterAttack/CounterAttackStore.js'),
     require('./loadingIndicator/LoadingIndicatorStore.js'),
-    require('../expandedCard/ExpandedCardStore.js')
+    require('../expandedCard/ExpandedCardStore.js'),
+    require('./chooseStartingPlayer/ChooseStartingPlayerStore.js')
 ];
 const AI = require('./AI.js');
 const LOGGING_ENABLED = false;
