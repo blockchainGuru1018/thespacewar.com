@@ -1,15 +1,14 @@
-function StartGameController(deps) {
-
-    const {
-        matchService,
-        matchComService,
-        playerServiceProvider,
-        playerServiceFactory
-    } = deps;
+function StartGameController({
+    matchService,
+    matchComService,
+    playerServiceProvider,
+    playerServiceFactory
+}) {
 
     return {
         start,
         selectPlayerToStart,
+        selectStartingStationCard,
         repairPotentiallyInconsistentState //TODO Move this to its own class
     };
 
@@ -29,6 +28,20 @@ function StartGameController(deps) {
         }
     }
 
+    function selectPlayerToStart(playerId, { playerToStartId }) {
+        const startGame = playerServiceFactory.startGame(playerId);
+        startGame.selectPlayerToStart(playerToStartId);
+
+        matchComService.emitCurrentStateToPlayers();
+    }
+
+    function selectStartingStationCard(playerId, { cardId, location }) {
+        const startGame = playerServiceFactory.startGame(playerId);
+        startGame.selectStartingStationCard({ cardId, location });
+
+        matchComService.emitCurrentStateToPlayers();
+    }
+
     function repairPlayersPotentiallyInconsistentState(playerIds) {
         for (const playerId of playerIds) {
             repairPotentiallyInconsistentState(playerId);
@@ -40,21 +53,6 @@ function StartGameController(deps) {
             const playerStateService = playerServiceFactory.playerStateService(playerId);
             playerStateService.reset();
         }
-    }
-
-    function selectPlayerToStart(playerId, { playerToStartId }) {
-        const opponentPhase = playerServiceFactory.playerPhase(playerToStartId);
-        opponentPhase.selectToStart();
-
-        const playerOrder = matchService.getPlayerOrder();
-        for (const playerId of playerOrder) {
-            const playerStateService = playerServiceFactory.playerStateService(playerId);
-            playerStateService.startGame();
-        }
-
-        matchService.startGame();
-
-        matchComService.emitCurrentStateToPlayers();
     }
 
     function repairPotentiallyInconsistentState(playerId) {

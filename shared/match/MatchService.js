@@ -1,3 +1,5 @@
+const MatchMode = require('./MatchMode.js');
+
 class MatchService {
 
     constructor({
@@ -118,8 +120,12 @@ class MatchService {
         return this._state.mode;
     }
 
+    startSelectingStationCards() {
+        this._state.mode = MatchMode.selectStationCards;
+    }
+
     startGame() {
-        this._state.mode = 'game';
+        this._state.mode = MatchMode.game;
     }
 
     setFirstPlayer(playerId) {

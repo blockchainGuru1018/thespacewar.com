@@ -1,4 +1,3 @@
-const { PHASES } = require('./phases.js');
 const canIssueOverwork = require('../../shared/match/overwork/canIssueOverwork.js');
 
 module.exports = function (deps) {
@@ -60,7 +59,8 @@ module.exports = function (deps) {
         return opponentCardsInDeckCount <= 0;
     }
 
-    function canMoveCardsFromHand(state, getters) {
+    function canMoveCardsFromHand(state, getters, rootState, rootGetters) {
+        if (rootGetters['match/canThePlayer'].putDownMoreStartingStationCards()) return true;
         if (getters.waitingForOtherPlayerToFinishRequirements) return false;
 
         const hasActiveRequirement = !!getFrom('firstRequirement', 'requirement');
@@ -85,7 +85,9 @@ module.exports = function (deps) {
         return rootGetters['match/playerRuleService'].canPutDownCardsInHomeZone();
     }
 
-    function canPutDownStationCards(state, getters, rootState) {
+    function canPutDownStationCards(state, getters, rootState, rootGetters) {
+        if (rootGetters['match/canThePlayer'].putDownMoreStartingStationCards()) return true;
+
         if (getters.waitingForOtherPlayerToFinishRequirements) return false;
         const hasRequirement = !!getFrom('firstRequirement', 'requirement');
         if (hasRequirement) return false;

@@ -139,6 +139,7 @@ module.exports = function ({
         nextPhase: nextPhaseController.onNextPhase,
         toggleControlOfTurn: nextPhaseController.onToggleControlOfTurn,
         putDownCard: putDownCardController.onPutDownCard,
+        selectStartingStationCard: startGameController.selectStartingStationCard,
         counterCard: putDownCardController.counterCard,
         cancelCounterCard: putDownCardController.cancelCounterCard,
         drawCard: drawCardController.onDrawCard,

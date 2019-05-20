@@ -93,6 +93,7 @@ class MatchComService {
             const data = {
                 mode: this._matchService.mode(),
                 ended: this._matchService.hasGameEnded(),
+                playerOrder: this._matchService.getPlayerOrder(),
                 retreatedPlayerId: this._matchService.getRetreatedPlayerId(),
                 currentPlayer: this._matchService.getCurrentPlayer(),
                 turn: this._matchService.getTurn(),

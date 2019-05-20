@@ -47,29 +47,37 @@ class PlayerStateService {
         });
     }
 
-    startGame() {
+    readyForSelectingStationCards() {
         const isFirstPlayer = this.isFirstPlayer();
 
         const playerDeck = this.getDeck();
-        const stationCards = [
-            { card: playerDeck.drawSingle(), place: 'draw' },
-            { card: playerDeck.drawSingle(), place: 'action' },
-            { card: playerDeck.drawSingle(), place: 'action' },
-            { card: playerDeck.drawSingle(), place: 'action' },
-            { card: playerDeck.drawSingle(), place: 'handSize' }
-        ];
+        const stationCardsToPutDown = isFirstPlayer ? 5 : 6;
+        const secondPlayerHandicap = isFirstPlayer ? 0 : 1;
         const startingHandCount = this._gameConfig.amountOfCardsInStartHand();
-        const cardsOnHandCount = isFirstPlayer ? startingHandCount : startingHandCount + 1;
+        const cardsOnHandCount = startingHandCount + stationCardsToPutDown + secondPlayerHandicap;
         const cardsOnHand = playerDeck.draw(cardsOnHandCount);
-        this.update(state => {
-            state.cardsOnHand = cardsOnHand;
-            state.stationCards = stationCards;
-            state.phase = isFirstPlayer ? PHASES.start : 'wait';
+        this.update(playerState => {
+            playerState.cardsOnHand = cardsOnHand;
+            playerState.phase = isFirstPlayer ? PHASES.start : 'wait';
         });
     }
 
+    doneSelectingStationCards() {
+        const isFirstPlayer = this.isFirstPlayer();
+
+        this.update(playerState => {
+            playerState.phase = isFirstPlayer ? PHASES.start : 'wait';
+        });
+    }
+
+    selectStartingStationCard(cardId, location) {
+        const cardData = this.removeCardFromHand(cardId);
+        this.addStationCard(cardData, location, { startingStation: true });
+    }
+
     isFirstPlayer() {
-        return this._matchService.getPlayerOrder()[0] === this.getPlayerId();
+        const playerOrder = this._matchService.getPlayerOrder();
+        return playerOrder[0] === this.getPlayerId();
     }
 
     getPlayerId() {
@@ -220,6 +228,10 @@ class PlayerStateService {
         return playerState.stationCards.filter(s => !s.flipped).length;
     }
 
+    allowedStartingStationCardCount() {
+        return this.isFirstPlayer() ? 5 : 6;
+    }
+
     hasFlippedStationCards() {
         const playerState = this.getPlayerState();
         return playerState.stationCards.filter(s => s.flipped).length > 0;
@@ -345,7 +357,7 @@ class PlayerStateService {
         });
     }
 
-    addStationCard(cardData, location, { putDownAsExtraStationCard = false } = {}) {
+    addStationCard(cardData, location, { startingStation = false, putDownAsExtraStationCard = false } = {}) {
         const stationLocation = location.split('-').pop();
         const stationCard = { place: stationLocation, card: cardData };
         this.update(playerState => {
@@ -357,7 +369,8 @@ class PlayerStateService {
             location,
             cardId: cardData.id,
             cardCommonId: cardData.commonId,
-            putDownAsExtraStationCard
+            putDownAsExtraStationCard,
+            startingStation
         }));
         return stationCard;
     }

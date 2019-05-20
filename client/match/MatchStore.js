@@ -93,12 +93,15 @@ module.exports = function (deps) {
             retreatedPlayerId: null
         },
         getters: {
+            isFirstPlayer,
+            selectingStartingStationCards,
             nextPhase,
             nextPhaseWithAction,
             cardsToDrawInDrawPhase,
             actionPointsFromStationCards,
             maxHandSize,
             amountOfCardsToDiscard,
+            startingStationCardsToPutDownCount,
             hasPutDownNonFreeCardThisTurn,
             actionPoints2,
             attackerCard,
@@ -186,6 +189,14 @@ module.exports = function (deps) {
         }
     };
 
+    function isFirstPlayer(state) {
+        return state.playerOrder[0] === state.ownUser.id;
+    }
+
+    function selectingStartingStationCards(state) {
+        return state.mode === MatchMode.selectStationCards;
+    }
+
     function nextPhase(state, getters) {
         let nextPhase = whatIsNextPhase({
             hasDurationCardInPlay: getters.playerStateService.hasDurationCardInPlay(),
@@ -241,6 +252,11 @@ module.exports = function (deps) {
 
     function amountOfCardsToDiscard(state, getters) {
         return Math.max(0, state.playerCardsOnHand.length - getters.maxHandSize);
+    }
+
+    function startingStationCardsToPutDownCount(state, getters) {
+        const totalAllowedCount = getters.playerStateService.allowedStartingStationCardCount();
+        return totalAllowedCount - getters.allPlayerStationCards.length;
     }
 
     function hasPutDownNonFreeCardThisTurn(state) {

@@ -441,7 +441,9 @@
                 'createCard',
                 'allPlayerStationCards',
                 'opponentCardsInDeckCount',
-                'playerCardsInDeckCount'
+                'playerCardsInDeckCount',
+                'canThePlayer',
+                'selectingStartingStationCards'
             ]),
             ...mapCardState([
                 'transientPlayerCardsInHomeZone',
@@ -502,6 +504,7 @@
                 if (this.showOnlyCardGhostsFor && !this.showOnlyCardGhostsFor.includes('playerStation')) return false;
 
                 return this.canPutDownMoreStationCards
+                    || this.canThePlayer.putDownMoreStartingStationCards()
                     || this.activeActionName === 'putDownCard';
             },
             opponentTopDiscardCard() {
@@ -542,6 +545,7 @@
                 showCardAction: 'showCardAction',
                 putDownCard: 'putDownCard',
                 putDownHoldingCard: 'putDownHoldingCard',
+                selectStartingStationCard: 'selectStartingStationCard',
                 cancelHoldingCard: 'cancelHoldingCard',
                 startHoldingCard: 'startHoldingCard',
                 discardHoldingCard: 'discardHoldingCard',
@@ -560,14 +564,24 @@
             cardGhostClick(location) {
                 if (!this.holdingCard) throw new Error('Should not be able to click on card ghost without holding a card');
 
-                if (this.activeActionName === 'putDownCard') {
-                    this.selectGhostForActiveAction(location);
-                }
-                else if (location === 'discard') {
-                    this.discardHoldingCard();
+                if (this.selectingStartingStationCards) {
+                    if (!location.startsWith('station')) {
+                        throw new Error('Should not be bale to put down card anywhere put in station when selecting starting station cards');
+                    }
+                    else {
+                        this.selectStartingStationCard({ cardId: this.holdingCard.id, location });
+                    }
                 }
                 else {
-                    this.putDownHoldingCard({ location });
+                    if (this.activeActionName === 'putDownCard') {
+                        this.selectGhostForActiveAction(location);
+                    }
+                    else if (location === 'discard') {
+                        this.discardHoldingCard();
+                    }
+                    else {
+                        this.putDownHoldingCard({ location });
+                    }
                 }
             },
             emptyClick() {

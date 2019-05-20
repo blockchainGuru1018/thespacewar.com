@@ -33,6 +33,9 @@
             </div>
 
             <div class="guideTextContainer" v-if="!choosingStartingPlayer">
+                <div v-if="selectingStartingStationCards" class="guideText guideText--small">
+                    {{ selectingStartingStationCardsText }}
+                </div>
                 <div
                     v-if="waitingForOtherPlayerToSelectStartingPlayer"
                     class="guideText-waitingForOtherPlayer guideText guideText--small"
@@ -242,6 +245,7 @@
     const { mapGetters: mapPermissionGetters } = Vuex.createNamespacedHelpers('permission');
     const cardHelpers = Vuex.createNamespacedHelpers('card');
     const requirementHelpers = Vuex.createNamespacedHelpers('requirement');
+    const MatchMode = require('../../shared/match/MatchMode.js');
     const { PHASES } = require('./phases.js');
 
     module.exports = {
@@ -273,7 +277,8 @@
                 'allPlayerStationCards',
                 'playerRetreated',
                 'opponentRetreated',
-                'turnControl'
+                'turnControl',
+                'startingStationCardsToPutDownCount'
             ]),
             ...requirementHelpers.mapGetters([
                 'waitingForOtherPlayerToFinishRequirements',
@@ -304,16 +309,28 @@
                 'playerHasControlOfOpponentsTurn'
             ]),
             gameOn() {
-                return this.mode === 'game';
+                return this.mode === MatchMode.game;
             },
             modeIsChooseStartingPlayer() {
-                return this.mode === 'chooseStartingPlayer';
+                return this.mode === MatchMode.chooseStartingPlayer;
             },
             choosingStartingPlayer() {
-                return this.mode === 'chooseStartingPlayer' && this.isOwnTurn;
+                return this.mode === MatchMode.chooseStartingPlayer && this.isOwnTurn;
             },
             waitingForOtherPlayerToSelectStartingPlayer() {
-                return this.mode === 'chooseStartingPlayer' && !this.isOwnTurn;
+                return this.mode === MatchMode.chooseStartingPlayer && !this.isOwnTurn;
+            },
+            selectingStartingStationCards() {
+                return this.mode === MatchMode.selectStationCards;
+            },
+            selectingStartingStationCardsText() {
+                const count = this.startingStationCardsToPutDownCount;
+                if (count === 0) {
+                    return 'Waiting for other player...';
+                }
+                else {
+                    return `Select ${count} station ${pluralize('card', count)}`;
+                }
             },
             showActionPoints() {
                 return ['action'].includes(this.phase);

@@ -1,5 +1,6 @@
 module.exports = function (clientState) {
     const state = {
+        mode: clientState.mode,
         turn: clientState.turn,
         playerOrder: clientState.playerOrder,
         currentPlayer: clientState.currentPlayer,
