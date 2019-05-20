@@ -48,7 +48,10 @@
             </div>
             <div class="field">
                 <div class="field-opponent">
-                    <div class="field-opponentStation opponentStationCards field-station field-section">
+                    <div
+                        class="field-opponentStation opponentStationCards field-station field-section"
+                        :style="opponentStationStyle"
+                    >
                         <div class="field-stationRow">
                             <station-card
                                 :is-holding-card="!!holdingCard"
@@ -528,6 +531,11 @@
             },
             playerVisibleHandSizeStationCards() {
                 return this.playerStation.handSizeCards.filter(s => !this.hiddenStationCardIds.some(id => id === s.id));
+            },
+            opponentStationStyle() {
+                return {
+                    opacity: this.selectingStartingStationCards ? 0 : 1
+                };
             }
         },
         methods: {
