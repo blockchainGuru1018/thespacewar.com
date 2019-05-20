@@ -5,6 +5,7 @@ const MoveCardEvent = require('../event/MoveCardEvent.js');
 const PutDownCardEvent = require('../PutDownCardEvent.js');
 const RepairCardEvent = require('../event/RepairCardEvent.js');
 const RemoveStationCardEvent = require('../event/RemoveStationCardEvent.js');
+const { PHASES } = require('../phases.js');
 
 class PlayerStateService {
 
@@ -15,7 +16,8 @@ class PlayerStateService {
         actionPointsCalculator,
         logger,
         cardFactory,
-        eventFactory
+        eventFactory,
+        gameConfig
     }) {
         this._playerId = playerId;
         this._matchService = matchService;
@@ -23,8 +25,51 @@ class PlayerStateService {
         this._actionPointsCalculator = actionPointsCalculator;
         this._cardFactory = cardFactory;
         this._eventFactory = eventFactory;
+        this._gameConfig = gameConfig;
         this._logger = logger || { log: (...args) => console.log('PlayerStateService logger: ', ...args) };
         this._stateTouchListeners = [];
+    }
+
+    reset() {
+        const playerId = this.getPlayerId();
+        this._matchService.readyPlayer(playerId);
+
+        this.update(playerState => {
+            playerState.cardsOnHand = [];
+            playerState.stationCards = [];
+            playerState.cardsInZone = [];
+            playerState.cardsInOpponentZone = [];
+            playerState.discardedCards = [];
+            playerState.phase = PHASES.start;
+            playerState.actionPoints = 0;
+            playerState.events = [];
+            playerState.requirements = [];
+        });
+    }
+
+    startGame() {
+        const isFirstPlayer = this.isFirstPlayer();
+
+        const playerDeck = this.getDeck();
+        const stationCards = [
+            { card: playerDeck.drawSingle(), place: 'draw' },
+            { card: playerDeck.drawSingle(), place: 'action' },
+            { card: playerDeck.drawSingle(), place: 'action' },
+            { card: playerDeck.drawSingle(), place: 'action' },
+            { card: playerDeck.drawSingle(), place: 'handSize' }
+        ];
+        const startingHandCount = this._gameConfig.amountOfCardsInStartHand();
+        const cardsOnHandCount = isFirstPlayer ? startingHandCount : startingHandCount + 1;
+        const cardsOnHand = playerDeck.draw(cardsOnHandCount);
+        this.update(state => {
+            state.cardsOnHand = cardsOnHand;
+            state.stationCards = stationCards;
+            state.phase = isFirstPlayer ? PHASES.start : 'wait';
+        });
+    }
+
+    isFirstPlayer() {
+        return this._matchService.getPlayerOrder()[0] === this.getPlayerId();
     }
 
     getPlayerId() {

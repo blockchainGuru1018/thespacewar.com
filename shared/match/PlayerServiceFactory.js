@@ -195,6 +195,7 @@ module.exports = function ({ state, logger, endMatch, gameConfig, actionPointsCa
     function playerStateService(playerId) {
         return new PlayerStateService({
             playerId,
+            gameConfig,
             queryEvents: api.queryEvents(playerId),
             matchService: api.matchService(),
             cardFactory: api.cardFactory(),

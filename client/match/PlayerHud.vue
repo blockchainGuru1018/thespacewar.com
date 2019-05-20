@@ -7,7 +7,7 @@
             v-if="!gameHasEnded"
             to="player-top"
         >
-            <div class="nextPhaseButtonContainer">
+            <div class="nextPhaseButtonContainer" v-if="!modeIsChooseStartingPlayer">
                 <button
                     v-if="phase === 'start'"
                     class="playerHud-phaseText nextPhaseButton"
@@ -303,6 +303,12 @@
                 'opponentHasControlOfPlayersTurn',
                 'playerHasControlOfOpponentsTurn'
             ]),
+            gameOn() {
+                return this.mode === 'game';
+            },
+            modeIsChooseStartingPlayer() {
+                return this.mode === 'chooseStartingPlayer';
+            },
             choosingStartingPlayer() {
                 return this.mode === 'chooseStartingPlayer' && this.isOwnTurn;
             },
@@ -316,12 +322,18 @@
                 return `${this.actionPoints2} action ${pluralize('point', this.actionPoints2)} remaining`;
             },
             gameHasEnded() {
+                if (!this.gameOn) return false;
+
                 return this.hasWonGame || this.hasLostGame;
             },
             hasWonGame() {
+                if (!this.gameOn) return false;
+
                 return this.opponentRetreated || this.allOpponentStationCards.filter(s => !s.flipped).length === 0;
             },
             hasLostGame() {
+                if (!this.gameOn) return false;
+
                 return this.playerRetreated || this.allPlayerStationCards.filter(s => !s.flipped).length === 0;
             },
             PHASES() {

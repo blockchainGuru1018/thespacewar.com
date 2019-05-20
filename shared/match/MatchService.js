@@ -125,6 +125,19 @@ class MatchService {
     setFirstPlayer(playerId) {
         this._state.playerOrder = [playerId, this.getOpponentId(playerId)];
     }
+
+    allPlayersReady() {
+        return this._state.playersReady >= this._state.playerOrder.length;
+    }
+
+    readyPlayer(playerId) {
+        this._state.playersReady++;
+        this._state.playerStateById[playerId] = {};
+    }
+
+    getPlayerIds() {
+        return [...this._state.playerOrder];
+    }
 }
 
 module.exports = MatchService;

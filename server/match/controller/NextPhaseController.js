@@ -3,30 +3,19 @@ const { PHASES } = require('../../../shared/phases.js');
 const whatIsNextPhase = require('../../../shared/match/whatIsNextPhase.js');
 const PlayerServiceProvider = require('../../../shared/match/PlayerServiceProvider.js');
 
-function PutDownCardController(deps) {
+function NextPhaseCardController(deps) {
 
     const {
         matchService,
         matchComService,
         cardFactory,
-        playerServiceProvider,
-        playerServiceFactory
+        playerServiceProvider
     } = deps;
 
     return {
-        selectPlayerToStart,
         onNextPhase,
         onToggleControlOfTurn
     };
-
-    function selectPlayerToStart(playerId, { playerToStartId }) {
-        const opponentPhase = playerServiceFactory.playerPhase(playerToStartId);
-        opponentPhase.selectToStart();
-
-        matchService.startGame();
-
-        matchComService.emitCurrentStateToPlayers();
-    }
 
     function onNextPhase(playerId) {
         if (playerId !== matchService.getCurrentPlayer()) {
@@ -209,4 +198,4 @@ function withKey(key) {
     return card => !!card[key]
 }
 
-module.exports = PutDownCardController;
+module.exports = NextPhaseCardController;
