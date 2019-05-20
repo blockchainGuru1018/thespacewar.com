@@ -764,7 +764,7 @@ eval("function TurnControlEvent({\n  type\n}) {\n  return {\n    type,\n    crea
 /*! exports provided: AMOUNT_OF_CARDS_IN_START_HAND, OVERWORK_IS_ACTIVE, MAXIMUM_STATION_CARDS, STATION_CARDS_AT_START, default */
 /***/ (function(module) {
 
-eval("module.exports = {\"AMOUNT_OF_CARDS_IN_START_HAND\":3,\"OVERWORK_IS_ACTIVE\":true,\"MAXIMUM_STATION_CARDS\":999,\"STATION_CARDS_AT_START\":4};\n\n//# sourceURL=webpack:///../shared/gameConfig.json?");
+eval("module.exports = {\"AMOUNT_OF_CARDS_IN_START_HAND\":7,\"OVERWORK_IS_ACTIVE\":true,\"MAXIMUM_STATION_CARDS\":999,\"STATION_CARDS_AT_START\":4};\n\n//# sourceURL=webpack:///../shared/gameConfig.json?");
 
 /***/ }),
 

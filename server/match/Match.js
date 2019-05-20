@@ -33,12 +33,17 @@ module.exports = function ({
     actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository })
 }) {
 
-    const playerOrder = players.map(p => p.id);
+    const playerIds = players.map(p => p.id);
+    const firstPlayerId = randomItem(playerIds);
+    const playerOrder = [
+        firstPlayerId,
+        playerIds.find(id => id !== firstPlayerId)
+    ];
 
     const state = {
         gameStartTime: Date.now(),
         turn: 1,
-        currentPlayer: players[0].id,
+        currentPlayer: firstPlayerId,
         playerOrder,
         playersReady: 0,
         ended: false,
@@ -155,16 +160,16 @@ module.exports = function ({
     };
 
     function start() {
-        const players = matchComService.getPlayers();
-        const gameHasAlreadyStarted = state.playersReady >= players.length;
+        const playerOrder = matchService.getPlayerOrder();
+        const gameHasAlreadyStarted = state.playersReady >= playerOrder.length;
         if (gameHasAlreadyStarted) {
-            players.forEach(player => repairPotentiallyInconsistentState(player.id));
+            playerOrder.forEach(playerId => repairPotentiallyInconsistentState(playerId));
             matchComService.emitCurrentStateToPlayers();
         }
         else {
             state.playersReady++;
-            if (state.playersReady === players.length) {
-                players.forEach((player, index) => startGameForPlayer(player.id, { isFirstPlayer: index === 0 }));
+            if (state.playersReady === playerOrder.length) {
+                playerOrder.forEach((playerId, index) => startGameForPlayer(playerId, { isFirstPlayer: index === 0 }));
                 matchComService.emitCurrentStateToPlayers();
             }
         }
@@ -315,4 +320,8 @@ function PlayerCommand(Command, deps) {
         });
         return command(...args);
     };
+}
+
+function randomItem(collection) {
+    return collection[Math.round(Math.random() * (collection.length - 1))];
 }
