@@ -81,7 +81,7 @@ class CanThePlayer {
         const extraFreeStationCards = this._queryEvents.countFreeExtraStationCardsGrantedOnTurn(currentTurn);
         const totalAllowedStationCards = extraFreeStationCards + ALLOWED_STATION_CARDS_EACH_TURN;
 
-        const putDownStationCards = this._queryEvents.countNonPaidExtraStationCardsPutDownOnTurn(currentTurn);
+        const putDownStationCards = this._queryEvents.countRegularStationCardsPutDownOnTurn(currentTurn);
         return putDownStationCards < totalAllowedStationCards;
     }
 

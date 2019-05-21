@@ -104,7 +104,7 @@ class QueryEvents {
         });
     }
 
-    countNonPaidExtraStationCardsPutDownOnTurn(turn) {
+    countRegularStationCardsPutDownOnTurn(turn) {
         return this._eventRepository
             .getAll()
             .filter(e => {
@@ -112,6 +112,7 @@ class QueryEvents {
                     && e.type === 'putDownCard'
                     && e.location.startsWith('station')
                     && !e.putDownAsExtraStationCard
+                    && !e.startingStation
             })
             .length;
     }
