@@ -26,7 +26,10 @@ function GameConfig({
 }
 
 function notLoaded() {
-    throw new Error('Trying to access the game config before it has finished downloading');
+    return {
+        amountOfCardsInStartHand: 0,
+        overworkIsActive: false
+    };
 }
 
 module.exports = GameConfig;

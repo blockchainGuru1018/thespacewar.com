@@ -16,6 +16,7 @@ const GameConfig = require('../../shared/match/GameConfig.js');
 const mapFromClientToServerState = require('./mapFromClientToServerState.js');
 const localGameDataFacade = require('../utils/localGameDataFacade.js');
 const whatIsNextPhase = require('../../shared/match/whatIsNextPhase.js');
+const MatchMode = require('../../shared/match/MatchMode.js');
 const {
     COMMON_PHASE_ORDER,
     PHASES
@@ -53,6 +54,7 @@ module.exports = function (deps) {
         namespaced: true,
         name: 'match',
         state: {
+            mode: MatchMode.firstMode,
             gameConfigEntity: null,
             turn: 1,
             currentPlayer: null,
@@ -91,12 +93,15 @@ module.exports = function (deps) {
             retreatedPlayerId: null
         },
         getters: {
+            isFirstPlayer,
+            selectingStartingStationCards,
             nextPhase,
             nextPhaseWithAction,
             cardsToDrawInDrawPhase,
             actionPointsFromStationCards,
             maxHandSize,
             amountOfCardsToDiscard,
+            startingStationCardsToPutDownCount,
             hasPutDownNonFreeCardThisTurn,
             actionPoints2,
             attackerCard,
@@ -184,6 +189,14 @@ module.exports = function (deps) {
         }
     };
 
+    function isFirstPlayer(state) {
+        return state.playerOrder[0] === state.ownUser.id;
+    }
+
+    function selectingStartingStationCards(state) {
+        return state.mode === MatchMode.selectStationCards;
+    }
+
     function nextPhase(state, getters) {
         let nextPhase = whatIsNextPhase({
             hasDurationCardInPlay: getters.playerStateService.hasDurationCardInPlay(),
@@ -239,6 +252,11 @@ module.exports = function (deps) {
 
     function amountOfCardsToDiscard(state, getters) {
         return Math.max(0, state.playerCardsOnHand.length - getters.maxHandSize);
+    }
+
+    function startingStationCardsToPutDownCount(state, getters) {
+        const totalAllowedCount = getters.playerStateService.allowedStartingStationCardCount();
+        return totalAllowedCount - getters.allPlayerStationCards.length;
     }
 
     function hasPutDownNonFreeCardThisTurn(state) {

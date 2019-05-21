@@ -7,6 +7,7 @@ const MoveCardController = require('./controller/MoveCardController.js');
 const PutDownCardController = require('./controller/PutDownCardController.js');
 const DiscardCardController = require('./controller/DiscardCardController.js');
 const NextPhaseController = require('./controller/NextPhaseController.js');
+const StartGameController = require('./controller/StartGameController.js');
 const OverworkController = require('./controller/OverworkController.js');
 const TriggerDormantEffect = require('./command/TriggerDormantEffect.js');
 const CheatController = require('./controller/CheatController.js');
@@ -17,7 +18,8 @@ const PlayerServiceProvider = require('../../shared/match/PlayerServiceProvider.
 const PlayerOverworkFactory = require('../../shared/match/overwork/PlayerOverworkFactory.js');
 const PlayerServiceFactory = require('../../shared/match/PlayerServiceFactory.js');
 const GameServiceFactory = require('../../shared/match/GameServiceFactory.js');
-const { PHASES, TEMPORARY_START_PHASE } = require('../../shared/phases.js');
+const MatchMode = require('../../shared/match/MatchMode.js');
+const { PHASES } = require('../../shared/phases.js');
 
 const ServiceTypes = PlayerServiceProvider.TYPE;
 
@@ -33,12 +35,18 @@ module.exports = function ({
     actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository })
 }) {
 
-    const playerOrder = players.map(p => p.id);
+    const playerIds = players.map(p => p.id);
+    const firstPlayerId = randomItem(playerIds);
+    const playerOrder = [
+        firstPlayerId,
+        playerIds.find(id => id !== firstPlayerId)
+    ];
 
     const state = {
+        mode: MatchMode.firstMode,
         gameStartTime: Date.now(),
         turn: 1,
-        currentPlayer: players[0].id,
+        currentPlayer: firstPlayerId,
         playerOrder,
         playersReady: 0,
         ended: false,
@@ -95,7 +103,8 @@ module.exports = function ({
         playerOverworkFactory,
         stateSerializer,
         playerServiceFactory,
-        stateMemento: gameServiceFactory.stateMemento()
+        stateMemento: gameServiceFactory.stateMemento(),
+        gameConfig
     };
 
     const debugController = DebugController(controllerDeps);
@@ -107,6 +116,7 @@ module.exports = function ({
     const putDownCardController = PutDownCardController(controllerDeps);
     const discardCardController = DiscardCardController(controllerDeps);
     const nextPhaseController = NextPhaseController(controllerDeps);
+    const startGameController = StartGameController(controllerDeps);
     const overworkController = OverworkController(controllerDeps);
 
     const unwrappedApi = {
@@ -115,7 +125,7 @@ module.exports = function ({
         get players() {
             return matchComService.getPlayers();
         },
-        start,
+        start: startGameController.start,
         refresh,
         getOwnState: getPlayerState,
         restoreFromState,
@@ -125,9 +135,11 @@ module.exports = function ({
         updatePlayer: matchComService.updatePlayer.bind(matchComService)
     };
     const api = {
+        selectPlayerToStart: startGameController.selectPlayerToStart,
         nextPhase: nextPhaseController.onNextPhase,
         toggleControlOfTurn: nextPhaseController.onToggleControlOfTurn,
         putDownCard: putDownCardController.onPutDownCard,
+        selectStartingStationCard: startGameController.selectStartingStationCard,
         counterCard: putDownCardController.counterCard,
         cancelCounterCard: putDownCardController.cancelCounterCard,
         drawCard: drawCardController.onDrawCard,
@@ -154,25 +166,8 @@ module.exports = function ({
         ...wrapApi({ api, matchComService, stateChangeListener })
     };
 
-    function start() {
-        const players = matchComService.getPlayers();
-        const gameHasAlreadyStarted = state.playersReady >= players.length;
-        if (gameHasAlreadyStarted) {
-            players.forEach(player => repairPotentiallyInconsistentState(player.id));
-            matchComService.emitCurrentStateToPlayers();
-        }
-        else {
-            state.playersReady++;
-            if (state.playersReady === players.length) {
-                players.forEach((player, index) => startGameForPlayer(player.id, { isFirstPlayer: index === 0 }));
-                matchComService.emitCurrentStateToPlayers();
-            }
-        }
-
-    }
-
     function refresh(playerId) {
-        repairPotentiallyInconsistentState(playerId);
+        startGameController.repairPotentiallyInconsistentState(playerId);
         matchComService.emitCurrentStateToPlayers();
     }
 
@@ -215,37 +210,6 @@ module.exports = function ({
         state.playersReady = 2;
     }
 
-    function repairPotentiallyInconsistentState(playerId) {
-        const opponentId = matchService.getOpponentId(playerId);
-        repairRequirements({
-            playerRequirementService: playerServiceProvider.getRequirementServiceById(playerId),
-            opponentRequirementService: playerServiceProvider.getRequirementServiceById(opponentId)
-        });
-    }
-
-    function startGameForPlayer(playerId, { isFirstPlayer }) {
-        const playerDeck = state.deckByPlayerId[playerId];
-        const stationCards = [
-            { card: playerDeck.drawSingle(), place: 'draw' },
-            { card: playerDeck.drawSingle(), place: 'action' },
-            { card: playerDeck.drawSingle(), place: 'action' },
-            { card: playerDeck.drawSingle(), place: 'action' },
-            { card: playerDeck.drawSingle(), place: 'handSize' }
-        ];
-        const cardsOnHand = playerDeck.draw(gameConfig.amountOfCardsInStartHand());
-        state.playerStateById[playerId] = {
-            cardsOnHand,
-            stationCards,
-            cardsInZone: [],
-            cardsInOpponentZone: [],
-            discardedCards: [],
-            phase: isFirstPlayer ? TEMPORARY_START_PHASE : 'wait',
-            actionPoints: 0,
-            events: [],
-            requirements: []
-        };
-    }
-
     function toClientModel() {
         const players = matchComService.getPlayers();
         return {
@@ -283,22 +247,6 @@ function wrapApi({ api, matchComService, stateChangeListener }) {
     return wrappedApi;
 }
 
-function repairRequirements({ playerRequirementService, opponentRequirementService }) {
-    let playerWaitingRequirement = playerRequirementService.getFirstMatchingRequirement({ waiting: true });
-    let opponentWaitingRequirement = opponentRequirementService.getFirstMatchingRequirement({ waiting: true });
-    while (!!playerWaitingRequirement !== !!opponentWaitingRequirement) {
-        if (playerWaitingRequirement) {
-            playerRequirementService.removeFirstMatchingRequirement({ waiting: true });
-        }
-        else {
-            opponentRequirementService.removeFirstMatchingRequirement({ waiting: true });
-        }
-
-        playerWaitingRequirement = playerRequirementService.getFirstMatchingRequirement({ waiting: true });
-        opponentWaitingRequirement = opponentRequirementService.getFirstMatchingRequirement({ waiting: true });
-    }
-}
-
 function CheatError(reason) {
     const error = new Error(reason);
     error.message = reason;
@@ -315,4 +263,8 @@ function PlayerCommand(Command, deps) {
         });
         return command(...args);
     };
+}
+
+function randomItem(collection) {
+    return collection[Math.round(Math.random() * (collection.length - 1))];
 }

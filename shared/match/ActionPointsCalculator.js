@@ -21,7 +21,7 @@ module.exports = function ({ cardInfoRepository }) {
                     actionPoints -= cardCost;
                 }
 
-                if (event.location === 'station-action') {
+                if (event.location === 'station-action' && !event.startingStation) {
                     actionPoints -= 2;
                 }
             }

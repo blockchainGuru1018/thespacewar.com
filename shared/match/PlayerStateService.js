@@ -5,6 +5,7 @@ const MoveCardEvent = require('../event/MoveCardEvent.js');
 const PutDownCardEvent = require('../PutDownCardEvent.js');
 const RepairCardEvent = require('../event/RepairCardEvent.js');
 const RemoveStationCardEvent = require('../event/RemoveStationCardEvent.js');
+const { PHASES } = require('../phases.js');
 
 class PlayerStateService {
 
@@ -15,7 +16,8 @@ class PlayerStateService {
         actionPointsCalculator,
         logger,
         cardFactory,
-        eventFactory
+        eventFactory,
+        gameConfig
     }) {
         this._playerId = playerId;
         this._matchService = matchService;
@@ -23,8 +25,59 @@ class PlayerStateService {
         this._actionPointsCalculator = actionPointsCalculator;
         this._cardFactory = cardFactory;
         this._eventFactory = eventFactory;
+        this._gameConfig = gameConfig;
         this._logger = logger || { log: (...args) => console.log('PlayerStateService logger: ', ...args) };
         this._stateTouchListeners = [];
+    }
+
+    reset() {
+        const playerId = this.getPlayerId();
+        this._matchService.readyPlayer(playerId);
+
+        this.update(playerState => {
+            playerState.cardsOnHand = [];
+            playerState.stationCards = [];
+            playerState.cardsInZone = [];
+            playerState.cardsInOpponentZone = [];
+            playerState.discardedCards = [];
+            playerState.phase = PHASES.start;
+            playerState.actionPoints = 0;
+            playerState.events = [];
+            playerState.requirements = [];
+        });
+    }
+
+    readyForSelectingStationCards() {
+        const isFirstPlayer = this.isFirstPlayer();
+
+        const playerDeck = this.getDeck();
+        const stationCardsToPutDown = isFirstPlayer ? 5 : 6;
+        const secondPlayerHandicap = isFirstPlayer ? 0 : 1;
+        const startingHandCount = this._gameConfig.amountOfCardsInStartHand();
+        const cardsOnHandCount = startingHandCount + stationCardsToPutDown + secondPlayerHandicap;
+        const cardsOnHand = playerDeck.draw(cardsOnHandCount);
+        this.update(playerState => {
+            playerState.cardsOnHand = cardsOnHand;
+            playerState.phase = isFirstPlayer ? PHASES.start : 'wait';
+        });
+    }
+
+    doneSelectingStationCards() {
+        const isFirstPlayer = this.isFirstPlayer();
+
+        this.update(playerState => {
+            playerState.phase = isFirstPlayer ? PHASES.start : 'wait';
+        });
+    }
+
+    selectStartingStationCard(cardId, location) {
+        const cardData = this.removeCardFromHand(cardId);
+        this.addStationCard(cardData, location, { startingStation: true });
+    }
+
+    isFirstPlayer() {
+        const playerOrder = this._matchService.getPlayerOrder();
+        return playerOrder[0] === this.getPlayerId();
     }
 
     getPlayerId() {
@@ -175,6 +228,10 @@ class PlayerStateService {
         return playerState.stationCards.filter(s => !s.flipped).length;
     }
 
+    allowedStartingStationCardCount() {
+        return this.isFirstPlayer() ? 5 : 6;
+    }
+
     hasFlippedStationCards() {
         const playerState = this.getPlayerState();
         return playerState.stationCards.filter(s => s.flipped).length > 0;
@@ -300,7 +357,7 @@ class PlayerStateService {
         });
     }
 
-    addStationCard(cardData, location, { putDownAsExtraStationCard = false } = {}) {
+    addStationCard(cardData, location, { startingStation = false, putDownAsExtraStationCard = false } = {}) {
         const stationLocation = location.split('-').pop();
         const stationCard = { place: stationLocation, card: cardData };
         this.update(playerState => {
@@ -312,7 +369,8 @@ class PlayerStateService {
             location,
             cardId: cardData.id,
             cardCommonId: cardData.commonId,
-            putDownAsExtraStationCard
+            putDownAsExtraStationCard,
+            startingStation
         }));
         return stationCard;
     }

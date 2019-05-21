@@ -4,13 +4,13 @@
             :class="['match', `currentPhase--${phase}`]"
             ref="match"
         >
-            <div class="match-overlay"/>
+            <div class="match-overlay" />
             <div class="match-backgroundWrapper">
                 <img
                     class="match-background"
                     src="/image/space4.PNG"
                 >
-                <div class="match-backgroundOverlay"/>
+                <div class="match-backgroundOverlay" />
             </div>
             <div class="match-header">
                 <button
@@ -48,7 +48,10 @@
             </div>
             <div class="field">
                 <div class="field-opponent">
-                    <div class="field-opponentStation opponentStationCards field-station field-section">
+                    <div
+                        class="field-opponentStation opponentStationCards field-station field-section"
+                        :style="opponentStationStyle"
+                    >
                         <div class="field-stationRow">
                             <station-card
                                 :is-holding-card="!!holdingCard"
@@ -58,7 +61,7 @@
                                 v-for="card in opponentStation.drawCards"
                             />
                             <div class="stationCardWrapper stationCardWrapper--fullSize">
-                                <div class="card card-placeholder"/>
+                                <div class="card card-placeholder" />
                             </div>
                         </div>
                         <div class="field-stationRow">
@@ -70,7 +73,7 @@
                                 v-for="card in opponentStation.actionCards"
                             />
                             <div class="stationCardWrapper stationCardWrapper--fullSize">
-                                <div class="card card-placeholder"/>
+                                <div class="card card-placeholder" />
                             </div>
                         </div>
                         <div class="field-stationRow">
@@ -82,7 +85,7 @@
                                 v-for="card in opponentStation.handSizeCards"
                             />
                             <div class="stationCardWrapper stationCardWrapper--fullSize">
-                                <div class="card card-placeholder"/>
+                                <div class="card card-placeholder" />
                             </div>
                         </div>
                     </div>
@@ -137,7 +140,7 @@
                         </div>
 
                         <div class="field-drawPile">
-                            <portal-target name="opponentDrawPile"/>
+                            <portal-target name="opponentDrawPile" />
                             <div
                                 class="card card-faceDown"
                                 v-if="!opponentDeckIsEmpty"
@@ -184,7 +187,7 @@
                     </div>
                 </div>
                 <div class="field-dividerWrapper">
-                    <div class="field-divider"/>
+                    <div class="field-divider" />
                     <portal-target
                         class="field-dividerContent"
                         name="player-top"
@@ -194,7 +197,7 @@
                 <div class="field-player">
                     <div class="field-piles field-section">
                         <div class="field-drawPile">
-                            <portal-target name="playerDrawPile"/>
+                            <portal-target name="playerDrawPile" />
                             <div
                                 class="card card-faceDown"
                                 v-if="playerCardsInDeckCount > 0"
@@ -293,7 +296,7 @@
                     </div>
                     <div class="playerStationCards field-playerStation field-station field-section">
                         <div class="field-stationRow">
-                            <portal-target name="stationDrawRow"/>
+                            <portal-target name="stationDrawRow" />
                             <station-card
                                 :is-holding-card="!!holdingCard"
                                 :key="card.id"
@@ -314,7 +317,7 @@
                             </div>
                         </div>
                         <div class="field-stationRow">
-                            <portal-target name="stationActionRow"/>
+                            <portal-target name="stationActionRow" />
                             <station-card
                                 :is-holding-card="!!holdingCard"
                                 :key="card.id"
@@ -335,7 +338,7 @@
                             </div>
                         </div>
                         <div class="field-stationRow">
-                            <portal-target name="stationHandSizeRow"/>
+                            <portal-target name="stationHandSizeRow" />
                             <station-card
                                 :is-holding-card="!!holdingCard"
                                 :key="card.id"
@@ -360,7 +363,7 @@
                         :holding-card="holdingCard"
                         @cardClick="playerCardClick"
                     />
-                    <player-hud/>
+                    <PlayerHud />
                 </div>
             </div>
             <div
@@ -368,13 +371,14 @@
                 class="card holdingCard"
                 v-if="holdingCard"
             />
-            <card-choice-dialog/>
-            <loading-indicator/>
+            <card-choice-dialog />
+            <loading-indicator />
             <portal-target
                 multiple
                 name="match"
             />
-            <ExpandedCard/>
+            <ExpandedCard />
+            <ChooseStartingPlayer />
         </div>
     </div>
 </template>
@@ -402,6 +406,7 @@
     const PlayerCardsOnHand = resolveModule(require('./PlayerCardsOnHand.vue'));
     const CardGhost = resolveModule(require('./CardGhost.vue'));
     const ExpandedCard = resolveModule(require('../expandedCard/ExpandedCard.vue'));
+    const ChooseStartingPlayer = resolveModule(require('./chooseStartingPlayer/ChooseStartingPlayer.vue'));
     const { PHASES } = require('./phases.js');
 
     module.exports = {
@@ -439,7 +444,9 @@
                 'createCard',
                 'allPlayerStationCards',
                 'opponentCardsInDeckCount',
-                'playerCardsInDeckCount'
+                'playerCardsInDeckCount',
+                'canThePlayer',
+                'selectingStartingStationCards'
             ]),
             ...mapCardState([
                 'transientPlayerCardsInHomeZone',
@@ -500,6 +507,7 @@
                 if (this.showOnlyCardGhostsFor && !this.showOnlyCardGhostsFor.includes('playerStation')) return false;
 
                 return this.canPutDownMoreStationCards
+                    || this.canThePlayer.putDownMoreStartingStationCards()
                     || this.activeActionName === 'putDownCard';
             },
             opponentTopDiscardCard() {
@@ -523,6 +531,11 @@
             },
             playerVisibleHandSizeStationCards() {
                 return this.playerStation.handSizeCards.filter(s => !this.hiddenStationCardIds.some(id => id === s.id));
+            },
+            opponentStationStyle() {
+                return {
+                    opacity: this.selectingStartingStationCards ? 0 : 1
+                };
             }
         },
         methods: {
@@ -540,6 +553,7 @@
                 showCardAction: 'showCardAction',
                 putDownCard: 'putDownCard',
                 putDownHoldingCard: 'putDownHoldingCard',
+                selectStartingStationCard: 'selectStartingStationCard',
                 cancelHoldingCard: 'cancelHoldingCard',
                 startHoldingCard: 'startHoldingCard',
                 discardHoldingCard: 'discardHoldingCard',
@@ -558,14 +572,24 @@
             cardGhostClick(location) {
                 if (!this.holdingCard) throw new Error('Should not be able to click on card ghost without holding a card');
 
-                if (this.activeActionName === 'putDownCard') {
-                    this.selectGhostForActiveAction(location);
-                }
-                else if (location === 'discard') {
-                    this.discardHoldingCard();
+                if (this.selectingStartingStationCards) {
+                    if (!location.startsWith('station')) {
+                        throw new Error('Should not be bale to put down card anywhere put in station when selecting starting station cards');
+                    }
+                    else {
+                        this.selectStartingStationCard({ cardId: this.holdingCard.id, location });
+                    }
                 }
                 else {
-                    this.putDownHoldingCard({ location });
+                    if (this.activeActionName === 'putDownCard') {
+                        this.selectGhostForActiveAction(location);
+                    }
+                    else if (location === 'discard') {
+                        this.discardHoldingCard();
+                    }
+                    else {
+                        this.putDownHoldingCard({ location });
+                    }
                 }
             },
             emptyClick() {
@@ -647,7 +671,8 @@
             LoadingIndicator,
             PlayerCardsOnHand,
             CardGhost,
-            ExpandedCard
+            ExpandedCard,
+            ChooseStartingPlayer
         },
         directives: {
             longpress

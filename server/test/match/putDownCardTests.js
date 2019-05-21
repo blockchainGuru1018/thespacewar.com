@@ -60,34 +60,6 @@ module.exports = {
         assert.equals(error.message, 'Cannot afford card');
         assert.equals(error.type, 'CheatDetected');
     },
-    'when have just started game': {
-        async setUp() {
-            const stateChanged = stub();
-            const connection = FakeConnection({ stateChanged });
-            const player = createPlayer({ id: 'P1A', cost: 1, connection });
-            let match = createMatch({ players: [player] });
-            match.start();
-            match.start();
-
-            match.start();
-            this.state = stateChanged.firstCall.args[0];
-        },
-        'should have 7 cards on hand': function () {
-            assert.equals(this.state.cardsOnHand.length, 7);
-        },
-        'should have correct amount and position of station cards': function () {
-            assert.equals(this.state.stationCards.length, 5);
-            assert.equals(this.state.stationCards.filter(c => c.place === 'draw').length, 1);
-            assert.equals(this.state.stationCards.filter(c => c.place === 'action').length, 3);
-            assert.equals(this.state.stationCards.filter(c => c.place === 'handSize').length, 1);
-        },
-        'should be first players turn': function () {
-            assert.equals(this.state.currentPlayer, 'P1A');
-        },
-        'should be turn 1': function () {
-            assert.equals(this.state.turn, 1);
-        }
-    },
     'when can afford card:': {
         async setUp() {
             this.firstPlayerConnection = FakeConnection2(['stateChanged']);
@@ -144,28 +116,41 @@ module.exports = {
         }
     },
     'when put down station card and has already put down a station this turn should throw error': function () {
-        let match = createMatchAndGoToFirstActionPhase({
-            deckFactory: FakeDeckFactory.fromCards([
-                createCard({ id: 'C1A' }),
-                createCard({ id: 'C2A' })
-            ]),
+        const match = createMatch({
             players: [createPlayer({ id: 'P1A' })]
         });
+        match.restoreFromState(createState({
+            playerStateById: {
+                'P1A': {
+                    phase: 'action',
+                    cardsOnHand: [
+                        createCard({ id: 'C1A' }),
+                        createCard({ id: 'C2A' })
+                    ],
+                    stationCards: []
+                }
+            }
+        }));
         match.putDownCard('P1A', { location: 'station-draw', cardId: 'C1A' });
 
-        let error = catchError(() => match.putDownCard('P1A', { location: 'station-draw', cardId: 'C2A' }));
+        const error = catchError(() => match.putDownCard('P1A', { location: 'station-draw', cardId: 'C2A' }));
 
         assert.equals(error.message, 'Cannot put down more station cards this turn');
         assert.equals(error.type, 'CheatDetected');
     },
     'when put down card and is NOT your turn should throw error': function () {
-        let match = createMatchAndGoToFirstActionPhase({
-            deckFactory: FakeDeckFactory.fromCards([
-                createCard({ id: 'C1A' }),
-                createCard({ id: 'C2A' })
-            ]),
+        const match = createMatch({
             players: [createPlayer({ id: 'P1A' })]
         });
+        match.restoreFromState(createState({
+            currentPlayer: 'P1A',
+            playerStateById: {
+                'P2A': {
+                    phase: 'wait',
+                    cardsOnHand: [createCard({ id: 'C2A' })]
+                }
+            }
+        }));
 
         let error = catchError(() => match.putDownCard('P2A', { location: 'zone', cardId: 'C2A' }));
 

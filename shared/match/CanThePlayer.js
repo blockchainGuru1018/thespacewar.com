@@ -1,3 +1,4 @@
+const MatchMode = require('./MatchMode.js');
 const Neutralization = require('../card/Neutralization.js');
 
 const ALLOWED_STATION_CARDS_EACH_TURN = 1;
@@ -82,6 +83,13 @@ class CanThePlayer {
 
         const putDownStationCards = this._queryEvents.countNonPaidExtraStationCardsPutDownOnTurn(currentTurn);
         return putDownStationCards < totalAllowedStationCards;
+    }
+
+    putDownMoreStartingStationCards() {
+        const totalAllowedCount = this._playerStateService.allowedStartingStationCardCount();
+        const stationCardsLeftToSelect = totalAllowedCount - this._playerStateService.getUnflippedStationCardsCount();
+        return this._matchService.mode() === MatchMode.selectStationCards
+            && stationCardsLeftToSelect > 0;
     }
 
     moveThisCard(card) {

@@ -1,13 +1,17 @@
 <template>
-    <div class="field-playerHud">
+    <div
+        v-if="!choosingStartingPlayer"
+        class="field-playerHud"
+    >
         <portal
             v-if="!gameHasEnded"
             to="player-top"
         >
-            <div class="nextPhaseButtonContainer">
+            <div v-if="gameOn" class="nextPhaseButtonContainer">
                 <button
                     v-if="phase === 'start'"
-                    class="playerHud-phaseText nextPhaseButton" @click="startClick"
+                    class="playerHud-phaseText nextPhaseButton"
+                    @click="startClick"
                 >
                     Start
                 </button>
@@ -21,16 +25,26 @@
                     </button>
                     <button
                         v-else-if="endTurnButtonVisible"
-                        class="playerHud-phaseText nextPhaseButton nextPhaseButton-endTurn" @click="nextPhaseClick"
+                        class="playerHud-phaseText nextPhaseButton nextPhaseButton-endTurn"
+                        @click="nextPhaseClick"
                     >
                         End turn
                     </button>
                 </template>
             </div>
 
-            <div class="guideTextContainer">
+            <div class="guideTextContainer" v-if="!choosingStartingPlayer">
+                <div v-if="selectingStartingStationCards" class="guideText guideText--small">
+                    {{ selectingStartingStationCardsText }}
+                </div>
                 <div
-                    v-if="waitingForOtherPlayerToFinishRequirements"
+                    v-if="waitingForOtherPlayerToSelectStartingPlayer"
+                    class="guideText-waitingForOtherPlayer guideText guideText--small"
+                >
+                    Waiting for other player...
+                </div>
+                <div
+                    v-else-if="waitingForOtherPlayerToFinishRequirements"
                     class="guideText-waitingForOtherPlayer guideText guideText--small"
                 >
                     <template v-if="waitingRequirement.reason === 'emptyDeck'">
@@ -48,7 +62,7 @@
                         :style="cardStyle"
                         class="guideTextCardWrapper card" @click="showEnlargedCard"
                     >
-                        <div class="enlargeIcon enlargeIcon--small"/>
+                        <div class="enlargeIcon enlargeIcon--small" />
                     </div>
                     {{ actionGuideText }}
                 </div>
@@ -61,7 +75,7 @@
                         :style="cardStyle"
                         @click="showEnlargedCard"
                     >
-                        <div class="enlargeIcon enlargeIcon--small"/>
+                        <div class="enlargeIcon enlargeIcon--small" />
                     </div>
                     {{ requirementGuideText }}
                 </div>
@@ -196,7 +210,7 @@
             v-if="enlargedCardVisible"
             to="match"
         >
-            <div class="dimOverlay"/>
+            <div class="dimOverlay" />
             <div
                 v-click-outside="hideEnlargedCard" class="card card--enlarged"
                 :style="cardStyle"
@@ -206,19 +220,19 @@
             v-if="firstRequirementIsFindCard"
             to="match"
         >
-            <FindCard/>
+            <FindCard />
         </portal>
         <portal
             v-if="firstRequirementIsCounterCard"
             to="match"
         >
-            <CounterCard/>
+            <CounterCard />
         </portal>
         <portal
             v-if="firstRequirementIsCounterAttack"
             to="match"
         >
-            <CounterAttack/>
+            <CounterAttack />
         </portal>
     </div>
 </template>
@@ -232,6 +246,7 @@
     const { mapGetters: mapPermissionGetters } = Vuex.createNamespacedHelpers('permission');
     const cardHelpers = Vuex.createNamespacedHelpers('card');
     const requirementHelpers = Vuex.createNamespacedHelpers('requirement');
+    const MatchMode = require('../../shared/match/MatchMode.js');
     const { PHASES } = require('./phases.js');
 
     module.exports = {
@@ -242,6 +257,7 @@
         },
         computed: {
             ...mapState([
+                'mode',
                 'currentPlayer',
                 'phase',
                 'ownUser',
@@ -262,7 +278,8 @@
                 'allPlayerStationCards',
                 'playerRetreated',
                 'opponentRetreated',
-                'turnControl'
+                'turnControl',
+                'startingStationCardsToPutDownCount'
             ]),
             ...requirementHelpers.mapGetters([
                 'waitingForOtherPlayerToFinishRequirements',
@@ -292,6 +309,27 @@
                 'opponentHasControlOfPlayersTurn',
                 'playerHasControlOfOpponentsTurn'
             ]),
+            gameOn() {
+                return this.mode === MatchMode.game;
+            },
+            choosingStartingPlayer() {
+                return this.mode === MatchMode.chooseStartingPlayer && this.isOwnTurn;
+            },
+            waitingForOtherPlayerToSelectStartingPlayer() {
+                return this.mode === MatchMode.chooseStartingPlayer && !this.isOwnTurn;
+            },
+            selectingStartingStationCards() {
+                return this.mode === MatchMode.selectStationCards;
+            },
+            selectingStartingStationCardsText() {
+                const count = this.startingStationCardsToPutDownCount;
+                if (count === 0) {
+                    return 'Waiting for other player...';
+                }
+                else {
+                    return `Select ${count} station ${pluralize('card', count)}`;
+                }
+            },
             showActionPoints() {
                 return ['action'].includes(this.phase);
             },
@@ -302,9 +340,13 @@
                 return this.hasWonGame || this.hasLostGame;
             },
             hasWonGame() {
+                if (!this.opponentRetreated && !this.gameOn) return false;
+
                 return this.opponentRetreated || this.allOpponentStationCards.filter(s => !s.flipped).length === 0;
             },
             hasLostGame() {
+                if (!this.playerRetreated && !this.gameOn) return false;
+
                 return this.playerRetreated || this.allPlayerStationCards.filter(s => !s.flipped).length === 0;
             },
             PHASES() {

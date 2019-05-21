@@ -3,13 +3,13 @@ const { PHASES } = require('../../../shared/phases.js');
 const whatIsNextPhase = require('../../../shared/match/whatIsNextPhase.js');
 const PlayerServiceProvider = require('../../../shared/match/PlayerServiceProvider.js');
 
-function PutDownCardController(deps) {
+function NextPhaseCardController(deps) {
 
     const {
         matchService,
         matchComService,
         cardFactory,
-        playerServiceProvider,
+        playerServiceProvider
     } = deps;
 
     return {
@@ -198,4 +198,4 @@ function withKey(key) {
     return card => !!card[key]
 }
 
-module.exports = PutDownCardController;
+module.exports = NextPhaseCardController;

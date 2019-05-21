@@ -1,3 +1,5 @@
+const MatchMode = require('./MatchMode.js');
+
 class MatchService {
 
     constructor({
@@ -23,6 +25,10 @@ class MatchService {
 
     getCurrentPlayer() {
         return this._state.currentPlayer;
+    }
+
+    setCurrentPlayer(playerId) {
+        return this._state.currentPlayer = playerId;
     }
 
     getPlayerOrder() {
@@ -108,6 +114,35 @@ class MatchService {
 
     getGameConfigEntity() {
         return this._gameConfig.entity();
+    }
+
+    mode() {
+        return this._state.mode;
+    }
+
+    startSelectingStationCards() {
+        this._state.mode = MatchMode.selectStationCards;
+    }
+
+    startGame() {
+        this._state.mode = MatchMode.game;
+    }
+
+    setFirstPlayer(playerId) {
+        this._state.playerOrder = [playerId, this.getOpponentId(playerId)];
+    }
+
+    allPlayersReady() {
+        return this._state.playersReady >= this._state.playerOrder.length;
+    }
+
+    readyPlayer(playerId) {
+        this._state.playersReady++;
+        this._state.playerStateById[playerId] = {};
+    }
+
+    getPlayerIds() {
+        return [...this._state.playerOrder];
     }
 }
 

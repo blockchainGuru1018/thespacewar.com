@@ -85,6 +85,9 @@ module.exports = function (deps) {
             _putDownCardLocal,
             _addPutDownCardEvent,
 
+            // Select starting station card
+            selectStartingStationCard,
+
             //Holding card
             putDownHoldingCard,
             discardHoldingCard,
@@ -359,14 +362,14 @@ module.exports = function (deps) {
         dispatch('_removeCardLocal', cardData.id);
         dispatch('_addPutDownCardEvent', { location, cardData, putDownAsExtraStationCard: true });
         dispatch('_putDownCardLocal', { location, cardData });
-        await putDownCardRemote({ location, cardId: cardData.id, choice });
+        putDownCardRemote({ location, cardId: cardData.id, choice });
     }
 
     async function putDownCard({ dispatch }, { cardData, choice = null, location }) {
         dispatch('_removeCardLocal', cardData.id);
         dispatch('_addPutDownCardEvent', { location, cardData });
         dispatch('_putDownCardLocal', { location, cardData });
-        await putDownCardRemote({ location, cardId: cardData.id, choice });
+        putDownCardRemote({ location, cardId: cardData.id, choice });
     }
 
     async function _removeCardLocal({ rootState, commit }, cardId) {
@@ -430,7 +433,12 @@ module.exports = function (deps) {
         }));
     }
 
-    async function putDownCardRemote({ location, cardId, choice }) {
+    function selectStartingStationCard({ dispatch }, { location, cardId }) {
+        matchController.emit('selectStartingStationCard', { location, cardId });
+        dispatch('cancelHoldingCard');
+    }
+
+    function putDownCardRemote({ location, cardId, choice }) {
         matchController.emit('putDownCard', { location, cardId, choice });
     }
 

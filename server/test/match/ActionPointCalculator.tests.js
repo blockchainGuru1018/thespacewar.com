@@ -305,6 +305,26 @@ module.exports = testCase('ActionPointCalculator', {
         });
 
         assert.equals(actionPoints, 1);
+    },
+    'putDownCard events with property "startingStation" should give action points on the same turn as created'() {
+        const calculator = ActionPointCalculator({
+            cardInfoRepository: FakeCardInfoRepository([{ commonId: 'C1A', cost: 1 }])
+        });
+
+        const actionPoints = calculator.calculate({
+            events: [{
+                type: 'putDownCard',
+                turn: 1,
+                cardCommonId: 'C1A',
+                startingStation: true,
+                location: 'station-action'
+            }],
+            turn: 1,
+            phase: 'action',
+            actionStationCardsCount: 1
+        });
+
+        assert.equals(actionPoints, 2);
     }
 });
 
