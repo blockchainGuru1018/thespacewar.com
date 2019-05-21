@@ -4,9 +4,9 @@ const {
         sinon,
         assert,
     },
-    Match,
     Player,
-    createMatchAndGoToFirstActionPhase,
+    createMatch,
+    createState,
     FakeConnection2,
 } = require('./shared.js');
 
@@ -29,12 +29,13 @@ module.exports = testCase('Match', {
         setUp() {
             this.firstPlayerConnection = FakeConnection2(['stateChanged']);
             this.secondPlayerConnection = FakeConnection2(['stateChanged']);
-            this.match = createMatchAndGoToFirstActionPhase({
+            this.match = createMatch({
                 players: [
                     Player('P1A', this.firstPlayerConnection),
                     Player('P2A', this.secondPlayerConnection)
                 ]
             });
+            this.match.restoreFromState(createState({}));
 
             this.match.retreat('P1A');
         },

@@ -7,13 +7,13 @@ const {
     createCard,
     createPlayer,
     Player,
-    createMatchAndGoToFirstAttackPhase,
     createMatchAndGoToSecondAttackPhase,
     createMatch,
     FakeConnection2,
     catchError,
     createState
 } = require('./shared.js');
+const { COMMON_PHASE_ORDER } = require('../../../shared/phases.js');
 const FakeDeck = require('../testUtils/FakeDeck.js');
 const DisturbingSensor = require('../../../shared/card/DisturbingSensor.js');
 const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
@@ -40,12 +40,21 @@ module.exports = {
         async setUp() {
             this.playerOneConnection = FakeConnection2(['nextPlayer']);
             this.playerTwoConnection = FakeConnection2(['nextPlayer']);
-            let match = createMatchAndGoToFirstAttackPhase({
+            const match = createMatch({
                 players: [
                     createPlayer({ id: 'P1A', connection: this.playerOneConnection }),
                     createPlayer({ id: 'P2A', connection: this.playerTwoConnection })
                 ]
             });
+            match.restoreFromState(createState({
+                currentPlayer: 'P1A',
+                playerOrder: ['P1A', 'P2A'],
+                playerStateById: {
+                    'P1A': {
+                        phase: COMMON_PHASE_ORDER[COMMON_PHASE_ORDER.length - 1]
+                    }
+                }
+            }));
 
             match.nextPhase('P1A');
         },
