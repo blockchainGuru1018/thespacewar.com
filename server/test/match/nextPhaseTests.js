@@ -21,14 +21,8 @@ const NeutralizationCommonId = '12';
 
 module.exports = {
     'when is not own players turn should throw error': function () {
-        let match = createMatch({
-            players: [
-                createPlayer({ id: 'P1A' }),
-                createPlayer({ id: 'P2A' })
-            ]
-        });
-        match.start();
-        match.start();
+        const match = createMatch({ players: [Player('P1A'), Player('P2A')] });
+        match.restoreFromState(createState({}));
 
         let error = catchError(() => match.nextPhase('P2A'));
 

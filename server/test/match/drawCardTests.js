@@ -11,6 +11,7 @@ const {
     createState,
 } = require('./shared.js');
 const FakeDeck = require('../testUtils/FakeDeck.js');
+const GameConfig = require('../../../shared/match/GameConfig.js');
 
 module.exports = {
     'when in draw phase and has 1 card in station draw-row': {
@@ -168,7 +169,7 @@ module.exports = {
             this.firstPlayerConnection = FakeConnection2(['drawCards', 'stateChanged']);
             this.secondPlayerConnection = FakeConnection2(['stateChanged', 'setOpponentCardCount']);
             const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
-            this.match = createMatch({ players });
+            this.match = createMatch({ players, gameConfig: GameConfig({ millCardCount: 2 }) });
             this.match.restoreFromState(createState({
                 playerStateById: {
                     'P1A': {
@@ -265,7 +266,7 @@ module.exports = {
             this.firstPlayerConnection = FakeConnection2(['drawCards', 'stateChanged']);
             this.secondPlayerConnection = FakeConnection2(['stateChanged', 'setOpponentCardCount']);
             const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
-            this.match = createMatch({ players });
+            this.match = createMatch({ players, gameConfig: GameConfig({ millCardCount: 2 }) });
             this.match.restoreFromState(createState({
                 playerStateById: {
                     'P1A': {

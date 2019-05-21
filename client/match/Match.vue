@@ -151,7 +151,7 @@
                                         class="drawPile-discardTopTwo actionOverlay"
                                         v-if="canMill"
                                     >
-                                        Mill 2
+                                        Mill {{ millCardCount }}
                                     </div>
                                 </div>
                             </div>
@@ -164,7 +164,7 @@
                                         @click="opponentDrawPileClick"
                                         class="drawPile-discardTopTwo actionOverlay"
                                     >
-                                        Mill 2
+                                        Mill {{ millCardCount }}
                                     </div>
                                 </div>
                             </div>
@@ -446,7 +446,8 @@
                 'opponentCardsInDeckCount',
                 'playerCardsInDeckCount',
                 'canThePlayer',
-                'selectingStartingStationCards'
+                'selectingStartingStationCards',
+                'gameConfig'
             ]),
             ...mapCardState([
                 'transientPlayerCardsInHomeZone',
@@ -536,6 +537,9 @@
                 return {
                     opacity: this.selectingStartingStationCards ? 0 : 1
                 };
+            },
+            millCardCount() {
+                return this.gameConfig.millCardCount();
             }
         },
         methods: {

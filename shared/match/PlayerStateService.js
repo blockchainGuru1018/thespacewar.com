@@ -420,14 +420,14 @@ class PlayerStateService {
         this.discardCard(cardData);
     }
 
-    discardTopTwoCardsInDrawPile() {
+    discardTopTwoCardsInDrawPile() { //TODO Correct name for this is operation is "Mill". Number of cards to be milled may now vary as of the config file.
         const deck = this.getDeck();
         if (deck.getCardCount() === 0) {
             this._logger.log(`PLAYERID=${this._playerId} Cannot mill, deck is empty`, 'playerStateService');
             return;
         }
 
-        const cards = deck.draw(2);
+        const cards = deck.draw(this._gameConfig.millCardCount());
         for (let card of cards) {
             this.discardCard(card);
         }

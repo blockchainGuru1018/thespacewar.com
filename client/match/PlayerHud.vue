@@ -203,7 +203,7 @@
                 v-if="canMill"
                 class="opponentDrawPileDescription descriptionText"
             >
-                Click to mill 2 cards
+                Click to mill {{ millCardCount }} cards
             </span>
         </portal>
         <portal
@@ -279,7 +279,8 @@
                 'playerRetreated',
                 'opponentRetreated',
                 'turnControl',
-                'startingStationCardsToPutDownCount'
+                'startingStationCardsToPutDownCount',
+                'gameConfig'
             ]),
             ...requirementHelpers.mapGetters([
                 'waitingForOtherPlayerToFinishRequirements',
@@ -445,6 +446,9 @@
                         display: 'none'
                     };
                 }
+            },
+            millCardCount() {
+                return this.gameConfig.millCardCount();
             }
         },
         methods: {
