@@ -7,7 +7,7 @@
             v-if="!gameHasEnded"
             to="player-top"
         >
-            <div class="nextPhaseButtonContainer" v-if="!modeIsChooseStartingPlayer">
+            <div v-if="gameOn" class="nextPhaseButtonContainer">
                 <button
                     v-if="phase === 'start'"
                     class="playerHud-phaseText nextPhaseButton"
@@ -25,7 +25,8 @@
                     </button>
                     <button
                         v-else-if="endTurnButtonVisible"
-                        class="playerHud-phaseText nextPhaseButton nextPhaseButton-endTurn" @click="nextPhaseClick"
+                        class="playerHud-phaseText nextPhaseButton nextPhaseButton-endTurn"
+                        @click="nextPhaseClick"
                     >
                         End turn
                     </button>
@@ -311,9 +312,6 @@
             gameOn() {
                 return this.mode === MatchMode.game;
             },
-            modeIsChooseStartingPlayer() {
-                return this.mode === MatchMode.chooseStartingPlayer;
-            },
             choosingStartingPlayer() {
                 return this.mode === MatchMode.chooseStartingPlayer && this.isOwnTurn;
             },
@@ -339,17 +337,15 @@
                 return `${this.actionPoints2} action ${pluralize('point', this.actionPoints2)} remaining`;
             },
             gameHasEnded() {
-                if (!this.gameOn) return false;
-
                 return this.hasWonGame || this.hasLostGame;
             },
             hasWonGame() {
-                if (!this.gameOn) return false;
+                if (!this.opponentRetreated && !this.gameOn) return false;
 
                 return this.opponentRetreated || this.allOpponentStationCards.filter(s => !s.flipped).length === 0;
             },
             hasLostGame() {
-                if (!this.gameOn) return false;
+                if (!this.playerRetreated && !this.gameOn) return false;
 
                 return this.playerRetreated || this.allPlayerStationCards.filter(s => !s.flipped).length === 0;
             },
