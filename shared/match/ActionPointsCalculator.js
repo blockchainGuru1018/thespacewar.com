@@ -39,6 +39,9 @@ module.exports = function ({ cardInfoRepository }) {
             }
         }
 
+        const moveStationCardEventsThisTurn = eventsThisTurn.filter(e => e.type === 'moveStationCard');
+        actionPoints += actionPointsToAddBecauseOfStationCardMoveEvents(moveStationCardEventsThisTurn);
+
         const cheatPoints = events.reduce((acc, e) => e.type === 'cheatAddActionPoints' ? acc + e.count : acc, 0);
         actionPoints += cheatPoints;
 
@@ -86,5 +89,43 @@ module.exports = function ({ cardInfoRepository }) {
     function getCostOfCard(cardCommonId) {
         const cardCost = cardInfoRepository.getCost(cardCommonId);
         return cardCost || 0;
+    }
+
+    function actionPointsToAddBecauseOfStationCardMoveEvents(events) {
+        let actionPointsToAdd = 0;
+
+        const eventsByCardId = groupEventsByCardId(events);
+        for (const cardId of Object.keys(eventsByCardId)) {
+            const cardEvents = eventsByCardId[cardId];
+            const startLocation = cardEvents[0].fromLocation;
+            const endLocation = cardEvents[cardEvents.length - 1].toLocation;
+            if (startLocation === 'station-action') {
+                if (endLocation !== 'station-action') {
+                    actionPointsToAdd += 2;
+                }
+            }
+            else {
+                if (endLocation === 'station-action') {
+                    actionPointsToAdd -= 2;
+                }
+            }
+        }
+
+        return actionPointsToAdd;
+    }
+
+    function groupEventsByCardId(events) {
+        const eventsByCardId = {};
+        for (const event of events) {
+            const cardId = event.cardId;
+            if (eventsByCardId[cardId]) {
+                eventsByCardId[cardId].push(event);
+            }
+            else {
+                eventsByCardId[cardId] = [event];
+            }
+        }
+
+        return eventsByCardId;
     }
 };

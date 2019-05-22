@@ -50,6 +50,9 @@ module.exports = function (deps) {
             activeActionCard,
             activeActionCardImageUrl,
             canSelectMoreCardsForAction,
+
+            // Move station card
+            movingStationCard
         },
         actions: {
             // Utils/Transient cards
@@ -87,6 +90,10 @@ module.exports = function (deps) {
 
             // Select starting station card
             selectStartingStationCard,
+
+            // Move station card
+            startMovingStationCard,
+            moveHoldingStationCard,
 
             //Holding card
             putDownHoldingCard,
@@ -156,6 +163,13 @@ module.exports = function (deps) {
         else {
             return false;
         }
+    }
+
+    function movingStationCard(state, getters, rootState, rootGetters) {
+        const holdingCard = state.holdingCard;
+        if (!holdingCard) return false;
+
+        return rootGetters['match/allPlayerStationCards'].some(stationCard => stationCard.id === holdingCard.id);
     }
 
     function moveCardToZoneAsTransient({ state }, cardData) {
@@ -330,6 +344,23 @@ module.exports = function (deps) {
         }
     }
 
+    function startMovingStationCard({ dispatch }, { stationCard }) {
+        const options = { showOnlyCardGhostsFor: 'playerStation' };
+        if (stationCard.flipped) {
+            options.cardData = stationCard.card;
+        }
+        else {
+            options.id = stationCard.id;
+        }
+        dispatch('startHoldingCard', options);
+    }
+
+    function moveHoldingStationCard({ state, dispatch }, { location }) {
+        const cardId = state.holdingCard.id;
+        matchController.emit('moveStationCard', { cardId, location });
+        dispatch('cancelHoldingCard');
+    }
+
     function putDownHoldingCard({ state, dispatch }, { location }) {
         const cardData = state.holdingCard;
         dispatch('cancelHoldingCard');
@@ -467,9 +498,9 @@ module.exports = function (deps) {
         }
     }
 
-    function startHoldingCard({ state, commit }, { cardData, showOnlyCardGhostsFor = null }) {
+    function startHoldingCard({ state, commit }, { id = null, cardData = null, showOnlyCardGhostsFor = null }) {
         state.showOnlyCardGhostsFor = showOnlyCardGhostsFor;
-        commit('SET_HOLDING_CARD', cardData);
+        commit('SET_HOLDING_CARD', cardData || { id, faceDown: true });
     }
 
     function cancelHoldingCard({ state, commit }) {

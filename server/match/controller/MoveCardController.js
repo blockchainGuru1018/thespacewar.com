@@ -6,11 +6,13 @@ module.exports = function (deps) {
     const {
         matchComService,
         playerServiceProvider,
+        playerServiceFactory,
         cardFactory
     } = deps;
 
     return {
-        onMoveCard
+        onMoveCard,
+        moveStationCard
     };
 
     function onMoveCard(playerId, cardId) {
@@ -24,5 +26,11 @@ module.exports = function (deps) {
 
         playerStateService.moveCard(cardId);
         matchComService.emitToOpponentOf(playerId, 'opponentMovedCard', cardId)
+    }
+
+    function moveStationCard(playerId, { cardId, location }) {
+        const moveStationCard = playerServiceFactory.moveStationCard(playerId);
+        if (!moveStationCard.canMove({ cardId, location })) throw new CheatError('Cannot move station card');
+        moveStationCard.move({ cardId, location });
     }
 };

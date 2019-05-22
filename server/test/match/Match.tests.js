@@ -23,6 +23,7 @@ module.exports = testCase('Match', {
     'damage station cards': require('./damageStationCardsTests.js'),
     'overwork': require('./overworkTests.js'),
     'putDownExtraStationCards': require('./putDownExtraStationCardsTests.js'),
+    'moveStationCard': require('./moveStationCardTests.js'),
     'turnControlTests': require('./turnControlTests.js'),
     'counterTests': require('./counterTests.js'),
     'when first player retreats from match should emit updated game state with retreated player id': {

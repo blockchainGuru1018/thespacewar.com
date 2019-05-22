@@ -906,7 +906,7 @@ module.exports = {
                 await click('.field-playerCardsOnHand .cardOnHand');
             },
             'should NOT be able to move station cards to zone'() {
-                assert.elementCount('.stationCard .movable', 0);
+                assert.elementCount('.stationCard .moveToZone', 0);
             }
         },
         'when in action phase with a damageStationCard requirement and opponent has station cards and has an affordable card on hand and click on card in hand': {
@@ -1165,7 +1165,7 @@ module.exports = {
                 }));
                 await timeout();
 
-                await click('.stationCard .movable');
+                await click('.stationCard .moveToZone');
             },
             'should show choice dialog'() {
                 assert.elementCount('.cardChoiceDialog', 1);
@@ -1203,7 +1203,7 @@ module.exports = {
                 }));
                 await timeout();
 
-                await click('.stationCard .movable');
+                await click('.stationCard .moveToZone');
                 await click('.cardChoiceDialog-overlay');
             },
             'should NOT show choice dialog'() {
@@ -1380,7 +1380,7 @@ module.exports = {
                 assert.elementCount('.field-player .stationCard .selectable', 0);
             },
             'should NOT be able to move own flipped station card'() {
-                assert.elementCount('.stationCard .movable', 0);
+                assert.elementCount('.stationCard .moveToZone', 0);
             }
         },
         'when move Fatal Error from station to zone': {
@@ -1409,7 +1409,7 @@ module.exports = {
                 }));
                 await timeout();
 
-                await click('.stationCard .movable');
+                await click('.stationCard .moveToZone');
             },
             'should have card in zone'() {
                 assert.elementCount('.field-playerZoneCards .card:not(.card-placeholder)', 1);

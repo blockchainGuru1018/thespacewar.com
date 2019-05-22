@@ -13,10 +13,17 @@
             >
                 <div
                     @click.stop="putDownCardOrShowChoiceOrAction({ location: 'zone', cardData: stationCard.card })"
-                    class="movable"
+                    class="movable moveToZone"
                     v-if="canMoveCardToZone"
                 >
-                    Move to zone
+                    Play card
+                </div>
+                <div
+                    v-if="canMoveCardToOtherStationRow"
+                    @click.stop="startMovingStationCard({stationCard})"
+                    class="movable moveToOtherStationRow"
+                >
+                    Move
                 </div>
 
                 <div
@@ -82,7 +89,8 @@
                 'attackerCanAttackStationCards',
                 'actionPoints2',
                 'createCard',
-                'canPutDownCard'
+                'canPutDownCard',
+                'moveStationCard'
             ]),
             ...mapPermissionGetters([
                 'canSelectStationCards',
@@ -127,6 +135,14 @@
                     && this.actionPoints2 >= this.stationCard.card.cost
                     && this.canMoveStationCards
                     && this.canPutDownCard(this.stationCard.card)
+            },
+            canMoveCardToOtherStationRow() {
+                if (this.isOpponentStationCard) return false;
+
+                return this.moveStationCard.canMove({
+                    cardId: this.stationCard.id,
+                    location: `station-${this.stationCard.place}`
+                });
             },
             selectedWithDanger() {
                 return this.selectedAsDefender
@@ -184,7 +200,8 @@
             ]),
             ...mapCardActions([
                 'selectCardForActiveAction',
-                'putDownCardOrShowChoiceOrAction'
+                'putDownCardOrShowChoiceOrAction',
+                'startMovingStationCard'
             ]),
             ...expandedCardHelpers.mapActions([
                 'expandCard'

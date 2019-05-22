@@ -94,6 +94,6 @@ describe('when has Destiny decided in play and has event card as flipped station
     });
 
     test('should NOT be able to move station card to zone', () => {
-        assert.elementCount('.playerStationCards .movable', 0);
+        assert.elementCount('.playerStationCards .moveToZone', 0);
     });
 });

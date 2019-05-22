@@ -308,7 +308,7 @@ class PlayerStateService {
     }
 
     _findStationCardFromCollection(cardId, collection) {
-        return collection.find(stationCard => stationCard.card && stationCard.card.id === cardId);
+        return collection.find(stationCard => getStationCardId(stationCard) === cardId);
     }
 
     findCard(cardId) {//TODO Rename findCardFromZones
@@ -746,7 +746,7 @@ class PlayerStateService {
         if (!this.findStationCard(cardId)) throw Error('Could not find station card when trying to update it. ID: ' + cardId);
 
         this.update(playerState => {
-            const stationCards = playerState.stationCards
+            const stationCards = playerState.stationCards;
             const stationCard = this._findStationCardFromCollection(cardId, stationCards);
             updateFn(stationCard);
         });

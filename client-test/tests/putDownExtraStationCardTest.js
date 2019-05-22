@@ -213,7 +213,7 @@ describe('when has excellent work as flipped station card and move it to zone', 
             ]
         }));
         await timeout();
-        await click('.playerStationCards .movable');
+        await click('.playerStationCards .moveToZone');
     });
 
     test('should show choice dialog', async () => {

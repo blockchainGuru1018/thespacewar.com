@@ -147,6 +147,7 @@ module.exports = function ({
         discardCard: discardCardController.onDiscardCard, //TODO Rename discardFromHand
         discardDurationCard,
         moveCard: moveCardController.onMoveCard,
+        moveStationCard: moveCardController.moveStationCard,
         attack: attackController.onAttack,
         counterAttack: attackController.counterAttack,
         cancelCounterAttack: attackController.cancelCounterAttack,

@@ -13,6 +13,7 @@ const CardFactory = require('../../shared/card/CardFactory.js');
 const ClientPlayerServiceProvider = require('./ClientPlayerServiceProvider.js');
 const EventFactory = require('../../shared/event/EventFactory.js');
 const GameConfig = require('../../shared/match/GameConfig.js');
+const MoveStationCard = require('../../shared/match/MoveStationCard.js');
 const mapFromClientToServerState = require('./mapFromClientToServerState.js');
 const localGameDataFacade = require('../utils/localGameDataFacade.js');
 const whatIsNextPhase = require('../../shared/match/whatIsNextPhase.js');
@@ -118,6 +119,7 @@ module.exports = function (deps) {
             findPlayerCardFromAllSources,
             cardFactory,
             playerServiceProvider,
+            moveStationCard,
             queryEvents,
             canPutDownCard,
             playerRuleService,
@@ -327,6 +329,14 @@ module.exports = function (deps) {
 
     function playerServiceProvider(...getterArgs) {
         return ClientPlayerServiceProvider(...getterArgs);
+    }
+
+    function moveStationCard(state, getters) {
+        return MoveStationCard({
+            matchService: getters.matchService,
+            playerStateService: getters.playerStateService,
+            playerPhase: getters.playerPhase
+        });
     }
 
     function playerRuleService(state, getters) {

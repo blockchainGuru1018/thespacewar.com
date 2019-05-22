@@ -8,6 +8,7 @@ let ActionPointCalculator = require('../../../shared/match/ActionPointsCalculato
 let DiscardCardEvent = require('../../../shared/event/DiscardCardEvent.js');
 let PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
 let RemoveStationCardEvent = require('../../../shared/event/RemoveStationCardEvent.js');
+let MoveStationCardEvent = require('../../../shared/event/MoveStationCardEvent.js');
 
 module.exports = testCase('ActionPointCalculator', {
     'when put card in zone and then put down a station card in action row'() {
@@ -325,6 +326,63 @@ module.exports = testCase('ActionPointCalculator', {
         });
 
         assert.equals(actionPoints, 2);
+    },
+    'should NOT count action row station cards that was moved there during this turn'() {
+        const calculator = ActionPointCalculator({ cardInfoRepository: FakeCardInfoRepository([]) });
+
+        const actionPoints = calculator.calculate({
+            events: [
+                MoveStationCard('C1A', 'station-draw', 'station-action')
+            ],
+            turn: 1,
+            phase: 'action',
+            actionStationCardsCount: 1
+        });
+
+        assert.equals(actionPoints, 0);
+    },
+    'when has 1 card in action row since before but move other station card several times to action row should NOT deduct too many action points'() {
+        const calculator = ActionPointCalculator({ cardInfoRepository: FakeCardInfoRepository([]) });
+
+        const actionPoints = calculator.calculate({
+            events: [
+                MoveStationCard('C1A', 'station-draw', 'station-action'),
+                MoveStationCard('C1A', 'station-action', 'station-handSize'),
+                MoveStationCard('C1A', 'station-handSize', 'station-action')
+            ],
+            turn: 1,
+            phase: 'action',
+            actionStationCardsCount: 2
+        });
+
+        assert.equals(actionPoints, 2);
+    },
+    'when card moved from action row and back should NOT deduct action points'() {
+        const calculator = ActionPointCalculator({ cardInfoRepository: FakeCardInfoRepository([]) });
+
+        const actionPoints = calculator.calculate({
+            events: [
+                MoveStationCard('C2A', 'station-action', 'station-handSize'),
+                MoveStationCard('C2A', 'station-handSize', 'station-action')
+            ],
+            turn: 1,
+            phase: 'action',
+            actionStationCardsCount: 1
+        });
+
+        assert.equals(actionPoints, 2);
+    },
+    'when card moved away from action row this turn should compensate lost action points'() {
+        const calculator = ActionPointCalculator({ cardInfoRepository: FakeCardInfoRepository([]) });
+
+        const actionPoints = calculator.calculate({
+            events: [MoveStationCard('C1A', 'station-action', 'station-handSize')],
+            turn: 1,
+            phase: 'action',
+            actionStationCardsCount: 0
+        });
+
+        assert.equals(actionPoints, 2);
     }
 });
 
@@ -333,4 +391,8 @@ function FakeCardInfoRepository(cards) {
         createAll: () => cards.map(c => createCard(c))
     };
     return CardInfoRepository({ cardDataAssembler });
+}
+
+function MoveStationCard(cardId, fromLocation, toLocation, turn = 1) {
+    return MoveStationCardEvent({ cardId, fromLocation, toLocation, turn });
 }

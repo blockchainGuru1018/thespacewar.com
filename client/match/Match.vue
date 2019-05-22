@@ -367,9 +367,9 @@
                 </div>
             </div>
             <div
-                :style="holdingCardStyle"
-                class="card holdingCard"
                 v-if="holdingCard"
+                :style="holdingCardStyle"
+                :class="['card', 'holdingCard', {'card-faceDown': holdingCard.faceDown, 'card-faceDown--player': holdingCard.faceDown}]"
             />
             <card-choice-dialog />
             <loading-indicator />
@@ -447,7 +447,8 @@
                 'playerCardsInDeckCount',
                 'canThePlayer',
                 'selectingStartingStationCards',
-                'gameConfig'
+                'gameConfig',
+                'moveStationCard'
             ]),
             ...mapCardState([
                 'transientPlayerCardsInHomeZone',
@@ -457,7 +458,8 @@
             ]),
             ...mapCardGetters({
                 cardChoiceDialogCardData: 'choiceCardData',
-                activeActionName: 'activeActionName'
+                activeActionName: 'activeActionName',
+                movingStationCard: 'movingStationCard'
             }),
             ...mapPermissionGetters([
                 'canMoveCardsFromHand',
@@ -476,7 +478,9 @@
             holdingCardStyle() {
                 if (!this.holdingCard) return {};
 
-                const cardUrl = getCardImageUrl.byCommonId(this.holdingCard.commonId);
+                const cardUrl = this.holdingCard.faceDown
+                    ? '/card/back-image'
+                    : getCardImageUrl.byCommonId(this.holdingCard.commonId);
                 return {
                     left: this.mousePosition.x + 'px',
                     top: this.mousePosition.y + 'px',
@@ -502,12 +506,27 @@
                     && this.canDiscardCards
                     && (!this.showOnlyCardGhostsFor || this.showOnlyCardGhostsFor.includes('discardPile'));
             },
+            canMoveHoldingStationCard() {
+                if (!this.holdingCard) return false;
+                const cardId = this.holdingCard.id;
+                const stationCard = this.allPlayerStationCards.find(s => s.id === cardId);
+                if (!stationCard) return false;
+
+                return this.moveStationCard.canMove({
+                    cardId: this.holdingCard.id,
+                    location: `station-${stationCard.place}`
+                });
+            },
             stationCardGhostVisible() {
                 if (!this.holdingCard) return false;
-                if (!this.canPutDownStationCards) return false;
+
+                const movingStationCard = this.movingStationCard;
+                if (!this.canPutDownStationCards && !movingStationCard) return false;
+
                 if (this.showOnlyCardGhostsFor && !this.showOnlyCardGhostsFor.includes('playerStation')) return false;
 
-                return this.canPutDownMoreStationCards
+                return movingStationCard
+                    || this.canPutDownMoreStationCards
                     || this.canThePlayer.putDownMoreStartingStationCards()
                     || this.activeActionName === 'putDownCard';
             },
@@ -525,13 +544,13 @@
                 return [...this.playerCardsInZone, ...this.transientPlayerCardsInHomeZone];
             },
             playerVisibleDrawStationCards() {
-                return this.playerStation.drawCards.filter(s => !this.hiddenStationCardIds.some(id => id === s.id));
+                return this.playerStation.drawCards.filter(s => this.shouldShowStationCard(s));
             },
             playerVisibleActionStationCards() {
-                return this.playerStation.actionCards.filter(s => !this.hiddenStationCardIds.some(id => id === s.id));
+                return this.playerStation.actionCards.filter(s => this.shouldShowStationCard(s));
             },
             playerVisibleHandSizeStationCards() {
-                return this.playerStation.handSizeCards.filter(s => !this.hiddenStationCardIds.some(id => id === s.id));
+                return this.playerStation.handSizeCards.filter(s => this.shouldShowStationCard(s));
             },
             opponentStationStyle() {
                 return {
@@ -562,11 +581,19 @@
                 startHoldingCard: 'startHoldingCard',
                 discardHoldingCard: 'discardHoldingCard',
                 cancelCurrentUserInteraction: 'cancelCurrentUserInteraction',
-                selectGhostForActiveAction: 'selectGhostForActiveAction'
+                selectGhostForActiveAction: 'selectGhostForActiveAction',
+                moveHoldingStationCard: 'moveHoldingStationCard'
             }),
             ...expandedCardHelpers.mapActions([
                 'expandCard'
             ]),
+            shouldShowStationCard(stationCard) {
+                if (this.holdingCard) {
+                    if (this.holdingCard.id === stationCard.id) return false;
+                }
+
+                return !this.hiddenStationCardIds.some(id => id === stationCard.id);
+            },
             canAffordCard(card) {
                 return this.actionPoints2 >= card.cost;
             },
@@ -583,6 +610,9 @@
                     else {
                         this.selectStartingStationCard({ cardId: this.holdingCard.id, location });
                     }
+                }
+                else if (this.movingStationCard) {
+                    this.moveHoldingStationCard({ location });
                 }
                 else {
                     if (this.activeActionName === 'putDownCard') {
