@@ -51,7 +51,7 @@ class PlayerStateService {
         const isFirstPlayer = this.isFirstPlayer();
 
         const playerDeck = this.getDeck();
-        const stationCardsToPutDown = isFirstPlayer ? 5 : 6;
+        const stationCardsToPutDown = this.allowedStartingStationCardCount();
         const secondPlayerHandicap = isFirstPlayer ? 0 : 1;
         const startingHandCount = this._gameConfig.amountOfCardsInStartHand();
         const cardsOnHandCount = startingHandCount + stationCardsToPutDown + secondPlayerHandicap;
@@ -229,7 +229,8 @@ class PlayerStateService {
     }
 
     allowedStartingStationCardCount() {
-        return this.isFirstPlayer() ? 5 : 6;
+        const stationCardsAtStart = this._gameConfig.stationCardsAtStart();
+        return this.isFirstPlayer() ? stationCardsAtStart : stationCardsAtStart + 1;
     }
 
     hasFlippedStationCards() {
