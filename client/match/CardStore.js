@@ -311,7 +311,9 @@ module.exports = function (deps) {
     function cancelCardAction({ state, dispatch }) {
         onActiveActionFinish = null;
 
-        dispatch('removeTransientCard', state.activeActionCardData.id);
+        if (state.activeActionCardData) {
+            dispatch('removeTransientCard', state.activeActionCardData.id);
+        }
 
         state.activeActionCardData = null;
         state.activeAction = null;

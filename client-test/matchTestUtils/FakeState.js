@@ -10,6 +10,7 @@ module.exports = function FakeState(options) {
     options.cardsOnHand = (options.cardsOnHand || []).map(c => createCard(c));
 
     return defaults(options, {
+        mode: 'game',
         stationCards: [{ place: 'draw' }], //Needed to not always show a Defeated screen
         cardsOnHand: [],
         cardsInZone: [],

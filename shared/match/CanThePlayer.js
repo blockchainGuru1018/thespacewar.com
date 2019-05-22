@@ -41,7 +41,7 @@ class CanThePlayer {
         }
         else {
             return this.moveThisCard(card)
-                && this.attackWithThisCard(card)
+                || this.attackWithThisCard(card)
         }
     }
 

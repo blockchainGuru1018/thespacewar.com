@@ -278,7 +278,7 @@ module.exports = function (deps) {
 
     function createCard(state, getters) {
         return (cardData, { isOpponent = false, playerId = null } = {}) => {
-            const id = playerId || isOpponent ? state.opponentUser.id : state.ownUser.id;
+            const id = playerId || (isOpponent ? state.opponentUser.id : state.ownUser.id);
             return getters.cardFactory.createCardForPlayer(cardData, id);
         };
     }
@@ -408,6 +408,7 @@ module.exports = function (deps) {
             actionPointsCalculator,
             queryEvents: getters.queryEvents,
             cardFactory: getters.cardFactory,
+            gameConfig: getters.gameConfig
         });
     }
 
@@ -419,7 +420,8 @@ module.exports = function (deps) {
             playerId: state.opponentUser.id,
             matchService: getters.matchService,
             queryEvents: getters.queryOpponentEvents,
-            cardFactory: getters.cardFactory
+            cardFactory: getters.cardFactory,
+            gameConfig: getters.gameConfig
         });
     }
 
@@ -451,8 +453,11 @@ module.exports = function (deps) {
         });
     }
 
-    function matchService(state) {
-        const matchService = new MatchService();
+    function matchService(state, getters) {
+        const matchService = new MatchService({
+            gameConfig: getters.gameConfig,
+            endMatch: () => {}
+        });
         const serverState = mapFromClientToServerState(state);
         matchService.setState(serverState);
         return matchService;

@@ -1484,7 +1484,12 @@ module.exports = {
                     turn: 3,
                     currentPlayer: 'P1A',
                     phase: 'attack',
-                    cardsInOpponentZone: [{ id: 'C1A', type: 'spaceShip', commonId: TriggerHappyJoeCommonId }],
+                    cardsInOpponentZone: [{
+                        id: 'C1A',
+                        attack: 1,
+                        type: 'spaceShip',
+                        commonId: TriggerHappyJoeCommonId
+                    }],
                     stationCards: [{ place: 'draw', id: 'S1A' }],
                     opponentStationCards: [
                         { place: 'draw', id: 'S2A', flipped: true, card: createCard({ id: 'C2A' }) },
@@ -1514,7 +1519,7 @@ module.exports = {
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'attack',
-                    cardsInZone: [{ id: 'C1A', type: 'spaceShip', commonId: DeadlySniperCommonId }],
+                    cardsInZone: [{ id: 'C1A', attack: 1, type: 'spaceShip', commonId: DeadlySniperCommonId }],
                     opponentCardsInZone: [{ id: 'C2A' }],
                     opponentCardsInPlayerZone: [{ id: 'C3A' }],
                     opponentStationCards: [{ place: 'draw', id: 'C4A' }],
@@ -1544,7 +1549,7 @@ module.exports = {
                     turn: 2,
                     currentPlayer: 'P1A',
                     phase: 'attack',
-                    cardsInZone: [{ id: 'C1A', type: 'spaceShip', commonId: DeadlySniperCommonId }],
+                    cardsInZone: [{ id: 'C1A', attack: 1, type: 'spaceShip', commonId: DeadlySniperCommonId }],
                     opponentCardsInZone: [{ id: 'C2A' }],
                     events: [
                         PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C1A' })

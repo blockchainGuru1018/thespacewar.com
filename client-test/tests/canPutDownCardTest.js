@@ -4,6 +4,7 @@ const getCardImageUrl = require('../../client/utils/getCardImageUrl.js');
 const FakeState = require('../matchTestUtils/FakeState.js');
 const FakeMatchController = require('../matchTestUtils/FakeMatchController.js');
 const DestinyDecided = require("../../shared/card/DestinyDecided");
+const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
 const { createController } = require('../matchTestUtils/index.js');
 const {
     assert,
@@ -86,7 +87,8 @@ describe('when has Destiny decided in play and has event card as flipped station
             stationCards: [
                 { id: 'C2A', place: 'draw', flipped: true, card: createCard({ id: 'C2A', type: 'event' }) },
                 { id: 'C3A', place: 'draw' }
-            ]
+            ],
+            events: [PutDownCardEvent({ turn: 1, cardId: 'C1A', location: 'zone' })]
         }));
         await timeout();
     });
