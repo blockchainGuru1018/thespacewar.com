@@ -177,7 +177,8 @@ module.exports = function ({ state, logger, endMatch, gameConfig, actionPointsCa
             queryEvents: api.queryEvents(playerId),
             opponentStateService: api.playerStateService(api.opponentId(playerId)),
             playerStateService: api.playerStateService(playerId),
-            turnControl: api.turnControl(playerId)
+            turnControl: api.turnControl(playerId),
+            gameConfig
         });
     }
 

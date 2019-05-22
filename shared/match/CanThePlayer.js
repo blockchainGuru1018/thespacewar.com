@@ -17,13 +17,15 @@ class CanThePlayer {
         queryEvents,
         playerStateService,
         opponentStateService,
-        turnControl
+        turnControl,
+        gameConfig
     } = {}) {
         this._matchService = matchService;
         this._queryEvents = queryEvents;
         this._playerStateService = playerStateService;
         this._opponentStateService = opponentStateService;
         this._turnControl = turnControl;
+        this._gameConfig = gameConfig;
     }
 
     triggerCardsDormantEffect(card) {
@@ -76,6 +78,9 @@ class CanThePlayer {
     }
 
     putDownMoreStationCards() {
+        const stationCardCount = this._playerStateService.getStationCardCount();
+        if (stationCardCount >= this._gameConfig.maximumStationCards()) return false;
+
         const currentTurn = this._matchService.getTurn();
 
         const extraFreeStationCards = this._queryEvents.countFreeExtraStationCardsGrantedOnTurn(currentTurn);

@@ -357,12 +357,13 @@ module.exports = function (deps) {
     }
 
     function canThePlayer(state, getters) {
-        return createCanThePlayer({
+        return new CanThePlayer({
             matchService: getters.matchService,
             queryEvents: getters.queryEvents,
             playerStateService: getters.playerStateService,
             opponentStateService: getters.opponentStateService,
-            turnControl: getters.turnControl
+            turnControl: getters.turnControl,
+            gameConfig: getters.gameConfig
         });
     }
 
@@ -905,14 +906,4 @@ module.exports = function (deps) {
 
 function stationCardsByIsFlippedComparer(a, b) {
     return (a.flipped ? 1 : 0) - (b.flipped ? 1 : 0);
-}
-
-function createCanThePlayer({ matchService, playerStateService, opponentStateService, queryEvents, turnControl }) {
-    return new CanThePlayer({
-        matchService,
-        queryEvents,
-        playerStateService,
-        opponentStateService,
-        turnControl
-    });
 }

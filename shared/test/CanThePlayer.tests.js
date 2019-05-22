@@ -7,6 +7,7 @@ const FakeCardDataAssembler = require('../../server/test/testUtils/FakeCardDataA
 const createCardData = FakeCardDataAssembler.createCard;
 const BaseCard = require('../card/BaseCard.js');
 const CanThePlayer = require('../match/CanThePlayer.js');
+const GameConfig = require('../match/GameConfig.js');
 const TestHelper = require('./fakeFactories/TestHelper.js');
 const createState = require('./fakeFactories/createState.js');
 
@@ -15,6 +16,25 @@ const {
 } = require('./shared.js');
 
 module.exports = testCase('CanThePlayer', {
+    'when max number of station cards is 1 and has 1 station card': {
+        setUp() {
+            const testHelper = TestHelper(createState({
+                currentPlayer: 'P1A',
+                playerStateById: {
+                    'P1A': {
+                        phase: 'action',
+                        stationCards: [stationCard('S1A', 'draw')]
+                    }
+                }
+            }), {
+                gameConfig: GameConfig({ maximumStationCards: 1 })
+            });
+            this.canThePlayer = testHelper.canThePlayer('P1A');
+        },
+        'should NOT be able to put down more station cards'() {
+            refute(this.canThePlayer.putDownMoreStationCards());
+        }
+    },
     'when card is of type spaceShip': {
         setUp() {
             this.card = createCard(BaseCard, {
@@ -202,3 +222,11 @@ module.exports = testCase('CanThePlayer', {
         }
     }
 });
+
+function stationCard(id, place) {
+    return {
+        place,
+        flipped: false,
+        card: { id }
+    };
+}

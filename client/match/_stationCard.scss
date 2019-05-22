@@ -49,18 +49,19 @@
   &--fullSize {
     flex: 0 0 auto;
     max-width: inherit;
-
-    /* WORKAROUND? Needed to be able to click on actionOverlays without getting weird behaviour were click falls through to card below */
-    position: relative;
-    z-index: 2;
-    /* */
-
   }
 
   .card-ghost {
     position: relative;
     z-index: 2;
   }
+}
+
+.stationCard--flipped {
+  /* WORKAROUND? Needed to be able to click on actionOverlays without getting weird behaviour were click falls through to card below */
+  position: relative;
+  z-index: 2;
+  /* */
 }
 
 .field-station .card {

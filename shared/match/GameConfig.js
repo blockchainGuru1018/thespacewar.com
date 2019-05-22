@@ -4,7 +4,8 @@ const propertyMap = {
     AMOUNT_OF_CARDS_IN_START_HAND: 'amountOfCardsInStartHand',
     OVERWORK_IS_ACTIVE: 'overworkIsActive',
     MILL_CARD_AMOUNT: 'millCardCount',
-    STATION_CARDS_AT_START: 'stationCardsAtStart'
+    STATION_CARDS_AT_START: 'stationCardsAtStart',
+    MAXIMUM_STATION_CARDS: 'maximumStationCards'
 };
 
 const Defaults = convertConfig(DEFAULT_CONFIG);
@@ -18,6 +19,7 @@ function GameConfig({
     overworkIsActive = Defaults.overworkIsActive,
     millCardCount = Defaults.millCardCount,
     stationCardsAtStart = Defaults.stationCardsAtStart,
+    maximumStationCards = Defaults.maximumStationCards
 } = {}) {
 
     return {
@@ -25,7 +27,8 @@ function GameConfig({
         amountOfCardsInStartHand: () => amountOfCardsInStartHand,
         overworkIsActive: () => overworkIsActive,
         millCardCount: () => millCardCount,
-        stationCardsAtStart: () => stationCardsAtStart
+        stationCardsAtStart: () => stationCardsAtStart,
+        maximumStationCards: () => maximumStationCards
     };
 }
 

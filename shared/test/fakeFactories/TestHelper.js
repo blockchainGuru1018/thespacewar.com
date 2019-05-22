@@ -1,18 +1,12 @@
-const playerStateServiceFactory = require("./playerStateServiceFactory.js");
-const PlayerPhase = require('../../match/PlayerPhase.js');
-const MatchService = require('../../match/MatchService.js');
-const TurnControl = require('../../match/TurnControl.js');
-const SourceFetcher = require('../../match/requirement/SourceFetcher.js');
-const CanThePlayer = require('../../match/CanThePlayer.js');
-const QueryEvents = require('../../event/QueryEvents.js');
-const EventRepository = require('../../event/EventRepository2.js');
 const PlayerServiceFactory = require('../../match/PlayerServiceFactory.js');
 const GameServiceFactory = require('../../match/GameServiceFactory.js');
 const CardDataAssembler = require('../../CardDataAssembler.js');
 const CardInfoRepository = require('../../CardInfoRepository.js');
 const ActionPointsCalculator = require('../../match/ActionPointsCalculator.js');
+const GameConfig = require('../../match/GameConfig.js');
 
 module.exports = function (state, {
+    gameConfig = GameConfig(),
     testCardData = []
 } = {}) {
 
@@ -29,13 +23,15 @@ module.exports = function (state, {
         state,
         logger,
         endMatch,
-        actionPointsCalculator
+        actionPointsCalculator,
+        gameConfig
     });
     const playerServiceFactory = PlayerServiceFactory({
         state,
         logger,
         endMatch,
-        actionPointsCalculator
+        actionPointsCalculator,
+        gameConfig
     });
 
     const api = {

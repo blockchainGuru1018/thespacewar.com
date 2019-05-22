@@ -205,6 +205,10 @@ class PlayerStateService {
         return playerState.stationCards;
     }
 
+    getStationCardCount() {
+        return this.getStationCards().length;
+    }
+
     getDrawStationCards() {
         return this
             .getStationCards()
