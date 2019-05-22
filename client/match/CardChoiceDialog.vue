@@ -10,6 +10,9 @@
                 v-if="dialogVisible"
                 class="cardChoiceDialog"
             >
+                <div class="chardChoiceDialog-header">
+                    Choose effect
+                </div>
                 <button
                     v-for="choice in choices"
                     :key="choice.name"
