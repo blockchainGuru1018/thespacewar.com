@@ -5,11 +5,10 @@ module.exports = function (deps) {
     return {
         login,
         getAll
-    }
+    };
 
     async function login(req, res) {
-        let name = req.body.name;
-        let user = await userRepository.addUser(name);
+        let user = await userRepository.addUser(req.body.name, req.body.secret);
         res.json(user);
     }
 
@@ -17,4 +16,4 @@ module.exports = function (deps) {
         let users = await userRepository.getAll();
         res.json(users);
     }
-}
+};

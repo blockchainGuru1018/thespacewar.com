@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const SocketIO = require('socket.io');
 const wrapControllersWithRejectionProtection = require('./utils/wrapControllersWithRejectionProtection.js');
+const SecurityController = require('./user/SecurityController.js');
 const SocketRepository = require('./user/SocketRepository.js');
 const UserRepository = require('./user/UserRepository.js');
 const UserController = require('./user/UserController.js');
@@ -80,15 +81,14 @@ async function run({ config, closeServer, exitProcess }) {
     await rawCardDataRepository.init();
     console.log(' - 1/2 SUCCESS');
 
-    const socketRepository = SocketRepository({ socketMaster });
-    const userRepository = UserRepository({ socketMaster });
     const deps = {
         logger,
         rawCardDataRepository,
-        gameConfig: GameConfig.fromConfig(config.gameConfig)
+        gameConfig: GameConfig.fromConfig(config.gameConfig),
+        userRepository: UserRepository({ socketMaster }),
+        socketRepository: SocketRepository({ socketMaster })
     };
-    deps.socketRepository = socketRepository;
-    deps.userRepository = userRepository;
+    deps.securityController = SecurityController(deps);
     deps.matchRepository = MatchRepository(deps);
 
     const controllers = {
@@ -111,6 +111,8 @@ function exitProcess() {
 }
 
 function setupRoutes(deps, controllers) {
+    app.use(deps.securityController.middleware);
+
     app.get('/', (req, res) => {
         res.sendFile(path.join(__dirname, 'client-dist', 'index.html'));
     });
@@ -158,9 +160,15 @@ function setupRoutes(deps, controllers) {
 function setupSocketConnectionHandler(deps, controllers) {
     const socketRepository = deps.socketRepository;
     const matchRepository = deps.matchRepository;
+    const securityController = deps.securityController;
 
     socketMaster.on('connection', async connection => {
-        connection.on('registerConnection', async ({ userId }) => {
+        connection.on('registerConnection', async ({ secret, userId }) => {
+            if (!securityController.isAuthorized(secret, userId)) {
+                deps.logger.log('Unauthorized user performing action on match', 'authorization');
+                return;
+            }
+
             console.log(' -- registering connection for user', userId);
             socketRepository.setForUser(userId, connection);
 
@@ -180,6 +188,11 @@ function setupSocketConnectionHandler(deps, controllers) {
         });
 
         connection.on('match', async data => {
+            if (!securityController.isAuthorized(data.secret, data.playerId)) {
+                deps.logger.log('Unauthorized user performing action on match', 'authorization');
+                return;
+            }
+
             try {
                 await controllers.match.onAction(data);
             }

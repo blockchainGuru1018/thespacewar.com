@@ -46,4 +46,4 @@ module.exports = function ({
         let opponentUser = users.find(u => u.id === opponentUserId);
         route('match', { matchId, opponentUser });
     }
-}
+};

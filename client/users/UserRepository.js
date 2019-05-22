@@ -1,5 +1,5 @@
 const ajax = require('../utils/ajax.js');
-const localGameDataFacade = require("../utils/localGameDataFacade.js")
+const localGameDataFacade = require("../utils/localGameDataFacade.js");
 
 module.exports = function (deps) {
 
@@ -24,7 +24,7 @@ module.exports = function (deps) {
         ownUser = user;
 
         if (!!user) {
-            socket.emit('registerConnection', { userId: user.id });
+            socket.emit('registerConnection', { secret: ajax.secret(), userId: user.id });
         }
     }
 
@@ -33,7 +33,7 @@ module.exports = function (deps) {
     }
 
     async function getAll() {
-        let users = await ajax.get('/user')
+        let users = await ajax.get('/user');
         cachedUsers = [...users];
         return users;
     }

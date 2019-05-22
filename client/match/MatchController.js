@@ -1,3 +1,5 @@
+const ajax = require('../utils/ajax.js');
+
 module.exports = function (deps) { //TODO Rename MatchConnectionController or something better
 
     const socket = deps.socket;
@@ -23,6 +25,7 @@ module.exports = function (deps) { //TODO Rename MatchConnectionController or so
         socket.emit('match', {
             matchId,
             playerId: ownUserId,
+            secret: ajax.secret(),
             action,
             value
         });
