@@ -19,13 +19,17 @@ function DiscardCardController(deps) {
         const playerPhase = playerStateService.getPhase();
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
         const isRequiredDiscard = !!playerRequirementService.getFirstMatchingRequirement({ type: 'discardCard' });
-        const ordinaryDiscard = playerPhase === 'action' || playerPhase === 'discard';
+        const isRecycling = playerPhase === 'action';
+        const ordinaryDiscard = playerPhase === 'discard';
 
         playerStateService.removeCardFromHand(cardId);
         playerStateService.discardCard(discardedCard);
 
         if (isRequiredDiscard) {
             onRequiredDiscard(playerId);
+        }
+        else if (isRecycling) {
+            playerStateService.drawCard({ isRecycling: true });
         }
         else if (!ordinaryDiscard) {
             throw new CheatError('Illegal discard');

@@ -479,7 +479,7 @@ class PlayerStateService {
         }));
     }
 
-    drawCard({ byEvent = false } = {}) {
+    drawCard({ byEvent = false, isRecycling = false } = {}) {
         const deck = this.getDeck();
         if (deck.getCardCount() === 0) {
             this._logger.log(`PLAYERID=${this._playerId} Cannot draw card, deck is empty`, 'playerStateService');
@@ -492,7 +492,7 @@ class PlayerStateService {
         });
 
         const turn = this._matchService.getTurn();
-        this.storeEvent(DrawCardEvent({ turn, byEvent }));
+        this.storeEvent(DrawCardEvent({ turn, byEvent, isRecycling }));
     }
 
     registerMill({ byEvent = false } = {}) {
