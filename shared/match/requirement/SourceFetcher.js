@@ -13,8 +13,10 @@ module.exports = function ({
         hand: () => [],
         opponentDeck: () => [],
         opponentDiscardPile: () => [],
-        opponentStationCards: () => [],
-        opponnetHand: () => [],
+        opponentDrawStationCards,
+        opponentActionStationCards,
+        opponentHandSizeStationCards,
+        opponentHand,
         opponentAny
     };
 
@@ -35,7 +37,9 @@ module.exports = function ({
     }
 
     function drawStationCards(specFilter) {
-        return playerStateService.getDrawStationCards()
+        return playerStateService
+            .getDrawStationCards()
+            .filter(stationCardFilter(specFilter))
             .map(cardFromStationCard)
             .map(cardData => playerStateService.createBehaviourCard(cardData))
             .filter(cardFilter(specFilter))
@@ -43,7 +47,9 @@ module.exports = function ({
     }
 
     function actionStationCards(specFilter) {
-        return playerStateService.getActionStationCards()
+        return playerStateService
+            .getActionStationCards()
+            .filter(stationCardFilter(specFilter))
             .map(cardFromStationCard)
             .map(cardData => playerStateService.createBehaviourCard(cardData))
             .filter(cardFilter(specFilter))
@@ -53,6 +59,7 @@ module.exports = function ({
     function handSizeStationCards(specFilter) {
         return playerStateService
             .getHandSizeStationCards()
+            .filter(stationCardFilter(specFilter))
             .map(cardFromStationCard)
             .map(cardData => playerStateService.createBehaviourCard(cardData))
             .filter(cardFilter(specFilter))
@@ -65,11 +72,60 @@ module.exports = function ({
             .map(card => card.getCardData());
     }
 
+    function opponentDrawStationCards(specFilter) {
+        return opponentStateService
+            .getDrawStationCards()
+            .filter(stationCardFilter(specFilter))
+            .map(cardFromStationCard)
+            .map(cardData => playerStateService.createBehaviourCard(cardData))
+            .filter(cardFilter(specFilter))
+            .map(card => card.getCardData());
+    }
+
+    function opponentActionStationCards(specFilter) {
+        return opponentStateService
+            .getActionStationCards()
+            .filter(stationCardFilter(specFilter))
+            .map(cardFromStationCard)
+            .map(cardData => playerStateService.createBehaviourCard(cardData))
+            .filter(cardFilter(specFilter))
+            .map(card => card.getCardData());
+    }
+
+    function opponentHandSizeStationCards(specFilter) {
+        return opponentStateService
+            .getHandSizeStationCards()
+            .filter(stationCardFilter(specFilter))
+            .map(cardFromStationCard)
+            .map(cardData => playerStateService.createBehaviourCard(cardData))
+            .filter(cardFilter(specFilter))
+            .map(card => card.getCardData());
+    }
+
+    function opponentHand(specFilter) {
+        return opponentStateService
+            .getCardsOnHand()
+            .map(cardData => playerStateService.createBehaviourCard(cardData))
+            .filter(cardFilter(specFilter))
+            .map(card => card.getCardData());
+    }
+
     function cardFilter(filter = {}, triggerCard = null) {
         return card => {
             if (!cardFulfillsTypeFilter(card, filter)) return false;
             if (!cardFulfillsCanBeCounteredFilter(triggerCard, card, filter)) return false;
 
+            return true;
+        };
+    }
+
+    function stationCardFilter(filter = {}) {
+        return stationCard => {
+            if ('onlyFlippedStationCards' in filter) {
+                return filter.onlyFlippedStationCards
+                    ? stationCard.flipped
+                    : !stationCard.flipped;
+            }
             return true;
         };
     }

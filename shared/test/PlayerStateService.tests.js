@@ -230,7 +230,11 @@ function createServiceForPlayer(state, playerId) {
     const matchService = new MatchService();
     matchService.setState(state);
     const playerServiceProvider = PlayerServiceProvider();
-    const cardFactory = new CardFactory({ matchService, playerServiceProvider });
+    const cardFactory = new CardFactory({
+        matchService,
+        playerServiceProvider,
+        playerServiceFactory: { addRequirementFromSpec: () => {} }
+    });
     const playerStateService = new PlayerStateService({ playerId, matchService, cardFactory });
     playerServiceProvider.registerService(PlayerServiceProvider.TYPE.state, playerId, playerServiceProvider);
 

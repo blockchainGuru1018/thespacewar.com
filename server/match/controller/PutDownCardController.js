@@ -10,10 +10,11 @@ function PutDownCardController(deps) {
         cardFactory,
         playerServiceProvider,
         stateMemento,
-        playerRequirementUpdaterFactory
+        playerRequirementUpdaterFactory,
+        playerServiceFactory
     } = deps;
 
-    const cardApplier = CardApplier({ playerServiceProvider, matchService });
+    const cardApplier = CardApplier({ playerServiceProvider, playerServiceFactory, matchService });
 
     return {
         onPutDownCard,
@@ -153,6 +154,11 @@ function PutDownCardController(deps) {
                 }
                 else if (location === 'zone') {
                     putDownCardInZone({ playerId, cardData });
+                }
+
+                if (location === 'zone') {
+                    const addRequirementFromSpec = playerServiceFactory.addRequirementFromSpec(playerId);
+                    addRequirementFromSpec.forCardPutDownInHomeZone(cardData);
                 }
             }
 

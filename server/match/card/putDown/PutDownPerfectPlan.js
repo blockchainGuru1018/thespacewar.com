@@ -3,7 +3,8 @@ const PerfectPlan = require('../../../../shared/card/PerfectPlan.js');
 PutDownPerfectPlan.CommonId = PerfectPlan.CommonId;
 
 function PutDownPerfectPlan({
-    playerServiceProvider
+    playerServiceProvider,
+    playerServiceFactory
 }) {
 
     return {
@@ -14,9 +15,8 @@ function PutDownPerfectPlan({
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         playerStateService.putDownEventCardInZone(cardData);
 
-        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
-        let spec = PerfectPlan.Info.requirementSpecsWhenPutDownInHomeZone;
-        playerRequirementService.addCardRequirementFromSpec({cardData, spec});
+        const addRequirementFromSpec = playerServiceFactory.addRequirementFromSpec(playerId);
+        addRequirementFromSpec.forCardPutDownInHomeZone(cardData);
     }
 }
 

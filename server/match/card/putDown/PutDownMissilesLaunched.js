@@ -3,6 +3,7 @@ const MissilesLaunched = require('../../../../shared/card/MissilesLaunched.js');
 PutDownMissilesLaunched.CommonId = MissilesLaunched.CommonId;
 
 function PutDownMissilesLaunched({
+    playerServiceFactory,
     playerServiceProvider
 }) {
 
@@ -14,8 +15,8 @@ function PutDownMissilesLaunched({
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         playerStateService.putDownEventCardInZone(cardData);
 
-        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
-        playerRequirementService.addCardRequirementFromSpec({ cardData, spec: MissilesLaunched.Info.requirementSpecsWhenPutDownInHomeZone});
+        const addRequirementFromSpec = playerServiceFactory.addRequirementFromSpec(playerId);
+        addRequirementFromSpec.forCardPutDownInHomeZone(cardData);
     }
 }
 

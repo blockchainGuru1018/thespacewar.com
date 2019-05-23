@@ -3,7 +3,8 @@ const TargetMissed = require('../../../../shared/card/TargetMissed.js');
 PutDownTargetMissed.CommonId = TargetMissed.CommonId;
 
 function PutDownTargetMissed({
-    playerServiceProvider
+    playerServiceProvider,
+    playerServiceFactory
 }) {
 
     return {
@@ -14,9 +15,8 @@ function PutDownTargetMissed({
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         playerStateService.putDownEventCardInZone(cardData);
 
-        const spec = TargetMissed.Info.requirementSpecsWhenPutDownInHomeZone;
-        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
-        playerRequirementService.addCardRequirementFromSpec({ cardData, spec });
+        const addRequirementFromSpec = playerServiceFactory.addRequirementFromSpec(playerId);
+        addRequirementFromSpec.forCardPutDownInHomeZone(cardData);
     }
 }
 

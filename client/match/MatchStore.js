@@ -323,7 +323,10 @@ module.exports = function (deps) {
     function cardFactory(state, getters) {
         return new CardFactory({
             matchService: getters.matchService,
-            playerServiceProvider: getters.playerServiceProvider
+            playerServiceProvider: getters.playerServiceProvider,
+            playerServiceFactory: {
+                addRequirementFromSpec: () => ClientLimitNotice
+            }
         });
     }
 

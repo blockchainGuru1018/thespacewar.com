@@ -4,9 +4,9 @@ const CanCounterCardsWithCostOrLess = require('./mixins/CanCounterCardsWithCostO
 
 module.exports = class Avoid extends CanCounterCardsWithCostOrLess(Infinity, BaseCard) {
 
-    constructor({ playerRequirementService, ...deps }) {
+    constructor({ addRequirementFromSpec, ...deps }) {
         super(deps);
-        this._playerRequirementService = playerRequirementService;
+        this._addRequirementFromSpec = addRequirementFromSpec;
     }
 
     static get CommonId() {
@@ -23,6 +23,6 @@ module.exports = class Avoid extends CanCounterCardsWithCostOrLess(Infinity, Bas
 
     triggerDormantEffect() {
         let spec = Avoid.Info.dormantEffectRequirementSpec;
-        this._playerRequirementService.addCardRequirementFromSpec({ card: this, spec });
+        this._addRequirementFromSpec.forCardAndSpec(this, spec);
     }
 };

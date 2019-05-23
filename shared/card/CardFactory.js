@@ -8,10 +8,12 @@ module.exports = class CardFactory {
 
     constructor({
         matchService,
-        playerServiceProvider
+        playerServiceProvider,
+        playerServiceFactory
     }) {
         this._matchService = matchService;
         this._playerServiceProvider = playerServiceProvider;
+        this._playerServiceFactory = playerServiceFactory;
     }
 
     createCardForPlayer(cardData, playerId) {
@@ -35,7 +37,7 @@ module.exports = class CardFactory {
             matchService: matchService,
             playerStateService: stateServiceById,
             canThePlayer: this._playerServiceProvider.getCanThePlayerServiceById(playerId),
-            playerRequirementService: this._playerServiceProvider.getRequirementServiceById(playerId)
+            addRequirementFromSpec: this._playerServiceFactory.addRequirementFromSpec(playerId)
         });
     }
 };

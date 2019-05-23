@@ -16,6 +16,7 @@ const QueryAttacks = require('./requirement/QueryAttacks.js');
 const OverworkEventFactory = require('./overwork/event/OverworkEventFactory.js');
 const PlayerOverwork = require('./overwork/PlayerOverwork.js');
 const MoveStationCard = require('./MoveStationCard.js');
+const AddRequirementFromSpec = require('./requirement/AddRequirementFromSpec.js');
 const StartGame = require('./StartGame.js');
 
 const ServiceTypes = PlayerServiceProvider.TYPE;
@@ -37,6 +38,7 @@ module.exports = function ({ state, logger, endMatch, gameConfig, actionPointsCa
         queryAttacks: cached(queryAttacks),
         startGame: cached(startGame),
         playerStateService: cached(playerStateService),
+        addRequirementFromSpec: cached(addRequirementFromSpec),
         playerRequirementService: cached(playerRequirementService),
         playerRuleService: cached(playerRuleService),
         playerPhase: cached(playerPhase),
@@ -140,7 +142,19 @@ module.exports = function ({ state, logger, endMatch, gameConfig, actionPointsCa
     function cardFactory() {
         return new CardFactory({
             matchService: api.matchService(),
-            playerServiceProvider
+            playerServiceProvider,
+            playerServiceFactory: api,
+        });
+    }
+
+    function addRequirementFromSpec(playerId) {
+        const opponentId = api.opponentId(playerId);
+        return AddRequirementFromSpec({
+            playerStateService: api.playerStateService(playerId),
+            playerRequirementService: api.playerRequirementService(playerId),
+            opponentRequirementService: api.playerRequirementService(opponentId),
+            playerRequirementFactory: api.playerRequirementFactory(playerId),
+            opponentRequirementFactory: api.playerRequirementFactory(opponentId)
         });
     }
 

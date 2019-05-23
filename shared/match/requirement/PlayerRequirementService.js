@@ -142,22 +142,6 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
         });
     }
 
-    addCardRequirementFromSpec({ card = null, cardData = null, spec }) {
-        if (!card && !cardData) throw new Error('Either card or cardData has to be provided when adding card requirement from spec');
-
-        card = card || this._playerStateService.createBehaviourCard(cardData);
-
-        for (const requirementSpec of spec.forPlayer) {
-            const requirement = this._playerRequirementFactory.create(card, requirementSpec);
-            this.addCardRequirement(requirement);
-        }
-
-        for (const requirementSpec of spec.forOpponent) {
-            const requirement = this._opponentRequirementFactory.create(card, requirementSpec);
-            this.addCardRequirement(requirement);
-        }
-    }
-
     canAddDiscardCardRequirementWithCountOrLess(count) {
         return this.getCountOrMinimumAvailableForDiscardingCards(count) > 0;
     }
