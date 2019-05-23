@@ -240,19 +240,26 @@
                                 v-if="!playerTopDiscardCard"
                             />
                             <div
+                                v-else
                                 v-longpress="() => expandCard(playerTopDiscardCard)"
                                 :data-cardId="playerTopDiscardCard.id"
                                 :style="getCardImageStyle(playerTopDiscardCard)"
                                 class="card card--expandable"
-                                v-else
                             />
                             <CardGhost
+                                v-if="discardPileCardGhostVisible"
                                 :element-hovered-over="elementHoveredOver"
-                                @click="cardGhostClick"
                                 class="discardPile-cardGhost"
                                 location="discard"
-                                v-if="discardPileCardGhostVisible"
-                            />
+                                @click="cardGhostClick"
+                            >
+                                <div
+                                    v-if="phase === PHASES.action"
+                                    class="recycle"
+                                >
+                                    Recycle
+                                </div>
+                            </CardGhost>
                         </div>
                     </div>
                     <div class="field-zoneRows field-playerZoneRows">
