@@ -51,11 +51,8 @@ class PlayerStateService {
         const isFirstPlayer = this.isFirstPlayer();
 
         const playerDeck = this.getDeck();
-        const stationCardsToPutDown = this.allowedStartingStationCardCount();
-        const secondPlayerHandicap = isFirstPlayer ? 0 : 1;
         const startingHandCount = this._gameConfig.amountOfCardsInStartHand();
-        const cardsOnHandCount = startingHandCount + stationCardsToPutDown + secondPlayerHandicap;
-        const cardsOnHand = playerDeck.draw(cardsOnHandCount);
+        const cardsOnHand = playerDeck.draw(startingHandCount);
         this.update(playerState => {
             playerState.cardsOnHand = cardsOnHand;
             playerState.phase = isFirstPlayer ? PHASES.start : 'wait';

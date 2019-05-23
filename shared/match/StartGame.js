@@ -3,7 +3,9 @@ const CheatError = require('../../server/match/CheatError.js');
 function StartGameController({
     matchService,
     playerStateService,
+    playerRequirementService,
     opponentStateService,
+    opponentRequirementService,
     playerPhase,
     opponentPhase,
     canThePlayer,
@@ -35,6 +37,8 @@ function StartGameController({
             playerStateService.doneSelectingStationCards();
 
             if (!canTheOpponent.putDownMoreStartingStationCards()) {
+                const secondPlayerRequirementService = playerStateService.isFirstPlayer() ? opponentRequirementService : playerRequirementService;
+                secondPlayerRequirementService.addDrawCardRequirement({ count: 1 });
                 matchService.startGame();
             }
         }

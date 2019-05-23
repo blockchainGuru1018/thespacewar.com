@@ -48,7 +48,7 @@ module.exports = function ({ state, logger, endMatch, gameConfig, actionPointsCa
         sourceFetcher: cached(sourceFetcher),
         eventRepository: cached(eventRepository),
         eventFactory: cached(eventFactory),
-        opponentId: cached(opponentId),
+        opponentId: cached(playerId => api.matchService().getOpponentId(playerId)),
         queryEvents: cached(queryEvents),
         actionPointsCalculator: () => actionPointsCalculator
     };
@@ -135,10 +135,6 @@ module.exports = function ({ state, logger, endMatch, gameConfig, actionPointsCa
         return EventFactory({ matchService: api.matchService() });
     }
 
-    function opponentId(playerId) {
-        return api.matchService().getOpponentId(playerId);
-    }
-
     function cardFactory() {
         return new CardFactory({
             matchService: api.matchService(),
@@ -180,7 +176,7 @@ module.exports = function ({ state, logger, endMatch, gameConfig, actionPointsCa
     function sourceFetcher(playerId) {
         return SourceFetcher({
             playerStateService: api.playerStateService(playerId),
-            opponentStateService: api.playerStateService(opponentId(playerId)),
+            opponentStateService: api.playerStateService(api.opponentId(playerId)),
             canThePlayer: api.canThePlayer(playerId)
         });
     }
@@ -211,7 +207,7 @@ module.exports = function ({ state, logger, endMatch, gameConfig, actionPointsCa
     }
 
     function queryAttacks(playerId) {
-        let opponentId = api.opponentId(playerId);
+        const opponentId = api.opponentId(playerId);
         return QueryAttacks({
             opponentStateService: api.playerStateService(opponentId),
             playerEventRepository: api.eventRepository(playerId),
@@ -220,14 +216,17 @@ module.exports = function ({ state, logger, endMatch, gameConfig, actionPointsCa
     }
 
     function startGame(playerId) {
+        const opponentId = api.opponentId(playerId);
         return StartGame({
             matchService: api.matchService(),
             playerStateService: api.playerStateService(playerId),
-            opponentStateService: api.playerStateService(api.opponentId(playerId)),
+            playerRequirementService: api.playerRequirementService(playerId),
+            opponentStateService: api.playerStateService(opponentId),
+            opponentRequirementService: api.playerRequirementService(opponentId),
             playerPhase: api.playerPhase(playerId),
-            opponentPhase: api.playerPhase(api.opponentId(playerId)),
+            opponentPhase: api.playerPhase(opponentId),
             canThePlayer: api.canThePlayer(playerId),
-            canTheOpponent: api.canThePlayer(api.opponentId(playerId))
+            canTheOpponent: api.canThePlayer(opponentId)
         });
     }
 
@@ -256,7 +255,7 @@ module.exports = function ({ state, logger, endMatch, gameConfig, actionPointsCa
     }
 
     function matchService() {
-        let matchService = new MatchService({ endMatch, gameConfig });
+        const matchService = new MatchService({ endMatch, gameConfig });
         matchService.setState(state);
         return matchService;
     }
