@@ -93,7 +93,7 @@
 /*! exports provided: AMOUNT_OF_CARDS_IN_START_HAND, OVERWORK_IS_ACTIVE, MAXIMUM_STATION_CARDS, STATION_CARDS_AT_START, MILL_CARD_AMOUNT, default */
 /***/ (function(module) {
 
-eval("module.exports = {\"AMOUNT_OF_CARDS_IN_START_HAND\":12,\"OVERWORK_IS_ACTIVE\":true,\"MAXIMUM_STATION_CARDS\":999,\"STATION_CARDS_AT_START\":5,\"MILL_CARD_AMOUNT\":2};\n\n//# sourceURL=webpack:///../config.json?");
+eval("module.exports = {\"AMOUNT_OF_CARDS_IN_START_HAND\":12,\"OVERWORK_IS_ACTIVE\":true,\"MAXIMUM_STATION_CARDS\":9,\"STATION_CARDS_AT_START\":5,\"MILL_CARD_AMOUNT\":2};\n\n//# sourceURL=webpack:///../config.json?");
 
 /***/ }),
 

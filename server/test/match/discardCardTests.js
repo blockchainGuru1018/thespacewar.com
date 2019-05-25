@@ -4,10 +4,7 @@ const {
         assert,
         refute,
     },
-    FakeDeckFactory,
     createCard,
-    createPlayer,
-    createMatchAndGoToFirstActionPhase,
     createState,
     createMatch,
     Player,
@@ -22,7 +19,7 @@ module.exports = {
         setUp() {
             this.firstPlayerConnection = FakeConnection2(['stateChanged']);
             this.secondPlayerConnection = FakeConnection2(['stateChanged']);
-            const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+            const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
             this.match = createMatch({ players });
             this.match.restoreFromState(createState({
                 playerStateById: {
@@ -32,7 +29,7 @@ module.exports = {
                     }
                 },
                 deckByPlayerId: {
-                    'P2A': FakeDeck.fromCards([createCard({ id: 'C2A' })])
+                    'P1A': FakeDeck.fromCards([createCard({ id: 'C2A' })])
                 }
             }));
 
@@ -42,19 +39,20 @@ module.exports = {
             assert.calledOnce(this.firstPlayerConnection.stateChanged);
             assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                 discardedCards: [sinon.match({ id: 'C1A' })],
-                cardsOnHand: []
+                cardsOnHand: [sinon.match({ id: 'C2A' })]
             }));
         },
-        'when restore state of first player should NOT have discarded card on hand'() {
+        'when restore state of first player should have top card of deck on hand'() {
             this.match.refresh('P1A');
             const { cardsOnHand } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
-            assert.equals(cardsOnHand.length, 0);
+            assert.equals(cardsOnHand.length, 1);
+            assert.equals(cardsOnHand[0].id, 'C2A');
         },
         'should emit state changed to second player'() {
             assert.calledOnce(this.secondPlayerConnection.stateChanged);
             assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
                 opponentDiscardedCards: [sinon.match({ id: 'C1A' })],
-                opponentCardCount: 0
+                opponentCardCount: 1
             }));
         }
     },
