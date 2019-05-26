@@ -1,16 +1,18 @@
 class PlayerRequirementUpdater { //TODO Rename PlayerRequirements
 
     constructor({
-        playerStateService,
+        cardFactory,
         playerRequirementService,
         opponentRequirementService,
-        requirementMatchConditions
+        requirementMatchConditions,
+        addRequirementFromSpec
     }) {
         this._requirementMatchCondition = requirementMatchConditions;
 
-        this._playerStateService = playerStateService;
         this._playerRequirementService = playerRequirementService;
         this._opponentRequirementService = opponentRequirementService;
+        this._addRequirementFromSpec = addRequirementFromSpec;
+        this._cardFactory = cardFactory;
     }
 
     canProgressRequirementByCount(count) {
@@ -28,7 +30,7 @@ class PlayerRequirementUpdater { //TODO Rename PlayerRequirements
         else if (requirement.common) {
             if (this._opponentHasMatchingAndWaitingRequirement()) {
                 this._removeOpponentMatchingAndWaitingRequirement();
-                this.remove();
+                this.resolve();
             }
             else {
                 this._update(requirement => {
@@ -38,12 +40,21 @@ class PlayerRequirementUpdater { //TODO Rename PlayerRequirements
             }
         }
         else {
-            this.remove();
+            this.resolve();
         }
     }
 
-    remove() {
-        return this._playerRequirementService.removeFirstMatchingRequirement(this._requirementMatchCondition)
+    resolve() {
+        const requirement = this._get();
+
+        this._playerRequirementService.removeFirstMatchingRequirement(this._requirementMatchCondition);
+
+        if (requirement.whenResolvedAddAlso) {
+            for (const spec of requirement.whenResolvedAddAlso) {
+                const card = this._cardFactory.createCardForPlayer(spec._cardData, spec._playerId);
+                this._addRequirementFromSpec.forCardAndSpec(card, spec);
+            }
+        }
     }
 
     _opponentHasMatchingAndWaitingRequirement() {

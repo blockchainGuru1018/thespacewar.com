@@ -325,7 +325,7 @@
             "name": "Fatal Error",
             "price": "0",
             "type_card": "orange",
-            "detail": "Destroy any card (on the table including station cards).\r\nYour opponent may draw 2 cards.",
+            "detail": "Destroy any card (on the table including station cards).\r\nThe opponent may draw 2 cards.",
             "defense": "0",
             "attack": "0",
             "number_copies": "2"
@@ -345,7 +345,7 @@
             "name": "Discovery",
             "price": "0",
             "type_card": "orange",
-            "detail": "Draw 3 cards and the opponent draws 2 cards. [ OR ] Discard 1 card and the opponent discards 2 cards.",
+            "detail": "Draw 3 cards and the opponent may draw 2 cards. [ OR ] Discard 1 card and the opponent discards 2 cards.",
             "defense": "0",
             "attack": "0",
             "number_copies": "2"
@@ -363,9 +363,9 @@
         {
             "id": "64",
             "name": "Destiny Decided",
-            "price": "2",
+            "price": "3",
             "type_card": "violet",
-            "detail": "No player can play any event (orange) card.",
+            "detail": "No player can play any event (orange) card.\r\nPlayers can only play 1 card during their turn.",
             "defense": "0",
             "attack": "0",
             "number_copies": "1"
@@ -381,5 +381,5 @@
             "number_copies": "2"
         }
     ],
-    "saveTime": 1558643670474
+    "saveTime": 1558881393668
 }

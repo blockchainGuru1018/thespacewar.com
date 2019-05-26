@@ -4,10 +4,12 @@ class PlayerRequirementUpdaterFactory {
 
     constructor({
         playerServiceProvider,
-        matchComService //TODO Should use matchService
+        matchComService, //TODO Should use matchService
+        playerServiceFactory
     }) {
         this._playerServiceProvider = playerServiceProvider;
         this._matchComService = matchComService;
+        this._playerServiceFactory = playerServiceFactory;
     }
 
     create(playerId, requirementMatchConditions) {
@@ -16,7 +18,9 @@ class PlayerRequirementUpdaterFactory {
             requirementMatchConditions,
             playerStateService: this._playerServiceProvider.getStateServiceById(playerId),
             playerRequirementService: this._playerServiceProvider.getRequirementServiceById(playerId),
-            opponentRequirementService: this._playerServiceProvider.getRequirementServiceById(opponentId)
+            opponentRequirementService: this._playerServiceProvider.getRequirementServiceById(opponentId),
+            addRequirementFromSpec: this._playerServiceFactory.addRequirementFromSpec(playerId),
+            cardFactory: this._playerServiceFactory.cardFactory()
         });
     }
 }

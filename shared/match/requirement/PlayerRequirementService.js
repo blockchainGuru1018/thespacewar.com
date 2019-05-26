@@ -38,22 +38,22 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
     addCardRequirement(requirement) {
         const type = requirement.type;
         if (type === 'drawCard') {
-            this.addDrawCardRequirement(requirement);
+            return this.addDrawCardRequirement(requirement);
         }
         else if (type === 'discardCard') {
-            this.addDiscardCardRequirement(requirement);
+            return this.addDiscardCardRequirement(requirement);
         }
         else if (type === 'damageStationCard') {
-            this.addDamageStationCardRequirement(requirement);
+            return this.addDamageStationCardRequirement(requirement);
         }
         else if (type === 'findCard') {
-            this.addFindCardRequirement(requirement);
+            return this.addFindCardRequirement(requirement);
         }
         else if (type === 'counterCard') {
-            this.addCounterCardRequirement(requirement);
+            return this.addCounterCardRequirement(requirement);
         }
         else if (type === 'counterAttack') {
-            this.addCounterAttackRequirement(requirement);
+            return this.addCounterAttackRequirement(requirement);
         }
     }
 
@@ -71,10 +71,14 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
                 requirement.cardCommonId = cardCommonId;
             }
             this.addRequirement(requirement);
+
+            return requirement;
         }
+
+        return null;
     }
 
-    addDrawCardRequirement({ count, common = false, cardCommonId = null }) {
+    addDrawCardRequirement({ count, common = false, cardCommonId = null, whenResolvedAddAlso = [] }) {
         let countToDraw = this.getCountOrMinimumAvailableForDrawingCards(count);
         if (countToDraw > 0) {
             const requirement = { type: 'drawCard', count: countToDraw };
@@ -84,8 +88,15 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
             if (cardCommonId) {
                 requirement.cardCommonId = cardCommonId;
             }
+            if (whenResolvedAddAlso.length) {
+                requirement.whenResolvedAddAlso = whenResolvedAddAlso;
+            }
             this.addRequirement(requirement);
+
+            return requirement;
         }
+
+        return null;
     }
 
     addDamageStationCardRequirement({ count, common = false, cardCommonId = null, reason = '' }) {
@@ -110,36 +121,49 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
                 requirement.cardCommonId = cardCommonId;
             }
             this.addRequirement(requirement);
+
+            return requirement;
         }
+
+        return null;
     }
 
     addFindCardRequirement({ count, cardGroups, ...uncheckedProperties }) {
         const totalCardCount = cardGroups.reduce((acc, group) => acc + group.cards.length, 0);
-        this.addRequirement({
+        const requirement = {
             ...uncheckedProperties,
             type: 'findCard',
             count: Math.min(totalCardCount, count),
             cardGroups: cardGroups.filter(g => g.cards.length)
-        });
+        };
+        this.addRequirement(requirement);
+
+        return requirement;
     }
 
     addCounterCardRequirement({ count, cardGroups, ...uncheckedProperties }) {
         const totalCardCount = cardGroups.reduce((acc, group) => acc + group.cards.length, 0);
-        this.addRequirement({
+        const requirement = {
             ...uncheckedProperties,
             type: 'counterCard',
             count: Math.min(totalCardCount, count),
             cardGroups: cardGroups.filter(g => g.cards.length)
-        });
+        };
+        this.addRequirement(requirement);
+
+        return requirement;
     }
 
     addCounterAttackRequirement({ count, attacks, ...uncheckedProperties }) {
-        this.addRequirement({
+        const requirement = {
             ...uncheckedProperties,
             type: 'counterAttack',
             count: Math.min(attacks.length, count),
             attacks
-        });
+        };
+        this.addRequirement(requirement);
+
+        return requirement;
     }
 
     canAddDiscardCardRequirementWithCountOrLess(count) {
@@ -178,12 +202,15 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
     }
 
     addEmptyCommonWaitingRequirement(requirement) {
-        this.addRequirement({
+        const addedRequirement = {
             ...requirement,
             count: 0,
             common: true,
             waiting: true
-        });
+        };
+        this.addRequirement(addedRequirement);
+
+        return addedRequirement;
     }
 
     updateFirstMatchingRequirement({ type, common = null, waiting = null }, updateFn) {

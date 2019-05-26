@@ -20,6 +20,8 @@ const {
 } = require('./shared.js');
 const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
 const MissilesLaunched = require('../../../shared/card/MissilesLaunched.js');
+const Sabotage = require('../../../shared/card/Sabotage.js');
+const StateAsserter = require('../testUtils/StateAsserter.js');
 const GrandOpportunityCommonId = '20';
 const ExcellentWorkCommonId = '14';
 const SupernovaCommonId = '15';
@@ -1255,9 +1257,9 @@ module.exports = {
             const players = [Player('P1A', this.firstPlayerConnection)];
             this.match = createMatch({ players }, [{ id: MissilesLaunched.CommonId }]);
             this.match.restoreFromState(createState({
+                turn: 1,
                 playerStateById: {
                     'P1A': {
-                        turn: 1,
                         phase: 'action',
                         cardsOnHand: [
                             createCard({ id: 'C1A', type: 'event', commonId: MissilesLaunched.CommonId })
@@ -1284,6 +1286,77 @@ module.exports = {
                     })
                 ]
             }));
+        }
+    },
+    'Sabotage:': {
+        setUp() {
+            const firstPlayerConnection = FakeConnection2(['stateChanged']);
+            const secondPlayerConnection = FakeConnection2(['stateChanged']);
+            const players = [Player('P1A', firstPlayerConnection), Player('P2A', secondPlayerConnection)];
+            this.match = createMatch({ players });
+            this.firstPlayerAsserter = StateAsserter(this.match, firstPlayerConnection, 'P1A');
+            this.secondPlayerAsserter = StateAsserter(this.match, secondPlayerConnection, 'P2A');
+        },
+        'when put down sabotage on own turn in action phase': {
+            setUp() {
+                this.match.restoreFromState(createState({
+                    turn: 1,
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'action',
+                            cardsOnHand: [
+                                createCard({ id: 'C1A', type: 'event', commonId: Sabotage.CommonId })
+                            ]
+                        },
+                        'P2A': {
+                            phase: 'wait',
+                            cardsOnHand: [createCard({ id: 'C2A' })]
+                        }
+                    },
+                    deckByPlayerId: {
+                        'P2A': FakeDeck.realDeckFromCards([createCard({ id: 'C3A' })])
+                    }
+                }));
+
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A', choice: null });
+            },
+            'should add requirement to player'() {
+                this.firstPlayerAsserter.hasRequirement({ type: 'drawCard', count: 0, common: true, waiting: true });
+            },
+            'should add requirement to opponent'() {
+                this.secondPlayerAsserter.hasRequirement({ type: 'drawCard', count: 1, common: true });
+            },
+            'should NOT add find card requirement to player'() {
+                this.firstPlayerAsserter.refuteHasRequirement({ type: 'findCard' });
+            }
+        },
+        'when has put down sabotage and opponent resolves draw card requirement': {
+            setUp() {
+                this.match.restoreFromState(createState({
+                    turn: 1,
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'action',
+                            cardsOnHand: [
+                                createCard({ id: 'C1A', type: 'event', commonId: Sabotage.CommonId })
+                            ]
+                        },
+                        'P2A': {
+                            phase: 'wait',
+                            cardsOnHand: [createCard({ id: 'C2A' })]
+                        }
+                    },
+                    deckByPlayerId: {
+                        'P2A': FakeDeck.realDeckFromCards([createCard({ id: 'C3A' })])
+                    }
+                }));
+                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A', choice: null });
+
+                this.match.drawCard('P2A');
+            },
+            'should add find card requirement to player'() {
+                this.firstPlayerAsserter.hasRequirement({ type: 'findCard' });
+            }
         }
     }
 };

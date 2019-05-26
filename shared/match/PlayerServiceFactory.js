@@ -147,6 +147,7 @@ module.exports = function ({ state, logger, endMatch, gameConfig, actionPointsCa
         const opponentId = api.opponentId(playerId);
         return AddRequirementFromSpec({
             playerStateService: api.playerStateService(playerId),
+            opponentStateService: api.playerStateService(opponentId),
             playerRequirementService: api.playerRequirementService(playerId),
             opponentRequirementService: api.playerRequirementService(opponentId),
             playerRequirementFactory: api.playerRequirementFactory(playerId),

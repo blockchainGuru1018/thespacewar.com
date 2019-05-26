@@ -90,7 +90,7 @@ function PutDownCardController(deps) {
 
     function removeCounterCardRequirment(playerId) {
         const playerRequirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'counterCard' });
-        playerRequirementUpdater.remove();
+        playerRequirementUpdater.resolve();
     }
 
     function checkIfCanPutDownCard({ playerId, location, cardData }) {

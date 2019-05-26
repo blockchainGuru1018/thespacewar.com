@@ -1,5 +1,6 @@
 const {
     assert,
+    refute,
     sinon
 } = require('bocha');
 
@@ -15,7 +16,8 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
         hasDiscardedCard,
         hasCardInZone,
         countMatchingAttacks,
-        hasRequirement
+        hasRequirement,
+        refuteHasRequirement
     };
 
     function send() {
@@ -62,7 +64,13 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
 
     function hasRequirement(requirement) {
         assert.calledWith(playerConnection.stateChanged, sinon.match({
-            requirements: sinon.match([sinon.match(requirement)])
+            requirements: sinon.match.some(sinon.match(requirement))
+        }));
+    }
+
+    function refuteHasRequirement(requirement) {
+        refute.calledWith(playerConnection.stateChanged, sinon.match({
+            requirements: sinon.match.some(sinon.match(requirement))
         }));
     }
 }

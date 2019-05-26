@@ -21,7 +21,20 @@ module.exports = function ({
 
     function create(card, requirementSpec) {
         const Constructor = factories.find(f => f.type === requirementSpec.type);
-        if (!Constructor) return { ...requirementSpec };
+        if (!Constructor) {
+            //WARNING: Mutating argument //TODO Out of my lazyness this will mutate requirementSpec. Would be great to have some deepClone in the future!
+            if (requirementSpec.whenResolvedAddAlso) {
+                requirementSpec.whenResolvedAddAlso.forEach(spec => {
+                    spec._cardData = card.getCardData();
+                    spec._playerId = card.playerId;
+                });
+            }
+            //END OF WARNING
+
+            return {
+                ...requirementSpec
+            };
+        }
 
         const factory = Constructor({
             playerStateService,
