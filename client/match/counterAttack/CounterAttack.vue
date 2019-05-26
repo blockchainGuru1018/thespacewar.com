@@ -1,10 +1,10 @@
 <template>
     <div class="counterAttack-wrapper">
-        <div class="dimOverlay"/>
+        <div class="dimOverlay" />
         <div class="counterAttack">
             <div class="counterAttack-header">
                 <div class="counterAttack-requirementCard">
-                    <img :src="getCardImageUrl({commonId: requirement.cardCommonId})"/>
+                    <img :src="getCardImageUrl({commonId: requirement.cardCommonId})" />
                 </div>
                 <div class="counterAttack-headerText">
                     {{ attacks.length > 0 ? 'Select attack to counter' : 'No attack to counter' }}
