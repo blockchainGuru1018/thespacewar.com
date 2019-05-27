@@ -1,5 +1,7 @@
 @import "cardVariables";
 
+$durationCardsMarginToOtherCards: 35px;
+
 .card {
   -webkit-user-select: none;
   user-select: none;
@@ -102,4 +104,12 @@
   &.card--turnedAround:active:hover {
     transform: rotate(180deg) scale(1.1) !important;
   }
+}
+
+.playerCardsInZone .card-lastDurationCard {
+  margin-right: $durationCardsMarginToOtherCards;
+}
+
+.opponentCardsInZone .card-lastDurationCard {
+  margin-left: $durationCardsMarginToOtherCards;
 }

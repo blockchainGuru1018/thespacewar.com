@@ -93,13 +93,13 @@
                         <div class="opponentCardsInZone field-opponentZoneRow field-zone field-section">
                             <template v-for="n in opponentCardsInZone.length">
                                 <zone-card
-                                    :card="opponentCardsInZone[n - 1]"
-                                    :key="opponentCardsInZone[n - 1].id"
+                                    v-if="n <= opponentCardsInZone.length"
+                                    :key="sortedOpponentCardsInZone[n - 1].id"
+                                    :card="sortedOpponentCardsInZone[n - 1]"
                                     :owner-id="opponentUser.id"
                                     :zone-opponent-row="playerCardsInOpponentZone"
                                     :zone-player-row="opponentCardsInZone"
-                                    class="card--turnedAround"
-                                    v-if="n <= opponentCardsInZone.length"
+                                    :class="['card--turnedAround', {'card-lastDurationCard': lastSortedOpponentDurationCardIndex === (n - 1)}]"
                                 />
                             </template>
                             <div
@@ -290,6 +290,7 @@
                                     :ownerId="ownUser.id"
                                     :zoneOpponentRow="opponentCardsInPlayerZone"
                                     :zonePlayerRow="visiblePlayerCards"
+                                    :class="{'card-lastDurationCard': lastVisiblePlayerDurationCardIndex === (n - 1)}"
                                 />
                             </template>
                             <CardGhost
@@ -548,7 +549,20 @@
                     && this.hasPutDownNonFreeCardThisTurn;
             },
             visiblePlayerCards() {
-                return [...this.playerCardsInZone, ...this.transientPlayerCardsInHomeZone];
+                const allCards = [...this.playerCardsInZone, ...this.transientPlayerCardsInHomeZone];
+                const leftMostCardTypes = ['duration'];
+                return allCards.sort((a, b) => leftMostCardTypes.indexOf(b.type) - leftMostCardTypes.indexOf(a.type));
+            },
+            lastVisiblePlayerDurationCardIndex() {
+                return Math.max(-1, this.visiblePlayerCards.findIndex(c => c.type !== 'duration') - 1);
+            },
+            sortedOpponentCardsInZone() {
+                const cards = [...this.opponentCardsInZone];
+                const leftMostCardTypes = ['duration'];
+                return cards.sort((a, b) => leftMostCardTypes.indexOf(b.type) - leftMostCardTypes.indexOf(a.type));
+            },
+            lastSortedOpponentDurationCardIndex() {
+                return Math.max(-1, this.sortedOpponentCardsInZone.findIndex(c => c.type !== 'duration') - 1);
             },
             playerVisibleDrawStationCards() {
                 return this.playerStation.drawCards.filter(s => this.shouldShowStationCard(s));
