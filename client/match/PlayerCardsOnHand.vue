@@ -1,5 +1,5 @@
 <template>
-    <div class="field-playerCardsOnHand playerCardsOnHand field-section">
+    <div class="field-playerCardsOnHand playerCardsOnHand field-section" :style="style">
         <div
             v-for="{card, index} in visibleCardHoverActivators"
             :key="`hoverActivator-${card.id}`"
@@ -58,6 +58,13 @@
             ...mapPermissionGetters([
                 'canMoveCardsFromHand'
             ]),
+            style() {
+                const style = {};
+                if(this.choosingStartingPlayer) {
+                    style.zIndex = '9999';
+                }
+                return style;
+            },
             playerVisibleCardsOnHand() {
                 return this.playerCardsOnHand.filter(card => !this.hiddenCardIdsOnHand.some(id => id === card.id));
             },

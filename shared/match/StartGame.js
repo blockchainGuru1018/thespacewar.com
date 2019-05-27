@@ -20,8 +20,11 @@ function StartGameController({
     function selectPlayerToStart(playerToStartId) {
         const playerId = playerStateService.getPlayerId();
 
-        const playerToStartStateService = playerToStartId === playerId ? playerPhase : opponentPhase;
-        playerToStartStateService.selectToStart();
+        const playerToStartPhaseService = playerToStartId === playerId ? playerPhase : opponentPhase;
+        playerToStartPhaseService.selectToStart();
+
+        const secondPlayerRequirementService = playerStateService.isFirstPlayer() ? opponentRequirementService : playerRequirementService;
+        secondPlayerRequirementService.addDrawCardRequirement({ count: 1 });
 
         playerStateService.readyForSelectingStationCards();
         opponentStateService.readyForSelectingStationCards();
@@ -37,8 +40,6 @@ function StartGameController({
             playerStateService.doneSelectingStationCards();
 
             if (!canTheOpponent.putDownMoreStartingStationCards()) {
-                const secondPlayerRequirementService = playerStateService.isFirstPlayer() ? opponentRequirementService : playerRequirementService;
-                secondPlayerRequirementService.addDrawCardRequirement({ count: 1 });
                 matchService.startGame();
             }
         }

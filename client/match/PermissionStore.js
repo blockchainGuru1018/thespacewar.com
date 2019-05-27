@@ -64,7 +64,8 @@ module.exports = function (deps) {
         if (getters.waitingForOtherPlayerToFinishRequirements) return false;
 
         const hasActiveRequirement = !!getFrom('firstRequirement', 'requirement');
-        return getters.isOwnTurn
+        const choosingStartingPlayer = rootGetters['match/choosingStartingPlayer'];
+        return (getters.isOwnTurn && !choosingStartingPlayer)
             || hasActiveRequirement;
     }
 

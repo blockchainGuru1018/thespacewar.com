@@ -17,9 +17,12 @@ module.exports = function ({
         }
     };
 
-    function visible(state, getters, rootState) {
+    function visible(state, getters, rootState, rootGetters) {
+        const somePlayerHasRetreated = !rootGetters['match/playerRetreated'] && !rootGetters['match/opponentRetreated'];
+
         return rootState.match.mode === MatchMode.chooseStartingPlayer
-            && rootState.match.currentPlayer === rootState.match.ownUser.id;
+            && rootState.match.currentPlayer === rootState.match.ownUser.id
+            && somePlayerHasRetreated;
     }
 
     function players(state, getters, rootState) {

@@ -1,8 +1,5 @@
 <template>
-    <div
-        v-if="!choosingStartingPlayer"
-        class="field-playerHud"
-    >
+    <div class="field-playerHud">
         <portal
             v-if="!gameHasEnded"
             to="player-top"
@@ -34,17 +31,8 @@
             </div>
 
             <div class="guideTextContainer" v-if="!choosingStartingPlayer">
-                <div v-if="selectingStartingStationCards" class="guideText guideText--small">
-                    {{ selectingStartingStationCardsText }}
-                </div>
                 <div
-                    v-if="waitingForOtherPlayerToSelectStartingPlayer"
-                    class="guideText-waitingForOtherPlayer guideText guideText--small"
-                >
-                    Waiting for other player...
-                </div>
-                <div
-                    v-else-if="waitingForOtherPlayerToFinishRequirements"
+                    v-if="waitingForOtherPlayerToFinishRequirements"
                     class="guideText-waitingForOtherPlayer guideText guideText--small"
                 >
                     <template v-if="waitingRequirement.reason === 'emptyDeck'">
@@ -78,6 +66,18 @@
                         <div class="enlargeIcon enlargeIcon--small" />
                     </div>
                     {{ requirementGuideText }}
+                </div>
+                <div v-else-if="selectingStartingStationCards" class="guideText guideText--small">
+                    {{ selectingStartingStationCardsText }}
+                </div>
+                <div
+                    v-else-if="waitingForOtherPlayerToSelectStartingPlayer"
+                    class="guideText-waitingForOtherPlayer guideText guideText--small"
+                >
+                    Your opponent is choosing who goes
+                    f
+                    <span style="letter-spacing:.1em;">ir</span>
+                    st
                 </div>
                 <div
                     v-else-if="numberOfStationCardsToSelect > 0"
@@ -280,7 +280,9 @@
                 'opponentRetreated',
                 'turnControl',
                 'startingStationCardsToPutDownCount',
-                'gameConfig'
+                'gameConfig',
+                'choosingStartingPlayer',
+                'isOwnTurn'
             ]),
             ...requirementHelpers.mapGetters([
                 'waitingForOtherPlayerToFinishRequirements',
@@ -313,9 +315,6 @@
             gameOn() {
                 return this.mode === MatchMode.game;
             },
-            choosingStartingPlayer() {
-                return this.mode === MatchMode.chooseStartingPlayer && this.isOwnTurn;
-            },
             waitingForOtherPlayerToSelectStartingPlayer() {
                 return this.mode === MatchMode.chooseStartingPlayer && !this.isOwnTurn;
             },
@@ -341,20 +340,17 @@
                 return this.hasWonGame || this.hasLostGame;
             },
             hasWonGame() {
-                if (!this.opponentRetreated && !this.gameOn) return false;
+                if (this.opponentRetreated) return true;
 
-                return this.opponentRetreated || this.allOpponentStationCards.filter(s => !s.flipped).length === 0;
+                return this.gameOn && this.allOpponentStationCards.filter(s => !s.flipped).length === 0;
             },
             hasLostGame() {
-                if (!this.playerRetreated && !this.gameOn) return false;
+                if (this.playerRetreated) return true;
 
-                return this.playerRetreated || this.allPlayerStationCards.filter(s => !s.flipped).length === 0;
+                return this.gameOn && this.allPlayerStationCards.filter(s => !s.flipped).length === 0;
             },
             PHASES() {
                 return PHASES;
-            },
-            isOwnTurn() {
-                return this.ownUser.id === this.currentPlayer;
             },
             currentPhaseText() {
                 if (this.phase === 'preparation') {

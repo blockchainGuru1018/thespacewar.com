@@ -34,8 +34,12 @@ class PlayerStateService {
         const playerId = this.getPlayerId();
         this._matchService.readyPlayer(playerId);
 
+        const playerDeck = this.getDeck();
+        const startingHandCount = this._gameConfig.amountOfCardsInStartHand();
+        const cardsOnHand = playerDeck.draw(startingHandCount);
+
         this.update(playerState => {
-            playerState.cardsOnHand = [];
+            playerState.cardsOnHand = cardsOnHand;
             playerState.stationCards = [];
             playerState.cardsInZone = [];
             playerState.cardsInOpponentZone = [];
@@ -49,12 +53,7 @@ class PlayerStateService {
 
     readyForSelectingStationCards() {
         const isFirstPlayer = this.isFirstPlayer();
-
-        const playerDeck = this.getDeck();
-        const startingHandCount = this._gameConfig.amountOfCardsInStartHand();
-        const cardsOnHand = playerDeck.draw(startingHandCount);
         this.update(playerState => {
-            playerState.cardsOnHand = cardsOnHand;
             playerState.phase = isFirstPlayer ? PHASES.start : 'wait';
         });
     }
