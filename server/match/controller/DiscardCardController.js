@@ -4,6 +4,7 @@ function DiscardCardController(deps) {
 
     const {
         playerServiceProvider,
+        playerServiceFactory,
         playerRequirementUpdaterFactory
     } = deps;
 
@@ -18,9 +19,9 @@ function DiscardCardController(deps) {
 
         const playerPhase = playerStateService.getPhase();
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
+        const canThePlayer = playerServiceFactory.canThePlayer(playerId);
         const isRequiredDiscard = !!playerRequirementService.getFirstMatchingRequirement({ type: 'discardCard' });
-        const isRecycling = playerPhase === 'action';
-        const ordinaryDiscard = playerPhase === 'discard';
+        const ordinaryDiscard = playerPhase === 'discard' || playerPhase === 'action';
 
         playerStateService.removeCardFromHand(cardId);
         playerStateService.discardCard(discardedCard);
@@ -28,8 +29,9 @@ function DiscardCardController(deps) {
         if (isRequiredDiscard) {
             onRequiredDiscard(playerId);
         }
-        else if (isRecycling) {
-            playerStateService.drawCard({ isRecycling: true });
+        else if (canThePlayer.recycleCards()) {
+            playerRequirementService.addDrawCardRequirement({ count: 1 });
+            playerStateService.storeEvent({ type: 'recycleCard' });
         }
         else if (!ordinaryDiscard) {
             throw new CheatError('Illegal discard');

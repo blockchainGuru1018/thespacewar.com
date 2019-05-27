@@ -254,7 +254,7 @@
                                 @click="cardGhostClick"
                             >
                                 <div
-                                    v-if="phase === PHASES.action"
+                                    v-if="canThePlayer.recycleCards()"
                                     class="recycle"
                                 >
                                     Recycle
@@ -610,27 +610,20 @@
             cardGhostClick(location) {
                 if (!this.holdingCard) throw new Error('Should not be able to click on card ghost without holding a card');
 
-                if (this.selectingStartingStationCards) {
-                    if (!location.startsWith('station')) {
-                        throw new Error('Should not be bale to put down card anywhere put in station when selecting starting station cards');
-                    }
-                    else {
-                        this.selectStartingStationCard({ cardId: this.holdingCard.id, location });
-                    }
+                if (this.activeActionName === 'putDownCard') {
+                    this.selectGhostForActiveAction(location);
                 }
-                else if (this.movingStationCard) {
+                else if (location === 'discard') {
+                    this.discardHoldingCard();
+                }
+                else if (this.movingStationCard && location.startsWith('station')) {
                     this.moveHoldingStationCard({ location });
                 }
+                else if (this.selectingStartingStationCards && location.startsWith('station')) {
+                    this.selectStartingStationCard({ cardId: this.holdingCard.id, location });
+                }
                 else {
-                    if (this.activeActionName === 'putDownCard') {
-                        this.selectGhostForActiveAction(location);
-                    }
-                    else if (location === 'discard') {
-                        this.discardHoldingCard();
-                    }
-                    else {
-                        this.putDownHoldingCard({ location });
-                    }
+                    this.putDownHoldingCard({ location });
                 }
             },
             emptyClick() {

@@ -137,6 +137,12 @@ class QueryEvents {
                 && event.byEvent === byEvent;
         });
     }
+
+    countRecycles() {
+        const events = this._eventRepository.getAll();
+        const recycles = events.filter(event => event.type === 'recycleCard');
+        return recycles.length;
+    }
 }
 
 function findLastIndex(collection, selector) {

@@ -1,10 +1,9 @@
-function DrawCardEvent({ turn, byEvent = false, isRecycling = false }) {
+function DrawCardEvent({ turn, byEvent = false }) {
     return {
         type: 'drawCard',
         created: Date.now(),
         turn,
-        byEvent,
-        isRecycling
+        byEvent
     };
 }
 

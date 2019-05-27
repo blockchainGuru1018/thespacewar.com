@@ -95,9 +95,10 @@ module.exports = function (deps) {
         },
         getters: {
             isFirstPlayer,
-            isOwnTurn,
+            gameOn,
             choosingStartingPlayer,
             selectingStartingStationCards,
+            isOwnTurn,
             nextPhase,
             nextPhaseWithAction,
             cardsToDrawInDrawPhase,
@@ -195,6 +196,10 @@ module.exports = function (deps) {
 
     function isFirstPlayer(state) {
         return state.playerOrder[0] === state.ownUser.id;
+    }
+
+    function gameOn(state) {
+        return state.mode === MatchMode.game;
     }
 
     function choosingStartingPlayer(state, getters) {

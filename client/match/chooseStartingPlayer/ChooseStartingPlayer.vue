@@ -3,10 +3,7 @@
         v-if="visible"
         class="chooseStartingPlayer"
     >
-        <div class="cardChoiceDialog-overlay" />
-        <div
-            class="cardChoiceDialog"
-        >
+        <div class="chooseStartingPlayer-dialog cardChoiceDialog">
             <div class="chardChoiceDialog-header">
                 Choose starting player
             </div>
@@ -47,5 +44,9 @@
         right: 0;
         bottom: 0;
         z-index: 1;
+    }
+
+    .chooseStartingPlayer-dialog {
+        border: 1px solid rgba(255, 255, 255, 0.15);
     }
 </style>

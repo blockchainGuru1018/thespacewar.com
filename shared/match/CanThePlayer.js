@@ -137,6 +137,11 @@ class CanThePlayer {
         return this._turnControl.playerHasControlOfOwnTurn();
     }
 
+    recycleCards() {
+        return this._matchService.mode() !== MatchMode.game
+            && this._queryEvents.countRecycles() < 3;
+    }
+
     counterCard({ id: cardId }) {
         const isOpponentCard = this._opponentStateService.hasCard(cardId);
         if (!isOpponentCard) return false;

@@ -64,22 +64,23 @@ module.exports = function (deps) {
         if (getters.waitingForOtherPlayerToFinishRequirements) return false;
 
         const hasActiveRequirement = !!getFrom('firstRequirement', 'requirement');
-        const choosingStartingPlayer = rootGetters['match/choosingStartingPlayer'];
-        return (getters.isOwnTurn && !choosingStartingPlayer)
+        return !rootGetters['match/gameOn']
+            || getters.isOwnTurn
             || hasActiveRequirement;
     }
 
-    function canDiscardCards(state, getters, rootState) {
+    function canDiscardCards(state, getters, rootState, rootGetters) {
         if (getters.waitingForOtherPlayerToFinishRequirements) return false;
 
         const hasRequirement = !!getFrom('firstRequirement', 'requirement');
         if (hasRequirement) {
             return getFrom('firstRequirementIsDiscardCard', 'requirement');
         }
-        else {
-            const phase = rootState.match.phase;
-            return phase === 'action' || phase === 'discard';
-        }
+
+        const phase = rootState.match.phase;
+        return rootGetters['match/canThePlayer'].recycleCards()
+            || phase === 'action'
+            || phase === 'discard';
     }
 
     function canPutDownCards(state, getters, rootState, rootGetters) {

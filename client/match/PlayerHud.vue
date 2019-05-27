@@ -282,7 +282,8 @@
                 'startingStationCardsToPutDownCount',
                 'gameConfig',
                 'choosingStartingPlayer',
-                'isOwnTurn'
+                'isOwnTurn',
+                'gameOn'
             ]),
             ...requirementHelpers.mapGetters([
                 'waitingForOtherPlayerToFinishRequirements',
@@ -312,9 +313,6 @@
                 'opponentHasControlOfPlayersTurn',
                 'playerHasControlOfOpponentsTurn'
             ]),
-            gameOn() {
-                return this.mode === MatchMode.game;
-            },
             waitingForOtherPlayerToSelectStartingPlayer() {
                 return this.mode === MatchMode.chooseStartingPlayer && !this.isOwnTurn;
             },
