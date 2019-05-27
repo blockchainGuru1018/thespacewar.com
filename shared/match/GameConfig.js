@@ -5,7 +5,8 @@ const propertyMap = {
     OVERWORK_IS_ACTIVE: 'overworkIsActive',
     MILL_CARD_AMOUNT: 'millCardCount',
     STATION_CARDS_AT_START: 'stationCardsAtStart',
-    MAXIMUM_STATION_CARDS: 'maximumStationCards'
+    MAX_STATION_CARDS: 'maxStationCards',
+    MAX_RECYCLES: 'maxRecycles'
 };
 
 const Defaults = convertConfig(DEFAULT_CONFIG);
@@ -19,7 +20,8 @@ function GameConfig({
     overworkIsActive = Defaults.overworkIsActive,
     millCardCount = Defaults.millCardCount,
     stationCardsAtStart = Defaults.stationCardsAtStart,
-    maximumStationCards = Defaults.maximumStationCards
+    maxStationCards = Defaults.maxStationCards,
+    maxRecycles = Defaults.maxRecycles
 } = {}) {
 
     return {
@@ -28,7 +30,8 @@ function GameConfig({
         overworkIsActive: () => overworkIsActive,
         millCardCount: () => millCardCount,
         stationCardsAtStart: () => stationCardsAtStart,
-        maximumStationCards: () => maximumStationCards
+        maxStationCards: () => maxStationCards,
+        maxRecycles: () => maxRecycles
     };
 }
 

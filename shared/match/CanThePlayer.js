@@ -79,7 +79,7 @@ class CanThePlayer {
 
     putDownMoreStationCards() {
         const stationCardCount = this._playerStateService.getStationCardCount();
-        if (stationCardCount >= this._gameConfig.maximumStationCards()) return false;
+        if (stationCardCount >= this._gameConfig.maxStationCards()) return false;
 
         const currentTurn = this._matchService.getTurn();
 
@@ -139,7 +139,7 @@ class CanThePlayer {
 
     recycleCards() {
         return this._matchService.mode() !== MatchMode.game
-            && this._queryEvents.countRecycles() < 3;
+            && this._queryEvents.countRecycles() < this._gameConfig.maxRecycles();
     }
 
     counterCard({ id: cardId }) {

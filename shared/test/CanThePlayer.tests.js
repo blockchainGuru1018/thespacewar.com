@@ -27,7 +27,7 @@ module.exports = testCase('CanThePlayer', {
                     }
                 }
             }), {
-                gameConfig: GameConfig({ maximumStationCards: 1 })
+                gameConfig: GameConfig({ maxStationCards: 1 })
             });
             this.canThePlayer = testHelper.canThePlayer('P1A');
         },
