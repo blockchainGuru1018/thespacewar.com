@@ -1,5 +1,7 @@
+@import "miscVariables";
+
 .cardChoiceDialog-overlay {
-  background-color: rgba(0, 0, 0, .3);
+  background-color: $dimOverlayColor;
   position: absolute;
   z-index: 1000;
   left: 0;
