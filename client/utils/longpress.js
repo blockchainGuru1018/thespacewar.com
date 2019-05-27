@@ -1,4 +1,4 @@
-const LONG_PRESS_TIME = 800;
+const LONG_PRESS_TIME = 400;
 
 let longpressTimeoutId;
 let longPressed = false;

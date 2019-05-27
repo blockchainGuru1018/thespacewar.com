@@ -95,7 +95,7 @@
 
 .card.card--expandable {
   &:active:hover {
-    transition: transform .75s cubic-bezier(0.95, 0.05, 0.795, 0.035) !important;
+    transition: transform .35s cubic-bezier(0.99, 0.05, 0.795, 0.035) !important;
     transform: scale(1.1);
   }
 

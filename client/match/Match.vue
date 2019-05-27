@@ -266,30 +266,30 @@
                         <div class="opponentCardsInPlayerZone field-zone field-section">
                             <template v-for="n in opponentCardsInPlayerZone.length">
                                 <zone-card
-                                    :card="opponentCardsInPlayerZone[n - 1]"
+                                    v-if="n <= opponentCardsInPlayerZone.length"
                                     :key="opponentCardsInPlayerZone[n - 1].id"
+                                    :card="opponentCardsInPlayerZone[n - 1]"
                                     :owner-id="opponentUser.id"
                                     :zone-opponent-row="playerCardsInZone"
                                     :zone-player-row="opponentCardsInPlayerZone"
                                     class="card--turnedAround"
-                                    v-if="n <= opponentCardsInPlayerZone.length"
                                 />
                             </template>
                             <div
-                                class="card card-placeholder"
                                 v-if="opponentCardsInPlayerZone.length === 0"
+                                class="card card-placeholder"
                             />
                         </div>
                         <div class="playerCardsInZone field-playerZoneCards field-zone field-section">
                             <template v-for="n in visiblePlayerCards.length">
                                 <zone-card
+                                    v-if="n <= visiblePlayerCards.length"
+                                    :key="visiblePlayerCards[n - 1].id"
                                     :card="(visiblePlayerCards[n - 1])"
                                     :isHomeZone="true"
-                                    :key="visiblePlayerCards[n - 1].id"
                                     :ownerId="ownUser.id"
                                     :zoneOpponentRow="opponentCardsInPlayerZone"
                                     :zonePlayerRow="visiblePlayerCards"
-                                    v-if="n <= visiblePlayerCards.length"
                                 />
                             </template>
                             <CardGhost

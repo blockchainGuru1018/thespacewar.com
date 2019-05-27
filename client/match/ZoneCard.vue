@@ -5,6 +5,7 @@
         :style="cardStyle"
         :data-type="card.type || ''"
         :class="classes"
+        title="Long press over any card to expand it"
     >
         <div class="indicatorOverlays">
             <div
@@ -26,10 +27,6 @@
                 X
             </span>
         </div>
-        <div
-            class="enlargeIcon"
-            @click="enlargeIconClick"
-        />
         <div
             class="actionOverlays"
         >
@@ -436,9 +433,6 @@
                 this.startSacrifice(this.card.id);
             },
             cardLongpress() {
-                this.expandCard(this.card);
-            },
-            enlargeIconClick() {
                 this.expandCard(this.card);
             }
         },

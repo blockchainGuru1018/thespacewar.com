@@ -1,6 +1,7 @@
 <template>
     <div
         :class="['stationCardWrapper', {'stationCardWrapper--fullSize': stationCard.flipped && !isOpponentStationCard}]"
+        title="Long press over any card to expand it"
     >
         <div
             v-longpress="cardLongpress"
