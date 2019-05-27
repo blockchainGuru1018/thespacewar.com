@@ -130,9 +130,11 @@
                     </div>
                     <div class="guideText-subText">
                         <button
+                            class="toggleControlOfTurn darkButton"
+                            title="Or press space to toggle control"
                             @click="toggleControlOfTurn"
                             @keydown.space.stop.prevent="toggleControlOfTurn"
-                            class="toggleControlOfTurn darkButton">
+                        >
                             {{ turnControlButtonText }}
                         </button>
                     </div>
