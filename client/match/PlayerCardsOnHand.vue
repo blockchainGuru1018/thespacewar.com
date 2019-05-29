@@ -60,7 +60,7 @@
             ]),
             style() {
                 const style = {};
-                if(this.choosingStartingPlayer) {
+                if (this.choosingStartingPlayer) {
                     style.zIndex = '9999';
                 }
                 return style;
@@ -91,11 +91,13 @@
         methods: {
             switchCardClick(card) {
                 if (this.holdingCard) {
+                    this.$store.dispatch('audio/select');
                     this.$emit('cardClick', card);
                 }
             },
             playerCardClick(card) {
                 if (this.canMoveCardsFromHand) {
+                    this.$store.dispatch('audio/select');
                     this.hoveringOverCardAtIndex = false;
                     this.$emit('cardClick', card);
                 }

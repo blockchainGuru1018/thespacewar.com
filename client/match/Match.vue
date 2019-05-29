@@ -1,5 +1,5 @@
 <template>
-    <div class="match-wrapper">
+    <div class="match-wrapper" ref="match-wrapper">
         <div
             :class="['match', `currentPhase--${phase}`]"
             ref="match"
@@ -443,7 +443,8 @@
                 'opponentDiscardedCards',
                 'opponentCardsInZone',
                 'opponentCardsInPlayerZone',
-                'aiStarted'
+                'aiStarted',
+                'shake'
             ]),
             ...mapGetters([
                 'hasPutDownNonFreeCardThisTurn',
@@ -580,6 +581,62 @@
             },
             millCardCount() {
                 return this.gameConfig.millCardCount();
+            }
+        },
+        watch: {
+            shake() {
+                if (!this.shake) return;
+
+                const loop = () => {
+                    if (!this.shake) return;
+
+                    const min = -5;
+                    const max = 5;
+                    this.$refs['match-wrapper'].style = `
+                            top: ${Math.round(Math.random() * (max - min) + min)}px;
+                            left: ${Math.round(Math.random() * (max - min) + min)}px;
+                        `;
+                    setTimeout(loop, 30);
+                };
+                setTimeout(loop, 30);
+            },
+            opponentCardsInZone: {
+                deep: true,
+                handler() {
+                    this.$store.state.match.shake = true;
+                    setTimeout(() => {
+                        this.$store.state.match.shake = false;
+                    }, 350);
+                }
+            },
+            opponentCardsInPlayerZone: {
+                deep: true,
+                handler() {
+                    this.$store.state.match.shake = true;
+                    setTimeout(() => {
+                        this.$store.state.match.shake = false;
+                    }, 350);
+                }
+            },
+            playerStation: {
+                deep: true,
+                immediate: false,
+                handler() {
+                    this.$store.state.match.shake = true;
+                    setTimeout(() => {
+                        this.$store.state.match.shake = false;
+                    }, 500);
+                }
+            },
+            opponentStation: {
+                deep: true,
+                immediate: false,
+                handler() {
+                    this.$store.state.match.shake = true;
+                    setTimeout(() => {
+                        this.$store.state.match.shake = false;
+                    }, 500);
+                }
             }
         },
         methods: {
