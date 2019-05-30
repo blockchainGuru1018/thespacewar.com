@@ -33,6 +33,7 @@
                 let classes = ['loading-backdrop'];
                 if (this.loadingDone) {
                     classes.push('loading-backdrop--blur');
+                    classes.push('loading-backdrop--animate');
                 }
                 return classes;
             },
@@ -49,6 +50,10 @@
                 }
                 return classes;
             }
+        },
+        mounted() {
+            this.$store.dispatch('audio/killAudio');
+            this.$store.dispatch('audio/main');
         },
         components: {
             Lobby,
@@ -71,11 +76,20 @@
 
     .loading-backdrop {
         width: 100%;
-        transition: filter $animation-time $animation-curve;
+        transition: filter $animation-time $animation-curve, transform 120s, left 120s;
+
+        left: -20px;
+        transform: scale(1.1, 1.05);
     }
 
     .loading-backdrop--blur {
-        filter: brightness(.9) contrast(105%) blur(3px);
+        /*filter: brightness(.9) contrast(105%) blur(3px);*/
+        filter: brightness(.9) contrast(105%) blur(.1px);
+    }
+
+    .loading-backdrop--animate {
+        left: 20px;
+        transform: scale(1, 1);
     }
 
     .loading-bar {

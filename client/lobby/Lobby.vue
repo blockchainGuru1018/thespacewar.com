@@ -6,17 +6,19 @@
             <div class="users-header">
                 <div class="users-headerTitle">Users</div>
             </div>
-            <div class="users">
-                <div class="user">
-                    <div class="user-name">{{ ownUser.name }} (you)</div>
-                    <!--<button @click="logout" class="icon-logout"/>-->
-                </div>
-                <div v-for="user in otherUsers"
-                     @keydown.enter="userClick(user)"
-                     @click="userClick(user)"
-                     class="user"
-                     tabindex="0">
-                    <span class="user-name">{{ user.name }}</span>
+            <div class="users-wrapper">
+                <div class="users">
+                    <div class="user">
+                        <div class="user-name">{{ ownUser.name }} (you)</div>
+                        <!--<button @click="logout" class="icon-logout"/>-->
+                    </div>
+                    <div @click="userClick(user)"
+                         @keydown.enter="userClick(user)"
+                         class="user"
+                         tabindex="0"
+                         v-for="user in otherUsers">
+                        <span class="user-name">{{ user.name }}</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -63,10 +65,18 @@
         left: 5px;
     }
 
+    .users-wrapper {
+        background: rgba(0, 0, 0, .7);
+        box-shadow: 0px -10px 90px 100px rgba(0, 0, 0, .7);
+        border-radius: 50%;
+    }
+
     .users {
         width: 300px;
         background: rgba(0, 0, 0, .4);
-        box-shadow: 1px 1px 1px rgba(0, 0, 0, .1);
+        box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+        border-radius: 0;
+        border: 1px solid rgba(255, 255, 255, .04);
     }
 
     .user {
