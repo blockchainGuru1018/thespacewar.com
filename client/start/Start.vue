@@ -1,13 +1,13 @@
 <template>
     <div :class="['loading', {'loading--done': loadingDone}]">
         <div class="loading-backdropLetterBoxWrapper">
-            <img :class="backdropClasses" src="/image/backdrop.jpg"/>
+            <img :class="backdropClasses" src="/image/backdrop.jpg" />
         </div>
         <div class="loading-bar" v-if="!loadingDone">
-            <div :style="progressStyle" class="loading-barProgress"/>
+            <div :style="progressStyle" class="loading-barProgress" />
         </div>
-        <Lobby :class="viewClasses" v-if="!!ownUser && loadingDone"/>
-        <Login :class="viewClasses" v-else/>
+        <Lobby :class="viewClasses" v-if="!!ownUser && loadingDone" />
+        <Login :class="viewClasses" v-else />
     </div>
 </template>
 <script>
@@ -52,7 +52,6 @@
             }
         },
         mounted() {
-            this.$store.dispatch('audio/killAudio');
             this.$store.dispatch('audio/main');
         },
         components: {
@@ -76,10 +75,10 @@
 
     .loading-backdrop {
         width: 100%;
-        transition: filter $animation-time $animation-curve, transform 120s, left 120s;
+        transition: filter $animation-time $animation-curve, transform 240s, left 240s;
 
-        left: -20px;
-        transform: scale(1.1, 1.05);
+        left: -10px;
+        transform: scale(1.05, 1.025);
     }
 
     .loading-backdrop--blur {

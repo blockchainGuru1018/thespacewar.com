@@ -91,13 +91,11 @@
         methods: {
             switchCardClick(card) {
                 if (this.holdingCard) {
-                    this.$store.dispatch('audio/select');
                     this.$emit('cardClick', card);
                 }
             },
             playerCardClick(card) {
                 if (this.canMoveCardsFromHand) {
-                    this.$store.dispatch('audio/select');
                     this.hoveringOverCardAtIndex = false;
                     this.$emit('cardClick', card);
                 }
@@ -143,7 +141,7 @@
                 const turnDistance = 80;
                 const startDegrees = -((cardCount - 1) * turnDistance * .5);
                 let degrees = index * turnDistance;
-                const number = startDegrees + degrees
+                const number = startDegrees + degrees;
                 return {
                     left: `${number}px`,
                     backgroundImage: `url(${cardUrl})`
@@ -188,6 +186,30 @@
 
             document.addEventListener('touchstart', onTouchStart);
             document.addEventListener('touchmove', onTouchMove);
+
+            let startMouseY = null;
+            const onMouseDown = e => {
+                if (e.target.className.includes('cardHoverActivator')) {
+                    startMouseY = e.clientY;
+                    document.addEventListener('mousemove', onMouseMove);
+                }
+            };
+            const onMouseUp = () => {
+                startMouseY = null;
+                document.removeEventListener('mousemove', onMouseMove);
+            };
+
+            const onMouseMove = e => {
+                if (startMouseY === null) return;
+
+                if (!this.holdingCard && e.clientY < (startMouseY - dragLooseThreshold)) {
+                    this.$emit('cardDrag', this.playerVisibleCardsOnHand[this.hoveringOverCardAtIndex]);
+                    this.hoveringOverCardAtIndex = -1;
+                }
+            };
+
+            document.addEventListener('mousedown', onMouseDown);
+            document.addEventListener('mouseup', onMouseUp);
         }
     };
 </script>

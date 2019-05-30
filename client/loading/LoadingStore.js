@@ -1,9 +1,6 @@
 const localGameDataFacade = require("../utils/localGameDataFacade")
 
-module.exports = function ({
-                               rootStore,
-                               pageDependencies
-                           }) {
+module.exports = function ({ pageDependencies }) {
 
     let progressIntervalId = null;
     const rawCardDataRepository = pageDependencies.rawCardDataRepository;
