@@ -27,9 +27,6 @@ module.exports = {
                         phase: 'action',
                         cardsOnHand: [createCard({ id: 'C1A' })]
                     }
-                },
-                deckByPlayerId: {
-                    'P1A': FakeDeck.fromCards([createCard({ id: 'C2A' })])
                 }
             }));
 
@@ -38,21 +35,13 @@ module.exports = {
         'should emit state changed to first player'() {
             assert.calledOnce(this.firstPlayerConnection.stateChanged);
             assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
-                discardedCards: [sinon.match({ id: 'C1A' })],
-                cardsOnHand: [sinon.match({ id: 'C2A' })]
+                discardedCards: [sinon.match({ id: 'C1A' })]
             }));
-        },
-        'when restore state of first player should have top card of deck on hand'() {
-            this.match.refresh('P1A');
-            const { cardsOnHand } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
-            assert.equals(cardsOnHand.length, 1);
-            assert.equals(cardsOnHand[0].id, 'C2A');
         },
         'should emit state changed to second player'() {
             assert.calledOnce(this.secondPlayerConnection.stateChanged);
             assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
-                opponentDiscardedCards: [sinon.match({ id: 'C1A' })],
-                opponentCardCount: 1
+                opponentDiscardedCards: [sinon.match({ id: 'C1A' })]
             }));
         }
     },

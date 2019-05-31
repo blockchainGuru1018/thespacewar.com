@@ -219,6 +219,7 @@ function repeat(count, callback) {
 function createState(options) {
     defaults(options, {
         turn: 1,
+        mode: 'game',
         currentPlayer: 'P1A',
         playerOrder: ['P1A', 'P2A'],
         playerStateById: {},
