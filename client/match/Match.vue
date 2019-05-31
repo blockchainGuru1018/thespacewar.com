@@ -14,33 +14,10 @@
             </div>
             <div class="match-header">
                 <button
-                    @click="reloadPage"
-                    class="icon-reload"
-                />
-                <button
-                    :disabled="aiStarted"
-                    @click="startAI"
-                    class="startAi match-smallButton"
-                >
-                    Start AI
-                </button>
-                <button
-                    @click="restoreSavedMatch"
+                    @click="showEscapeMenu"
                     class="match-smallButton"
                 >
-                    Restore match
-                </button>
-                <button
-                    @click="saveMatch"
-                    class="match-smallButton--success match-smallButton"
-                >
-                    Save match
-                </button>
-                <button
-                    @click="retreat"
-                    class="match-retreatButton match-smallButton"
-                >
-                    Retreat
+                    Menu
                 </button>
                 <h1 :title="`Match ID: ${matchId}`">
                     {{ ownUser.name }} v.s. {{ opponentUser.name }}
@@ -388,6 +365,7 @@
             />
             <ExpandedCard />
             <ChooseStartingPlayer />
+            <EscapeMenu />
         </div>
     </div>
 </template>
@@ -405,6 +383,7 @@
     } = Vuex.createNamespacedHelpers('card');
     const requirementHelpers = Vuex.createNamespacedHelpers('requirement');
     const expandedCardHelpers = Vuex.createNamespacedHelpers('expandedCard');
+    const escapeMenuHelpers = Vuex.createNamespacedHelpers('escapeMenu');
     const longpress = require('../utils/longpress.js');
     const resolveModule = require('../utils/resolveModuleWithPossibleDefault.js');
     const ZoneCard = resolveModule(require('./ZoneCard.vue'));
@@ -416,6 +395,7 @@
     const CardGhost = resolveModule(require('./CardGhost.vue'));
     const ExpandedCard = resolveModule(require('../expandedCard/ExpandedCard.vue'));
     const ChooseStartingPlayer = resolveModule(require('./chooseStartingPlayer/ChooseStartingPlayer.vue'));
+    const EscapeMenu = resolveModule(require('./escapeMenu/EscapeMenu.vue'));
     const { PHASES } = require('./phases.js');
 
     module.exports = {
@@ -667,6 +647,9 @@
             ...expandedCardHelpers.mapActions([
                 'expandCard'
             ]),
+            ...escapeMenuHelpers.mapActions({
+                showEscapeMenu: 'show'
+            }),
             shouldShowStationCard(stationCard) {
                 if (this.holdingCard) {
                     if (this.holdingCard.id === stationCard.id) return false;
@@ -793,7 +776,8 @@
             PlayerCardsOnHand,
             CardGhost,
             ExpandedCard,
-            ChooseStartingPlayer
+            ChooseStartingPlayer,
+            EscapeMenu
         },
         directives: {
             longpress

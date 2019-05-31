@@ -36,17 +36,6 @@
         }
     };
 </script>
-<style scoped lang="scss">
-    .chooseStartingPlayer {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 1;
-    }
-
-    .chooseStartingPlayer-dialog {
-        border: 1px solid rgba(255, 255, 255, 0.15);
-    }
+<style lang="scss">
+    @import "chooseStartingPlayer";
 </style>

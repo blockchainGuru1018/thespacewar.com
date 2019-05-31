@@ -21,5 +21,13 @@ module.exports = function ({
                 rootStore.dispatch('match/toggleControlOfTurn');
             }
         }
+        else if (event.key === 'Escape') {
+            if (rootStore.state.escapeMenu.visible) {
+                rootStore.dispatch('escapeMenu/hide');
+            }
+            else {
+                rootStore.dispatch('escapeMenu/show');
+            }
+        }
     }
 };

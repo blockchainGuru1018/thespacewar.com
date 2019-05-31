@@ -1,11 +1,14 @@
 const AudioLoader = require('./AudioLoader.js');
+const AudioSettings = require('./AudioSettings.js');
 
 module.exports = function ({ nameToInfo }) {
+
+    const settings = AudioSettings();
 
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     const audioContext = new AudioContext();
     const destinationNode = audioContext.createGain();
-    destinationNode.gain.value = 1;
+    destinationNode.gain.value = settings.masterGain();
     destinationNode.connect(audioContext.destination);
 
     const audioQueue = [];
@@ -24,12 +27,14 @@ module.exports = function ({ nameToInfo }) {
         destinationNode.gain.value = 0;
     };
     window.unmute = () => {
-        destinationNode.gain.value = 1;
+        destinationNode.gain.value = settings.masterGain();
     };
 
     return {
         playSong,
         playEffect,
+        masterGain,
+        setMasterGain,
     };
 
     function playSong(name) {
@@ -57,5 +62,14 @@ module.exports = function ({ nameToInfo }) {
         if (sound) {
             sound.playImmediately();
         }
+    }
+
+    function masterGain() {
+        return destinationNode.gain.value;
+    }
+
+    function setMasterGain(newGain) {
+        destinationNode.gain.value = newGain;
+        settings.setMasterGain(newGain);
     }
 };

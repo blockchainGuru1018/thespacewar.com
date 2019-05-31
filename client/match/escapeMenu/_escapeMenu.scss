@@ -1,0 +1,63 @@
+@import "../colors";
+
+.escapeMenu-wrapper {
+  position: absolute;
+  z-index: 1001;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.escapeMenu-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, .4);
+}
+
+.escapeMenu {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  display: flex;
+  margin: 30px auto;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 20px 0;
+  background: $dialogColoredGradient;
+  border: 1px solid $dialogGlowingBorderColor;
+  border-radius: 4px;
+}
+
+.escapeMenu-option {
+  color: #FFF;
+  border: none;
+  font-size: 20px;
+  padding: 18px 120px;
+  background: transparent;
+  font-weight: bold;
+  margin-bottom: 6px;
+  font-family: "Space Mono", monospace;
+  letter-spacing: .18em;
+
+  &:hover {
+    background-color: rgba(120, 120, 120, .06);
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.escapeMenu-retreat {
+  color: rgb(255, 100, 100);
+}
+
+.escapeMenu-fadedOption {
+  color: rgb(60, 60, 60);
+}

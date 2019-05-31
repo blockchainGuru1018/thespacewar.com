@@ -46,17 +46,26 @@ module.exports = function () {
     return {
         namespaced: true,
         name: 'audio',
+        state: {
+            masterGain: audioPlayer.masterGain()
+        },
         actions: {
             main,
-            background
+            background,
+            setMasterGain
         }
     };
 
-    async function main() {
+    function main() {
         audioPlayer.playSong('main');
     }
 
-    async function background() {
+    function background() {
         audioPlayer.playSong('background');
+    }
+
+    function setMasterGain({ state }, newGain) {
+        audioPlayer.setMasterGain(newGain);
+        state.masterGain = audioPlayer.masterGain();
     }
 };

@@ -1,38 +1,71 @@
-const OwnUserKey = 'own-user';
-const OngoingMatchKey = 'ongoing-match';
-
-module.exports = {
-    getOwnUser,
-    getOngoingMatch,
-    setOwnUser,
-    setOngoingMatch,
-    removeAll,
-    removeOngoingMatch
+const Keys = {
+    OwnUser: 'own-user',
+    OngoingMatch: 'ongoing-match',
+    AudioSettings: 'audio-settings'
 };
 
-function getOwnUser() {
-    return getAndParseOrNull(OwnUserKey);
-}
+module.exports = Facade();
 
-function getOngoingMatch() {
-    return getAndParseOrNull(OngoingMatchKey);
-}
+function Facade() {
+    const facade = {
+        getOwnUser: Getter(Keys.OwnUser),
+        setOwnUser: Setter(Keys.OwnUser),
+        removeOwnUser: Remover(Keys.OwnUser),
 
-function setOwnUser(ownUser) {
-    stringifyAndSet(OwnUserKey, ownUser);
-}
+        getOngoingMatch: Getter(Keys.OngoingMatch),
+        setOngoingMatch: Setter(Keys.OngoingMatch),
+        removeOngoingMatch: Remover(Keys.OngoingMatch),
 
-function setOngoingMatch(ongoingMatch) {
-    stringifyAndSet(OngoingMatchKey, ongoingMatch);
+        removeAll
+    };
+
+    for (const objectKey of Object.keys(Keys)) {
+        const localStorageKey = Keys[objectKey];
+        facade[objectKey] = {
+            get: Getter(localStorageKey),
+            set: Setter(localStorageKey),
+            remove: Remover(localStorageKey),
+            getWithDefault: DefaultGetter(localStorageKey)
+        };
+    }
+
+    return facade;
 }
 
 function removeAll() {
-    localStorage.removeItem(OwnUserKey);
-    removeOngoingMatch();
+    for (const localStorageKey of Object.values(Keys)) {
+        Remover(localStorageKey)();
+    }
 }
 
-function removeOngoingMatch() {
-    localStorage.removeItem(OngoingMatchKey);
+function Getter(key) {
+    return () => getAndParseOrNull(key)
+}
+
+function Setter(key) {
+    return value => {
+        stringifyAndSet(key, value);
+        return value;
+    };
+}
+
+function Remover(key) {
+    return () => {
+        localStorage.removeItem(key);
+    };
+}
+
+function DefaultGetter(key) {
+    return (defaultValue) => {
+        const storedValue = Getter(key)();
+        if (!storedValue) {
+            Setter(key)(defaultValue);
+            return defaultValue;
+        }
+        else {
+            return storedValue;
+        }
+    };
 }
 
 function getAndParseOrNull(key) {

@@ -75,9 +75,12 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
             secondUserInLobby.click();
 
             await wait(1000);
+            //TODO MUST GO TO MENU
             $('.startAi').click();
-        } else {
+        }
+        else {
             await wait(2000);
+            //TODO MUST GO TO MENU
             $('.startAi').click();
         }
     }
@@ -93,21 +96,26 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
 
         if (gameHasEnded()) {
             await handleGameEnded();
-        } else if (hasSomeRequirement()) {
+        }
+        else if (hasSomeRequirement()) {
             await handleRequirements();
             setTimeout(() => onPhaseChange(state.phase));
-        } else if (phase === 'start') {
+        }
+        else if (phase === 'start') {
             matchController.emit('nextPhase');
-        } else if (phase === 'draw') {
-            while (hasDrawCardRequirement())
+        }
+        else if (phase === 'draw') {
+            while (hasDrawCardRequirement()) {
                 matchController.emit('drawCard');
+            }
 
             matchController.emit('drawCard');
             await wait(WaitTime);
             if (state.phase === 'draw')
                 setTimeout(() => onPhaseChange('draw'));
 
-        } else if (phase === 'action') {
+        }
+        else if (phase === 'action') {
             const cardToPutDownInStation = leastExpensiveAffordableCardOnHand();
             if (cardToPutDownInStation) {
                 matchController.emit('putDownCard', {
@@ -129,7 +137,8 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
             }
 
             matchController.emit('nextPhase');
-        } else if (phase === 'discard') {
+        }
+        else if (phase === 'discard') {
             if (mustDiscardCard()) {
                 const card = leastExpensiveCardOnHand();
                 matchController.emit('discardCard', card.id);
@@ -137,10 +146,12 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
                 await wait(WaitTime);
                 if (state.phase === 'discard')
                     setTimeout(() => onPhaseChange('discard'));
-            } else {
+            }
+            else {
                 matchController.emit('nextPhase');
             }
-        } else if (phase === 'attack') {
+        }
+        else if (phase === 'attack') {
             if (hasOpponentCardsInHomeZone()) {
                 await defendHomeZone();
             }
@@ -212,7 +223,8 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
                 .slice(0, card.attack)
                 .map(s => s.id);
             matchController.emit('attackStationCard', { attackerCardId, targetStationCardIds });
-        } else {
+        }
+        else {
             let defenderCardId;
             if (canAttackCardInZone(card)) {
                 const opponentStateService = rootStore.getters['match/opponentStateService'];
@@ -222,7 +234,8 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
                 const opponentCardsInZone = opponentCardsDataInZone
                     .map(data => opponentStateService.createBehaviourCard(data));
                 defenderCardId = opponentCardsInZone.find(c => card.canAttackCard(c)).id;
-            } else if (card.canAttackCardsInOtherZone()) {
+            }
+            else if (card.canAttackCardsInOtherZone()) {
                 const opponentStateService = rootStore.getters['match/opponentStateService'];
                 const opponentCardsDataInZone = card.isInHomeZone()
                     ? opponentStateService.getCardsInZone()
@@ -242,10 +255,12 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
                 lastRun = Date.now();
                 await wait(WaitTime);
             }
-        } else if (hasDrawCardRequirement()) {
+        }
+        else if (hasDrawCardRequirement()) {
             matchController.emit('drawCard');
             await wait(WaitTime);
-        } else if (hasDamageStationCardRequirement()) {
+        }
+        else if (hasDamageStationCardRequirement()) {
             const requirement = getDamageStationCardRequirement();
             const opponentStateService = rootStore.getters['match/opponentStateService'];
             const targetIds = opponentStateService
@@ -256,7 +271,8 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
             matchController.emit('damageStationCards', { targetIds });
 
             await wait(WaitTime);
-        } else if (hasDiscardCardRequirement()) {
+        }
+        else if (hasDiscardCardRequirement()) {
             const requirement = getDiscardCardRequirement();
             for (let i = 0; i < requirement.count; i++) {
                 const card = leastExpensiveCardOnHand();
