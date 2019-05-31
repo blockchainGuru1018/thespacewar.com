@@ -1,4 +1,4 @@
-const localGameDataFacade = require("../../utils/localGameDataFacade.js");
+const localGameDataFacade = require("../utils/localGameDataFacade.js");
 
 module.exports = function () {
 

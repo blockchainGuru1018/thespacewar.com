@@ -16,7 +16,7 @@ const ClientRawCardDataRepository = require('./card/ClientRawCardDataRepository.
 const CardDataAssembler = require('../shared/CardDataAssembler.js');
 const CardInfoRepository = require('../shared/CardInfoRepository.js');
 const UserStore = require('./users/UserStore.js');
-const AudioStore = require('./match/audio/AudioStore.js');//TODO Move audio folder outside of match folder
+const AudioStore = require('./match/audio/AudioStore.js');
 require('./utils/cheatEngine.js');
 
 Vue.use(Vuex);

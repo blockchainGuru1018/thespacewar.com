@@ -15,7 +15,7 @@
             <div class="match-header">
                 <button
                     @click="showEscapeMenu"
-                    class="match-smallButton"
+                    class="match-menuButton match-smallButton"
                 >
                     Menu
                 </button>

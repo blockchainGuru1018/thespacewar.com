@@ -46,7 +46,7 @@
             </button>
             <button
                 v-else
-                class="escapeMenu-fadedOption escapeMenu-option"
+                class="escapeMenu-startAi escapeMenu-fadedOption escapeMenu-option"
                 @click="hideAnd(startAI)"
             >
                 Start AI (experimental)
@@ -64,7 +64,7 @@
     const escapeMenuHelpers = Vuex.createNamespacedHelpers('escapeMenu');
     const matchHelpers = Vuex.createNamespacedHelpers('match');
     const resolveModule = require('../../utils/resolveModuleWithPossibleDefault.js');
-    const MasterGainSlider = resolveModule(require('../audio/MasterGainSlider.vue'));
+    const MasterGainSlider = resolveModule(require('../../audio/MasterGainSlider.vue'));
 
     module.exports = {
         computed: {

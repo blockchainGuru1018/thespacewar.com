@@ -75,13 +75,13 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
             secondUserInLobby.click();
 
             await wait(1000);
-            //TODO MUST GO TO MENU
-            $('.startAi').click();
+            $('.match-menuButton');
+            $('.escapeMenu-startAi').click();
         }
         else {
             await wait(2000);
-            //TODO MUST GO TO MENU
-            $('.startAi').click();
+            $('.match-menuButton');
+            $('.escapeMenu-startAi').click();
         }
     }
 

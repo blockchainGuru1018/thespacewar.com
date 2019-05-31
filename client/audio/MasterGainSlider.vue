@@ -7,8 +7,8 @@
 <script>
     const Vuex = require('vuex');
     const audioHelpers = Vuex.createNamespacedHelpers('audio');
-    const resolveModule = require('../../utils/resolveModuleWithPossibleDefault.js');
-    const FactorSlider = resolveModule(require('../../miscComponents/FactorSlider.vue'));
+    const resolveModule = require('../utils/resolveModuleWithPossibleDefault.js');
+    const FactorSlider = resolveModule(require('../miscComponents/FactorSlider.vue'));
 
     module.exports = {
         computed: {

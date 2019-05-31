@@ -1,4 +1,4 @@
-const AudioPlayer = require('./AudioPlayer.js');
+const AudioPlayer = require('../../audio/AudioPlayer.js');
 
 const dragAndDropSoundTime = 600;
 
