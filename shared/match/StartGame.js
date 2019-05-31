@@ -34,8 +34,10 @@ function StartGameController({
 
     function selectStartingStationCard({ cardId, location }) {
         if (!canThePlayer.putDownMoreStartingStationCards()) throw new CheatError('Cannot put down more starting station cards');
+        if (!playerStateService.hasCardOnHand(cardId)) throw new CheatError('Card is not on hand');
 
         playerStateService.selectStartingStationCard(cardId, location);
+
         if (!canThePlayer.putDownMoreStartingStationCards()) {
             playerStateService.doneSelectingStationCards();
 

@@ -508,6 +508,7 @@ module.exports = function (deps) {
     function cancelHoldingCard({ state, commit }) {
         state.showOnlyCardGhostsFor = null;
 
+        state.draggingCard = false;
         if (state.holdingCard) {
             const holdingCardId = state.holdingCard.id;
             state.hiddenStationCardIds = state.hiddenStationCardIds.filter(id => id !== holdingCardId);

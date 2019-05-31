@@ -16,6 +16,10 @@ class MatchComService {
         stateChangeListener.listenForSnapshots(this._onSnapshot.bind(this));
     }
 
+    callStarted() {
+        this._emittedAllState = false;
+    }
+
     callEnded() {
         this._emittedAllState = false;
     }

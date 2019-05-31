@@ -230,13 +230,21 @@ function wrapApi({ api, matchComService, stateChangeListener }) {
     for (let name of Object.keys(api)) {
         if (typeof api[name] === 'function') {
             wrappedApi[name] = (...args) => {
+
+                //WARNING: For some reason "callEnded" was not always setting its flag to false before the next call runs ".snapshot".
+                // So this was added and it fixed the bug. But it would be nice to know _why_ in the future!
+                matchComService.callStarted();
+                //END OF WARNING
+
                 let result;
                 try {
                     result = api[name](...args);
                     stateChangeListener.snapshot();
                 }
                 finally {
+                    //WARNING: See related warning about ".callStarted". If it no longer exists, delete this warning.
                     matchComService.callEnded();
+                    //END OF WARNING
                 }
 
                 return result;
