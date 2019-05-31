@@ -22,7 +22,7 @@ module.exports = function (deps) {
             canPutDownMoreStationCards,
             canSelectStationCards,
             canSelectCardsForActiveAction,
-            canMoveStationCards,
+            canPutDownStationCardInHomeZone,
             canIssueOverwork: canIssueOverworkGetter,
             canDrawCards,
             canMill,
@@ -102,13 +102,9 @@ module.exports = function (deps) {
         return canThePlayer.putDownMoreStationCards();
     }
 
-    function canMoveStationCards(state, getters, rootState) { //TODO This will collide with the ability to "move station cards between rows". This method is talking about moving it to the home zone, perhaps "playing station card"
-        if (getters.waitingForOtherPlayerToFinishRequirements) return false;
-
-        const hasActiveAction = rootState.card.activeAction;
-        const hasRequirement = !!getFrom('firstRequirement', 'requirement');
-        return !hasActiveAction
-            && !hasRequirement;
+    function canPutDownStationCardInHomeZone(state, getters, rootState, rootGetters) {
+        return rootGetters['match/playerRuleService'].canPutDownCardsInHomeZone()
+            && !rootState.card.activeAction;
     }
 
     function canIssueOverworkGetter(state, getters, rootState, rootGetters) {

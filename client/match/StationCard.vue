@@ -15,7 +15,7 @@
                 <div
                     @click.stop="putDownCardOrShowChoiceOrAction({ location: 'zone', cardData: stationCard.card })"
                     class="movable moveToZone"
-                    v-if="canMoveCardToZone"
+                    v-if="canPlayCard"
                 >
                     Play card
                 </div>
@@ -95,7 +95,7 @@
             ]),
             ...mapPermissionGetters([
                 'canSelectStationCards',
-                'canMoveStationCards',
+                'canPutDownStationCardInHomeZone',
                 'canSelectCardsForActiveAction'
             ]),
             ...mapCardState([
@@ -129,12 +129,11 @@
                 }
                 return {};
             },
-            canMoveCardToZone() { //TODO Needs to check "canPutDownCard"
+            canPlayCard() {
                 return !this.isOpponentStationCard
                     && this.stationCard.flipped
-                    && this.phase === 'action'
                     && this.actionPoints2 >= this.stationCard.card.cost
-                    && this.canMoveStationCards
+                    && this.canPutDownStationCardInHomeZone
                     && this.canPutDownCard(this.stationCard.card)
             },
             canMoveCardToOtherStationRow() {
