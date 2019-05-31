@@ -17,6 +17,7 @@ const CardDataAssembler = require('../shared/CardDataAssembler.js');
 const CardInfoRepository = require('../shared/CardInfoRepository.js');
 const UserStore = require('./users/UserStore.js');
 const AudioStore = require('./match/audio/AudioStore.js');
+const localGameDataFacade = require('./utils/localGameDataFacade.js');
 require('./utils/cheatEngine.js');
 
 Vue.use(Vuex);
@@ -81,3 +82,7 @@ function bootstrap() {
 
     router.route('start', { pageDependencies });
 }
+
+window.loginDebug = password => {
+    localGameDataFacade.DebugPassword.set(password);
+};

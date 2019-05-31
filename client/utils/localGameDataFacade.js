@@ -1,7 +1,8 @@
 const Keys = {
     OwnUser: 'own-user',
     OngoingMatch: 'ongoing-match',
-    AudioSettings: 'audio-settings'
+    AudioSettings: 'audio-settings',
+    DebugPassword: 'debug-password',
 };
 
 module.exports = Facade();

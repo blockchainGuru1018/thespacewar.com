@@ -24,9 +24,11 @@ module.exports = function ({ nameToInfo }) {
         });
 
     window.mute = () => {
+        window.audioMuted = true;
         destinationNode.gain.value = 0;
     };
     window.unmute = () => {
+        window.audioMuted = false;
         destinationNode.gain.value = settings.masterGain();
     };
 

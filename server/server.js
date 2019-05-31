@@ -18,6 +18,7 @@ const GameConfig = require('../shared/match/GameConfig.js');
 const Logger = require('./utils/Logger.js');
 const http = require('http');
 const { port } = require('./settings.json');
+const { DebugPassword } = require('./semi-secret.js');
 
 let inDevelopment;
 let app;
@@ -111,6 +112,8 @@ function exitProcess() {
 }
 
 function setupRoutes(deps, controllers) {
+    let lastCheckTime = 0;
+
     app.use(deps.securityController.middleware);
 
     app.get('/', (req, res) => {
@@ -133,29 +136,40 @@ function setupRoutes(deps, controllers) {
     app.get('/image/:imageName', controllers.assets.getImage);
     app.get('/sound/:soundName', controllers.assets.getSound);
 
+    app.post('/test-debug', (req, res) => {
+        const timeSinceLastCheck = Date.now() - lastCheckTime;
+        if (timeSinceLastCheck < 10 * 1000) {
+            res.json({ valid: false });
+        }
+        else {
+            res.json({ valid: req.body.password === DebugPassword });
+        }
+
+        lastCheckTime = Date.now();
+    });
     app.post('/cheat', controllers.cheat.cheat);
+    app.get('/restart', async (req, res) => {
+        if (req.body.password !== DebugPassword) {
+            res.end('Invalid password');
+            return;
+        }
 
-    if (inDevelopment) {
-        app.get('/restart', async (req, res) => {
-            await restartServer();
+        await restartServer();
 
-            setTimeout(() => {
-                res.redirect('/');
-            }, 3000);
-        });
-        app.get('/logs', async (req, res) => {
-            const matchLogs = deps.logger.readAll();
-            res.end(matchLogs);
-        });
-        app.get('/master-log', (req, res) => {
-            const masterLog = deps.logger.readMasterLog();
-            res.end(masterLog);
-        });
-        app.get('/logs/:type', async (req, res) => {
-            const matchLogs = deps.logger.read(type);
-            res.end(matchLogs);
-        });
-    }
+        setTimeout(() => {
+            res.redirect('/');
+        }, 3000);
+    });
+
+    app.get('/master-log', (req, res) => {
+        if (req.body.password !== DebugPassword) {
+            res.end('Invalid password');
+            return;
+        }
+
+        const masterLog = deps.logger.readMasterLog();
+        res.end(masterLog);
+    });
 }
 
 function setupSocketConnectionHandler(deps, controllers) {

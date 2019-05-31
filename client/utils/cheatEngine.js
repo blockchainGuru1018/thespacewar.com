@@ -35,10 +35,12 @@ async function sendCheatAndLogResult(type, data) {
 async function sendCheat(type, data) {
     let ownUser = localGameDataFacade.getOwnUser();
     let ongoingMatch = localGameDataFacade.getOngoingMatch();
+    let password = localGameDataFacade.DebugPassword.get();
 
     return await ajax.jsonPost('/cheat', {
         type,
         data,
+        password,
         playerId: ownUser.id,
         matchId: ongoingMatch.id
     });
