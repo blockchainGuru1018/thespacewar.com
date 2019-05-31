@@ -16,6 +16,7 @@ const ClientRawCardDataRepository = require('./card/ClientRawCardDataRepository.
 const CardDataAssembler = require('../shared/CardDataAssembler.js');
 const CardInfoRepository = require('../shared/CardInfoRepository.js');
 const UserStore = require('./users/UserStore.js');
+const AudioStore = require('./match/audio/AudioStore.js');//TODO Move audio folder outside of match folder
 require('./utils/cheatEngine.js');
 
 Vue.use(Vuex);
@@ -66,7 +67,8 @@ function bootstrap() {
         LoadingStore({ rootStore, pageDependencies }),
         LoginStore({ route: router.route, rootStore, userRepository }),
         LobbyStore({ route: router.route, rootStore, userRepository, matchRepository }),
-        UserStore({ rootStore, userRepository })
+        UserStore({ rootStore, userRepository }),
+        AudioStore()
     ];
     for (let store of stores) {
         rootStore.registerModule(store.name, store);

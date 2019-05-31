@@ -131,6 +131,7 @@ function setupRoutes(deps, controllers) {
 
     app.get('/icon/:iconName', controllers.assets.getIcon);
     app.get('/image/:imageName', controllers.assets.getImage);
+    app.get('/sound/:soundName', controllers.assets.getSound);
 
     app.post('/cheat', controllers.cheat.cheat);
 

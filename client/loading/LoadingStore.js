@@ -1,9 +1,6 @@
 const localGameDataFacade = require("../utils/localGameDataFacade")
 
-module.exports = function ({
-    rootStore,
-    pageDependencies
-}) {
+module.exports = function ({ pageDependencies }) {
 
     let progressIntervalId = null;
     const rawCardDataRepository = pageDependencies.rawCardDataRepository;
@@ -29,7 +26,7 @@ module.exports = function ({
         return state.progress >= 140 && state.loaded;
     }
 
-    async function load({ state, dispatch, rootGetters }) {
+    async function load({ state, rootGetters, dispatch }) {
         let d = performance.now();
 
         dispatch('initFakeLoadingProgress');

@@ -1,13 +1,13 @@
 <template>
     <div :class="['loading', {'loading--done': loadingDone}]">
         <div class="loading-backdropLetterBoxWrapper">
-            <img :class="backdropClasses" src="/image/backdrop.jpg"/>
+            <img :class="backdropClasses" src="/image/backdrop.jpg" />
         </div>
         <div class="loading-bar" v-if="!loadingDone">
-            <div :style="progressStyle" class="loading-barProgress"/>
+            <div :style="progressStyle" class="loading-barProgress" />
         </div>
-        <Lobby :class="viewClasses" v-if="!!ownUser && loadingDone"/>
-        <Login :class="viewClasses" v-else/>
+        <Lobby :class="viewClasses" v-if="!!ownUser && loadingDone" />
+        <Login :class="viewClasses" v-else />
     </div>
 </template>
 <script>
@@ -33,6 +33,7 @@
                 let classes = ['loading-backdrop'];
                 if (this.loadingDone) {
                     classes.push('loading-backdrop--blur');
+                    classes.push('loading-backdrop--animate');
                 }
                 return classes;
             },
@@ -49,6 +50,9 @@
                 }
                 return classes;
             }
+        },
+        mounted() {
+            this.$store.dispatch('audio/main');
         },
         components: {
             Lobby,
@@ -71,11 +75,20 @@
 
     .loading-backdrop {
         width: 100%;
-        transition: filter $animation-time $animation-curve;
+        transition: filter $animation-time $animation-curve, transform 240s, left 240s;
+
+        left: -10px;
+        transform: scale(1.05, 1.025);
     }
 
     .loading-backdrop--blur {
-        filter: brightness(.9) contrast(105%) blur(3px);
+        /*filter: brightness(.9) contrast(105%) blur(3px);*/
+        filter: brightness(.9) contrast(105%) blur(.1px);
+    }
+
+    .loading-backdrop--animate {
+        left: 20px;
+        transform: scale(1, 1);
     }
 
     .loading-bar {

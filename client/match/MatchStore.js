@@ -91,7 +91,8 @@ module.exports = function (deps) {
             repairerCardId: null,
             aiStarted: false,
             ended: false,
-            retreatedPlayerId: null
+            retreatedPlayerId: null,
+            shake: false
         },
         getters: {
             isFirstPlayer,

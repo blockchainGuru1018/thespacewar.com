@@ -8,6 +8,7 @@
             <path value="file://$PROJECT_DIR$/server/assets" />
             <path value="file://$PROJECT_DIR$/server/assets/icons" />
             <path value="file://$PROJECT_DIR$/server/assets/images" />
+            <path value="file://$PROJECT_DIR$/server/assets/sounds" />
           </resourceRoots>
         </entryData>
       </entry>

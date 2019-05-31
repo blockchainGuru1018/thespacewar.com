@@ -19,6 +19,7 @@ module.exports = function (deps) {
         name: 'card',
         state: {
             holdingCard: null,
+            draggingCard: false, //todo this flag relates to above data "holdingCard", but might it be confused as to be data itself and not a boolean?
 
             //choice dialog
             choiceCardId: null,
@@ -498,8 +499,9 @@ module.exports = function (deps) {
         }
     }
 
-    function startHoldingCard({ state, commit }, { id = null, cardData = null, showOnlyCardGhostsFor = null }) {
+    function startHoldingCard({ state, commit }, { id = null, cardData = null, showOnlyCardGhostsFor = null, dragging = false }) {
         state.showOnlyCardGhostsFor = showOnlyCardGhostsFor;
+        state.draggingCard = dragging;
         commit('SET_HOLDING_CARD', cardData || { id, faceDown: true });
     }
 

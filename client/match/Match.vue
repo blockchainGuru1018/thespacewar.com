@@ -1,5 +1,5 @@
 <template>
-    <div class="match-wrapper">
+    <div class="match-wrapper" ref="match-wrapper">
         <div
             :class="['match', `currentPhase--${phase}`]"
             ref="match"
@@ -49,8 +49,8 @@
             <div class="field">
                 <div class="field-opponent">
                     <div
-                        class="field-opponentStation opponentStationCards field-station field-section"
                         :style="opponentStationStyle"
+                        class="field-opponentStation opponentStationCards field-station field-section"
                     >
                         <div class="field-stationRow">
                             <station-card
@@ -93,13 +93,13 @@
                         <div class="opponentCardsInZone field-opponentZoneRow field-zone field-section">
                             <template v-for="n in opponentCardsInZone.length">
                                 <zone-card
-                                    v-if="n <= opponentCardsInZone.length"
-                                    :key="sortedOpponentCardsInZone[n - 1].id"
                                     :card="sortedOpponentCardsInZone[n - 1]"
+                                    :class="['card--turnedAround', {'card-lastDurationCard': lastSortedOpponentDurationCardIndex === (n - 1)}]"
+                                    :key="sortedOpponentCardsInZone[n - 1].id"
                                     :owner-id="opponentUser.id"
                                     :zone-opponent-row="playerCardsInOpponentZone"
                                     :zone-player-row="opponentCardsInZone"
-                                    :class="['card--turnedAround', {'card-lastDurationCard': lastSortedOpponentDurationCardIndex === (n - 1)}]"
+                                    v-if="n <= opponentCardsInZone.length"
                                 />
                             </template>
                             <div
@@ -131,11 +131,11 @@
                                 v-if="!opponentTopDiscardCard"
                             />
                             <div
-                                v-longpress="() => expandCard(opponentTopDiscardCard)"
                                 :data-cardId="opponentTopDiscardCard.id"
                                 :style="getCardImageStyle(opponentTopDiscardCard)"
                                 class="card card--turnedAround card--expandable"
                                 v-else
+                                v-longpress="() => expandCard(opponentTopDiscardCard)"
                             />
                         </div>
 
@@ -240,22 +240,22 @@
                                 v-if="!playerTopDiscardCard"
                             />
                             <div
-                                v-else
-                                v-longpress="() => expandCard(playerTopDiscardCard)"
                                 :data-cardId="playerTopDiscardCard.id"
                                 :style="getCardImageStyle(playerTopDiscardCard)"
                                 class="card card--expandable"
+                                v-else
+                                v-longpress="() => expandCard(playerTopDiscardCard)"
                             />
                             <CardGhost
-                                v-if="discardPileCardGhostVisible"
                                 :element-hovered-over="elementHoveredOver"
+                                @click="cardGhostClick"
                                 class="discardPile-cardGhost"
                                 location="discard"
-                                @click="cardGhostClick"
+                                v-if="discardPileCardGhostVisible"
                             >
                                 <div
-                                    v-if="canThePlayer.recycleCards()"
                                     class="recycle"
+                                    v-if="canThePlayer.recycleCards()"
                                 >
                                     Recycle
                                 </div>
@@ -266,31 +266,31 @@
                         <div class="opponentCardsInPlayerZone field-zone field-section">
                             <template v-for="n in opponentCardsInPlayerZone.length">
                                 <zone-card
-                                    v-if="n <= opponentCardsInPlayerZone.length"
-                                    :key="opponentCardsInPlayerZone[n - 1].id"
                                     :card="opponentCardsInPlayerZone[n - 1]"
+                                    :key="opponentCardsInPlayerZone[n - 1].id"
                                     :owner-id="opponentUser.id"
                                     :zone-opponent-row="playerCardsInZone"
                                     :zone-player-row="opponentCardsInPlayerZone"
                                     class="card--turnedAround"
+                                    v-if="n <= opponentCardsInPlayerZone.length"
                                 />
                             </template>
                             <div
-                                v-if="opponentCardsInPlayerZone.length === 0"
                                 class="card card-placeholder"
+                                v-if="opponentCardsInPlayerZone.length === 0"
                             />
                         </div>
                         <div class="playerCardsInZone field-playerZoneCards field-zone field-section">
                             <template v-for="n in visiblePlayerCards.length">
                                 <zone-card
-                                    v-if="n <= visiblePlayerCards.length"
-                                    :key="visiblePlayerCards[n - 1].id"
                                     :card="(visiblePlayerCards[n - 1])"
+                                    :class="{'card-lastDurationCard': lastVisiblePlayerDurationCardIndex === (n - 1)}"
                                     :isHomeZone="true"
+                                    :key="visiblePlayerCards[n - 1].id"
                                     :ownerId="ownUser.id"
                                     :zoneOpponentRow="opponentCardsInPlayerZone"
                                     :zonePlayerRow="visiblePlayerCards"
-                                    :class="{'card-lastDurationCard': lastVisiblePlayerDurationCardIndex === (n - 1)}"
+                                    v-if="n <= visiblePlayerCards.length"
                                 />
                             </template>
                             <CardGhost
@@ -370,14 +370,15 @@
                     <PlayerCardsOnHand
                         :holding-card="holdingCard"
                         @cardClick="playerCardClick"
+                        @cardDrag="playerCardDrag"
                     />
                     <PlayerHud />
                 </div>
             </div>
             <div
-                v-if="holdingCard"
-                :style="holdingCardStyle"
                 :class="['card', 'holdingCard', {'card-faceDown': holdingCard.faceDown, 'card-faceDown--player': holdingCard.faceDown}]"
+                :style="holdingCardStyle"
+                v-if="holdingCard"
             />
             <card-choice-dialog />
             <loading-indicator />
@@ -443,7 +444,8 @@
                 'opponentDiscardedCards',
                 'opponentCardsInZone',
                 'opponentCardsInPlayerZone',
-                'aiStarted'
+                'aiStarted',
+                'shake'
             ]),
             ...mapGetters([
                 'hasPutDownNonFreeCardThisTurn',
@@ -462,7 +464,8 @@
                 'transientPlayerCardsInHomeZone',
                 'hiddenStationCardIds',
                 'showOnlyCardGhostsFor',
-                'holdingCard'
+                'holdingCard',
+                'draggingCard'
             ]),
             ...mapCardGetters({
                 cardChoiceDialogCardData: 'choiceCardData',
@@ -582,6 +585,62 @@
                 return this.gameConfig.millCardCount();
             }
         },
+        watch: {
+            shake() {
+                if (!this.shake) return;
+
+                const loop = () => {
+                    if (!this.shake) return;
+
+                    const min = -5;
+                    const max = 5;
+                    this.$refs['match-wrapper'].style = `
+                            top: ${Math.round(Math.random() * (max - min) + min)}px;
+                            left: ${Math.round(Math.random() * (max - min) + min)}px;
+                        `;
+                    setTimeout(loop, 30);
+                };
+                setTimeout(loop, 30);
+            },
+            // opponentCardsInZone: {
+            //     deep: true,
+            //     handler() {
+            //         this.$store.state.match.shake = true;
+            //         setTimeout(() => {
+            //             this.$store.state.match.shake = false;
+            //         }, 350);
+            //     }
+            // },
+            // opponentCardsInPlayerZone: {
+            //     deep: true,
+            //     handler() {
+            //         this.$store.state.match.shake = true;
+            //         setTimeout(() => {
+            //             this.$store.state.match.shake = false;
+            //         }, 350);
+            //     }
+            // },
+            // playerStation: {
+            //     deep: true,
+            //     immediate: false,
+            //     handler() {
+            //         this.$store.state.match.shake = true;
+            //         setTimeout(() => {
+            //             this.$store.state.match.shake = false;
+            //         }, 500);
+            //     }
+            // },
+            // opponentStation: {
+            //     deep: true,
+            //     immediate: false,
+            //     handler() {
+            //         this.$store.state.match.shake = true;
+            //         setTimeout(() => {
+            //             this.$store.state.match.shake = false;
+            //         }, 500);
+            //     }
+            // }
+        },
         methods: {
             ...mapActions([
                 'selectAsDefender',
@@ -617,6 +676,9 @@
             },
             canAffordCard(card) {
                 return this.actionPoints2 >= card.cost;
+            },
+            playerCardDrag(cardData) {
+                this.startHoldingCard({ cardData, dragging: true });
             },
             playerCardClick(cardData) {
                 this.startHoldingCard({ cardData });
@@ -675,6 +737,8 @@
             }
         },
         mounted() {
+            this.$store.dispatch('audio/background');
+
             this.$refs.match.addEventListener('mousemove', event => {
                 this.mousePosition.x = event.clientX;
                 this.mousePosition.y = event.clientY;
@@ -682,9 +746,18 @@
             this.$refs.match.addEventListener('click', event => {
                 const targetElementClasses = Array.from(event.target.classList);
                 const isNotCardOrCardActionOverlay = (!targetElementClasses.includes('card')
-                    && !targetElementClasses.includes('actionOverlay'))
+                    && !targetElementClasses.includes('actionOverlay'));
                 if (isNotCardOrCardActionOverlay
                     || targetElementClasses.includes('card-placeholder')) {
+                    this.emptyClick();
+                }
+            });
+            this.$refs.match.addEventListener('mouseup', event => {
+                if (!this.draggingCard) return;
+
+                const targetElementClasses = Array.from(event.target.classList);
+                const isCardGhost = targetElementClasses.includes('card-ghost');
+                if (!isCardGhost) {
                     this.emptyClick();
                 }
             });
