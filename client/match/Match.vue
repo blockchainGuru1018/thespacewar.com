@@ -5,6 +5,7 @@
             ref="match"
         >
             <div class="match-overlay" />
+
             <div class="match-backgroundWrapper">
                 <img
                     class="match-background"
@@ -12,17 +13,9 @@
                 >
                 <div class="match-backgroundOverlay" />
             </div>
-            <div class="match-header">
-                <button
-                    @click="showEscapeMenu"
-                    class="match-menuButton match-smallButton"
-                >
-                    Menu
-                </button>
-                <h1 :title="`Match ID: ${matchId}`">
-                    {{ ownUser.name }} v.s. {{ opponentUser.name }}
-                </h1>
-            </div>
+
+            <MatchHeader />
+
             <div class="field">
                 <div class="field-opponent">
                     <div
@@ -396,6 +389,7 @@
     const ExpandedCard = resolveModule(require('../expandedCard/ExpandedCard.vue'));
     const ChooseStartingPlayer = resolveModule(require('./chooseStartingPlayer/ChooseStartingPlayer.vue'));
     const EscapeMenu = resolveModule(require('./escapeMenu/EscapeMenu.vue'));
+    const MatchHeader = resolveModule(require('./MatchHeader.vue'));
     const { PHASES } = require('./phases.js');
 
     module.exports = {
@@ -777,7 +771,8 @@
             CardGhost,
             ExpandedCard,
             ChooseStartingPlayer,
-            EscapeMenu
+            EscapeMenu,
+            MatchHeader
         },
         directives: {
             longpress
