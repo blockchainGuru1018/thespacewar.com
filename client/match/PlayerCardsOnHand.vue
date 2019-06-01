@@ -189,7 +189,8 @@
 
             let startMouseY = null;
             const onMouseDown = e => {
-                if (e.target.className.includes('cardHoverActivator')) {
+                const className = e.target.className;
+                if (className.includes('cardHoverBlowUp') || className.includes('cardHoverActivator')) {
                     startMouseY = e.clientY;
                     document.addEventListener('mousemove', onMouseMove);
                 }
