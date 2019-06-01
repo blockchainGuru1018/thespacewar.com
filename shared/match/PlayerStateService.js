@@ -48,6 +48,7 @@ class PlayerStateService {
             playerState.actionPoints = 0;
             playerState.events = [];
             playerState.requirements = [];
+            playerState.actionLogEntries = [];
         });
     }
 

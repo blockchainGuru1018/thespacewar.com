@@ -31,7 +31,8 @@ module.exports = function (state, {
         logger,
         endMatch,
         actionPointsCalculator,
-        gameConfig
+        gameConfig,
+        gameServiceFactory
     });
 
     const api = {

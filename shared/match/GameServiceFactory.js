@@ -1,6 +1,7 @@
 const MatchService = require('./MatchService.js');
 const StateMemento = require('./StateMemento.js');
 const CardDataAssembler = require('../CardDataAssembler.js');
+const CardInfoRepository = require('../CardInfoRepository.js');
 const StateSerializer = require('../../server/match/StateSerializer.js');
 
 module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig }) {
@@ -12,6 +13,7 @@ module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig 
         matchService: cached(matchService),
         stateMemento: cached(stateMemento),
         cardDataAssembler: cached(cardDataAssembler),
+        cardInfoRepository: cached(cardInfoRepository),
         stateSerializer: cached(stateSerializer)
     };
 
@@ -19,6 +21,12 @@ module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig 
 
     function cardDataAssembler() {
         return CardDataAssembler({ rawCardDataRepository });
+    }
+
+    function cardInfoRepository() {
+        return CardInfoRepository({
+            cardDataAssembler: api.cardDataAssembler()
+        });
     }
 
     function stateSerializer() {

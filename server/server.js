@@ -138,20 +138,13 @@ function setupRoutes(deps, controllers) {
     app.get('/sound/:soundName', controllers.assets.getSound);
 
     app.post('/test-debug', (req, res) => {
-        const timeSinceLastCheck = Date.now() - lastCheckTime;
-        if (timeSinceLastCheck < 10 * 1000) {
-            res.json({ valid: false });
-        }
-        else {
-            res.json({ valid: req.body.password === DebugPassword });
-        }
-
+        res.json({ valid: validateDebugPassword(req.body.password) });
         lastCheckTime = Date.now();
     });
     app.post('/cheat', controllers.cheat.cheat);
-    app.get('/restart', async (req, res) => {
-        if (req.body.password !== DebugPassword) {
-            res.end('Invalid password');
+    app.post('/restart', async (req, res) => {
+        if (validateDebugPassword(req.body.password)) {
+            res.json({ text: 'Invalid password' });
             return;
         }
 
@@ -162,15 +155,25 @@ function setupRoutes(deps, controllers) {
         }, 3000);
     });
 
-    app.get('/master-log', (req, res) => {
-        if (req.body.password !== DebugPassword) {
-            res.end('Invalid password');
+    app.post('/master-log', (req, res) => {
+        if (validateDebugPassword(req.body.password)) {
+            res.json({ text: `Invalid password` });
             return;
         }
 
         const masterLog = deps.logger.readMasterLog();
-        res.end(masterLog);
+        res.json({ text: masterLog });
     });
+
+    function validateDebugPassword(password) {
+        const timeSinceLastCheck = Date.now() - lastCheckTime;
+        if (timeSinceLastCheck < 10 * 1000) {
+            return false;
+        }
+        else {
+            return password === DebugPassword;
+        }
+    }
 }
 
 function setupSocketConnectionHandler(deps, controllers) {

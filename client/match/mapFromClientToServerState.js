@@ -8,6 +8,7 @@ module.exports = function (clientState) {
         retreatedPlayerId: clientState.retreatedPlayerId,
         playerStateById: {
             [clientState.ownUser.id]: {
+                actionLogEntries: clientState.actionLogEntries,
                 phase: clientState.phase,
                 events: clientState.events,
                 cardsInZone: clientState.playerCardsInZone,

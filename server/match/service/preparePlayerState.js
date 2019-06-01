@@ -14,7 +14,8 @@ const whitelist = [
     'cardsOnHand',
     'events',
     'requirements',
-    'phase'
+    'phase',
+    'actionLogEntries'
 ];
 
 module.exports = StatePreparer({ obscureHandlerByKey, whitelist }).prepare;

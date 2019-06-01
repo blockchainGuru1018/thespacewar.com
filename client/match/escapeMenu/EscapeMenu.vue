@@ -99,6 +99,16 @@
             >
                 Back
             </button>
+            <button class="escapeMenu-option" />
+            <button class="escapeMenu-option" />
+            <button class="escapeMenu-option" />
+            <button class="escapeMenu-option" />
+            <button
+                class="escapeMenu-danger escapeMenu-option"
+                @click="_danger_restart_danger_"
+            >
+                R E S T A R T
+            </button>
         </div>
 
         <div
@@ -253,7 +263,20 @@
             async showLog() {
                 this.view = 'log';
                 this.log = 'LOADING LOG';
-                this.log = await ajax.getText('/master-log', { password: localGameDataFacade.DebugPassword.get() });
+                const { text } = await ajax.jsonPost('/master-log', { password: localGameDataFacade.DebugPassword.get() });
+                this.log = text;
+            },
+            async _danger_restart_danger_() {
+                const confirmed = confirm('WARNING!   REALLY RESTART?   THIS IS DANGEROUS.');
+                if (confirmed) {
+                    const superConfirmed = confirm('REALLY REALLY SURE?');
+                    if (superConfirmed) {
+                        const response = await ajax.jsonPost('/restart', { password: localGameDataFacade.DebugPassword.get() });
+                        if (response) {
+                            alert(`Response from server: ${response.text}`);
+                        }
+                    }
+                }
             },
             unmuteAudio() {
                 window.unmute();

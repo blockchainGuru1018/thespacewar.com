@@ -69,7 +69,8 @@ module.exports = function ({
         endMatch,
         actionPointsCalculator,
         logger,
-        gameConfig
+        gameConfig,
+        gameServiceFactory
     });
     const matchService = playerServiceFactory.matchService();
     const playerServiceProvider = playerServiceFactory.playerServiceProvider();

@@ -166,6 +166,9 @@ function PutDownCardController(deps) {
             if (card.requirementsWhenPutDownInHomeZone) {
                 addCardRequirementsOnPutDownInHomeZone({ playerId, card });
             }
+
+            const opponentActionLog = playerServiceFactory.actionLog(matchService.getOpponentId(playerId));
+            opponentActionLog.opponentPlayedCard({ cardCommonId: cardData.commonId });
         }
     }
 

@@ -1,11 +1,12 @@
-module.exports = function (deps) {
-
-    const cardDataAssembler = deps.cardDataAssembler;
+module.exports = function ({
+    cardDataAssembler
+}) {
 
     let cards = null;
 
     return {
         getCost,
+        getName,
         getImageUrl,
         getType
     };
@@ -14,6 +15,11 @@ module.exports = function (deps) {
         const card = getCard(cardCommonId);
         let costTextOrZero = card.cost || '0';
         return parseInt(costTextOrZero, 10) || 0;
+    }
+
+    function getName(cardCommonId) {
+        const card = getCard(cardCommonId);
+        return card.name;
     }
 
     function getType(cardCommonId) {

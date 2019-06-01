@@ -73,7 +73,7 @@
                         class="guideText-wrapper"
                     >
                         <div class="guideText">
-                            Build your space station with {{ startingStationCardsToPutDownCount }}
+                            Expand your space station with {{ startingStationCardsToPutDownCount }}
                             {{ startingStationCardsToPutDownCount === 1 ? 'card' : 'cards' }}
                         </div>
                         <div class="guideText-subText">

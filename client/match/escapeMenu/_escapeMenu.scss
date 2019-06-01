@@ -81,3 +81,19 @@
     font-size: 12px;
   }
 }
+
+.escapeMenu-danger {
+  color: black;
+  background: yellow;
+  border: 2px dashed black;
+  font-weight: bold;
+  font-family: "Arial black";
+  font-size: 24px;
+  letter-spacing: .2em;
+
+  &:hover {
+    color: yellow;
+    background: black;
+    border: 2px dashed yellow;
+  }
+}

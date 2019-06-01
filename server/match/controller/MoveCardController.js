@@ -4,6 +4,7 @@ const CheatError = require('../CheatError.js');
 module.exports = function (deps) {
 
     const {
+        matchService,
         matchComService,
         playerServiceProvider,
         playerServiceFactory,
@@ -25,7 +26,10 @@ module.exports = function (deps) {
         if (!card.canMove()) throw new CheatError('Cannot move card');
 
         playerStateService.moveCard(cardId);
-        matchComService.emitToOpponentOf(playerId, 'opponentMovedCard', cardId)
+        matchComService.emitToOpponentOf(playerId, 'opponentMovedCard', cardId); //TODO Remove and test IRL. Should work without. Also remove on the client in MatchStore.js!
+
+        const opponentActionLog = playerServiceFactory.actionLog(matchService.getOpponentId(playerId));
+        opponentActionLog.opponentMovedCard({ cardCommonId: cardData.commonId });
     }
 
     function moveStationCard(playerId, { cardId, location }) {

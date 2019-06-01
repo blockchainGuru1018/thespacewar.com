@@ -35,21 +35,36 @@ function AttackController(deps) {
         const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
         const defenderCard = opponentStateService.createBehaviourCardById(defenderCardId);
         const attackerCard = playerStateService.createBehaviourCardById(attackerCardId);
-        attackerCard.attackCard(defenderCard);
 
+        const damageBefore = defenderCard.damage;
+        attackerCard.attackCard(defenderCard);
+        const damageAfter = defenderCard.damage;
+
+        const defenderCardWasDestroyed = defenderCard.destroyed;
         matchComService.emitToPlayer(opponentId, 'opponentAttackedCard', {
             attackerCardId,
             defenderCardId,
             newDamage: defenderCard.damage,
-            defenderCardWasDestroyed: defenderCard.destroyed,
+            defenderCardWasDestroyed,
             attackerCardWasDestroyed: attackerCard.destroyed
         });
-        const event = playerStateService.registerAttack({ attackerCardId, defenderCardId });
 
+        const event = playerStateService.registerAttack({ attackerCardId, defenderCardId });
         const attackData = { attackerCardId, defenderCardIds: [defenderCardId], time: event.created };
         stateMemento.saveStateForAttackData(stateBeforeAttack, attackData);
 
-        if (defenderCard.destroyed) {
+        const opponentActionLog = playerServiceFactory.actionLog(opponentId);
+        if (defenderCardWasDestroyed) {
+            opponentActionLog.cardDestroyed({ cardCommonId: defenderCard.commonId })
+        }
+        else if (damageBefore !== damageAfter) {
+            opponentActionLog.damagedInAttack({
+                defenderCardCommonId: defenderCard.commonId,
+                damageInflictedByDefender: damageAfter - damageBefore
+            })
+        }
+
+        if (defenderCardWasDestroyed) {
             const cardData = opponentStateService.removeCard(defenderCardId);
             opponentStateService.discardCard(cardData);
         }
@@ -160,6 +175,9 @@ function AttackController(deps) {
 
         const attackData = { attackerCardId, defenderCardIds: targetStationCardIds, time: event.created };
         stateMemento.saveStateForAttackData(stateBeforeAttack, attackData);
+
+        const opponentActionLog = playerServiceFactory.actionLog(opponentId);
+        opponentActionLog.stationCardsWereDamaged({ targetCount: targetStationCardIds.length });
 
         const attackerCardData = playerStateService.findCard(attackerCardId);
         const attackerCard = cardFactory.createCardForPlayer(attackerCardData, playerId);

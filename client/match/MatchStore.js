@@ -14,6 +14,7 @@ const ClientPlayerServiceProvider = require('./ClientPlayerServiceProvider.js');
 const EventFactory = require('../../shared/event/EventFactory.js');
 const GameConfig = require('../../shared/match/GameConfig.js');
 const MoveStationCard = require('../../shared/match/MoveStationCard.js');
+const ActionLog = require('../../shared/match/log/ActionLog.js');
 const mapFromClientToServerState = require('./mapFromClientToServerState.js');
 const localGameDataFacade = require('../utils/localGameDataFacade.js');
 const whatIsNextPhase = require('../../shared/match/whatIsNextPhase.js');
@@ -57,6 +58,7 @@ module.exports = function (deps) {
         state: {
             mode: MatchMode.firstMode,
             gameConfigEntity: null,
+            actionLogEntries: [],
             turn: 1,
             currentPlayer: null,
             phase: '',
@@ -124,7 +126,6 @@ module.exports = function (deps) {
             cardFactory,
             playerServiceProvider,
             moveStationCard,
-            queryEvents,
             canPutDownCard,
             playerRuleService,
             getCanThePlayer,
@@ -136,7 +137,9 @@ module.exports = function (deps) {
             playerRequirementService,
             playerStateService,
             opponentStateService,
+            queryEvents,
             queryOpponentEvents,
+            actionLog,
             eventFactory,
             matchService,
             playerCardsInDeckCount,
@@ -475,6 +478,13 @@ module.exports = function (deps) {
                 getAll: () => state.events
             },
             matchService: getters.matchService
+        });
+    }
+
+    function actionLog(state, getters) {
+        return ActionLog({
+            playerStateService: getters.playerStateService,
+            cardInfoRepository
         });
     }
 

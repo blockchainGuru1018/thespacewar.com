@@ -15,6 +15,7 @@
                     d="M37 24.8c-6.7 0-12.2 5.5-12.2 12.2S30.3 49.2 37 49.2 49.2 43.7 49.2 37 43.7 24.8 37 24.8zm0 20.4c-4.5 0-8.2-3.7-8.2-8.2s3.7-8.2 8.2-8.2 8.2 3.7 8.2 8.2-3.7 8.2-8.2 8.2z" />
             </svg>
         </button>
+        <ActionLog />
         <PlayerBanner
             :isPlayer="true"
             :reverse="true"
@@ -31,6 +32,7 @@
     const escapeMenuHelpers = Vuex.createNamespacedHelpers('escapeMenu');
     const resolveModule = require('../../utils/resolveModuleWithPossibleDefault.js');
     const PlayerBanner = resolveModule(require('./PlayerBanner.vue'));
+    const ActionLog = resolveModule(require('../log/ActionLog.vue'));
 
     module.exports = {
         computed: {
@@ -42,7 +44,8 @@
             })
         },
         components: {
-            PlayerBanner
+            PlayerBanner,
+            ActionLog
         }
     }
 </script>
@@ -63,8 +66,8 @@
 
         padding: 0;
         margin: 10px 10px 0 0;
-        width: 50px;
-        height: 50px;
+        width: $bannerHeight;
+        height: $bannerHeight;
         box-sizing: border-box;
         display: flex;
         justify-content: center;
