@@ -14,6 +14,8 @@ const dummyCardInfoRepository = {
 
 module.exports = function TestController({ playerIds = ['P1A', 'P2A'], matchId = 'M1A', ...pageDeps } = {}) {
     const store = new Vuex.Store({});
+    registerFakeAudioModule(store);
+
     const [ownId, opponentId] = playerIds;
     const matchController = pageDeps.matchController || FakeMatchController();
 
@@ -37,3 +39,12 @@ module.exports = function TestController({ playerIds = ['P1A', 'P2A'], matchId =
         }
     };
 };
+
+function registerFakeAudioModule(rootStore) {
+    rootStore.registerModule('audio', {
+        namespaced: true,
+        actions: {
+            background() {}
+        }
+    });
+}
