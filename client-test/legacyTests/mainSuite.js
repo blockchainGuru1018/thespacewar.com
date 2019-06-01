@@ -418,7 +418,7 @@ module.exports = {
                 assert.calledOnceWith(this.matchController.emit, 'drawCard');
             },
             'should get put new card in hand'() {
-                assert.elementCount('.field-playerCardsOnHand .cardOnHand', 1);
+                assert.elementCount('.playerCardsOnHand .cardOnHand', 1);
             },
             'should NOT show guide text'() {
                 assert.elementCount('.guideText-drawCard', 0);
@@ -451,7 +451,7 @@ module.exports = {
                 assert.calledOnceWith(this.matchController.emit, 'drawCard');
             },
             'should get put new card in hand'() {
-                assert.elementCount('.field-playerCardsOnHand .cardOnHand', 1);
+                assert.elementCount('.playerCardsOnHand .cardOnHand', 1);
             },
             'should NOT show go to next phase button'() {
                 assert.elementCount('.nextPhaseButton', 0);
@@ -485,7 +485,7 @@ module.exports = {
                 assert.calledOnceWith(this.matchController.emit, 'discardOpponentTopTwoCards');
             },
             'should NOT get new card in hand'() {
-                assert.elementCount('.field-playerCardsOnHand .cardOnHand', 0);
+                assert.elementCount('.playerCardsOnHand .cardOnHand', 0);
             },
             'should NOT show next phase button'() {
                 assert.elementCount('.nextPhaseButton', 0);
@@ -903,7 +903,7 @@ module.exports = {
                 }));
                 await timeout();
 
-                await click('.field-playerCardsOnHand .cardOnHand');
+                await click('.playerCardsOnHand .cardOnHand');
             },
             'should NOT be able to move station cards to zone'() {
                 assert.elementCount('.stationCard .moveToZone', 0);
@@ -926,7 +926,7 @@ module.exports = {
                 }));
                 await timeout();
 
-                await click('.field-playerCardsOnHand .cardOnHand');
+                await click('.playerCardsOnHand .cardOnHand');
             },
             'should NOT show ANY card ghosts'() {
                 assert.elementCount('.card-ghost', 0);
@@ -1126,14 +1126,14 @@ module.exports = {
                 }));
                 await timeout();
 
-                await click('.field-playerCardsOnHand .cardOnHand');
+                await click('.playerCardsOnHand .cardOnHand');
                 await click('.field-playerZoneCards .card-ghost:eq(0)');
             },
             'should put down card in zone'() {
                 assert.elementCount('.field-playerZoneCards .card:not(.card-placeholder)', 1);
             },
             'should NOT have card on hand'() {
-                assert.elementCount('.field-playerCardsOnHand .cardOnHand', 0);
+                assert.elementCount('.playerCardsOnHand .cardOnHand', 0);
             },
             'should NOT discard card'() {
                 assert.elementCount('.field-discardPile .card-faceDown', 0);
@@ -1231,7 +1231,7 @@ module.exports = {
                     cardsOnHand: [{ id: 'C1A', type: 'event', commonId: DiscoveryCommonId }]
                 }));
                 await timeout();
-                await click('.field-playerCardsOnHand .cardOnHand');
+                await click('.playerCardsOnHand .cardOnHand');
                 await click('.field-playerZoneCards .card-ghost:eq(0)');
 
                 await click('.cardChoiceDialog-choice:contains("draw")');
@@ -1250,7 +1250,7 @@ module.exports = {
                 assert.elementCount('.field-playerZoneCards .card:not(.card-placeholder)', 0);
             },
             'should NOT show card on hand'() {
-                assert.elementCount('.field-playerCardsOnHand .cardOnHand', 0);
+                assert.elementCount('.playerCardsOnHand .cardOnHand', 0);
             },
             'should show card in discard pile'() {
                 assert.elementCount('.field-player .field-discardPile .card[data-cardId="C1A"]', 1);
@@ -1268,7 +1268,7 @@ module.exports = {
                     cardsOnHand: [{ id: 'C1A', commonId: DiscoveryCommonId }]
                 }));
                 await timeout();
-                await click('.field-playerCardsOnHand .cardOnHand');
+                await click('.playerCardsOnHand .cardOnHand');
                 await click('.field-playerZoneCards .card-ghost:eq(0)');
 
                 await click('.cardChoiceDialog-choice:contains("discard")');
@@ -1296,7 +1296,7 @@ module.exports = {
                     cardsOnHand: [{ id: 'C1A', commonId: DiscoveryCommonId }]
                 }));
                 await timeout();
-                await click('.field-playerCardsOnHand .cardOnHand');
+                await click('.playerCardsOnHand .cardOnHand');
                 await click('.field-playerZoneCards .card-ghost:eq(0)');
 
                 await click('.cardChoiceDialog-overlay');
@@ -1311,7 +1311,7 @@ module.exports = {
                 assert.elementCount('.field-playerZoneCards .card:not(.card-placeholder)', 0);
             },
             'should show card on hand'() {
-                assert.elementCount('.field-playerCardsOnHand .cardOnHand', 1);
+                assert.elementCount('.playerCardsOnHand .cardOnHand', 1);
             },
             'should NOT have discarded card'() {
                 assert.elementCount('.field-discardPile .card-faceDown', 0);
@@ -1342,7 +1342,7 @@ module.exports = {
                     ]
                 }));
                 await timeout();
-                await click('.field-playerCardsOnHand .cardOnHand');
+                await click('.playerCardsOnHand .cardOnHand');
 
                 await click('.field-playerZoneCards .card-ghost:eq(0)');
             },
@@ -1350,7 +1350,7 @@ module.exports = {
                 assert.elementCount('.field-playerZoneCards .card:not(.card-placeholder)', 2);
             },
             'should NOT have card in hand'() {
-                assert.elementCount('.field-playerCardsOnHand .cardOnHand', 0);
+                assert.elementCount('.playerCardsOnHand .cardOnHand', 0);
             },
             'should NOT have discarded card'() {
                 assert.elementCount('.field-discardPile .card-faceDown', 0);
@@ -1446,7 +1446,7 @@ module.exports = {
                     ]
                 }));
                 await timeout();
-                await click('.field-playerCardsOnHand .cardOnHand');
+                await click('.playerCardsOnHand .cardOnHand');
                 await click('.field-playerZoneCards .card-ghost:eq(0)');
 
                 await click('.opponentCardsInPlayerZone .card:eq(0) .selectable');
@@ -1455,7 +1455,7 @@ module.exports = {
                 assert.elementCount('.field-playerZoneCards .card:not(.card-placeholder)', 1);
             },
             'should NOT have card in hand'() {
-                assert.elementCount('.field-playerCardsOnHand .cardOnHand', 0);
+                assert.elementCount('.playerCardsOnHand .cardOnHand', 0);
             },
             'should have discarded card'() {
                 assert.elementCount('.field-player .field-discardPile .card[data-cardId="C1A"]', 1);
@@ -1586,7 +1586,7 @@ module.exports = {
     //             }));
     //             await timeout();
     //
-    //             await click('.field-playerCardsOnHand .cardOnHand');
+    //             await click('.playerCardsOnHand .cardOnHand');
     //         },
     //         'should be able to put down a second station card'() {
     //             assert.elementCount('.field-playerStation .card-ghost', 3);

@@ -2,10 +2,17 @@ const path = require('path');
 
 module.exports = function (deps) {
     return {
+        getFont,
         getIcon,
         getImage,
         getSound
     };
+
+    function getFont(req, res) {
+        const fontName = req.params.fontName;
+        const filePath = path.join(__dirname, 'fonts', fontName);
+        res.sendFile(filePath);
+    }
 
     function getIcon(req, res) {
         const iconName = req.params.iconName;

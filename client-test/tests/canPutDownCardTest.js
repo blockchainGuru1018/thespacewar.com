@@ -47,7 +47,7 @@ describe('when has Destiny decided in play and hold event card', async () => {
         }));
         await timeout();
 
-        await click('.field-playerCardsOnHand .cardOnHand');
+        await click('.playerCardsOnHand .cardOnHand');
     });
 
     test('should NOT see zone ghosts', () => {
@@ -67,7 +67,7 @@ describe('when does NOT have Destiny decided in play and hold event card', async
         }));
         await timeout();
 
-        await click('.field-playerCardsOnHand .cardOnHand');
+        await click('.playerCardsOnHand .cardOnHand');
     });
 
     test('should see zone ghosts', () => {

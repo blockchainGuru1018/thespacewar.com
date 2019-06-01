@@ -96,7 +96,7 @@ describe('when has taken control of the turn and is holding a 0 cost card', asyn
         }));
         await timeout();
 
-        await click('.field-playerCardsOnHand .cardOnHand');
+        await click('.playerCardsOnHand .cardOnHand');
     });
 
     test('should show zone ghost', async () => {
@@ -116,7 +116,7 @@ describe('when has taken control of the turn and is holding a card costing more 
         }));
         await timeout();
 
-        await click('.field-playerCardsOnHand .cardOnHand');
+        await click('.playerCardsOnHand .cardOnHand');
     });
 
     test('should NOT show zone ghost', async () => {

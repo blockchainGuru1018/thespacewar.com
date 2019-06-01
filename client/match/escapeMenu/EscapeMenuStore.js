@@ -6,10 +6,15 @@ module.exports = function () {
             visible: false
         },
         actions: {
+            toggleVisible,
             show,
             hide
         }
     };
+
+    function toggleVisible({ state }) {
+        state.visible = !state.visible;
+    }
 
     function show({ state }) {
         state.visible = true;

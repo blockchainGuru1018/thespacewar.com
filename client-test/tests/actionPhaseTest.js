@@ -40,7 +40,7 @@ describe('action phase', () => {
             }));
             await timeout();
 
-            await click('.field-playerCardsOnHand .cardOnHand');
+            await click('.playerCardsOnHand .cardOnHand');
         });
 
         test('should see station card ghosts', async () => {

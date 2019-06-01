@@ -61,7 +61,7 @@ describe('when has already put down station card this turn and holding Excellent
         }));
         await timeout();
 
-        await click('.field-playerCardsOnHand .cardOnHand');
+        await click('.playerCardsOnHand .cardOnHand');
     });
 
     test('should NOT show station ghosts', () => {
@@ -96,7 +96,7 @@ describe('when has already put down station card this turn and holding Excellent
             }));
             await timeout();
 
-            await click('.field-playerCardsOnHand .cardOnHand');
+            await click('.playerCardsOnHand .cardOnHand');
         });
 
         test('should NOT show station ghosts', () => {
@@ -123,7 +123,7 @@ describe('when has NOT put down station card this turn and holding Excellent wor
         }));
         await timeout();
 
-        await click('.field-playerCardsOnHand .cardOnHand');
+        await click('.playerCardsOnHand .cardOnHand');
     });
 
     test('should show station ghosts', () => {
@@ -146,7 +146,7 @@ describe('putting down card and selecting choice "Put down as extra station card
             cardsOnHand: [{ id: 'C1A', commonId: ExcellentWork.CommonId }]
         }));
         await timeout();
-        await click('.field-playerCardsOnHand .cardOnHand');
+        await click('.playerCardsOnHand .cardOnHand');
         await click('.playerCardsInZone .card-ghost');
 
         await click('.cardChoiceDialog-choice:contains("Put down as extra station card")');
@@ -175,7 +175,7 @@ describe('have put down Excellent work and selected "Put down as extra station c
                 stationCards: [{ id: 'C2A', place: 'action' }]
             }));
             await timeout();
-            await click('.field-playerCardsOnHand .cardOnHand');
+            await click('.playerCardsOnHand .cardOnHand');
             await click('.playerCardsInZone .card-ghost');
             await click('.cardChoiceDialog-choice:contains("Put down as extra station card")');
             await click('.playerStationCards .card-ghost:eq(0)');
@@ -236,12 +236,12 @@ describe('have put down "Expansion" and is holding another card', async () => {
             ]
         }));
         await timeout();
-        await click('.field-playerCardsOnHand .cardOnHand:eq(0)');
+        await click('.playerCardsOnHand .cardOnHand:eq(0)');
         await click('.playerCardsInZone .card-ghost');
-        await click('.field-playerCardsOnHand .cardOnHand:eq(0)');
+        await click('.playerCardsOnHand .cardOnHand:eq(0)');
         await click('.playerStationCards .card-ghost:eq(0)');
 
-        await click('.field-playerCardsOnHand .cardOnHand');
+        await click('.playerCardsOnHand .cardOnHand');
     });
 
     test('should show station card ghosts', async () => {
@@ -266,16 +266,16 @@ describe('have put down "Expansion" and put down 3 station cards and is holding 
             ]
         }));
         await timeout();
-        await click('.field-playerCardsOnHand .cardOnHand:eq(0)');
+        await click('.playerCardsOnHand .cardOnHand:eq(0)');
         await click('.playerCardsInZone .card-ghost');
-        await click('.field-playerCardsOnHand .cardOnHand:eq(0)');
+        await click('.playerCardsOnHand .cardOnHand:eq(0)');
         await click('.playerStationCards .card-ghost:eq(0)');
-        await click('.field-playerCardsOnHand .cardOnHand:eq(0)');
+        await click('.playerCardsOnHand .cardOnHand:eq(0)');
         await click('.playerStationCards .card-ghost:eq(0)');
-        await click('.field-playerCardsOnHand .cardOnHand:eq(0)');
+        await click('.playerCardsOnHand .cardOnHand:eq(0)');
         await click('.playerStationCards .card-ghost:eq(0)');
 
-        await click('.field-playerCardsOnHand .cardOnHand');
+        await click('.playerCardsOnHand .cardOnHand');
     });
 
     test('should NOT show station card ghost ', async () => {

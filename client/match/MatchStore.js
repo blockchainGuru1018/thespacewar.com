@@ -144,6 +144,7 @@ module.exports = function (deps) {
             opponentRetreated,
             playerRetreated,
             overworkEnabled,
+            maxStationCardCount,
             gameConfig
         },
         mutations: {
@@ -521,6 +522,10 @@ module.exports = function (deps) {
 
     function overworkEnabled(state, getters) {
         return getters.gameConfig.overworkIsActive();
+    }
+
+    function maxStationCardCount(state, getters) {
+        return getters.gameConfig.maxStationCards();
     }
 
     function gameConfig(state) {

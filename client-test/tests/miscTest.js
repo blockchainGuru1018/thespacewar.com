@@ -49,7 +49,7 @@ describe('misc', async () => {
         }));
         await timeout();
 
-        await click('.field-playerCardsOnHand .cardOnHand');
+        await click('.playerCardsOnHand .cardOnHand');
 
         assert.elementCount('.card-ghost', 0);
     });
@@ -72,16 +72,16 @@ describe('when in discard phase and is required to discard 2 cards', async () =>
     });
 
     test('and discards 2 cards should at least go to next phase', async () => {
-        await click('.field-playerCardsOnHand .cardOnHand:eq(0)');
+        await click('.playerCardsOnHand .cardOnHand:eq(0)');
         await click('.field-player .discardPile-cardGhost');
-        await click('.field-playerCardsOnHand .cardOnHand');
+        await click('.playerCardsOnHand .cardOnHand');
         await click('.field-player .discardPile-cardGhost');
 
         assert.calledWith(matchController.emit, 'nextPhase');
     });
 
     test('and discards 1 card', async () => {
-        await click('.field-playerCardsOnHand .cardOnHand:eq(0)');
+        await click('.playerCardsOnHand .cardOnHand:eq(0)');
         await click('.field-player .discardPile-cardGhost');
 
         refute.calledWith(matchController.emit, 'nextPhase');
@@ -104,7 +104,7 @@ describe('when in action phase', async () => {
     });
 
     test('and discards card', async () => {
-        await click('.field-playerCardsOnHand .cardOnHand');
+        await click('.playerCardsOnHand .cardOnHand');
         await click('.field-player .discardPile-cardGhost');
 
         refute.calledWith(matchController.emit, 'nextPhase');

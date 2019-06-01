@@ -132,6 +132,7 @@ function setupRoutes(deps, controllers) {
 
     app.post('/git/push', controllers.git.onPush);
 
+    app.get('/font/:fontName', controllers.assets.getFont);
     app.get('/icon/:iconName', controllers.assets.getIcon);
     app.get('/image/:imageName', controllers.assets.getImage);
     app.get('/sound/:soundName', controllers.assets.getSound);

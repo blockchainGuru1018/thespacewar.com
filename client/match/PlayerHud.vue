@@ -33,13 +33,13 @@
             <div class="guideTextContainer" v-if="!choosingStartingPlayer">
                 <div
                     v-if="waitingForOtherPlayerToFinishRequirements"
-                    class="guideText-waitingForOtherPlayer guideText guideText--small"
+                    class="guideText-waitingwForOtherPlayer guideText guideText--small"
                 >
                     <template v-if="waitingRequirement.reason === 'emptyDeck'">
                         Your opponent is dealing damage to your station
                     </template>
                     <template v-else>
-                        Waiting for other player...
+                        Waiting for other player
                     </template>
                 </div>
                 <div
@@ -67,9 +67,23 @@
                     </div>
                     {{ requirementGuideText }}
                 </div>
-                <div v-else-if="selectingStartingStationCards" class="guideText guideText--small">
-                    {{ selectingStartingStationCardsText }}
-                </div>
+                <template v-else-if="selectingStartingStationCards">
+                    <div
+                        v-if="startingStationCardsToPutDownCount > 0"
+                        class="guideText-wrapper"
+                    >
+                        <div class="guideText">
+                            Build your space station with {{ startingStationCardsToPutDownCount }}
+                            {{ startingStationCardsToPutDownCount === 1 ? 'card' : 'cards' }}
+                        </div>
+                        <div class="guideText-subText">
+                            You lose when all your station cards are damaged
+                        </div>
+                    </div>
+                    <div v-else class="guideText-waitingForOtherPlayer guideText">
+                        Waiting for other player
+                    </div>
+                </template>
                 <div
                     v-else-if="waitingForOtherPlayerToSelectStartingPlayer"
                     class="guideText-waitingForOtherPlayer guideText guideText--small"
@@ -263,6 +277,7 @@
                 'currentPlayer',
                 'phase',
                 'ownUser',
+                'opponentUser',
                 'selectedDefendingStationCards',
                 'requirements',
                 'playerCardsOnHand'
@@ -320,15 +335,6 @@
             },
             selectingStartingStationCards() {
                 return this.mode === MatchMode.selectStationCards;
-            },
-            selectingStartingStationCardsText() {
-                const count = this.startingStationCardsToPutDownCount;
-                if (count === 0) {
-                    return 'Waiting for other player...';
-                }
-                else {
-                    return `Select ${count} station ${pluralize('card', count)}`;
-                }
             },
             showActionPoints() {
                 return ['action'].includes(this.phase);

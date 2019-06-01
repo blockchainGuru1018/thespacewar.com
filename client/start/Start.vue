@@ -1,13 +1,29 @@
 <template>
     <div :class="['loading', {'loading--done': loadingDone}]">
         <div class="loading-backdropLetterBoxWrapper">
-            <img :class="backdropClasses" src="/image/backdrop.jpg" />
+            <img
+                :class="backdropClasses"
+                src="/image/backdrop.jpg"
+                alt="Small fighters attacking a large battleship"
+            >
         </div>
-        <div class="loading-bar" v-if="!loadingDone">
-            <div :style="progressStyle" class="loading-barProgress" />
+        <div
+            v-if="!loadingDone"
+            class="loading-bar"
+        >
+            <div
+                :style="progressStyle"
+                class="loading-barProgress"
+            />
         </div>
-        <Lobby :class="viewClasses" v-if="!!ownUser && loadingDone" />
-        <Login :class="viewClasses" v-else />
+        <Lobby
+            v-if="!!ownUser && loadingDone"
+            :class="viewClasses"
+        />
+        <Login
+            v-else
+            :class="viewClasses"
+        />
     </div>
 </template>
 <script>

@@ -14,8 +14,6 @@
                 <div class="match-backgroundOverlay" />
             </div>
 
-            <MatchHeader />
-
             <div class="field">
                 <div class="field-opponent">
                     <div
@@ -146,14 +144,6 @@
                                 {{ opponentCardsInDeckCount }}
                             </div>
                         </div>
-                    </div>
-                    <div class="field-opponentCardsOnHand field-section">
-                        <div
-                            :key="n"
-                            :style="getOpponentCardStyle(n - 1)"
-                            class="card card-faceDown"
-                            v-for="n in opponentCardCount"
-                        />
                     </div>
                 </div>
                 <div class="field-dividerWrapper">
@@ -337,11 +327,6 @@
                             </div>
                         </div>
                     </div>
-                    <PlayerCardsOnHand
-                        :holding-card="holdingCard"
-                        @cardClick="playerCardClick"
-                        @cardDrag="playerCardDrag"
-                    />
                     <PlayerHud />
                 </div>
             </div>
@@ -359,6 +344,24 @@
             <ExpandedCard />
             <ChooseStartingPlayer />
             <EscapeMenu />
+        </div>
+
+        <MatchHeader />
+
+        <div class="cardsOnHand">
+            <div class="opponentCardsOnHand field-section">
+                <div
+                    :key="n"
+                    :style="getOpponentCardStyle(n - 1)"
+                    class="card card-faceDown"
+                    v-for="n in opponentCardCount"
+                />
+            </div>
+            <PlayerCardsOnHand
+                :holding-card="holdingCard"
+                @cardClick="playerCardClick"
+                @cardDrag="playerCardDrag"
+            />
         </div>
     </div>
 </template>
@@ -389,7 +392,7 @@
     const ExpandedCard = resolveModule(require('../expandedCard/ExpandedCard.vue'));
     const ChooseStartingPlayer = resolveModule(require('./chooseStartingPlayer/ChooseStartingPlayer.vue'));
     const EscapeMenu = resolveModule(require('./escapeMenu/EscapeMenu.vue'));
-    const MatchHeader = resolveModule(require('./MatchHeader.vue'));
+    const MatchHeader = resolveModule(require('./banner/MatchHeader.vue'));
     const { PHASES } = require('./phases.js');
 
     module.exports = {
