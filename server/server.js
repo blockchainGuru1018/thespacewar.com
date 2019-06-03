@@ -144,25 +144,25 @@ function setupRoutes(deps, controllers) {
     app.post('/cheat', controllers.cheat.cheat);
     app.post('/restart', async (req, res) => {
         if (validateDebugPassword(req.body.password)) {
-            res.json({ text: 'Invalid password' });
-            return;
+            await restartServer();
+
+            setTimeout(() => {
+                res.redirect('/');
+            }, 3000);
         }
-
-        await restartServer();
-
-        setTimeout(() => {
-            res.redirect('/');
-        }, 3000);
+        else {
+            res.json({ text: 'Invalid password' });
+        }
     });
 
     app.post('/master-log', (req, res) => {
         if (validateDebugPassword(req.body.password)) {
-            res.json({ text: `Invalid password` });
-            return;
+            const masterLog = deps.logger.readMasterLog();
+            res.json({ text: masterLog });
         }
-
-        const masterLog = deps.logger.readMasterLog();
-        res.json({ text: masterLog });
+        else {
+            res.json({ text: `Invalid password` });
+        }
     });
 
     function validateDebugPassword(password) {

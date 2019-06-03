@@ -18,6 +18,7 @@ const CardInfoRepository = require('../shared/CardInfoRepository.js');
 const UserStore = require('./users/UserStore.js');
 const AudioStore = require('./match/audio/AudioStore.js');
 const localGameDataFacade = require('./utils/localGameDataFacade.js');
+const ajax = require('./utils/ajax.js');
 require('./utils/cheatEngine.js');
 
 Vue.use(Vuex);
@@ -85,4 +86,14 @@ function bootstrap() {
 
 window.loginDebug = password => {
     localGameDataFacade.DebugPassword.set(password);
+};
+
+window.readMasterLog = () => {
+    (async () => {
+        const password = localGameDataFacade.DebugPassword.get();
+        const { text } = await ajax.jsonPost('/master-log', { password: password });
+        console.log('-----------');
+        console.log(text);
+        console.log('-----------');
+    })();
 };

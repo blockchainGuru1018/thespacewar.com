@@ -202,7 +202,8 @@
                 'attackerCardId',
                 'ownUser',
                 'repairerCardId',
-                'flashCardInZoneId'
+                'flashAttackedCardId',
+                'highlightCardId'
             ]),
             ...mapGetters([
                 'allOpponentStationCards',
@@ -228,7 +229,7 @@
                 return this.createCard(this.card, { playerId: this.ownerId });
             },
             flashCard() {
-                return this.flashCardInZoneId === this.card.id;
+                return this.flashAttackedCardId === this.card.id;
             },
             classes() {
                 const classes = ['card', 'card--expandable'];
@@ -246,6 +247,9 @@
                 }
                 if (this.flashCard) {
                     classes.push(this.isPlayerCard ? 'shake' : 'shake--upsideDown');
+                }
+                if (this.highlightCardId === this.card.id) {
+                    classes.push('flash');
                 }
                 if (!this.isPlayerCard) {
                     classes.push('card--upsideDown');

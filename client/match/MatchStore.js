@@ -60,6 +60,7 @@ module.exports = function (deps) {
             mode: MatchMode.firstMode,
             gameConfigEntity: null,
             actionLogEntries: [],
+            opponentActionLogEntries: [],
             turn: 1,
             currentPlayer: null,
             phase: '',
@@ -96,7 +97,8 @@ module.exports = function (deps) {
             ended: false,
             retreatedPlayerId: null,
             shake: false, //TODO Implement or remove!
-            flashCardInZoneId: null,
+            highlightCardId: null,
+            flashAttackedCardId: null,
             flashDiscardPile: false
         },
         getters: {
@@ -200,7 +202,9 @@ module.exports = function (deps) {
             damageStationCards, //todo rename to "damageStationCardsForRequirement",
             startAI,
             flashFocusLatestAction,
-            flashCardInZone
+            flashFocusLatestOpponentAction,
+            triggerCardAttackedEffect,
+            triggerHighlightCardEffect
         }
     };
 
@@ -687,6 +691,13 @@ module.exports = function (deps) {
                         });
                     }
                 }
+                else if (key === 'opponentActionLogEntries') {
+                    if (datum.length !== state.opponentActionLogEntries.length) {
+                        setTimeout(() => {
+                            dispatch('flashFocusLatestOpponentAction');
+                        });
+                    }
+                }
                 else if (key === 'currentPlayer' && datum !== state.ownUser.id) {
                     dispatch('card/cancelCurrentUserInteraction', null, { root: true });
                 }
@@ -805,7 +816,7 @@ module.exports = function (deps) {
         matchController.emit('attack', { attackerCardId, defenderCardId });
 
         dispatch('registerAttack', { attackerCardId, defenderCardId });
-        dispatch('flashCardInZone', defenderCardId);
+        dispatch('triggerCardAttackedEffect', defenderCardId);
     }
 
     function opponentAttackedCard({ state }, {
@@ -959,7 +970,7 @@ module.exports = function (deps) {
 
         const action = latestEntry.action;
         if (action === 'damagedInAttack') {
-            dispatch('flashCardInZone', latestEntry.defenderCardId);
+            dispatch('triggerCardAttackedEffect', latestEntry.defenderCardId);
         }
         else if (action === 'destroyed') {
             state.flashDiscardPile = true;
@@ -967,12 +978,42 @@ module.exports = function (deps) {
                 state.flashDiscardPile = false;
             }, FlashCardTime);
         }
+        else if (action === 'counteredAttackOnCard') {
+            dispatch('triggerHighlightCardEffect', latestEntry.defenderCardId);
+        }
     }
 
-    function flashCardInZone({ state }, cardId) {
-        state.flashCardInZoneId = cardId;
+    function flashFocusLatestOpponentAction({ state, dispatch }) {
+        const actionLogEntries = state.opponentActionLogEntries;
+        const latestEntry = actionLogEntries[actionLogEntries.length - 1];
+
+        const action = latestEntry.action;
+        if (action === 'destroyed') {
+            state.flashOpponentDiscardPile = true;
+            setTimeout(() => {
+                state.flashOpponentDiscardPile = false;
+            }, FlashCardTime);
+        }
+        else if (action === 'counteredAttackOnCard') {
+            dispatch('triggerHighlightCardEffect', latestEntry.defenderCardId);
+        }
+    }
+
+    function triggerCardAttackedEffect({ state }, cardId) {
         setTimeout(() => {
-            state.flashCardInZoneId = null;
+            state.flashAttackedCardId = cardId;
+        });
+        setTimeout(() => {
+            state.flashAttackedCardId = null;
+        }, FlashCardTime);
+    }
+
+    function triggerHighlightCardEffect({ state }, cardId) {
+        setTimeout(() => {
+            state.highlightCardId = cardId;
+        });
+        setTimeout(() => {
+            state.highlightCardId = null;
         }, FlashCardTime);
     }
 };

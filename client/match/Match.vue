@@ -93,7 +93,7 @@
                         </div>
                     </div>
                     <div class="field-piles field-section">
-                        <div class="field-discardPile">
+                        <div :class="['field-discardPile', {'flash': flashOpponentDiscardPile}]">
                             <div
                                 class="card card-placeholder"
                                 v-if="!opponentTopDiscardCard"
@@ -423,7 +423,8 @@
                 'opponentCardsInPlayerZone',
                 'aiStarted',
                 'shake',
-                'flashDiscardPile'
+                'flashDiscardPile',
+                'flashOpponentDiscardPile'
             ]),
             ...mapGetters([
                 'hasPutDownNonFreeCardThisTurn',

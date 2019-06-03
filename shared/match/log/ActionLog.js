@@ -5,6 +5,7 @@ const actionToIconUrl = {
     stationCardsDamaged: 'target-hit.svg',
     destroyed: 'target-hit.svg',
     countered: 'countered.svg',
+    counteredAttackOnCard: 'countered.svg',
 };
 
 module.exports = function ({
@@ -20,6 +21,8 @@ module.exports = function ({
         opponentPlayedCard,
         opponentMovedCard,
         opponentCounteredCard,
+        opponentCounteredAttackOnCard,
+        //opponentCounteredAttackOnStation,
     };
 
     function queryLatest() {
@@ -73,6 +76,15 @@ module.exports = function ({
         log({
             action: 'countered',
             text: `Opponent countered *${cardName}#`
+        });
+    }
+
+    function opponentCounteredAttackOnCard({ defenderCardId, defenderCardCommonId }) {
+        const cardName = cardInfoRepository.getName(defenderCardCommonId);
+        log({
+            action: 'counteredAttackOnCard',
+            text: `Opponent countered attack on *${cardName}#`,
+            defenderCardId
         });
     }
 

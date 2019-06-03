@@ -118,6 +118,18 @@ function AttackController(deps) {
         const cardUsedToCounterId = counterAttackRequirement.cardId;
         playerStateService.useToCounter(cardUsedToCounterId);
 
+        if (attackData.targetedStation) {
+            //TODO Add entry in actionLog about opponentCounteredAttackOnStation
+        }
+        else {
+            const opponentActionLog = playerServiceFactory.actionLog(opponentId);
+            const defenderCardsData = attackData.defenderCardsData[0];
+            opponentActionLog.opponentCounteredAttackOnCard({
+                defenderCardId: defenderCardsData.id,
+                defenderCardCommonId: defenderCardsData.commonId
+            });
+        }
+
         matchComService.emitCurrentStateToPlayers();
     }
 
