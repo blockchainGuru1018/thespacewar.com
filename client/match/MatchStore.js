@@ -99,7 +99,8 @@ module.exports = function (deps) {
             shake: false, //TODO Implement or remove!
             highlightCardId: null,
             flashAttackedCardId: null,
-            flashDiscardPile: false
+            flashDiscardPile: false,
+            flashOpponentDiscardPile: false,
         },
         getters: {
             isFirstPlayer,
@@ -204,7 +205,9 @@ module.exports = function (deps) {
             flashFocusLatestAction,
             flashFocusLatestOpponentAction,
             triggerCardAttackedEffect,
-            triggerHighlightCardEffect
+            triggerHighlightCardEffect,
+            triggerFlashDiscardPileEffect,
+            triggerFlashOpponentDiscardPileEffect
         }
     };
 
@@ -973,10 +976,10 @@ module.exports = function (deps) {
             dispatch('triggerCardAttackedEffect', latestEntry.defenderCardId);
         }
         else if (action === 'destroyed') {
-            state.flashDiscardPile = true;
-            setTimeout(() => {
-                state.flashDiscardPile = false;
-            }, FlashCardTime);
+            dispatch('triggerFlashDiscardPileEffect');
+        }
+        else if (action === 'countered') {
+            dispatch('triggerFlashDiscardPileEffect');
         }
         else if (action === 'counteredAttackOnCard') {
             dispatch('triggerHighlightCardEffect', latestEntry.defenderCardId);
@@ -989,14 +992,32 @@ module.exports = function (deps) {
 
         const action = latestEntry.action;
         if (action === 'destroyed') {
-            state.flashOpponentDiscardPile = true;
-            setTimeout(() => {
-                state.flashOpponentDiscardPile = false;
-            }, FlashCardTime);
+            dispatch('triggerFlashOpponentDiscardPileEffect');
+        }
+        else if (action === 'countered') {
+            dispatch('triggerFlashOpponentDiscardPileEffect');
         }
         else if (action === 'counteredAttackOnCard') {
             dispatch('triggerHighlightCardEffect', latestEntry.defenderCardId);
         }
+    }
+
+    function triggerFlashDiscardPileEffect({ state }) {
+        setTimeout(() => {
+            state.flashDiscardPile = true;
+        });
+        setTimeout(() => {
+            state.flashDiscardPile = false;
+        }, FlashCardTime);
+    }
+
+    function triggerFlashOpponentDiscardPileEffect({ state }) {
+        setTimeout(() => {
+            state.flashOpponentDiscardPile = true;
+        });
+        setTimeout(() => {
+            state.flashOpponentDiscardPile = false;
+        }, FlashCardTime);
     }
 
     function triggerCardAttackedEffect({ state }, cardId) {
