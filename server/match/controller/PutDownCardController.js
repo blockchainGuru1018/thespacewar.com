@@ -71,6 +71,9 @@ function PutDownCardController(deps) {
 
             playerStateService.useToCounter(cardId);
 
+            const opponentActionLog = playerServiceFactory.actionLog(matchService.getOpponentId(playerId));
+            opponentActionLog.opponentCounteredCard({ cardCommonId: targetCard.commonId });
+
             matchComService.emitCurrentStateToPlayers();
         }
     }

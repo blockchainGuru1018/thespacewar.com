@@ -3,7 +3,8 @@ const actionToIconUrl = {
     moved: 'move.svg',
     played: 'played.svg',
     stationCardsDamaged: 'target-hit.svg',
-    destroyed: 'target-hit.svg'
+    destroyed: 'target-hit.svg',
+    countered: 'countered.svg',
 };
 
 module.exports = function ({
@@ -17,7 +18,8 @@ module.exports = function ({
         cardDestroyed,
         stationCardsWereDamaged,
         opponentPlayedCard,
-        opponentMovedCard
+        opponentMovedCard,
+        opponentCounteredCard,
     };
 
     function queryLatest() {
@@ -63,6 +65,14 @@ module.exports = function ({
         log({
             action: 'moved',
             text: `Opponent moved *${cardName}#`
+        });
+    }
+
+    function opponentCounteredCard({ cardCommonId }) {
+        const cardName = cardInfoRepository.getName(cardCommonId);
+        log({
+            action: 'countered',
+            text: `Opponent countered *${cardName}#`
         });
     }
 
