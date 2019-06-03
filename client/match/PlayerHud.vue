@@ -489,7 +489,6 @@
 
 </script>
 <style scoped lang="scss">
-    @import "card";
     @import "enlargeCard";
 
     $overlayColor: rgba(0, 0, 0, .4);

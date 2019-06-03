@@ -55,6 +55,10 @@ module.exports = function ({
         delete restoreState.playerOrder;
         delete restoreState.playersReady;
 
+        for (const playerId of Object.keys(restoreState.playerStateById)) {
+            delete restoreState.playerStateById[playerId].actionLog;
+        }
+
         const state = matchService.getState();
         for (let key of Object.keys(restoreState)) {
             state[key] = restoreState[key];

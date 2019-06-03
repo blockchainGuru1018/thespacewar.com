@@ -59,6 +59,7 @@ function AttackController(deps) {
         }
         else if (damageBefore !== damageAfter) {
             opponentActionLog.damagedInAttack({
+                defenderCardId,
                 defenderCardCommonId: defenderCard.commonId,
                 damageInflictedByDefender: damageAfter - damageBefore
             })

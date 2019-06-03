@@ -1,16 +1,16 @@
-const iconNameToAssetName = {
-    damagedInAttack: 'missile.svg',
+const actionToIconUrl = {
+    damagedInAttack: 'fire.svg',
     moved: 'move.svg',
     played: 'played.svg',
     stationCardsDamaged: 'target-hit.svg',
-    destroyed: 'fire.svg'
+    destroyed: 'target-hit.svg'
 };
 
 module.exports = function ({
     playerStateService,
     cardInfoRepository
 }) {
-    
+
     return {
         queryLatest,
         damagedInAttack,
@@ -21,21 +21,31 @@ module.exports = function ({
     };
 
     function queryLatest() {
-        return playerStateService.getPlayerState().actionLogEntries.slice(-7);
+        return playerStateService
+            .getPlayerState()
+            .actionLogEntries
+            .slice(-7)
+            .map(entry => {
+                return {
+                    ...entry,
+                    iconUrl: `/icon/${actionToIconUrl[entry.action]}`
+                };
+            });
     }
 
-    function damagedInAttack({ defenderCardCommonId, damageInflictedByDefender }) {
+    function damagedInAttack({ defenderCardId, defenderCardCommonId, damageInflictedByDefender }) {
         const cardName = cardInfoRepository.getName(defenderCardCommonId);
         log({
-            iconName: 'damagedInAttack',
-            text: `*${cardName}# took ${damageInflictedByDefender} damage`
+            action: 'damagedInAttack',
+            text: `*${cardName}# took ${damageInflictedByDefender} damage`,
+            defenderCardId
         });
     }
 
     function cardDestroyed({ cardCommonId }) {
         const cardName = cardInfoRepository.getName(cardCommonId);
         log({
-            iconName: 'destroyed',
+            action: 'destroyed',
             text: `*${cardName}# was discarded`
         });
     }
@@ -43,7 +53,7 @@ module.exports = function ({
     function opponentPlayedCard({ cardCommonId }) {
         const cardName = cardInfoRepository.getName(cardCommonId);
         log({
-            iconName: 'played',
+            action: 'played',
             text: `Opponent played *${cardName}#`
         });
     }
@@ -51,23 +61,26 @@ module.exports = function ({
     function opponentMovedCard({ cardCommonId }) {
         const cardName = cardInfoRepository.getName(cardCommonId);
         log({
-            iconName: 'moved',
+            action: 'moved',
             text: `Opponent moved *${cardName}#`
         });
     }
 
     function stationCardsWereDamaged({ targetCount }) {
         log({
-            iconName: 'stationCardsDamaged',
+            action: 'stationCardsDamaged',
             text: `*${targetCount} station ${targetCount === 1 ? 'card' : 'cards'}# ${targetCount === 1 ? 'was' : 'were'} damaged`
         });
     }
 
-    function log({ iconName, text }) {
+    function log({
+        action,
+        ...entry
+    }) {
         playerStateService.update(playerState => {
             playerState.actionLogEntries.push({
-                iconUrl: `/icon/${iconNameToAssetName[iconName]}`,
-                text
+                action,
+                ...entry
             });
         });
     }

@@ -6,6 +6,7 @@
 @import "counter";
 @import "choiceDialog";
 @import "cardsOnHand";
+@import "card";
 
 .match {
   display: flex;
@@ -197,7 +198,6 @@
   height: $playerCardHeight;
   display: flex;
   flex-direction: column;
-  background: white;
   background-size: 100% 100%;
   box-sizing: border-box;
 
@@ -497,5 +497,124 @@
 
   .card-ghost:hover & {
     visibility: visible;
+  }
+}
+
+$shakeDuration: .2s;
+$shakeAnimationFunction: ease-out;
+$shakeDelay: 0s;
+
+.shake {
+  animation: shake $shakeDuration $shakeAnimationFunction;
+  animation-delay: $shakeDelay;
+}
+
+.shake--upsideDown {
+  animation: shake-upsideDown $shakeDuration $shakeAnimationFunction;
+  animation-delay: $shakeDelay;
+}
+
+.flash-red {
+  animation: flash-red .4s linear;
+}
+
+.flash {
+  animation: flash 1s ease-out;
+}
+
+@keyframes flash-red {
+  0% {
+    background: rgba(255, 40, 40, 0);
+  }
+
+  10% {
+    background: rgba(255, 40, 40, .35);
+  }
+
+  60% {
+    background: rgba(255, 40, 40, .4);
+  }
+
+  100% {
+    background: rgba(255, 40, 40, 0);
+  }
+}
+
+@keyframes flash {
+  50% {
+    filter: contrast(50%) brightness(150%);
+  }
+}
+
+
+@-webkit-keyframes shake {
+  0% {
+    transform: translate(2px, 1px) rotate(0deg);
+  }
+  10% {
+    transform: translate(-1px, -2px) rotate(-1deg);
+  }
+  20% {
+    transform: translate(-3px, 0px) rotate(1deg);
+  }
+  30% {
+    transform: translate(0px, 2px) rotate(0deg);
+  }
+  40% {
+    transform: translate(1px, -1px) rotate(1deg);
+  }
+  50% {
+    transform: translate(-1px, 2px) rotate(-1deg);
+  }
+  60% {
+    transform: translate(-3px, 1px) rotate(0deg);
+  }
+  70% {
+    transform: translate(2px, 1px) rotate(-1deg);
+  }
+  80% {
+    transform: translate(-1px, -1px) rotate(1deg);
+  }
+  90% {
+    transform: translate(2px, 2px) rotate(0deg);
+  }
+  100% {
+    transform: translate(1px, -2px) rotate(-1deg);
+  }
+}
+
+@-webkit-keyframes shake-upsideDown {
+  0% {
+    transform: translate(2px, 1px) rotate(180deg);
+  }
+  10% {
+    transform: translate(-1px, -2px) rotate(179deg);
+  }
+  20% {
+    transform: translate(-3px, 0px) rotate(181deg);
+  }
+  30% {
+    transform: translate(0px, 2px) rotate(180deg);
+  }
+  40% {
+    transform: translate(1px, -1px) rotate(181deg);
+  }
+  50% {
+    transform: translate(-1px, 2px) rotate(179deg);
+  }
+  60% {
+    transform: translate(-3px, 1px) rotate(180deg);
+  }
+  70% {
+    transform: translate(2px, 1px) rotate(179deg);
+  }
+  80% {
+    transform: translate(-1px, -1px) rotate(181deg);
+  }
+  90% {
+    transform: translate(2px, 2px) rotate(180deg);
+  }
+  100% {
+    transform: translate(1px, -2px) rotate(179deg);
   }
 }

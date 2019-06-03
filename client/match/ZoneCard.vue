@@ -10,10 +10,24 @@
         <div class="indicatorOverlays">
             <div
                 v-if="card.damage && card.damage > 0"
-                class="card-damageIndicator"
-                :style="damageTextStyle"
+                :class="['card-damageIndicatorWrapper', {'flash-red': flashCard}]"
             >
-                -{{ card.damage }}
+                <div
+                    class="card-damageIndicator"
+                    :style="damageTextStyle"
+                >
+                    <svg
+                        :style="damageTextIconStyle"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 454.6 454.6"
+                    >
+                        <path
+                            fill="#ff1a1a"
+                            d="M250.1 139.2C220 46 262.5 0 262.5 0S122.8 67.2 81.3 248.3C64 223.2 48.7 209.5 50.5 214c18.6 48.4-23.6 70-23 121.1.5 51 88.6 109.5 88.6 109.5 3.5 2.5 7.2 4.9 11 7.2-3.3-4-6.3-8-9.2-12-9.5-13.6-16.2-28-16.4-41.9-.3-27.3 11.7-46.2 20-65.4 7.2-16.5 11.7-33.2 3-55.7-1.4-3.6 7.8 4.3 20.3 20 24.4-66 48.3-123.3 48.3-123.3s.7 90 31.1 147.5c28.6 54.1 27 81.9 27 81.9 52-49.7 69.4-128.8 69.4-128.8 18.9 16.7 29.8 37.9 35.9 59.2 12.9 44.8-13.8 89.8-14.4 94.2-.2 1.8-.7 3.5-1 5.2a60.9 60.9 0 0 1-9.7 22c5-3.2 9.5-6.6 14-10.2 0 0 81.2-58.3 81.8-109.4.6-51-41.7-72.7-23-121.1 1.6-4.2-10.7 7.4-25.6 29.5-14.8-45.5-24.2-82.3-73.5-125.7 0 0 9.1 98.8-43.3 170.4 0 0 18.4-56-11.7-149z"
+                        />
+                    </svg>
+                    {{ card.damage }}
+                </div>
             </div>
         </div>
         <div
@@ -187,7 +201,8 @@
                 'events',
                 'attackerCardId',
                 'ownUser',
-                'repairerCardId'
+                'repairerCardId',
+                'flashCardInZoneId'
             ]),
             ...mapGetters([
                 'allOpponentStationCards',
@@ -212,6 +227,9 @@
             behaviourCard() {
                 return this.createCard(this.card, { playerId: this.ownerId });
             },
+            flashCard() {
+                return this.flashCardInZoneId === this.card.id;
+            },
             classes() {
                 const classes = ['card', 'card--expandable'];
                 if (this.selectedAsAttacker) {
@@ -226,6 +244,12 @@
                 if (this.card.paralyzed) {
                     classes.push('paralyzed');
                 }
+                if (this.flashCard) {
+                    classes.push(this.isPlayerCard ? 'shake' : 'shake--upsideDown');
+                }
+                if (!this.isPlayerCard) {
+                    classes.push('card--upsideDown');
+                }
                 return classes;
             },
             disabled() {
@@ -236,6 +260,12 @@
                 return {
                     backgroundImage: `url("${cardUrl}")`
                 };
+            },
+            damageTextIconStyle() {
+                const fontSize = Math.round(this.cardWidth * .25);
+                return {
+                    width: fontSize + 'px'
+                }
             },
             damageTextStyle() {
                 const fontSize = Math.round(this.cardWidth * .25);
@@ -452,7 +482,6 @@
 </script>
 <style scoped lang="scss">
     @import "miscVariables";
-    @import "card";
 
     .card {
         position: relative;
@@ -579,21 +608,6 @@
         & .selectForRepair {
             visibility: visible;
         }
-    }
-
-    .card-damageIndicator {
-        display: flex;
-        padding-right: 5%;
-        padding-bottom: 24%;
-        box-sizing: border-box;
-        width: 100%;
-        height: 100%;
-        align-items: flex-end;
-        justify-content: flex-end;
-        color: red;
-        text-shadow: 1px 1px #333;
-        font-weight: bold;
-        font-family: Arial, sans-serif;
     }
 
     @keyframes fullOpacityOnIntentionalHover {

@@ -194,7 +194,7 @@
                             </div>
                         </div>
 
-                        <div class="field-discardPile">
+                        <div :class="['field-discardPile', {'flash': flashDiscardPile}]">
                             <div
                                 class="card card-placeholder"
                                 v-if="!playerTopDiscardCard"
@@ -422,7 +422,8 @@
                 'opponentCardsInZone',
                 'opponentCardsInPlayerZone',
                 'aiStarted',
-                'shake'
+                'shake',
+                'flashDiscardPile'
             ]),
             ...mapGetters([
                 'hasPutDownNonFreeCardThisTurn',

@@ -24,6 +24,7 @@ const {
     PHASES
 } = require('./phases.js');
 
+const FlashCardTime = 2000;
 const ClientLimitNotice = { note: 'not_allowed_on_client' };
 
 const storeItemNameByServerItemName = {
@@ -94,7 +95,9 @@ module.exports = function (deps) {
             aiStarted: false,
             ended: false,
             retreatedPlayerId: null,
-            shake: false
+            shake: false, //TODO Implement or remove!
+            flashCardInZoneId: null,
+            flashDiscardPile: false
         },
         getters: {
             isFirstPlayer,
@@ -195,7 +198,9 @@ module.exports = function (deps) {
             cancelRepair,
             selectForRepair,
             damageStationCards, //todo rename to "damageStationCardsForRequirement",
-            startAI
+            startAI,
+            flashFocusLatestAction,
+            flashCardInZone
         }
     };
 
@@ -673,19 +678,29 @@ module.exports = function (deps) {
 
     function stateChanged({ state, commit, dispatch }, data) {
         for (let key of Object.keys(data)) {
+            const datum = data[key];
+            if (gameHasBegun) {
+                if (key === 'actionLogEntries') {
+                    if (datum.length !== state.actionLogEntries.length) {
+                        setTimeout(() => {
+                            dispatch('flashFocusLatestAction');
+                        });
+                    }
+                }
+                else if (key === 'currentPlayer' && datum !== state.ownUser.id) {
+                    dispatch('card/cancelCurrentUserInteraction', null, { root: true });
+                }
+            }
+
             if (key === 'stationCards') {
-                commit('setPlayerStationCards', data[key]);
+                commit('setPlayerStationCards', datum);
             }
             else if (key === 'opponentStationCards') {
-                commit('setOpponentStationCards', data[key]);
+                commit('setOpponentStationCards', datum);
             }
             else {
                 const localKey = storeItemNameByServerItemName[key] || key;
-                state[localKey] = data[key];
-            }
-
-            if (key === 'currentPlayer' && data[key] !== state.ownUser.id) {
-                dispatch('card/cancelCurrentUserInteraction', null, { root: true });
+                state[localKey] = datum;
             }
         }
 
@@ -790,6 +805,7 @@ module.exports = function (deps) {
         matchController.emit('attack', { attackerCardId, defenderCardId });
 
         dispatch('registerAttack', { attackerCardId, defenderCardId });
+        dispatch('flashCardInZone', defenderCardId);
     }
 
     function opponentAttackedCard({ state }, {
@@ -935,6 +951,29 @@ module.exports = function (deps) {
     function startAI({ state }) {
         state.aiStarted = true;
         ai.start();
+    }
+
+    function flashFocusLatestAction({ state, dispatch }) {
+        const actionLogEntries = state.actionLogEntries;
+        const latestEntry = actionLogEntries[actionLogEntries.length - 1];
+
+        const action = latestEntry.action;
+        if (action === 'damagedInAttack') {
+            dispatch('flashCardInZone', latestEntry.defenderCardId);
+        }
+        else if (action === 'destroyed') {
+            state.flashDiscardPile = true;
+            setTimeout(() => {
+                state.flashDiscardPile = false;
+            }, FlashCardTime);
+        }
+    }
+
+    function flashCardInZone({ state }, cardId) {
+        state.flashCardInZoneId = cardId;
+        setTimeout(() => {
+            state.flashCardInZoneId = null;
+        }, FlashCardTime);
     }
 };
 

@@ -218,8 +218,6 @@
     };
 </script>
 <style lang="scss">
-    @import "card";
-
     .card {
         position: relative;
     }
