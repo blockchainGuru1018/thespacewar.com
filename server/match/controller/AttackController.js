@@ -53,18 +53,6 @@ function AttackController(deps) {
         const attackData = { attackerCardId, defenderCardIds: [defenderCardId], time: event.created };
         stateMemento.saveStateForAttackData(stateBeforeAttack, attackData);
 
-        const opponentActionLog = playerServiceFactory.actionLog(opponentId);
-        if (defenderCardWasDestroyed) {
-            opponentActionLog.cardDestroyed({ cardCommonId: defenderCard.commonId })
-        }
-        else if (damageBefore !== damageAfter) {
-            opponentActionLog.damagedInAttack({
-                defenderCardId,
-                defenderCardCommonId: defenderCard.commonId,
-                damageInflictedByDefender: damageAfter - damageBefore
-            })
-        }
-
         if (defenderCardWasDestroyed) {
             const cardData = opponentStateService.removeCard(defenderCardId);
             opponentStateService.discardCard(cardData);
@@ -83,6 +71,21 @@ function AttackController(deps) {
             playerStateService.updateCardById(attackerCardId, card => {
                 Object.assign(card, attackerCard.getCardData());
             });
+        }
+
+        const opponentActionLog = playerServiceFactory.actionLog(opponentId);
+        if (defenderCardWasDestroyed) {
+            opponentActionLog.cardDestroyed({ cardCommonId: defenderCard.commonId })
+        }
+        else if (defenderCard.paralyzed) {
+            opponentActionLog.paralyzed({ defenderCardId, defenderCardCommonId: defenderCard.commonId })
+        }
+        else if (damageBefore !== damageAfter) {
+            opponentActionLog.damagedInAttack({
+                defenderCardId,
+                defenderCardCommonId: defenderCard.commonId,
+                damageInflictedByDefender: damageAfter - damageBefore
+            })
         }
     }
 

@@ -990,6 +990,9 @@ module.exports = function (deps) {
         if (action === 'damagedInAttack') {
             dispatch('triggerCardAttackedEffect', latestEntry.defenderCardId);
         }
+        else if (action === 'paralyzed') {
+            dispatch('triggerHighlightCardEffect', latestEntry.defenderCardId);
+        }
         else if (action === 'destroyed') {
             dispatch('triggerFlashDiscardPileEffect');
         }

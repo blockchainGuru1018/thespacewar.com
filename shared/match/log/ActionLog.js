@@ -9,7 +9,8 @@ const actionToIconUrl = {
     expandedStation: 'expand.svg',
     issuedOverwork: 'recycle.svg',
     milled: 'mill.svg',
-    movedStationCard: 'move.svg'
+    movedStationCard: 'move.svg',
+    paralyzed: 'shock.svg'
 };
 
 const locationToText = {
@@ -28,6 +29,7 @@ module.exports = function ({
     return {
         queryLatest,
         damagedInAttack,
+        paralyzed,
         cardDestroyed,
         stationCardsWereDamaged,
         opponentPlayedCard,
@@ -57,6 +59,15 @@ module.exports = function ({
         log({
             action: 'damagedInAttack',
             text: `*${cardName}# took ${damageInflictedByDefender} damage`,
+            defenderCardId
+        });
+    }
+
+    function paralyzed({ defenderCardId, defenderCardCommonId }) {
+        const cardName = cardInfoRepository.getName(defenderCardCommonId);
+        log({
+            action: 'paralyzed',
+            text: `*${cardName}# was paralyzed`,
             defenderCardId
         });
     }
