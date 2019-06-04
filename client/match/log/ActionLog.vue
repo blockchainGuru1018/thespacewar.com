@@ -45,10 +45,16 @@
                 this.expanded = !this.expanded;
             },
             getEntryHtml(entry) {
-                return encodeHtml(entry.text).replace('*', '<strong>').replace('#', '</strong>');
+                const textWithSubstitutedAmp = entry.text.split('&').join('_amp_');
+                return encodeHtml(textWithSubstitutedAmp)
+                    .split('_amp_').join('&')
+                    .split(/\*/).join('<strong>')
+                    .split(/#/).join('</strong>');
             },
             getTitleText(entry) {
-                return entry.text.replace('*', '').replace('#', '');
+                return entry.text
+                    .split(/\*/).join('')
+                    .split(/#/).join('');
             }
         }
     };

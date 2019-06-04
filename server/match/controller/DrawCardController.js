@@ -4,7 +4,8 @@ function DrawCardController(deps) {
         matchService,
         matchComService,
         playerServiceProvider,
-        playerRequirementUpdaterFactory
+        playerRequirementUpdaterFactory,
+        playerServiceFactory
     } = deps;
 
     return {
@@ -57,7 +58,7 @@ function DrawCardController(deps) {
         }
 
         const opponentStateService = playerServiceProvider.getStateServiceById([matchService.getOpponentId(playerId)]);
-        opponentStateService.discardTopTwoCardsInDrawPile();
+        const milledCards = opponentStateService.discardTopTwoCardsInDrawPile();
         playerStateService.registerMill();
 
         if (drawCardRequirement) {
@@ -69,6 +70,9 @@ function DrawCardController(deps) {
                 moreCardsCanBeDrawn: playerStateService.moreCardsCanBeDrawnForDrawPhase()
             });
         }
+
+        const opponentActionLog = playerServiceFactory.actionLog(matchService.getOpponentId(playerId));
+        opponentActionLog.opponentMilledCardsFromYourDeck({ milledCardCommonIds: milledCards.map(cardData => cardData.commonId) });
     }
 }
 

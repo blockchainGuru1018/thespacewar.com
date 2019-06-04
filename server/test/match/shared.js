@@ -162,6 +162,11 @@ function createMatch(deps = {}, testCardData = []) {
         players: [createPlayer('P1A'), createPlayer('P2A')],
         logger: {
             log: (...args) => console.log(...args)
+        },
+        userRepository: {
+            getById: id => {
+                return deps.players.find(p => p.id === id);
+            }
         }
     });
     return Match(deps);
@@ -255,6 +260,7 @@ function createPlayerState(options = {}) {
         stationCards: [],
         discardedCards: [],
         events: [],
-        requirements: []
+        requirements: [],
+        actionLogEntries: []
     });
 }

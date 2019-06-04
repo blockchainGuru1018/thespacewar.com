@@ -32,7 +32,8 @@ module.exports = function ({
     rawCardDataRepository,
     endMatch,
     gameConfig,
-    actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository })
+    actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository }),
+    userRepository
 }) {
 
     const playerIds = players.map(p => p.id);
@@ -70,7 +71,8 @@ module.exports = function ({
         actionPointsCalculator,
         logger,
         gameConfig,
-        gameServiceFactory
+        gameServiceFactory,
+        userRepository
     });
     const matchService = playerServiceFactory.matchService();
     const playerServiceProvider = playerServiceFactory.playerServiceProvider();

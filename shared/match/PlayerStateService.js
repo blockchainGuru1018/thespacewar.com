@@ -429,10 +429,12 @@ class PlayerStateService {
             return;
         }
 
-        const cards = deck.draw(this._gameConfig.millCardCount());
-        for (let card of cards) {
+        const milledCards = deck.draw(this._gameConfig.millCardCount());
+        for (let card of milledCards) {
             this.discardCard(card);
         }
+
+        return milledCards;
     }
 
     useToCounter(cardId) {

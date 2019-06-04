@@ -22,7 +22,15 @@ const ActionLog = require('./log/ActionLog.js');
 
 const ServiceTypes = PlayerServiceProvider.TYPE;
 
-module.exports = function ({ state, logger, endMatch, gameConfig, actionPointsCalculator, gameServiceFactory }) {
+module.exports = function ({
+    state,
+    logger,
+    endMatch,
+    gameConfig,
+    actionPointsCalculator,
+    gameServiceFactory,
+    userRepository
+}) {
 
     const objectsByNameAndPlayerId = {};
 
@@ -212,8 +220,10 @@ module.exports = function ({ state, logger, endMatch, gameConfig, actionPointsCa
 
     function actionLog(playerId) {
         return ActionLog({
+            matchService: api.matchService(),
             playerStateService: api.playerStateService(playerId),
-            cardInfoRepository: gameServiceFactory.cardInfoRepository()
+            cardInfoRepository: gameServiceFactory.cardInfoRepository(),
+            userRepository
         });
     }
 

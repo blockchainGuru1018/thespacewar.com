@@ -224,6 +224,12 @@ module.exports = {
                     sinon.match({ type: 'discardCard' })
                 ]
             }));
+        },
+        'should have added action log entry'() {
+            assert.calledOnce(this.secondPlayerConnection.stateChanged);
+            assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                actionLogEntries: sinon.match.some(sinon.match({ action: 'milled' }))
+            }));
         }
     },
     'when has draw card requirement with count 1 and draw card': {

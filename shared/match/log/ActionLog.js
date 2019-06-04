@@ -7,13 +7,19 @@ const actionToIconUrl = {
     countered: 'countered.svg',
     counteredAttackOnCard: 'countered.svg',
     expandedStation: 'expand.svg',
-    issuedOverwork: 'recycle.svg'
+    issuedOverwork: 'recycle.svg',
+    milled: 'mill.svg'
 };
 
 module.exports = function ({
+    matchService,
     playerStateService,
-    cardInfoRepository
+    cardInfoRepository,
+    userRepository
 }) {
+
+    let loadedOpponentName = 'The opponent';
+    loadOpponentName();
 
     return {
         queryLatest,
@@ -26,7 +32,8 @@ module.exports = function ({
         opponentCounteredAttackOnCard,
         opponentCounteredAttackOnStation,
         opponentExpandedStation,
-        opponentIssuedOverwork
+        opponentIssuedOverwork,
+        opponentMilledCardsFromYourDeck
     };
 
     function queryLatest() {
@@ -61,7 +68,7 @@ module.exports = function ({
         const cardName = cardInfoRepository.getName(cardCommonId);
         log({
             action: 'played',
-            text: `Opponent played *${cardName}#`
+            text: `${opponentName()} played *${cardName}#`
         });
     }
 
@@ -69,7 +76,7 @@ module.exports = function ({
         const cardName = cardInfoRepository.getName(cardCommonId);
         log({
             action: 'moved',
-            text: `Opponent moved *${cardName}#`
+            text: `${opponentName()} moved *${cardName}#`
         });
     }
 
@@ -77,7 +84,7 @@ module.exports = function ({
         const cardName = cardInfoRepository.getName(cardCommonId);
         log({
             action: 'countered',
-            text: `Opponent countered *${cardName}#`
+            text: `${opponentName()} countered *${cardName}#`
         });
     }
 
@@ -85,7 +92,7 @@ module.exports = function ({
         const cardName = cardInfoRepository.getName(defenderCardCommonId);
         log({
             action: 'counteredAttackOnCard',
-            text: `Opponent countered attack on *${cardName}#`,
+            text: `${opponentName()} countered attack on *${cardName}#`,
             defenderCardId
         });
     }
@@ -93,7 +100,7 @@ module.exports = function ({
     function opponentCounteredAttackOnStation({ targetStationCardIds }) {
         log({
             action: 'counteredAttackOnCard',
-            text: `Opponent countered attack on *${targetStationCardIds.length} station cards#`,
+            text: `${opponentName()} countered attack on *${targetStationCardIds.length} station cards#`,
             targetStationCardIds
         });
     }
@@ -104,7 +111,7 @@ module.exports = function ({
         const count = latestSimilarEntries.reduce((acc, entry) => acc + entry.count, 0) + 1;
         log({
             action,
-            text: `Opponent expanded station by *${count} station ${count === 1 ? 'card' : 'cards'}#`,
+            text: `${opponentName()} expanded station by *${count} station ${count === 1 ? 'card' : 'cards'}#`,
             count
         });
     }
@@ -119,7 +126,30 @@ module.exports = function ({
     function opponentIssuedOverwork() {
         log({
             action: 'issuedOverwork',
-            text: `Your opponent issued overwork`
+            text: `${opponentName()} issued overwork`
+        });
+    }
+
+    function opponentMilledCardsFromYourDeck({ milledCardCommonIds }) {
+        const cardNames = milledCardCommonIds.map(cardCommonId => cardInfoRepository.getName(cardCommonId));
+
+        let text = '';
+        if (cardNames.length === 0) {
+            text = 'milled 0 cards';
+        }
+        else if (cardNames.length === 1) {
+            text = `milled cards *${cardNames[0]}#`;
+        }
+        else if (cardNames.length === 2) {
+            text = `milled cards *${cardNames[0]}# & *${cardNames[1]}#`;
+        }
+        else {
+            text = `milled cards ${cardNames.slice(0, 1).map(name => `*${name}#`).join(', ')} & *${cardNames[cardNames.length - 1]}#`;
+        }
+
+        log({
+            action: 'milled',
+            text: `${opponentName()} ${text}`
         });
     }
 
@@ -155,5 +185,19 @@ module.exports = function ({
         return playerStateService
             .getPlayerState()
             .actionLogEntries;
+    }
+
+    function opponentName() {
+        return loadedOpponentName;
+    }
+
+    async function loadOpponentName() {
+        if (!matchService) return; //TODO If in the future ActionLog needs to be completely used on the client, this needs to be resolved.
+
+        const playerId = playerStateService.getPlayerId();
+        const opponentId = matchService.getOpponentId(playerId);
+        const opponentUser = await userRepository.getById(opponentId);
+
+        loadedOpponentName = opponentUser.name;
     }
 };
