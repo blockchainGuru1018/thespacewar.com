@@ -1,6 +1,7 @@
 <template>
     <div
         class="actionLog"
+        ref="actionLog"
         @click="toggleExpanded"
     >
         <div
@@ -40,6 +41,13 @@
                 return this.actionLog.queryLatest();
             }
         },
+        watch: {
+            entries() {
+                setTimeout(() => {
+                    this.$refs.actionLog.scrollTop = Number.MAX_SAFE_INTEGER;
+                });
+            }
+        },
         methods: {
             toggleExpanded() {
                 this.expanded = !this.expanded;
@@ -77,6 +85,9 @@
         margin: #{$bannerTopMargin + $bannerHeight + ($bannerTopMargin / 2)} 10px 0 0;
         background: rgba(18, 18, 18, .2);
         border: $borderSize solid $bannerBorderColor;
+        max-height: 320px;
+        overflow-y: auto;
+        overflow-x: hidden;
 
         &:hover {
             background: rgba(18, 18, 18, .5);
@@ -87,6 +98,11 @@
     .actionLog-entry {
         display: flex;
         align-items: center;
+        height: 46px;
+
+        &:last-child {
+            filter: brightness(160%);
+        }
     }
 
     .actionLog-entryIcon {

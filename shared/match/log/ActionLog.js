@@ -51,7 +51,6 @@ module.exports = function ({
 
     function queryLatest() {
         return getEntries()
-            .slice(-7)
             .map(entry => {
                 return {
                     ...entry,
