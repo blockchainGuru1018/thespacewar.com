@@ -52,7 +52,6 @@ module.exports = function ({
             logger,
             rawCardDataRepository,
             gameConfig,
-            userRepository,
             endMatch: () => end(matchId)
         });
         matchById.set(matchId, match);

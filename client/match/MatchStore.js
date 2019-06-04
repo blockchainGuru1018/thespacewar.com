@@ -147,6 +147,7 @@ module.exports = function (deps) {
             queryEvents,
             queryOpponentEvents,
             actionLog,
+            opponentActionLog,
             eventFactory,
             matchService,
             playerCardsInDeckCount,
@@ -372,7 +373,8 @@ module.exports = function (deps) {
         return MoveStationCard({
             matchService: getters.matchService,
             playerStateService: getters.playerStateService,
-            playerPhase: getters.playerPhase
+            playerPhase: getters.playerPhase,
+            opponentActionLog: getters.opponentActionLog
         });
     }
 
@@ -498,6 +500,13 @@ module.exports = function (deps) {
     function actionLog(state, getters) {
         return ActionLog({
             playerStateService: getters.playerStateService,
+            cardInfoRepository
+        });
+    }
+
+    function opponentActionLog(state, getters) {
+        return ActionLog({
+            playerStateService: getters.opponentStateService,
             cardInfoRepository
         });
     }

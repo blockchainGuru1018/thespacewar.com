@@ -8,7 +8,14 @@ const actionToIconUrl = {
     counteredAttackOnCard: 'countered.svg',
     expandedStation: 'expand.svg',
     issuedOverwork: 'recycle.svg',
-    milled: 'mill.svg'
+    milled: 'mill.svg',
+    movedStationCard: 'move.svg'
+};
+
+const locationToText = {
+    'station-handSize': '"max cards"',
+    'station-draw': '"draw cards"',
+    'station-action': '"action points"',
 };
 
 module.exports = function ({
@@ -17,9 +24,6 @@ module.exports = function ({
     cardInfoRepository,
     userRepository
 }) {
-
-    let loadedOpponentName = 'The opponent';
-    loadOpponentName();
 
     return {
         queryLatest,
@@ -33,7 +37,8 @@ module.exports = function ({
         opponentCounteredAttackOnStation,
         opponentExpandedStation,
         opponentIssuedOverwork,
-        opponentMilledCardsFromYourDeck
+        opponentMilledCardsFromYourDeck,
+        opponentMovedStationCard
     };
 
     function queryLatest() {
@@ -130,6 +135,15 @@ module.exports = function ({
         });
     }
 
+    function opponentMovedStationCard({ fromLocation, toLocation }) {
+        const fromLocationText = locationToText[fromLocation];
+        const toLocationText = locationToText[toLocation];
+        log({
+            action: 'movedStationCard',
+            text: `${opponentName()} moved a station card from ${fromLocationText}-row to ${toLocationText}-row`
+        });
+    }
+
     function opponentMilledCardsFromYourDeck({ milledCardCommonIds }) {
         const cardNames = milledCardCommonIds.map(cardCommonId => cardInfoRepository.getName(cardCommonId));
 
@@ -188,16 +202,9 @@ module.exports = function ({
     }
 
     function opponentName() {
-        return loadedOpponentName;
-    }
-
-    async function loadOpponentName() {
-        if (!matchService) return; //TODO If in the future ActionLog needs to be completely used on the client, this needs to be resolved.
-
         const playerId = playerStateService.getPlayerId();
         const opponentId = matchService.getOpponentId(playerId);
-        const opponentUser = await userRepository.getById(opponentId);
-
-        loadedOpponentName = opponentUser.name;
+        const opponentUser = userRepository.getById(opponentId);
+        return opponentUser.name;
     }
 };

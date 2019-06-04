@@ -32,8 +32,7 @@ module.exports = function ({
     rawCardDataRepository,
     endMatch,
     gameConfig,
-    actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository }),
-    userRepository
+    actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository })
 }) {
 
     const playerIds = players.map(p => p.id);
@@ -72,7 +71,9 @@ module.exports = function ({
         logger,
         gameConfig,
         gameServiceFactory,
-        userRepository
+        userRepository: {
+            getById: id => players.find(p => p.id === id)
+        }
     });
     const matchService = playerServiceFactory.matchService();
     const playerServiceProvider = playerServiceFactory.playerServiceProvider();

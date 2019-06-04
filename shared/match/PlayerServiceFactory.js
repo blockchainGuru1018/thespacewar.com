@@ -107,7 +107,8 @@ module.exports = function ({
         return MoveStationCard({
             matchService: api.matchService(),
             playerStateService: api.playerStateService(playerId),
-            playerPhase: api.playerPhase(playerId)
+            playerPhase: api.playerPhase(playerId),
+            opponentActionLog: api.actionLog(api.opponentId(playerId))
         });
     }
 

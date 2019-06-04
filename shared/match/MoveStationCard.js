@@ -9,7 +9,8 @@ const ValidLocations = [
 module.exports = function ({
     matchService,
     playerStateService,
-    playerPhase
+    playerPhase,
+    opponentActionLog
 }) {
 
     return {
@@ -33,6 +34,7 @@ module.exports = function ({
         });
 
         playerStateService.storeEvent(createEvent({ cardId, fromLocation, toLocation: location }));
+        opponentActionLog.opponentMovedStationCard({ fromLocation, toLocation: location });
     }
 
     function createEvent({ cardId, fromLocation, toLocation }) {
