@@ -1021,6 +1021,9 @@ module.exports = function (deps) {
         if (action === 'destroyed') {
             dispatch('triggerFlashOpponentDiscardPileEffect');
         }
+        else if (action === 'repairedCard') {
+            dispatch('highlightCards', [latestEntry.repairedCardId]);
+        }
         else if (action === 'countered') {
             dispatch('triggerFlashOpponentDiscardPileEffect');
         }

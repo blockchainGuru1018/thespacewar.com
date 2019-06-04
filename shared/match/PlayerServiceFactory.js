@@ -109,6 +109,7 @@ module.exports = function ({
 
     function repair(playerId) {
         return Repair({
+            matchService: api.matchService(),
             playerStateService: api.playerStateService(playerId),
             opponentActionLog: api.actionLog(api.opponentId(playerId))
         });
