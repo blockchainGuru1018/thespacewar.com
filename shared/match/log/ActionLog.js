@@ -34,7 +34,6 @@ module.exports = function ({
         cardDestroyed,
         cardsDiscarded,
         stationCardsWereDamaged,
-        opponentPlayedCard,
         opponentPlayedCards,
         opponentMovedCard,
         opponentCounteredCard,
@@ -101,14 +100,6 @@ module.exports = function ({
         }
 
         log({ action: 'discarded', text });
-    }
-
-    function opponentPlayedCard({ cardCommonId }) { //TODO Use opponentPlayedCards instead
-        const cardName = cardInfoRepository.getName(cardCommonId);
-        log({
-            action: 'played',
-            text: `${opponentName()} played *${cardName}#`
-        });
     }
 
     function opponentPlayedCards({ cardCommonIds }) {

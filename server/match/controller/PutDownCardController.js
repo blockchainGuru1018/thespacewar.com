@@ -151,7 +151,7 @@ function PutDownCardController(deps) {
         }
         else {
             const opponentActionLog = playerServiceFactory.actionLog(matchService.getOpponentId(playerId));
-            opponentActionLog.opponentPlayedCard({ cardCommonId: cardData.commonId });
+            opponentActionLog.opponentPlayedCards({ cardCommonIds: [cardData.commonId] });
 
             if (cardApplier.hasCommandForCard(cardData)) {
                 cardApplier.putDownCard(playerId, cardData, { choice });
