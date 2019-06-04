@@ -1005,6 +1005,9 @@ module.exports = function (deps) {
         else if (action === 'countered') {
             dispatch('triggerFlashDiscardPileEffect');
         }
+        else if (action === 'repairedCard') {
+            dispatch('highlightCards', [latestEntry.repairedCardId]);
+        }
         else if (action === 'counteredAttackOnCard') {
             dispatch('highlightCards', [latestEntry.defenderCardId]);
         }

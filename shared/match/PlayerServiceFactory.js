@@ -20,6 +20,7 @@ const AddRequirementFromSpec = require('./requirement/AddRequirementFromSpec.js'
 const StartGame = require('./StartGame.js');
 const ActionLog = require('./log/ActionLog.js');
 const SacrificeCard = require('./SacrificeCard.js');
+const Repair = require('./Repair.js');
 
 const ServiceTypes = PlayerServiceProvider.TYPE;
 
@@ -40,6 +41,7 @@ module.exports = function ({
     const api = {
         _cache: objectsByNameAndPlayerId,
         playerServiceProvider: () => playerServiceProvider,
+        repair: cached(repair),
         moveStationCard: cached(moveStationCard),
         playerOverwork: cached(playerOverwork),
         overworkEventFactory: cached(overworkEventFactory),
@@ -104,6 +106,13 @@ module.exports = function ({
     };
 
     return api;
+
+    function repair(playerId) {
+        return Repair({
+            playerStateService: api.playerStateService(playerId),
+            opponentActionLog: api.actionLog(api.opponentId(playerId))
+        });
+    }
 
     function moveStationCard(playerId) {
         return MoveStationCard({

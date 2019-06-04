@@ -506,36 +506,6 @@ class PlayerStateService {
         }
     }
 
-    repairCard(repairerCardId, cardToRepairId) {
-        const cardToRepair = this.createBehaviourCardById(cardToRepairId);
-        const repairerCard = this.createBehaviourCardById(repairerCardId);
-        repairerCard.repairCard(cardToRepair);
-
-        if (cardToRepair.isStationCard()) {
-            this.update(playerState => {
-                const stationCardToRepair = playerState.stationCards.find(s => {
-                    const id = s.card ? s.card.id : s.id;
-                    return id === cardToRepairId;
-                });
-                stationCardToRepair.flipped = cardToRepair.flipped;
-            });
-        }
-        else {
-            this.updateCardById(cardToRepairId, card => {
-                Object.assign(card, cardToRepair.getCardData());
-            });
-        }
-
-        let currentTurn = this._matchService.getTurn();
-        this.storeEvent(RepairCardEvent({
-            turn: currentTurn,
-            cardId: repairerCard.id,
-            cardCommonId: repairerCard.commonId,
-            repairedCardId: cardToRepair.id,
-            repairedCardCommonId: cardToRepair.commonId
-        }));
-    }
-
     registerAttack({ attackerCardId, defenderCardId = null, targetStationCardIds = null }) {
         const cardData = this.findCard(attackerCardId);
         const turn = this._matchService.getTurn();
@@ -577,6 +547,12 @@ class PlayerStateService {
     flipStationCard(cardId) {
         this.updateStationCard(cardId, card => {
             card.flipped = true;
+        });
+    }
+
+    unflipStationCard(cardId) {
+        this.updateStationCard(cardId, card => {
+            card.flipped = false;
         });
     }
 

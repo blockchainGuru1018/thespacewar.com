@@ -11,7 +11,9 @@ const actionToIconUrl = {
     issuedOverwork: 'recycle.svg',
     milled: 'mill.svg',
     movedStationCard: 'move.svg',
-    paralyzed: 'shock.svg'
+    paralyzed: 'shock.svg',
+    repairedCard: 'recycle.svg',
+    repairedStationCard: 'recycle.svg'
 };
 
 const locationToText = {
@@ -36,6 +38,8 @@ module.exports = function ({
         stationCardsWereDamaged,
         opponentPlayedCards,
         opponentMovedCard,
+        opponentRepairedCard,
+        opponentRepairedStationCard,
         opponentCounteredCard,
         opponentCounteredAttackOnCard,
         opponentCounteredAttackOnStation,
@@ -134,6 +138,31 @@ module.exports = function ({
         });
     }
 
+    function opponentRepairedCard({ repairedCardId, repairedCardCommonId }) {
+        const cardName = cardInfoRepository.getName(repairedCardCommonId);
+        log({
+            action: 'repairedCard',
+            text: `${opponentName()} moved *${cardName}#`,
+            repairedCardId
+        });
+    }
+
+    function opponentRepairedStationCard() {
+        const action = 'repairedStationCard';
+        const latestSimilarEntries = removeLatestSimilarEntries(action);
+        const count = latestSimilarEntries.reduce((acc, entry) => acc + entry.count, 0) + 1;
+
+        let text;
+        if (count === 1) {
+            text = `${opponentName()} repaired a *station card#`
+        }
+        else {
+            text = `${opponentName()} repaired ${count} station ${count === 1 ? 'card' : 'cards'}#`
+        }
+
+        log({ action, text, count });
+    }
+
     function opponentCounteredCard({ cardCommonId }) {
         const cardName = cardInfoRepository.getName(cardCommonId);
         log({
@@ -161,7 +190,7 @@ module.exports = function ({
 
     function opponentExpandedStation() {
         const action = 'expandedStation';
-        const latestSimilarEntries = removeLatestSimilarEntries('expandedStation');
+        const latestSimilarEntries = removeLatestSimilarEntries(action);
         const count = latestSimilarEntries.reduce((acc, entry) => acc + entry.count, 0) + 1;
         log({
             action,
