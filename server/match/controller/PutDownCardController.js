@@ -150,6 +150,9 @@ function PutDownCardController(deps) {
             opponentActionLog.opponentExpandedStation();
         }
         else {
+            const opponentActionLog = playerServiceFactory.actionLog(matchService.getOpponentId(playerId));
+            opponentActionLog.opponentPlayedCard({ cardCommonId: cardData.commonId });
+
             if (cardApplier.hasCommandForCard(cardData)) {
                 cardApplier.putDownCard(playerId, cardData, { choice });
             }
@@ -172,9 +175,6 @@ function PutDownCardController(deps) {
             if (card.requirementsWhenPutDownInHomeZone) {
                 addCardRequirementsOnPutDownInHomeZone({ playerId, card });
             }
-
-            const opponentActionLog = playerServiceFactory.actionLog(matchService.getOpponentId(playerId));
-            opponentActionLog.opponentPlayedCard({ cardCommonId: cardData.commonId });
         }
     }
 

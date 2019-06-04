@@ -420,6 +420,8 @@ class PlayerStateService {
         const cardData = this.findCardFromAnySource(cardId);
         this.removeCardFromStationOrZones(cardId);
         this.discardCard(cardData);
+
+        return cardData;
     }
 
     discardTopTwoCardsInDrawPile() { //TODO Correct name for this is operation is "Mill". Number of cards to be milled may now vary as of the config file.
@@ -532,28 +534,6 @@ class PlayerStateService {
             repairedCardId: cardToRepair.id,
             repairedCardCommonId: cardToRepair.commonId
         }));
-    }
-
-    registerStationCollisionFromSacrifice(targetCardIds) {
-        for (const targetCardId of targetCardIds) {
-            this.flipStationCard(targetCardId);
-        }
-    }
-
-    registerCardCollisionFromSacrifice(targetCardId) {
-        const targetCardData = this.findCard(targetCardId);
-        const targetCard = this.createBehaviourCard(targetCardData);
-        const newTargetDamage = targetCard.damage ? targetCard.damage + 4 : 4;
-        const targetDefense = targetCard.defense || 0;
-        if (newTargetDamage >= targetDefense) {
-            this.removeCard(targetCardId);
-            this.discardCard(targetCardData);
-        }
-        else {
-            this.updateCardById(targetCardId, card => {
-                card.damage = newTargetDamage;
-            });
-        }
     }
 
     registerAttack({ attackerCardId, defenderCardId = null, targetStationCardIds = null }) {

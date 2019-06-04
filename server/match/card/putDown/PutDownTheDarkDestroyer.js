@@ -4,7 +4,8 @@ PutDownTheDarkDestroyer.CommonId = TheDarkDestroyer.CommonId;
 
 function PutDownTheDarkDestroyer({
     playerServiceProvider,
-    matchService
+    matchService,
+    playerServiceFactory
 }) {
 
     return {
@@ -18,7 +19,10 @@ function PutDownTheDarkDestroyer({
         const opponentId = matchService.getOpponentId(playerId);
         const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
         if (opponentStateService.hasCard(targetCardId)) {
-            opponentStateService.removeAndDiscardCardFromStationOrZone(targetCardId);
+            const targetCardData = opponentStateService.removeAndDiscardCardFromStationOrZone(targetCardId);
+
+            const opponentActionLog = playerServiceFactory.actionLog(opponentId);
+            opponentActionLog.cardsDiscarded({ cardCommonIds: [targetCardData.commonId] });
         }
     }
 }

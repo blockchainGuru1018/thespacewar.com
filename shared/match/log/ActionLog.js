@@ -4,6 +4,7 @@ const actionToIconUrl = {
     played: 'played.svg',
     stationCardsDamaged: 'target-hit.svg',
     destroyed: 'target-hit.svg',
+    discarded: 'mill.svg',
     countered: 'countered.svg',
     counteredAttackOnCard: 'countered.svg',
     expandedStation: 'expand.svg',
@@ -31,8 +32,10 @@ module.exports = function ({
         damagedInAttack,
         paralyzed,
         cardDestroyed,
+        cardsDiscarded,
         stationCardsWereDamaged,
         opponentPlayedCard,
+        opponentPlayedCards,
         opponentMovedCard,
         opponentCounteredCard,
         opponentCounteredAttackOnCard,
@@ -80,11 +83,54 @@ module.exports = function ({
         });
     }
 
-    function opponentPlayedCard({ cardCommonId }) {
+    function cardsDiscarded({ cardCommonIds }) {
+        const cardNames = cardCommonIds.map(cardCommonId => cardInfoRepository.getName(cardCommonId));
+        if (cardNames.length === 0) {
+            return;
+        }
+
+        let text = '';
+        if (cardNames.length === 1) {
+            text = `*${cardNames[0]}# was discarded`;
+        }
+        else if (cardNames.length === 2) {
+            text = `*${cardNames[0]}# & *${cardNames[1]}# were discarded`;
+        }
+        else {
+            text = `${cardNames.slice(0, 1).map(name => `*${name}#`).join(', ')} & *${cardNames[cardNames.length - 1]}# were discarded`;
+        }
+
+        log({ action: 'discarded', text });
+    }
+
+    function opponentPlayedCard({ cardCommonId }) { //TODO Use opponentPlayedCards instead
         const cardName = cardInfoRepository.getName(cardCommonId);
         log({
             action: 'played',
             text: `${opponentName()} played *${cardName}#`
+        });
+    }
+
+    function opponentPlayedCards({ cardCommonIds }) {
+        const cardNames = cardCommonIds.map(cardCommonId => cardInfoRepository.getName(cardCommonId));
+        if (cardNames.length === 0) {
+            return;
+        }
+
+        let text = '';
+        if (cardNames.length === 1) {
+            text = `*${cardNames[0]}#`;
+        }
+        else if (cardNames.length === 2) {
+            text = `*${cardNames[0]}# & *${cardNames[1]}#`;
+        }
+        else {
+            text = `${cardNames.slice(0, 1).map(name => `*${name}#`).join(', ')} & *${cardNames[cardNames.length - 1]}#`;
+        }
+
+        log({
+            action: 'played',
+            text: `${opponentName()} played *${text}#`
         });
     }
 

@@ -10,7 +10,8 @@ const opponentSourceToPlayerSource = {
 module.exports = function ({
     playerRequirementUpdaterFactory,
     playerServiceProvider,
-    matchService
+    matchService,
+    playerServiceFactory
 }) {
 
     return {
@@ -52,12 +53,19 @@ module.exports = function ({
 
     function moveCardsToHomeZone(cardGroups, playerId) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+
+        const cardCommonIds = [];
         for (const group of cardGroups) {
             for (const cardId of group.cardIds) {
                 const cardData = removeCardFromSource(cardId, group.source, playerId);
+                cardCommonIds.push(cardData.commonId);
                 playerStateService.putDownCardInZone(cardData, { grantedForFreeByEvent: true });
             }
         }
+
+        const opponentId = matchService.getOpponentId(playerId);
+        const opponentActionLog = playerServiceFactory.actionLog(opponentId);
+        opponentActionLog.opponentPlayedCards({ cardCommonIds })
     }
 
     function moveCardsToHand(cardGroups, playerId) {
@@ -73,13 +81,19 @@ module.exports = function ({
     function moveCardsToOpponentDiscardPile(cardGroups, playerId) {
         const opponentId = matchService.getOpponentId(playerId);
         const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
+
+        const cardCommonIds = [];
         for (const group of cardGroups) {
             for (const cardId of group.cardIds) {
                 const playerSource = opponentSourceToPlayerSource[group.source];
                 const cardData = removeCardFromSource(cardId, playerSource, opponentId);
+                cardCommonIds.push(cardData.commonId);
                 opponentStateService.discardCard(cardData);
             }
         }
+
+        const opponentActionLog = playerServiceFactory.actionLog(opponentId);
+        opponentActionLog.cardsDiscarded({ cardCommonIds });
     }
 
     function removeCardFromSource(cardId, source, playerId) {

@@ -19,6 +19,7 @@ const MoveStationCard = require('./MoveStationCard.js');
 const AddRequirementFromSpec = require('./requirement/AddRequirementFromSpec.js');
 const StartGame = require('./StartGame.js');
 const ActionLog = require('./log/ActionLog.js');
+const SacrificeCard = require('./SacrificeCard.js');
 
 const ServiceTypes = PlayerServiceProvider.TYPE;
 
@@ -59,6 +60,7 @@ module.exports = function ({
         eventFactory: cached(eventFactory),
         opponentId: cached(playerId => api.matchService().getOpponentId(playerId)),
         queryEvents: cached(queryEvents),
+        sacrificeCard: cached(sacrificeCard),
         actionLog: cached(actionLog),
         actionPointsCalculator: () => actionPointsCalculator
     };
@@ -217,6 +219,14 @@ module.exports = function ({
 
     function queryEvents(playerId) {
         return new ServerQueryEvents({ playerId, matchService: api.matchService() });
+    }
+
+    function sacrificeCard(playerId) {
+        return SacrificeCard({
+            playerStateService: api.playerStateService(playerId),
+            opponentStateService: api.playerStateService(api.opponentId(playerId)),
+            opponentActionLog: api.actionLog(api.opponentId(playerId))
+        });
     }
 
     function actionLog(playerId) {

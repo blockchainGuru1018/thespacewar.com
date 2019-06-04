@@ -301,14 +301,12 @@ function AttackController(deps) {
             if (!card.canTargetCardForSacrifice(targetCard)) throw new CheatError('Cannot sacrifice');
         }
 
-        playerStateService.removeCard(cardId);
-        playerStateService.discardCard(cardData);
-
-        if (!targetCardIds) {
-            opponentStateService.registerCardCollisionFromSacrifice(targetCardId);
+        const sacrificeCard = playerServiceFactory.sacrificeCard(playerId);
+        if (targetCardIds) {
+            sacrificeCard.collideWithStation(cardId, targetCardIds);
         }
         else {
-            onStationCollisionFromSacrifice({ playerId, targetCardIds });
+            sacrificeCard.collideWithCard(cardId, targetCardId);
         }
     }
 
@@ -336,12 +334,6 @@ function AttackController(deps) {
 
         return !isBelowTargetLimit
             || !hasMoreAvailableTargets;
-    }
-
-    function onStationCollisionFromSacrifice({ playerId, targetCardIds }) {
-        const opponentId = matchService.getOpponentId(playerId);
-        const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
-        opponentStateService.registerStationCollisionFromSacrifice(targetCardIds);
     }
 }
 
