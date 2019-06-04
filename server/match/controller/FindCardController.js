@@ -54,18 +54,21 @@ module.exports = function ({
     function moveCardsToHomeZone(cardGroups, playerId) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
 
+        const cardIds = [];
         const cardCommonIds = [];
         for (const group of cardGroups) {
             for (const cardId of group.cardIds) {
                 const cardData = removeCardFromSource(cardId, group.source, playerId);
-                cardCommonIds.push(cardData.commonId);
                 playerStateService.putDownCardInZone(cardData, { grantedForFreeByEvent: true });
+
+                cardIds.push(cardData.id);
+                cardCommonIds.push(cardData.commonId);
             }
         }
 
         const opponentId = matchService.getOpponentId(playerId);
         const opponentActionLog = playerServiceFactory.actionLog(opponentId);
-        opponentActionLog.opponentPlayedCards({ cardCommonIds })
+        opponentActionLog.opponentPlayedCards({ cardIds, cardCommonIds })
     }
 
     function moveCardsToHand(cardGroups, playerId) {

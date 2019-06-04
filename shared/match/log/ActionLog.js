@@ -102,7 +102,7 @@ module.exports = function ({
         log({ action: 'discarded', text });
     }
 
-    function opponentPlayedCards({ cardCommonIds }) {
+    function opponentPlayedCards({ cardIds, cardCommonIds }) {
         const cardNames = cardCommonIds.map(cardCommonId => cardInfoRepository.getName(cardCommonId));
         if (cardNames.length === 0) {
             return;
@@ -121,7 +121,8 @@ module.exports = function ({
 
         log({
             action: 'played',
-            text: `${opponentName()} played *${text}#`
+            text: `${opponentName()} played *${text}#`,
+            cardIds
         });
     }
 

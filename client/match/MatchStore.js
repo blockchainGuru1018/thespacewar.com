@@ -98,7 +98,7 @@ module.exports = function (deps) {
             ended: false,
             retreatedPlayerId: null,
             shake: false, //TODO Implement or remove!
-            highlightCardId: null,
+            highlightCardIds: [],
             flashAttackedCardId: null,
             flashDiscardPile: false,
             flashOpponentDiscardPile: false
@@ -208,7 +208,7 @@ module.exports = function (deps) {
             flashFocusLatestAction,
             flashFocusLatestOpponentAction,
             triggerCardAttackedEffect,
-            triggerHighlightCardEffect,
+            highlightCards,
             triggerFlashDiscardPileEffect,
             triggerFlashOpponentDiscardPileEffect
         }
@@ -987,20 +987,26 @@ module.exports = function (deps) {
         const latestEntry = actionLogEntries[actionLogEntries.length - 1];
 
         const action = latestEntry.action;
-        if (action === 'damagedInAttack') {
+        if (action === 'played') {
+            dispatch('highlightCards', latestEntry.cardIds);
+        }
+        else if (action === 'damagedInAttack') {
             dispatch('triggerCardAttackedEffect', latestEntry.defenderCardId);
         }
         else if (action === 'paralyzed') {
-            dispatch('triggerHighlightCardEffect', latestEntry.defenderCardId);
+            dispatch('highlightCards', [latestEntry.defenderCardId]);
         }
         else if (action === 'destroyed') {
+            dispatch('triggerFlashDiscardPileEffect');
+        }
+        else if (action === 'discarded') {
             dispatch('triggerFlashDiscardPileEffect');
         }
         else if (action === 'countered') {
             dispatch('triggerFlashDiscardPileEffect');
         }
         else if (action === 'counteredAttackOnCard') {
-            dispatch('triggerHighlightCardEffect', latestEntry.defenderCardId);
+            dispatch('highlightCards', [latestEntry.defenderCardId]);
         }
     }
 
@@ -1016,7 +1022,7 @@ module.exports = function (deps) {
             dispatch('triggerFlashOpponentDiscardPileEffect');
         }
         else if (action === 'counteredAttackOnCard') {
-            dispatch('triggerHighlightCardEffect', latestEntry.defenderCardId);
+            dispatch('highlightCards', [latestEntry.defenderCardId]);
         }
     }
 
@@ -1047,12 +1053,12 @@ module.exports = function (deps) {
         }, FlashCardTime);
     }
 
-    function triggerHighlightCardEffect({ state }, cardId) {
+    function highlightCards({ state }, cardIds) {
         setTimeout(() => {
-            state.highlightCardId = cardId;
+            state.highlightCardIds = cardIds;
         });
         setTimeout(() => {
-            state.highlightCardId = null;
+            state.highlightCardIds = [];
         }, FlashCardTime);
     }
 };

@@ -203,7 +203,7 @@
                 'ownUser',
                 'repairerCardId',
                 'flashAttackedCardId',
-                'highlightCardId'
+                'highlightCardIds'
             ]),
             ...mapGetters([
                 'allOpponentStationCards',
@@ -248,7 +248,7 @@
                 if (this.flashCard) {
                     classes.push(this.isPlayerCard ? 'shake' : 'shake--upsideDown');
                 }
-                if (this.highlightCardId === this.card.id) {
+                if (this.highlightCardIds.includes(this.card.id)) {
                     classes.push('flash');
                 }
                 if (!this.isPlayerCard) {
