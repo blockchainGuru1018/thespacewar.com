@@ -149,22 +149,19 @@ module.exports = function ({
 
         let text = '';
         if (cardNames.length === 0) {
-            text = 'milled 0 cards';
+            text = `${opponentName()} milled but no cards were discarded`;
         }
         else if (cardNames.length === 1) {
-            text = `milled cards *${cardNames[0]}#`;
+            text = `*${cardNames[0]}# was milled`;
         }
         else if (cardNames.length === 2) {
-            text = `milled cards *${cardNames[0]}# & *${cardNames[1]}#`;
+            text = `*${cardNames[0]}# & *${cardNames[1]}# were milled`;
         }
         else {
-            text = `milled cards ${cardNames.slice(0, 1).map(name => `*${name}#`).join(', ')} & *${cardNames[cardNames.length - 1]}#`;
+            text = `${cardNames.slice(0, 1).map(name => `*${name}#`).join(', ')} & *${cardNames[cardNames.length - 1]}# were milled`;
         }
 
-        log({
-            action: 'milled',
-            text: `${opponentName()} ${text}`
-        });
+        log({ action: 'milled', text });
     }
 
     function log({
