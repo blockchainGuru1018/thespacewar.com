@@ -150,7 +150,15 @@
                     <span>
                         Card ID
                     </span>
-                    <input v-model="cheatCommonId" type="text" value="0" />
+                    <select v-model="cheatCommonId">
+                        <option
+                            v-for="option in cardOptions"
+                            :key="option.value"
+                            :value="option.value"
+                        >
+                            {{ option.text }}
+                        </option>
+                    </select>
                 </label>
             </div>
             <button
@@ -213,6 +221,9 @@
             ...matchHelpers.mapState([
                 'aiStarted'
             ]),
+            ...matchHelpers.mapGetters([
+                'cardDataAssembler'
+            ]),
             cheatTypeOptions() {
                 return [
                     { value: 'addCard', text: 'Add card' },
@@ -220,6 +231,12 @@
                     { value: 'removeAllRequirements', text: 'Remove all requirements' },
                     { value: 'getCardsInDeck', text: 'Get cards in deck (result is logged in the console)' }
                 ];
+            },
+            cardOptions() {
+                const allCards = this.cardDataAssembler.createOneOfEach();
+                return allCards.map(cardData => {
+                    return { value: cardData.commonId, text: cardData.name };
+                });
             }
         },
         watch: {

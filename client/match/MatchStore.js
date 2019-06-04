@@ -19,6 +19,7 @@ const mapFromClientToServerState = require('./mapFromClientToServerState.js');
 const localGameDataFacade = require('../utils/localGameDataFacade.js');
 const whatIsNextPhase = require('../../shared/match/whatIsNextPhase.js');
 const MatchMode = require('../../shared/match/MatchMode.js');
+const CardDataAssembler = require('../../shared/CardDataAssembler.js');
 const {
     COMMON_PHASE_ORDER,
     PHASES
@@ -100,7 +101,7 @@ module.exports = function (deps) {
             highlightCardId: null,
             flashAttackedCardId: null,
             flashDiscardPile: false,
-            flashOpponentDiscardPile: false,
+            flashOpponentDiscardPile: false
         },
         getters: {
             isFirstPlayer,
@@ -154,7 +155,8 @@ module.exports = function (deps) {
             playerRetreated,
             overworkEnabled,
             maxStationCardCount,
-            gameConfig
+            gameConfig,
+            cardDataAssembler
         },
         mutations: {
             setPlayerStationCards,
@@ -556,6 +558,10 @@ module.exports = function (deps) {
         }
 
         return GameConfig(state.gameConfigEntity);
+    }
+
+    function cardDataAssembler() {
+        return CardDataAssembler({ rawCardDataRepository });
     }
 
     function attackerCard(state, getters) {

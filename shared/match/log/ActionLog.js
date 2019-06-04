@@ -6,6 +6,7 @@ const actionToIconUrl = {
     destroyed: 'target-hit.svg',
     countered: 'countered.svg',
     counteredAttackOnCard: 'countered.svg',
+    expandedStation: 'expand.svg'
 };
 
 module.exports = function ({
@@ -22,13 +23,12 @@ module.exports = function ({
         opponentMovedCard,
         opponentCounteredCard,
         opponentCounteredAttackOnCard,
-        //opponentCounteredAttackOnStation,
+        opponentCounteredAttackOnStation,
+        opponentExpandedStation
     };
 
     function queryLatest() {
-        return playerStateService
-            .getPlayerState()
-            .actionLogEntries
+        return getEntries()
             .slice(-7)
             .map(entry => {
                 return {
@@ -88,6 +88,25 @@ module.exports = function ({
         });
     }
 
+    function opponentCounteredAttackOnStation({ targetStationCardIds }) {
+        log({
+            action: 'counteredAttackOnCard',
+            text: `Opponent countered attack on *${targetStationCardIds.length} station cards#`,
+            targetStationCardIds
+        });
+    }
+
+    function opponentExpandedStation() {
+        const action = 'expandedStation';
+        const latestSimilarEntries = removeLatestSimilarEntries('expandedStation');
+        const count = latestSimilarEntries.reduce((acc, entry) => acc + entry.count, 0) + 1;
+        log({
+            action,
+            text: `Opponent expanded station by *${count} station ${count === 1 ? 'card' : 'cards'}#`,
+            count
+        });
+    }
+
     function stationCardsWereDamaged({ targetCount }) {
         log({
             action: 'stationCardsDamaged',
@@ -105,5 +124,27 @@ module.exports = function ({
                 ...entry
             });
         });
+    }
+
+    function removeLatestSimilarEntries(similarToAction) {
+        const entries = getEntries().slice();
+        const collapsedEntries = [];
+        while (entries.length > 0 && entries[entries.length - 1].action === similarToAction) {
+            collapsedEntries.push(entries.pop());
+        }
+
+        const updatedEntries = entries.reverse();
+        playerStateService.update(playerState => {
+            playerState.actionLogEntries = updatedEntries;
+        });
+
+        return collapsedEntries;
+
+    }
+
+    function getEntries() {
+        return playerStateService
+            .getPlayerState()
+            .actionLogEntries;
     }
 };

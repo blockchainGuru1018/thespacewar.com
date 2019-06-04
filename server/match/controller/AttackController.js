@@ -119,7 +119,10 @@ function AttackController(deps) {
         playerStateService.useToCounter(cardUsedToCounterId);
 
         if (attackData.targetedStation) {
-            //TODO Add entry in actionLog about opponentCounteredAttackOnStation
+            const opponentActionLog = playerServiceFactory.actionLog(opponentId);
+            opponentActionLog.opponentCounteredAttackOnStation({
+                targetStationCardIds: attackData.defenderCardsData.map(cardData => cardData.id)
+            });
         }
         else {
             const opponentActionLog = playerServiceFactory.actionLog(opponentId);

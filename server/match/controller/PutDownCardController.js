@@ -145,6 +145,9 @@ function PutDownCardController(deps) {
     function putDownCardAtNewLocation({ playerId, location, cardData, choice }) {
         if (location.startsWith('station')) {
             putDownStationCard({ playerId, cardData, location, choice });
+
+            const opponentActionLog = playerServiceFactory.actionLog(matchService.getOpponentId(playerId));
+            opponentActionLog.opponentExpandedStation();
         }
         else {
             if (cardApplier.hasCommandForCard(cardData)) {

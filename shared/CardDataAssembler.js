@@ -12,6 +12,7 @@ module.exports = function ({
 
     return {
         createAll,
+        createOneOfEach,
         createFromCommonId
     };
 
@@ -26,6 +27,11 @@ module.exports = function ({
             }
         }
         return cards;
+    }
+
+    function createOneOfEach() {
+        const rawCardData = rawCardDataRepository.get();
+        return rawCardData.map(cardJson => CardData(cardJson));
     }
 
     function createFromCommonId(commonId) {
