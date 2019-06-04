@@ -6,7 +6,8 @@ const actionToIconUrl = {
     destroyed: 'target-hit.svg',
     countered: 'countered.svg',
     counteredAttackOnCard: 'countered.svg',
-    expandedStation: 'expand.svg'
+    expandedStation: 'expand.svg',
+    issuedOverwork: 'recycle.svg'
 };
 
 module.exports = function ({
@@ -24,7 +25,8 @@ module.exports = function ({
         opponentCounteredCard,
         opponentCounteredAttackOnCard,
         opponentCounteredAttackOnStation,
-        opponentExpandedStation
+        opponentExpandedStation,
+        opponentIssuedOverwork
     };
 
     function queryLatest() {
@@ -111,6 +113,13 @@ module.exports = function ({
         log({
             action: 'stationCardsDamaged',
             text: `*${targetCount} station ${targetCount === 1 ? 'card' : 'cards'}# ${targetCount === 1 ? 'was' : 'were'} damaged`
+        });
+    }
+
+    function opponentIssuedOverwork() {
+        log({
+            action: 'issuedOverwork',
+            text: `Your opponent issued overwork`
         });
     }
 

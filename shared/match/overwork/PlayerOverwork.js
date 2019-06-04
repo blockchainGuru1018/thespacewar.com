@@ -7,7 +7,8 @@ module.exports = function ({
     playerRequirementService,
     opponentRequirementService,
     overworkEventFactory,
-    gameConfig
+    gameConfig,
+    opponentActionLog
 }) {
 
     return {
@@ -34,5 +35,7 @@ module.exports = function ({
         opponentRequirementService.addDamageStationCardRequirement({ count: 1, reason: 'overwork', common: true });
         playerRequirementService.addEmptyCommonWaitingRequirement({ type: 'damageStationCard', reason: 'overwork' });
         overworkEventFactory.createAndStore();
+
+        opponentActionLog.opponentIssuedOverwork();
     }
 };

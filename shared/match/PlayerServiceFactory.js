@@ -110,6 +110,7 @@ module.exports = function ({ state, logger, endMatch, gameConfig, actionPointsCa
             playerStateService: api.playerStateService(playerId),
             playerRequirementService: api.playerRequirementService(playerId),
             opponentRequirementService: api.playerRequirementService(api.opponentId(playerId)),
+            opponentActionLog: api.actionLog(api.opponentId(playerId)),
             gameConfig
         });
     }
