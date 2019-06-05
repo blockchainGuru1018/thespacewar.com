@@ -17,6 +17,7 @@ const Luck = require('../../../shared/card/Luck.js');
 const FatalError = require('../../../shared/card/FatalError.js');
 const TargetMissed = require('../../../shared/card/TargetMissed.js');
 const MoveCardEvent = require("../../../shared/event/MoveCardEvent.js");
+const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
 
 module.exports = {
     'counter:': {
@@ -296,6 +297,53 @@ module.exports = {
                     attackerCardId: 'C3A',
                     targetStationCardIds: ['S1A', 'S2A']
                 });
+            }
+        },
+        'when opponent counter attack with Target Missed and player counters that with Luck': {
+            async setUp() {
+                this.match.restoreFromState(createState({
+                    currentPlayer: 'P1A',
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsOnHand: [
+                                createCard({ id: 'C2A', type: 'event', commonId: Luck.CommonId, cost: 0 })
+                            ],
+                            cardsInOpponentZone: [
+                                createCard({ id: 'C1A', type: 'spaceShip', attack: 1 })
+                            ]
+                        },
+                        'P2A': {
+                            phase: 'wait',
+                            cardsOnHand: [
+                                createCard({ id: 'C4A', cost: 0, commonId: TargetMissed.CommonId })
+                            ],
+                            cardsInZone: [
+                                createCard({ id: 'C3A', defense: 1 })
+                            ],
+                            events: [
+                                PutDownCardEvent.forTest({ cardId: 'C3A' })
+                            ]
+                        }
+                    }
+                }));
+                this.match.attack('P1A', { attackerCardId: 'C1A', defenderCardId: 'C3A' });
+
+                this.match.toggleControlOfTurn('P2A');
+                this.match.putDownCard('P2A', { cardId: 'C4A', location: 'zone' });
+                this.match.counterAttack('P2A', { attackIndex: 0 });
+
+                this.match.putDownCard('P1A', { cardId: 'C2A', location: 'zone', choice: 'counter' });
+                this.match.counterCard('P1A', { cardId: 'C2A', targetCardId: 'C4A' });
+            },
+            'first player should have moved card used to counter into the discard pile'() {
+                this.firstPlayerAsserter.send('P1A');
+                this.firstPlayerAsserter.hasDiscardedCard('C2A');
+            },
+            'second player should have countered card in discard pile'() {
+                this.secondPlayerAsserter.send('P2A');
+                this.secondPlayerAsserter.hasDiscardedCard('C3A');
+                this.secondPlayerAsserter.hasDiscardedCard('C4A');
             }
         }
     }

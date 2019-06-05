@@ -294,6 +294,7 @@
             },
             canSelectAction() {
                 if (!this.isPlayerCard) return false;
+                if (this.isTransient) return false;
 
                 return !this.attackerCardId
                     && !this.repairerCardId
@@ -385,9 +386,11 @@
             isRepairing() {
                 return this.card.id === this.repairerCardId;
             },
+            isTransient() {
+                return this.transientPlayerCardsInHomeZone.some(c => c.id === this.card.id);
+            },
             canSelectCardForAction() {
-                const cardIsTransient = this.transientPlayerCardsInHomeZone.some(c => c.id === this.card.id);
-                if (cardIsTransient) return false;
+                if (this.isTransient) return false;
                 if (this.isPlayerCard) return false;
                 if (!this.canSelectCardsForActiveAction) return false;
                 if (this.isSelectedForAction) return false;

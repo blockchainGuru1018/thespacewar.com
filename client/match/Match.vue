@@ -479,11 +479,13 @@
                 }
             },
             playerZoneCardGhostVisible() {
-                return this.holdingCard
-                    && this.canPutDownCards
-                    && this.canPutDownHoldingCard
-                    && this.canAffordHoldingCard
-                    && (!this.showOnlyCardGhostsFor || this.showOnlyCardGhostsFor.includes('homeZone'));
+                if (!this.holdingCard) return false;
+                if (this.showOnlyCardGhostsFor && !this.showOnlyCardGhostsFor.includes('homeZone')) return false;
+
+                if (!this.canAffordHoldingCard) return false;
+
+                return this.createCard(this.holdingCard).canBePutDownAnyTime()
+                    || (this.canPutDownCards && this.canPutDownHoldingCard);
             },
             canPutDownHoldingCard() {
                 return this.canPutDownCard(this.holdingCard);

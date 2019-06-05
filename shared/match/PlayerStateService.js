@@ -409,11 +409,11 @@ class PlayerStateService {
                 this.storeEvent(event);
             });
 
-        this.registerEventForPutDownEventCard(cardData);
+        this.registerEventForPutDownEventCardInZone(cardData);
         this.discardCard(cardData);
     }
 
-    registerEventForPutDownEventCard(cardData) {
+    registerEventForPutDownEventCardInZone(cardData) {
         const currentTurn = this._matchService.getTurn();
         this.storeEvent(PutDownCardEvent({
             turn: currentTurn,
@@ -451,7 +451,7 @@ class PlayerStateService {
         this.discardCard(cardData);
 
         if (cardData.type === 'event') {
-            this.registerEventForPutDownEventCard(cardData);
+            this.registerEventForPutDownEventCardInZone(cardData);
         }
         else {
             this.registerEventForPutDownCardInZone(cardData, { grantedForFreeByEvent: false });

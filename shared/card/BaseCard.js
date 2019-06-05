@@ -260,6 +260,10 @@ class BaseCard {
         return false;
     }
 
+    canBePutDownAnyTime() {
+        return false;
+    }
+
     get eventSpecsWhenPutDownInHomeZone() {
         return [];
     }
