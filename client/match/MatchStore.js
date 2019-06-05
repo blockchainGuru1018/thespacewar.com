@@ -97,7 +97,7 @@ module.exports = function (deps) {
             aiStarted: false,
             ended: false,
             retreatedPlayerId: null,
-            shake: false, //TODO Implement or remove!
+            shake: false,
             highlightCardIds: [],
             flashAttackedCardId: null,
             flashDiscardPile: false,
@@ -1001,6 +1001,14 @@ module.exports = function (deps) {
         }
         else if (action === 'discarded') {
             dispatch('triggerFlashDiscardPileEffect');
+        }
+        else if (action === 'stationCardsDamaged') {
+            setTimeout(() => {
+                state.shake = true;
+            });
+            setTimeout(() => {
+                state.shake = false;
+            }, 300);
         }
         else if (action === 'countered') {
             dispatch('triggerFlashDiscardPileEffect');

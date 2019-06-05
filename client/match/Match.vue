@@ -1,5 +1,5 @@
 <template>
-    <div class="match-wrapper" ref="match-wrapper">
+    <div :class="['match-wrapper', {shake: shake}]" ref="match-wrapper">
         <div
             :class="['match', `currentPhase--${phase}`]"
             ref="match"
