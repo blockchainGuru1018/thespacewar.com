@@ -210,7 +210,8 @@ module.exports = function (deps) {
             triggerCardAttackedEffect,
             highlightCards,
             triggerFlashDiscardPileEffect,
-            triggerFlashOpponentDiscardPileEffect
+            triggerFlashOpponentDiscardPileEffect,
+            shakeTheScreen
         }
     };
 
@@ -907,6 +908,7 @@ module.exports = function (deps) {
         if (selectedMaxTargetCount || selectedLastStationCard) {
             matchController.emit('attackStationCard', { attackerCardId, targetStationCardIds });
             dispatch('registerAttack', { attackerCardId, targetStationCardIds });
+            dispatch('shakeTheScreen');
         }
     }
 
@@ -1003,12 +1005,7 @@ module.exports = function (deps) {
             dispatch('triggerFlashDiscardPileEffect');
         }
         else if (action === 'stationCardsDamaged') {
-            setTimeout(() => {
-                state.shake = true;
-            });
-            setTimeout(() => {
-                state.shake = false;
-            }, 300);
+            dispatch('shakeTheScreen');
         }
         else if (action === 'countered') {
             dispatch('triggerFlashDiscardPileEffect');
@@ -1074,6 +1071,15 @@ module.exports = function (deps) {
         setTimeout(() => {
             state.highlightCardIds = [];
         }, FlashCardTime);
+    }
+
+    function shakeTheScreen({ state }) {
+        setTimeout(() => {
+            state.shake = true;
+        });
+        setTimeout(() => {
+            state.shake = false;
+        }, 300);
     }
 };
 
