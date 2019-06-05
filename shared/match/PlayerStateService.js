@@ -384,10 +384,14 @@ class PlayerStateService {
     }
 
     putDownCardInZone(cardData, { grantedForFreeByEvent = false } = {}) {
-        const currentTurn = this._matchService.getTurn();
         this.update(playerState => {
             playerState.cardsInZone.push(cardData);
         });
+        this.registerEventForPutDownCardInZone(cardData, { grantedForFreeByEvent });
+    }
+
+    registerEventForPutDownCardInZone(cardData, { grantedForFreeByEvent = false } = {}) {
+        const currentTurn = this._matchService.getTurn();
         this.storeEvent(PutDownCardEvent({
             turn: currentTurn,
             location: 'zone',
@@ -398,8 +402,6 @@ class PlayerStateService {
     }
 
     putDownEventCardInZone(cardData) {
-        const currentTurn = this._matchService.getTurn();
-
         const card = this.createBehaviourCard(cardData);
         card.eventSpecsWhenPutDownInHomeZone
             .map(this._eventFactory.fromSpec)
@@ -407,13 +409,18 @@ class PlayerStateService {
                 this.storeEvent(event);
             });
 
+        this.registerEventForPutDownEventCard(cardData);
+        this.discardCard(cardData);
+    }
+
+    registerEventForPutDownEventCard(cardData) {
+        const currentTurn = this._matchService.getTurn();
         this.storeEvent(PutDownCardEvent({
             turn: currentTurn,
             location: 'zone',
             cardId: cardData.id,
             cardCommonId: cardData.commonId
         }));
-        this.discardCard(cardData);
     }
 
     removeAndDiscardCardFromStationOrZone(cardId) {
@@ -442,6 +449,13 @@ class PlayerStateService {
     useToCounter(cardId) {
         const cardData = this.removeCardFromStationHandOrHomeZone(cardId);
         this.discardCard(cardData);
+
+        if (cardData.type === 'event') {
+            this.registerEventForPutDownEventCard(cardData);
+        }
+        else {
+            this.registerEventForPutDownCardInZone(cardData, { grantedForFreeByEvent: false });
+        }
     }
 
     registerAttackCountered({ attackerCardId, defenderCardId = null, targetStationCardIds = null }) {

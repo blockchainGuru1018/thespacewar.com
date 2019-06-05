@@ -6,7 +6,8 @@ const propertyMap = {
     MILL_CARD_AMOUNT: 'millCardCount',
     STATION_CARDS_AT_START: 'stationCardsAtStart',
     MAX_STATION_CARDS: 'maxStationCards',
-    MAX_RECYCLES: 'maxRecycles'
+    MAX_RECYCLES: 'maxRecycles',
+    TIME_TO_COUNTER: 'timeToCounter'
 };
 
 const Defaults = convertConfig(DEFAULT_CONFIG);
@@ -21,7 +22,8 @@ function GameConfig({
     millCardCount = Defaults.millCardCount,
     stationCardsAtStart = Defaults.stationCardsAtStart,
     maxStationCards = Defaults.maxStationCards,
-    maxRecycles = Defaults.maxRecycles
+    maxRecycles = Defaults.maxRecycles,
+    timeToCounter = Defaults.timeToCounter
 } = {}) {
 
     return {
@@ -31,7 +33,8 @@ function GameConfig({
         millCardCount: () => millCardCount,
         stationCardsAtStart: () => stationCardsAtStart,
         maxStationCards: () => maxStationCards,
-        maxRecycles: () => maxRecycles
+        maxRecycles: () => maxRecycles,
+        timeToCounter: () => timeToCounter
     };
 }
 

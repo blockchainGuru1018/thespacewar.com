@@ -46,6 +46,12 @@
                 setTimeout(() => {
                     this.$refs.actionLog.scrollTop = Number.MAX_SAFE_INTEGER;
                 });
+                setTimeout(() => {
+                    this.$refs.actionLog.scrollTop = Number.MAX_SAFE_INTEGER;
+                }, 10);
+                setTimeout(() => {
+                    this.$refs.actionLog.scrollTop = Number.MAX_SAFE_INTEGER;
+                }, 30);
             }
         },
         methods: {

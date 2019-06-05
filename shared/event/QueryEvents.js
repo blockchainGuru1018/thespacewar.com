@@ -26,7 +26,7 @@ class QueryEvents {
     }
 
     lastTookControlWithinTimeFrameSincePutDownCard(opponentCardId, millisecondsTimeFrame) {
-        const timeSinceOpponentCardWasPutDown = this.getTimeWhenOpponentCardWasPutDown(opponentCardId);
+        const timeWhenOpponentCardWasPutDown = this.getTimeWhenOpponentCardWasPutDown(opponentCardId);
         const playerEvents = this._eventRepository.getAll().slice();
 
         const indexOfLatestTakingOfControl = findLastIndex(playerEvents, e => e.type === 'takeControlOfOpponentsTurn');
@@ -34,11 +34,20 @@ class QueryEvents {
 
         if (indexOfLatestTakingOfControl > indexOfLatestReleaseOfControl) {
             const takeControlOfOpponentsTurnEvent = playerEvents[indexOfLatestTakingOfControl];
-            const timeDifference = takeControlOfOpponentsTurnEvent.created - timeSinceOpponentCardWasPutDown;
-            return timeDifference >= 0 && timeDifference <= millisecondsTimeFrame;
+            const timeDifference = takeControlOfOpponentsTurnEvent.created - timeWhenOpponentCardWasPutDown;
+
+            //NOTE!
+            // You can counter cards where "timeDifference < 0". This is because you may counter a counter.
+            return timeDifference <= millisecondsTimeFrame;
         }
 
         return false;
+    }
+
+    putDownCardWithinTimeFrame(opponentCardId, millisecondsTimeFrame) {
+        const timeWhenOpponentCardWasPutDown = this.getTimeWhenOpponentCardWasPutDown(opponentCardId);
+        const timeSincePutDown = Date.now() - timeWhenOpponentCardWasPutDown;
+        return timeSincePutDown >= 0 && timeSincePutDown <= millisecondsTimeFrame;
     }
 
     getTimeWhenOpponentCardWasPutDown(opponentCardId) {

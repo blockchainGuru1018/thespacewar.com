@@ -145,7 +145,18 @@ class CanThePlayer {
     counterCard({ id: cardId }) {
         const isOpponentCard = this._opponentStateService.hasCard(cardId);
         if (!isOpponentCard) return false;
-        if (!this._queryEvents.lastTookControlWithinTimeFrameSincePutDownCard(cardId, 5000)) return false;
+
+        const playerHasControlOfOwnTurn = this._turnControl.playerHasControlOfOwnTurn();
+        if (playerHasControlOfOwnTurn) {
+            const cardWasPutDownTooLongAgo = !this._queryEvents.putDownCardWithinTimeFrame(cardId, this._gameConfig.timeToCounter());
+            if (cardWasPutDownTooLongAgo) return false;
+        }
+        else {
+            const tookControlOfTurnToLate = !this._queryEvents.lastTookControlWithinTimeFrameSincePutDownCard(cardId, this._gameConfig.timeToCounter());
+            if (tookControlOfTurnToLate) {
+                return false;
+            }
+        }
 
         return this._queryEvents.wasOpponentCardAtLatestPutDownInHomeZone(cardId)
             || this._queryEvents.wasOpponentCardAtLatestPutDownAsExtraStationCard(cardId);

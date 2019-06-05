@@ -1,10 +1,11 @@
 module.exports = function ({
     matchService,
-    stateSerializer
+    stateSerializer,
+    gameConfig
 }) {
 
-    const stateAttackDataTuples = [];
-    const stateCardIdTuples = [];
+    let stateAttackDataTimeTuples = [];
+    let stateCardIdTimeTuples = [];
 
     return {
         saveStateForCardId,
@@ -13,19 +14,35 @@ module.exports = function ({
         revertStateToBeforeAttack
     };
 
+    function clearOldPutDownCardState() {
+        const now = Date.now();
+        stateCardIdTimeTuples = stateCardIdTimeTuples.filter(([state, cardId, time]) => {
+            return now - time <= gameConfig.timeToCounter();
+        });
+    }
+
+    function clearOldAttackState() {
+        const now = Date.now();
+        stateAttackDataTimeTuples = stateAttackDataTimeTuples.filter(([state, attackData, time]) => {
+            return now - time <= gameConfig.timeToCounter();
+        });
+    }
+
     function saveStateForCardId(cardId) {
         const state = stateSerializer.serialize(matchService.getState());
-        stateCardIdTuples.push([state, cardId, Date.now()]);
+        stateCardIdTimeTuples.push([state, cardId, Date.now()]);
     }
 
     function revertStateToBeforeCardWasPutDown(cardId) {
-        const storedStateJson = stateCardIdTuples.slice().reverse().find(([_, id]) => id === cardId)[0];
+        const storedStateJson = stateCardIdTimeTuples.slice().reverse().find(([_, id]) => id === cardId)[0];
         const restoredState = stateSerializer.parse(storedStateJson);
         restoreFromState(restoredState);
+
+        clearOldPutDownCardState();
     }
 
     function saveStateForAttackData(stateBeforeAttack, { attackerCardId, defenderCardIds, time }) {
-        stateAttackDataTuples.push([
+        stateAttackDataTimeTuples.push([
             stateBeforeAttack,
             { attackerCardId, defenderCardIds, time },
             Date.now()
@@ -36,10 +53,12 @@ module.exports = function ({
         const storedStateJson = findStateFromDataKey({ attackerCardData, defenderCardsData, time });
         const restoredState = stateSerializer.parse(storedStateJson);
         restoreFromState(restoredState);
+
+        clearOldAttackState();
     }
 
     function findStateFromDataKey({ attackerCardData, defenderCardsData, time }) {
-        const stateDataTuple = stateAttackDataTuples
+        const stateDataTuple = stateAttackDataTimeTuples
             .slice()
             .reverse()
             .find(([_, dataKey]) => {

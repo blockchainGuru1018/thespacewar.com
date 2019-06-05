@@ -52,30 +52,30 @@ function PutDownCardController(deps) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         let cardData = playerStateService.findCardFromAnySource(cardId);
         if (!cardData) throw new CheatError(`Cannot find card`);
-        const canThePlayer = playerServiceProvider.byTypeAndId(PlayerServiceProvider.TYPE.canThePlayer, playerId);
-        if (!canThePlayer.counterCard({ id: targetCardId })) throw new CheatError('Cannot counter card');
 
         validateIfCanProgressCounterCardRequirementByCount(1, playerId);
         progressCounterCardRequirementByCount(1, playerId); //TODO Is this necessary? As the game resets below, also the requirement should reset...
 
-        const card = playerStateService.createBehaviourCard(cardData);
         const opponentId = matchService.getOpponentId(playerId);
         const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
         const targetCard = opponentStateService.createBehaviourCardById(targetCardId);
-        if (card.canCounterCard(targetCard)) {
-            stateMemento.revertStateToBeforeCardWasPutDown(targetCardId);
 
-            const opponentId = matchService.getOpponentId(playerId);
-            const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
-            opponentStateService.counterCard(targetCardId);
+        stateMemento.revertStateToBeforeCardWasPutDown(targetCardId);
 
-            playerStateService.useToCounter(cardId);
-
-            const opponentActionLog = playerServiceFactory.actionLog(matchService.getOpponentId(playerId));
-            opponentActionLog.opponentCounteredCard({ cardCommonId: targetCard.commonId });
-
-            matchComService.emitCurrentStateToPlayers();
+        const turnControl = playerServiceFactory.turnControl(playerId);
+        if (turnControl.opponentHasControlOfPlayersTurn()) {
+            const opponentTurnControl = playerServiceFactory.turnControl(opponentId);
+            opponentTurnControl.releaseControlOfOpponentsTurn();
         }
+
+        opponentStateService.counterCard(targetCardId);
+
+        playerStateService.useToCounter(cardId);
+
+        const opponentActionLog = playerServiceFactory.actionLog(matchService.getOpponentId(playerId));
+        opponentActionLog.opponentCounteredCard({ cardCommonId: targetCard.commonId });
+
+        matchComService.emitCurrentStateToPlayers();
     }
 
     function validateIfCanProgressCounterCardRequirementByCount(count, playerId) {
@@ -174,6 +174,12 @@ function PutDownCardController(deps) {
             const card = cardFactory.createCardForPlayer(cardData, playerId);
             if (card.requirementsWhenPutDownInHomeZone) {
                 addCardRequirementsOnPutDownInHomeZone({ playerId, card });
+            }
+
+            const turnControl = playerServiceFactory.turnControl(playerId);
+            if (turnControl.playerHasControlOfOpponentsTurn()) {
+                turnControl.releaseControlOfOpponentsTurn();
+                matchComService.emitCurrentStateToPlayers();
             }
         }
     }

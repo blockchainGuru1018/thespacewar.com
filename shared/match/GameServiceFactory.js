@@ -38,7 +38,8 @@ module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig 
     function stateMemento() {
         return StateMemento({
             matchService: api.matchService(),
-            stateSerializer: api.stateSerializer()
+            stateSerializer: api.stateSerializer(),
+            gameConfig
         });
     }
 

@@ -32,7 +32,13 @@ module.exports = testCase('FindCardController', {
             };
             const controller = Controller({
                 playerRequirementUpdaterFactory: this.playerRequirementUpdaterFactory,
-                playerServiceProvider
+                playerServiceProvider,
+                playerServiceFactory: {
+                    actionLog: () => ({
+                        opponentPlayedCards() {},
+                        cardsDiscarded() {}
+                    })
+                }
             });
 
             controller.onSelectCard('P1A', {
@@ -63,6 +69,15 @@ module.exports = testCase('FindCardController', {
         }
     },
     'checks if can progress requirement correctly': function () {
+        this.playerStateService = fakePlayerStateServiceFactory.withStubs({
+            removeCardFromDeck: () => ({ id: 'C1A' })
+        });
+        let playerServiceProvider = {
+            getStateServiceById: stub().returns(this.playerStateService),
+            getRequirementServiceById: () => ({
+                getFirstMatchingRequirement: () => ({ target: 'homeZone' })
+            })
+        };
         const playerRequirementUpdater = {
             canProgressRequirementByCount: stub().returns(true),
             progressRequirementByCount: stub()
@@ -71,11 +86,7 @@ module.exports = testCase('FindCardController', {
             playerRequirementUpdaterFactory: {
                 create: () => playerRequirementUpdater
             },
-            playerServiceProvider: {
-                getRequirementServiceById: () => ({
-                    getFirstMatchingRequirement: () => ({ target: 'homeZone' })
-                })
-            }
+            playerServiceProvider
         });
 
         controller.onSelectCard('P1A', { cardGroups: [{ source: 'deck', cardIds: ['C1A'] }] });
@@ -160,6 +171,18 @@ function Controller(deps = {}) {
                 canProgressRequirementByCount: () => true,
                 progressRequirementByCount: stub()
             })
+        },
+        playerServiceFactory: {
+            actionLog: () => ({
+                opponentPlayedCards() {},
+                cardsDiscarded() {}
+            })
+        },
+        matchService: {
+            getOpponentId(playerId) {
+                if (playerId === 'P1A') return 'P2A';
+                return 'P1A';
+            }
         }
     });
 
