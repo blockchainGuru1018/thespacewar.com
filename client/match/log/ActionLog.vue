@@ -38,20 +38,7 @@
                 'actionLog'
             ]),
             entries() {
-                return this.actionLog.queryLatest();
-            }
-        },
-        watch: {
-            entries() {
-                setTimeout(() => {
-                    this.$refs.actionLog.scrollTop = Number.MAX_SAFE_INTEGER;
-                });
-                setTimeout(() => {
-                    this.$refs.actionLog.scrollTop = Number.MAX_SAFE_INTEGER;
-                }, 10);
-                setTimeout(() => {
-                    this.$refs.actionLog.scrollTop = Number.MAX_SAFE_INTEGER;
-                }, 30);
+                return this.actionLog.queryLatest().slice().reverse();
             }
         },
         methods: {
@@ -89,9 +76,9 @@
         top: 0;
         right: 0;
         margin: #{$bannerTopMargin + $bannerHeight + ($bannerTopMargin / 2)} 10px 0 0;
-        background: rgba(18, 18, 18, .2);
+        background: rgba(18, 18, 18, .7);
         border: $borderSize solid $bannerBorderColor;
-        max-height: 320px;
+        max-height: 32vh;
         overflow-y: auto;
         overflow-x: hidden;
 
@@ -106,13 +93,13 @@
         align-items: center;
         height: 46px;
 
-        &:last-child {
-            filter: brightness(160%);
+        &:first-child {
+            filter: brightness(170%);
         }
     }
 
     .actionLog-entryIcon {
-        width: $bannerHeight - ($borderSize * 2);
+        width: $bannerHeight - ($borderSize * 2) - 1px;
         box-sizing: border-box;
         padding: 10px;
     }
