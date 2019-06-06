@@ -42,7 +42,8 @@
         props: ['holdingCard'],
         data() {
             return {
-                hoveringOverCardAtIndex: -1
+                hoveringOverCardAtIndex: -1,
+                draggingCardAtIndex: -1
             };
         },
         computed: {
@@ -188,24 +189,30 @@
             document.addEventListener('touchmove', onTouchMove);
 
             let startMouseY = null;
+            let startMouseX = null;
             const onMouseDown = e => {
-                const className = e.target.className;
-                if (className.includes('cardHoverBlowUp') || className.includes('cardHoverActivator')) {
-                    startMouseY = e.clientY;
-                    document.addEventListener('mousemove', onMouseMove);
-                }
+                if (!e.target.dataset.index) return;
+
+                this.draggingCardAtIndex = parseInt(e.target.dataset.index);
+                startMouseY = e.clientY;
+                startMouseX = e.clientX;
+                document.addEventListener('mousemove', onMouseMove);
             };
             const onMouseUp = () => {
                 startMouseY = null;
+                startMouseX = null;
                 document.removeEventListener('mousemove', onMouseMove);
             };
 
             const onMouseMove = e => {
-                if (startMouseY === null) return;
+                if (startMouseY === null || startMouseX === null) return;
 
-                if (!this.holdingCard && e.clientY < (startMouseY - dragLooseThreshold)) {
-                    this.$emit('cardDrag', this.playerVisibleCardsOnHand[this.hoveringOverCardAtIndex]);
+                const yPositionAboveThreshold = e.clientY < (startMouseY - dragLooseThreshold);
+                const xPositionAboveThreshold = e.clientX < (startMouseX - dragLooseThreshold) || e.clientX > (startMouseX + dragLooseThreshold);
+                if (!this.holdingCard && (yPositionAboveThreshold || xPositionAboveThreshold)) {
+                    this.$emit('cardDrag', this.playerVisibleCardsOnHand[this.draggingCardAtIndex]);
                     this.hoveringOverCardAtIndex = -1;
+                    this.draggingCardAtIndex = -1;
                 }
             };
 
