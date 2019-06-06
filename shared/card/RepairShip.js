@@ -24,10 +24,8 @@ module.exports = class RepairShip extends BaseCard {
     }
 
     canRepairCard(card) {
-        if (!card.canBeRepaired()) return false;
-
-        return card.isStationCard()
-            || card.isInHomeZone() === this.isInHomeZone();
+        return card.canBeRepaired()
+            && card.isInHomeZone() === this.isInHomeZone();
     }
 
     repairCard(otherCardOrStationCard) {

@@ -229,7 +229,8 @@ class BaseCard {
     }
 
     isInHomeZone() {
-        return this._playerStateService.isCardInHomeZone(this.id);
+        return this.isStationCard()
+            || this._playerStateService.isCardInHomeZone(this.id);
     }
 
     isStationCard() {

@@ -299,7 +299,7 @@ class PlayerStateService {
     }
 
     isCardFlipped(cardId) {
-        const stationCard = this.findStationCard(cardId)
+        const stationCard = this.findStationCard(cardId);
         return stationCard && stationCard.flipped;
     }
 
