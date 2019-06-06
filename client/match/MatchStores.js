@@ -44,7 +44,7 @@ module.exports = function (deps) {
     };
 
     function destroyAll() {
-        unregisterAllStores(rootStore, stores);
+        destroyAndUnregisterAllStores(rootStore, stores);
         matchController.stop();
     }
 };
@@ -85,8 +85,12 @@ function registerStoreModule(rootStore, store) {
     rootStore.registerModule(store.name, store);
 }
 
-function unregisterAllStores(rootStore, stores) {
+function destroyAndUnregisterAllStores(rootStore, stores) {
     for (const store of stores) {
+        if (store.actions.destroy) {
+            rootStore.dispatch(`${store.name}/destroy`);
+        }
+
         unregisterStoreModule(rootStore, store.name);
     }
 }

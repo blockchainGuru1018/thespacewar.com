@@ -1,18 +1,22 @@
 module.exports = function ({
-    rootStore,
-    matchController
+    rootStore
 }) {
 
     return {
         namespaced: true,
         name: 'keyboardShortcuts',
         actions: {
-            init
+            init,
+            destroy
         }
     };
 
     function init() {
         window.addEventListener('keydown', onKeyDown);
+    }
+
+    function destroy() {
+        window.removeEventListener('keydown', onKeyDown);
     }
 
     function onKeyDown(event) {

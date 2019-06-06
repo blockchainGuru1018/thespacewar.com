@@ -33,6 +33,8 @@ module.exports = function (deps) { //TODO Rename MatchConnectionController or so
 
     function stop() {
         socket.off('match', onSocketMatchEvent);
+
+        document.removeEventListener('visibilitychange', onVisibilityChange);
     }
 
     function onSocketMatchEvent(data) {

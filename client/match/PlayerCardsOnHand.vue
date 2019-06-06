@@ -38,12 +38,17 @@
     const { mapGetters: mapPermissionGetters } = Vuex.createNamespacedHelpers('permission');
     const { mapState: mapCardState } = Vuex.createNamespacedHelpers('card');
 
+    const DragLooseThreshold = 50;
+
     module.exports = {
         props: ['holdingCard'],
         data() {
             return {
                 hoveringOverCardAtIndex: -1,
-                draggingCardAtIndex: -1
+                draggingCardAtIndex: -1,
+                touchStartY: 0,
+                startMouseY: null,
+                startMouseX: null
             };
         },
         computed: {
@@ -155,27 +160,21 @@
                 if (this.hoveringOverCardAtIndex === index) {
                     this.hoveringOverCardAtIndex = -1;
                 }
-            }
-        },
-        mounted() {
-            const dragLooseThreshold = 50;
-
-            let startY = 0;
-            const onTouchStart = e => {
-                startY = e.touches[0].clientY;
-                onTouchMove(e);
-            };
-
-            const onTouchMove = e => {
+            },
+            documentTouchStart(event) {
+                this.touchStartY = event.touches[0].clientY;
+                this.documentTouchMove(event);
+            },
+            documentTouchMove(event) {
                 if (this.holdingCard) return;
 
-                if (e.touches[0].clientY < (startY - dragLooseThreshold)) {
+                if (event.touches[0].clientY < (this.touchStartY - DragLooseThreshold)) {
                     this.$emit('cardClick', this.playerVisibleCardsOnHand[this.hoveringOverCardAtIndex]);
                     this.hoveringOverCardAtIndex = -1;
                     return;
                 }
 
-                let touchedElement = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+                let touchedElement = document.elementFromPoint(event.touches[0].clientX, event.touches[0].clientY);
                 const activator = this.$refs.cardHoverActivator.find(activator => activator === touchedElement);
                 if (activator) {
                     this.hoveringOverCardAtIndex = parseInt(activator.dataset.index);
@@ -183,41 +182,45 @@
                 else {
                     this.hoveringOverCardAtIndex = -1;
                 }
-            };
+            },
+            documentMouseDown(event) {
+                if (!event.target.dataset.index) return;
 
-            document.addEventListener('touchstart', onTouchStart);
-            document.addEventListener('touchmove', onTouchMove);
+                this.draggingCardAtIndex = parseInt(event.target.dataset.index);
+                this.startMouseY = event.clientY;
+                this.startMouseX = event.clientX;
+                document.addEventListener('mousemove', this.documentMouseMove);
+            },
+            documentMouseUp() {
+                this.startMouseY = null;
+                this.startMouseX = null;
+                document.removeEventListener('mousemove', this.documentMouseMove);
+            },
+            documentMouseMove(event) {
+                if (this.startMouseY === null || this.startMouseX === null) return;
 
-            let startMouseY = null;
-            let startMouseX = null;
-            const onMouseDown = e => {
-                if (!e.target.dataset.index) return;
-
-                this.draggingCardAtIndex = parseInt(e.target.dataset.index);
-                startMouseY = e.clientY;
-                startMouseX = e.clientX;
-                document.addEventListener('mousemove', onMouseMove);
-            };
-            const onMouseUp = () => {
-                startMouseY = null;
-                startMouseX = null;
-                document.removeEventListener('mousemove', onMouseMove);
-            };
-
-            const onMouseMove = e => {
-                if (startMouseY === null || startMouseX === null) return;
-
-                const yPositionAboveThreshold = e.clientY < (startMouseY - dragLooseThreshold);
-                const xPositionAboveThreshold = e.clientX < (startMouseX - dragLooseThreshold) || e.clientX > (startMouseX + dragLooseThreshold);
+                const yPositionAboveThreshold = event.clientY < (this.startMouseY - DragLooseThreshold);
+                const xPositionAboveThreshold = event.clientX < (this.startMouseX - DragLooseThreshold) || event.clientX > (this.startMouseX + DragLooseThreshold);
                 if (!this.holdingCard && (yPositionAboveThreshold || xPositionAboveThreshold)) {
                     this.$emit('cardDrag', this.playerVisibleCardsOnHand[this.draggingCardAtIndex]);
                     this.hoveringOverCardAtIndex = -1;
                     this.draggingCardAtIndex = -1;
                 }
-            };
+            }
+        },
+        mounted() {
+            document.addEventListener('touchstart', this.documentTouchStart);
+            document.addEventListener('touchmove', this.documentTouchMove);
 
-            document.addEventListener('mousedown', onMouseDown);
-            document.addEventListener('mouseup', onMouseUp);
+            document.addEventListener('mousedown', this.documentMouseDown);
+            document.addEventListener('mouseup', this.documentMouseUp);
+        },
+        destroyed() {
+            document.removeEventListener('touchstart', this.documentTouchStart);
+            document.removeEventListener('touchmove', this.documentTouchMove);
+
+            document.removeEventListener('mousedown', this.documentMouseDown);
+            document.removeEventListener('mouseup', this.documentMouseUp);
         }
     };
 </script>
