@@ -12,7 +12,7 @@ class GoodKarma extends BaseCard {
     }
 
     get requirementsWhenEnterDrawPhase() {
-        const cardCommonId = this.commonId;
+        const cardCommonId = GoodKarma.CommonId;
         return {
             forOpponent: [],
             forPlayer: [
@@ -22,7 +22,7 @@ class GoodKarma extends BaseCard {
     }
 
     get requirementsWhenLeavingDrawPhase() {
-        const cardCommonId = this.commonId;
+        const cardCommonId = GoodKarma.CommonId;
         return {
             forOpponent: [],
             forPlayer: [

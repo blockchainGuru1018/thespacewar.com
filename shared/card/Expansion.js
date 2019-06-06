@@ -16,7 +16,7 @@ module.exports = class Expansion extends BaseCard {
     get requirementsWhenPutDownInHomeZone() {
         return {
             forOpponent: [
-                { type: 'drawCard', count: 2 }
+                { type: 'drawCard', count: 2, cardCommonId: Expansion.CommonId }
             ],
             forPlayer: []
         };

@@ -6,7 +6,8 @@ class PlayerRuleService {
         canThePlayer,
         playerRequirementService,
         playerPhase,
-        turnControl
+                    turnControl,
+                    gameConfig
     } = {}) {
         this._playerStateService = playerStateService;
         this._playerRequirementService = playerRequirementService;

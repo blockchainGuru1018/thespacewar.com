@@ -11,7 +11,11 @@ module.exports = class FatalError extends BaseCard {
 
     get requirementsWhenPutDownInHomeZone() {
         return {
-            forOpponent: [{ type: 'drawCard', count: 2 }],
+            forOpponent: [{
+                type: 'drawCard',
+                count: 2,
+                cardCommonId: FatalError.CommonId
+            }],
             forPlayer: []
         };
     }
