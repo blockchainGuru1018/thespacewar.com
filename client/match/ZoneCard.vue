@@ -59,7 +59,9 @@
                     v-else-if="predictedResultsIfAttacked.defenderDestroyed"
                     class="actionOverlay-predictedLethal actionOverlay-predictionText"
                 >
-                    ⇒0
+                    {{ behaviourCard.defense - behaviourCard.damage }}
+                    ⇒
+                    0
                 </div>
                 <div
                     v-else
@@ -148,7 +150,9 @@
                         v-if="predictedResultsIfTargetForAction.destroyed"
                         class="actionOverlay-predictedLethal actionOverlay-predictionText"
                     >
-                        ⇒0
+                        {{ behaviourCard.defense - behaviourCard.damage }}
+                        ⇒
+                        0
                     </div>
                     <div
                         v-else
