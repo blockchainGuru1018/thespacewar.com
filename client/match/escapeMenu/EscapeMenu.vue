@@ -229,6 +229,7 @@
                     { value: 'addCard', text: 'Add card' },
                     { value: 'actionPoints', text: 'Add action points' },
                     { value: 'removeAllRequirements', text: 'Remove all requirements' },
+                    { value: 'addDamageStationCardRequirement', text: 'Add damage station card requirement' },
                     { value: 'getCardsInDeck', text: 'Get cards in deck (result is logged in the console)' }
                 ];
             },

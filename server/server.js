@@ -167,7 +167,7 @@ function setupRoutes(deps, controllers) {
 
     function validateDebugPassword(password) {
         const timeSinceLastCheck = Date.now() - lastCheckTime;
-        if (timeSinceLastCheck < 10 * 1000) {
+        if (timeSinceLastCheck < 3 * 1000) {
             return false;
         }
         else {

@@ -16,6 +16,7 @@ let PutDownCardEvent = require('../../../shared/PutDownCardEvent.js').forTest;
 let MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
 const PursuiterCommonId = '19';
 const EnergyShieldCommonId = '21';
+const SmallRepairShip = require('../../../shared/card/SmallRepairShop.js');
 
 module.exports = {
     'when first player is in attack phase and moves card': {
@@ -1620,5 +1621,58 @@ module.exports = {
                 assert.equals(this.error.message, 'Cannot sacrifice');
             }
         }
-    }
+    },
+    'when move repair ship to opponent zone and back home again and repair flipped station card': {
+        async setUp() {
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['opponentMovedCard', 'stateChanged']);
+            const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
+            this.match = createMatch({ players });
+            this.match.restoreFromState(createState({
+                turn: 2,
+                playerStateById: {
+                    'P1A': {
+                        phase: 'attack',
+                        cardsInOpponentZone: [createCard({ id: 'C1A', commonId: SmallRepairShip.CommonId })],
+                        stationCards: [
+                            flippedStationCard('S1A'),
+                            stationCard('S2A'),
+                        ],
+                        events: [
+                            PutDownCardEvent({ cardId: 'C1A', turn: 1 }),
+                            MoveCardEvent({ turn: 1, cardId: 'C1A' })
+                        ]
+                    }
+                }
+            }));
+            this.match.moveCard('P1A', 'C1A');
+
+            const options = { repairerCardId: 'C1A', cardToRepairId: 'S1A' };
+            this.error = catchError(() => this.match.repairCard('P1A', options));
+        },
+        'should NOT throw an error'() {
+            refute(this.error);
+        },
+        'station card should be unflipped'() {
+            assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                stationCards: sinon.match.some(sinon.match({ id: 'S1A', flipped: undefined }))
+            }));
+        }
+    },
 };
+
+function stationCard(id, place = 'action') {
+    return {
+        place,
+        flipped: false,
+        card: createCard({ id })
+    };
+}
+
+function flippedStationCard(id, place = 'action') {
+    return {
+        place,
+        flipped: true,
+        card: createCard({ id })
+    };
+}
