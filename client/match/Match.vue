@@ -246,6 +246,7 @@
                                 v-if="opponentCardsInPlayerZone.length === 0"
                             />
                         </div>
+
                         <div class="playerCardsInZone field-playerZoneCards field-zone field-section">
                             <template v-for="n in visiblePlayerCards.length">
                                 <zone-card
@@ -335,11 +336,25 @@
                     </div>
                     <PlayerHud />
                 </div>
+
+                <transition name="fade-fast">
+                    <div
+                        v-if="activateEventCardGhostVisible"
+                        class="playerEventCardGhost ghost"
+                    >
+                        <div
+                            class="activateEventCard"
+                            @click.stop="cardGhostClick('zone')"
+                        >
+                            Activate
+                        </div>
+                    </div>
+                </transition>
             </div>
             <div
+                v-if="holdingCard"
                 :class="['card', 'holdingCard', {'card-faceDown': holdingCard.faceDown, 'card-faceDown--player': holdingCard.faceDown}]"
                 :style="holdingCardStyle"
-                v-if="holdingCard"
             />
             <card-choice-dialog />
             <loading-indicator />
@@ -481,20 +496,31 @@
                     left: this.mousePosition.x + 'px',
                     top: this.mousePosition.y + 'px',
                     backgroundImage: `url(${cardUrl})`,
-                    pointerEvents: 'none'
+                    pointerEvents: 'none',
+                    transform: 'translate(-10%, -20%)'
                 }
             },
             playerZoneCardGhostVisible() {
                 if (!this.holdingCard) return false;
+                if (this.holdingEventCard) return false;
                 if (this.showOnlyCardGhostsFor && !this.showOnlyCardGhostsFor.includes('homeZone')) return false;
 
+                return this.canPutDownHoldingCard;
+            },
+            activateEventCardGhostVisible() {
+                if (!this.holdingEventCard) return false;
+                if (this.showOnlyCardGhostsFor && !this.showOnlyCardGhostsFor.includes('homeZone')) return false;
+
+                return this.canPutDownHoldingCard;
+            },
+            holdingEventCard() {
+                return this.holdingCard && this.holdingCard.type === 'event';
+            },
+            canPutDownHoldingCard() {
                 if (!this.canAffordHoldingCard) return false;
 
                 return this.createCard(this.holdingCard).canBePutDownAnyTime()
-                    || (this.canPutDownCards && this.canPutDownHoldingCard);
-            },
-            canPutDownHoldingCard() {
-                return this.canPutDownCard(this.holdingCard);
+                    || (this.canPutDownCards && this.canPutDownCard(this.holdingCard));
             },
             canAffordHoldingCard() {
                 return this.canAffordCard(this.holdingCard);
@@ -709,8 +735,7 @@
             this.$refs.match.addEventListener('mouseup', event => {
                 if (!this.draggingCard) return;
 
-                const targetElementClasses = Array.from(event.target.classList);
-                const isCardGhost = targetElementClasses.includes('card-ghost');
+                const isCardGhost = event.target.className.includes('ghost');
                 if (!isCardGhost) {
                     this.emptyClick();
                 }
@@ -742,6 +767,5 @@
     };
 </script>
 <style lang="scss">
-    @import "match.scss";
-    @import "stationCard.scss";
+    @import "index";
 </style>

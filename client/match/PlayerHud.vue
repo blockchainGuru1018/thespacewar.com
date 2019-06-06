@@ -4,7 +4,7 @@
             v-if="!gameHasEnded"
             to="player-top"
         >
-            <div v-if="gameOn" class="nextPhaseButtonContainer">
+            <div v-if="nextPhaseButtonContainerVisible" class="nextPhaseButtonContainer">
                 <button
                     v-if="phase === 'start'"
                     class="playerHud-phaseText nextPhaseButton"
@@ -30,7 +30,7 @@
                 </template>
             </div>
 
-            <div class="guideTextContainer" v-if="!choosingStartingPlayer">
+            <div class="guideTextContainer" v-if="guideTextContainerVisible">
                 <div
                     v-if="waitingForOtherPlayerToFinishRequirements"
                     class="guideText-waitingwForOtherPlayer guideText guideText--small"
@@ -155,9 +155,11 @@
                 </div>
             </div>
 
-            <div class="overworkContainer">
+            <div
+                v-if="overworkContainerVisible"
+                class="overworkContainer"
+            >
                 <button
-                    v-if="canIssueOverwork"
                     title="Your opponent may flip 1 of your station cards & you receive 2 action points"
                     class="overwork darkButton"
                     @click="overwork"
@@ -319,6 +321,7 @@
             ]),
             ...cardHelpers.mapState([
                 'activeAction',
+                'holdingCard'
             ]),
             ...cardHelpers.mapGetters([
                 'activeActionCardImageUrl'
@@ -330,6 +333,15 @@
                 'opponentHasControlOfPlayersTurn',
                 'playerHasControlOfOpponentsTurn'
             ]),
+            nextPhaseButtonContainerVisible() {
+                return this.gameOn && !this.holdingCard;
+            },
+            guideTextContainerVisible() {
+                return !this.choosingStartingPlayer && (!this.holdingCard || this.holdingCard.type !== 'event');
+            },
+            overworkContainerVisible() {
+                return this.canIssueOverwork && !this.holdingCard;
+            },
             waitingForOtherPlayerToSelectStartingPlayer() {
                 return this.mode === MatchMode.chooseStartingPlayer && !this.isOwnTurn;
             },

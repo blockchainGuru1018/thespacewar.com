@@ -1,12 +1,14 @@
 <template>
-    <div
-        :class="['card', 'card-ghost', {'card-ghost--hoveredOver': elementHoveredOver === $el }]"
-        :data-location="location"
-        @click.stop="click"
-        @mouseup="mouseup"
-    >
-        <slot></slot>
-    </div>
+    <transition name="fade-fast">
+        <div
+            :class="['card', 'card-ghost', {'card-ghost--hoveredOver': elementHoveredOver === $el }]"
+            :data-location="location"
+            @click.stop="click"
+            @mouseup="mouseup"
+        >
+            <slot></slot>
+        </div>
+    </transition>
 </template>
 <script>
     const Vuex = require('vuex');

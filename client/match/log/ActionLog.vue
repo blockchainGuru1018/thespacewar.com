@@ -1,5 +1,6 @@
 <template>
     <div
+        v-if="!holdingCard"
         class="actionLog"
         ref="actionLog"
         @click="toggleExpanded"
@@ -26,6 +27,7 @@
 <script>
     const Vuex = require('vuex');
     const matchHelpers = Vuex.createNamespacedHelpers('match');
+    const cardHelpers = Vuex.createNamespacedHelpers('card');
 
     module.exports = {
         data() {
@@ -36,6 +38,9 @@
         computed: {
             ...matchHelpers.mapGetters([
                 'actionLog'
+            ]),
+            ...cardHelpers.mapState([
+                'holdingCard'
             ]),
             entries() {
                 return this.actionLog.queryLatest().slice().reverse();

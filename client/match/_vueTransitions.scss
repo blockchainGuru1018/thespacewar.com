@@ -1,0 +1,14 @@
+@mixin fade($name, $time) {
+  .#{$name}-enter-active,
+  .#{$name}-leave-active {
+    transition: opacity $time;
+  }
+
+  .#{$name}-enter,
+  .#{$name}-leave-to {
+    opacity: 0;
+  }
+}
+
+@include fade('fade', .5s);
+@include fade('fade-fast', .22s);

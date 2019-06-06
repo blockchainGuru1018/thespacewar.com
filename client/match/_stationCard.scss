@@ -8,6 +8,7 @@
   flex: 1 1 auto;
   max-width: 30%;
   min-width: 110px;
+  z-index: 2;
 
   .card {
     width: $playerStationCardWidth;
@@ -45,6 +46,8 @@
   flex: 0 1 auto;
   min-width: 20px;
   max-width: 30px;
+  width: $cardGhostWidth;
+  position: relative;
 
   &--fullSize {
     flex: 0 0 auto;
@@ -52,7 +55,8 @@
   }
 
   .card-ghost {
-    position: relative;
+    position: absolute;
+    top: 0;
     z-index: 2;
   }
 }
