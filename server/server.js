@@ -123,6 +123,7 @@ function setupRoutes(deps, controllers) {
         res.sendFile(path.join(__dirname, 'client-dist', 'index.js'));
     });
     app.post('/login', controllers.user.login);
+    app.post('/test-access-key', controllers.user.testAccessKey);
     app.get('/user', controllers.user.getAll);
     app.post('/match', controllers.match.create);
     app.get('/match/:matchId/player/:playerId/state', controllers.match.getOwnState);

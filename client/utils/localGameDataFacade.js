@@ -3,6 +3,7 @@ const Keys = {
     OngoingMatch: 'ongoing-match',
     AudioSettings: 'audio-settings',
     DebugPassword: 'debug-password',
+    AccessKey: 'access-key',
 };
 
 module.exports = Facade();
