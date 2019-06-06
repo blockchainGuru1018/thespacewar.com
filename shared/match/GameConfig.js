@@ -7,7 +7,8 @@ const propertyMap = {
     STATION_CARDS_AT_START: 'stationCardsAtStart',
     MAX_STATION_CARDS: 'maxStationCards',
     MAX_RECYCLES: 'maxRecycles',
-    TIME_TO_COUNTER: 'timeToCounter'
+    TIME_TO_COUNTER: 'timeToCounter',
+    ACCESS_KEY: 'accessKey'
 };
 
 const Defaults = convertConfig(DEFAULT_CONFIG);
@@ -23,7 +24,8 @@ function GameConfig({
     stationCardsAtStart = Defaults.stationCardsAtStart,
     maxStationCards = Defaults.maxStationCards,
     maxRecycles = Defaults.maxRecycles,
-    timeToCounter = Defaults.timeToCounter
+    timeToCounter = Defaults.timeToCounter,
+    accessKey = Defaults.accessKey
 } = {}) {
 
     return {
@@ -34,7 +36,8 @@ function GameConfig({
         stationCardsAtStart: () => stationCardsAtStart,
         maxStationCards: () => maxStationCards,
         maxRecycles: () => maxRecycles,
-        timeToCounter: () => timeToCounter
+        timeToCounter: () => timeToCounter,
+        accessKey: () => accessKey
     };
 }
 

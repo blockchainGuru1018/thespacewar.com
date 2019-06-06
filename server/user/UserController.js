@@ -1,6 +1,7 @@
-module.exports = function (deps) {
-
-    const userRepository = deps.userRepository;
+module.exports = function ({
+    userRepository,
+    gameConfig
+}) {
 
     return {
         login,
@@ -8,6 +9,8 @@ module.exports = function (deps) {
     };
 
     async function login(req, res) {
+        if (req.body.secret.startsWith(gameConfig.accessKey())) throw new Error('Wrong key');
+
         let user = await userRepository.addUser(req.body.name, req.body.secret);
         res.json(user);
     }
