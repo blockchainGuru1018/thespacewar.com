@@ -32,14 +32,20 @@ function PutDownDiscovery({
             });
         }
         else if (choice === 'discard') {
+            const playerCount = 1;
+            const opponentCount = 2;
+            const bothPlayersCanDiscardSomeCard =
+                playerRequirementService.canAddDiscardCardRequirementWithCountOrLess(playerCount)
+                && opponentRequirementService.canAddDiscardCardRequirementWithCountOrLess(opponentCount);
+
             playerRequirementService.addDiscardCardRequirement({
-                count: 1,
-                common: true,
+                count: playerCount,
+                common: bothPlayersCanDiscardSomeCard,
                 cardCommonId: cardData.commonId
             });
             opponentRequirementService.addDiscardCardRequirement({
-                count: 2,
-                common: true,
+                count: opponentCount,
+                common: bothPlayersCanDiscardSomeCard,
                 cardCommonId: cardData.commonId
             })
         }
