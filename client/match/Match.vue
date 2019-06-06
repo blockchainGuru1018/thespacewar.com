@@ -219,6 +219,12 @@
                                 >
                                     Recycle
                                 </div>
+                                <div
+                                        class="discard"
+                                        v-else
+                                >
+                                    Discard
+                                </div>
                             </CardGhost>
                         </div>
                     </div>
