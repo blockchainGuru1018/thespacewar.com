@@ -194,6 +194,9 @@ module.exports = function ({
         const repairerCard = cardFactory.createCardForPlayer(repairerCardData, playerId);
         if (!repairerCard.canRepair()) throw CheatError('Cannot repair');
 
+        const cardToRepair = playerStateService.createBehaviourCardById(cardToRepairId);
+        if (!repairerCard.canRepairCard(cardToRepair)) throw CheatError('Cannot repair');
+
         const repair = playerServiceFactory.repair(playerId);
         repair.cardOrStationCard(repairerCardId, cardToRepairId);
     }

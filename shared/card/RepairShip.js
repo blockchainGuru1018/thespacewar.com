@@ -23,6 +23,11 @@ module.exports = class RepairShip extends BaseCard {
             || this._canRepairFlippedStationCards();
     }
 
+    canRepairCard(card) {
+        return card.canBeRepaired()
+            && card.isInHomeZone() === this.isInHomeZone();
+    }
+
     repairCard(otherCardOrStationCard) {
         if (otherCardOrStationCard.flipped) {
             otherCardOrStationCard.flipped = false;

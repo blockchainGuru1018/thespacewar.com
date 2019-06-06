@@ -29,7 +29,7 @@ module.exports = function ({
             })
         }
 
-        registerEvent(repairerCardId, cardToRepairId);
+        registerEvent(repairerCard, cardToRepair);
     }
 
     function registerEvent(repairerCard, cardToRepair) {

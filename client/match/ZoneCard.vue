@@ -374,15 +374,13 @@
             canRepair() {
                 if (!this.canThePlayer.repairCards()) return false;
 
-                return this
-                    .createCard(this.card)
-                    .canRepair();
+                return this.behaviourCard.canRepair();
             },
             canBeSelectedForRepair() {
                 if (!this.isPlayerCard) return false;
                 if (!this.repairerCardId) return false;
 
-                return this.createCard(this.card).canBeRepaired();
+                return this.repairerCard.canRepairCard(this.behaviourCard);
             },
             isSelectedForAction() {
                 return this.selectedCardIdsForAction.includes(this.card.id);
