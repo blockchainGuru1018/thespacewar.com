@@ -77,10 +77,7 @@ class CanThePlayer {
             || this._opponentStateService.hasMatchingCardInSomeZone(card => card.preventsAnyPlayerFromPlayingAnEventCard);
     }
 
-    putDownMoreStationCards() {
-        const stationCardCount = this._playerStateService.getStationCardCount();
-        if (stationCardCount >= this._gameConfig.maxStationCards()) return false;
-
+    putDownMoreStationCardsThisTurn() {
         const currentTurn = this._matchService.getTurn();
 
         const extraFreeStationCards = this._queryEvents.countFreeExtraStationCardsGrantedOnTurn(currentTurn);

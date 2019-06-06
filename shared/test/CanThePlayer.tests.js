@@ -32,7 +32,7 @@ module.exports = testCase('CanThePlayer', {
             this.canThePlayer = testHelper.canThePlayer('P1A');
         },
         'should NOT be able to put down more station cards'() {
-            refute(this.canThePlayer.putDownMoreStationCards());
+            refute(this.canThePlayer.putDownMoreStationCardsThisTurn());
         }
     },
     'when card is of type spaceShip': {

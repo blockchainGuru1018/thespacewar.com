@@ -386,7 +386,8 @@ module.exports = function (deps) {
             playerRequirementService: getters.playerRequirementService,
             canThePlayer: getters.canThePlayer,
             turnControl: getters.turnControl,
-            playerPhase: getters.playerPhase
+            playerPhase: getters.playerPhase,
+            gameConfig: getters.gameConfig
         });
     }
 
@@ -412,7 +413,7 @@ module.exports = function (deps) {
             matchService: getters.matchService,
             queryEvents: getters.queryEvents,
             playerStateService: getters.opponentStateService,
-            opponentStateService: getters.playerStateService,
+            opponentStateService: getters.playerStateService
         });
     }
 

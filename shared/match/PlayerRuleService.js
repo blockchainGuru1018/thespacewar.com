@@ -14,6 +14,7 @@ class PlayerRuleService {
         this._playerPhase = playerPhase;
         this._opponentStateService = opponentStateService;
         this._canThePlayer = canThePlayer;
+        this._gameConfig = gameConfig;
     }
 
     canPutDownCardsInHomeZone() {
@@ -26,6 +27,10 @@ class PlayerRuleService {
     }
 
     canPutDownStationCards() {
+        if (this._canThePlayer.putDownMoreStartingStationCards()) return true;
+
+        if (this.hasReachedMaximumStationCardCapacity()) return false;
+
         let playerRequirements = this._playerRequirementService;
         if (playerRequirements.hasAnyRequirement()) return false;
         if (playerRequirements.isWaitingOnOpponentFinishingRequirement()) return false;
@@ -46,6 +51,11 @@ class PlayerRuleService {
         return stationCards
             .filter(card => card.place === 'handSize')
             .length * 3
+    }
+
+    hasReachedMaximumStationCardCapacity() {
+        const stationCardCount = this._playerStateService.getStationCardCount();
+        return stationCardCount >= this._gameConfig.maxStationCards();
     }
 }
 

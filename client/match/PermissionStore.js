@@ -19,7 +19,7 @@ module.exports = function (deps) {
             canDiscardCards,
             canPutDownCards,
             canPutDownStationCards,
-            canPutDownMoreStationCards,
+            canPutDownMoreStationCardsThisTurn,
             canSelectStationCards,
             canSelectCardsForActiveAction,
             canPutDownStationCardInHomeZone,
@@ -88,18 +88,12 @@ module.exports = function (deps) {
     }
 
     function canPutDownStationCards(state, getters, rootState, rootGetters) {
-        if (rootGetters['match/canThePlayer'].putDownMoreStartingStationCards()) return true;
-
-        if (getters.waitingForOtherPlayerToFinishRequirements) return false;
-        const hasRequirement = !!getFrom('firstRequirement', 'requirement');
-        if (hasRequirement) return false;
-
-        return rootState.match.phase === 'action';
+        return rootGetters['match/playerRuleService'].canPutDownStationCards();
     }
 
-    function canPutDownMoreStationCards(state, getters, rootState, rootGetters) {
+    function canPutDownMoreStationCardsThisTurn(state, getters, rootState, rootGetters) {
         const canThePlayer = rootGetters['match/canThePlayer'];
-        return canThePlayer.putDownMoreStationCards();
+        return canThePlayer.putDownMoreStationCardsThisTurn();
     }
 
     function canPutDownStationCardInHomeZone(state, getters, rootState, rootGetters) {

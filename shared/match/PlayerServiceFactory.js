@@ -292,7 +292,8 @@ module.exports = function ({
             playerRequirementService: api.playerRequirementService(playerId),
             canThePlayer: api.canThePlayer(playerId),
             turnControl: api.turnControl(playerId),
-            playerPhase: api.playerPhase(playerId)
+            playerPhase: api.playerPhase(playerId),
+            gameConfig
         });
     }
 

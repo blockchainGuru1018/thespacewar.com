@@ -126,7 +126,7 @@ function PutDownCardController(deps) {
             }
 
             const card = cardFactory.createCardForPlayer(cardData, playerId);
-            if (!card.canBePutDownAsExtraStationCard && !canThePlayer.putDownMoreStationCards()) {
+            if (!card.canBePutDownAsExtraStationCard && !canThePlayer.putDownMoreStationCardsThisTurn()) {
                 throw new CheatError('Cannot put down more station cards this turn');
             }
         }
