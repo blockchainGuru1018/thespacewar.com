@@ -260,9 +260,8 @@ module.exports = function ({
             collapsedEntries.push(entries.pop());
         }
 
-        const updatedEntries = entries.reverse();
         playerStateService.update(playerState => {
-            playerState.actionLogEntries = updatedEntries;
+            playerState.actionLogEntries = entries;
         });
 
         return collapsedEntries;

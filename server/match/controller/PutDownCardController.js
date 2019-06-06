@@ -1,6 +1,7 @@
 const CheatError = require('../CheatError.js');
 const CardApplier = require('../card/CardApplier.js');
 const PlayerServiceProvider = require('../../../shared/match/PlayerServiceProvider.js');
+const ExcellentWork = require('../../../shared/card/ExcellentWork.js');
 
 function PutDownCardController(deps) {
 
@@ -145,10 +146,15 @@ function PutDownCardController(deps) {
 
     function putDownCardAtNewLocation({ playerId, location, cardData, choice }) {
         if (location.startsWith('station')) {
-            putDownStationCard({ playerId, cardData, location, choice });
+            if (cardData.commonId === ExcellentWork.CommonId) { // WORKAROUND: This is just lazy. Should be a more general approach perhaps.
+                const opponentActionLog = playerServiceFactory.actionLog(matchService.getOpponentId(playerId));
+                opponentActionLog.opponentPlayedCards({ cardIds: [cardData.id], cardCommonIds: [cardData.commonId] });
+            }
 
             const opponentActionLog = playerServiceFactory.actionLog(matchService.getOpponentId(playerId));
             opponentActionLog.opponentExpandedStation();
+
+            putDownStationCard({ playerId, cardData, location, choice });
         }
         else {
             const opponentActionLog = playerServiceFactory.actionLog(matchService.getOpponentId(playerId));
