@@ -14,7 +14,7 @@ module.exports = function ({
             init,
             storeOwnUser
         }
-    }
+    };
 
     async function init({ state }) {
         userRepository.onUsersChanged(users => {

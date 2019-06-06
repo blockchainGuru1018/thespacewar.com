@@ -21,8 +21,12 @@
             :class="viewClasses"
         />
         <Login
-            v-else
+            v-else-if="hasAccess"
             :class="viewClasses"
+        />
+        <EnterAccessKey
+            :class="viewClasses"
+            v-else
         />
     </div>
 </template>
@@ -30,9 +34,11 @@
     const Vuex = require('vuex');
     const loadingHelpers = Vuex.createNamespacedHelpers('loading');
     const userHelpers = Vuex.createNamespacedHelpers('user');
+    const loginHelpers = Vuex.createNamespacedHelpers('login');
     const resolveModuleWithPossibleDefault = require('../utils/resolveModuleWithPossibleDefault.js');
     const Lobby = resolveModuleWithPossibleDefault(require('../lobby/Lobby.vue'));
     const Login = resolveModuleWithPossibleDefault(require('../login/Login.vue'));
+    const EnterAccessKey = resolveModuleWithPossibleDefault(require('../login/EnterAccessKey.vue'));
 
     module.exports = {
         computed: {
@@ -44,6 +50,9 @@
             ]),
             ...userHelpers.mapState([
                 'ownUser'
+            ]),
+            ...loginHelpers.mapState([
+                'hasAccess'
             ]),
             backdropClasses() {
                 let classes = ['loading-backdrop'];
@@ -72,7 +81,8 @@
         },
         components: {
             Lobby,
-            Login
+            Login,
+            EnterAccessKey
         }
     };
 </script>

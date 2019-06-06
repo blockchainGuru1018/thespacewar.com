@@ -11,21 +11,52 @@ module.exports = function ({
         namespaced: true,
         name: 'login',
         state: {
-            username: ''
+            username: '',
+            enteredWrongAccessKey: false,
+            hasAccess: false
         },
         getters: {
             checkIfHasPreviousSession
         },
         actions: {
+            init,
             login,
+            testAccessKey,
             restoreFromPreviousSession
         }
     };
+
+    function init({ state, dispatch }) {
+        const storedAccessKey = localGameDataFacade.AccessKey.get();
+        if (storedAccessKey) {
+            state.hasAccess = true;
+            dispatch('testAccessKey', storedAccessKey);
+        }
+    }
 
     async function login({ state, dispatch }) {
         let ownUser = await ajax.jsonPost('/login', { name: state.username });
         localGameDataFacade.setOwnUser(ownUser);
         dispatch('user/storeOwnUser', ownUser, { root: true });
+    }
+
+    async function testAccessKey({ state }, key) {
+        try {
+            const result = await ajax.jsonPost('/test-access-key', { key });
+            if (result.valid) {
+                state.enteredWrongAccessKey = false;
+                state.hasAccess = true;
+                localGameDataFacade.AccessKey.set(key);
+            }
+            else {
+                state.hasAccess = false;
+                state.enteredWrongAccessKey = true;
+                localGameDataFacade.AccessKey.remove();
+            }
+        }
+        catch (error) {
+            state.enteredWrongAccessKey = true;
+        }
     }
 
     function checkIfHasPreviousSession() {

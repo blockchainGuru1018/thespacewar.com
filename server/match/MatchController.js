@@ -12,6 +12,8 @@ module.exports = function (deps) {
     async function create(req, res) {
         const playerId = req.body.playerId;
         const opponentId = req.body.opponentId;
+        if (!playerId || !opponentId) throw new Error('Illegal operation');
+
         const match = await matchRepository.create({ playerId, opponentId });
         res.json(match);
     }

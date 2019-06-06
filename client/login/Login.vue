@@ -1,10 +1,18 @@
 <template>
     <div class="login">
-        <input @keydown.exact.enter="loginClick"
-               class="login-username"
-               placeholder="username"
-               v-model="username"/>
-        <button :style="{opacity: username.length >= 3 ? 1 : 0}" @click="loginClick" class="login-submit">></button>
+        <input
+            @keydown.exact.enter="loginClick"
+            class="login-username"
+            placeholder="username"
+            v-model="username"
+        />
+        <button
+            :style="{opacity: username.length >= 3 ? 1 : 0}"
+            @click="loginClick"
+            class="login-submit"
+        >
+            >
+        </button>
     </div>
 </template>
 <script>
