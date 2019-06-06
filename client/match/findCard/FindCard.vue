@@ -52,6 +52,8 @@
     const Vuex = require('vuex');
     const getCardImageUrl = require('../../utils/getCardImageUrl');
     const findCardHelpers = Vuex.createNamespacedHelpers('findCard');
+    const Sabotage = require('../../../shared/card/Sabotage.js');
+    const MissilesLaunched = require('../../../shared/card/MissilesLaunched.js');
 
     const nameBySource = { //TODO Do something clever with a the, future, new Source classes
         'deck': 'Deck',
@@ -81,7 +83,17 @@
                 return this.filteredRequirement.cardGroups.reduce((acc, group) => acc + group.cards.length, 0);
             },
             findCardHeaderText() {
-                return `Pick ${this.cardsToSelect} ${pluralize('card', this.cardsToSelect)}`;
+                let endText = '';
+
+                const cardCommonId = this.requirement.cardCommonId;
+                if (cardCommonId === Sabotage.CommonId) {
+                    endText = ' to discard';
+                }
+                else if (cardCommonId === MissilesLaunched.CommonId) {
+                    endText = ' to play';
+                }
+
+                return `Pick ${this.cardsToSelect} ${pluralize('card', this.cardsToSelect)}${endText}`;
             }
         },
         methods: {
