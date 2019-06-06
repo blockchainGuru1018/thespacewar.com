@@ -73,8 +73,14 @@ class CanThePlayer {
     }
 
     _somePlayerHasCardThatPreventsEventCards() {
-        return this._playerStateService.hasMatchingCardInSomeZone(card => card.preventsAnyPlayerFromPlayingAnEventCard)
-            || this._opponentStateService.hasMatchingCardInSomeZone(card => card.preventsAnyPlayerFromPlayingAnEventCard);
+        return this._playerStateService.hasMatchingCardInSomeZone(card => {
+                return card.preventsAnyPlayerFromPlayingAnEventCard
+                    && this.useThisCard(card);
+            })
+            || this._opponentStateService.hasMatchingCardInSomeZone(card => {
+                return card.preventsAnyPlayerFromPlayingAnEventCard
+                    && this.useThisCard(card);
+            });
     }
 
     putDownMoreStationCardsThisTurn() {
