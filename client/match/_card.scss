@@ -105,11 +105,11 @@ $durationCardsMarginToOtherCards: 35px;
   }
 }
 
-.playerCardsInZone .card-lastDurationCard {
+.playerCardsInZone .card.card-lastDurationCard {
   margin-right: $durationCardsMarginToOtherCards;
 }
 
-.opponentCardsInZone .card-lastDurationCard {
+.opponentCardsInZone .card.card-lastDurationCard {
   margin-left: $durationCardsMarginToOtherCards;
 }
 
