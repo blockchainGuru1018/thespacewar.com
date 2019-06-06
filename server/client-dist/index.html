@@ -57,6 +57,13 @@
         ::-webkit-scrollbar-thumb{
             background: rgb(80,80,80);
         }
+
+        @-moz-document url-prefix() {
+            html,body {
+                scrollbar-color: rgb(80,80,80) rgba(0,0,0,1);
+                scrollbar-width: thin;
+            }
+        }
     </style>
     <link href="https://fonts.googleapis.com/css?family=Space+Mono" rel="stylesheet">
     <script src="/socket.io/socket.io.js"></script>

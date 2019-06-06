@@ -99,9 +99,10 @@
     }
 
     .actionLog-entryIcon {
-        width: $bannerHeight - ($borderSize * 2) - 1px;
+        width: $bannerHeight - ($borderSize * 2) - .5px;
         box-sizing: border-box;
         padding: 10px;
+        flex: 1 0 auto;
     }
 
     .actionLog-entryText {
@@ -109,6 +110,11 @@
         font-family: "Space mono", sans-serif;
         color: $bannerTextColor;
         width: 320px;
+    }
 
+    @-moz-document url-prefix() {
+        .actionLog-entry {
+            margin-right: 20px;
+        }
     }
 </style>
