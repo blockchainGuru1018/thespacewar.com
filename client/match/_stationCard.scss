@@ -46,7 +46,6 @@
   flex: 0 1 auto;
   min-width: 20px;
   max-width: 30px;
-  width: $cardGhostWidth;
   position: relative;
 
   &--fullSize {
@@ -59,6 +58,11 @@
     top: 0;
     z-index: 2;
   }
+}
+
+.field-player .stationCardWrapper {
+  width: $playerStationCardWidth;
+  height: $playerStationCardHeight;
 }
 
 .stationCard--flipped {

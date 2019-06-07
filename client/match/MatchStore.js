@@ -423,7 +423,8 @@ module.exports = function (deps) {
             playerStateService: getters.playerStateService,
             playerPhase: getters.playerPhase,
             opponentStateService: getters.opponentStateService,
-            opponentPhase: getters.opponentPhase
+            opponentPhase: getters.opponentPhase,
+            opponentActionLog: ClientLimitNotice
         });
     }
 

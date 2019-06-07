@@ -448,6 +448,7 @@
                 'flashOpponentDiscardPile'
             ]),
             ...mapGetters([
+                'gameOn',
                 'hasPutDownNonFreeCardThisTurn',
                 'actionPoints2',
                 'canPutDownCard',
@@ -518,6 +519,7 @@
             },
             canPutDownHoldingCard() {
                 if (!this.canAffordHoldingCard) return false;
+                if (!this.gameOn) return false;
 
                 return this.createCard(this.holdingCard).canBePutDownAnyTime()
                     || (this.canPutDownCards && this.canPutDownCard(this.holdingCard));
@@ -529,17 +531,6 @@
                 return this.holdingCard
                     && this.canDiscardCards
                     && (!this.showOnlyCardGhostsFor || this.showOnlyCardGhostsFor.includes('discardPile'));
-            },
-            canMoveHoldingStationCard() {
-                if (!this.holdingCard) return false;
-                const cardId = this.holdingCard.id;
-                const stationCard = this.allPlayerStationCards.find(s => s.id === cardId);
-                if (!stationCard) return false;
-
-                return this.moveStationCard.canMove({
-                    cardId: this.holdingCard.id,
-                    location: `station-${stationCard.place}`
-                });
             },
             stationCardGhostVisible() {
                 if (!this.holdingCard) return false;

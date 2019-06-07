@@ -224,6 +224,7 @@ module.exports = function ({
             opponentStateService: api.playerStateService(api.opponentId(playerId)),
             playerPhase: api.playerPhase(playerId),
             opponentPhase: api.playerPhase(api.opponentId(playerId)),
+            opponentActionLog: api.actionLog(api.opponentId(playerId)),
         });
     }
 

@@ -1,6 +1,6 @@
 <template>
     <div
-        :class="['matchHeader-banner', {'matchHeader-reverse': reverse, 'matchHeader-playerBanner': isPlayer, 'matchHeader-opponentBanner': !isPlayer }]"
+        :class="classes"
     >
         <div class="matchHeader-bannerName">
             {{ name }}
@@ -39,6 +39,7 @@
 <script>
     const Vuex = require('vuex');
     const matchHelpers = Vuex.createNamespacedHelpers('match');
+    const cardHelpers = Vuex.createNamespacedHelpers('card');
 
     module.exports = {
         props: ['isPlayer', 'reverse'],
@@ -53,6 +54,28 @@
                 'allOpponentStationCards',
                 'maxStationCardCount'
             ]),
+            ...cardHelpers.mapState([
+                'holdingCard'
+            ]),
+            classes() {
+                const classes = ['matchHeader-banner'];
+                if (this.reverse) {
+                    classes.push('matchHeader-reverse');
+                }
+
+                if (this.isPlayer) {
+                    classes.push('matchHeader-playerBanner');
+
+                    if (this.holdingCard) {
+                        classes.push('matchHeader-opaque');
+                    }
+                }
+                else {
+                    classes.push('matchHeader-opponentBanner');
+                }
+
+                return classes;
+            },
             name() {
                 if (this.isPlayer) {
                     return this.ownUser.name;
@@ -128,6 +151,12 @@
         bottom: 0;
         right: 0;
         flex-direction: row-reverse;
+    }
+
+    .matchHeader-opaque {
+        transition: opacity .1s;
+        opacity: .4;
+        pointer-events: none;
     }
 
     .matchHeader-bannerName {

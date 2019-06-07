@@ -7,7 +7,8 @@ module.exports = class TurnControl {
         playerStateService,
         opponentStateService,
         opponentPhase,
-        playerPhase
+        playerPhase,
+        opponentActionLog
     }) {
         this._matchService = matchService;
 
@@ -16,6 +17,7 @@ module.exports = class TurnControl {
 
         this._opponentStateService = opponentStateService;
         this._opponentPhase = opponentPhase;
+        this._opponentActionLog = opponentActionLog;
     }
 
     toggleControlOfTurn() {
@@ -34,6 +36,8 @@ module.exports = class TurnControl {
         this._matchService.update(state => {
             state.currentPlayer = playerId;
         });
+
+        this._opponentActionLog.opponentTookControlOfTurn();
     }
 
     releaseControlOfOpponentsTurn() {
@@ -43,6 +47,8 @@ module.exports = class TurnControl {
         this._matchService.update(state => {
             state.currentPlayer = opponentId;
         });
+
+        this._opponentActionLog.opponentReleasedControlOfTurn();
     }
 
     canToggleControlOfTurn() {

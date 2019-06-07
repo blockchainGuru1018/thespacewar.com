@@ -262,8 +262,8 @@
 }
 
 .card-ghost {
-  width: $playerCardWidth;
-  height: $playerCardHeight;
+  width: $cardGhostWidth;
+  height: $cardGhostHeight;
   border: 4px solid #8ae68a;
   background: transparent;
   z-index: $cardGhostZIndex;

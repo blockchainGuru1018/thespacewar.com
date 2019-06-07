@@ -337,7 +337,10 @@
                 return this.gameOn && !this.holdingCard;
             },
             guideTextContainerVisible() {
-                return !this.choosingStartingPlayer && (!this.holdingCard || this.holdingCard.type !== 'event');
+                if (this.choosingStartingPlayer) return false;
+                if (this.holdingCard && this.holdingCard.type === 'event' && this.gameOn) return false;
+
+                return true;
             },
             overworkContainerVisible() {
                 return this.canIssueOverwork && !this.holdingCard;

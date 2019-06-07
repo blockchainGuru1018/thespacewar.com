@@ -13,7 +13,9 @@ const actionToIconUrl = {
     movedStationCard: 'move.svg',
     paralyzed: 'shock.svg',
     repairedCard: 'recycle.svg',
-    repairedStationCard: 'recycle.svg'
+    repairedStationCard: 'recycle.svg',
+    tookControlOfTurn: 'switch.svg',
+    releasedControlOfTurn: 'switch.svg'
 };
 
 const locationToText = {
@@ -46,7 +48,9 @@ module.exports = function ({
         opponentExpandedStation,
         opponentIssuedOverwork,
         opponentMilledCardsFromYourDeck,
-        opponentMovedStationCard
+        opponentMovedStationCard,
+        opponentTookControlOfTurn,
+        opponentReleasedControlOfTurn
     };
 
     function queryLatest() {
@@ -239,6 +243,20 @@ module.exports = function ({
         }
 
         log({ action: 'milled', text });
+    }
+
+    function opponentTookControlOfTurn() {
+        log({
+            action: 'tookControlOfTurn',
+            text: `${opponentName()} took control of turn`
+        });
+    }
+
+    function opponentReleasedControlOfTurn() {
+        log({
+            action: 'releasedControlOfTurn',
+            text: `${opponentName()} released control of turn`
+        });
     }
 
     function log({
