@@ -7,9 +7,10 @@
             <div class="match-overlay" />
 
             <div class="match-backgroundWrapper">
+            <!-- /image/space4.PNG -->
                 <img
                     class="match-background"
-                    src="/image/space4.PNG"
+                    src="https://images.thespacewar.com/game-background.jpg"
                 >
                 <div class="match-backgroundOverlay" />
             </div>
