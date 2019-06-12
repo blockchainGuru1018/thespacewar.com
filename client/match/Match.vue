@@ -7,7 +7,7 @@
             <div class="match-overlay" />
 
             <div class="match-backgroundWrapper">
-            <!-- /image/space4.PNG -->
+                <!-- /image/space4.PNG -->
                 <img
                     class="match-background"
                     src="https://images.thespacewar.com/game-background.jpg"
@@ -148,7 +148,10 @@
                     </div>
                 </div>
                 <div class="field-dividerWrapper">
-                    <div class="field-divider" />
+                    <div
+                        class="field-divider"
+                        :style="{opacity: activateEventCardGhostVisible ? '0': '1'}"
+                    />
                     <portal-target
                         class="field-dividerContent"
                         name="player-top"
@@ -338,19 +341,11 @@
                     <PlayerHud />
                 </div>
 
-                <transition name="fade-fast">
-                    <div
-                        v-if="activateEventCardGhostVisible"
-                        class="playerEventCardGhost ghost"
-                    >
-                        <div
-                            class="activateEventCard"
-                            @click.stop="cardGhostClick('zone')"
-                        >
-                            Activate
-                        </div>
-                    </div>
-                </transition>
+                <EventGhost
+                    v-if="activateEventCardGhostVisible"
+                    :element-hovered-over="elementHoveredOver"
+                    @click="cardGhostClick"
+                />
             </div>
             <div
                 v-if="holdingCard"
@@ -399,6 +394,7 @@
         mapGetters: mapCardGetters,
         mapActions: mapCardActions
     } = Vuex.createNamespacedHelpers('card');
+    const ghostHelpers = Vuex.createNamespacedHelpers('ghost');
     const requirementHelpers = Vuex.createNamespacedHelpers('requirement');
     const expandedCardHelpers = Vuex.createNamespacedHelpers('expandedCard');
     const escapeMenuHelpers = Vuex.createNamespacedHelpers('escapeMenu');
@@ -411,6 +407,7 @@
     const LoadingIndicator = resolveModule(require('./loadingIndicator/LoadingIndicator.vue'));
     const PlayerCardsOnHand = resolveModule(require('./PlayerCardsOnHand.vue'));
     const CardGhost = resolveModule(require('./CardGhost.vue'));
+    const EventGhost = resolveModule(require('./ghost/EventGhost.vue'));
     const ExpandedCard = resolveModule(require('../expandedCard/ExpandedCard.vue'));
     const ChooseStartingPlayer = resolveModule(require('./chooseStartingPlayer/ChooseStartingPlayer.vue'));
     const EscapeMenu = resolveModule(require('./escapeMenu/EscapeMenu.vue'));
@@ -488,6 +485,9 @@
                 'firstRequirement',
                 'firstRequirementIsCounterCard'
             ]),
+            ...ghostHelpers.mapGetters([
+                'activateEventCardGhostVisible'
+            ]),
             holdingCardStyle() {
                 if (!this.holdingCard) return {};
 
@@ -505,12 +505,6 @@
             playerZoneCardGhostVisible() {
                 if (!this.holdingCard) return false;
                 if (this.holdingEventCard) return false;
-                if (this.showOnlyCardGhostsFor && !this.showOnlyCardGhostsFor.includes('homeZone')) return false;
-
-                return this.canPutDownHoldingCard;
-            },
-            activateEventCardGhostVisible() {
-                if (!this.holdingEventCard) return false;
                 if (this.showOnlyCardGhostsFor && !this.showOnlyCardGhostsFor.includes('homeZone')) return false;
 
                 return this.canPutDownHoldingCard;
@@ -748,6 +742,7 @@
             LoadingIndicator,
             PlayerCardsOnHand,
             CardGhost,
+            EventGhost,
             ExpandedCard,
             ChooseStartingPlayer,
             EscapeMenu,

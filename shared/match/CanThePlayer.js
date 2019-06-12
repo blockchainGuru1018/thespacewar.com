@@ -18,7 +18,8 @@ class CanThePlayer {
         playerStateService,
         opponentStateService,
         turnControl,
-        gameConfig
+        gameConfig,
+        playerPhase
     } = {}) {
         this._matchService = matchService;
         this._queryEvents = queryEvents;
@@ -26,10 +27,12 @@ class CanThePlayer {
         this._opponentStateService = opponentStateService;
         this._turnControl = turnControl;
         this._gameConfig = gameConfig;
+        this._playerPhase = playerPhase;
     }
 
     triggerCardsDormantEffect(card) {
         return this._turnControl.playerHasControl()
+            && !this._playerPhase.isPreparation()
             && card.canTriggerDormantEffect()
             && this.useThisCard(card);
     }

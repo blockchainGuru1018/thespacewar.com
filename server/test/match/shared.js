@@ -152,10 +152,7 @@ function createMatch(deps = {}, testCardData = []) {
     const rawCardDataRepository = { get: () => testCardData };
     const cardDataAssembler = CardDataAssembler({ rawCardDataRepository });
     defaults(deps, {
-        gameConfig: GameConfig({
-            amountOfCardsInStartHand: 7,
-            overworkIsActive: true
-        }),
+        gameConfig: GameConfig({ amountOfCardsInStartHand: 7 }),
         deckFactory,
         cardInfoRepository: CardInfoRepository({ cardDataAssembler }),
         rawCardDataRepository,

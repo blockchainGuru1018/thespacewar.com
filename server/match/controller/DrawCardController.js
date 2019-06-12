@@ -20,6 +20,7 @@ function DrawCardController(deps) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         const cannotDrawMoreCards = !playerStateService.moreCardsCanBeDrawnForDrawPhase()
             || playerStateService.deckIsEmpty();
+
         if (drawCardRequirement) {
             onDrawCardForRequirement({ playerId });
         }

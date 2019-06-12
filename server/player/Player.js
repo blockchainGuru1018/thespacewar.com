@@ -9,4 +9,4 @@ module.exports = function (deps) {
         name,
         connection
     };
-}
+};

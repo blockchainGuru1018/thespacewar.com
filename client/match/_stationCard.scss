@@ -65,6 +65,11 @@
   height: $playerStationCardHeight;
 }
 
+.field-opponent .stationCardWrapper {
+  width: $opponentStationCardWidth;
+  height: $opponentStationCardHeight;
+}
+
 .stationCard--flipped {
   /* WORKAROUND? Needed to be able to click on actionOverlays without getting weird behaviour were click falls through to card below */
   position: relative;

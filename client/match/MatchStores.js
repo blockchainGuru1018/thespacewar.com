@@ -10,7 +10,8 @@ const STORES = [
     require('./loadingIndicator/LoadingIndicatorStore.js'),
     require('../expandedCard/ExpandedCardStore.js'),
     require('./chooseStartingPlayer/ChooseStartingPlayerStore.js'),
-    require('./escapeMenu/EscapeMenuStore.js')
+    require('./escapeMenu/EscapeMenuStore.js'),
+    require('./ghost/GhostStore.js')
 ];
 const AI = require('./AI.js');
 const LOGGING_ENABLED = false;
@@ -67,7 +68,7 @@ function createStore(Store, deps) {
     return store;
 }
 
-function loggedActions(actions) {
+function loggedActions(actions = {}) {
     const loggedActions = {};
     Object.keys(actions).forEach(actionName => {
         loggedActions[actionName] = (...args) => {
@@ -87,7 +88,7 @@ function registerStoreModule(rootStore, store) {
 
 function destroyAndUnregisterAllStores(rootStore, stores) {
     for (const store of stores) {
-        if (store.actions.destroy) {
+        if (store.actions && store.actions.destroy) {
             rootStore.dispatch(`${store.name}/destroy`);
         }
 

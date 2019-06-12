@@ -41,4 +41,8 @@ module.exports = class PlayerPhase {
         let phase = this._playerStateService.getPhase();
         return phase === PHASES.start;
     }
+
+    isPreparation() {
+        return this._playerStateService.getPhase() === PHASES.preparation;
+    }
 };

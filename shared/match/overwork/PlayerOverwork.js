@@ -1,5 +1,6 @@
 const canIssueOverworkFn = require('./canIssueOverwork.js'); //TODO This should perhaps just be an internal method
 const CheatError = require('../../../server/match/CheatError.js');
+const Commander = require("../commander/Commander.js");
 
 module.exports = function ({
     matchService,
@@ -7,7 +8,7 @@ module.exports = function ({
     playerRequirementService,
     opponentRequirementService,
     overworkEventFactory,
-    gameConfig,
+    playerCommanders,
     opponentActionLog
 }) {
 
@@ -17,15 +18,14 @@ module.exports = function ({
     };
 
     function canIssueOverwork() {
-        if (!gameConfig.overworkIsActive()) throw new CheatError('Overwork is disabled');
-
-        return canIssueOverworkFn({
-            playerId: playerStateService.getPlayerId(),
-            currentPlayer: matchService.getCurrentPlayer(),
-            unflippedStationCardCount: playerStateService.getUnflippedStationCardsCount(),
-            hasRequirements: playerRequirementService.hasAnyRequirement(),
-            phase: playerStateService.getPhase()
-        });
+        return playerCommanders.has(Commander.GeneralJackson)
+            && canIssueOverworkFn({
+                playerId: playerStateService.getPlayerId(),
+                currentPlayer: matchService.getCurrentPlayer(),
+                unflippedStationCardCount: playerStateService.getUnflippedStationCardsCount(),
+                hasRequirements: playerRequirementService.hasAnyRequirement(),
+                phase: playerStateService.getPhase()
+            });
     }
 
     function overwork() {

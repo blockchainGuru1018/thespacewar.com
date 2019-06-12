@@ -1,3 +1,5 @@
+const Commander = require('./commander/Commander.js');
+
 class PlayerRuleService {
 
     constructor({
@@ -6,8 +8,9 @@ class PlayerRuleService {
         canThePlayer,
         playerRequirementService,
         playerPhase,
-                    turnControl,
-                    gameConfig
+        turnControl,
+        gameConfig,
+        playerCommanders
     } = {}) {
         this._playerStateService = playerStateService;
         this._playerRequirementService = playerRequirementService;
@@ -16,6 +19,7 @@ class PlayerRuleService {
         this._opponentStateService = opponentStateService;
         this._canThePlayer = canThePlayer;
         this._gameConfig = gameConfig;
+        this._playerCommanders = playerCommanders;
     }
 
     canPutDownCardsInHomeZone() {
@@ -56,7 +60,17 @@ class PlayerRuleService {
 
     hasReachedMaximumStationCardCapacity() {
         const stationCardCount = this._playerStateService.getStationCardCount();
-        return stationCardCount >= this._gameConfig.maxStationCards();
+        return stationCardCount >= this.maxStationCardCount();
+    }
+
+    maxStationCardCount() {
+        if (this._playerCommanders.has(Commander.FrankJohnson)) {
+            const frankJohnson = this._playerCommanders.get(Commander.FrankJohnson);
+            return frankJohnson.maxStationCards();
+        }
+        else {
+            return this._gameConfig.maxStationCards();
+        }
     }
 }
 

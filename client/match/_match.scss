@@ -42,7 +42,7 @@
 .field-dividerWrapper {
   position: relative;
   height: 20px;
-  z-index: 1;
+  z-index: 3;
 }
 
 .field-divider {
@@ -464,11 +464,8 @@
 }
 
 .match-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  width: 100%;
+  filter: blur(0px) contrast(101%) brightness(25%) saturate(160%);
 }
 
 .match-backgroundWrapper {

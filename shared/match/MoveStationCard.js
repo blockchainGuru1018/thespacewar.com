@@ -1,4 +1,5 @@
 const MoveStationCardEvent = require('../event/MoveStationCardEvent.js');
+const Commander = require("./commander/Commander.js");
 
 const ValidLocations = [
     'station-draw',
@@ -10,7 +11,8 @@ module.exports = function ({
     matchService,
     playerStateService,
     playerPhase,
-    opponentActionLog
+    opponentActionLog,
+    playerCommanders
 }) {
 
     return {
@@ -19,6 +21,7 @@ module.exports = function ({
     };
 
     function canMove({ cardId, location }) {
+        if (!playerCommanders.has(Commander.KeveBakins)) return false;
         if (!playerPhase.isAction()) return false;
 
         const stationCard = playerStateService.findStationCard(cardId);

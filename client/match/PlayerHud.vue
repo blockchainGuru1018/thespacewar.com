@@ -263,6 +263,7 @@
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
     const { mapGetters: mapPermissionGetters } = Vuex.createNamespacedHelpers('permission');
     const cardHelpers = Vuex.createNamespacedHelpers('card');
+    const ghostHelpers = Vuex.createNamespacedHelpers('ghost');
     const requirementHelpers = Vuex.createNamespacedHelpers('requirement');
     const MatchMode = require('../../shared/match/MatchMode.js');
     const { PHASES } = require('./phases.js');
@@ -333,12 +334,15 @@
                 'opponentHasControlOfPlayersTurn',
                 'playerHasControlOfOpponentsTurn'
             ]),
+            ...ghostHelpers.mapGetters([
+                'activateEventCardGhostVisible'
+            ]),
             nextPhaseButtonContainerVisible() {
                 return this.gameOn && !this.holdingCard;
             },
             guideTextContainerVisible() {
                 if (this.choosingStartingPlayer) return false;
-                if (this.holdingCard && this.holdingCard.type === 'event' && this.gameOn) return false;
+                if (this.activateEventCardGhostVisible) return false;
 
                 return true;
             },

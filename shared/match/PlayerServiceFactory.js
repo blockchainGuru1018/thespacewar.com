@@ -21,6 +21,7 @@ const StartGame = require('./StartGame.js');
 const ActionLog = require('./log/ActionLog.js');
 const SacrificeCard = require('./SacrificeCard.js');
 const Repair = require('./Repair.js');
+const PlayerCommanders = require('./commander/PlayerCommanders.js');
 
 const ServiceTypes = PlayerServiceProvider.TYPE;
 
@@ -41,6 +42,7 @@ module.exports = function ({
     const api = {
         _cache: objectsByNameAndPlayerId,
         playerServiceProvider: () => playerServiceProvider,
+        playerCommanders: cached(playerCommanders),
         repair: cached(repair),
         moveStationCard: cached(moveStationCard),
         playerOverwork: cached(playerOverwork),
@@ -107,6 +109,12 @@ module.exports = function ({
 
     return api;
 
+    function playerCommanders(playerId) {
+        return PlayerCommanders({
+            playerStateService: api.playerStateService(playerId)
+        });
+    }
+
     function repair(playerId) {
         return Repair({
             matchService: api.matchService(),
@@ -120,7 +128,8 @@ module.exports = function ({
             matchService: api.matchService(),
             playerStateService: api.playerStateService(playerId),
             playerPhase: api.playerPhase(playerId),
-            opponentActionLog: api.actionLog(api.opponentId(playerId))
+            opponentActionLog: api.actionLog(api.opponentId(playerId)),
+            playerCommanders: api.playerCommanders(playerId)
         });
     }
 
@@ -132,7 +141,7 @@ module.exports = function ({
             playerRequirementService: api.playerRequirementService(playerId),
             opponentRequirementService: api.playerRequirementService(api.opponentId(playerId)),
             opponentActionLog: api.actionLog(api.opponentId(playerId)),
-            gameConfig
+            playerCommanders: api.playerCommanders(playerId)
         });
     }
 
@@ -213,6 +222,7 @@ module.exports = function ({
             opponentStateService: api.playerStateService(api.opponentId(playerId)),
             playerStateService: api.playerStateService(playerId),
             turnControl: api.turnControl(playerId),
+            playerPhase: api.playerPhase(playerId),
             gameConfig
         });
     }
@@ -294,6 +304,7 @@ module.exports = function ({
             canThePlayer: api.canThePlayer(playerId),
             turnControl: api.turnControl(playerId),
             playerPhase: api.playerPhase(playerId),
+            playerCommanders: api.playerCommanders(playerId),
             gameConfig
         });
     }

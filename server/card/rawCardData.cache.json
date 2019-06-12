@@ -145,7 +145,7 @@
             "name": "Target Missed",
             "price": "0",
             "type_card": "orange",
-            "detail": "Play this card directly during enemy attack from space ship (not colisision, missile or cannon) to make it fail.",
+            "detail": "Play this card directly during enemy attack from space ship (not collision, missile or cannon) to make it fail.",
             "defense": "0",
             "attack": "0",
             "number_copies": "3"
@@ -245,7 +245,7 @@
             "name": "The Shade",
             "price": "4",
             "type_card": "blue",
-            "detail": "The Shade cannot be attacked if it has not been attacking this turn.",
+            "detail": "The Shade can only be attacked if it has been attacking in the most recent turn of the opponent.",
             "defense": "3",
             "attack": "4",
             "number_copies": "1"
@@ -381,5 +381,5 @@
             "number_copies": "2"
         }
     ],
-    "saveTime": 1559666363401
+    "saveTime": 1560300534004
 }

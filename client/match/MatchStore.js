@@ -20,6 +20,8 @@ const localGameDataFacade = require('../utils/localGameDataFacade.js');
 const whatIsNextPhase = require('../../shared/match/whatIsNextPhase.js');
 const MatchMode = require('../../shared/match/MatchMode.js');
 const CardDataAssembler = require('../../shared/CardDataAssembler.js');
+const PlayerCommanders = require('../../shared/match/commander/PlayerCommanders.js');
+const Commander = require("../../shared/match/commander/Commander.js");
 const {
     COMMON_PHASE_ORDER,
     PHASES
@@ -60,6 +62,7 @@ module.exports = function (deps) {
         state: {
             mode: MatchMode.firstMode,
             gameConfigEntity: null,
+            commanders: [],
             actionLogEntries: [],
             opponentActionLogEntries: [],
             turn: 1,
@@ -132,6 +135,7 @@ module.exports = function (deps) {
             findPlayerCardFromAllSources,
             cardFactory,
             playerServiceProvider,
+            playerCommanders,
             moveStationCard,
             canPutDownCard,
             playerRuleService,
@@ -370,12 +374,19 @@ module.exports = function (deps) {
         return ClientPlayerServiceProvider(...getterArgs);
     }
 
+    function playerCommanders(state, getters) {
+        return PlayerCommanders({
+            playerStateService: getters.playerStateService
+        });
+    }
+
     function moveStationCard(state, getters) {
         return MoveStationCard({
             matchService: getters.matchService,
             playerStateService: getters.playerStateService,
             playerPhase: getters.playerPhase,
-            opponentActionLog: getters.opponentActionLog
+            opponentActionLog: getters.opponentActionLog,
+            playerCommanders: getters.playerCommanders
         });
     }
 
@@ -387,7 +398,8 @@ module.exports = function (deps) {
             canThePlayer: getters.canThePlayer,
             turnControl: getters.turnControl,
             playerPhase: getters.playerPhase,
-            gameConfig: getters.gameConfig
+            gameConfig: getters.gameConfig,
+            playerCommanders: getters.playerCommanders
         });
     }
 
@@ -404,7 +416,8 @@ module.exports = function (deps) {
             playerStateService: getters.playerStateService,
             opponentStateService: getters.opponentStateService,
             turnControl: getters.turnControl,
-            gameConfig: getters.gameConfig
+            gameConfig: getters.gameConfig,
+            playerPhase: getters.playerPhase
         });
     }
 
@@ -557,11 +570,11 @@ module.exports = function (deps) {
     }
 
     function overworkEnabled(state, getters) {
-        return getters.gameConfig.overworkIsActive();
+        return getters.playerCommanders.has(Commander.GeneralJackson);
     }
 
     function maxStationCardCount(state, getters) {
-        return getters.gameConfig.maxStationCards();
+        return getters.playerRuleService.maxStationCardCount();
     }
 
     function gameConfig(state) {

@@ -5,6 +5,7 @@ const MoveCardEvent = require('../event/MoveCardEvent.js');
 const PutDownCardEvent = require('../PutDownCardEvent.js');
 const RepairCardEvent = require('../event/RepairCardEvent.js');
 const RemoveStationCardEvent = require('../event/RemoveStationCardEvent.js');
+const Commander = require("./commander/Commander.js");
 const { PHASES } = require('../phases.js');
 
 class PlayerStateService {
@@ -49,6 +50,12 @@ class PlayerStateService {
             playerState.events = [];
             playerState.requirements = [];
             playerState.actionLogEntries = [];
+            playerState.commanders = [
+                Commander.FrankJohnson,
+                Commander.KeveBakins,
+                Commander.NiciaSatu,
+                Commander.GeneralJackson
+            ];
         });
     }
 

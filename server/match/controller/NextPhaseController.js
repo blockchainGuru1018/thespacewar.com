@@ -2,6 +2,7 @@ const CheatError = require('../CheatError.js');
 const { PHASES } = require('../../../shared/phases.js');
 const whatIsNextPhase = require('../../../shared/match/whatIsNextPhase.js');
 const PlayerServiceProvider = require('../../../shared/match/PlayerServiceProvider.js');
+const Commander = require("../../../shared/match/commander/Commander.js");
 
 function NextPhaseCardController(deps) {
 
@@ -9,7 +10,8 @@ function NextPhaseCardController(deps) {
         matchService,
         matchComService,
         cardFactory,
-        playerServiceProvider
+        playerServiceProvider,
+        playerServiceFactory
     } = deps;
 
     return {
@@ -68,29 +70,34 @@ function NextPhaseCardController(deps) {
 
     function enterDrawPhaseForPlayer(playerId) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        if (playerStateService.deckIsEmpty()) {
-            const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
-            playerRequirementService.addRequirement({
-                type: 'damageStationCard',
-                common: true,
-                count: 0,
-                waiting: true,
-                reason: 'emptyDeck'
-            });
-
-            const opponentId = matchService.getOpponentId(playerId);
-            const opponentRequirementService = playerServiceProvider.getRequirementServiceById(opponentId);
-            opponentRequirementService.addDamageStationCardRequirement({
-                common: true,
-                count: 3,
-                reason: 'emptyDeck'
-            });
+        const playerCommanders = playerServiceFactory.playerCommanders(playerId);
+        if (playerStateService.deckIsEmpty() && !playerCommanders.has(Commander.NiciaSatu)) {
+            penalizePlayerForEmptyDeck(playerId);
         }
 
         const requirementsFromDurationCards = getRequirementsFromDurationCards(playerId, 'requirementsWhenEnterDrawPhase');
         if (requirementsFromDurationCards.length > 0) {
             requirementsFromDurationCards.forEach(requirements => addCardRequirements({ playerId, requirements }));
         }
+    }
+
+    function penalizePlayerForEmptyDeck(playerId) {
+        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
+        playerRequirementService.addRequirement({
+            type: 'damageStationCard',
+            common: true,
+            count: 0,
+            waiting: true,
+            reason: 'emptyDeck'
+        });
+
+        const opponentId = matchService.getOpponentId(playerId);
+        const opponentRequirementService = playerServiceProvider.getRequirementServiceById(opponentId);
+        opponentRequirementService.addDamageStationCardRequirement({
+            common: true,
+            count: 3,
+            reason: 'emptyDeck'
+        });
     }
 
     function leaveDrawPhaseForPlayer(playerId) {

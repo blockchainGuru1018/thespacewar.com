@@ -43,33 +43,29 @@ module.exports = {
             }
         }
     },
-    'overwork disabled:': {
-        'when gameConfig has overwork NOT active': {
-            async setUp() {
-                this.match = createMatch({
-                    gameConfig: GameConfig({
-                        overworkIsActive: false
-                    }),
-                    players: [Player('P1A'), Player('P2A')]
-                });
-                this.match.restoreFromState(createState({
-                    playerStateById: {
-                        'P1A': {
-                            phase: 'action',
-                            stationCards: [
-                                stationCard({ id: 'C1A', flipped: false }),
-                                stationCard({ id: 'C2A', flipped: false })
-                            ]
-                        }
+    'when player does NOT have General Jackson': {
+        async setUp() {
+            this.match = createMatch({
+                gameConfig: GameConfig({}),
+                players: [Player('P1A'), Player('P2A')]
+            });
+            this.match.restoreFromState(createState({
+                playerStateById: {
+                    'P1A': {
+                        phase: 'action',
+                        stationCards: [
+                            stationCard({ id: 'C1A', flipped: false }),
+                            stationCard({ id: 'C2A', flipped: false })
+                        ]
                     }
-                }));
+                }
+            }));
 
-                this.error = catchError(() => this.match.overwork('P1A'));
-            },
-            'should throw error': function () {
-                assert(this.error);
-                assert.equals(this.error.message, 'Overwork is disabled');
-            }
+            this.error = catchError(() => this.match.overwork('P1A'));
+        },
+        'should throw error': function () {
+            assert(this.error);
+            assert.equals(this.error.message, 'Overwork is disabled');
         }
     }
 };
