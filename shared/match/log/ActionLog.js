@@ -9,6 +9,7 @@ const actionToIconUrl = {
     counteredAttackOnCard: 'countered.svg',
     expandedStation: 'expand.svg',
     issuedOverwork: 'recycle.svg',
+    issuedPerfectPlan: 'played.svg', //TODO Find an icon specifically for Perfect Plan
     milled: 'mill.svg',
     movedStationCard: 'move.svg',
     paralyzed: 'shock.svg',
@@ -47,6 +48,7 @@ module.exports = function ({
         opponentCounteredAttackOnStation,
         opponentExpandedStation,
         opponentIssuedOverwork,
+        opponentIssuedPerfectPlan,
         opponentMilledCardsFromYourDeck,
         opponentMovedStationCard,
         opponentTookControlOfTurn,
@@ -213,6 +215,13 @@ module.exports = function ({
         log({
             action: 'issuedOverwork',
             text: `${opponentName()} issued overwork`
+        });
+    }
+
+    function opponentIssuedPerfectPlan() {
+        log({
+            action: 'issuedPerfectPlan',
+            text: `${opponentName()} issued Perfect Plan`
         });
     }
 

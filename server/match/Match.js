@@ -9,6 +9,7 @@ const DiscardCardController = require('./controller/DiscardCardController.js');
 const NextPhaseController = require('./controller/NextPhaseController.js');
 const StartGameController = require('./controller/StartGameController.js');
 const OverworkController = require('./controller/OverworkController.js');
+const PerfectPlanController = require('./controller/PerfectPlanController.js');
 const TriggerDormantEffect = require('./command/TriggerDormantEffect.js');
 const CheatController = require('./controller/CheatController.js');
 const MatchComService = require('./service/MatchComService.js');
@@ -123,6 +124,7 @@ module.exports = function ({
     const nextPhaseController = NextPhaseController(controllerDeps);
     const startGameController = StartGameController(controllerDeps);
     const overworkController = OverworkController(controllerDeps);
+    const perfectPlanController = PerfectPlanController(controllerDeps);
 
     const unwrappedApi = {
         id: matchId,
@@ -161,6 +163,7 @@ module.exports = function ({
         damageStationCards: attackController.onDamageStationCard,
         selectCardForFindCardRequirement: findCardController.onSelectCard,
         overwork: overworkController.overwork,
+        perfectPlan: perfectPlanController.perfectPlan,
         triggerDormantEffect: PlayerCommand(TriggerDormantEffect, controllerDeps),
         repairCard,
         retreat,

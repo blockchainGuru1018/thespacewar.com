@@ -6,7 +6,11 @@ const Keys = {
     AccessKey: 'access-key',
 };
 
-const DoNotRemoveKeysWhenRemoveAll = ['AccessKey'];
+const DoNotRemoveKeysWhenRemoveAll = [
+    Keys.AccessKey,
+    Keys.DebugPassword,
+    Keys.AudioSettings
+];
 
 module.exports = Facade();
 

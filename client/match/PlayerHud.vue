@@ -156,15 +156,25 @@
             </div>
 
             <div
-                v-if="overworkContainerVisible"
+                v-if="overworkContainerVisible || perfectPlanContainerVisible"
                 class="overworkContainer"
             >
                 <button
+                    v-if="overworkContainerVisible"
                     title="Your opponent may flip 1 of your station cards & you receive 2 action points"
                     class="overwork darkButton"
                     @click="overwork"
                 >
                     Overwork
+                </button>
+
+                <button
+                    v-if="perfectPlanContainerVisible"
+                    title="Your opponent may flip 2 of your station cards & you may select any card to put in your hand"
+                    class="perfectPlan darkButton"
+                    @click="perfectPlan"
+                >
+                    PerfectPlan
                 </button>
             </div>
         </portal>
@@ -303,7 +313,8 @@
                 'gameConfig',
                 'choosingStartingPlayer',
                 'isOwnTurn',
-                'gameOn'
+                'gameOn',
+                'playerPerfectPlan'
             ]),
             ...requirementHelpers.mapGetters([
                 'waitingForOtherPlayerToFinishRequirements',
@@ -348,6 +359,9 @@
             },
             overworkContainerVisible() {
                 return this.canIssueOverwork && !this.holdingCard;
+            },
+            perfectPlanContainerVisible() {
+                return this.playerPerfectPlan.canIssuePerfectPlan() && !this.holdingCard;
             },
             waitingForOtherPlayerToSelectStartingPlayer() {
                 return this.mode === MatchMode.chooseStartingPlayer && !this.isOwnTurn;
@@ -477,6 +491,7 @@
                 'goToNextPhase',
                 'endGame',
                 'overwork',
+                'perfectPlan',
                 'toggleControlOfTurn'
             ]),
             startClick() {

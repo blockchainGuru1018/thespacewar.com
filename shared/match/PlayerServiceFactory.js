@@ -12,6 +12,7 @@ const EventFactory = require('../event/EventFactory.js');
 const PlayerRequirementService = require('./requirement/PlayerRequirementService.js');
 const PlayerRequirementFactory = require('./requirement/PlayerRequirementFactory.js');
 const PlayerRuleService = require('./PlayerRuleService.js');
+const PlayerPerfectPlan = require('./perfectPlan/PlayerPerfectPlan.js');
 const QueryAttacks = require('./requirement/QueryAttacks.js');
 const OverworkEventFactory = require('./overwork/event/OverworkEventFactory.js');
 const PlayerOverwork = require('./overwork/PlayerOverwork.js');
@@ -48,6 +49,7 @@ module.exports = function ({
         repair: cached(repair),
         moveStationCard: cached(moveStationCard),
         playerOverwork: cached(playerOverwork),
+        playerPerfectPlan: cached(playerPerfectPlan),
         overworkEventFactory: cached(overworkEventFactory),
         cardFactory: cached(cardFactory),
         matchService: cached(matchService),
@@ -154,6 +156,19 @@ module.exports = function ({
             opponentRequirementService: api.playerRequirementService(api.opponentId(playerId)),
             opponentActionLog: api.actionLog(api.opponentId(playerId)),
             playerCommanders: api.playerCommanders(playerId)
+        });
+    }
+
+    function playerPerfectPlan(playerId) {
+        return PlayerPerfectPlan({
+            playerPhase: api.playerPhase(playerId),
+            overworkEventFactory: api.overworkEventFactory(playerId),
+            playerStateService: api.playerStateService(playerId),
+            playerRequirementService: api.playerRequirementService(playerId),
+            opponentRequirementService: api.playerRequirementService(api.opponentId(playerId)),
+            opponentActionLog: api.actionLog(api.opponentId(playerId)),
+            playerCommanders: api.playerCommanders(playerId),
+            addRequirementFromSpec: api.addRequirementFromSpec(playerId)
         });
     }
 

@@ -9,6 +9,7 @@ const PlayerPhase = require("../../shared/match/PlayerPhase.js");
 const PlayerRuleService = require("../../shared/match/PlayerRuleService.js");
 const ClientPlayerStateService = require("./ClientPlayerStateService");
 const PlayerRequirementService = require('../../shared/match/requirement/PlayerRequirementService.js');
+const PlayerPerfectPlan = require('../../shared/match/perfectPlan/PlayerPerfectPlan.js');
 const CardFactory = require('../../shared/card/CardFactory.js');
 const ClientPlayerServiceProvider = require('./ClientPlayerServiceProvider.js');
 const EventFactory = require('../../shared/event/EventFactory.js');
@@ -138,6 +139,7 @@ module.exports = function (deps) {
             playerCommanders,
             moveStationCard,
             canPutDownCard,
+            playerPerfectPlan,
             playerRuleService,
             getCanThePlayer,
             canThePlayer,
@@ -176,6 +178,7 @@ module.exports = function (deps) {
             saveMatch,
             restoreSavedMatch,
             overwork,
+            perfectPlan,
             toggleControlOfTurn,
 
             // local & remote
@@ -347,19 +350,6 @@ module.exports = function (deps) {
         }
     }
 
-    function canPutDownCard(state, getters) {
-        return cardData => {
-
-            //TODO Incorporate this into canThePlayer.putDownThisCard
-            const canOnlyHaveOneInHomeZone = getters.createCard(cardData).canOnlyHaveOneInHomeZone();
-            if (canOnlyHaveOneInHomeZone) {
-                return !state.playerCardsInZone.some(c => c.commonId === cardData.commonId);
-            }
-
-            return getters.canThePlayer.putDownThisCard(cardData);
-        };
-    }
-
     function cardFactory(state, getters) {
         return new CardFactory({
             matchService: getters.matchService,
@@ -387,6 +377,31 @@ module.exports = function (deps) {
             playerPhase: getters.playerPhase,
             opponentActionLog: getters.opponentActionLog,
             playerCommanders: getters.playerCommanders
+        });
+    }
+
+    function canPutDownCard(state, getters) {
+        return cardData => {
+
+            //TODO Incorporate this into canThePlayer.putDownThisCard
+            const canOnlyHaveOneInHomeZone = getters.createCard(cardData).canOnlyHaveOneInHomeZone();
+            if (canOnlyHaveOneInHomeZone) {
+                return !state.playerCardsInZone.some(c => c.commonId === cardData.commonId);
+            }
+
+            return getters.canThePlayer.putDownThisCard(cardData);
+        };
+    }
+
+    function playerPerfectPlan(state, getters) {
+        return PlayerPerfectPlan({
+            playerPhase: getters.playerPhase,
+            playerStateService: getters.playerStateService,
+            playerRequirementService: getters.playerRequirementService,
+            opponentRequirementService: getters.opponentRequirementService,
+            playerCommanders: getters.playerCommanders,
+            opponentActionLog: ClientLimitNotice,
+            addRequirementFromSpec: ClientLimitNotice
         });
     }
 
@@ -709,6 +724,10 @@ module.exports = function (deps) {
 
     function overwork() {
         matchController.emit('overwork');
+    }
+
+    function perfectPlan() {
+        matchController.emit('perfectPlan');
     }
 
     function toggleControlOfTurn() {
