@@ -1,8 +1,10 @@
 const CheatError = require('../CheatError.js');
+const MatchMode = require("../../../shared/match/MatchMode.js");
 
 function DiscardCardController(deps) {
 
     const {
+        matchService,
         playerServiceProvider,
         playerServiceFactory,
         playerRequirementUpdaterFactory
@@ -31,7 +33,12 @@ function DiscardCardController(deps) {
         }
         else if (canThePlayer.recycleCards()) {
             playerRequirementService.addDrawCardRequirement({ count: 1 });
-            playerStateService.storeEvent({ type: 'recycleCard' });
+
+            const event = { type: 'recycleCard' };
+            if (matchService.mode() === MatchMode.game) {
+                event.turn = matchService.getTurn();
+            }
+            playerStateService.storeEvent(event);
         }
         else if (!ordinaryDiscard) {
             throw new CheatError('Illegal discard');

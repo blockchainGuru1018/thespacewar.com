@@ -1,5 +1,6 @@
 const MatchMode = require('./MatchMode.js');
 const Neutralization = require('../card/Neutralization.js');
+const Commander = require('./commander/Commander.js');
 
 const ALLOWED_STATION_CARDS_EACH_TURN = 1;
 
@@ -19,7 +20,8 @@ class CanThePlayer {
         opponentStateService,
         turnControl,
         gameConfig,
-        playerPhase
+        playerPhase,
+        playerCommanders
     } = {}) {
         this._matchService = matchService;
         this._queryEvents = queryEvents;
@@ -28,6 +30,7 @@ class CanThePlayer {
         this._turnControl = turnControl;
         this._gameConfig = gameConfig;
         this._playerPhase = playerPhase;
+        this._playerCommanders = playerCommanders;
     }
 
     triggerCardsDormantEffect(card) {
@@ -144,8 +147,18 @@ class CanThePlayer {
     }
 
     recycleCards() {
-        return this._matchService.mode() !== MatchMode.game
-            && this._queryEvents.countRecycles() < this._gameConfig.maxRecycles();
+        if (this._matchService.mode() !== MatchMode.game) {
+            return this._queryEvents.countRecycles() < this._gameConfig.maxRecycles();
+        }
+        else if (this._playerCommanders.has(Commander.DrStein)) {
+            const currentTurn = this._matchService.getTurn();
+            const recyclesThisTurn = this._queryEvents.countRecyclesOnTurn(currentTurn);
+
+            return this._playerPhase.isAction()
+                && recyclesThisTurn < this._gameConfig.maxRecycles();
+        }
+
+        return false;
     }
 
     counterCard({ id: cardId }) {

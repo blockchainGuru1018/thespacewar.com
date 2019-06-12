@@ -55,7 +55,8 @@ class PlayerStateService {
                 Commander.KeveBakins,
                 Commander.NiciaSatu,
                 Commander.GeneralJackson,
-                Commander.TheMiller
+                Commander.TheMiller,
+                Commander.DrStein
             ];
         });
     }

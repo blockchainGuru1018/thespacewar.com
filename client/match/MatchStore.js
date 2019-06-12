@@ -417,7 +417,8 @@ module.exports = function (deps) {
             opponentStateService: getters.opponentStateService,
             turnControl: getters.turnControl,
             gameConfig: getters.gameConfig,
-            playerPhase: getters.playerPhase
+            playerPhase: getters.playerPhase,
+            playerCommanders: getters.playerCommanders
         });
     }
 

@@ -349,8 +349,8 @@
             </div>
             <div
                 v-if="holdingCard"
+                ref="holdingCard"
                 :class="['card', 'holdingCard', {'card-faceDown': holdingCard.faceDown, 'card-faceDown--player': holdingCard.faceDown}]"
-                :style="holdingCardStyle"
             />
             <card-choice-dialog />
             <loading-indicator />
@@ -488,20 +488,6 @@
             ...ghostHelpers.mapGetters([
                 'activateEventCardGhostVisible'
             ]),
-            holdingCardStyle() {
-                if (!this.holdingCard) return {};
-
-                const cardUrl = this.holdingCard.faceDown
-                    ? '/card/back-image'
-                    : getCardImageUrl.byCommonId(this.holdingCard.commonId);
-                return {
-                    left: this.mousePosition.x + 'px',
-                    top: this.mousePosition.y + 'px',
-                    backgroundImage: `url(${cardUrl})`,
-                    pointerEvents: 'none',
-                    transform: 'translate(-10%, -20%)'
-                }
-            },
             playerZoneCardGhostVisible() {
                 if (!this.holdingCard) return false;
                 if (this.holdingEventCard) return false;
@@ -581,6 +567,27 @@
             },
             millCardCount() {
                 return this.gameConfig.millCardCount();
+            }
+        },
+        watch: {
+            mousePosition() { // USING REF AS OPTIMIZATION: When the style is computed, every getters using "holdingCard" will be recomputed.
+                if (this.$refs.holdingCard) {
+                    this.$refs.holdingCard.style.left = this.mousePosition.x + 'px';
+                    this.$refs.holdingCard.style.top = this.mousePosition.y + 'px';
+                }
+            },
+            async holdingCard() { // USING REF AS OPTIMIZATION: When the style is computed, every getters using "holdingCard" will be recomputed.
+                if (this.holdingCard) {
+                    await this.$nextTick();
+
+                    const cardUrl = this.holdingCard.faceDown
+                        ? '/card/back-image'
+                        : getCardImageUrl.byCommonId(this.holdingCard.commonId);
+                    this.$refs.holdingCard.style.backgroundImage = `url(${cardUrl})`;
+
+                    this.$refs.holdingCard.style.left = this.mousePosition.x + 'px';
+                    this.$refs.holdingCard.style.top = this.mousePosition.y + 'px';
+                }
             }
         },
         methods: {
@@ -683,8 +690,7 @@
             documentTouchmove(event) {
                 const x = event.touches[0].clientX;
                 const y = event.touches[0].clientY;
-                this.mousePosition.x = x;
-                this.mousePosition.y = y;
+                this.mousePosition = { x, y };
 
                 this.elementHoveredOver = document.elementFromPoint(x, y);
             },
@@ -706,8 +712,10 @@
             this.$store.dispatch('audio/background');
 
             this.$refs.match.addEventListener('mousemove', event => {
-                this.mousePosition.x = event.clientX;
-                this.mousePosition.y = event.clientY;
+                this.mousePosition = {
+                    x: event.clientX,
+                    y: event.clientY
+                };
             });
             this.$refs.match.addEventListener('click', event => {
                 const targetElementClasses = Array.from(event.target.classList);

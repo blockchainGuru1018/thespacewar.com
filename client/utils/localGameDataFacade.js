@@ -6,6 +6,8 @@ const Keys = {
     AccessKey: 'access-key',
 };
 
+const DoNotRemoveKeysWhenRemoveAll = ['AccessKey'];
+
 module.exports = Facade();
 
 function Facade() {
@@ -35,7 +37,8 @@ function Facade() {
 }
 
 function removeAll() {
-    for (const localStorageKey of Object.values(Keys)) {
+    const keysToRemove = Object.values(Keys).filter(key => !DoNotRemoveKeysWhenRemoveAll.includes(key));
+    for (const localStorageKey of keysToRemove) {
         Remover(localStorageKey)();
     }
 }

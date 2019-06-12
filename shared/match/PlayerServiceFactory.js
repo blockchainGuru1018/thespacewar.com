@@ -235,6 +235,7 @@ module.exports = function ({
             playerStateService: api.playerStateService(playerId),
             turnControl: api.turnControl(playerId),
             playerPhase: api.playerPhase(playerId),
+            playerCommanders: api.playerCommanders(playerId),
             gameConfig
         });
     }

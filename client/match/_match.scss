@@ -357,6 +357,8 @@
 
 .holdingCard {
   position: absolute;
+  pointer-events: none;
+  transform: translate(-10%, -20%);
   z-index: $holdingCardZIndex;
 }
 

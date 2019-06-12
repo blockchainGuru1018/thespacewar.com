@@ -152,6 +152,12 @@ class QueryEvents {
         const recycles = events.filter(event => event.type === 'recycleCard');
         return recycles.length;
     }
+
+    countRecyclesOnTurn(currentTurn) {
+        const events = this._eventRepository.getAll();
+        const recycles = events.filter(event => event.turn === currentTurn && event.type === 'recycleCard');
+        return recycles.length;
+    }
 }
 
 function findLastIndex(collection, selector) {
