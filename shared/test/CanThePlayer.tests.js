@@ -10,6 +10,7 @@ const CanThePlayer = require('../match/CanThePlayer.js');
 const GameConfig = require('../match/GameConfig.js');
 const TestHelper = require('./fakeFactories/TestHelper.js');
 const createState = require('./fakeFactories/createState.js');
+const PutDownCardEvent = require('../PutDownCardEvent.js');
 
 const {
     createCard
@@ -20,10 +21,18 @@ module.exports = testCase('CanThePlayer', {
         setUp() {
             const testHelper = TestHelper(createState({
                 currentPlayer: 'P1A',
+                turn: 1,
                 playerStateById: {
                     'P1A': {
                         phase: 'action',
-                        stationCards: [stationCard('S1A', 'draw')]
+                        stationCards: [stationCard('S1A', 'draw')],
+                        events: [
+                            PutDownCardEvent({
+                                location: 'station-draw',
+                                cardId: 'S1A',
+                                turn: 1
+                            })
+                        ]
                     }
                 }
             }), {

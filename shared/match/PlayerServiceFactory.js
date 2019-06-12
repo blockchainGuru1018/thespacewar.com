@@ -21,6 +21,7 @@ const StartGame = require('./StartGame.js');
 const ActionLog = require('./log/ActionLog.js');
 const SacrificeCard = require('./SacrificeCard.js');
 const Repair = require('./Repair.js');
+const Miller = require('./mill/Miller.js');
 const PlayerCommanders = require('./commander/PlayerCommanders.js');
 
 const ServiceTypes = PlayerServiceProvider.TYPE;
@@ -43,6 +44,7 @@ module.exports = function ({
         _cache: objectsByNameAndPlayerId,
         playerServiceProvider: () => playerServiceProvider,
         playerCommanders: cached(playerCommanders),
+        miller: cached(miller),
         repair: cached(repair),
         moveStationCard: cached(moveStationCard),
         playerOverwork: cached(playerOverwork),
@@ -112,6 +114,16 @@ module.exports = function ({
     function playerCommanders(playerId) {
         return PlayerCommanders({
             playerStateService: api.playerStateService(playerId)
+        });
+    }
+
+    function miller(playerId) {
+        return Miller({
+            playerRequirementService: api.playerRequirementService(playerId),
+            playerStateService: api.playerStateService(playerId),
+            playerCommanders: api.playerCommanders(playerId),
+            opponentStateService: api.playerStateService(api.opponentId(playerId)),
+            opponentActionLog: api.actionLog(api.opponentId(playerId))
         });
     }
 

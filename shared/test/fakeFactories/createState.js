@@ -3,6 +3,7 @@ const {
 } = require('bocha');
 const FakeDeckFactory = require('../../../server/test/testUtils/FakeDeckFactory.js');
 const FakeCardDataAssembler = require('../../../server/test/testUtils/FakeCardDataAssembler.js');
+const playerStateFactory = require("../../match/playerStateFactory.js");
 
 module.exports = function createState(options = {}) {
     defaults(options, {
@@ -34,14 +35,5 @@ module.exports = function createState(options = {}) {
 };
 
 function createPlayerState(options = {}) {
-    return defaults(options, {
-        phase: 'wait',
-        cardsOnHand: [],
-        cardsInZone: [],
-        cardsInOpponentZone: [],
-        stationCards: [],
-        discardedCards: [],
-        events: [],
-        requirements: []
-    });
+    return defaults(options, playerStateFactory.empty());
 }

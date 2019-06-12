@@ -10,6 +10,7 @@ const {
 } = require('./shared.js');
 const StateAsserter = require('../testUtils/StateAsserter.js');
 const GameConfig = require('../../../shared/match/GameConfig.js');
+const Commander = require("../../../shared/match/commander/Commander.js");
 
 module.exports = {
     'overwork': {
@@ -30,7 +31,8 @@ module.exports = {
                             stationCards: [
                                 stationCard({ id: 'C1A', flipped: false }),
                                 stationCard({ id: 'C2A', flipped: false })
-                            ]
+                            ],
+                            commanders: [Commander.GeneralJackson]
                         }
                     }
                 }));
@@ -56,7 +58,8 @@ module.exports = {
                         stationCards: [
                             stationCard({ id: 'C1A', flipped: false }),
                             stationCard({ id: 'C2A', flipped: false })
-                        ]
+                        ],
+                        commanders: []
                     }
                 }
             }));
@@ -65,7 +68,7 @@ module.exports = {
         },
         'should throw error': function () {
             assert(this.error);
-            assert.equals(this.error.message, 'Overwork is disabled');
+            assert.equals(this.error.message, 'Cannot issue Overwork');
         }
     }
 };

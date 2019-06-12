@@ -1,4 +1,5 @@
 const canIssueOverwork = require('../../shared/match/overwork/canIssueOverwork.js');
+const Commander = require("../../shared/match/commander/Commander.js");
 
 module.exports = function (deps) {
 
@@ -142,9 +143,12 @@ module.exports = function (deps) {
         }
     }
 
-    function canMill(state, getters, rootState) {
+    function canMill(state, getters, rootState, rootGetters) {
         if (getters.waitingForOtherPlayerToFinishRequirements) return false;
         if (getters.opponentDeckIsEmpty) return false;
+
+        const hasTheMiller = rootGetters['match/playerCommanders'].has(Commander.TheMiller);
+        if (!hasTheMiller) return false;
 
         return rootState.match.phase === 'draw'
             || getFrom('firstRequirementIsDrawCard', 'requirement');

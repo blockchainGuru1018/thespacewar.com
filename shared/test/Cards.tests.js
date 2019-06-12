@@ -267,7 +267,8 @@ module.exports = testCase('Cards', {
                 }),
                 playerStateService: playerStateServiceFactory.withStubs({
                     isCardInHomeZone: () => false,
-                    getPhase: () => 'attack'
+                    getPhase: () => 'attack',
+                    isCardStationCard: () => false
                 })
             });
 

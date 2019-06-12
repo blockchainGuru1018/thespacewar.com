@@ -8,8 +8,8 @@ module.exports = function ({
 
     function overwork(playerId) {
         const playerOverwork = playerOverworkFactory.create(playerId);
-        if (playerOverwork.canIssueOverwork()) {
-            playerOverwork.overwork();
-        }
+        if (!playerOverwork.canIssueOverwork()) throw new Error('Cannot issue Overwork');
+
+        playerOverwork.overwork();
     }
 };

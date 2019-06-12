@@ -492,7 +492,10 @@
                 this.enlargedCardVisible = false;
             },
             composeDrawOrMillText() {
-                return 'Draw card or Mill opponent';
+                if (this.canMill) {
+                    return 'Draw card or Mill opponent';
+                }
+                return 'Draw card';
             }
         },
         components: {

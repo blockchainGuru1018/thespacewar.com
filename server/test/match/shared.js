@@ -15,6 +15,7 @@ const CardDataAssembler = require('../../../shared/CardDataAssembler.js');
 const CardInfoRepository = require('../../../shared/CardInfoRepository.js');
 const GameConfig = require('../../../shared/match/GameConfig.js');
 const Match = require('../../match/Match.js');
+const playerStateFactory = require("../../../shared/match/playerStateFactory.js");
 
 module.exports = {
     bocha: {
@@ -244,15 +245,5 @@ function createState(options) {
 }
 
 function createPlayerState(options = {}) {
-    return defaults(options, {
-        phase: 'wait',
-        cardsOnHand: [],
-        cardsInZone: [],
-        cardsInOpponentZone: [],
-        stationCards: [],
-        discardedCards: [],
-        events: [],
-        requirements: [],
-        actionLogEntries: []
-    });
+    return defaults(options, playerStateFactory.empty());
 }

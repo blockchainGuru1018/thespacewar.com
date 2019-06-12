@@ -9,6 +9,7 @@ const {
     createState,
 } = require('./shared.js');
 const StateAsserter = require('../testUtils/StateAsserter.js');
+const Commander = require("../../../shared/match/commander/Commander.js");
 
 module.exports = {
     async setUp() {
@@ -28,7 +29,8 @@ module.exports = {
                         phase: 'action',
                         stationCards: [
                             stationCard({ id: 'C1A', place: 'draw' })
-                        ]
+                        ],
+                        commanders: [Commander.KeveBakins]
                     }
                 }
             }));

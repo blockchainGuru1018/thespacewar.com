@@ -50,30 +50,26 @@ function DrawCardController(deps) {
     }
 
     function onDiscardOpponentTopTwoCards(playerId) {
-        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
-        const drawCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'drawCard' });
-        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        if (!drawCardRequirement && !playerStateService.moreCardsCanBeDrawnForDrawPhase()) {
+        const miller = playerServiceFactory.miller(playerId);
+        if (!miller.canMill()) {
             matchComService.emitToPlayer(playerId, 'drawCards', { moreCardsCanBeDrawn: false });
             return;
         }
 
-        const opponentStateService = playerServiceProvider.getStateServiceById([matchService.getOpponentId(playerId)]);
-        const milledCards = opponentStateService.discardTopTwoCardsInDrawPile();
-        playerStateService.registerMill();
+        miller.mill();
 
+        const playerRequirementService = playerServiceFactory.playerRequirementService(playerId);
+        const drawCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'drawCard' });
         if (drawCardRequirement) {
             const requirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'drawCard' });
             requirementUpdater.progressRequirementByCount(1);
         }
         else {
+            const playerStateService = playerServiceFactory.playerStateService(playerId);
             matchComService.emitToPlayer(playerId, 'drawCards', {
                 moreCardsCanBeDrawn: playerStateService.moreCardsCanBeDrawnForDrawPhase()
             });
         }
-
-        const opponentActionLog = playerServiceFactory.actionLog(matchService.getOpponentId(playerId));
-        opponentActionLog.opponentMilledCardsFromYourDeck({ milledCardCommonIds: milledCards.map(cardData => cardData.commonId) });
     }
 }
 
