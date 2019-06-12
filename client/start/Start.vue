@@ -3,7 +3,7 @@
         <div class="loading-backdropLetterBoxWrapper">
             <img
                 :class="backdropClasses"
-                src="/image/backdrop.jpg"
+                src="https://uploads.staticjw.com/th/thespacewar/the-space-war-card-game.jpg"
                 alt="Small fighters attacking a large battleship"
             >
         </div>
