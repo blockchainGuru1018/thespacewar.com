@@ -8,13 +8,12 @@ function StartGameController({
     opponentRequirementService,
     playerPhase,
     opponentPhase,
-    canThePlayer,
-    canTheOpponent
+    canThePlayer
 }) {
 
     return {
         selectPlayerToStart,
-        selectStartingStationCard,
+        selectStartingStationCard
     };
 
     function selectPlayerToStart(playerToStartId) {
@@ -37,14 +36,6 @@ function StartGameController({
         if (!playerStateService.hasCardOnHand(cardId)) throw new CheatError('Card is not on hand');
 
         playerStateService.selectStartingStationCard(cardId, location);
-
-        if (!canThePlayer.putDownMoreStartingStationCards()) {
-            playerStateService.doneSelectingStationCards();
-
-            if (!canTheOpponent.putDownMoreStartingStationCards()) {
-                matchService.startGame();
-            }
-        }
     }
 }
 

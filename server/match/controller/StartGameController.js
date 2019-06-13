@@ -8,6 +8,7 @@ function StartGameController({
     return {
         start,
         selectPlayerToStart,
+        selectCommander,
         selectStartingStationCard,
         repairPotentiallyInconsistentState //TODO Move this to its own class
     };
@@ -15,13 +16,13 @@ function StartGameController({
     function start(playerId) {
         const playerIds = matchService.getPlayerIds();
 
-        if (matchService.allPlayersReady()) {
+        if (matchService.allPlayersConnected()) {
             repairPlayersPotentiallyInconsistentState(playerIds);
             matchComService.emitCurrentStateToPlayers();
         }
         else {
-            matchService.readyPlayer(playerId);
-            if (matchService.allPlayersReady()) {
+            matchService.connectPlayer(playerId);
+            if (matchService.allPlayersConnected()) {
                 resetPlayers(playerIds);
                 matchComService.emitCurrentStateToPlayers();
             }
@@ -33,6 +34,13 @@ function StartGameController({
         startGame.selectPlayerToStart(playerToStartId);
 
         matchComService.emitCurrentStateToPlayers();
+    }
+
+    function selectCommander(playerId, { commander }) {
+        if (matchService.getReadyPlayerIds().includes(playerId)) throw new Error('Cannot select commander when has registered as ready');
+
+        const playerCommanders = playerServiceFactory.playerCommanders(playerId);
+        playerCommanders.select(commander);
     }
 
     function selectStartingStationCard(playerId, { cardId, location }) {

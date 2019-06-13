@@ -19,6 +19,10 @@ const obscurerByKey = {
     actionLogEntries: {
         obscure: value => value,
         key: 'opponentActionLogEntries'
+    },
+    commanders: {
+        obscure: value => value,
+        key: 'opponentCommanders'
     }
 };
 
@@ -30,7 +34,8 @@ const whitelist = [
     'cardsOnHand',
     'events',
     'phase',
-    'actionLogEntries'
+    'actionLogEntries',
+    'commanders'
 ];
 
 const statePreparer = StatePreparer({

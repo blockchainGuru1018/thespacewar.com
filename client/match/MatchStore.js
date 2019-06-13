@@ -62,8 +62,9 @@ module.exports = function (deps) {
         name: 'match',
         state: {
             mode: MatchMode.firstMode,
+            readyPlayerIds: [],
             gameConfigEntity: null,
-            commanders: [],
+            commanders: [Commander.StartingCommander],
             actionLogEntries: [],
             opponentActionLogEntries: [],
             turn: 1,
@@ -84,6 +85,7 @@ module.exports = function (deps) {
                 handSizeCards: []
             },
             playerCardsInOpponentZone: [],
+            opponentCommanders: [],
             opponentPhase: '',
             opponentCardCount: 0,
             opponentDiscardedCards: [],
@@ -137,10 +139,12 @@ module.exports = function (deps) {
             cardFactory,
             playerServiceProvider,
             playerCommanders,
+            opponentCommanders,
             moveStationCard,
             canPutDownCard,
             playerPerfectPlan,
             playerRuleService,
+            opponentRuleService,
             getCanThePlayer,
             canThePlayer,
             canTheOpponent,
@@ -162,6 +166,7 @@ module.exports = function (deps) {
             playerRetreated,
             overworkEnabled,
             maxStationCardCount,
+            opponentMaxStationCardCount,
             gameConfig,
             cardDataAssembler
         },
@@ -370,6 +375,12 @@ module.exports = function (deps) {
         });
     }
 
+    function opponentCommanders(state, getters) {
+        return PlayerCommanders({
+            playerStateService: getters.opponentStateService
+        });
+    }
+
     function moveStationCard(state, getters) {
         return MoveStationCard({
             matchService: getters.matchService,
@@ -415,6 +426,19 @@ module.exports = function (deps) {
             playerPhase: getters.playerPhase,
             gameConfig: getters.gameConfig,
             playerCommanders: getters.playerCommanders
+        });
+    }
+
+    function opponentRuleService(state, getters) {
+        return new PlayerRuleService({
+            playerStateService: getters.opponentStateService,
+            playerCommanders: getters.opponentCommanders,
+            gameConfig: getters.gameConfig,
+            opponentStateService: ClientLimitNotice,
+            playerRequirementService: ClientLimitNotice,
+            canThePlayer: ClientLimitNotice,
+            turnControl: ClientLimitNotice,
+            playerPhase: ClientLimitNotice
         });
     }
 
@@ -591,6 +615,10 @@ module.exports = function (deps) {
 
     function maxStationCardCount(state, getters) {
         return getters.playerRuleService.maxStationCardCount();
+    }
+
+    function opponentMaxStationCardCount(state, getters) {
+        return getters.opponentRuleService.maxStationCardCount();
     }
 
     function gameConfig(state) {

@@ -4,7 +4,8 @@ const FrankJohnson = require('./FrankJohnson.js');
 module.exports = function ({ playerStateService }) {
     return {
         has,
-        get
+        get,
+        select
     };
 
     function has(commanderType) {
@@ -15,5 +16,11 @@ module.exports = function ({ playerStateService }) {
         if (commanderType === Commander.FrankJohnson) {
             return FrankJohnson();
         }
+    }
+
+    function select(commanderType) {
+        playerStateService.update(playerState => {
+            playerState.commanders = [commanderType];
+        });
     }
 };

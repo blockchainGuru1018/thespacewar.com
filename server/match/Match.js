@@ -49,7 +49,8 @@ module.exports = function ({
         turn: 1,
         currentPlayer: firstPlayerId,
         playerOrder,
-        playersReady: 0,
+        playersConnected: 0,
+        readyPlayerIds: [],
         ended: false,
         retreatedPlayerId: null,
         playerStateById: {},
@@ -143,8 +144,10 @@ module.exports = function ({
     };
     const api = {
         selectPlayerToStart: startGameController.selectPlayerToStart,
+        selectCommander: startGameController.selectCommander,
         nextPhase: nextPhaseController.onNextPhase,
         toggleControlOfTurn: nextPhaseController.onToggleControlOfTurn,
+        playerReady: nextPhaseController.playerReady,
         putDownCard: putDownCardController.onPutDownCard,
         selectStartingStationCard: startGameController.selectStartingStationCard,
         counterCard: putDownCardController.counterCard,
@@ -220,7 +223,7 @@ module.exports = function ({
             matchService.setState(state);
         }
 
-        state.playersReady = 2;
+        state.playersConnected = 2;
     }
 
     function toClientModel() {

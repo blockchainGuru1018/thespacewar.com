@@ -160,44 +160,48 @@
                 </div>
                 <div class="field-player">
                     <div class="field-piles field-section">
-                        <div class="field-drawPile">
-                            <portal-target name="playerDrawPile" />
-                            <div
-                                class="card card-faceDown"
-                                v-if="playerCardsInDeckCount > 0"
-                            >
-                                <div class="actionOverlays">
-                                    <div
-                                        @click="playerDrawPileClick"
-                                        class="drawPile-draw actionOverlay"
-                                        v-if="canDrawCards"
-                                    >
-                                        Draw
+                        <div class="field-commandersAndDrawPile">
+                            <CommanderCards />
+
+                            <div class="field-drawPile">
+                                <portal-target name="playerDrawPile" />
+                                <div
+                                    class="card card-faceDown"
+                                    v-if="playerCardsInDeckCount > 0"
+                                >
+                                    <div class="actionOverlays">
+                                        <div
+                                            @click="playerDrawPileClick"
+                                            class="drawPile-draw actionOverlay"
+                                            v-if="canDrawCards"
+                                        >
+                                            Draw
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div
-                                class="card card-emptyDeck"
-                                v-else-if="canDrawCards"
-                            >
-                                <div class="actionOverlays">
-                                    <div
-                                        @click="playerDrawPileClick"
-                                        class="drawPile-draw actionOverlay actionOverlay--hinted"
-                                    >
-                                        Pass
+                                <div
+                                    class="card card-emptyDeck"
+                                    v-else-if="canDrawCards"
+                                >
+                                    <div class="actionOverlays">
+                                        <div
+                                            @click="playerDrawPileClick"
+                                            class="drawPile-draw actionOverlay actionOverlay--hinted"
+                                        >
+                                            Pass
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div
-                                class="card card-emptyDeck"
-                                v-else
-                            />
-                            <div class="drawPile-cardCount drawPile-cardCountText">
-                                {{ playerCardsInDeckCount }}
+                                <div
+                                    class="card card-emptyDeck"
+                                    v-else
+                                />
+                                <div class="drawPile-cardCount drawPile-cardCountText">
+                                    {{ playerCardsInDeckCount }}
+                                </div>
                             </div>
                         </div>
-
+                        
                         <div :class="['field-discardPile', {'flash': flashDiscardPile}]">
                             <div
                                 class="card card-placeholder"
@@ -346,6 +350,8 @@
                     :element-hovered-over="elementHoveredOver"
                     @click="cardGhostClick"
                 />
+
+                <CommanderSelection />
             </div>
             <div
                 v-if="holdingCard"
@@ -412,6 +418,8 @@
     const ChooseStartingPlayer = resolveModule(require('./chooseStartingPlayer/ChooseStartingPlayer.vue'));
     const EscapeMenu = resolveModule(require('./escapeMenu/EscapeMenu.vue'));
     const MatchHeader = resolveModule(require('./banner/MatchHeader.vue'));
+    const CommanderSelection = resolveModule(require('./commander/CommanderSelection.vue'));
+    const CommanderCards = resolveModule(require('./commander/CommanderCards.vue'));
     const { PHASES } = require('./phases.js');
 
     module.exports = {
@@ -754,7 +762,9 @@
             ExpandedCard,
             ChooseStartingPlayer,
             EscapeMenu,
-            MatchHeader
+            MatchHeader,
+            CommanderSelection,
+            CommanderCards
         },
         directives: {
             longpress

@@ -32,7 +32,7 @@ class PlayerStateService {
 
     reset() {
         const playerId = this.getPlayerId();
-        this._matchService.readyPlayer(playerId);
+        this._matchService.connectPlayer(playerId); //TODO This is already done in StartGame.js. Why is it also done here?
 
         const playerDeck = this.getDeck();
         const startingHandCount = this._gameConfig.amountOfCardsInStartHand();
@@ -49,27 +49,12 @@ class PlayerStateService {
             playerState.events = [];
             playerState.requirements = [];
             playerState.actionLogEntries = [];
-            playerState.commanders = [
-                Commander.FrankJohnson,
-                Commander.KeveBakins,
-                Commander.NiciaSatu,
-                Commander.GeneralJackson,
-                Commander.TheMiller,
-                Commander.DrStein
-            ];
+            playerState.commanders = [Commander.StartingCommander];
         });
     }
 
     readyForSelectingStationCards() {
         const isFirstPlayer = this.isFirstPlayer();
-        this.update(playerState => {
-            playerState.phase = isFirstPlayer ? PHASES.start : 'wait';
-        });
-    }
-
-    doneSelectingStationCards() {
-        const isFirstPlayer = this.isFirstPlayer();
-
         this.update(playerState => {
             playerState.phase = isFirstPlayer ? PHASES.start : 'wait';
         });

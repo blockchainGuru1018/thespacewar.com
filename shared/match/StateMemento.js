@@ -72,7 +72,7 @@ module.exports = function ({
     function restoreFromState(restoreState) {
         delete restoreState.gameStartTime;
         delete restoreState.playerOrder;
-        delete restoreState.playersReady;
+        delete restoreState.playersConnected;
 
         const state = matchService.getState();
         for (const playerId of Object.keys(restoreState.playerStateById)) {

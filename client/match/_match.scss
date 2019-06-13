@@ -105,6 +105,12 @@
   align-items: flex-start;
 }
 
+.field-commandersAndDrawPile {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
 .field-drawPile {
   position: relative;
 

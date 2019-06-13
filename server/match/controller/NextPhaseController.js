@@ -16,7 +16,8 @@ function NextPhaseCardController(deps) {
 
     return {
         onNextPhase,
-        onToggleControlOfTurn
+        onToggleControlOfTurn,
+        playerReady
     };
 
     function onNextPhase(playerId) {
@@ -65,6 +66,25 @@ function NextPhaseCardController(deps) {
         if (!turnControl.canToggleControlOfTurn()) throw new CheatError('Cannot toggle control of turn');
 
         turnControl.toggleControlOfTurn();
+        matchComService.emitCurrentStateToPlayers();
+    }
+
+    function playerReady(playerId) {
+        const canThePlayer = playerServiceFactory.canThePlayer(playerId);
+        if (canThePlayer.putDownMoreStartingStationCards()) throw new CheatError('Must select all starting station cards before reading');
+
+        matchService.update(state => {
+            state.readyPlayerIds.push(playerId);
+        });
+
+        if (matchService.allPlayersReady()) {
+            matchService.startGame();
+
+            const playerOrder = matchService.getPlayerOrder();
+            const firstPlayerId = playerOrder[0];
+            onNextPhase(firstPlayerId);
+        }
+
         matchComService.emitCurrentStateToPlayers();
     }
 

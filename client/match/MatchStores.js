@@ -11,7 +11,8 @@ const STORES = [
     require('../expandedCard/ExpandedCardStore.js'),
     require('./chooseStartingPlayer/ChooseStartingPlayerStore.js'),
     require('./escapeMenu/EscapeMenuStore.js'),
-    require('./ghost/GhostStore.js')
+    require('./ghost/GhostStore.js'),
+    require('./StartGameStore.js')
 ];
 const AI = require('./AI.js');
 const LOGGING_ENABLED = false;

@@ -52,7 +52,8 @@
             ...matchHelpers.mapGetters([
                 'allPlayerStationCards',
                 'allOpponentStationCards',
-                'maxStationCardCount'
+                'maxStationCardCount',
+                'opponentMaxStationCardCount'
             ]),
             ...cardHelpers.mapState([
                 'holdingCard'
@@ -87,10 +88,13 @@
             stationCards() {
                 return this.isPlayer ? this.allPlayerStationCards : this.allOpponentStationCards;
             },
+            barCount() {
+                return this.isPlayer ? this.maxStationCardCount : this.opponentMaxStationCardCount;
+            },
             bars() {
                 const stationCards = this.stationCards.slice();
 
-                stationCards.push(...range(this.maxStationCardCount - stationCards.length).map(index => ({
+                stationCards.push(...range(this.barCount - stationCards.length).map(index => ({
                     key: `e:${index}`,
                     empty: true
                 })));

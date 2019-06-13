@@ -4,15 +4,17 @@
             v-if="!gameHasEnded"
             to="player-top"
         >
-            <div v-if="nextPhaseButtonContainerVisible" class="nextPhaseButtonContainer">
+            <div v-if="startGameButtonContainerVisible" class="startGameButtonContainer">
                 <button
-                    v-if="phase === 'start'"
-                    class="playerHud-phaseText nextPhaseButton"
-                    @click="startClick"
+                    v-if="readyButtonVisible"
+                    class="readyButton playerHud-phaseText nextPhaseButton"
+                    @click="readyClick"
                 >
-                    Start
+                    Ready
                 </button>
-                <template v-else-if="canGoToNextTurn">
+            </div>
+            <div v-else-if="nextPhaseButtonContainerVisible" class="nextPhaseButtonContainer">
+                <template v-if="canGoToNextTurn">
                     <button
                         v-if="nextPhaseButtonText"
                         class="playerHud-phaseText nextPhaseButton"
@@ -174,7 +176,7 @@
                     class="perfectPlan darkButton"
                     @click="perfectPlan"
                 >
-                    PerfectPlan
+                    Perfect Plan
                 </button>
             </div>
         </portal>
@@ -275,6 +277,7 @@
     const cardHelpers = Vuex.createNamespacedHelpers('card');
     const ghostHelpers = Vuex.createNamespacedHelpers('ghost');
     const requirementHelpers = Vuex.createNamespacedHelpers('requirement');
+    const startGameHelpers = Vuex.createNamespacedHelpers('startGame');
     const MatchMode = require('../../shared/match/MatchMode.js');
     const { PHASES } = require('./phases.js');
 
@@ -285,6 +288,9 @@
             };
         },
         computed: {
+            ...startGameHelpers.mapGetters([
+                'readyButtonVisible'
+            ]),
             ...mapState([
                 'mode',
                 'currentPlayer',
@@ -348,6 +354,9 @@
             ...ghostHelpers.mapGetters([
                 'activateEventCardGhostVisible'
             ]),
+            startGameButtonContainerVisible() {
+                return !this.gameOn;
+            },
             nextPhaseButtonContainerVisible() {
                 return this.gameOn && !this.holdingCard;
             },
@@ -494,8 +503,11 @@
                 'perfectPlan',
                 'toggleControlOfTurn'
             ]),
-            startClick() {
-                this.goToNextPhase();
+            ...startGameHelpers.mapActions([
+                'playerReady'
+            ]),
+            readyClick() {
+                this.playerReady();
             },
             nextPhaseClick() {
                 this.goToNextPhase();
@@ -569,7 +581,8 @@
         }
     }
 
-    .nextPhaseButtonContainer {
+    .nextPhaseButtonContainer,
+    .startGameButtonContainer {
         position: absolute;
         top: 50%;
         left: 0;

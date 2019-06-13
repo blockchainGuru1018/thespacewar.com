@@ -35,6 +35,10 @@ class MatchService {
         return this._state.playerOrder;
     }
 
+    getReadyPlayerIds() {
+        return this._state.readyPlayerIds;
+    }
+
     getFirstPlayerId() {
         return this._state.playerOrder[0];
     }
@@ -132,12 +136,16 @@ class MatchService {
         this._state.playerOrder = [playerId, this.getOpponentId(playerId)];
     }
 
-    allPlayersReady() {
-        return this._state.playersReady >= this._state.playerOrder.length;
+    allPlayersConnected() {
+        return this._state.playersConnected >= this._state.playerOrder.length;
     }
 
-    readyPlayer(playerId) {
-        this._state.playersReady++;
+    allPlayersReady() {
+        return this._state.playerOrder.every(id => this._state.readyPlayerIds.includes(id));
+    }
+
+    connectPlayer(playerId) {
+        this._state.playersConnected++;
         this._state.playerStateById[playerId] = {};
     }
 
