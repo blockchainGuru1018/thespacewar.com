@@ -1,6 +1,10 @@
 @import "cardVariables";
 
+$stationRowPaddingTop: 20px;
+$stationRowPaddingBottom: 16px;
+
 .field-playerStation {
+  position: relative;
   flex-direction: column;
   margin-right: 12px;
   margin-top: 8px;

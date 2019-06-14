@@ -204,32 +204,32 @@
 
                         <div :class="['field-discardPile', {'flash': flashDiscardPile}]">
                             <div
-                                class="card card-placeholder"
                                 v-if="!playerTopDiscardCard"
+                                class="card card-placeholder card-emptyDeck"
                             />
                             <div
+                                v-else
+                                v-longpress="() => expandCard(playerTopDiscardCard)"
                                 :data-cardId="playerTopDiscardCard.id"
                                 :style="getCardImageStyle(playerTopDiscardCard)"
                                 class="card card--expandable"
-                                v-else
-                                v-longpress="() => expandCard(playerTopDiscardCard)"
                             />
                             <CardGhost
-                                :element-hovered-over="elementHoveredOver"
-                                @click="cardGhostClick"
+                                v-if="discardPileCardGhostVisible"
                                 class="discardPile-cardGhost"
                                 location="discard"
-                                v-if="discardPileCardGhostVisible"
+                                :element-hovered-over="elementHoveredOver"
+                                @click="cardGhostClick"
                             >
                                 <div
-                                    class="recycle"
                                     v-if="canThePlayer.recycleCards()"
+                                    class="recycle"
                                 >
                                     Recycle
                                 </div>
                                 <div
-                                    class="discard"
                                     v-else
+                                    class="discard"
                                 >
                                     Discard
                                 </div>
@@ -278,6 +278,11 @@
                         </div>
                     </div>
                     <div class="playerStationCards field-playerStation field-station field-section">
+                        <div class="stationCardLabel">
+                            <div class="stationCardLabelText">
+                                Space Station
+                            </div>
+                        </div>
                         <div class="field-stationRow">
                             <portal-target name="stationDrawRow" />
                             <station-card

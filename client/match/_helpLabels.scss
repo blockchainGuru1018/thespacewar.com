@@ -1,0 +1,74 @@
+
+.field-player {
+  .field-drawPile::before,
+  .field-discardPile::before,
+  .commanderCards::before {
+    $fontSize: 20px;
+
+    font-family: "Space Mono", monospace;
+    font-size: $fontSize;
+    position: absolute;
+    bottom: calc(100% + #{$fontSize / 6});
+    transform: translateX(-50%);
+    left: 50%;
+    text-align: center;
+    white-space: nowrap;
+    pointer-events: none;
+
+    color: rgba(255, 255, 255, .2);
+  }
+
+  .field-drawPile:hover::before,
+  .field-discardPile:hover::before,
+  .commanderCards:hover::before {
+    transition: color .15s ease;
+    color: rgba(255, 255, 255, .4);
+  }
+
+  .field-drawPile::before {
+    content: "Draw pile";
+  }
+
+  .field-discardPile::before {
+    content: "Discard pile";
+  }
+
+  .commanderCards {
+    position: relative;
+
+    &::before {
+      content: "Commander";
+    }
+  }
+}
+
+.field-player .stationCardLabel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: none;
+  transform-origin: 0 0;
+  transform: rotate(90deg);
+  margin-left: -10px;
+  pointer-events: none;
+
+  .stationCardLabelText {
+    letter-spacing: .25em;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: none;
+    transform: rotate(180deg);
+    margin-left: calc(((#{$playerStationCardHeight} + #{$stationRowPaddingTop} + #{$stationRowPaddingBottom}) / 3) - 12px);
+
+    color: rgba(255, 255, 255, .2);
+    font-family: "Space Mono", monospace;
+    font-size: 36px;
+    white-space: nowrap;
+  }
+}
+
+.field-playerStation:hover .stationCardLabelText {
+  transition: color .15s ease;
+  color: rgba(255, 255, 255, .6);
+}

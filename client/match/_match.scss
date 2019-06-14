@@ -360,9 +360,16 @@
 .card-emptyDeck {
   width: $playerCardWidth;
   height: $playerCardHeight;
-  border: 4px solid rgba(60, 60, 60, .16);
+  border-size: 4px;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, .2);
   background: transparent;
   z-index: $cardGhostZIndex;
+
+  &:hover {
+    transition: border-color .15s ease;
+    border-color: rgba(255, 255, 255, .4);
+  }
 }
 
 .holdingCard {
