@@ -49,11 +49,6 @@
             click() {
                 this.$emit('click', this.location);
             }
-        },
-        watch: {
-            elementHoveredOver() {
-                console.log('elementHoveredOver', this.elementHoveredOver);
-            }
         }
     }
 </script>

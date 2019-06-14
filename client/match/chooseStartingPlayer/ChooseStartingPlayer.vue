@@ -5,7 +5,10 @@
     >
         <div class="chooseStartingPlayer-dialog cardChoiceDialog">
             <div class="chardChoiceDialog-header">
-                Choose starting player
+                <span class="chooseStartingPlayer-randomlyChosenText">
+                    You were randomly chosen to
+                </span>
+                Select the starting player
             </div>
             <button
                 v-for="player in players"

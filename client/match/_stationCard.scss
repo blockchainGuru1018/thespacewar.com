@@ -1,7 +1,5 @@
 @import "cardVariables";
-
-$stationRowPaddingTop: 20px;
-$stationRowPaddingBottom: 16px;
+@import "miscVariables";
 
 .field-playerStation {
   position: relative;

@@ -1,3 +1,8 @@
+@import "cardVariables";
+@import "miscVariables";
+
+$startOpacity: .2;
+$endOpacity: .6;
 
 .field-player {
   .field-drawPile::before,
@@ -15,14 +20,14 @@
     white-space: nowrap;
     pointer-events: none;
 
-    color: rgba(255, 255, 255, .2);
+    color: rgba(255, 255, 255, $startOpacity);
   }
 
   .field-drawPile:hover::before,
   .field-discardPile:hover::before,
   .commanderCards:hover::before {
     transition: color .15s ease;
-    color: rgba(255, 255, 255, .4);
+    color: rgba(255, 255, 255, $endOpacity);
   }
 
   .field-drawPile::before {
@@ -61,7 +66,7 @@
     transform: rotate(180deg);
     margin-left: calc(((#{$playerStationCardHeight} + #{$stationRowPaddingTop} + #{$stationRowPaddingBottom}) / 3) - 12px);
 
-    color: rgba(255, 255, 255, .2);
+    color: rgba(255, 255, 255, $startOpacity);
     font-family: "Space Mono", monospace;
     font-size: 36px;
     white-space: nowrap;
@@ -70,5 +75,14 @@
 
 .field-playerStation:hover .stationCardLabelText {
   transition: color .15s ease;
-  color: rgba(255, 255, 255, .6);
+  color: rgba(255, 255, 255, $endOpacity);
+}
+
+.field-player .card-emptyDeck {
+  border-color: rgba(255, 255, 255, $startOpacity);
+
+  &:hover {
+    transition: border-color .15s ease;
+    border-color: rgba(255, 255, 255, $endOpacity);
+  }
 }
