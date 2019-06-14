@@ -11,7 +11,9 @@ module.exports = function ({
         getters: {
             playerHasRegisteredAsReady,
             readyButtonVisible,
-            commanderSelectionVisible
+            commanderCardsVisible,// TODO Does not really fit in to the "startGame" store...
+            commanderSelectionVisible,
+            _doneSelectingStationCards
         },
         actions: {
             playerReady,
@@ -24,13 +26,22 @@ module.exports = function ({
             || rootState.match.readyPlayerIds.includes(rootState.match.ownUser.id);
     }
 
-    function readyButtonVisible(state, getters, rootState, rootGetters) {
-        return rootGetters['match/startingStationCardsToPutDownCount'] === 0
+    function readyButtonVisible(state, getters) {
+        return getters._doneSelectingStationCards
             && !getters.playerHasRegisteredAsReady;
     }
 
+    function commanderCardsVisible(state, getters) {
+        return !getters.commanderSelectionVisible && getters._doneSelectingStationCards;
+    }
+
     function commanderSelectionVisible(state, getters) {
-        return !getters.playerHasRegisteredAsReady;
+        return getters.readyButtonVisible;
+    }
+
+    function _doneSelectingStationCards(state, getters, rootState, rootGetters) {
+        return rootGetters['match/gameOn']
+            || rootGetters['match/startingStationCardsToPutDownCount'] === 0;
     }
 
     function playerReady({ state }) {

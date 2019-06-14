@@ -1,12 +1,15 @@
 <template>
     <transition name="fade-fast">
         <div
-            :data-location="location"
-            :class="['playerEventCardGhost', 'ghost', {'playerEventCardGhost--hoveredOver': elementHoveredOver === $el }]"
+            :class="classes"
             @click.stop="click"
             @mouseup="mouseup"
         >
-            <div class="activateEventCard">
+            <div
+                ref="activateEventCard"
+                :data-location="location"
+                class="activateEventCard ghost"
+            >
                 Activate
             </div>
         </div>
@@ -28,7 +31,14 @@
         computed: {
             ...cardHelpers.mapState([
                 'draggingCard'
-            ])
+            ]),
+            classes() {
+                const classes = ['playerEventCardGhost'];
+                if (this.elementHoveredOver === this.$refs.activateEventCard) {
+                    classes.push('playerEventCardGhost--hoveredOver');
+                }
+                return classes;
+            }
         },
         methods: {
             mouseup() {
@@ -38,6 +48,11 @@
             },
             click() {
                 this.$emit('click', this.location);
+            }
+        },
+        watch: {
+            elementHoveredOver() {
+                console.log('elementHoveredOver', this.elementHoveredOver);
             }
         }
     }

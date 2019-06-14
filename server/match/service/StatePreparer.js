@@ -4,7 +4,7 @@ module.exports = function StatePreparer({ whitelist, obscureHandlerByKey, altern
         prepare
     };
 
-    function prepare(state) {
+    function prepare(state, context = {}) {
         let result = {};
         let whitelistedKeys = Object.keys(state).filter(key => whitelist.includes(key));
         for (let key of whitelistedKeys) {
@@ -12,7 +12,7 @@ module.exports = function StatePreparer({ whitelist, obscureHandlerByKey, altern
 
             const obscurer = obscureHandlerByKey[key];
             if (obscurer) {
-                result[getFinalKey(obscurer.key)] = obscurer.obscure(value);
+                result[getFinalKey(obscurer.key)] = obscurer.obscure(value, context);
             }
             else {
                 result[getFinalKey(key)] = value;

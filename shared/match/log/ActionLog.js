@@ -186,9 +186,10 @@ module.exports = function ({
     }
 
     function opponentCounteredAttackOnStation({ targetStationCardIds }) {
+        const count = targetStationCardIds.length;
         log({
             action: 'counteredAttackOnCard',
-            text: `${opponentName()} countered attack on *${targetStationCardIds.length} station cards#`,
+            text: `${opponentName()} countered attack on *${count} station ${count === 1 ? 'card' : 'cards'}#`,
             targetStationCardIds
         });
     }

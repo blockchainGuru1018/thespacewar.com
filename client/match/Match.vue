@@ -1,20 +1,17 @@
 <template>
     <div :class="['match-wrapper', {shake: shake}]" ref="match-wrapper">
+        <div class="match-overlay" />
+        <div class="match-backgroundWrapper">
+            <img
+                class="match-background"
+                src="https://images.thespacewar.com/game-background.jpg"
+            >
+            <div class="match-backgroundOverlay" />
+        </div>
         <div
             :class="['match', `currentPhase--${phase}`]"
             ref="match"
         >
-            <div class="match-overlay" />
-
-            <div class="match-backgroundWrapper">
-                <!-- /image/space4.PNG -->
-                <img
-                    class="match-background"
-                    src="https://images.thespacewar.com/game-background.jpg"
-                >
-                <div class="match-backgroundOverlay" />
-            </div>
-
             <div class="field">
                 <div class="field-opponent">
                     <div
@@ -108,41 +105,44 @@
                             />
                         </div>
 
-                        <div class="field-drawPile">
-                            <portal-target name="opponentDrawPile" />
-                            <div
-                                class="card card-faceDown"
-                                v-if="!opponentDeckIsEmpty"
-                            >
-                                <div class="actionOverlays">
-                                    <div
-                                        @click="opponentDrawPileClick"
-                                        class="drawPile-discardTopTwo actionOverlay"
-                                        v-if="canMill"
-                                    >
-                                        Mill {{ millCardCount }}
+                        <div class="field-commandersAndDrawPile">
+                            <OpponentCommanderCards />
+                            <div class="field-drawPile">
+                                <portal-target name="opponentDrawPile" />
+                                <div
+                                    class="card card-faceDown"
+                                    v-if="!opponentDeckIsEmpty"
+                                >
+                                    <div class="actionOverlays">
+                                        <div
+                                            @click="opponentDrawPileClick"
+                                            class="drawPile-discardTopTwo actionOverlay"
+                                            v-if="canMill"
+                                        >
+                                            Mill {{ millCardCount }}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div
-                                class="card card-emptyDeck"
-                                v-else-if="canMill"
-                            >
-                                <div class="actionOverlays">
-                                    <div
-                                        @click="opponentDrawPileClick"
-                                        class="drawPile-discardTopTwo actionOverlay"
-                                    >
-                                        Mill {{ millCardCount }}
+                                <div
+                                    class="card card-emptyDeck"
+                                    v-else-if="canMill"
+                                >
+                                    <div class="actionOverlays">
+                                        <div
+                                            @click="opponentDrawPileClick"
+                                            class="drawPile-discardTopTwo actionOverlay"
+                                        >
+                                            Mill {{ millCardCount }}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div
-                                class="card card-emptyDeck"
-                                v-else
-                            />
-                            <div class="drawPile-cardCount drawPile-cardCountText">
-                                {{ opponentCardsInDeckCount }}
+                                <div
+                                    class="card card-emptyDeck"
+                                    v-else
+                                />
+                                <div class="drawPile-cardCount drawPile-cardCountText">
+                                    {{ opponentCardsInDeckCount }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -161,7 +161,7 @@
                 <div class="field-player">
                     <div class="field-piles field-section">
                         <div class="field-commandersAndDrawPile">
-                            <CommanderCards />
+                            <PlayerCommanderCards />
 
                             <div class="field-drawPile">
                                 <portal-target name="playerDrawPile" />
@@ -201,7 +201,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div :class="['field-discardPile', {'flash': flashDiscardPile}]">
                             <div
                                 class="card card-placeholder"
@@ -419,7 +419,8 @@
     const EscapeMenu = resolveModule(require('./escapeMenu/EscapeMenu.vue'));
     const MatchHeader = resolveModule(require('./banner/MatchHeader.vue'));
     const CommanderSelection = resolveModule(require('./commander/CommanderSelection.vue'));
-    const CommanderCards = resolveModule(require('./commander/CommanderCards.vue'));
+    const PlayerCommanderCards = resolveModule(require('./commander/PlayerCommanderCards.vue'));
+    const OpponentCommanderCards = resolveModule(require('./commander/OpponentCommanderCards.vue'));
     const { PHASES } = require('./phases.js');
 
     module.exports = {
@@ -696,6 +697,10 @@
                 window.location.reload();
             },
             documentTouchmove(event) {
+                if (!this.holdingCard) return;
+
+                event.preventDefault();
+
                 const x = event.touches[0].clientX;
                 const y = event.touches[0].clientY;
                 this.mousePosition = { x, y };
@@ -703,6 +708,8 @@
                 this.elementHoveredOver = document.elementFromPoint(x, y);
             },
             documentTouchend() {
+                if (!this.holdingCard) return;
+
                 let elementAtPosition = document.elementFromPoint(this.mousePosition.x, this.mousePosition.y);
                 if (elementAtPosition.className.includes('ghost')) {
                     this.cardGhostClick(elementAtPosition.dataset.location);
@@ -743,7 +750,7 @@
                 }
             });
 
-            document.addEventListener('touchmove', this.documentTouchmove);
+            document.addEventListener('touchmove', this.documentTouchmove, { passive: false });
             document.addEventListener('touchend', this.documentTouchend);
         },
         destroyed() {
@@ -764,7 +771,8 @@
             EscapeMenu,
             MatchHeader,
             CommanderSelection,
-            CommanderCards
+            PlayerCommanderCards,
+            OpponentCommanderCards
         },
         directives: {
             longpress

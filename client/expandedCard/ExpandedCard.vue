@@ -1,6 +1,6 @@
 <template>
     <div
-        v-if="cardData"
+        v-if="cardData || commander"
         ref="expandedCard"
         class="expandedCard"
         tabindex="0"
@@ -21,7 +21,8 @@
     module.exports = {
         computed: {
             ...expandedCardHelpers.mapState([
-                'cardData'
+                'cardData',
+                'commander'
             ]),
             ...expandedCardHelpers.mapGetters([
                 'cardImageUrl'
@@ -30,6 +31,13 @@
         watch: {
             cardData() {
                 if (this.cardData) {
+                    setTimeout(() => {
+                        this.$refs.expandedCard.focus();
+                    });
+                }
+            },
+            commander() {
+                if (this.commander) {
                     setTimeout(() => {
                         this.$refs.expandedCard.focus();
                     });

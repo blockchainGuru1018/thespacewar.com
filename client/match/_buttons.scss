@@ -1,6 +1,5 @@
 
-.darkButton {
-  height: 46px;
+.darkButton--onlyLook {
   font-size: 16px;
   font-family: Helvetica, sans-serif;
   font-weight: bold;
@@ -17,6 +16,12 @@
     color: white;
     outline: 0;
   }
+}
+
+.darkButton {
+  @extend .darkButton--onlyLook;
+
+  height: 46px;
 }
 
 .toggleControlOfTurn {

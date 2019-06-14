@@ -82,9 +82,6 @@
                             You lose when all your station cards are damaged
                         </div>
                     </div>
-                    <div v-else class="guideText-waitingForOtherPlayer guideText">
-                        Waiting for other player
-                    </div>
                 </template>
                 <div
                     v-else-if="waitingForOtherPlayerToSelectStartingPlayer"
@@ -588,10 +585,12 @@
         left: 0;
         transform: translateY(-50%);
         z-index: 1;
-        width: 15%;
+        min-width: 15%;
         display: flex;
         justify-content: center;
         align-items: center;
+        padding: 10px;
+        box-sizing: border-box;
     }
 
     .nextPhaseButton {
@@ -652,12 +651,13 @@
     .stationRowDescription {
         position: absolute;
         left: 0;
+        top: 0;
+        z-index: 1;
+        white-space: nowrap;
         display: flex;
         text-align: right;
         justify-content: flex-end;
         align-items: center;
-        top: 0;
-        z-index: 1;
     }
 
     .opponentDrawPileDescription,

@@ -1,24 +1,51 @@
 <template>
     <div
+        v-longpress="() => longpress(commander)"
         :class="classes"
+        :style="style"
         @click="$emit('select')"
-    >
-        <div class="commanderCard-name">
-            <slot />
-        </div>
-    </div>
+    />
 </template>
 <script>
+    const Vuex = require('vuex');
+    const expandedCardHelpers = Vuex.createNamespacedHelpers('expandedCard');
+    const getCardImageUrl = require('../../utils/getCardImageUrl.js');
+    const longpress = require('../../utils/longpress.js');
+
     module.exports = {
-        props: ['selected'],
+        props: ['commander', 'selected', 'expandable', 'turnedAround'],
         computed: {
             classes() {
-                const classes = ['commanderCard', 'card', 'card-faceDown'];
+                const classes = ['commanderCard', 'card'];
                 if (this.selected) {
                     classes.push('commanderCard--selected');
                 }
+                if (this.turnedAround) {
+                    classes.push('card--turnedAround');
+                }
+                if (this.expandable) {
+                    classes.push('card--expandable');
+                }
                 return classes;
+            },
+            style() {
+                return {
+                    backgroundImage: `url(${getCardImageUrl.forCommander(this.commander)})`
+                };
             }
+        },
+        methods: {
+            ...expandedCardHelpers.mapActions([
+                'expandCommanderCard'
+            ]),
+            longpress() {
+                if (!this.expandable) return;
+
+                this.expandCommanderCard(this.commander);
+            }
+        },
+        directives: {
+            longpress
         }
     }
 </script>

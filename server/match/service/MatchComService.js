@@ -104,7 +104,7 @@ class MatchComService {
                 turn: this._matchService.getTurn(),
                 gameConfigEntity: this._matchService.getGameConfigEntity(),
                 ...preparePlayerState(playerState),
-                ...prepareOpponentState(opponentState)
+                ...this._prepareOpponentState(opponentState)
             };
 
             if (Object.keys(data).length > 0) {
@@ -122,16 +122,11 @@ class MatchComService {
 
         for (const player of this.getPlayers()) {
             const playerId = player.id;
-            const playerChangedKeys = snapshot.changedKeysByPlayerId[playerId];
-            const playerChangedState = this._getPlayerChangedState(playerId, playerChangedKeys);
-
-            let opponentId = this.getOpponentId(playerId);
-            const opponentChangedKeys = snapshot.changedKeysByPlayerId[opponentId];
-            const opponentChangedState = this._getPlayerChangedState(opponentId, opponentChangedKeys);
+            const opponentId = this.getOpponentId(playerId);
 
             const data = {
-                ...preparePlayerState(playerChangedState),
-                ...prepareOpponentState(opponentChangedState)
+                ...preparePlayerState(this._getPlayerChangedState(playerId, snapshot)),
+                ...this._prepareOpponentState(this._getPlayerChangedState(opponentId, snapshot))
             };
 
             if (Object.keys(data).length > 0) {
@@ -140,12 +135,23 @@ class MatchComService {
         }
     }
 
+    _prepareOpponentState(state) {
+        return prepareOpponentState(state, this._getContext());
+    }
+
+    _getContext() {
+        return {
+            matchMode: this._matchService.mode()
+        };
+    }
+
     _getPlayerState(playerId) {
         const playerStateService = this._playerServiceProvider.getStateServiceById(playerId);
         return playerStateService.getPlayerState();
     }
 
-    _getPlayerChangedState(playerId, playerChangedKeys) {
+    _getPlayerChangedState(playerId, snapshot) {
+        const playerChangedKeys = snapshot.changedKeysByPlayerId[playerId];
         const playerStateService = this._playerServiceProvider.getStateServiceById(playerId);
         const playerState = playerStateService.getPlayerState();
         return getChangedStateFromChangedKeys(playerState, playerChangedKeys);

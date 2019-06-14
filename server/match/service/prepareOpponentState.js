@@ -1,6 +1,8 @@
 const obscureOpponentEvents = require('./obscureOpponentEvents.js');
 const itemNamesForOpponentByItemNameForPlayer = require('../itemNamesForOpponentByItemNameForPlayer.js');
 const StatePreparer = require('./StatePreparer.js');
+const MatchMode = require("../../../shared/match/MatchMode.js");
+
 const obscurerByKey = {
     stationCards: {
         obscure: require('./prepareStationCardsForClient'),
@@ -21,7 +23,13 @@ const obscurerByKey = {
         key: 'opponentActionLogEntries'
     },
     commanders: {
-        obscure: value => value,
+        obscure: (value, context) => {
+            if (context.matchMode === MatchMode.game) {
+                return value;
+            }
+
+            return [];
+        },
         key: 'opponentCommanders'
     }
 };

@@ -168,10 +168,12 @@
             documentTouchMove(event) {
                 if (this.holdingCard) return;
 
-                if (event.touches[0].clientY < (this.touchStartY - DragLooseThreshold)) {
-                    this.$emit('cardClick', this.playerVisibleCardsOnHand[this.hoveringOverCardAtIndex]);
-                    this.hoveringOverCardAtIndex = -1;
-                    return;
+                if (this.hoveringOverCardAtIndex >= 0) {
+                    if (event.touches[0].clientY < (this.touchStartY - DragLooseThreshold)) {
+                        this.$emit('cardClick', this.playerVisibleCardsOnHand[this.hoveringOverCardAtIndex]);
+                        this.hoveringOverCardAtIndex = -1;
+                        return;
+                    }
                 }
 
                 let touchedElement = document.elementFromPoint(event.touches[0].clientX, event.touches[0].clientY);
@@ -209,8 +211,8 @@
             }
         },
         mounted() {
-            document.addEventListener('touchstart', this.documentTouchStart);
-            document.addEventListener('touchmove', this.documentTouchMove);
+            document.addEventListener('touchstart', this.documentTouchStart, { passive: false });
+            document.addEventListener('touchmove', this.documentTouchMove, { passive: false });
 
             document.addEventListener('mousedown', this.documentMouseDown);
             document.addEventListener('mouseup', this.documentMouseUp);

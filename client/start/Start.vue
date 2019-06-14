@@ -1,11 +1,12 @@
 <template>
     <div :class="['loading', {'loading--done': loadingDone}]">
         <div class="loading-backdropLetterBoxWrapper">
-            <img
-                :class="backdropClasses"
-                src="https://uploads.staticjw.com/th/thespacewar/the-space-war-card-game.jpg"
-                alt="Small fighters attacking a large battleship"
-            >
+            <div class="background" />
+            <!--<img-->
+            <!--:class="backdropClasses"-->
+            <!--src="https://uploads.staticjw.com/th/thespacewar/the-space-war-card-game.jpg"-->
+            <!--alt="Small fighters attacking a large battleship"-->
+            <!--&gt;-->
         </div>
         <div
             v-if="!loadingDone"
@@ -97,10 +98,25 @@
         bottom: 0;
         left: 0;
         background-color: black;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        overflow: hidden;
+    }
+
+    .background {
+        width: 100%;
+        height: 100%;
+        background-image: url(https://uploads.staticjw.com/th/thespacewar/the-space-war-card-game.jpg);
+        background-repeat: no-repeat;
+        background-position: top center;
+        background-size: cover;
     }
 
     .loading-backdrop {
-        width: 100%;
+        flex: 0 0 auto;
+        width: 100vmax;
+
         transition: filter $animation-time $animation-curve, transform 240s, left 240s;
 
         left: -10px;

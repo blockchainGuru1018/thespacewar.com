@@ -63,6 +63,7 @@
         position: absolute;
         top: 0;
         right: 0;
+        z-index: 3;
 
         padding: 0;
         margin: 10px 10px 0 0;

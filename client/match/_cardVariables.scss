@@ -30,6 +30,9 @@ $playerDiscardPileCardHeight: $playerCardHeight;
 $playerDrawPileCardWidth: $playerCardWidth;
 $playerDrawPileCardHeight: $playerCardHeight;
 
+$commanderCardWidth: calc(#{$cardWidth} / 2.8);
+$commanderCardHeight: calc(#{$cardHeight} / 2.8);
+
 $cardHoverWidth: $cardWidth / 2.8;
 $cardHoverHeight: $cardHeight / 2.8;
 

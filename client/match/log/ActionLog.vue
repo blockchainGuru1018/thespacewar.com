@@ -80,6 +80,8 @@
         position: absolute;
         top: 0;
         right: 0;
+        z-index: 3;
+
         margin: #{$bannerTopMargin + $bannerHeight + ($bannerTopMargin / 2)} 10px 0 0;
         background: rgba(18, 18, 18, .7);
         border: $borderSize solid $bannerBorderColor;
