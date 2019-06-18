@@ -47,7 +47,7 @@ $endOpacity: .6;
   }
 }
 
-.field-player .stationCardLabel {
+.stationCardLabel {
   position: absolute;
   top: 0;
   left: 0;
@@ -56,21 +56,21 @@ $endOpacity: .6;
   transform: rotate(90deg);
   margin-left: -10px;
   pointer-events: none;
+}
 
-  .stationCardLabelText {
-    letter-spacing: .25em;
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: none;
-    transform: rotate(180deg);
-    margin-left: calc(((#{$playerStationCardHeight} + #{$stationRowPaddingTop} + #{$stationRowPaddingBottom}) / 3) - 12px);
+.stationCardLabelText {
+  letter-spacing: .25em;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: none;
+  transform: rotate(180deg);
+  margin-left: calc(((#{$playerStationCardHeight} + #{$stationRowPaddingTop} + #{$stationRowPaddingBottom}) / 3) - 12px);
 
-    color: rgba(255, 255, 255, $startOpacity);
-    font-family: "Space Mono", monospace;
-    font-size: 36px;
-    white-space: nowrap;
-  }
+  color: rgba(255, 255, 255, $startOpacity);
+  font-family: "Space Mono", monospace;
+  font-size: 36px;
+  white-space: nowrap;
 }
 
 .field-playerStation:hover .stationCardLabelText {

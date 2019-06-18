@@ -1,3 +1,5 @@
+@import "miscVariables";
+
 @mixin fade($name, $time) {
   .#{$name}-enter-active,
   .#{$name}-leave-active {
@@ -10,5 +12,4 @@
   }
 }
 
-@include fade('fade', .5s);
-@include fade('fade-fast', .22s);
+@include fade('fade-fast', $ghostFadeTime);
