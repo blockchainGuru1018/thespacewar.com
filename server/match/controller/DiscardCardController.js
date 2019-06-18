@@ -31,10 +31,10 @@ function DiscardCardController(deps) {
         if (isRequiredDiscard) {
             onRequiredDiscard(playerId);
         }
-        else if (canThePlayer.recycleCards()) {
+        else if (canThePlayer.replaceCards()) {
             playerRequirementService.addDrawCardRequirement({ count: 1 });
 
-            const event = { type: 'recycleCard' };
+            const event = { type: 'replaceCard' };
             if (matchService.mode() === MatchMode.game) {
                 event.turn = matchService.getTurn();
             }

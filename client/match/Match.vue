@@ -222,10 +222,10 @@
                                 @click="cardGhostClick"
                             >
                                 <div
-                                    v-if="canThePlayer.recycleCards()"
-                                    class="recycle"
+                                    v-if="canThePlayer.replaceCards()"
+                                    class="replace"
                                 >
-                                    Recycle
+                                    Replace
                                 </div>
                                 <div
                                     v-else

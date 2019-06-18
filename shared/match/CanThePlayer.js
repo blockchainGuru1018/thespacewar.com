@@ -146,16 +146,16 @@ class CanThePlayer {
         return this._turnControl.playerHasControlOfOwnTurn();
     }
 
-    recycleCards() {
+    replaceCards() {
         if (this._matchService.mode() !== MatchMode.game) {
-            return this._queryEvents.countRecycles() < this._gameConfig.maxRecycles();
+            return this._queryEvents.countReplaces() < this._gameConfig.maxReplaces();
         }
         else if (this._playerCommanders.has(Commander.DrStein)) {
             const currentTurn = this._matchService.getTurn();
-            const recyclesThisTurn = this._queryEvents.countRecyclesOnTurn(currentTurn);
+            const replacesThisTurn = this._queryEvents.countReplacesOnTurn(currentTurn);
 
             return this._playerPhase.isAction()
-                && recyclesThisTurn < this._gameConfig.maxRecycles();
+                && replacesThisTurn < this._gameConfig.maxReplaces();
         }
 
         return false;

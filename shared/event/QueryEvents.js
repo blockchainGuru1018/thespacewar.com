@@ -147,16 +147,16 @@ class QueryEvents {
         });
     }
 
-    countRecycles() {
+    countReplaces() {
         const events = this._eventRepository.getAll();
-        const recycles = events.filter(event => event.type === 'recycleCard');
-        return recycles.length;
+        const replaces = events.filter(event => event.type === 'replaceCard');
+        return replaces.length;
     }
 
-    countRecyclesOnTurn(currentTurn) {
+    countReplacesOnTurn(currentTurn) {
         const events = this._eventRepository.getAll();
-        const recycles = events.filter(event => event.turn === currentTurn && event.type === 'recycleCard');
-        return recycles.length;
+        const replaces = events.filter(event => event.turn === currentTurn && event.type === 'replaceCard');
+        return replaces.length;
     }
 }
 

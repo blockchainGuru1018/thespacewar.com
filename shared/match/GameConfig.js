@@ -5,7 +5,7 @@ const propertyMap = {
     MILL_CARD_AMOUNT: 'millCardCount',
     STATION_CARDS_AT_START: 'stationCardsAtStart',
     MAX_STATION_CARDS: 'maxStationCards',
-    MAX_RECYCLES: 'maxRecycles',
+    MAX_REPLACES: 'maxReplaces',
     TIME_TO_COUNTER: 'timeToCounter',
     ACCESS_KEY: 'accessKey'
 };
@@ -21,7 +21,7 @@ function GameConfig({
     millCardCount = Defaults.millCardCount,
     stationCardsAtStart = Defaults.stationCardsAtStart,
     maxStationCards = Defaults.maxStationCards,
-    maxRecycles = Defaults.maxRecycles,
+    maxReplaces = Defaults.maxReplaces,
     timeToCounter = Defaults.timeToCounter,
     accessKey = Defaults.accessKey
 } = {}) {
@@ -32,7 +32,7 @@ function GameConfig({
         millCardCount: () => millCardCount,
         stationCardsAtStart: () => stationCardsAtStart,
         maxStationCards: () => maxStationCards,
-        maxRecycles: () => maxRecycles,
+        maxReplaces: () => maxReplaces,
         timeToCounter: () => timeToCounter,
         accessKey: () => accessKey
     };
