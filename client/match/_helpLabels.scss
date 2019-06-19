@@ -65,7 +65,7 @@ $endOpacity: .6;
   left: 0;
   background: none;
   transform: rotate(180deg);
-  margin-left: calc(((#{$playerStationCardHeight} + #{$stationRowPaddingTop} + #{$stationRowPaddingBottom}) / 3) - 12px);
+  margin-left: calc(((#{$playerStationCardHeight} + #{$stationRowPaddingTop} + #{$stationRowPaddingBottom}) / 3) - 48px);
 
   color: rgba(255, 255, 255, $startOpacity);
   font-family: "Space Mono", monospace;

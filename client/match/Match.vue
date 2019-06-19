@@ -147,11 +147,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="field-dividerWrapper">
-                    <div
-                        class="field-divider"
-                        :style="{opacity: activateEventCardGhostVisible ? '0': '1'}"
-                    />
+                <div
+                    :class="['field-dividerWrapper', {'field-dividerWrapper--placeholder': activateEventCardGhostVisible }]"
+                >
+                    <div class="field-divider" />
                     <portal-target
                         class="field-dividerContent"
                         name="player-top"
