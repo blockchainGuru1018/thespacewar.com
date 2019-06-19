@@ -12,7 +12,7 @@
   max-width: 30%;
   min-width: 230px;
   z-index: 2;
-  padding-bottom: 60px; /* To accommodate for the GUI element present beneath the station */
+  padding-bottom: 40px; /* To accommodate for the GUI element present beneath the station */
   margin-left: 46px; /* To accommodate for the GUI element present to the left of the station */
 
   .card {
@@ -30,6 +30,7 @@
 .field-opponentStation {
   flex-direction: column;
   margin-left: 8px;
+  margin-bottom: 10px;
   transform: rotate(180deg);
   justify-content: flex-end;
   display: flex;

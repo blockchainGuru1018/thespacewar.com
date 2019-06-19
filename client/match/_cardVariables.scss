@@ -2,13 +2,13 @@ $cardWidth: 652px;
 $cardHeight: 916px;
 
 $opponentHandScale: .65;
-$opponentDiscardAndDrawPileScale: 1; /* TODO Remove when this variable has not been changed for a while */
+$opponentDiscardAndDrawPileScale: .9;
 
-$opponentStationScale: .7;
-$playerStationScale: .7;
+$opponentStationScale: .68;
+$playerStationScale: .68;
 
-$scaledCardWidth: calc(#{$cardWidth} * .18);
-$scaledCardHeight: calc(#{$cardHeight} * .18);
+$scaledCardWidth: calc(#{$cardWidth} * .2);
+$scaledCardHeight: calc(#{$cardHeight} * .2);
 
 $playerCardOnHandWidth: $scaledCardWidth;
 $playerCardOnHandHeight: $scaledCardHeight;

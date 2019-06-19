@@ -48,15 +48,19 @@
 
 .opponentCardsOnHand {
   position: absolute;
-  top: -25px;
+  top: -70px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 3;
-
   display: flex;
   flex: 1 0;
   justify-content: center;
   align-items: flex-start;
+  transition: top .12s ease-out;
+
+  &:hover {
+    top: -20px;
+  }
 
   .card {
     width: $opponentCardOnHandWidth;
