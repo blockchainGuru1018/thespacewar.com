@@ -8,6 +8,6 @@ const queryEventsFactory = {
             ...stubs
         };
     }
-}
+};
 
 module.exports = queryEventsFactory;

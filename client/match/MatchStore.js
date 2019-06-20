@@ -418,14 +418,17 @@ module.exports = function (deps) {
 
     function playerRuleService(state, getters) {
         return new PlayerRuleService({
+            matchService: getters.matchService,
             playerStateService: getters.playerStateService,
             opponentStateService: getters.opponentStateService,
             playerRequirementService: getters.playerRequirementService,
             canThePlayer: getters.canThePlayer,
+            canTheOpponent: getters.canTheOpponent,
             turnControl: getters.turnControl,
             playerPhase: getters.playerPhase,
             gameConfig: getters.gameConfig,
-            playerCommanders: getters.playerCommanders
+            playerCommanders: getters.playerCommanders,
+            queryEvents: getters.queryEvents
         });
     }
 

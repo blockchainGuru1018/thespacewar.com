@@ -13,6 +13,14 @@ class DestinyDecided extends BaseCard {
     get preventsAnyPlayerFromPlayingAnEventCard() {
         return true;
     }
+
+    get preventsPlayerFromPlayingAnyCards() {
+        return true;
+    }
+
+    get limitsOpponentToPlayingMaxCardCount() {
+        return 1;
+    }
 }
 
 module.exports = DestinyDecided;

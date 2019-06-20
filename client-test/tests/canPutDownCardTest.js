@@ -5,6 +5,7 @@ const FakeState = require('../matchTestUtils/FakeState.js');
 const FakeMatchController = require('../matchTestUtils/FakeMatchController.js');
 const DestinyDecided = require("../../shared/card/DestinyDecided");
 const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
+const Neutralization = require("../../shared/card/Neutralization.js");
 const { createController } = require('../matchTestUtils/index.js');
 const {
     assert,
@@ -95,5 +96,95 @@ describe('when has Destiny decided in play and has event card as flipped station
 
     test('should NOT be able to move station card to zone', () => {
         assert.elementCount('.playerStationCards .moveToZone', 0);
+    });
+});
+
+describe('when has Destiny decided in play and hold any card (not an event card as that is covered by previous tests)', async () => {
+    beforeEach(async () => {
+        const { dispatch, showPage } = setUpController();
+        showPage();
+        dispatch('stateChanged', FakeState({
+            turn: 1,
+            currentPlayer: 'P1A',
+            phase: 'action',
+            cardsInZone: [{ id: 'C1A', commonId: DestinyDecided.CommonId }],
+            cardsOnHand: [{ id: 'C2A', type: 'spaceShip' }]
+        }));
+        await timeout();
+
+        await click('.playerCardsOnHand .cardOnHand');
+    });
+
+    test('should NOT see zone ghosts', () => {
+        assert.elementCount('.playerCardsInZone .card-ghost', 0);
+    });
+});
+
+describe('when opponent has Destiny decided in play and player has put down 1 card this turn and is holding a card', async () => {
+    beforeEach(async () => {
+        const { dispatch, showPage } = setUpController();
+        showPage();
+        dispatch('stateChanged', FakeState({
+            turn: 1,
+            currentPlayer: 'P1A',
+            phase: 'action',
+            cardsInZone: [{ id: 'C1A' }],
+            cardsOnHand: [{ id: 'C2A' }],
+            events: [PutDownCardEvent({ location: 'zone', cardId: 'C1A', turn: 1 })],
+            opponentCardsInZone: [{ id: 'C1A', type: 'duration', commonId: DestinyDecided.CommonId }]
+        }));
+        await timeout();
+
+        await click('.playerCardsOnHand .cardOnHand');
+    });
+
+    test('should NOT see zone ghosts', () => {
+        assert.elementCount('.playerCardsInZone .card-ghost', 0);
+    });
+});
+
+describe('when opponent has Destiny decided in play and player has put down 1 card this turn and is holding a card, but player has Neutralization in play', async () => {
+    beforeEach(async () => {
+        const { dispatch, showPage } = setUpController();
+        showPage();
+        dispatch('stateChanged', FakeState({
+            turn: 1,
+            currentPlayer: 'P1A',
+            phase: 'action',
+            cardsInZone: [{ id: 'C1A', type: 'duration', commonId: Neutralization.CommonId }],
+            cardsOnHand: [{ id: 'C2A' }],
+            events: [PutDownCardEvent({ location: 'zone', cardId: 'C1A', turn: 1 })],
+            opponentCardsInZone: [{ id: 'C1A', type: 'duration', commonId: DestinyDecided.CommonId }]
+        }));
+        await timeout();
+
+        await click('.playerCardsOnHand .cardOnHand');
+    });
+
+    test('should see zone ghosts', () => {
+        assert.elementCount('.playerCardsInZone .card-ghost', 1);
+    });
+});
+
+describe('when opponent has Destiny decided in play and player has NOT put down ANY card this turn and is holding a card', async () => {
+    beforeEach(async () => {
+        const { dispatch, showPage } = setUpController();
+        showPage();
+        dispatch('stateChanged', FakeState({
+            turn: 1,
+            currentPlayer: 'P1A',
+            phase: 'action',
+            cardsInZone: [],
+            cardsOnHand: [{ id: 'C2A' }],
+            events: [],
+            opponentCardsInZone: [{ id: 'C1A', type: 'duration', commonId: DestinyDecided.CommonId }]
+        }));
+        await timeout();
+
+        await click('.playerCardsOnHand .cardOnHand');
+    });
+
+    test('should see zone ghosts', () => {
+        assert.elementCount('.playerCardsInZone .card-ghost', 1);
     });
 });

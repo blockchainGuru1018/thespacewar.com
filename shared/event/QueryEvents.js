@@ -25,6 +25,16 @@ class QueryEvents {
         return currentTurn - moveCardEvent.turn;
     }
 
+    putDownCardInHomeZoneCountOnTurn(turn) {
+        const events = this._eventRepository.getAll();
+        const putDownCardEvents = events.filter(event => {
+            return event.turn === turn
+                && event.type === 'putDownCard'
+                && event.location === 'zone';
+        });
+        return putDownCardEvents.length;
+    }
+
     lastTookControlWithinTimeFrameSincePutDownCard(opponentCardId, millisecondsTimeFrame) {
         const timeWhenOpponentCardWasPutDown = this.getTimeWhenOpponentCardWasPutDown(opponentCardId);
         const playerEvents = this._eventRepository.getAll().slice();

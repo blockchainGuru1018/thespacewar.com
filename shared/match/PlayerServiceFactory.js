@@ -326,13 +326,16 @@ module.exports = function ({
 
     function playerRuleService(playerId) {
         return new PlayerRuleService({
+            matchService: api.matchService(),
             playerStateService: api.playerStateService(playerId),
             opponentStateService: api.playerStateService(playerId),
             playerRequirementService: api.playerRequirementService(playerId),
             canThePlayer: api.canThePlayer(playerId),
+            canTheOpponent: api.canThePlayer(api.opponentId(playerId)),
             turnControl: api.turnControl(playerId),
             playerPhase: api.playerPhase(playerId),
             playerCommanders: api.playerCommanders(playerId),
+            queryEvents: api.queryEvents(playerId),
             gameConfig
         });
     }
