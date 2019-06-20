@@ -7,6 +7,7 @@ const AttackEvent = require('../../shared/event/AttackEvent.js');
 const getCardImageUrl = require('../../client/utils/getCardImageUrl.js');
 const FakeState = require('../matchTestUtils/FakeState.js');
 const FakeMatchController = require('../matchTestUtils/FakeMatchController.js');
+const Commander = require("../../shared/match/commander/Commander.js");
 const { createControllerBoundToTestContext } = require('../matchTestUtils/legacyIndex.js');
 const {
     assert,
@@ -230,7 +231,7 @@ module.exports = {
                 assert.elementCount('.field-playerZoneCards .card:eq(0) .repair', 1);
             },
             'should show damage indicator for other card'() {
-                assert.elementText('.card-damageIndicator', '-1');
+                assert.elementText('.card-damageIndicator', '1');
             },
             'and click repair': {
                 async setUp() {
@@ -379,7 +380,8 @@ module.exports = {
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'draw',
-                    stationCards: [{ place: 'draw' }]
+                    stationCards: [{ place: 'draw' }],
+                    commanders: [Commander.TheMiller]
                 }));
                 await timeout();
             },
@@ -406,7 +408,8 @@ module.exports = {
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'draw',
-                    stationCards: [{ place: 'draw' }, { place: 'action' }]
+                    stationCards: [{ place: 'draw' }, { place: 'action' }],
+                    commanders: [Commander.TheMiller]
                 }));
                 await timeout();
 
@@ -469,7 +472,8 @@ module.exports = {
                 dispatch('stateChanged', FakeState({
                     turn: 1,
                     currentPlayer: 'P1A',
-                    phase: 'draw'
+                    phase: 'draw',
+                    commanders: [Commander.TheMiller]
                 }));
                 await timeout();
 
@@ -481,7 +485,7 @@ module.exports = {
                 dispatch('drawCards', { cards: [], moreCardsCanBeDrawn: true });
                 await timeout();
             },
-            'should ask to discard opponent top 2 cards'() {
+            'should have asked to discard opponent top 2 cards'() {
                 assert.calledOnceWith(this.matchController.emit, 'discardOpponentTopTwoCards');
             },
             'should NOT get new card in hand'() {
@@ -1064,7 +1068,8 @@ module.exports = {
                     currentPlayer: 'P1A',
                     phase: 'action',
                     opponentStationCards: [{ place: 'draw' }],
-                    requirements: [{ type: 'drawCard', count: 2 }]
+                    requirements: [{ type: 'drawCard', count: 2 }],
+                    commanders: [Commander.TheMiller]
                 }));
                 await timeout();
             },
@@ -1084,7 +1089,8 @@ module.exports = {
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'draw',
-                    requirements: [{ type: 'drawCard', count: 2 }]
+                    requirements: [{ type: 'drawCard', count: 2 }],
+                    commanders: [Commander.TheMiller]
                 }));
                 await timeout();
             },
@@ -1104,7 +1110,8 @@ module.exports = {
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'action',
-                    requirements: [{ type: 'drawCard', count: 2 }, { type: 'discardCard', count: 2 }]
+                    requirements: [{ type: 'drawCard', count: 2 }, { type: 'discardCard', count: 2 }],
+                    commanders: [Commander.TheMiller]
                 }));
                 await timeout();
             },
@@ -1122,12 +1129,12 @@ module.exports = {
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'action',
-                    cardsOnHand: [{ id: 'C1A', commonId: DiscoveryCommonId }]
+                    cardsOnHand: [{ id: 'C1A', type: 'event', commonId: DiscoveryCommonId }]
                 }));
                 await timeout();
 
                 await click('.playerCardsOnHand .cardOnHand');
-                await click('.field-playerZoneCards .card-ghost:eq(0)');
+                await click('.playerEventCardGhost');
             },
             'should put down card in zone'() {
                 assert.elementCount('.field-playerZoneCards .card:not(.card-placeholder)', 1);
@@ -1154,7 +1161,7 @@ module.exports = {
                         {
                             place: 'draw',
                             id: 'C1A',
-                            card: createCard({ id: 'C1A', commonId: DiscoveryCommonId }),
+                            card: createCard({ id: 'C1A', type: 'event', commonId: DiscoveryCommonId }),
                             flipped: true
                         },
                         { place: 'draw', id: 'C2A' },
@@ -1192,7 +1199,7 @@ module.exports = {
                         {
                             place: 'draw',
                             id: 'C1A',
-                            card: createCard({ id: 'C1A', commonId: DiscoveryCommonId }),
+                            card: createCard({ id: 'C1A', type: 'event', commonId: DiscoveryCommonId }),
                             flipped: true
                         },
                         { place: 'draw', id: 'C2A' },
@@ -1232,7 +1239,7 @@ module.exports = {
                 }));
                 await timeout();
                 await click('.playerCardsOnHand .cardOnHand');
-                await click('.field-playerZoneCards .card-ghost:eq(0)');
+                await click('.playerEventCardGhost');
 
                 await click('.cardChoiceDialog-choice:contains("draw")');
             },
@@ -1265,11 +1272,11 @@ module.exports = {
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'action',
-                    cardsOnHand: [{ id: 'C1A', commonId: DiscoveryCommonId }]
+                    cardsOnHand: [{ id: 'C1A', type: 'event', commonId: DiscoveryCommonId }]
                 }));
                 await timeout();
                 await click('.playerCardsOnHand .cardOnHand');
-                await click('.field-playerZoneCards .card-ghost:eq(0)');
+                await click('.playerEventCardGhost');
 
                 await click('.cardChoiceDialog-choice:contains("discard")');
             },
@@ -1293,11 +1300,11 @@ module.exports = {
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'action',
-                    cardsOnHand: [{ id: 'C1A', commonId: DiscoveryCommonId }]
+                    cardsOnHand: [{ id: 'C1A', type: 'event', commonId: DiscoveryCommonId }]
                 }));
                 await timeout();
                 await click('.playerCardsOnHand .cardOnHand');
-                await click('.field-playerZoneCards .card-ghost:eq(0)');
+                await click('.playerEventCardGhost');
 
                 await click('.cardChoiceDialog-overlay');
             },
@@ -1327,7 +1334,7 @@ module.exports = {
                     turn: 1,
                     currentPlayer: 'P1A',
                     phase: 'action',
-                    cardsOnHand: [{ id: 'C1A', commonId: FatalErrorCommonId }],
+                    cardsOnHand: [{ id: 'C1A', type: 'event', commonId: FatalErrorCommonId }],
                     cardsInZone: [{ id: 'C2A' }],
                     cardsInOpponentZone: [{ id: 'C3A' }],
                     stationCards: [
@@ -1344,7 +1351,7 @@ module.exports = {
                 await timeout();
                 await click('.playerCardsOnHand .cardOnHand');
 
-                await click('.field-playerZoneCards .card-ghost:eq(0)');
+                await click('.playerEventCardGhost');
             },
             'should have card in zone'() {
                 assert.elementCount('.field-playerZoneCards .card:not(.card-placeholder)', 2);
@@ -1447,7 +1454,7 @@ module.exports = {
                 }));
                 await timeout();
                 await click('.playerCardsOnHand .cardOnHand');
-                await click('.field-playerZoneCards .card-ghost:eq(0)');
+                await click('.playerEventCardGhost');
 
                 await click('.opponentCardsInPlayerZone .card:eq(0) .selectable');
             },

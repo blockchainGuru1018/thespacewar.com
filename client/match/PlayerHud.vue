@@ -35,7 +35,7 @@
             <div class="guideTextContainer" v-if="guideTextContainerVisible">
                 <div
                     v-if="waitingForOtherPlayerToFinishRequirements"
-                    class="guideText-waitingwForOtherPlayer guideText guideText--small"
+                    class="guideText-waitingForOtherPlayer guideText guideText--small"
                 >
                     <template v-if="waitingRequirement.reason === 'emptyDeck'">
                         Your opponent is dealing damage to your station

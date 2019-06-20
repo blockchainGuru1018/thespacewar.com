@@ -93,7 +93,7 @@ describe('when has find card requirement', () => {
         });
 
         test('should show find card requirement header', () => {
-            assert.elementText('.findCard-header', 'Pick 2 cards');
+            assert.elementText('.findCard-header', 'Pick 2 cards to play');
         });
 
         test('should show card that caused requirement', () => {
@@ -171,7 +171,7 @@ describe('when has find card requirement', () => {
         });
 
         test('should show 1 card left to select', () => {
-            assert.elementText('.findCard-header', 'Pick 1 card');
+            assert.elementText('.findCard-header', 'Pick 1 card to play');
         });
 
         test('and select second card should emit action', async () => {

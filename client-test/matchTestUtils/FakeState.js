@@ -1,5 +1,6 @@
 const defaults = require('lodash/defaults');
 const FakeCardDataAssembler = require('../../server/test/testUtils/FakeCardDataAssembler.js');
+const Commander = require("../../shared/match/commander/Commander.js");
 const createCard = FakeCardDataAssembler.createCard;
 
 module.exports = function FakeState(options) {
@@ -11,6 +12,8 @@ module.exports = function FakeState(options) {
 
     return defaults(options, {
         mode: 'game',
+        commanders: [Commander.GeneralJackson],
+        readyPlayerIds: ['P1A', 'P2A'],
         stationCards: [{ place: 'draw' }], //Needed to not always show a Defeated screen
         cardsOnHand: [],
         cardsInZone: [],

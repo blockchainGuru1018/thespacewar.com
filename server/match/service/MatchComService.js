@@ -1,4 +1,4 @@
-const LOG_ALL_EMITS = false;
+const LOG_ALL_EMITS = true;
 
 const preparePlayerState = require('./preparePlayerState.js');
 const prepareOpponentState = require('./prepareOpponentState.js');

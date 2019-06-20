@@ -3,6 +3,7 @@ const createCard = FakeCardDataAssembler.createCard;
 const getCardImageUrl = require('../../client/utils/getCardImageUrl.js');
 const FakeState = require('../matchTestUtils/FakeState.js');
 const FakeMatchController = require('../matchTestUtils/FakeMatchController.js');
+const Commander = require("../../shared/match/commander/Commander.js");
 const { createController } = require('../matchTestUtils/index.js');
 const {
     assert,
@@ -73,9 +74,9 @@ describe('when in discard phase and is required to discard 2 cards', async () =>
 
     test('and discards 2 cards should at least go to next phase', async () => {
         await click('.playerCardsOnHand .cardOnHand:eq(0)');
-        await click('.field-player .discardPile-cardGhost');
+        await click('.field-player .discardPile-cardGhost:eq(0)');
         await click('.playerCardsOnHand .cardOnHand');
-        await click('.field-player .discardPile-cardGhost');
+        await click('.field-player .discardPile-cardGhost:eq(0)');
 
         assert.calledWith(matchController.emit, 'nextPhase');
     });
@@ -122,7 +123,8 @@ describe('when has NO cards left and it is draw phase and opponent has 1 card le
             currentPlayer: 'P1A',
             phase: 'draw',
             stationCards: [{ id: 'C1A', place: 'draw' }, { id: 'C2A', place: 'draw' }],
-            opponentStationCards: [{ id: 'C3A', place: 'draw' }]
+            opponentStationCards: [{ id: 'C3A', place: 'draw' }],
+            commanders: [Commander.TheMiller]
         }));
         await timeout();
     });

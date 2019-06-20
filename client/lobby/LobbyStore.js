@@ -17,7 +17,7 @@ module.exports = function ({
             startGameWithUser,
             logout
         }
-    }
+    };
 
     async function init() {
         matchRepository.onMatchCreatedForPlayer(joinMatch);

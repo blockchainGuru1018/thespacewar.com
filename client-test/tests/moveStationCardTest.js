@@ -1,6 +1,7 @@
 const getCardImageUrl = require('../../client/utils/getCardImageUrl.js');
 const FakeState = require('../matchTestUtils/FakeState.js');
 const FakeMatchController = require('../matchTestUtils/FakeMatchController.js');
+const Commander = require("../../shared/match/commander/Commander.js");
 const { createController } = require('../matchTestUtils/index.js');
 const {
     assert,
@@ -40,7 +41,8 @@ describe('when has 1 station card in draw row in action phase and click move', a
             phase: 'action',
             stationCards: [
                 { id: 'C1A', place: 'draw' }
-            ]
+            ],
+            commanders: [Commander.KeveBakins]
         }));
         await timeout();
         await click('.playerStationCards .stationCard .moveToOtherStationRow');
@@ -66,7 +68,8 @@ describe('when move station card from draw row to action row', async () => {
             phase: 'action',
             stationCards: [
                 { id: 'C1A', place: 'draw' }
-            ]
+            ],
+            commanders: [Commander.KeveBakins]
         }));
         await timeout();
 
