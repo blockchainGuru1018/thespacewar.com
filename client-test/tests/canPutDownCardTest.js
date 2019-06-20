@@ -51,7 +51,7 @@ describe('when has Destiny decided in play and hold event card', async () => {
     });
 
     test('should NOT see zone ghosts', () => {
-        assert.elementCount('.playerCardsInZone .card-ghost', 0);
+        assert.elementCount('.playerEventCardGhost', 0);
     });
 });
 
@@ -71,7 +71,7 @@ describe('when does NOT have Destiny decided in play and hold event card', async
     });
 
     test('should see zone ghosts', () => {
-        assert.elementCount('.playerCardsInZone .card-ghost', 1);
+        assert.elementCount('.playerEventCardGhost', 1);
     });
 });
 
