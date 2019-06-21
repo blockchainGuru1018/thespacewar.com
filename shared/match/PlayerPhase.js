@@ -1,4 +1,4 @@
-const { PHASES } = require('../phases.js');
+const { COMMON_PHASE_ORDER, PHASES } = require('../phases.js');
 
 module.exports = class PlayerPhase {
 
@@ -18,6 +18,10 @@ module.exports = class PlayerPhase {
     reset() {
         this._playerStateService.setPhase(PHASES.start);
         this._opponentStateService.setPhase(PHASES.wait);
+    }
+
+    isFirstPhase() {
+        return this._playerStateService.getPhase() === COMMON_PHASE_ORDER[0];
     }
 
     isFirstDraw() {

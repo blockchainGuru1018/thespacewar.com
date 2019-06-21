@@ -59,6 +59,10 @@ function NextPhaseCardController(deps) {
         if (newPhase === PHASES.draw) {
             enterDrawPhaseForPlayer(currentPlayerId);
         }
+
+        if (playerServiceFactory.playerPhase(currentPlayerId).isFirstPhase()) {
+            playerServiceFactory.gameTimer(currentPlayerId).switchTo();
+        }
     }
 
     function onToggleControlOfTurn(playerId) {
@@ -79,6 +83,7 @@ function NextPhaseCardController(deps) {
 
         if (matchService.allPlayersReady()) {
             matchService.startGame();
+            playerServiceFactory.gameTimer(playerId).resetAll();
 
             const playerOrder = matchService.getPlayerOrder();
             const firstPlayerId = playerOrder[0];

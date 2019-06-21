@@ -23,6 +23,8 @@ const MatchMode = require('../../shared/match/MatchMode.js');
 const CardDataAssembler = require('../../shared/CardDataAssembler.js');
 const PlayerCommanders = require('../../shared/match/commander/PlayerCommanders.js');
 const Commander = require("../../shared/match/commander/Commander.js");
+const Clock = require('../../shared/gameTimer/Clock.js');
+
 const {
     COMMON_PHASE_ORDER,
     PHASES
@@ -152,6 +154,8 @@ module.exports = function (deps) {
             playerPhase,
             opponentPhase,
             playerRequirementService,
+            playerClock,
+            opponentClock,
             playerStateService,
             opponentStateService,
             queryEvents,
@@ -500,6 +504,18 @@ module.exports = function (deps) {
             playerStateService: getters.playerStateService,
             opponentStateService: getters.opponentStateService,
             requirementFactory: ClientLimitNotice
+        });
+    }
+
+    function playerClock(state, getters) {
+        return Clock({
+            playerStateService: getters.playerStateService
+        });
+    }
+
+    function opponentClock(state, getters) {
+        return Clock({
+            playerStateService: getters.opponentStateService
         });
     }
 

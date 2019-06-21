@@ -50,6 +50,7 @@ class PlayerStateService {
             playerState.requirements = [];
             playerState.actionLogEntries = [];
             playerState.commanders = [Commander.StartingCommander];
+            playerState.clock = {};
         });
     }
 

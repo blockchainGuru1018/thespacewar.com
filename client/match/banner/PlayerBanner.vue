@@ -3,7 +3,7 @@
         :class="classes"
     >
         <div class="matchHeader-bannerName">
-            {{ name }}
+            {{ name }} ({{ clockTime }})
         </div>
         <div class="matchHeader-bannerBarsWrapper">
             <div class="matchHeader-bannerBars">
@@ -43,6 +43,12 @@
 
     module.exports = {
         props: ['isPlayer', 'reverse'],
+        data() {
+            return {
+                clockTime: 0,
+                clockUpdateIntervalId: null
+            }
+        },
         computed: {
             ...matchHelpers.mapState([
                 'opponentUser',
@@ -53,7 +59,9 @@
                 'allPlayerStationCards',
                 'allOpponentStationCards',
                 'maxStationCardCount',
-                'opponentMaxStationCardCount'
+                'opponentMaxStationCardCount',
+                'playerClock',
+                'opponentClock'
             ]),
             ...cardHelpers.mapState([
                 'holdingCard'
@@ -101,7 +109,25 @@
 
                 const reverse = this.reverse;
                 return stationCards.slice().sort((a, b) => getCardSortOrder(a, reverse) - getCardSortOrder(b, reverse));
+            },
+            clock() {
+                if (this.isPlayer) {
+                    return this.playerClock;
+                }
+                return this.opponentClock;
             }
+        },
+        mounted() {
+            this.clockUpdateIntervalId = setInterval(() => {
+                const time = this.clock.getTime();
+                const rawSeconds = Math.ceil(time / 1000) % 60;
+                const seconds = (rawSeconds).toString();
+                const minutes = (Math.ceil(time / 1000 / 60) % 60 - (rawSeconds !== 0 ? 1 : 0)).toString();
+                this.clockTime = `${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`;
+            }, 250);
+        },
+        destroyed() {
+            clearInterval(this.clockUpdateIntervalId);
         }
     };
 

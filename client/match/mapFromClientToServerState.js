@@ -8,6 +8,7 @@ module.exports = function (clientState) {
         retreatedPlayerId: clientState.retreatedPlayerId,
         playerStateById: {
             [clientState.ownUser.id]: {
+                clock: clientState.clock,
                 commanders: clientState.commanders,
                 actionLogEntries: clientState.actionLogEntries,
                 phase: clientState.phase,
@@ -24,6 +25,7 @@ module.exports = function (clientState) {
                 requirements: clientState.requirements
             },
             [clientState.opponentUser.id]: {
+                clock: clientState.opponentClock,
                 commanders: clientState.opponentCommanders,
                 phase: clientState.opponentPhase,
                 events: clientState.opponentEvents,

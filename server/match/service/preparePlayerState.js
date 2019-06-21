@@ -16,7 +16,8 @@ const whitelist = [
     'requirements',
     'phase',
     'actionLogEntries',
-    'commanders'
+    'commanders',
+    'clock'
 ];
 
 module.exports = StatePreparer({ obscureHandlerByKey, whitelist }).prepare;

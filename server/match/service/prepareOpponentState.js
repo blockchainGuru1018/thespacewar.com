@@ -31,6 +31,10 @@ const obscurerByKey = {
             return [];
         },
         key: 'opponentCommanders'
+    },
+    clock: {
+        obscure: value => value,
+        key: 'opponentClock'
     }
 };
 
@@ -43,7 +47,8 @@ const whitelist = [
     'events',
     'phase',
     'actionLogEntries',
-    'commanders'
+    'commanders',
+    'clock'
 ];
 
 const statePreparer = StatePreparer({

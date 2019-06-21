@@ -24,6 +24,8 @@ const SacrificeCard = require('./SacrificeCard.js');
 const Repair = require('./Repair.js');
 const Miller = require('./mill/Miller.js');
 const PlayerCommanders = require('./commander/PlayerCommanders.js');
+const Clock = require('../gameTimer/Clock.js');
+const GameTimer = require('../gameTimer/GameTimer.js');
 
 const ServiceTypes = PlayerServiceProvider.TYPE;
 
@@ -55,6 +57,8 @@ module.exports = function ({
         matchService: cached(matchService),
         queryAttacks: cached(queryAttacks),
         startGame: cached(startGame),
+        gameTimer: cached(gameTimer),
+        clock: cached(clock),
         playerStateService: cached(playerStateService),
         addRequirementFromSpec: cached(addRequirementFromSpec),
         playerRequirementService: cached(playerRequirementService),
@@ -308,6 +312,19 @@ module.exports = function ({
             opponentPhase: api.playerPhase(opponentId),
             canThePlayer: api.canThePlayer(playerId),
             canTheOpponent: api.canThePlayer(opponentId)
+        });
+    }
+
+    function gameTimer(playerId) {
+        return GameTimer({
+            playerClock: api.clock(playerId),
+            opponentClock: api.clock(api.opponentId(playerId))
+        });
+    }
+
+    function clock(playerId) {
+        return Clock({
+            playerStateService: api.playerStateService(playerId)
         });
     }
 
