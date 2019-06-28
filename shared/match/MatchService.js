@@ -52,6 +52,13 @@ class MatchService {
         return this._state.retreatedPlayerId;
     }
 
+    playerRetreat(playerId) {
+        this.update(state => {
+            state.ended = true;
+            state.retreatedPlayerId = playerId;
+        });
+    }
+
     hasGameEnded() {
         return this._state.ended;
     }

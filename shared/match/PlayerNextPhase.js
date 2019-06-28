@@ -112,6 +112,10 @@ module.exports = function ({
         else {
             matchService.goToNextPlayer();
         }
+
+        if (playerGameTimer.hasEnded()) {
+            matchService.playerRetreat(getPlayerId());
+        }
     }
 
     function isLastPlayerOfTurn() {

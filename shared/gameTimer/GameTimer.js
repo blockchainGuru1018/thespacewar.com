@@ -1,16 +1,21 @@
-module.exports = function ({
+module.exports = function ({ //TODO Rename => PlayerGameTimer
     opponentClock,
     playerClock
 }) {
 
     return {
         switchTo,
+        hasEnded,
         resetAll
     };
 
     function switchTo() {
         opponentClock.stop();
         playerClock.start();
+    }
+
+    function hasEnded() {
+        return playerClock.getTime() <= 0;
     }
 
     function resetAll() {

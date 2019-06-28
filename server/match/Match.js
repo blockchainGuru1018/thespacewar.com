@@ -208,8 +208,7 @@ module.exports = function ({
     }
 
     function retreat(playerId) {
-        state.ended = true;
-        state.retreatedPlayerId = playerId;
+        matchService.playerRetreat(playerId);
         matchComService.emitCurrentStateToPlayers();
     }
 
