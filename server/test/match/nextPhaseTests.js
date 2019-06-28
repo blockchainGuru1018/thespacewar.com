@@ -31,8 +31,8 @@ module.exports = {
     },
     'when player of the turn is player one and current phase is the last one and go to next phase': {
         async setUp() {
-            this.playerOneConnection = FakeConnection2(['nextPlayer']);
-            this.playerTwoConnection = FakeConnection2(['nextPlayer']);
+            this.playerOneConnection = FakeConnection2(['stateChanged']);
+            this.playerTwoConnection = FakeConnection2(['stateChanged']);
             const match = createMatch({
                 players: [
                     createPlayer({ id: 'P1A', connection: this.playerOneConnection }),
@@ -52,16 +52,16 @@ module.exports = {
             match.nextPhase('P1A');
         },
         'should broadcast next player of the turn and turn count of 1 to playerOne'() {
-            assert.calledWith(this.playerOneConnection.nextPlayer, { turn: 1, currentPlayer: 'P2A' });
+            assert.calledWith(this.playerOneConnection.stateChanged, sinon.match({ turn: 1, currentPlayer: 'P2A' }));
         },
         'should broadcast next player of the turn and turn count of 1 to playerTwo'() {
-            assert.calledWith(this.playerTwoConnection.nextPlayer, { turn: 1, currentPlayer: 'P2A' });
+            assert.calledWith(this.playerTwoConnection.stateChanged, sinon.match({ turn: 1, currentPlayer: 'P2A' }));
         }
     },
     'when player of the turn is player two and current phase is the last one': {
         async setUp() {
-            this.firstPlayerConnection = FakeConnection2(['nextPlayer']);
-            this.secondPlayerConnection = FakeConnection2(['nextPlayer']);
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['stateChanged']);
             const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
             const match = createMatch({ players });
             match.restoreFromState(createState({
@@ -79,10 +79,10 @@ module.exports = {
             match.nextPhase('P2A');
         },
         'should broadcast next player of the turn and turn count of 2 to first player'() {
-            assert.calledWith(this.firstPlayerConnection.nextPlayer, { turn: 2, currentPlayer: 'P1A' });
+            assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({ turn: 2, currentPlayer: 'P1A' }));
         },
         'should broadcast next player of the turn and turn count of 2 to second player'() {
-            assert.calledWith(this.secondPlayerConnection.nextPlayer, { turn: 2, currentPlayer: 'P1A' });
+            assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({ turn: 2, currentPlayer: 'P1A' }));
         }
     },
     'when enter draw phase and has NO cards left in deck': {
@@ -127,9 +127,6 @@ module.exports = {
             }));
         },
         'should add empty, but common, damage station card requirement to first player'() {
-            //TODO Requirements should be common when both players perform the same kind of action, but here only one is.
-            // The real intent is to have the first player wait for the other. Perhaps this could be implement in another
-            // way that doesnt break the abstraction?
             this.match.refresh('P1A');
             assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                 requirements: [{
@@ -191,9 +188,10 @@ module.exports = {
 
                 this.match.nextPhase('P1A');
             },
-            'should emit state changed WITHOUT requirements'() {
-                assert.calledOnce(this.firstPlayerConnection.stateChanged);
-                refute.defined(this.firstPlayerConnection.stateChanged.lastCall.args[0].requirements);
+            'should NOT have added any requirements'() {
+                assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                    requirements: []
+                }));
             }
         }
     },

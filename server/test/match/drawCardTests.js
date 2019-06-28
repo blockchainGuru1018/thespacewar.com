@@ -12,6 +12,7 @@ const {
 } = require('./shared.js');
 const FakeDeck = require('../testUtils/FakeDeck.js');
 const GameConfig = require('../../../shared/match/GameConfig.js');
+const Commander = require("../../../shared/match/commander/Commander.js");
 
 module.exports = {
     'when in draw phase and has 1 card in station draw-row': {
@@ -178,6 +179,7 @@ module.exports = {
                             { place: 'draw', card: createCard() },
                             { place: 'draw', card: createCard() }
                         ],
+                        commanders: [Commander.TheMiller]
                     }
                 },
                 deckByPlayerId: {
@@ -277,7 +279,8 @@ module.exports = {
                 playerStateById: {
                     'P1A': {
                         phase: 'draw',
-                        requirements: [{ type: 'drawCard', count: 1 }]
+                        requirements: [{ type: 'drawCard', count: 1 }],
+                        commanders: [Commander.TheMiller]
                     }
                 },
                 deckByPlayerId: {

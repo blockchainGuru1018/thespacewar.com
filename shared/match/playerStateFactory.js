@@ -13,6 +13,9 @@ function empty() {
         events: [],
         requirements: [],
         commanders: [],
-        actionLogEntries: []
+        actionLogEntries: [],
+        clock: {
+            events: []
+        }
     };
 }

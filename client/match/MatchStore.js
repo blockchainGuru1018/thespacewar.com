@@ -205,7 +205,6 @@ module.exports = function (deps) {
             placeCardInZone,
             opponentDiscardedDurationCard,
             opponentMovedCard,
-            nextPlayer,
             persistOngoingMatch,
             drawCards,
             selectAsAttacker,
@@ -819,19 +818,6 @@ module.exports = function (deps) {
         if (!gameHasBegun) {
             gameHasBegun = true;
             dispatch('persistOngoingMatch');
-        }
-    }
-
-    function nextPlayer({ state }, { turn, currentPlayer }) {
-        state.currentPlayer = currentPlayer;
-        state.turn = turn;
-
-        if (currentPlayer === state.ownUser.id) {
-            const hasDurationCardInPlay = state.playerCardsInZone.some(c => c.type === 'duration');
-            state.phase = hasDurationCardInPlay ? PHASES.preparation : PHASES.draw;
-        }
-        else {
-            state.phase = PHASES.wait;
         }
     }
 

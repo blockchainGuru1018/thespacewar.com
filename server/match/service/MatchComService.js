@@ -1,4 +1,4 @@
-const LOG_ALL_EMITS = true;
+const LOG_ALL_EMITS = false;
 
 const preparePlayerState = require('./preparePlayerState.js');
 const prepareOpponentState = require('./prepareOpponentState.js');
@@ -57,7 +57,8 @@ class MatchComService {
 
         if (LOG_ALL_EMITS) {
             this._logger.log(
-                `[${new Date().toISOString()}] emitToPlayer(${playerId}, ${action}, ${value}) stack: ${new Error().stack}`,
+                'DEBUG_LOG_NOT_AN_ERROR!',
+                `[${new Date().toISOString()}] emitToPlayer(${playerId}, ${action}, ${JSON.stringify(value, null, 4)}) stack: ${new Error().stack}`,
                 'match'
             );
         }

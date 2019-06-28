@@ -43,15 +43,6 @@ function Clock({ playerStateService }) {
         });
     }
 
-    function latestEventType() {
-        const events = state().events;
-        if (events.length === 0) {
-            return 'start';
-        }
-
-        return events[events.length - 1].type;
-    }
-
     function getTime() {
         const { startTime, duration } = state();
         if (startTime === 0) return duration;
@@ -59,6 +50,15 @@ function Clock({ playerStateService }) {
         const now = Date.now();
         const elapsedTimeIfNotInterrupted = now - startTime;
         return duration - (elapsedTimeIfNotInterrupted - totalElapsedInterruptionTime(now));
+    }
+
+    function latestEventType() {
+        const events = state().events;
+        if (events.length === 0) {
+            return 'start';
+        }
+
+        return events[events.length - 1].type;
     }
 
     function pushEvent(event) {

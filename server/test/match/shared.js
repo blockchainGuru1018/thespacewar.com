@@ -159,7 +159,9 @@ function createMatch(deps = {}, testCardData = []) {
         rawCardDataRepository,
         players: [createPlayer('P1A'), createPlayer('P2A')],
         logger: {
-            log: (...args) => console.log(...args)
+            log: (...args) => {
+                console.log(...args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 4) : a))
+            }
         }
     });
     return Match(deps);

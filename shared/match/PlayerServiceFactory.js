@@ -26,6 +26,8 @@ const Miller = require('./mill/Miller.js');
 const PlayerCommanders = require('./commander/PlayerCommanders.js');
 const Clock = require('../gameTimer/Clock.js');
 const GameTimer = require('../gameTimer/GameTimer.js');
+const PlayerPhaseControl = require('./PlayerPhaseControl.js');
+const PlayerNextPhase = require('./PlayerNextPhase.js');
 
 const ServiceTypes = PlayerServiceProvider.TYPE;
 
@@ -46,6 +48,8 @@ module.exports = function ({
     const api = {
         _cache: objectsByNameAndPlayerId,
         playerServiceProvider: () => playerServiceProvider,
+        playerPhaseControl: cached(playerPhaseControl),
+        playerNextPhase: cached(playerNextPhase),
         playerCommanders: cached(playerCommanders),
         miller: cached(miller),
         repair: cached(repair),
@@ -116,6 +120,30 @@ module.exports = function ({
     };
 
     return api;
+
+    function playerPhaseControl(playerId) {
+        return PlayerPhaseControl({
+            matchService: api.matchService(),
+            playerStateService: api.playerStateService(playerId),
+            playerNextPhase: api.playerNextPhase(playerId),
+            opponentNextPhase: api.playerNextPhase(api.opponentId(playerId)),
+        });
+    }
+
+    function playerNextPhase(playerId) {
+        return PlayerNextPhase({
+            matchService: api.matchService(),
+            playerStateService: api.playerStateService(playerId),
+            playerRequirementService: api.playerRequirementService(playerId),
+            playerRuleService: api.playerRuleService(playerId),
+            playerPhase: api.playerPhase(playerId),
+            canThePlayer: api.canThePlayer(playerId),
+            playerCommanders: api.playerCommanders(playerId),
+            playerGameTimer: api.gameTimer(playerId),
+            opponentStateService: api.playerStateService(api.opponentId(playerId)),
+            opponentRequirementService: api.playerRequirementService(api.opponentId(playerId))
+        });
+    }
 
     function playerCommanders(playerId) {
         return PlayerCommanders({

@@ -20,8 +20,22 @@ module.exports = class PlayerPhase {
         this._opponentStateService.setPhase(PHASES.wait);
     }
 
+    get() {
+        return this._playerStateService.getPhase();
+    }
+
+    set(phase) {
+        this._playerStateService.update(playerState => {
+            playerState.phase = phase;
+        });
+    }
+
     isFirstPhase() {
         return this._playerStateService.getPhase() === COMMON_PHASE_ORDER[0];
+    }
+
+    isLastPhase() {
+        return this._playerStateService.getPhase() === COMMON_PHASE_ORDER[COMMON_PHASE_ORDER.length - 1];
     }
 
     isFirstDraw() {
@@ -31,6 +45,10 @@ module.exports = class PlayerPhase {
 
     isDraw() {
         return this._playerStateService.getPhase() === PHASES.draw;
+    }
+
+    isDiscard() {
+        return this._playerStateService.getPhase() === PHASES.discard;
     }
 
     isAction() {
