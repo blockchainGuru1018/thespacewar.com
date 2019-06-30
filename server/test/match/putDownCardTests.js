@@ -31,14 +31,21 @@ const ExpansionCommonId = '40';
 
 module.exports = {
     'when does NOT have card should throw error': function () {
-        let match = createMatch({
-            players: createPlayers([{ id: 'P1A' }])
-        });
-        match.start();
-        match.start();
-        const putDownCardOptions = { location: 'zone', cardId: 'C1A' };
+        this.match = createMatch({ players: [Player('P1A')] });
+        this.match.restoreFromState(createState({
+            turn: 2,
+            currentPlayer: 'P1A',
+            playerOrder: ['P1A', 'P2A'],
+            playerStateById: {
+                'P1A': {
+                    phase: 'action',
+                    cardsOnHand: []
+                }
+            }
+        }));
 
-        let error = catchError(() => match.putDownCard('P1A', putDownCardOptions));
+        const putDownCardOptions = { location: 'zone', cardId: 'C1A' };
+        let error = catchError(() => this.match.putDownCard('P1A', putDownCardOptions));
 
         assert.equals(error.message, 'Cannot find card');
     },
