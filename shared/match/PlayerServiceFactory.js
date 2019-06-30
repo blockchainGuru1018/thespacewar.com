@@ -28,6 +28,7 @@ const Clock = require('../gameTimer/Clock.js');
 const GameTimer = require('../gameTimer/GameTimer.js');
 const PlayerPhaseControl = require('./PlayerPhaseControl.js');
 const PlayerNextPhase = require('./PlayerNextPhase.js');
+const PlayerStationAttacker = require('../PlayerStationAttacker.js');
 
 const ServiceTypes = PlayerServiceProvider.TYPE;
 
@@ -48,6 +49,7 @@ module.exports = function ({
     const api = {
         _cache: objectsByNameAndPlayerId,
         playerServiceProvider: () => playerServiceProvider,
+        playerStationAttacker: cached(playerStationAttacker),
         playerPhaseControl: cached(playerPhaseControl),
         playerNextPhase: cached(playerNextPhase),
         playerCommanders: cached(playerCommanders),
@@ -120,6 +122,18 @@ module.exports = function ({
     };
 
     return api;
+
+    function playerStationAttacker(playerId) {
+        return PlayerStationAttacker({
+            matchService: api.matchService(),
+            stateSerializer: gameServiceFactory.stateSerializer(),
+            stateMemento: gameServiceFactory.stateMemento(),
+            playerStateService: api.playerStateService(playerId),
+            canThePlayer: api.canThePlayer(playerId),
+            opponentStateService: api.playerStateService(api.opponentId(playerId)),
+            opponentActionLog: api.actionLog(api.opponentId(playerId)),
+        });
+    }
 
     function playerPhaseControl(playerId) {
         return PlayerPhaseControl({

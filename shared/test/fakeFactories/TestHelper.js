@@ -17,7 +17,7 @@ module.exports = function (state, {
     const logger = {
         log: (...args) => console.log(...args)
     };
-    const endMatch = () => console.log('Trying to endMatch in the tests');
+    const endMatch = () => {};
 
     const gameServiceFactory = GameServiceFactory({
         state,
