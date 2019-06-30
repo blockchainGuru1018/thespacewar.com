@@ -43,11 +43,14 @@ function NextPhaseCardController(deps) {
 
         if (matchService.allPlayersReady()) {
             matchService.startGame();
-            playerServiceFactory.gameTimer(playerId).resetAll();
-
             const playerOrder = matchService.getPlayerOrder();
             const firstPlayerId = playerOrder[0];
             onNextPhase(firstPlayerId);
+        }
+        else {
+            const opponentGameTimer = playerServiceFactory.gameTimer(matchService.getOpponentId(playerId));
+            opponentGameTimer.resetAll();
+            opponentGameTimer.switchTo();
         }
 
         matchComService.emitCurrentStateToPlayers();
