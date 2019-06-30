@@ -32,7 +32,10 @@ module.exports = function (state, {
         endMatch,
         actionPointsCalculator,
         gameConfig,
-        gameServiceFactory
+        gameServiceFactory,
+        userRepository: {
+            getById: () => ({})
+        }
     });
 
     const api = {

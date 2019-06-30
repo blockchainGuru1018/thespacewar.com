@@ -141,7 +141,8 @@ module.exports = function ({
             playerCommanders: api.playerCommanders(playerId),
             playerGameTimer: api.gameTimer(playerId),
             opponentStateService: api.playerStateService(api.opponentId(playerId)),
-            opponentRequirementService: api.playerRequirementService(api.opponentId(playerId))
+            opponentRequirementService: api.playerRequirementService(api.opponentId(playerId)),
+            opponentGameTimer: api.gameTimer(api.opponentId(playerId))
         });
     }
 
@@ -293,6 +294,7 @@ module.exports = function ({
             playerStateService: api.playerStateService(playerId),
             opponentStateService: api.playerStateService(api.opponentId(playerId)),
             playerPhase: api.playerPhase(playerId),
+            playerGameTimer: api.gameTimer(playerId),
             opponentPhase: api.playerPhase(api.opponentId(playerId)),
             opponentActionLog: api.actionLog(api.opponentId(playerId)),
         });

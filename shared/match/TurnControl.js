@@ -5,19 +5,23 @@ module.exports = class TurnControl {
     constructor({
         matchService,
         playerStateService,
+        playerPhase,
+        playerGameTimer,
         opponentStateService,
         opponentPhase,
-        playerPhase,
-        opponentActionLog
+        opponentActionLog,
+        opponentGameTimer
     }) {
         this._matchService = matchService;
 
         this._playerStateService = playerStateService;
         this._playerPhase = playerPhase;
+        this._playerGameTimer = playerGameTimer;
 
         this._opponentStateService = opponentStateService;
         this._opponentPhase = opponentPhase;
         this._opponentActionLog = opponentActionLog;
+        this._opponentGameTimer = opponentGameTimer;
     }
 
     toggleControlOfTurn() {
@@ -32,10 +36,11 @@ module.exports = class TurnControl {
     takeControlOfOpponentsTurn() {
         this._playerStateService.storeEvent(TakeControlEvent.takeControlOfOpponentsTurn());
 
-        const playerId = this._playerStateService.getPlayerId();
+        const playerId = this._playerId();
         this._matchService.update(state => {
             state.currentPlayer = playerId;
         });
+        this._playerGameTimer.switchTo();
 
         this._opponentActionLog.opponentTookControlOfTurn();
     }
@@ -43,10 +48,14 @@ module.exports = class TurnControl {
     releaseControlOfOpponentsTurn() {
         this._playerStateService.storeEvent(TakeControlEvent.releaseControlOfOpponentsTurn());
 
-        const opponentId = this._opponentStateService.getPlayerId();
+        const opponentId = this._opponentId();
         this._matchService.update(state => {
             state.currentPlayer = opponentId;
         });
+        if (this._playerGameTimer.hasEnded()) {
+            this._matchService.playerRetreat(this._playerId());
+        }
+        this._opponentGameTimer.switchTo();
 
         this._opponentActionLog.opponentReleasedControlOfTurn();
     }
@@ -73,30 +82,30 @@ module.exports = class TurnControl {
     }
 
     playerHasControlOfOwnTurn() {
-        const playerStateService = this._playerStateService;
-
-        return this._matchService.getCurrentPlayer() === playerStateService.getPlayerId()
+        return this._matchService.getCurrentPlayer() === this._playerId()
             && !this._playerPhase.isWait();
     }
 
     opponentHasControlOfOwnTurn() {
-        const opponentStateService = this._opponentStateService;
-
-        return this._matchService.getCurrentPlayer() === opponentStateService.getPlayerId()
+        return this._matchService.getCurrentPlayer() === this._opponentId()
             && !this._opponentPhase.isWait();
     }
 
     playerHasControlOfOpponentsTurn() {
-        const playerStateService = this._playerStateService;
-
-        return this._matchService.getCurrentPlayer() === playerStateService.getPlayerId()
+        return this._matchService.getCurrentPlayer() === this._playerId()
             && this._playerPhase.isWait();
     }
 
     opponentHasControlOfPlayersTurn() {
-        const playerStateService = this._playerStateService;
-
-        return this._matchService.getCurrentPlayer() !== playerStateService.getPlayerId()
+        return this._matchService.getCurrentPlayer() !== this._playerId()
             && !this._playerPhase.isWait();
+    }
+
+    _playerId() {
+        return this._playerStateService.getPlayerId();
+    }
+
+    _opponentId() {
+        return this._opponentStateService.getPlayerId();
     }
 };
