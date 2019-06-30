@@ -64,25 +64,5 @@ module.exports = function ({
             playerStateService.removeCard(attackerCardId);
             playerStateService.discardCard(attackerCardData);
         }
-
-        const allOpponentStationCardsAreDamaged = opponentStateService.getStationCards().filter(s => !s.flipped).length === 0;
-        const allPlayerStationCardsAreDamaged = playerStateService.getStationCards().filter(s => !s.flipped).length === 0;
-        if (allOpponentStationCardsAreDamaged) {
-            matchService.playerRetreat(getOpponentId());
-        }
-        else if (allPlayerStationCardsAreDamaged) {
-            matchService.playerRetreat(getPlayerId());
-        }
-        // if (allOpponentStationCardsAreDamaged || allPlayerStationCardsAreDamaged) {
-        //     matchComService.emitCurrentStateToPlayers();
-        // }
-    }
-
-    function getOpponentId() {
-        return opponentStateService.getPlayerId();
-    }
-
-    function getPlayerId() {
-        return playerStateService.getPlayerId();
     }
 };

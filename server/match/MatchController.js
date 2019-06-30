@@ -1,6 +1,7 @@
 module.exports = function (deps) {
 
     const matchRepository = deps.matchRepository;
+    const socketRepository = deps.socketRepository;
     const logger = deps.logger;
 
     return {
@@ -27,17 +28,26 @@ module.exports = function (deps) {
     }
 
     async function onAction(data) {
-        const match = await matchRepository.getById(data.matchId);
-        if (!match) {
-            throw new Error('Cannot find ongoing match with id');
-        }
+        const userId = data.playerId;
+        const matchId = data.matchId;
 
-        logger.log(matchActionLogMessage(data), 'match');
-        match[data.action](data.playerId, data.value);
+        const match = await matchRepository.getById(matchId);
+        if (match) {
+            logger.log(matchActionLogMessage(data), 'match');
+            match[data.action](userId, data.value);
+        }
+        else {
+            sendMatchIsDeadMessageToUserSocketConnection({ userId, matchId });
+        }
     }
 
     function matchActionLogMessage({ action, value, playerId }) {
         const actionValueJson = JSON.stringify(value, null, 4);
         return `[${new Date().toISOString()}] Match action: ${action} - To player: ${playerId} - With value: ${actionValueJson}`;
+    }
+
+    function sendMatchIsDeadMessageToUserSocketConnection({ userId, matchId }) {
+        const userConnection = socketRepository.getForUser(userId);
+        userConnection.emit('match', { matchId, action: 'matchIsDead' });
     }
 };

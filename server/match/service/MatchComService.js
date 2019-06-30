@@ -88,6 +88,8 @@ class MatchComService {
     emitCurrentStateToPlayers() {
         this._emittedAllState = true;
 
+        this._gameEndedCheck();
+
         for (const player of this.getPlayers()) {
             const playerId = player.id;
             const playerState = this._getPlayerState(playerId);
@@ -96,11 +98,11 @@ class MatchComService {
             const opponentState = this._getPlayerState(opponentId);
 
             const data = {
+                ...this._getGameEndedState(),
+
                 mode: this._matchService.mode(),
-                ended: this._matchService.hasGameEnded(),
                 playerOrder: this._matchService.getPlayerOrder(),
                 readyPlayerIds: this._matchService.getReadyPlayerIds(),
-                retreatedPlayerId: this._matchService.getRetreatedPlayerId(),
                 currentPlayer: this._matchService.getCurrentPlayer(),
                 turn: this._matchService.getTurn(),
                 gameConfigEntity: this._matchService.getGameConfigEntity(),
@@ -121,19 +123,50 @@ class MatchComService {
     _onSnapshot(snapshot) {
         if (this._emittedAllState) return;
 
+        this._gameEndedCheck();
+
         for (const player of this.getPlayers()) {
             const playerId = player.id;
             const opponentId = this.getOpponentId(playerId);
 
             const data = {
+                ...this._getGameEndedState(),
+
                 ...preparePlayerState(this._getPlayerChangedState(playerId, snapshot)),
                 ...this._prepareOpponentState(this._getPlayerChangedState(opponentId, snapshot))
             };
 
-            if (Object.keys(data).length > 0) {
+            const allChangedDataKeys = Object.keys(data);
+            if (allChangedDataKeys.length > 0) {
                 this.emitToPlayer(playerId, 'stateChanged', data);
             }
         }
+    }
+
+    _gameEndedCheck() {
+        if (!this._matchService.isGameOn()) return;
+
+        const [firstPlayerId, secondPlayerId] = this._matchService.getPlayerOrder();
+
+        const firstPlayerStateService = this._playerServiceProvider.getStateServiceById(firstPlayerId);
+        const allFirstPlayerStationCardsAreDamaged = firstPlayerStateService.getUnflippedStationCardsCount() === 0;
+
+        const secondPlayerStateService = this._playerServiceProvider.getStateServiceById(secondPlayerId);
+        const allSecondPlayerStationCardsAreDamaged = secondPlayerStateService.getUnflippedStationCardsCount() === 0;
+
+        if (allFirstPlayerStationCardsAreDamaged) {
+            this._matchService.playerRetreat(firstPlayerId);
+        }
+        else if (allSecondPlayerStationCardsAreDamaged) {
+            this._matchService.playerRetreat(secondPlayerId);
+        }
+    }
+
+    _getGameEndedState() {
+        return {
+            ended: this._matchService.hasGameEnded(),
+            retreatedPlayerId: this._matchService.getRetreatedPlayerId()
+        };
     }
 
     _prepareOpponentState(state) {

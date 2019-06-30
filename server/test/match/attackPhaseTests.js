@@ -1079,17 +1079,18 @@ module.exports = {
                         'P1A': {
                             phase: 'attack',
                             cardsInOpponentZone: [createCard({ id: 'C1A', attack: 1 })],
-                            events: [{ type: 'moveCard', cardId: 'C1A', turn: 1 }]
+                            events: [{ type: 'moveCard', cardId: 'C1A', turn: 1 }],
+                            stationCards: [stationCard('S1A')]
                         },
                         'P2A': {
                             stationCards: [
-                                { card: createCard({ id: 'C2A' }), place: 'action' }
+                                stationCard('S2A')
                             ]
                         }
                     }
                 }));
 
-                const attackOptions = { attackerCardId: 'C1A', targetStationCardIds: ['C2A'] };
+                const attackOptions = { attackerCardId: 'C1A', targetStationCardIds: ['S2A'] };
                 this.error = catchError(() => this.match.attackStationCard('P1A', attackOptions));
             },
             'should set opponent as retreated player'() {

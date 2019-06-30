@@ -98,7 +98,8 @@ function Clock({ playerStateService }) {
 
     function clockInitialized() {
         const playerState = playerStateService.getPlayerState();
-        return !!playerState.clock.events;
+        return !!playerState.clock &&
+            !!playerState.clock.events;
 
     }
 }

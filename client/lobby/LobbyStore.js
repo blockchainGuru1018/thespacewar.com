@@ -38,7 +38,8 @@ module.exports = function ({
             const opponentId = opponentUser.id;
             const match = await matchRepository.create({ playerId, opponentId });
             matchId = match.id;
-        } catch (error) {
+        }
+        catch (error) {
             alert('Could not create match: ' + error.message);
         }
 

@@ -19,7 +19,9 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
         hasRequirement,
         refuteHasRequirement,
         playerIsDefeated,
-        gameHasEnded
+        noPlayerIsDefeated,
+        gameHasEnded,
+        gameHasNotEnded
     };
 
     function send() {
@@ -82,9 +84,21 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
         }));
     }
 
+    function noPlayerIsDefeated() {
+        assert.calledWith(playerConnection.stateChanged, sinon.match({
+            retreatedPlayerId: null
+        }));
+    }
+
     function gameHasEnded() {
         assert.calledWith(playerConnection.stateChanged, sinon.match({
             ended: true
+        }));
+    }
+
+    function gameHasNotEnded() {
+        assert.calledWith(playerConnection.stateChanged, sinon.match({
+            ended: false
         }));
     }
 }

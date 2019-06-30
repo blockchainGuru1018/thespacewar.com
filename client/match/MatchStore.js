@@ -226,7 +226,8 @@ module.exports = function (deps) {
             highlightCards,
             triggerFlashDiscardPileEffect,
             triggerFlashOpponentDiscardPileEffect,
-            shakeTheScreen
+            shakeTheScreen,
+            matchIsDead
         }
     };
 
@@ -1148,6 +1149,10 @@ module.exports = function (deps) {
         setTimeout(() => {
             state.shake = false;
         }, 300);
+    }
+
+    function matchIsDead() {
+        endGame();
     }
 };
 

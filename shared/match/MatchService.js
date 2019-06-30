@@ -138,6 +138,10 @@ class MatchService {
         return this._state.mode;
     }
 
+    isGameOn() {
+        return this._state.mode === MatchMode.game;
+    }
+
     startSelectingStationCards() {
         this._state.mode = MatchMode.selectStationCards;
     }

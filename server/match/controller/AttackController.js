@@ -179,10 +179,6 @@ function AttackController(deps) {
         const playerStationAttacker = playerServiceFactory.playerStationAttacker(playerId);
         playerStationAttacker.validateAttackOnStationCards(playerId, { attackerCardId, targetStationCardIds });
         playerStationAttacker.attackStationCards({ attackerCardId, targetStationCardIds });
-
-        if (matchService.hasGameEnded() || matchService.somePlayerHasAlreadyRetreated()) {
-            matchComService.emitCurrentStateToPlayers();
-        }
     }
 
     function onDamageStationCard(playerId, { targetIds }) {
