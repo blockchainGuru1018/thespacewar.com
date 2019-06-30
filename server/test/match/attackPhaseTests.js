@@ -17,6 +17,7 @@ let MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
 const PursuiterCommonId = '19';
 const EnergyShieldCommonId = '21';
 const SmallRepairShip = require('../../../shared/card/SmallRepairShop.js');
+const StateAsserter = require('../testUtils/StateAsserter.js');
 
 module.exports = {
     'when first player is in attack phase and moves card': {
@@ -1040,7 +1041,7 @@ module.exports = {
             setUp() {
                 this.firstPlayerConnection = FakeConnection2(['opponentStationCardsChanged']);
                 this.secondPlayerConnection = FakeConnection2(['stationCardsChanged']);
-                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
                 this.match = createMatch({ players });
                 this.match.restoreFromState(createState({
                     turn: 3,
@@ -1064,6 +1065,38 @@ module.exports = {
             },
             'should NOT throw error'() {
                 refute(this.error);
+            }
+        },
+        'when attack last station card of opponent': {
+            setUp() {
+                this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+                const players = [Player('P1A', this.firstPlayerConnection), Player('P2A')];
+                this.match = createMatch({ players });
+                this.firstPlayerAsserter = StateAsserter(this.match, this.firstPlayerConnection, 'P1A');
+                this.match.restoreFromState(createState({
+                    turn: 3,
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInOpponentZone: [createCard({ id: 'C1A', attack: 1 })],
+                            events: [{ type: 'moveCard', cardId: 'C1A', turn: 1 }]
+                        },
+                        'P2A': {
+                            stationCards: [
+                                { card: createCard({ id: 'C2A' }), place: 'action' }
+                            ]
+                        }
+                    }
+                }));
+
+                const attackOptions = { attackerCardId: 'C1A', targetStationCardIds: ['C2A'] };
+                this.error = catchError(() => this.match.attackStationCard('P1A', attackOptions));
+            },
+            'should set opponent as retreated player'() {
+                this.firstPlayerAsserter.playerIsDefeated('P2A');
+            },
+            'should end game'() {
+                this.firstPlayerAsserter.gameHasEnded('P2A');
             }
         },
         'when enemy has only 1 station card and attacker has 2 in attack but only gives 1 target station card id': {

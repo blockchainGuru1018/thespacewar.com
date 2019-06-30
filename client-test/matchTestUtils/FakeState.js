@@ -30,7 +30,7 @@ module.exports = function FakeState(options) {
         turn: 1,
         currentPlayer: 'P2A',
         opponentRetreated: false,
-        playerRetreated: false,
+        retreatedPlayerId: null,
         playerOrder: ['P1A', 'P2A']
     });
 };

@@ -52,11 +52,18 @@ class MatchService {
         return this._state.retreatedPlayerId;
     }
 
-    playerRetreat(playerId) {
+    playerRetreat(playerId) { //TODO rename "retreatPlayer" or "setPlayerAsRetreated"s
+        if (this.somePlayerHasAlreadyRetreated() || this.hasGameEnded()) return;
+
         this.update(state => {
             state.ended = true;
             state.retreatedPlayerId = playerId;
         });
+        this.endMatch();
+    }
+
+    somePlayerHasAlreadyRetreated() {
+        return !!this.getState().retreatedPlayerId;
     }
 
     hasGameEnded() {

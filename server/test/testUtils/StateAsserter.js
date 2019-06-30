@@ -17,7 +17,9 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
         hasCardInZone,
         countMatchingAttacks,
         hasRequirement,
-        refuteHasRequirement
+        refuteHasRequirement,
+        playerIsDefeated,
+        gameHasEnded
     };
 
     function send() {
@@ -71,6 +73,18 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
     function refuteHasRequirement(requirement) {
         refute.calledWith(playerConnection.stateChanged, sinon.match({
             requirements: sinon.match.some(sinon.match(requirement))
+        }));
+    }
+
+    function playerIsDefeated(playerId) {
+        assert.calledWith(playerConnection.stateChanged, sinon.match({
+            retreatedPlayerId: playerId
+        }));
+    }
+
+    function gameHasEnded() {
+        assert.calledWith(playerConnection.stateChanged, sinon.match({
+            ended: true
         }));
     }
 }

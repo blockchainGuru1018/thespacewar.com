@@ -205,10 +205,16 @@ function AttackController(deps) {
             playerStateService.discardCard(attackerCardData);
         }
 
-        const gameOver = opponentStateService.getStationCards().filter(s => !s.flipped) === 0
-            || playerStateService.getStationCards().filter(s => !s.flipped).length === 0;
-        if (gameOver) {
-            matchService.endMatch();
+        const allOpponentStationCardsAreDamaged = opponentStateService.getStationCards().filter(s => !s.flipped).length === 0;
+        const allPlayerStationCardsAreDamaged = playerStateService.getStationCards().filter(s => !s.flipped).length === 0;
+        if (allOpponentStationCardsAreDamaged) {
+            matchService.playerRetreat(opponentId);
+        }
+        else if (allPlayerStationCardsAreDamaged) {
+            matchService.playerRetreat(playerId);
+        }
+        if (allOpponentStationCardsAreDamaged || allPlayerStationCardsAreDamaged) {
+            matchComService.emitCurrentStateToPlayers();
         }
     }
 
