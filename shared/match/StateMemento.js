@@ -34,9 +34,9 @@ module.exports = function ({
     }
 
     function revertStateToBeforeCardWasPutDown(cardId) {
-        const storedStateJson = stateCardIdTimeTuples.slice().reverse().find(([_, id]) => id === cardId)[0];
+        const [storedStateJson, _, timeForAction] = stateCardIdTimeTuples.slice().reverse().find(([_, id]) => id === cardId);
         const restoredState = stateSerializer.parse(storedStateJson);
-        restoreFromState(restoredState);
+        restoreFromState(restoredState, timeForAction);
 
         clearOldPutDownCardState();
     }
@@ -50,15 +50,19 @@ module.exports = function ({
     }
 
     function revertStateToBeforeAttack({ attackerCardData, defenderCardsData, time }) {
-        const storedStateJson = findStateFromDataKey({ attackerCardData, defenderCardsData, time });
+        const [storedStateJson, _, timeForAction] = findStateTupleFromDataKey({
+            attackerCardData,
+            defenderCardsData,
+            time
+        });
         const restoredState = stateSerializer.parse(storedStateJson);
-        restoreFromState(restoredState);
+        restoreFromState(restoredState, timeForAction);
 
         clearOldAttackState();
     }
 
-    function findStateFromDataKey({ attackerCardData, defenderCardsData, time }) {
-        const stateDataTuple = stateAttackDataTimeTuples
+    function findStateTupleFromDataKey({ attackerCardData, defenderCardsData, time }) {
+        return stateAttackDataTimeTuples
             .slice()
             .reverse()
             .find(([_, dataKey]) => {
@@ -66,10 +70,9 @@ module.exports = function ({
                     && dataKey.defenderCardIds.every(cardId => defenderCardsData.some(cardData => cardData.id === cardId))
                     && dataKey.time === time;
             });
-        return stateDataTuple[0];
     }
 
-    function restoreFromState(restoreState) {
+    function restoreFromState(restoreState, timeForAction) {
         delete restoreState.gameStartTime;
         delete restoreState.playerOrder;
         delete restoreState.playersConnected;
@@ -83,6 +86,21 @@ module.exports = function ({
             state[key] = restoreState[key];
         }
 
+        moveClockStartTime(timeForAction, state);
+
         matchService.setState(state);
+    }
+
+    function moveClockStartTime(timeForAction, state) {
+        for (const playerId of Object.keys(state.playerStateById)) {
+            const clock = state.playerStateById[playerId].clock;
+
+            const now = Date.now();
+            const timeSinceAction = now - timeForAction;
+            clock.startTime += timeSinceAction;
+            for (let event of clock.events) {
+                event.time += timeSinceAction;
+            }
+        }
     }
 };
