@@ -120,10 +120,14 @@
         mounted() {
             this.clockUpdateIntervalId = setInterval(() => {
                 const time = this.clock.getTime();
-                const rawSeconds = Math.ceil(time / 1000) % 60;
-                const seconds = (rawSeconds).toString();
-                const minutes = (Math.ceil(time / 1000 / 60) % 60 - (rawSeconds !== 0 ? 1 : 0)).toString();
-                this.clockTime = `${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`;
+
+                const seconds = Math.ceil(time / 1000) % 60;
+                const secondsToShow = Math.max(0, seconds).toString();
+
+                const minutes = (Math.ceil(time / 1000 / 60) % 60 - (seconds !== 0 ? 1 : 0));
+                const minutesToShow = Math.max(minutes, 0).toString();
+
+                this.clockTime = `${minutesToShow.padStart(2, '0')}:${secondsToShow.padStart(2, '0')}`;
             }, 250);
         },
         destroyed() {
