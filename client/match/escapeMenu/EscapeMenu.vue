@@ -23,18 +23,6 @@
                 <MasterGainSlider />
             </button>
             <button
-                class="escapeMenu-option"
-                @click="hideAnd(saveMatch)"
-            >
-                Save game
-            </button>
-            <button
-                class="escapeMenu-option"
-                @click="hideAnd(restoreSavedMatch)"
-            >
-                Load game
-            </button>
-            <button
                 class="escapeMenu-retreat escapeMenu-option"
                 @click="hideAnd(retreat)"
             >
