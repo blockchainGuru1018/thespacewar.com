@@ -1,7 +1,6 @@
 function DrawCardController(deps) {
 
     const {
-        matchService,
         matchComService,
         playerServiceProvider,
         playerRequirementUpdaterFactory,

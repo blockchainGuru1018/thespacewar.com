@@ -7,11 +7,16 @@ const NullState = {
 function Clock({ playerStateService }) {
 
     return {
+        isSet,
         reset,
         start,
         stop,
         getTime
     };
+
+    function isSet() {
+        return clockInitialized();
+    }
 
     function reset(duration) {
         const startTime = Date.now();

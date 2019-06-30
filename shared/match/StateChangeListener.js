@@ -27,7 +27,7 @@ class StateChangeListener {
 
     snapshot() {
         const snapshot = { changedKeysByPlayerId: {} };
-        const playerIds = Object.keys(this._snapshotData.changedKeysByPlayerId)
+        const playerIds = Object.keys(this._snapshotData.changedKeysByPlayerId);
         for (const playerId of playerIds) {
             snapshot.changedKeysByPlayerId[playerId] = Array.from(this._snapshotData.changedKeysByPlayerId[playerId]);
         }

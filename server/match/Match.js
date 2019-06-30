@@ -86,6 +86,7 @@ module.exports = function ({
         logger,
         matchService,
         playerServiceProvider,
+        playerServiceFactory,
         stateChangeListener
     });
 

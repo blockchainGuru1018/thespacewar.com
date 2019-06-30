@@ -5,12 +5,21 @@ const prepareOpponentState = require('./prepareOpponentState.js');
 
 class MatchComService {
 
-    constructor({ matchId, players, logger, matchService, playerServiceProvider, stateChangeListener }) {
+    constructor({
+        matchId,
+        players,
+        logger,
+        matchService,
+        playerServiceProvider,
+        playerServiceFactory,
+        stateChangeListener
+    }) {
         this._matchId = matchId;
         this._players = players;
         this._logger = logger;
         this._matchService = matchService;
         this._playerServiceProvider = playerServiceProvider;
+        this._playerServiceFactory = playerServiceFactory;
         this._emittedAllState = false;
 
         stateChangeListener.listenForSnapshots(this._onSnapshot.bind(this));
@@ -89,6 +98,7 @@ class MatchComService {
         this._emittedAllState = true;
 
         this._gameEndedCheck();
+        this._computeGameTimerState();
 
         for (const player of this.getPlayers()) {
             const playerId = player.id;
@@ -124,6 +134,7 @@ class MatchComService {
         if (this._emittedAllState) return;
 
         this._gameEndedCheck();
+        this._computeGameTimerState(snapshot);
 
         for (const player of this.getPlayers()) {
             const playerId = player.id;
@@ -159,6 +170,70 @@ class MatchComService {
         }
         else if (allSecondPlayerStationCardsAreDamaged) {
             this._matchService.playerRetreat(secondPlayerId);
+        }
+    }
+
+    _computeGameTimerState(snapshot = null) {
+        if (this._matchService.isGameOn()) {
+            this._computeGameTimerStateForWhenGameIsOn();
+
+            if (snapshot) {
+                this._setSnapshotDirtyForClockKey(snapshot);
+            }
+        }
+        else if (!this._matchService.allPlayersReady()) {
+            this._computeGameTimerStateForBeforeAllPlayersAreReady();
+
+            if (snapshot) {
+                this._setSnapshotDirtyForClockKey(snapshot);
+            }
+        }
+    }
+
+    _computeGameTimerStateForBeforeAllPlayersAreReady() {
+        const playerReadyId = this._matchService.getReadyPlayerIds()[0];
+        if (!playerReadyId) return;
+
+        const playerNotReadyGameTimer = this._playerServiceFactory.gameTimer(this._matchService.getOpponentId(playerReadyId));
+
+        if (!playerNotReadyGameTimer.isAllSet()) {
+            playerNotReadyGameTimer.resetAll();
+        }
+        playerNotReadyGameTimer.switchTo();
+    }
+
+    _computeGameTimerStateForWhenGameIsOn() {
+        const [firstPlayerId, secondPlayerId] = this._matchService.getPlayerOrder();
+        const firstPlayerRequirementService = this._playerServiceFactory.playerRequirementService(firstPlayerId);
+        if (firstPlayerRequirementService.isWaitingOnOpponentFinishingRequirement()) {
+            const secondPlayerGameTimer = this._playerServiceFactory.gameTimer(secondPlayerId);
+            secondPlayerGameTimer.switchTo();
+
+            return;
+        }
+
+        const secondPlayerRequirementService = this._playerServiceFactory.playerRequirementService(secondPlayerId);
+        if (secondPlayerRequirementService.isWaitingOnOpponentFinishingRequirement()) {
+            const firstPlayerGameTimer = this._playerServiceFactory.gameTimer(firstPlayerId);
+            firstPlayerGameTimer.switchTo();
+
+            return;
+        }
+
+        const firstPlayerTurnControl = this._playerServiceFactory.turnControl(firstPlayerId);
+        if (firstPlayerTurnControl.playerHasControl()) {
+            const firstPlayerGameTimer = this._playerServiceFactory.gameTimer(firstPlayerId);
+            firstPlayerGameTimer.switchTo();
+        }
+        else {
+            const secondPlayerGameTimer = this._playerServiceFactory.gameTimer(secondPlayerId);
+            secondPlayerGameTimer.switchTo();
+        }
+    }
+
+    _setSnapshotDirtyForClockKey(snapshot) {
+        for (const playerId of this._matchService.getPlayerIds()) {
+            snapshot.changedKeysByPlayerId[playerId].push('clock');
         }
     }
 

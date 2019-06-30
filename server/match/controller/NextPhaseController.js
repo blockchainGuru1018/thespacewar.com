@@ -47,11 +47,6 @@ function NextPhaseCardController(deps) {
             const firstPlayerId = playerOrder[0];
             onNextPhase(firstPlayerId);
         }
-        else {
-            const opponentGameTimer = playerServiceFactory.gameTimer(matchService.getOpponentId(playerId));
-            opponentGameTimer.resetAll();
-            opponentGameTimer.switchTo();
-        }
 
         matchComService.emitCurrentStateToPlayers();
     }

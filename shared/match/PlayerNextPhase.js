@@ -46,10 +46,6 @@ module.exports = function ({
             if (playerPhase.isDraw()) {
                 enterDrawPhaseForPlayer();
             }
-
-            if (playerPhase.isFirstPhase()) {
-                playerGameTimer.switchTo();
-            }
         }
     }
 

@@ -40,7 +40,6 @@ module.exports = class TurnControl {
         this._matchService.update(state => {
             state.currentPlayer = playerId;
         });
-        this._playerGameTimer.switchTo();
 
         this._opponentActionLog.opponentTookControlOfTurn();
     }
@@ -55,7 +54,6 @@ module.exports = class TurnControl {
         if (this._playerGameTimer.hasEnded()) {
             this._matchService.playerRetreat(this._playerId());
         }
-        this._opponentGameTimer.switchTo();
 
         this._opponentActionLog.opponentReleasedControlOfTurn();
     }
