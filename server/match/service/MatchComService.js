@@ -195,10 +195,6 @@ class MatchComService {
         if (!playerReadyId) return;
 
         const playerNotReadyGameTimer = this._playerServiceFactory.gameTimer(this._matchService.getOpponentId(playerReadyId));
-
-        if (!playerNotReadyGameTimer.isAllSet()) {
-            playerNotReadyGameTimer.resetAll();
-        }
         playerNotReadyGameTimer.switchTo();
     }
 

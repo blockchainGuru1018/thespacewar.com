@@ -6,7 +6,6 @@ module.exports = function ({ //TODO Rename => PlayerGameTimer
     return {
         switchTo,
         hasEnded,
-        isAllSet,
         resetAll
     };
 
@@ -17,11 +16,6 @@ module.exports = function ({ //TODO Rename => PlayerGameTimer
 
     function hasEnded() {
         return playerClock.getTime() <= 0;
-    }
-
-    function isAllSet() {
-        return opponentClock.isSet()
-            && playerClock.isSet();
     }
 
     function resetAll() {

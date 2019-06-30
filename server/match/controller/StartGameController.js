@@ -24,6 +24,10 @@ function StartGameController({
             matchService.connectPlayer(playerId);
             if (matchService.allPlayersConnected()) {
                 resetPlayers(playerIds);
+
+                const playerGameTimer = playerServiceFactory.gameTimer(playerId);
+                playerGameTimer.resetAll();
+
                 matchComService.emitCurrentStateToPlayers();
             }
         }
