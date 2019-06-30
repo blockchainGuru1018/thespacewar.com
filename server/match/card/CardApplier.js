@@ -5,10 +5,7 @@ const Commands = [
     require('./putDown/PutDownGrandOpportunity.js'),
     require('./putDown/PutDownDiscovery.js'),
     require('./putDown/PutDownFatalError.js'),
-    require('./putDown/PutDownMissilesLaunched.js'),
-    require('./putDown/PutDownPerfectPlan.js'),
     require('./putDown/PutDownLuck.js'),
-    require('./putDown/PutDownTargetMissed.js'),
     require('./putDown/PutDownTheDarkDestroyer.js')
 ];
 

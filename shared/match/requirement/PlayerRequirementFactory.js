@@ -16,7 +16,7 @@ module.exports = function ({
     ];
 
     return {
-        create
+        create, // TODO rename "createForCard", or rename module to something mentioning "card"
     };
 
     function create(card, requirementSpec) {

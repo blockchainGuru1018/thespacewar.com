@@ -11,7 +11,8 @@ module.exports = function ({ //TODO Is there a better name for this class? Perha
     return {
         forCardAndChoiceOfRequirement,
         forCardPutDownInHomeZone,
-        forCardAndSpec
+        forCardAndSpec,
+        forReasonAndSpec
     };
 
     function forCardAndChoiceOfRequirement(cardData, choice) {
@@ -31,6 +32,8 @@ module.exports = function ({ //TODO Is there a better name for this class? Perha
 
         const card = playerStateService.createBehaviourCard(cardData);
         const spec = info.requirementSpecsWhenPutDownInHomeZone;
+        if (!spec) return;
+
         forCardAndSpec(card, spec);
     }
 
@@ -66,6 +69,34 @@ module.exports = function ({ //TODO Is there a better name for this class? Perha
                 for (const otherSpec of spec.ifAddedAddAlso) {
                     forCardAndSpec(card, otherSpec);
                 }
+            }
+        }
+    }
+
+    function forReasonAndSpec(reason, spec) {
+        const playerId = playerStateService.getPlayerId();
+        const opponentId = opponentStateService.getPlayerId();
+        const order = spec.opponentIsFirst
+            ? [opponentId, playerId]
+            : [playerId, opponentId];
+
+        for (const id of order) {
+            forReasonAndSpecAndPlayer(reason, spec, id);
+        }
+    }
+
+    function forReasonAndSpecAndPlayer(reason, spec, playerId) {
+        const requirementService = playerStateService.getPlayerId() === playerId ? playerRequirementService : opponentRequirementService;
+
+        const requirementSpecs = playerId === playerStateService.getPlayerId() ? spec.forPlayer : spec.forOpponent;
+        for (const spec of requirementSpecs) {
+            const requirement = { ...spec, reason };
+
+            if (isEmptyCommonWaitingRequirement(requirement)) {
+                requirementService.addEmptyCommonWaitingRequirement(requirement);
+            }
+            else {
+                requirementService.addCardRequirement(requirement);
             }
         }
     }

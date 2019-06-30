@@ -291,7 +291,7 @@ eval("const info = __webpack_require__(/*! ./info/14.config.js */ \"../shared/ca
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("const BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nmodule.exports = class Expansion extends BaseCard {\n  constructor(deps) {\n    super(deps);\n  }\n\n  static get CommonId() {\n    return '66';\n  }\n\n  get eventSpecsWhenPutDownInHomeZone() {\n    return [{\n      type: 'freeExtraStationCardGranted',\n      count: 2\n    }];\n  }\n\n  get requirementsWhenPutDownInHomeZone() {\n    return {\n      forOpponent: [{\n        type: 'drawCard',\n        count: 2,\n        cardCommonId: Expansion.CommonId\n      }],\n      forPlayer: []\n    };\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/Expansion.js?");
+eval("const info = __webpack_require__(/*! ./info/66.config.js */ \"../shared/card/info/66.config.js\");\n\nconst BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nmodule.exports = class Expansion extends BaseCard {\n  constructor(deps) {\n    super(deps);\n  }\n\n  static get Info() {\n    return info;\n  }\n\n  static get CommonId() {\n    return info.CommonId;\n  }\n\n  get eventSpecsWhenPutDownInHomeZone() {\n    return [{\n      type: 'freeExtraStationCardGranted',\n      count: 2\n    }];\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/Expansion.js?");
 
 /***/ }),
 
@@ -313,7 +313,7 @@ eval("const BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("const BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nmodule.exports = class FatalError extends BaseCard {\n  constructor(deps) {\n    super(deps);\n  }\n\n  static get CommonId() {\n    return '38';\n  }\n\n  get requirementsWhenPutDownInHomeZone() {\n    return {\n      forOpponent: [{\n        type: 'drawCard',\n        count: 2,\n        cardCommonId: FatalError.CommonId\n      }],\n      forPlayer: []\n    };\n  }\n\n  get actionWhenPutDownInHomeZone() {\n    return {\n      showCardImage: true,\n      showTransientCardInHomeZone: true,\n      name: 'destroyAnyCard',\n      text: 'Select any card to destroy'\n    };\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/FatalError.js?");
+eval("const info = __webpack_require__(/*! ./info/38.config.js */ \"../shared/card/info/38.config.js\");\n\nconst BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nmodule.exports = class FatalError extends BaseCard {\n  constructor(deps) {\n    super(deps);\n  }\n\n  static get Info() {\n    return info;\n  }\n\n  static get CommonId() {\n    return info.CommonId;\n  }\n\n  get actionWhenPutDownInHomeZone() {\n    return {\n      showCardImage: true,\n      showTransientCardInHomeZone: true,\n      name: 'destroyAnyCard',\n      text: 'Select any card to destroy'\n    };\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/FatalError.js?");
 
 /***/ }),
 
@@ -622,6 +622,28 @@ eval("const CommonId = '31';\nconst DrawCardsCount = 2;\nmodule.exports = {\n  C
 /***/ (function(module, exports) {
 
 eval("const CommonId = '34';\nmodule.exports = {\n  CommonId,\n  dormantEffectRequirementSpec: {\n    forOpponent: [],\n    forPlayer: [{\n      type: 'counterCard',\n      count: 1,\n      sources: ['opponentAny'],\n      filter: {\n        canBeCountered: true\n      }\n    }]\n  }\n};\n\n//# sourceURL=webpack:///../shared/card/info/34.config.js?");
+
+/***/ }),
+
+/***/ "../shared/card/info/38.config.js":
+/*!****************************************!*\
+  !*** ../shared/card/info/38.config.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("const CommonId = '38';\nmodule.exports = {\n  CommonId,\n  requirementSpecsWhenPutDownInHomeZone: {\n    forOpponent: [{\n      type: 'drawCard',\n      count: 2,\n      cardCommonId: CommonId\n    }],\n    forPlayer: []\n  }\n};\n\n//# sourceURL=webpack:///../shared/card/info/38.config.js?");
+
+/***/ }),
+
+/***/ "../shared/card/info/66.config.js":
+/*!****************************************!*\
+  !*** ../shared/card/info/66.config.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("const CommonId = '66';\nmodule.exports = {\n  CommonId,\n  requirementSpecsWhenPutDownInHomeZone: {\n    forOpponent: [{\n      type: 'drawCard',\n      count: 2,\n      cardCommonId: CommonId\n    }],\n    forPlayer: []\n  }\n};\n\n//# sourceURL=webpack:///../shared/card/info/66.config.js?");
 
 /***/ }),
 

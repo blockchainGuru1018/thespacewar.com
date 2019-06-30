@@ -154,6 +154,7 @@ module.exports = function ({
             canThePlayer: api.canThePlayer(playerId),
             playerCommanders: api.playerCommanders(playerId),
             playerGameTimer: api.gameTimer(playerId),
+            addRequirementFromSpec: api.addRequirementFromSpec(playerId),
             opponentStateService: api.playerStateService(api.opponentId(playerId)),
             opponentRequirementService: api.playerRequirementService(api.opponentId(playerId))
         });

@@ -1,5 +1,6 @@
 module.exports = function ({
     playerServiceProvider,
+    playerServiceFactory
 }) {
 
     return {
@@ -8,9 +9,10 @@ module.exports = function ({
     };
 
     function forPlayerWithData(playerId, requirement) {
-        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
-        playerRequirementService.addRequirement(requirement);
+        const addRequirementFromSpec = playerServiceFactory.addRequirementFromSpec(playerId);
+        addRequirementFromSpec.forReasonAndSpec('cheat', requirement);
 
+        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
         return { message: 'all requirements', requirements: playerRequirementService.getRequirements() };
     }
 };

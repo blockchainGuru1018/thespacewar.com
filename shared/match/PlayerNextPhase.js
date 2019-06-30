@@ -7,13 +7,12 @@ module.exports = function ({
     matchService,
     playerRuleService,
     playerStateService,
-    playerRequirementService,
     playerPhase,
     canThePlayer,
     playerCommanders,
-    playerGameTimer, //TODO Should it locally be called "gameTimer" or like here "playerGameTimer"
-    opponentStateService,
-    opponentRequirementService,
+    playerGameTimer, //TODO Should it locally be called "gameTimer" or like here "playerGameTimer",
+    addRequirementFromSpec,
+    opponentStateService
 }) {
 
     return {
@@ -59,36 +58,39 @@ module.exports = function ({
             penalizePlayerForEmptyDeck();
         }
 
-        const requirementsFromDurationCards = getRequirementsFromDurationCards('requirementsWhenEnterDrawPhase');
-        if (requirementsFromDurationCards.length > 0) {
-            const playerId = getPlayerId();
-            requirementsFromDurationCards.forEach(requirements => addCardRequirements({ playerId, requirements }));
+        const specAndCardTuples = getRequirementsSpecAndCardTuplesFromDurationCards('requirementsWhenEnterDrawPhase');
+        if (specAndCardTuples.length > 0) {
+            for (const specAndCardTuple of specAndCardTuples) {
+                addRequirementFromSpec.forCardAndSpec(specAndCardTuple.card, specAndCardTuple.requirementsSpec);
+            }
         }
     }
 
     function penalizePlayerForEmptyDeck() {
-        playerRequirementService.addRequirement({
-            type: 'damageStationCard',
-            common: true,
-            count: 0,
-            waiting: true,
-            reason: 'emptyDeck'
-        });
-
-        opponentRequirementService.addDamageStationCardRequirement({
-            common: true,
-            count: 3,
-            reason: 'emptyDeck'
+        addRequirementFromSpec.forReasonAndSpec('emptyDeck', {
+            forPlayer: [{
+                type: 'damageStationCard',
+                common: true,
+                count: 0,
+                waiting: true
+            }],
+            forOpponent: [{
+                type: 'damageStationCard',
+                common: true,
+                count: 3
+            }]
         });
     }
 
     function leaveDrawPhaseForPlayer() {
-        const requirementLists = [
-            ...getRequirementsFromDurationCards('requirementsWhenLeavingDrawPhase'),
-            ...getRequirementsFromOpponentCards('requirementsWhenOpponentLeaveDrawPhase')
+        const specAndCardTuples = [
+            ...getRequirementsSpecAndCardTuplesFromDurationCards('requirementsWhenLeavingDrawPhase'),
+            ...getRequirementsSpecAndCardTuplesFromOpponentCards('requirementsWhenOpponentLeaveDrawPhase')
         ];
-        if (requirementLists.length > 0) {
-            requirementLists.forEach(requirements => addCardRequirements({ requirements }));
+        if (specAndCardTuples.length > 0) {
+            for (const specAndCardTuple of specAndCardTuples) {
+                addRequirementFromSpec.forCardAndSpec(specAndCardTuple.card, specAndCardTuple.requirementsSpec);
+            }
         }
     }
 
@@ -122,32 +124,26 @@ module.exports = function ({
         return getPlayerId() === matchService.getLastPlayerId();
     }
 
-    function getRequirementsFromDurationCards(key) {
+    function getRequirementsSpecAndCardTuplesFromDurationCards(key) {
         return playerStateService
             .getDurationCards()
             .filter(cardData => canThePlayer.useThisDurationCard(cardData.id))
             .map(cardData => playerStateService.createBehaviourCard(cardData))
-            .map(card => card[key])
-            .filter(requirements => !!requirements);
+            .map(card => {
+                return { card, requirementsSpec: card[key] }
+            })
+            .filter(({ requirementsSpec }) => !!requirementsSpec);
     }
 
-    function getRequirementsFromOpponentCards(key) {
+    function getRequirementsSpecAndCardTuplesFromOpponentCards(key) {
         return opponentStateService
             .getMatchingBehaviourCards(withKey(key))
-            .map(card => card[key])
-            .filter(soToKeepValuesThatAreNotNull)
+            .map(card => {
+                return { card, requirementsSpec: card[key] }
+            })
+            .filter(tuple => !!tuple.requirementsSpec)
             .filter(soToKeepApplicableRequirements(playerStateService))
             .map(opponentRequirementToPlayerRequirement);
-    }
-
-    function addCardRequirements({ requirements }) {
-        for (const requirement of requirements.forPlayer) {
-            playerRequirementService.addCardRequirement(requirement);
-        }
-
-        for (const requirement of requirements.forOpponent) {
-            opponentRequirementService.addCardRequirement(requirement);
-        }
     }
 
     function hasNegativeActionPoints() {
@@ -160,19 +156,18 @@ module.exports = function ({
     }
 };
 
-function opponentRequirementToPlayerRequirement(requirement) {
+function opponentRequirementToPlayerRequirement({ card, requirementsSpec }) {
     return {
-        forPlayer: requirement.forOpponent,
-        forOpponent: requirement.forPlayer
+        card,
+        requirementsSpec: {
+            forPlayer: requirementsSpec.forOpponent,
+            forOpponent: requirementsSpec.forPlayer
+        }
     };
 }
 
 function soToKeepApplicableRequirements(opponentStateService) {
-    return requirement => !requirement.shouldApply || requirement.shouldApply({ opponentStateService });
-}
-
-function soToKeepValuesThatAreNotNull(v) {
-    return !!v;
+    return ({ requirementsSpec }) => !requirementsSpec.shouldApply || requirementsSpec.shouldApply({ opponentStateService });
 }
 
 function withKey(key) {

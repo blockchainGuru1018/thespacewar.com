@@ -1,3 +1,4 @@
+const info = require('./info/66.config.js');
 const BaseCard = require('./BaseCard.js');
 
 module.exports = class Expansion extends BaseCard {
@@ -5,20 +6,15 @@ module.exports = class Expansion extends BaseCard {
         super(deps);
     }
 
+    static get Info() {
+        return info;
+    }
+
     static get CommonId() {
-        return '66';
+        return info.CommonId;
     }
 
     get eventSpecsWhenPutDownInHomeZone() {
         return [{ type: 'freeExtraStationCardGranted', count: 2 }];
-    }
-
-    get requirementsWhenPutDownInHomeZone() {
-        return {
-            forOpponent: [
-                { type: 'drawCard', count: 2, cardCommonId: Expansion.CommonId }
-            ],
-            forPlayer: []
-        };
     }
 };

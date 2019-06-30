@@ -171,16 +171,11 @@ function PutDownCardController(deps) {
                 else if (location === 'zone') {
                     putDownCardInZone({ playerId, cardData });
                 }
-
-                if (location === 'zone') {
-                    const addRequirementFromSpec = playerServiceFactory.addRequirementFromSpec(playerId);
-                    addRequirementFromSpec.forCardPutDownInHomeZone(cardData);
-                }
             }
 
-            const card = cardFactory.createCardForPlayer(cardData, playerId);
-            if (card.requirementsWhenPutDownInHomeZone) {
-                addCardRequirementsOnPutDownInHomeZone({ playerId, card });
+            if (location === 'zone') {
+                const addRequirementFromSpec = playerServiceFactory.addRequirementFromSpec(playerId);
+                addRequirementFromSpec.forCardPutDownInHomeZone(cardData);
             }
 
             const turnControl = playerServiceFactory.turnControl(playerId);
@@ -214,21 +209,6 @@ function PutDownCardController(deps) {
 
         playerStateService.removeStationCard(cardId);
         return stationCard;
-    }
-
-    function addCardRequirementsOnPutDownInHomeZone({ playerId, card }) {
-        const requirements = card.requirementsWhenPutDownInHomeZone;
-
-        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
-        for (const requirement of requirements.forPlayer) {
-            playerRequirementService.addCardRequirement(requirement);
-        }
-
-        const opponentId = matchComService.getOpponentId(playerId);
-        const opponentRequirementService = playerServiceProvider.getRequirementServiceById(opponentId);
-        for (const requirement of requirements.forOpponent) {
-            opponentRequirementService.addCardRequirement(requirement);
-        }
     }
 
     function putDownCardInZone({ playerId, cardData }) {

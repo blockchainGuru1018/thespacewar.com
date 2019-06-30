@@ -1,3 +1,4 @@
+const info = require('./info/38.config.js');
 const BaseCard = require('./BaseCard.js');
 
 module.exports = class FatalError extends BaseCard {
@@ -5,19 +6,12 @@ module.exports = class FatalError extends BaseCard {
         super(deps);
     }
 
-    static get CommonId() {
-        return '38';
+    static get Info() {
+        return info;
     }
 
-    get requirementsWhenPutDownInHomeZone() {
-        return {
-            forOpponent: [{
-                type: 'drawCard',
-                count: 2,
-                cardCommonId: FatalError.CommonId
-            }],
-            forPlayer: []
-        };
+    static get CommonId() {
+        return info.CommonId;
     }
 
     get actionWhenPutDownInHomeZone() {

@@ -1,5 +1,5 @@
 module.exports = function ({
-    playerServiceProvider,
+    playerServiceFactory
 }) {
 
     return {
@@ -8,7 +8,7 @@ module.exports = function ({
     };
 
     function forPlayerWithData(playerId, { count }) {
-        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
-        playerRequirementService.addRequirement({ type: 'damageStationCard', count });
+        const addRequirementFromSpec = playerServiceFactory.addRequirementFromSpec(playerId);
+        addRequirementFromSpec.forReasonAndSpec('cheat', { type: 'damageStationCard', count });
     }
 };
