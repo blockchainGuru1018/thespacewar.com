@@ -11,12 +11,22 @@
                 Select the starting player
             </div>
             <button
-                v-for="player in players"
-                :key="player.id"
                 class="cardChoiceDialog-choice"
                 @click="selectPlayerToStart(player.id)"
             >
-                {{ player.name }}
+                You
+            </button>
+            <button
+                class="cardChoiceDialog-choice"
+                @click="selectPlayerToStart(opponent.id)"
+            >
+                {{ opponent.name }}
+                <span class="cardChoiceDialog-choiceSubText">
+                    You start with +1 card on hand
+                </span>
+                <span class="cardChoiceDialog-choiceSubText">
+                    and +1 station card
+                </span>
             </button>
         </div>
     </div>
@@ -28,7 +38,8 @@
     module.exports = {
         computed: {
             ...chooseStartingPlayerHelpers.mapGetters([
-                'players',
+                'player',
+                'opponent',
                 'visible'
             ])
         },

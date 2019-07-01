@@ -16,5 +16,12 @@
 .chooseStartingPlayer-randomlyChosenText {
   display: block;
   font-size: .6em;
-  opacity: .5;
+  color: rgba(255, 255, 255, .5);
+}
+
+.cardChoiceDialog-choiceSubText {
+  display: block;
+  color: rgba(255, 255, 255, .5);
+  font-size: .8em;
+  margin-top: 5px;
 }

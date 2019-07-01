@@ -73,11 +73,6 @@ $endOpacity: .6;
   white-space: nowrap;
 }
 
-.field-playerStation:hover .stationCardLabelText {
-  transition: color .15s ease;
-  color: rgba(255, 255, 255, $endOpacity);
-}
-
 .field-player .card-emptyDeck {
   border-color: rgba(255, 255, 255, $startOpacity);
 

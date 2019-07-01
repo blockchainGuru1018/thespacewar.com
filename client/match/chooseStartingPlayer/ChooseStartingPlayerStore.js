@@ -10,7 +10,8 @@ module.exports = function ({
         state: {},
         getters: {
             visible,
-            players
+            player,
+            opponent
         },
         actions: {
             selectPlayerToStart
@@ -25,13 +26,14 @@ module.exports = function ({
             && somePlayerHasRetreated;
     }
 
-    function players(state, getters, rootState) {
+    function player(state, getters, rootState) {
         const ownUser = rootState.match.ownUser;
+        return { id: ownUser.id, name: ownUser.name };
+    }
+
+    function opponent(state, getters, rootState) {
         const opponentUser = rootState.match.opponentUser;
-        return [
-            { id: ownUser.id, name: ownUser.name },
-            { id: opponentUser.id, name: opponentUser.name }
-        ];
+        return { id: opponentUser.id, name: opponentUser.name };
     }
 
     function selectPlayerToStart(actionContext, playerToStartId) {
