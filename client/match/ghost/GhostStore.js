@@ -22,7 +22,7 @@ module.exports = function () {
         const showOnlyCardGhostsFor = rootState.card.showOnlyCardGhostsFor;
         if (showOnlyCardGhostsFor && !showOnlyCardGhostsFor.includes('homeZone')) return false;
 
-        return getters._canPutDownHoldingCard;
+        return true;
     }
 
     function _canPutDownHoldingCard(state, getters, rootState, rootGetters) {

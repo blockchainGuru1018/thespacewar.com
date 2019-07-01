@@ -269,13 +269,13 @@
                             </template>
                             <CardGhost
                                 :element-hovered-over="elementHoveredOver"
-                                @click="cardGhostClick"
-                                class="card-ghost--zone"
+                                @click="homeZoneCardGhostClick"
+                                :class="playerZoneCardGhostClasses"
                                 location="zone"
                                 v-if="playerZoneCardGhostVisible"
                             >
                                 <div class="playCard">
-                                    Play card
+                                    {{ playerZoneCardGhostText }}
                                 </div>
                             </CardGhost>
                         </div>
@@ -331,21 +331,21 @@
                         <div class="field-stationRow">
                             <portal-target name="stationHandSizeRow" />
                             <station-card
-                                :is-holding-card="!!holdingCard"
-                                :key="card.id"
-                                :station-card="card"
                                 v-for="card in playerVisibleHandSizeStationCards"
+                                :key="card.id"
+                                :is-holding-card="!!holdingCard"
+                                :station-card="card"
                             />
                             <div class="stationCardWrapper stationCardWrapper--fullSize">
                                 <CardGhost
+                                    v-if="stationCardGhostVisible"
+                                    location="station-handSize"
                                     :element-hovered-over="elementHoveredOver"
                                     @click="cardGhostClick"
-                                    location="station-handSize"
-                                    v-if="stationCardGhostVisible"
                                 />
                                 <div
-                                    class="card card-placeholder"
                                     v-else
+                                    class="card card-placeholder"
                                 />
                             </div>
                         </div>
@@ -356,8 +356,11 @@
                 <EventGhost
                     v-if="activateEventCardGhostVisible"
                     :element-hovered-over="elementHoveredOver"
-                    @click="cardGhostClick"
-                />
+                    :class="eventGhostClasses"
+                    @click="homeZoneCardGhostClick"
+                >
+                    {{ playerZoneCardGhostText }}
+                </EventGhost>
 
                 <CommanderSelection />
             </div>
@@ -505,19 +508,43 @@
             ...ghostHelpers.mapGetters([
                 'activateEventCardGhostVisible'
             ]),
+            playerZoneCardGhostClasses() {
+                const classes = ['card-ghost--zone'];
+                if (!this.canPutDownHoldingCard) {
+                    classes.push('card-ghost--deactivatedZone');
+                }
+                return classes;
+            },
+            eventGhostClasses() {
+                if (!this.canPutDownHoldingCard) {
+                    return ['playerEventCardGhost--deactivated'];
+                }
+                return [];
+            },
             playerZoneCardGhostVisible() {
                 if (!this.holdingCard) return false;
                 if (this.holdingEventCard) return false;
                 if (this.showOnlyCardGhostsFor && !this.showOnlyCardGhostsFor.includes('homeZone')) return false;
+                if (this.cannotPutDownAnyCardInZone) return false;
 
-                return this.canPutDownHoldingCard;
+                return true;
+            },
+            playerZoneCardGhostText() {
+                if (this.canPutDownHoldingCard) {
+                    return 'Play card';
+                }
+
+                return 'Cannot play card';
             },
             holdingEventCard() {
                 return this.holdingCard && this.holdingCard.type === 'event';
             },
+            cannotPutDownAnyCardInZone() {
+                return !this.gameOn;
+            },
             canPutDownHoldingCard() {
+                if (this.cannotPutDownAnyCardInZone) return false;
                 if (!this.canAffordHoldingCard) return false;
-                if (!this.gameOn) return false;
 
                 return this.createCard(this.holdingCard).canBePutDownAnyTime()
                     || (this.canPutDownCards && this.canPutDownCard(this.holdingCard));
@@ -651,6 +678,14 @@
             },
             playerCardClick(cardData) {
                 this.startHoldingCard({ cardData });
+            },
+            homeZoneCardGhostClick() {
+                if (this.canPutDownHoldingCard) {
+                    this.cardGhostClick('zone');
+                }
+                else {
+                    this.cancelHoldingCard();
+                }
             },
             cardGhostClick(location) {
                 if (!this.holdingCard) throw new Error('Should not be able to click on card ghost without holding a card');

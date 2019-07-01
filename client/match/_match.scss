@@ -1,3 +1,4 @@
+@import "miscVariables";
 @import "cardVariables";
 @import "icons";
 @import "buttons";
@@ -240,8 +241,8 @@
   }
 }
 
-.discardPile-cardGhost {
-  border: 4px solid rgb(204, 31, 31);
+.field-discardPile .discardPile-cardGhost {
+  border: 4px solid $dangerBorderColor;
 
   &--hoveredOver, &:hover {
     background: rgba(230, 46, 46, 0.2);

@@ -68,13 +68,13 @@ class CanThePlayer {
         if (this._turnControl.playerHasControlOfOpponentsTurn() && cardData.cost > 0) return false;
 
         if (cardData.type === 'event') {
-            return this.putDownThisEventCard(cardData.id);
+            return this.putDownThisEventCard();
         }
 
         return true;
     }
 
-    putDownThisEventCard(cardData) {
+    putDownThisEventCard() {
         return !this._somePlayerHasCardThatPreventsEventCards();
     }
 

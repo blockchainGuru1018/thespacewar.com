@@ -10,7 +10,7 @@
                 :data-location="location"
                 class="activateEventCard ghost"
             >
-                Play card
+                <slot />
             </div>
         </div>
     </transition>
