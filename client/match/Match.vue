@@ -9,7 +9,7 @@
             <div class="match-backgroundOverlay" />
         </div>
         <div
-            :class="['match', `currentPhase--${phase}`]"
+            :class="['match', `currentPhase--${phase}`, {'match-selectingStartingStationCards': selectingStartingStationCards}]"
             ref="match"
         >
             <div class="field">
