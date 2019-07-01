@@ -161,6 +161,7 @@
     }
 
     .commanderSelection .commanderCard--selected {
+        filter: brightness(25%);
     }
 
     .commanderSelection .commanderCard:not(.commanderCard--selected):hover::after {
