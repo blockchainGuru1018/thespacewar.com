@@ -1,17 +1,14 @@
 <template>
     <div
-        v-if="commanderSelectionVisible"
+        v-if="canSelectCommander && !hidden"
         class="commanderSelection"
     >
         <div class="commanderSelection-header">
             <div class="commanderSelection-headerText">
                 Select your commander
             </div>
-            <button class="commanderSelection-hide darkButton--onlyLook" @click="hidden = !hidden">
-                {{ hidden ? 'Show' : 'Hide' }}
-            </button>
         </div>
-        <div v-if="!hidden" class="commanderSelection-cards">
+        <div class="commanderSelection-cards">
             <div
                 v-for="(row, index) in rows"
                 :key="index"
@@ -49,7 +46,6 @@
     module.exports = {
         data() {
             return {
-                hidden: false,
                 rows: [
                     { commanderOptions: commanderOptions.slice(0, 3) },
                     { commanderOptions: commanderOptions.slice(3) }
@@ -58,14 +54,29 @@
         },
         computed: {
             ...startGameHelpers.mapGetters([
-                'commanderSelectionVisible',
+                'canSelectCommander',
             ]),
+            hidden: {
+                get() {
+                    return this.$store.state.startGame.commanderSelectionHidden;
+                },
+                set(value) {
+                    return this.$store.state.startGame.commanderSelectionHidden = value;
+                }
+            },
             selectedCommander: {
                 get() {
                     return this.$store.state.match.commanders[0];
                 },
                 set(value) {
                     this.$store.dispatch('startGame/selectCommander', value);
+                }
+            }
+        },
+        watch: {
+            canSelectCommander() {
+                if (this.canSelectCommander) {
+                    this.hidden = !!this.selectedCommander;
                 }
             }
         },

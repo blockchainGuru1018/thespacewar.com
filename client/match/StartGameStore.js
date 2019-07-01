@@ -6,13 +6,14 @@ module.exports = function ({
         namespaced: true,
         name: 'startGame',
         state: {
-            localPlayerHasRegisteredAsReady: false
+            localPlayerHasRegisteredAsReady: false,
+            commanderSelectionHidden: false
         },
         getters: {
             playerHasRegisteredAsReady,
             readyButtonVisible,
-            commanderCardsVisible,// TODO Does not really fit in to the "startGame" store...
-            commanderSelectionVisible,
+            commanderCardsVisible,
+            canSelectCommander,
             _doneSelectingStationCards
         },
         actions: {
@@ -35,7 +36,7 @@ module.exports = function ({
         return getters._doneSelectingStationCards;
     }
 
-    function commanderSelectionVisible(state, getters) {
+    function canSelectCommander(state, getters) {
         return getters.readyButtonVisible;
     }
 

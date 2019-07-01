@@ -49,7 +49,7 @@ class PlayerStateService {
             playerState.events = [];
             playerState.requirements = [];
             playerState.actionLogEntries = [];
-            playerState.commanders = [Commander.StartingCommander];
+            playerState.commanders = [];
             playerState.clock = {};
         });
     }
