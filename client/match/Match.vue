@@ -273,7 +273,11 @@
                                 class="card-ghost--zone"
                                 location="zone"
                                 v-if="playerZoneCardGhostVisible"
-                            />
+                            >
+                                <div class="playCard">
+                                    Play card
+                                </div>
+                            </CardGhost>
                         </div>
                     </div>
                     <div class="playerStationCards field-playerStation field-station field-section">
