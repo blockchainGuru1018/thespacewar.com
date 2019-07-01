@@ -11,9 +11,9 @@ module.exports = function ({
         },
         getters: {
             playerHasRegisteredAsReady,
-            readyButtonVisible,
             commanderCardsVisible,
             canSelectCommander,
+            readyButtonVisible,
             _doneSelectingStationCards
         },
         actions: {
@@ -27,17 +27,19 @@ module.exports = function ({
             || rootState.match.readyPlayerIds.includes(rootState.match.ownUser.id);
     }
 
-    function readyButtonVisible(state, getters) {
-        return getters._doneSelectingStationCards
-            && !getters.playerHasRegisteredAsReady;
-    }
-
     function commanderCardsVisible(state, getters) {
         return getters._doneSelectingStationCards;
     }
 
     function canSelectCommander(state, getters) {
-        return getters.readyButtonVisible;
+        return getters._doneSelectingStationCards
+            && !getters.playerHasRegisteredAsReady;
+    }
+
+    function readyButtonVisible(state, getters, rootState) {
+        const hasSelectedCommander = !!rootState.match.commanders[0];
+        return hasSelectedCommander
+            && !getters.playerHasRegisteredAsReady;
     }
 
     function _doneSelectingStationCards(state, getters, rootState, rootGetters) {
