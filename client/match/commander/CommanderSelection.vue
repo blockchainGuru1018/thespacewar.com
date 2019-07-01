@@ -141,42 +141,12 @@
     }
 
     .commanderSelection .commanderCard--selected {
-        &::after {
-            content: "↓";
-            position: absolute;
-            transform: translateX(-50%);
-            bottom: 93%;
-            left: 50%;
-
-            font-size: 36px;
-            color: white;
-            font-weight: bold;
-            font-family: "Space mono", sans-serif;
-            text-shadow: #000 0 0;
-        }
-
-        &:hover::after {
-            font-size: 40px;
-        }
     }
 
     .commanderSelection .commanderCard:not(.commanderCard--selected):hover::after {
-        content: "↓";
-        position: absolute;
-        transform: translateX(-50%);
-        bottom: 93%;
-        left: 50%;
-
-        font-size: 40px;
-        color: transparent;
-        font-weight: bold;
-        font-family: "Space mono", sans-serif;
-
-        text-shadow: #000 0 0;
     }
 
     * {
-
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }
