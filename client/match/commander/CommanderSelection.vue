@@ -22,7 +22,7 @@
                     :key="commander.value"
                     :commander="commander.value"
                     :selected="selectedCommander === commander.value"
-                    @select="selectedCommander = commander.value"
+                    @select="selectCommander(commander)"
                 >
                     {{ commander.name }}
                 </CommanderCard>
@@ -67,6 +67,15 @@
                 set(value) {
                     this.$store.dispatch('startGame/selectCommander', value);
                 }
+            }
+        },
+        methods: {
+            selectCommander(commander) {
+                this.selectedCommander = commander.value;
+                this.hide();
+            },
+            hide() {
+                this.hidden = true;
             }
         },
         components: {

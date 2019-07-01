@@ -32,7 +32,7 @@ module.exports = function ({
     }
 
     function commanderCardsVisible(state, getters) {
-        return !getters.commanderSelectionVisible && getters._doneSelectingStationCards;
+        return getters._doneSelectingStationCards;
     }
 
     function commanderSelectionVisible(state, getters) {
