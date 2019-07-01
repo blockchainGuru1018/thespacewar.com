@@ -601,12 +601,15 @@
         left: 0;
         transform: translateY(-50%);
         z-index: 1;
-        min-width: 15%;
         display: flex;
         justify-content: center;
         align-items: center;
         padding: 10px;
         box-sizing: border-box;
+    }
+
+    .nextPhaseButtonContainer {
+        min-width: 15%;
     }
 
     .nextPhaseButton {
@@ -644,6 +647,17 @@
             background-color: #ff3646;
             color: white;
         }
+    }
+
+    .startGameButtonContainer {
+        width: 100%;
+    }
+
+    .readyButton {
+        width: 240px;
+        height: 48px;
+        font-size: 1.4em;
+        letter-spacing: .1em;
     }
 
     .overworkContainer {
