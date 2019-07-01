@@ -82,6 +82,12 @@
                             You lose when all your station cards are damaged
                         </div>
                     </div>
+                    <div
+                        v-else-if="playerIsReady"
+                        class="guideText-waitingForOtherPlayer guideText guideText--small"
+                    >
+                        Waiting for other player
+                    </div>
                 </template>
                 <div
                     v-else-if="waitingForOtherPlayerToSelectStartingPlayer"
@@ -296,7 +302,8 @@
                 'opponentUser',
                 'selectedDefendingStationCards',
                 'requirements',
-                'playerCardsOnHand'
+                'playerCardsOnHand',
+                'readyPlayerIds'
             ]),
             ...mapGetters([
                 'nextPhaseWithAction',
@@ -368,6 +375,9 @@
             },
             perfectPlanContainerVisible() {
                 return this.playerPerfectPlan.canIssuePerfectPlan() && !this.holdingCard;
+            },
+            playerIsReady() {
+                return this.readyPlayerIds.includes(this.ownUser.id);
             },
             waitingForOtherPlayerToSelectStartingPlayer() {
                 return this.mode === MatchMode.chooseStartingPlayer && !this.isOwnTurn;
