@@ -279,7 +279,7 @@
                     <div class="playerStationCards field-playerStation field-station field-section">
                         <div class="stationCardLabel">
                             <div class="stationCardLabelText">
-                                Space Station
+                                Station cards
                             </div>
                         </div>
                         <div class="field-stationRow">
