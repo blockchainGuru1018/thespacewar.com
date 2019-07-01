@@ -3,7 +3,11 @@
         :class="classes"
     >
         <div class="matchHeader-bannerName">
-            {{ name }} ({{ clockTime }})
+            {{ name }}
+            <span class="matchHeader-bannerClockText">
+                <ClockIcon :isPlayer="isPlayer" />
+                {{ clockTime }}
+            </span>
         </div>
         <div class="matchHeader-bannerBarsWrapper">
             <div class="matchHeader-bannerBars">
@@ -40,6 +44,8 @@
     const Vuex = require('vuex');
     const matchHelpers = Vuex.createNamespacedHelpers('match');
     const cardHelpers = Vuex.createNamespacedHelpers('card');
+    const resolveModuleWithPossibleDefault = require('../../utils/resolveModuleWithPossibleDefault.js');
+    const ClockIcon = resolveModuleWithPossibleDefault(require('./ClockIcon.vue'));
 
     module.exports = {
         props: ['isPlayer', 'reverse'],
@@ -132,6 +138,9 @@
         },
         destroyed() {
             clearInterval(this.clockUpdateIntervalId);
+        },
+        components: {
+            ClockIcon
         }
     };
 
@@ -307,5 +316,12 @@
         line-height: 102%;
         width: 56px;
         height: 0; /* It should not have an effect on the container height, so that's why its zero */
+    }
+
+    .matchHeader-bannerClockText {
+        display: inline-block;
+        min-width: 84px;
+        text-align: left;
+        margin: 0 0 0 4px;
     }
 </style>

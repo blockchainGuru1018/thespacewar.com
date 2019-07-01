@@ -4,7 +4,10 @@
             v-if="!gameHasEnded"
             to="player-top"
         >
-            <div v-if="startGameButtonContainerVisible" class="startGameButtonContainer">
+            <div
+                v-if="startGameButtonContainerVisible"
+                class="startGameButtonContainer"
+            >
                 <button
                     v-if="readyButtonVisible"
                     class="readyButton playerHud-phaseText nextPhaseButton"
@@ -13,7 +16,10 @@
                     Ready
                 </button>
             </div>
-            <div v-else-if="nextPhaseButtonContainerVisible" class="nextPhaseButtonContainer">
+            <div
+                v-else-if="nextPhaseButtonContainerVisible"
+                class="nextPhaseButtonContainer"
+            >
                 <template v-if="canGoToNextTurn">
                     <button
                         v-if="nextPhaseButtonText"

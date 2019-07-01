@@ -1,2 +1,7 @@
-Used icons:
-https://www.flaticon.com/free-icon/resize_724946# "Enlarge icon" for cards
+-- Used icons --
+
+https://www.flaticon.com/free-icon/resize_724946# "Enlarge icon" for cards (NOT USED ANYMORE)
+
+Stopwatch icon:
+https://www.flaticon.com/free-icon/stopwatch_149862#term=stopwatch&page=1&position=61
+<div>Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/"                 title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/"                 title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
