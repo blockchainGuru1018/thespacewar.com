@@ -13,22 +13,29 @@ function DrawCardController(deps) {
     };
 
     function onDrawCard(playerId) {
+        const playerRuleService = playerServiceFactory.playerRuleService(playerId);
+        if (!playerRuleService.canDrawCards()) {
+            return;
+            //TODO When playing I would accidentally press "Draw card" twice quickly, resulting in skipping 2 phases at once.
+            // The problem arises from the latency of the response to my first press. It would then be odd to throw an error
+            // here in such a case, as it would only amass to a lot of useless log entries on the server.
+            // Currently there are other places which should have similar failure-states that _does_ throw an error.
+            // What does the future maintainer or future me have to think about this issue?
+        }
+
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
         const drawCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'drawCard' });
-
-        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        const cannotDrawMoreCards = !playerStateService.moreCardsCanBeDrawnForDrawPhase()
-            || playerStateService.deckIsEmpty();
-
         if (drawCardRequirement) {
             onDrawCardForRequirement({ playerId });
         }
         else {
-            if (cannotDrawMoreCards) {
-                matchComService.emitToPlayer(playerId, 'drawCards', { moreCardsCanBeDrawn: false });
+            const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+            const canDrawMoreCards = playerStateService.moreCardsCanBeDrawnForDrawPhase() && !playerStateService.deckIsEmpty();
+            if (canDrawMoreCards) {
+                onDrawCardBecauseOfDrawPhase({ playerId });
             }
             else {
-                onDrawCardBecauseOfDrawPhase({ playerId });
+                matchComService.emitToPlayer(playerId, 'drawCards', { moreCardsCanBeDrawn: false });
             }
         }
     }

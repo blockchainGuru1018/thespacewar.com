@@ -128,29 +128,11 @@ module.exports = function (deps) {
         return ['destroyAnyCard', 'sacrifice'].includes(activeAction.name);
     }
 
-    function canDrawCards(state, getters, rootState) {
-        if (getters.waitingForOtherPlayerToFinishRequirements) return false;
-
-        let isDrawPhaseOrHasDrawCardRequirement = rootState.match.phase === 'draw'
-            || getFrom('firstRequirementIsDrawCard', 'requirement');
-        if (!isDrawPhaseOrHasDrawCardRequirement) return false;
-
-        if (getters.deckIsEmpty) {
-            return getters.opponentDeckIsEmpty;
-        }
-        else {
-            return true;
-        }
+    function canDrawCards(state, getters, rootState, rootGetters) {
+        return rootGetters['match/playerRuleService'].canDrawCards();
     }
 
     function canMill(state, getters, rootState, rootGetters) {
-        if (getters.waitingForOtherPlayerToFinishRequirements) return false;
-        if (getters.opponentDeckIsEmpty) return false;
-
-        const hasTheMiller = rootGetters['match/playerCommanders'].has(Commander.TheMiller);
-        if (!hasTheMiller) return false;
-
-        return rootState.match.phase === 'draw'
-            || getFrom('firstRequirementIsDrawCard', 'requirement');
+        return rootGetters['match/playerRuleService'].canMill();
     }
 };

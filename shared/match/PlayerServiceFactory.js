@@ -266,9 +266,7 @@ module.exports = function ({
         const opponentId = api.opponentId(playerId);
         return new PlayerRequirementService({
             playerStateService: api.playerStateService(playerId),
-            opponentStateService: api.playerStateService(opponentId),
-            playerRequirementFactory: api.playerRequirementFactory(playerId),
-            opponentRequirementFactory: api.playerRequirementFactory(opponentId)
+            opponentStateService: api.playerStateService(opponentId)
         });
     }
 

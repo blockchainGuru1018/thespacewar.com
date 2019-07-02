@@ -500,10 +500,9 @@ module.exports = function (deps) {
     }
 
     function playerRequirementService(state, getters) {
-        return new PlayerRequirementService({ //TODO Separate the read requirements part from the add requirement part?
+        return new PlayerRequirementService({
             playerStateService: getters.playerStateService,
-            opponentStateService: getters.opponentStateService,
-            requirementFactory: ClientLimitNotice
+            opponentStateService: getters.opponentStateService
         });
     }
 
@@ -533,7 +532,10 @@ module.exports = function (deps) {
             actionPointsCalculator,
             queryEvents: getters.queryEvents,
             cardFactory: getters.cardFactory,
-            gameConfig: getters.gameConfig
+            gameConfig: getters.gameConfig,
+            deckIsEmpty: () => {
+                return getters.playerCardsInDeckCount <= 0
+            }
         });
     }
 
@@ -546,7 +548,10 @@ module.exports = function (deps) {
             matchService: getters.matchService,
             queryEvents: getters.queryOpponentEvents,
             cardFactory: getters.cardFactory,
-            gameConfig: getters.gameConfig
+            gameConfig: getters.gameConfig,
+            deckIsEmpty: () => {
+                return getters.opponentCardsInDeckCount <= 0
+            }
         });
     }
 

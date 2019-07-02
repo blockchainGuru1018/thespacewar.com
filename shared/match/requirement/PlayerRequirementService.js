@@ -3,13 +3,9 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
     constructor({
         playerStateService,
         opponentStateService,
-        playerRequirementFactory,
-        opponentRequirementFactory
     }) {
         this._playerStateService = playerStateService;
         this._opponentStateService = opponentStateService;
-        this._playerRequirementFactory = playerRequirementFactory;
-        this._opponentRequirementFactory = opponentRequirementFactory;
     }
 
     getRequirements() {
@@ -33,6 +29,12 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
             .requirements
             .slice();
         return this._findMatchingRequirement(requirements, { type, common, waiting });
+    }
+
+    firstRequirementIsOfType(type) {
+        const requirements = this.getRequirements();
+        const firstRequirement = requirements[0];
+        return firstRequirement && firstRequirement.type === type;
     }
 
     addCardRequirement(requirement) {

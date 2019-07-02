@@ -6,6 +6,7 @@ class ClientPlayerStateService extends PlayerStateService {
     constructor(deps) {
         super(deps);
         this._updateStore = deps.updateStore;
+        this.deckIsEmpty = deps.deckIsEmpty;
     }
 
     updateCardById(cardId, updateFn) {

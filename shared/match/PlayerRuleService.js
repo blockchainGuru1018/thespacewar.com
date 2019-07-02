@@ -99,6 +99,32 @@ class PlayerRuleService {
             return this._gameConfig.maxStationCards();
         }
     }
+
+    canDrawCards() {
+        const playerRequirements = this._playerRequirementService;
+        if (playerRequirements.isWaitingOnOpponentFinishingRequirement()) return false;
+        if (!this._playerPhase.isDraw() && !playerRequirements.firstRequirementIsOfType('drawCard')) return false;
+
+        if (this._playerStateService.deckIsEmpty()) {
+            return this._opponentStateService.deckIsEmpty();
+        }
+        else {
+            return true;
+        }
+    }
+
+    canMill() {
+        const playerRequirements = this._playerRequirementService;
+        if (playerRequirements.isWaitingOnOpponentFinishingRequirement()) return false;
+        if (this._opponentStateService.deckIsEmpty()) return false;
+
+        const hasTheMiller = this._playerCommanders.has(Commander.TheMiller);
+        if (!hasTheMiller) return false;
+
+        return this._playerPhase.isDraw()
+            || playerRequirements.firstRequirementIsOfType('drawCard');
+
+    }
 }
 
 module.exports = PlayerRuleService;
