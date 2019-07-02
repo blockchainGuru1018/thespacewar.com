@@ -51,9 +51,12 @@
                 this.expanded = !this.expanded;
             },
             getEntryHtml(entry) {
-                const textWithSubstitutedAmp = entry.text.split('&').join('_amp_');
-                return encodeHtml(textWithSubstitutedAmp)
+                const textWithSubstitutedSensitiveCharacters = entry.text
+                    .split('&').join('_amp_')
+                    .split('s').join('_115_');
+                return encodeHtml(textWithSubstitutedSensitiveCharacters)
                     .split('_amp_').join('&')
+                    .split('_115_').join('s')
                     .split(/\*/).join('<strong>')
                     .split(/#/).join('</strong>');
             },
