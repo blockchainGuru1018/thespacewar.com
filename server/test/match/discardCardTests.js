@@ -10,9 +10,8 @@ const {
     Player,
     FakeDeck,
     FakeConnection2,
+    catchError
 } = require('./shared.js');
-
-//TODO When resolving requirements Game Timers should be paused (ignore this until Game Timers are implemented)
 
 module.exports = {
     'when is action phase and first player discards card': {
@@ -25,6 +24,31 @@ module.exports = {
                 playerStateById: {
                     'P1A': {
                         phase: 'action',
+                        cardsOnHand: [createCard({ id: 'C1A' })]
+                    }
+                }
+            }));
+
+            this.error = catchError(() => this.match.discardCard('P1A', 'C1A'));
+        },
+        'should throw an error'() {
+            assert(this.error);
+            assert.equals(this.error.message, 'Illegal discard');
+        },
+        'should NOT emit state changed to first player'() {
+            refute.called(this.firstPlayerConnection.stateChanged);
+        }
+    },
+    'when is discard phase and first player discards card': {
+        setUp() {
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['stateChanged']);
+            const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
+            this.match = createMatch({ players });
+            this.match.restoreFromState(createState({
+                playerStateById: {
+                    'P1A': {
+                        phase: 'discard',
                         cardsOnHand: [createCard({ id: 'C1A' })]
                     }
                 }

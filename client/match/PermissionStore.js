@@ -80,7 +80,6 @@ module.exports = function (deps) {
 
         const phase = rootState.match.phase;
         return rootGetters['match/canThePlayer'].replaceCards()
-            || phase === 'action'
             || phase === 'discard';
     }
 
