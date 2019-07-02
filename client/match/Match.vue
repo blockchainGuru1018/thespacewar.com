@@ -146,6 +146,7 @@
                             </div>
                         </div>
                     </div>
+                    <OpponentPreGameOverlay />
                 </div>
                 <div
                     :class="['field-dividerWrapper', {'field-dividerWrapper--placeholder': activateEventCardGhostVisible }]"
@@ -432,6 +433,7 @@
     const CommanderSelection = resolveModule(require('./commander/CommanderSelection.vue'));
     const PlayerCommanderCards = resolveModule(require('./commander/PlayerCommanderCards.vue'));
     const OpponentCommanderCards = resolveModule(require('./commander/OpponentCommanderCards.vue'));
+    const OpponentPreGameOverlay = resolveModule(require('./OpponentPreGameOverlay.vue'));
     const { PHASES } = require('./phases.js');
 
     module.exports = {
@@ -815,7 +817,8 @@
             MatchHeader,
             CommanderSelection,
             PlayerCommanderCards,
-            OpponentCommanderCards
+            OpponentCommanderCards,
+            OpponentPreGameOverlay
         },
         directives: {
             longpress
