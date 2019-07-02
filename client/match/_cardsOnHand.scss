@@ -73,8 +73,8 @@
   transform: translateX(-50%);
   opacity: 1;
   bottom: 120px;
-  width: $actualCardWidth;
-  height: $actualCardHeight;
+  width: $cardOnHandBlowUpWidth;
+  height: $cardOnHandBlowUpHeight;
   cursor: pointer;
   z-index: 1;
 }

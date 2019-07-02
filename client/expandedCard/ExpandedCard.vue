@@ -52,6 +52,8 @@
     }
 </script>
 <style scoped lang="scss">
+    @import "../match/cardVariables";
+
     .expandedCard {
         position: fixed;
         top: 0;
@@ -66,8 +68,8 @@
     }
 
     .expandedCard-image {
-        width: 287px;
-        height: 400px;
+        width: $expandedCardWidth;
+        height: $expandedCardHeight;
         pointer-events: none;
     }
 </style>

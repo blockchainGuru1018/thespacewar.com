@@ -1,7 +1,12 @@
 $cardWidth: 652px;
 $cardHeight: 916px;
+
 $actualCardWidth: 287px;
 $actualCardHeight: 400px;
+$expandedCardWidth: $actualCardWidth * 1.32;
+$expandedCardHeight: $actualCardHeight * 1.32;
+$cardOnHandBlowUpWidth: $actualCardWidth * 1.2;
+$cardOnHandBlowUpHeight: $actualCardHeight * 1.2;
 
 $opponentHandScale: .65;
 $opponentDiscardAndDrawPileScale: .9;
