@@ -171,6 +171,7 @@ module.exports = function ({
             playerRequirementService: api.playerRequirementService(playerId),
             playerStateService: api.playerStateService(playerId),
             playerCommanders: api.playerCommanders(playerId),
+            playerRuleService: api.playerRuleService(playerId),
             opponentStateService: api.playerStateService(api.opponentId(playerId)),
             opponentActionLog: api.actionLog(api.opponentId(playerId))
         });

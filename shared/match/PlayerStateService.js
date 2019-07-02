@@ -79,13 +79,6 @@ class PlayerStateService {
         return this.getPlayerState().phase;
     }
 
-    moreCardsCanBeDrawnForDrawPhase() {
-        let currentTurn = this._matchService.getTurn();
-        let cardDrawEvents = this._queryEvents.getCardDrawsOnTurn(currentTurn);
-        let cardsToDrawOnTurnCount = this.getStationDrawCardsCount();
-        return cardsToDrawOnTurnCount > cardDrawEvents.length;
-    }
-
     deckIsEmpty() {
         return this.getDeck().getCardCount() === 0;
     }

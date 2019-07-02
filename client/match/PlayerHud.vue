@@ -132,7 +132,7 @@
                     v-else-if="phase === PHASES.draw"
                     class="guideText-drawCard guideText guideText--small"
                 >
-                    {{ composeDrawOrMillText() }}
+                    {{ drawCardOrMillText }}
                 </div>
                 <div
                     v-else-if="inDiscardPhaseAndMustDiscardCard"
@@ -330,7 +330,8 @@
                 'choosingStartingPlayer',
                 'isOwnTurn',
                 'gameOn',
-                'playerPerfectPlan'
+                'playerPerfectPlan',
+                'playerRuleService'
             ]),
             ...requirementHelpers.mapGetters([
                 'waitingForOtherPlayerToFinishRequirements',
@@ -462,7 +463,7 @@
                         this.cardsLeftToSelect)} to damage`;
                 }
                 else if (this.firstRequirementIsDrawCard) {
-                    return this.composeDrawOrMillText();
+                    return this.drawCardOrMillText;
                 }
                 else {
                     return '';
@@ -506,6 +507,18 @@
             },
             millCardCount() {
                 return this.gameConfig.millCardCount();
+            },
+            drawCardOrMillText() {
+                const count = this.firstRequirementIsDrawCard
+                    ? this.countInFirstRequirement
+                    : this.playerRuleService.countCardsLeftToDrawForDrawPhase();
+                if (this.canMill) {
+                    if (count > 1) {
+                        return `Draw card or Mill opponent (x${count})`;
+                    }
+                    return `Draw card or Mill opponent`;
+                }
+                return `Draw ${count} ${pluralize('card', count)}`;
             }
         },
         methods: {
@@ -525,17 +538,11 @@
             nextPhaseClick() {
                 this.goToNextPhase();
             },
-            showEnlargedCard() {
+            showEnlargedCard() { //TODO Should use new expandedCard component instead!
                 this.enlargedCardVisible = true;
             },
             hideEnlargedCard() {
                 this.enlargedCardVisible = false;
-            },
-            composeDrawOrMillText() {
-                if (this.canMill) {
-                    return 'Draw card or Mill opponent';
-                }
-                return 'Draw card';
             }
         },
         components: {

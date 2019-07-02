@@ -30,7 +30,8 @@ function DrawCardController(deps) {
         }
         else {
             const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-            const canDrawMoreCards = playerStateService.moreCardsCanBeDrawnForDrawPhase() && !playerStateService.deckIsEmpty();
+            const playerRuleService = playerServiceFactory.playerRuleService(playerId);
+            const canDrawMoreCards = playerRuleService.moreCardsCanBeDrawnForDrawPhase() && !playerStateService.deckIsEmpty();
             if (canDrawMoreCards) {
                 onDrawCardBecauseOfDrawPhase({ playerId });
             }
@@ -51,7 +52,9 @@ function DrawCardController(deps) {
     function onDrawCardBecauseOfDrawPhase({ playerId }) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         playerStateService.drawCard();
-        const moreCardsCanBeDrawn = playerStateService.moreCardsCanBeDrawnForDrawPhase();
+
+        const playerRuleService = playerServiceFactory.playerRuleService(playerId);
+        const moreCardsCanBeDrawn = playerRuleService.moreCardsCanBeDrawnForDrawPhase();
         matchComService.emitToPlayer(playerId, 'drawCards', { moreCardsCanBeDrawn });
     }
 
@@ -71,9 +74,9 @@ function DrawCardController(deps) {
             requirementUpdater.progressRequirementByCount(1);
         }
         else {
-            const playerStateService = playerServiceFactory.playerStateService(playerId);
+            const playerRuleService = playerServiceFactory.playerRuleService(playerId);
             matchComService.emitToPlayer(playerId, 'drawCards', {
-                moreCardsCanBeDrawn: playerStateService.moreCardsCanBeDrawnForDrawPhase()
+                moreCardsCanBeDrawn: playerRuleService.moreCardsCanBeDrawnForDrawPhase()
             });
         }
     }

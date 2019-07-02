@@ -123,7 +123,17 @@ class PlayerRuleService {
 
         return this._playerPhase.isDraw()
             || playerRequirements.firstRequirementIsOfType('drawCard');
+    }
 
+    countCardsLeftToDrawForDrawPhase() {
+        let currentTurn = this._matchService.getTurn();
+        let cardDrawEvents = this._queryEvents.getCardDrawsOnTurn(currentTurn);
+        let cardsToDrawOnTurnCount = this._playerStateService.getStationDrawCardsCount();
+        return cardsToDrawOnTurnCount - cardDrawEvents.length;
+    }
+
+    moreCardsCanBeDrawnForDrawPhase() {
+        return this.countCardsLeftToDrawForDrawPhase() > 0;
     }
 }
 

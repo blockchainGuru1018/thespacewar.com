@@ -4,6 +4,7 @@ module.exports = function ({
     playerRequirementService,
     playerStateService,
     playerCommanders,
+    playerRuleService,
     opponentStateService,
     opponentActionLog
 }) {
@@ -21,7 +22,7 @@ module.exports = function ({
         if (!hasTheMiller) return false;
 
         const drawCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'drawCard' });
-        return drawCardRequirement || playerStateService.moreCardsCanBeDrawnForDrawPhase();
+        return drawCardRequirement || playerRuleService.moreCardsCanBeDrawnForDrawPhase();
     }
 
     function mill() {
