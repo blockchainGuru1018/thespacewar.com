@@ -66,7 +66,8 @@
     }
 
     .expandedCard-image {
-        height: 80vh;
+        width: 287px;
+        height: 400px;
         pointer-events: none;
     }
 </style>

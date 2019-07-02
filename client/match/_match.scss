@@ -367,39 +367,6 @@
   left: 0;
 }
 
-.cardHoverActivator {
-  position: absolute;
-  width: $playerCardOnHandWidth;
-  height: 100px; //TODO Increase to 150px when using touch?
-  bottom: 100px;
-  opacity: 0;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-color: transparent;
-  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
-  transform: translateX(-50%);
-  z-index: 2;
-  cursor: pointer;
-
-  touch-action: none;
-}
-
-.cardHoverBlowUp {
-  touch-action: none;
-
-  position: absolute;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-color: transparent;
-  transform: translateX(-50%);
-  opacity: 1;
-  bottom: 120px;
-  width: calc(#{$cardWidth} / 2);
-  height: calc(#{$cardHeight} / 2);
-  cursor: pointer;
-  z-index: 1;
-}
-
 .replace,
 .discard,
 .playCard {
