@@ -119,7 +119,7 @@ describe('when has taken control of the turn and is holding a card costing more 
         await click('.playerCardsOnHand .cardOnHand');
     });
 
-    test('should NOT show zone ghost', async () => {
-        assert.elementCount('.playerCardsInZone .card-ghost', 0);
+    test('should see "cannot play card" home zone ghost', () => {
+        assert.elementCount('.playerCardsInZone .card-ghost--deactivatedZone', 1);
     });
 });

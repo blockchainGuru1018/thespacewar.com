@@ -105,8 +105,8 @@ describe('when has already put down station card this turn and holding Excellent
             assert.elementCount('.playerStationCards .card-ghost', 0);
         });
 
-        test('should NOT see zone ghosts', () => {
-            assert.elementCount('.playerEventCardGhost', 0);
+        test('should see "cannot play card" event ghost', () => {
+            assert.elementCount('.playerEventCardGhost--deactivated', 1);
         });
     });
 
@@ -132,8 +132,8 @@ describe('when has NOT put down station card this turn and holding Excellent wor
         assert.elementCount('.playerStationCards .card-ghost', 3);
     });
 
-    test('should NOT see zone ghosts', () => {
-        assert.elementCount('.playerEventCardGhost', 0);
+    test('should see "cannot play card" event ghost', () => {
+        assert.elementCount('.playerEventCardGhost--deactivated', 1);
     });
 });
 

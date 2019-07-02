@@ -51,8 +51,8 @@ describe('when has Destiny decided in play and hold event card', async () => {
         await click('.playerCardsOnHand .cardOnHand');
     });
 
-    test('should NOT see zone ghosts', () => {
-        assert.elementCount('.playerEventCardGhost', 0);
+    test('should see "cannot play card" event ghost', () => {
+        assert.elementCount('.playerEventCardGhost--deactivated', 1);
     });
 });
 
