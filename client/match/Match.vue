@@ -525,9 +525,9 @@
                 if (!this.holdingCard) return false;
                 if (this.holdingEventCard) return false;
                 if (this.showOnlyCardGhostsFor && !this.showOnlyCardGhostsFor.includes('homeZone')) return false;
-                if (this.cannotPutDownAnyCardInZone) return false;
 
-                return true;
+                if (this.holdingCardCannotBePlayedButGhostWithMessageShouldBeDisplayed) return true;
+                return this.canPutDownHoldingCard;
             },
             playerZoneCardGhostText() {
                 if (this.canPutDownHoldingCard) {
@@ -536,14 +536,11 @@
 
                 return 'Cannot play card';
             },
-            holdingEventCard() {
-                return this.holdingCard && this.holdingCard.type === 'event';
-            },
-            cannotPutDownAnyCardInZone() {
-                return !this.gameOn;
+            holdingCardCannotBePlayedButGhostWithMessageShouldBeDisplayed() {
+                return this.canPutDownCards
+                    && !this.canPutDownHoldingCard;
             },
             canPutDownHoldingCard() {
-                if (this.cannotPutDownAnyCardInZone) return false;
                 if (!this.canAffordHoldingCard) return false;
 
                 return this.createCard(this.holdingCard).canBePutDownAnyTime()
@@ -551,6 +548,9 @@
             },
             canAffordHoldingCard() {
                 return this.canAffordCard(this.holdingCard);
+            },
+            holdingEventCard() {
+                return this.holdingCard && this.holdingCard.type === 'event';
             },
             discardPileCardGhostVisible() {
                 return this.holdingCard

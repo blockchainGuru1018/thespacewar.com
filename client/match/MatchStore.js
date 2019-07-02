@@ -401,7 +401,7 @@ module.exports = function (deps) {
             //TODO Incorporate this into canThePlayer.putDownThisCard
             const canOnlyHaveOneInHomeZone = getters.createCard(cardData).canOnlyHaveOneInHomeZone();
             if (canOnlyHaveOneInHomeZone) {
-                return !state.playerCardsInZone.some(c => c.commonId === cardData.commonId);
+                if (state.playerCardsInZone.some(c => c.commonId === cardData.commonId)) return false;
             }
 
             return getters.canThePlayer.putDownThisCard(cardData);

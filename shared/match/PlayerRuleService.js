@@ -29,6 +29,7 @@ class PlayerRuleService {
     }
 
     canPutDownCardsInHomeZone() { // TODO Since event cards are graphically put down in the home zone, this name could be confusing as it still covers event cards.
+        if (!this._matchService.isGameOn()) return false;
         let playerRequirements = this._playerRequirementService;
         if (playerRequirements.hasAnyRequirement()) return false;
         if (playerRequirements.isWaitingOnOpponentFinishingRequirement()) return false;
