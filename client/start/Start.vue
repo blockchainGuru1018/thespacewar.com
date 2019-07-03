@@ -2,11 +2,6 @@
     <div :class="['loading', {'loading--done': loadingDone}]">
         <div class="loading-backdropLetterBoxWrapper">
             <div class="background" />
-            <!--<img-->
-            <!--:class="backdropClasses"-->
-            <!--src="https://uploads.staticjw.com/th/thespacewar/the-space-war-card-game.jpg"-->
-            <!--alt="Small fighters attacking a large battleship"-->
-            <!--&gt;-->
         </div>
         <div
             v-if="!loadingDone"
@@ -77,8 +72,21 @@
                 return classes;
             }
         },
-        mounted() {
+        methods: {
+            async requestFullScreen() {
+                try {
+                    await document.documentElement.requestFullscreen();
+                }
+                catch (error) {
+                    console.log('Got error when requested fullscreen:', error);
+                }
+            },
+        },
+        async mounted() {
             this.$store.dispatch('audio/main');
+
+            document.addEventListener('click', this.requestFullScreen, { once: true });
+            document.addEventListener('keydown', this.requestFullScreen, { once: true });
         },
         components: {
             Lobby,
@@ -111,26 +119,6 @@
         background-repeat: no-repeat;
         background-position: top center;
         background-size: cover;
-    }
-
-    .loading-backdrop {
-        flex: 0 0 auto;
-        width: 100vmax;
-
-        transition: filter $animation-time $animation-curve, transform 240s, left 240s;
-
-        left: -10px;
-        transform: scale(1.05, 1.025);
-    }
-
-    .loading-backdrop--blur {
-        /*filter: brightness(.9) contrast(105%) blur(3px);*/
-        filter: brightness(.9) contrast(105%) blur(.1px);
-    }
-
-    .loading-backdrop--animate {
-        left: 20px;
-        transform: scale(1, 1);
     }
 
     .loading-bar {
