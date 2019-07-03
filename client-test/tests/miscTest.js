@@ -3,6 +3,7 @@ const createCard = FakeCardDataAssembler.createCard;
 const getCardImageUrl = require('../../client/utils/getCardImageUrl.js');
 const FakeState = require('../matchTestUtils/FakeState.js');
 const FakeMatchController = require('../matchTestUtils/FakeMatchController.js');
+const FullForceForward = require('../../shared/card/FullForceForward.js');
 const Commander = require("../../shared/match/commander/Commander.js");
 const { createController } = require('../matchTestUtils/index.js');
 const {
@@ -161,5 +162,28 @@ describe('when both players are out of cards', () => {
         // In the future the draw phase could be skipped automatically.
         // But for now the player has to "draw a card" which will trigger a next phase because no more cards are available to draw.
         assert.elementCount('.drawPile-draw', 1);
+    });
+});
+
+describe('when has and FullForceForward in play and a space ship with an attack of 1 in play', () => {
+    beforeEach(async () => {
+        const { dispatch, showPage } = setUpController({
+            getDeckSize: () => 1
+        });
+        showPage();
+        dispatch('stateChanged', FakeState({
+            turn: 1,
+            currentPlayer: 'P1A',
+            phase: 'draw',
+            cardsInZone: [
+                { id: 'C1A', type: 'spaceShip', attack: 1 },
+                { id: 'C2A', type: 'duration', commonId: FullForceForward.CommonId }
+            ]
+        }));
+        await timeout();
+    });
+
+    test('should show +1 symbol on card', () => {
+        assert.elementText('.playerCardsInZone .card-attackBoostIndicator', '1');
     });
 });

@@ -43,8 +43,11 @@ class BaseCard {
     }
 
     get attack() {
-        const boost = this._playerStateService.getAttackBoostForCard(this);
-        return this._card.attack + boost;
+        return this._card.attack + this.attackBoost;
+    }
+
+    get attackBoost() {
+        return this._playerStateService.getAttackBoostForCard(this);
     }
 
     get defense() {
