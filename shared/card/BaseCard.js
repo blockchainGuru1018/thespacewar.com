@@ -116,6 +116,7 @@ class BaseCard {
         const turn = this._matchService.getTurn();
         const isInHomeZone = this.isInHomeZone();
         const isMissile = this.type === 'missile';
+
         const canAttackFromHomeZone = (isInHomeZone && this.canAttackCardsInOtherZone());
         const hasMovedOnPreviousTurn = this._queryEvents.hasMovedOnPreviousTurn(this.id, turn);
         const hasWaitedAndCanAttackFromOpponentZone = (hasMovedOnPreviousTurn && !isInHomeZone);
@@ -127,22 +128,18 @@ class BaseCard {
     }
 
     canAttackCard(otherCard) { //TODO rename "canTargetCardForAttack", also perhaps this belongs in a more higher level class?
-        if (!this.canTargetCard(otherCard)) return false;
-        if (!this.canAttack()) return false;
-
-        return this.canAttackCardsInOtherZone()
-            || this._matchService.cardsAreInSameZone(this, otherCard);
+        return this.canTargetCard(otherCard)
+            && this.canAttack();
     }
 
     canTargetCardForSacrifice(otherCard) {
         if (!this.canBeSacrificed()) return false;
-        if (!this.canTargetCard(otherCard)) return false;
 
         if (otherCard.isStationCard()) {
             return this.canTargetStationCardsForSacrifice();
         }
         else {
-            return this._matchService.cardsAreInSameZone(this, otherCard);
+            return this.canTargetCard(otherCard);
         }
     }
 
@@ -185,7 +182,9 @@ class BaseCard {
         if (!otherCard.canBeTargeted()) return false;
         if (otherCard.type === 'duration') return false;
         if (otherCard.playerId === this.playerId) return false;
-        return true;
+
+        return this.canAttackCardsInOtherZone()
+            || this._matchService.cardsAreInSameZone(this, otherCard);
     }
 
     canBeTargeted() {
@@ -213,6 +212,9 @@ class BaseCard {
     }
 
     canAttackCardsInOtherZone() {
+        if (this.type === 'missile') {
+            return this.canMove() && this.canMoveAndAttackOnSameTurn();
+        }
         return false;
     }
 

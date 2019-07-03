@@ -307,9 +307,16 @@
             },
             canMove() {
                 if (!this.canThePlayer.moveCards()) return false;
+                if (this.shouldNotShowMoveOption) return false;
 
                 const card = this.createCard(this.card);
                 return card.canMove();
+            },
+            shouldNotShowMoveOption() {
+                //NOTE: Since June 2019 "Move" is not shown as an option for missile cards that can attack and move on the same turn.
+                // The player should never move them but instead just attack from home zone directly.
+                return this.card.type === 'missile'
+                    && this.behaviourCard.canMoveAndAttackOnSameTurn();
             },
             canAttack() {
                 if (this.attackerCardId) return false;

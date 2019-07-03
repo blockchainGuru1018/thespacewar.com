@@ -8,6 +8,7 @@ const MoveCardEvent = require('../event/MoveCardEvent.js');
 const BaseCard = require('../card/BaseCard.js');
 const Slow = require('../card/mixins/Slow.js');
 const SmallRepairShop = require('../card/SmallRepairShop.js');
+const FastMissile = require('../card/FastMissile.js');
 const NuclearMissile = require('../card/NuclearMissile.js');
 const EmpMissile = require('../card/EmpMissile.js');
 const EnergyShield = require('../card/EnergyShield.js');
@@ -394,6 +395,36 @@ module.exports = testCase('Cards', {
             });
 
             refute(this.card.canAttack());
+        },
+        'should NOT be able to attack cards in opposite zone': function () {
+            const card = createCard(NuclearMissile, {
+                player: 'P1A',
+                card: { id: 'C1A', attack: 1, type: 'missile' },
+                canThePlayer: canThePlayerFactory.withStubs({
+                    attackStationCards: () => true,
+                    attackWithThisCard: () => true,
+                    moveThisCard: () => true
+                }),
+                playerStateService: playerStateServiceFactory.withStubs({
+                    getPhase: () => 'attack',
+                    isCardInHomeZone: () => true
+                }),
+                matchService: {
+                    getTurn: () => 2,
+                    cardsAreInSameZone: () => false
+                },
+                queryEvents: queryEventsFactory.withStubs({
+                    getAttacksOnTurn: () => [],
+                    hasMovedOnTurn: () => false,
+                    getTurnWhenCardWasPutDown: () => 1
+                })
+            });
+            const targetCard = createCard(BaseCard, {
+                playerId: 'P2A',
+                card: { id: 'C2A', type: 'spaceShip' }
+            });
+
+            refute(card.canAttackCard(targetCard));
         }
     },
     'Slow (general behaviour, cannot move and attack on the same turn)': {
@@ -700,6 +731,93 @@ module.exports = testCase('Cards', {
         'can counter card costing 0'() {
             const card = createCard(CanCounterCardsWithCostOrLess(2, BaseCard), {});
             assert(card.canCounterCard({ cost: 0 }));
+        }
+    },
+    'Fast missile': {
+        'when was played in home zone this turn can attack station cards'() {
+            const card = createCard(FastMissile, {
+                card: { id: 'C1A', attack: 1, type: 'missile' },
+                canThePlayer: canThePlayerFactory.withStubs({
+                    attackStationCards: () => true,
+                    attackWithThisCard: () => true,
+                    moveThisCard: () => true
+                }),
+                playerStateService: playerStateServiceFactory.withStubs({
+                    getPhase: () => 'attack',
+                    isCardInHomeZone: () => true
+                }),
+                matchService: {
+                    getTurn: () => 1
+                },
+                queryEvents: queryEventsFactory.withStubs({
+                    getAttacksOnTurn: () => [],
+                    hasMovedOnTurn: () => false,
+                    getTurnWhenCardWasPutDown: () => 1
+                })
+            });
+            assert(card.canAttackStationCards());
+        },
+        'when was played in home zone this turn can attack cards in the opposite zone'() {
+            const card = createCard(FastMissile, {
+                player: 'P1A',
+                card: { id: 'C1A', attack: 1, type: 'missile' },
+                canThePlayer: canThePlayerFactory.withStubs({
+                    attackStationCards: () => true,
+                    attackWithThisCard: () => true,
+                    moveThisCard: () => true
+                }),
+                playerStateService: playerStateServiceFactory.withStubs({
+                    getPhase: () => 'attack',
+                    isCardInHomeZone: () => true
+                }),
+                matchService: {
+                    getTurn: () => 1,
+                    cardsAreInSameZone: () => false
+                },
+                queryEvents: queryEventsFactory.withStubs({
+                    getAttacksOnTurn: () => [],
+                    hasMovedOnTurn: () => false,
+                    getTurnWhenCardWasPutDown: () => 1
+                })
+            });
+            const targetCard = createCard(BaseCard, {
+                playerId: 'P2A',
+                card: { id: 'C2A', type: 'spaceShip' }
+            });
+
+            assert(card.canAttackCard(targetCard));
+        }
+    },
+    'Missile (in general)': {
+        'when was played in home zone the previous turn can attack cards in the opposite zone'() {
+            const card = createCard(BaseCard, {
+                player: 'P1A',
+                card: { id: 'C1A', attack: 1, type: 'missile' },
+                canThePlayer: canThePlayerFactory.withStubs({
+                    attackStationCards: () => true,
+                    attackWithThisCard: () => true,
+                    moveThisCard: () => true
+                }),
+                playerStateService: playerStateServiceFactory.withStubs({
+                    getPhase: () => 'attack',
+                    isCardInHomeZone: () => true
+                }),
+                matchService: {
+                    getTurn: () => 2,
+                    cardsAreInSameZone: () => false
+                },
+                queryEvents: queryEventsFactory.withStubs({
+                    getAttacksOnTurn: () => [],
+                    hasMovedOnTurn: () => false,
+                    getTurnWhenCardWasPutDown: () => 1
+                })
+            });
+            const targetCard = createCard(BaseCard, {
+                playerId: 'P2A',
+                card: { id: 'C2A', type: 'spaceShip' }
+            });
+
+            assert(card.canAttackCard(targetCard));
         }
     }
 });

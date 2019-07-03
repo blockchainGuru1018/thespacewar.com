@@ -12,8 +12,8 @@ const {
     catchError,
     createState,
 } = require('./shared.js');
-let PutDownCardEvent = require('../../../shared/PutDownCardEvent.js').forTest;
-let MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
+const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js').forTest;
+const MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
 const PursuiterCommonId = '19';
 const EnergyShieldCommonId = '21';
 const SmallRepairShip = require('../../../shared/card/SmallRepairShop.js');
@@ -495,7 +495,8 @@ module.exports = {
                     playerStateById: {
                         'P1A': {
                             phase: 'attack',
-                            cardsInZone: [createCard({ id: 'C1A', attack: 2, type: 'missile' })]
+                            cardsInZone: [createCard({ id: 'C1A', attack: 2, type: 'missile' })],
+                            events: [PutDownCardEvent({ turn: 1, cardId: 'C1A' })]
                         },
                         'P2A': {
                             cardsInOpponentZone: [createCard({ id: 'C2A', defense: 1 })],
@@ -529,6 +530,7 @@ module.exports = {
                     opponentDiscardedCards: [sinon.match({ id: 'C2A' })],
                     discardedCards: [sinon.match({ id: 'C1A' })],
                     events: [
+                        sinon.match({ type: 'putDownCard' }),
                         sinon.match({ type: 'attack', attackerCardId: 'C1A' }),
                         sinon.match({ type: 'discardCard', cardId: 'C1A' })
                     ]
@@ -554,7 +556,9 @@ module.exports = {
                         'P1A': {
                             phase: 'attack',
                             cardsInZone: [createCard({ id: 'C1A', attack: 1, type: 'missile' })],
-                            events: []
+                            events: [
+                                PutDownCardEvent({ turn: 1, cardId: 'C1A' })
+                            ]
                         },
                         'P2A': {
                             stationCards: [

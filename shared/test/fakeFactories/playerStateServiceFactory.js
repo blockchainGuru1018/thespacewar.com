@@ -9,6 +9,7 @@ const playerStateServiceFactory = {
         return {
             getAttackBoostForCard: () => 0,
             cardCanMoveOnTurnWhenPutDown: () => false,
+            isCardStationCard: () => false,
             hasMatchingCardInSameZone: () => false,
             getCardsInDeck: () => [],
             getDiscardedCards: () => [],
