@@ -1,6 +1,7 @@
 const Vue = require('vue');
 const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
-
+const TheDarkDestroyer = require('../../shared/card/TheDarkDestroyer.js');
+const Avoid = require('../../shared/card/Avoid.js');
 const falsyOp = () => false;
 
 module.exports = function (deps) {
@@ -379,7 +380,9 @@ module.exports = function (deps) {
                 cardData,
                 action: card.actionWhenPutDownInHomeZone,
                 useTransientCard: true,
-                checkIfCanBeSelectedForAction: (actionCard, { isOpponentCard }) => {
+                checkIfCanBeSelectedForAction: (actionCard, { cardData, isOpponentCard }) => {
+                    if (actionCard.commonId === TheDarkDestroyer.CommonId && cardData.commonId === Avoid.CommonId) return false;
+
                     return isOpponentCard;
                 },
                 onFinish: targetCardIds => dispatch('putDownCard', { location, cardData, choice: targetCardIds[0] })

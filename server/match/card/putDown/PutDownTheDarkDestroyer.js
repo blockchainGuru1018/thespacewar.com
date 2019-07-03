@@ -1,4 +1,5 @@
 const TheDarkDestroyer = require('../../../../shared/card/TheDarkDestroyer.js');
+const Avoid = require('../../../../shared/card/Avoid.js');
 
 PutDownTheDarkDestroyer.CommonId = TheDarkDestroyer.CommonId;
 
@@ -18,7 +19,8 @@ function PutDownTheDarkDestroyer({
 
         const opponentId = matchService.getOpponentId(playerId);
         const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
-        if (opponentStateService.hasCard(targetCardId)) {
+        const targetCardData = opponentStateService.findCardFromAnySource(targetCardId);
+        if (targetCardData && targetCardData.commonId !== Avoid.CommonId) {
             const targetCardData = opponentStateService.removeAndDiscardCardFromStationOrZone(targetCardId);
 
             const opponentActionLog = playerServiceFactory.actionLog(opponentId);
