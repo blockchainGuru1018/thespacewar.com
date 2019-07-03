@@ -99,6 +99,7 @@ module.exports = function (deps) {
             opponentCardsInPlayerZone: [],
             opponentCardsInZone: [],
             opponentEvents: [],
+            opponentRequirements: [],
             attackerCardId: null,
             selectedDefendingStationCards: [],
             repairerCardId: null,
@@ -154,6 +155,7 @@ module.exports = function (deps) {
             playerPhase,
             opponentPhase,
             playerRequirementService,
+            opponentRequirementService,
             playerClock,
             opponentClock,
             playerStateService,
@@ -503,6 +505,13 @@ module.exports = function (deps) {
         return new PlayerRequirementService({
             playerStateService: getters.playerStateService,
             opponentStateService: getters.opponentStateService
+        });
+    }
+
+    function opponentRequirementService(state, getters) {
+        return new PlayerRequirementService({
+            playerStateService: getters.opponentStateService,
+            opponentStateService: getters.playerStateService
         });
     }
 

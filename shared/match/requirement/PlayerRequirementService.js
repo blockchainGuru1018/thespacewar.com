@@ -184,6 +184,13 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
         return Math.min(maxDiscardCount, maxCount);
     }
 
+    getQueuedDamageStationCardCount() {
+        return this
+            .getRequirements()
+            .filter(r => r.type === 'damageStationCard')
+            .reduce((total, requirement) => total + requirement.count, 0);
+    }
+
     getCountOrMinimumAvailableForDrawingCards(maxCount) {
         const deckCardCount = this._playerStateService.getDeck().getCardCount();
         const opponentDeckPossibleMillsCount = this._opponentStateService.getDeck().getPossibleMillCount();

@@ -35,6 +35,15 @@ const obscurerByKey = {
     clock: {
         obscure: value => value,
         key: 'opponentClock'
+    },
+    requirements: {
+        obscure: value => {
+            return value.map(requirement => ({
+                type: requirement.type,
+                count: requirement.count
+            }));
+        },
+        key: 'opponentRequirements'
     }
 };
 
@@ -48,7 +57,8 @@ const whitelist = [
     'phase',
     'actionLogEntries',
     'commanders',
-    'clock'
+    'clock',
+    'requirements'
 ];
 
 const statePreparer = StatePreparer({

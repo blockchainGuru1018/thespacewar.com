@@ -547,7 +547,7 @@
             canPutDownHoldingCard() {
                 if (!this.canAffordHoldingCard) return false;
 
-                return this.createCard(this.holdingCard).canBePutDownAnyTime()
+                return (this.gameOn && this.createCard(this.holdingCard).canBePutDownAnyTime())
                     || (this.canPutDownCards && this.canPutDownCard(this.holdingCard));
             },
             canAffordHoldingCard() {

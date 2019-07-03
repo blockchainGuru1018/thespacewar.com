@@ -37,7 +37,8 @@ module.exports = function (clientState) {
                     ...clientState.opponentStation.drawCards,
                     ...clientState.opponentStation.actionCards,
                     ...clientState.opponentStation.handSizeCards
-                ]
+                ],
+                requirements: clientState.opponentRequirements
             }
         }
     };

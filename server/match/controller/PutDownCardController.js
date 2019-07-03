@@ -103,7 +103,8 @@ function PutDownCardController(deps) {
 
         if (location === 'zone') {
             const card = playerStateService.createBehaviourCard(cardData);
-            if (!ruleService.canPutDownCardsInHomeZone() && !card.canBePutDownAnyTime()) {
+            const canBePutDownAnyway = matchService.isGameOn() && !card.canBePutDownAnyTime();
+            if (!ruleService.canPutDownCardsInHomeZone() && canBePutDownAnyway) {
                 throw new CheatError('Cannot put down card');
             }
 

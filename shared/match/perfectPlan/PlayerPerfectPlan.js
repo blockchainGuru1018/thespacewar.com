@@ -21,7 +21,8 @@ module.exports = function ({
 
     function canIssuePerfectPlan() {
         return playerCommanders.has(Commander.DrStein)
-            && playerPhase.isAction();
+            && playerPhase.isAction()
+            && hasEnoughUnflippedStationCards()
     }
 
     function perfectPlan() {
@@ -42,5 +43,12 @@ module.exports = function ({
         addRequirementFromSpec.forCardAndSpec(fakeCard, PerfectPlan.Info.requirementSpecsWhenPutDownInHomeZone);
 
         opponentActionLog.opponentIssuedPerfectPlan();
+    }
+
+    function hasEnoughUnflippedStationCards() {
+        const unflippedStationCardsCount = playerStateService.getUnflippedStationCardsCount();
+        const opponentsQueuedDamageStationCardCount = opponentRequirementService.getQueuedDamageStationCardCount();
+        const stationCardsAvailableToSacrifice = unflippedStationCardsCount - opponentsQueuedDamageStationCardCount;
+        return stationCardsAvailableToSacrifice > PerfectPlanStationCardCost;
     }
 };
