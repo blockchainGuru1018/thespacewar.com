@@ -768,17 +768,19 @@
                         }
                     });
                 }
+            },
+            mousemove(event) {
+                this.mousePosition = {
+                    x: event.clientX,
+                    y: event.clientY
+                };
             }
         },
         mounted() {
             this.$store.dispatch('audio/background');
 
-            this.$refs.match.addEventListener('mousemove', event => {
-                this.mousePosition = {
-                    x: event.clientX,
-                    y: event.clientY
-                };
-            });
+            document.addEventListener('mousemove', this.mousemove);
+
             this.$refs.match.addEventListener('click', event => {
                 const targetElementClasses = Array.from(event.target.classList);
                 const isNotCardOrCardActionOverlay = (!targetElementClasses.includes('card')
@@ -801,6 +803,7 @@
             document.addEventListener('touchend', this.documentTouchend);
         },
         destroyed() {
+            document.removeEventListener('mousemove', this.mousemove);
             document.removeEventListener('touchmove', this.documentTouchmove);
             document.removeEventListener('touchend', this.documentTouchend);
         },
