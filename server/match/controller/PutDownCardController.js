@@ -99,7 +99,6 @@ function PutDownCardController(deps) {
 
     function checkIfCanPutDownCard({ playerId, location, cardData }) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        const canThePlayer = playerServiceProvider.getCanThePlayerServiceById(playerId);
         const ruleService = playerServiceProvider.byTypeAndId(PlayerServiceProvider.TYPE.rule, playerId);
 
         if (location === 'zone') {
@@ -127,7 +126,8 @@ function PutDownCardController(deps) {
             }
 
             const card = cardFactory.createCardForPlayer(cardData, playerId);
-            if (!card.canBePutDownAsExtraStationCard && !canThePlayer.putDownMoreStationCardsThisTurn()) {
+            const playerRuleService = playerServiceFactory.playerRuleService(playerId);
+            if (!card.canBePutDownAsExtraStationCard && !playerRuleService.canPutDownMoreStationCardsThisTurn()) {
                 throw new CheatError('Cannot put down more station cards this turn');
             }
         }

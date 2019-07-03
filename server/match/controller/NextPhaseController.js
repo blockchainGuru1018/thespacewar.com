@@ -34,8 +34,8 @@ function NextPhaseCardController(deps) {
     }
 
     function playerReady(playerId) {
-        const canThePlayer = playerServiceFactory.canThePlayer(playerId);
-        if (canThePlayer.putDownMoreStartingStationCards()) throw new CheatError('Must select all starting station cards before reading');
+        const playerRuleService = playerServiceFactory.playerRuleService(playerId);
+        if (playerRuleService.canPutDownMoreStartingStationCards()) throw new CheatError('Must select all starting station cards before reading');
 
         matchService.update(state => {
             state.readyPlayerIds.push(playerId);

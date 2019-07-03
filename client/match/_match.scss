@@ -94,10 +94,7 @@
   align-items: center;
   justify-content: space-evenly;
   position: relative;
-}
-
-.field-piles {
-  z-index: 2;
+  z-index: 1;
   min-width: 20%;
   flex: 0 0 auto;
 }

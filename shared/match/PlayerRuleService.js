@@ -1,4 +1,6 @@
 const Commander = require('./commander/Commander.js');
+const MatchMode = require("./MatchMode.js");
+const ALLOWED_STATION_CARDS_EACH_TURN = 1;
 
 class PlayerRuleService {
 
@@ -36,7 +38,7 @@ class PlayerRuleService {
         if (this._playerHasCardThatPreventsThemFromPlayingAnyCards()) return false;
         if (this._opponentHasCardThatPreventsPlayerFromPlayingMoreCards()) return false;
 
-        return (this._turnControl.playerHasControlOfOwnTurn() && this._playerPhase.isAction())
+        return this._playerHasControlOfTheirOwnActionPhase()
             || this._turnControl.playerHasControlOfOpponentsTurn();
     }
 
@@ -59,7 +61,7 @@ class PlayerRuleService {
     }
 
     canPutDownStationCards() {
-        if (this._canThePlayer.putDownMoreStartingStationCards()) return true;
+        if (this.canPutDownMoreStartingStationCards()) return true;
 
         if (this.hasReachedMaximumStationCardCapacity()) return false;
 
@@ -67,7 +69,24 @@ class PlayerRuleService {
         if (playerRequirements.hasAnyRequirement()) return false;
         if (playerRequirements.isWaitingOnOpponentFinishingRequirement()) return false;
 
-        return this._playerPhase.isAction();
+        return this._playerHasControlOfTheirOwnActionPhase();
+    }
+
+    canPutDownMoreStartingStationCards() {
+        const totalAllowedCount = this._playerStateService.allowedStartingStationCardCount();
+        const stationCardsLeftToSelect = totalAllowedCount - this._playerStateService.getUnflippedStationCardsCount();
+        return this._matchService.mode() === MatchMode.selectStationCards
+            && stationCardsLeftToSelect > 0;
+    }
+
+    canPutDownMoreStationCardsThisTurn() {
+        const currentTurn = this._matchService.getTurn();
+
+        const extraFreeStationCards = this._queryEvents.countFreeExtraStationCardsGrantedOnTurn(currentTurn);
+        const totalAllowedStationCards = extraFreeStationCards + ALLOWED_STATION_CARDS_EACH_TURN;
+
+        const putDownStationCards = this._queryEvents.countRegularStationCardsPutDownOnTurn(currentTurn);
+        return putDownStationCards < totalAllowedStationCards;
     }
 
     getMaximumHandSize() {
@@ -125,6 +144,35 @@ class PlayerRuleService {
             || playerRequirements.firstRequirementIsOfType('drawCard');
     }
 
+    canDiscardCards() { //TODO Confusing that you "discard" when you want to "replace". Should ideally be 2 separate things (even if they are both performed on the discard pile).
+        const playerRequirements = this._playerRequirementService;
+        if (playerRequirements.isWaitingOnOpponentFinishingRequirement()) return false;
+
+        return this.canReplaceCards()
+            || playerRequirements.firstRequirementIsOfType('discardCard')
+            || this._playerPhase.isDiscard();
+    }
+
+    canDiscardActivateDurationCards() {
+        return this._turnControl.playerHasControlOfOwnTurn()
+            && this._playerPhase.isPreparation();
+    }
+
+    canReplaceCards() {
+        if (this._matchService.mode() !== MatchMode.game) {
+            return this._queryEvents.countReplaces() < this._gameConfig.maxReplaces();
+        }
+        else if (this._playerCommanders.has(Commander.DrStein)) {
+            const currentTurn = this._matchService.getTurn();
+            const replacesThisTurn = this._queryEvents.countReplacesOnTurn(currentTurn);
+
+            return this._playerPhase.isAction()
+                && replacesThisTurn < this._gameConfig.maxReplaces();
+        }
+
+        return false;
+    }
+
     countCardsLeftToDrawForDrawPhase() {
         let currentTurn = this._matchService.getTurn();
         let cardDrawEvents = this._queryEvents.getCardDrawsOnTurn(currentTurn);
@@ -134,6 +182,10 @@ class PlayerRuleService {
 
     moreCardsCanBeDrawnForDrawPhase() {
         return this.countCardsLeftToDrawForDrawPhase() > 0;
+    }
+
+    _playerHasControlOfTheirOwnActionPhase() {
+        return this._turnControl.playerHasControlOfOwnTurn() && this._playerPhase.isAction();
     }
 }
 

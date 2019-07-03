@@ -116,7 +116,7 @@ module.exports = {
             }));
         }
     },
-    'when discard card in action phase and has discard card requirement of 1 card': {
+    'when discard card in action phase and has discard card requirement of 1 card BUT it is after another requirement': {
         setUp() {
             this.firstPlayerConnection = FakeConnection2(['stateChanged']);
             this.match = createMatch({ players: [Player('P1A', this.firstPlayerConnection), Player('P2A')] });
@@ -126,6 +126,30 @@ module.exports = {
                         phase: 'action',
                         cardsOnHand: [createCard({ id: 'C1A' })],
                         requirements: [{ type: 'otherType', count: 3 }, { type: 'discardCard', count: 1 }]
+                    }
+                }
+            }));
+
+            this.error = catchError(() => this.match.discardCard('P1A', 'C1A'));
+        },
+        'should NOT emit changes to first player'() {
+            refute.called(this.firstPlayerConnection.stateChanged);
+        },
+        'should throw error'() {
+            assert(this.error);
+            assert.equals(this.error.message, 'Illegal discard');
+        }
+    },
+    'when discard card in action phase and has discard card requirement of 1 card': {
+        setUp() {
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+            this.match = createMatch({ players: [Player('P1A', this.firstPlayerConnection), Player('P2A')] });
+            this.match.restoreFromState(createState({
+                playerStateById: {
+                    'P1A': {
+                        phase: 'action',
+                        cardsOnHand: [createCard({ id: 'C1A' })],
+                        requirements: [{ type: 'discardCard', count: 1 }, { type: 'otherType', count: 3 }]
                     }
                 }
             }));

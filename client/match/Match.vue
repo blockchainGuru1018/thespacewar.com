@@ -222,7 +222,7 @@
                                 @click="cardGhostClick"
                             >
                                 <div
-                                    v-if="canThePlayer.replaceCards()"
+                                    v-if="canReplaceCards"
                                     class="replace"
                                 >
                                     Replace
@@ -496,9 +496,11 @@
             ...mapPermissionGetters([
                 'canMoveCardsFromHand',
                 'canDiscardCards',
+                'canReplaceCards',
                 'canPutDownCards',
                 'canPutDownStationCards',
                 'canPutDownMoreStationCardsThisTurn',
+                'canPutDownMoreStartingStationCards',
                 'canDrawCards',
                 'canMill',
                 'opponentDeckIsEmpty'
@@ -568,7 +570,7 @@
                 if (!this.canPutDownStationCards) return false;
 
                 return this.canPutDownMoreStationCardsThisTurn
-                    || this.canThePlayer.putDownMoreStartingStationCards()
+                    || this.canPutDownMoreStartingStationCards
                     || this.activeActionName === 'putDownCard';
             },
             opponentTopDiscardCard() {

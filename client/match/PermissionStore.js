@@ -1,5 +1,4 @@
 const canIssueOverwork = require('../../shared/match/overwork/canIssueOverwork.js');
-const Commander = require("../../shared/match/commander/Commander.js");
 
 module.exports = function (deps) {
 
@@ -18,9 +17,12 @@ module.exports = function (deps) {
             waitingForOtherPlayerToFinishRequirements,
             canMoveCardsFromHand,
             canDiscardCards,
+            canDiscardActivateDurationCards,
+            canReplaceCards,
             canPutDownCards,
             canPutDownStationCards,
             canPutDownMoreStationCardsThisTurn,
+            canPutDownMoreStartingStationCards,
             canSelectStationCards,
             canSelectCardsForActiveAction,
             canPutDownStationCardInHomeZone,
@@ -61,7 +63,7 @@ module.exports = function (deps) {
     }
 
     function canMoveCardsFromHand(state, getters, rootState, rootGetters) {
-        if (rootGetters['match/canThePlayer'].putDownMoreStartingStationCards()) return true;
+        if (getters.canPutDownMoreStartingStationCards) return true;
         if (getters.waitingForOtherPlayerToFinishRequirements) return false;
 
         const hasActiveRequirement = !!getFrom('firstRequirement', 'requirement');
@@ -71,16 +73,15 @@ module.exports = function (deps) {
     }
 
     function canDiscardCards(state, getters, rootState, rootGetters) {
-        if (getters.waitingForOtherPlayerToFinishRequirements) return false;
+        return rootGetters['match/playerRuleService'].canDiscardCards();
+    }
 
-        const hasRequirement = !!getFrom('firstRequirement', 'requirement');
-        if (hasRequirement) {
-            return getFrom('firstRequirementIsDiscardCard', 'requirement');
-        }
+    function canDiscardActivateDurationCards(state, getters, rootState, rootGetters) {
+        return rootGetters['match/playerRuleService'].canDiscardActivateDurationCards();
+    }
 
-        const phase = rootState.match.phase;
-        return rootGetters['match/canThePlayer'].replaceCards()
-            || phase === 'discard';
+    function canReplaceCards(state, getters, rootState, rootGetters) {
+        return rootGetters['match/playerRuleService'].canReplaceCards();
     }
 
     function canPutDownCards(state, getters, rootState, rootGetters) {
@@ -92,8 +93,11 @@ module.exports = function (deps) {
     }
 
     function canPutDownMoreStationCardsThisTurn(state, getters, rootState, rootGetters) {
-        const canThePlayer = rootGetters['match/canThePlayer'];
-        return canThePlayer.putDownMoreStationCardsThisTurn();
+        return rootGetters['match/playerRuleService'].canPutDownMoreStationCardsThisTurn();
+    }
+
+    function canPutDownMoreStartingStationCards(state, getters, rootState, rootGetters) {
+        return rootGetters['match/playerRuleService'].canPutDownMoreStartingStationCards();
     }
 
     function canPutDownStationCardInHomeZone(state, getters, rootState, rootGetters) {

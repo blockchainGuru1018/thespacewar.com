@@ -218,6 +218,7 @@
             ]),
             ...mapPermissionGetters([
                 'canSelectCardsForActiveAction',
+                'canDiscardActivateDurationCards'
             ]),
             ...mapCardState([
                 'transientPlayerCardsInHomeZone',
@@ -366,10 +367,8 @@
                     && this.attackerCard.canAttackCard(card);
             },
             canBeDiscarded() {
-                if (!this.canThePlayer.discardCards()) return false;
-
-                return this.card.type === 'duration'
-                    && this.phase === 'preparation';
+                if (this.card.type !== 'duration') return false;
+                return this.canDiscardActivateDurationCards;
             },
             canRepair() {
                 if (!this.canThePlayer.repairCards()) return false;

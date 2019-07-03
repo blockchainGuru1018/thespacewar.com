@@ -1,8 +1,4 @@
-const MatchMode = require('./MatchMode.js');
 const Neutralization = require('../card/Neutralization.js');
-const Commander = require('./commander/Commander.js');
-
-const ALLOWED_STATION_CARDS_EACH_TURN = 1;
 
 //TODO Idea for interface. Each method takes cardData, but if necessary or ideal they have a
 // sibling method with the same name and a suffix "byId" that get the cardData and runs the other method.
@@ -20,8 +16,7 @@ class CanThePlayer {
         opponentStateService,
         turnControl,
         gameConfig,
-        playerPhase,
-        playerCommanders
+        playerPhase
     } = {}) {
         this._matchService = matchService;
         this._queryEvents = queryEvents;
@@ -30,7 +25,6 @@ class CanThePlayer {
         this._turnControl = turnControl;
         this._gameConfig = gameConfig;
         this._playerPhase = playerPhase;
-        this._playerCommanders = playerCommanders;
     }
 
     triggerCardsDormantEffect(card) {
@@ -53,7 +47,6 @@ class CanThePlayer {
         }
     }
 
-    //TODO This could do as "putDownThisEventCard" and check for properties on instantiated cards instead of checking against static properties.
     useThisDurationCard(cardId) {
         const cardData = this._findCardFromOpponentOrPlayer(cardId);
         if (cardData && cardData.commonId === Neutralization.CommonId) return true;
@@ -74,7 +67,7 @@ class CanThePlayer {
         return true;
     }
 
-    putDownThisEventCard() {
+    putDownThisEventCard() { //Move to RuleService and rename to "putDownEventCards"
         return !this._somePlayerHasCardThatPreventsEventCards();
     }
 
@@ -87,23 +80,6 @@ class CanThePlayer {
                 return card.preventsAnyPlayerFromPlayingAnEventCard
                     && this.useThisCard(card);
             });
-    }
-
-    putDownMoreStationCardsThisTurn() {
-        const currentTurn = this._matchService.getTurn();
-
-        const extraFreeStationCards = this._queryEvents.countFreeExtraStationCardsGrantedOnTurn(currentTurn);
-        const totalAllowedStationCards = extraFreeStationCards + ALLOWED_STATION_CARDS_EACH_TURN;
-
-        const putDownStationCards = this._queryEvents.countRegularStationCardsPutDownOnTurn(currentTurn);
-        return putDownStationCards < totalAllowedStationCards;
-    }
-
-    putDownMoreStartingStationCards() {
-        const totalAllowedCount = this._playerStateService.allowedStartingStationCardCount();
-        const stationCardsLeftToSelect = totalAllowedCount - this._playerStateService.getUnflippedStationCardsCount();
-        return this._matchService.mode() === MatchMode.selectStationCards
-            && stationCardsLeftToSelect > 0;
     }
 
     moveThisCard(card) {
@@ -122,43 +98,24 @@ class CanThePlayer {
         return true;
     }
 
-    attackStationCards() {
+    attackStationCards() { //Move to RuleService
         return !this._opponentStateService.hasMatchingCardInHomeZone(c => c.stopsStationAttack())
     }
 
-    attackCards() {
+    attackCards() { //Move to RuleService
         return this._turnControl.playerHasControlOfOwnTurn();
     }
 
-    moveCards() {
+    moveCards() { //Move to RuleService
         return this._turnControl.playerHasControlOfOwnTurn();
     }
 
-    sacrificeCards() {
+    sacrificeCards() { //Move to RuleService
         return this._turnControl.playerHasControlOfOwnTurn();
     }
 
-    repairCards() {
+    repairCards() { //Move to RuleService
         return this._turnControl.playerHasControlOfOwnTurn();
-    }
-
-    discardCards() {
-        return this._turnControl.playerHasControlOfOwnTurn();
-    }
-
-    replaceCards() {
-        if (this._matchService.mode() !== MatchMode.game) {
-            return this._queryEvents.countReplaces() < this._gameConfig.maxReplaces();
-        }
-        else if (this._playerCommanders.has(Commander.DrStein)) {
-            const currentTurn = this._matchService.getTurn();
-            const replacesThisTurn = this._queryEvents.countReplacesOnTurn(currentTurn);
-
-            return this._playerPhase.isAction()
-                && replacesThisTurn < this._gameConfig.maxReplaces();
-        }
-
-        return false;
     }
 
     counterCard({ id: cardId }) {

@@ -296,7 +296,6 @@ module.exports = function ({
             playerStateService: api.playerStateService(playerId),
             turnControl: api.turnControl(playerId),
             playerPhase: api.playerPhase(playerId),
-            playerCommanders: api.playerCommanders(playerId),
             gameConfig
         });
     }
@@ -354,7 +353,7 @@ module.exports = function ({
             opponentRequirementService: api.playerRequirementService(opponentId),
             playerPhase: api.playerPhase(playerId),
             opponentPhase: api.playerPhase(opponentId),
-            canThePlayer: api.canThePlayer(playerId),
+            playerRuleService: api.playerRuleService(playerId),
             canTheOpponent: api.canThePlayer(opponentId)
         });
     }

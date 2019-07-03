@@ -1,5 +1,6 @@
 let bocha = require('bocha');
 let assert = bocha.assert;
+let refute = bocha.refute;
 let defaults = bocha.defaults;
 const FakeCardDataAssembler = require("../../server/test/testUtils/FakeCardDataAssembler.js");//TODO Move to shared
 const createCard = FakeCardDataAssembler.createCard;
@@ -7,10 +8,40 @@ const CardFactory = require('../card/CardFactory.js');
 const PlayerStateService = require('../match/PlayerStateService.js');
 const PlayerRuleService = require('../match/PlayerRuleService.js');
 const MatchService = require('../match/MatchService.js');
-const FakeDeckFactory = require('../../server/test/testUtils/FakeDeckFactory.js')
+const FakeDeckFactory = require('../../server/test/testUtils/FakeDeckFactory.js');
 const PlayerServiceProvider = require('../match/PlayerServiceProvider.js');
+const TestHelper = require('./fakeFactories/TestHelper.js');
+const PutDownCardEvent = require('../PutDownCardEvent.js');
+const GameConfig = require('../match/GameConfig.js');
 
 module.exports = bocha.testCase('PlayerRuleService', {
+    'when max number of station cards is 1 and has 1 station card': {
+        setUp() {
+            const testHelper = TestHelper(createState({
+                currentPlayer: 'P1A',
+                turn: 1,
+                playerStateById: {
+                    'P1A': {
+                        phase: 'action',
+                        stationCards: [stationCard('S1A', 'draw')],
+                        events: [
+                            PutDownCardEvent({
+                                location: 'station-draw',
+                                cardId: 'S1A',
+                                turn: 1
+                            })
+                        ]
+                    }
+                }
+            }), {
+                gameConfig: GameConfig({ maxStationCards: 1 })
+            });
+            this.playerRuleService = testHelper.playerRuleService('P1A');
+        },
+        'should NOT be able to put down more station cards'() {
+            refute(this.playerRuleService.canPutDownMoreStationCardsThisTurn());
+        }
+    },
     'max hand size:': {
         'when player has card that grants unlimited hand size should return Infinity': async function () {
             const cardFactory = {
@@ -131,4 +162,12 @@ function createPlayerState(options = {}) {
         events: [],
         requirements: []
     });
+}
+
+function stationCard(id, place) {
+    return {
+        place,
+        flipped: false,
+        card: { id }
+    };
 }

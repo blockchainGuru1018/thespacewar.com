@@ -19,12 +19,10 @@ function DiscardCardController(deps) {
         const discardedCard = playerStateService.findCardFromHand(cardId);
         if (!discardedCard) throw new CheatError('Invalid state - someone is cheating');
 
-        const playerPhase = playerStateService.getPhase();
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
-        const canThePlayer = playerServiceFactory.canThePlayer(playerId);
         const isRequiredDiscard = !!playerRequirementService.getFirstMatchingRequirement({ type: 'discardCard' });
-
-        if (!isRequiredDiscard && !canThePlayer.replaceCards() && playerPhase !== 'discard') {
+        const playerRuleService = playerServiceFactory.playerRuleService(playerId);
+        if (!playerRuleService.canDiscardCards()) {
             throw new CheatError('Illegal discard');
         }
 
@@ -34,7 +32,7 @@ function DiscardCardController(deps) {
         if (isRequiredDiscard) {
             onRequiredDiscard(playerId);
         }
-        else if (canThePlayer.replaceCards()) {
+        else if (playerRuleService.canReplaceCards()) {
             playerRequirementService.addDrawCardRequirement({ count: 1 });
 
             const event = { type: 'replaceCard' };
