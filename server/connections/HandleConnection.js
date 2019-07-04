@@ -1,16 +1,20 @@
 module.exports = function ({
     socketRepository,
     matchRepository,
+    userRepository,
     securityController,
     logger,
     controllers,
     connection
 }) {
 
+    let connectedUserId;
+
     init();
 
     function init() {
         connection.on('registerConnection', onRegisterConnection);
+        connection.on('disconnect', onDisconnect);
         connection.on('match', onMatchMessage);
     }
 
@@ -20,7 +24,12 @@ module.exports = function ({
             return;
         }
 
+        connectedUserId = userId;
+
         socketRepository.setForUser(userId, connection);
+        userRepository.updateUser(userId, user => {
+            user.connected();
+        });
 
         const ongoingMatch = matchRepository.getForUser(userId);
         if (ongoingMatch) {
@@ -34,6 +43,14 @@ module.exports = function ({
                 logger.log('Error when registering connection for user: ' + error.message, 'reconnect error');
                 logger.log('Raw error: ' + error, 'reconnect error');
             }
+        }
+    }
+
+    function onDisconnect() {
+        if (connectedUserId) {
+            userRepository.updateUser(connectedUserId, user => {
+                user.disconnected();
+            });
         }
     }
 

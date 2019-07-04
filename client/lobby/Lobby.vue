@@ -56,7 +56,9 @@
                 'loggingOut' //TODO Fully implement logout functionality or remove the traces of it that's left
             ]),
             otherUsers() {
-                return this.users.filter(u => u.id !== this.ownUser.id);
+                return this.users
+                    .filter(u => u.isConnected)
+                    .filter(u => u.id !== this.ownUser.id);
             },
             usersInGameCount() {
                 return this.otherUsers.filter(u => u.inMatch).length;
