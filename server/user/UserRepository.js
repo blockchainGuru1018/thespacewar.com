@@ -1,4 +1,4 @@
-const User = require("./User.js");
+const User = require("../../shared/user/User.js");
 
 module.exports = function (deps) {
 
@@ -37,6 +37,8 @@ module.exports = function (deps) {
 
     function updateUser(userId, mutator) {
         const user = getUser(userId);
+        if (!user) return;
+
         mutator(user);
         storeUserData(user);
 

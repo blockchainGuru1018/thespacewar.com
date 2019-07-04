@@ -141,7 +141,8 @@ module.exports = function ({
         toClientModel,
         hasEnded,
         saveMatch: debugController.onSaveMatch,
-        updatePlayer: matchComService.updatePlayer.bind(matchComService)
+        updatePlayer: matchComService.updatePlayer.bind(matchComService),
+        timeAlive: debugController.timeAlive
     };
     const api = {
         selectPlayerToStart: startGameController.selectPlayerToStart,

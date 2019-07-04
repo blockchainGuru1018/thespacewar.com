@@ -11,7 +11,8 @@ module.exports = function ({
         create,
         reconnect,
         getById,
-        getForUser
+        getForUser,
+        clearOldMatches
     };
 
     async function create({ playerId, opponentId }) {
@@ -50,6 +51,16 @@ module.exports = function ({
 
     function getForUser(userId) {
         return matchByUserId.get(userId);
+    }
+
+    function clearOldMatches() {
+        const matchIdsToClear = [];
+        matchById.forEach((match, matchId) => {
+            if (match.timeAlive() > 24 * 60 * 60 * 1000) {
+                matchIdsToClear.push(matchId);
+            }
+        });
+        matchIdsToClear.forEach(matchId => endMatch(matchId));
     }
 
     function endMatch(matchId) {

@@ -1,11 +1,12 @@
 const {
     testCase,
     assert,
+    refute,
     defaults,
     stub
 } = require('bocha');
 const MatchRepository = require('../../match/MatchRepository.js');
-const User = require("../../user/User.js");
+const User = require("../../../shared/user/User.js");
 
 let keysBefore = [];
 
@@ -178,6 +179,26 @@ module.exports = testCase('MatchRepository', {
                 assert.calledOnce(user.enteredMatch);
             }
         },
+    },
+    'when clear old matches should remove those that are older than 24 hours': async function () {
+        this.opponentSocketConnection = { emit: stub() };
+        const Hours24 = 24 * 60 * 60 * 1000;
+        const fakeMatch = FakeMatch({
+            id: 'M1A',
+            timeAlive: () => Hours24 + 1
+        });
+        const repository = Repository({
+            socketRepository: {
+                hasConnectionToUser: () => true,
+                getForUser: id => id === 'P2A' ? this.opponentSocketConnection : null
+            },
+            userRepository: FakeUserRepository([{ id: 'P1A' }, { id: 'P2A' }]),
+            matchFactory: { create: () => fakeMatch }
+        });
+        await repository.create({ playerId: 'P1A', opponentId: 'P2A' });
+
+        repository.clearOldMatches();
+        refute(repository.getById('M1A'));
     },
 });
 

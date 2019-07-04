@@ -1,3 +1,5 @@
+const User = require("../../shared/user/User.js");
+
 module.exports = function ({
     userRepository,
     gameConfig
@@ -12,7 +14,8 @@ module.exports = function ({
     async function login(req, res) {
         if (req.body.accessKey !== gameConfig.accessKey()) new Error('Wrong key');
 
-        let user = await userRepository.addUser(req.body.name, req.body.secret);
+        const name = req.body.name.trim().slice(0, User.MaxNameLength);
+        let user = await userRepository.addUser(name, req.body.secret);
         res.json(user);
     }
 

@@ -6,6 +6,10 @@ class User {
         this.inMatch = inMatch;
     }
 
+    static get MaxNameLength() {
+        return 20;
+    }
+
     static fromData(data) {
         return new User(data);
     }

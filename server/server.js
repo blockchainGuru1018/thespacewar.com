@@ -197,7 +197,6 @@ function setupSocketConnectionHandler(deps, controllers) {
                 return;
             }
 
-            console.log(' -- registering connection for user', userId);
             socketRepository.setForUser(userId, connection);
 
             const ongoingMatch = matchRepository.getForUser(userId);
@@ -209,8 +208,8 @@ function setupSocketConnectionHandler(deps, controllers) {
                     });
                 }
                 catch (error) {
-                    console.error('Error when registering connection for user: ' + error.message);
-                    console.info('Raw error:', error);
+                    deps.logger.log('Error when registering connection for user: ' + error.message, 'reconnect error');
+                    deps.logger.log('Raw error: ' + error, 'reconnect error');
                 }
             }
         });

@@ -15,7 +15,9 @@ module.exports = function (deps) {
         const opponentId = req.body.opponentId;
         if (!playerId || !opponentId) throw new Error('Illegal operation');
 
+        matchRepository.clearOldMatches();
         const match = await matchRepository.create({ playerId, opponentId });
+
         res.json(match);
     }
 

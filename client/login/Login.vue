@@ -4,7 +4,8 @@
             @keydown.exact.enter="loginClick"
             class="login-username"
             placeholder="username"
-            v-model="username"
+            v-model.trim="username"
+            :maxlength="usernameMaxLength"
         />
         <button
             :style="{opacity: username.length >= 3 ? 1 : 0}"
@@ -18,6 +19,7 @@
 <script>
     const Vuex = require('vuex');
     const loginHelpers = Vuex.createNamespacedHelpers('login');
+    const User = require('../../shared/user/User.js');
 
     module.exports = {
         computed: {
@@ -29,6 +31,9 @@
                     this.$store.state.login.username = username;
                 }
             },
+            usernameMaxLength() {
+                return User.MaxNameLength;
+            }
         },
         methods: {
             ...loginHelpers.mapActions([

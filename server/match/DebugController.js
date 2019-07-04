@@ -16,7 +16,8 @@ function DebugController(deps) {
 
     return {
         onSaveMatch,
-        onRestoreSavedMatch
+        onRestoreSavedMatch,
+        timeAlive
     };
 
     function onSaveMatch(playerId, saveName) {
@@ -73,6 +74,12 @@ function DebugController(deps) {
         // restoredState.playerOrder = playerOrder;
         //
         // restoreFromState(restoredState);
+    }
+
+    function timeAlive() {
+        const startTime = matchService.getGameStartTime();
+        if (!startTime) return Infinity;
+        return Date.now() - startTime;
     }
 }
 
