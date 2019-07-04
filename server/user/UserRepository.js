@@ -13,7 +13,7 @@ module.exports = function (deps) {
         getUser,
         addUser,
         updateUser,
-        userIdFromSecret
+        authorizeWithSecret
     };
 
     async function getAll() {
@@ -52,6 +52,10 @@ module.exports = function (deps) {
         else {
             return null;
         }
+    }
+
+    function authorizeWithSecret(userId, secret) {
+        return userId === userIdFromSecret(secret);
     }
 
     function createUser(name) {

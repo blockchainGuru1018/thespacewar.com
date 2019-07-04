@@ -20,7 +20,7 @@ module.exports = function ({ pageDependencies }) {
             load,
             initFakeLoadingProgress
         }
-    }
+    };
 
     function loadingDone(state) {
         return state.progress >= 140 && state.loaded;
@@ -34,7 +34,7 @@ module.exports = function ({ pageDependencies }) {
 
         let a = performance.now();
         await rawCardDataRepository.init();
-        console.log('raw data load:', performance.now() - a)
+        console.log('raw data load:', performance.now() - a);
 
         let b = performance.now();
         if (isAlreadyLoggedIn()) {
@@ -50,13 +50,13 @@ module.exports = function ({ pageDependencies }) {
                 dispatch('user/storeOwnUser', null, { root: true });
             }
         }
-        console.log('login:', performance.now() - b)
+        console.log('login:', performance.now() - b);
 
         let c = performance.now();
         if (rootGetters['login/checkIfHasPreviousSession']()) {
             await dispatch('login/restoreFromPreviousSession', null, { root: true });
         }
-        console.log('restore match:', performance.now() - c)
+        console.log('restore match:', performance.now() - c);
 
         state.loaded = true;
 

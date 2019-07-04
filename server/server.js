@@ -16,6 +16,7 @@ const GitController = require('./git/GitController.js');
 const AssetsController = require('./assets/AssetsController.js');
 const ServerRawCardDataRepository = require('./card/ServerRawCardDataRepository.js');
 const GameConfig = require('../shared/match/GameConfig.js');
+const HandleConnection = require('./connections/HandleConnection.js');
 const Logger = require('./utils/Logger.js');
 const http = require('http');
 const { port } = require('./settings.json');
@@ -186,50 +187,7 @@ function setupRoutes(deps, controllers) {
 }
 
 function setupSocketConnectionHandler(deps, controllers) {
-    const socketRepository = deps.socketRepository;
-    const matchRepository = deps.matchRepository;
-    const securityController = deps.securityController;
-
     socketMaster.on('connection', async connection => {
-        connection.on('registerConnection', async ({ secret, userId }) => {
-            if (!securityController.isAuthorized(secret, userId)) {
-                deps.logger.log('Unauthorized user performing action on match', 'authorization');
-                return;
-            }
-
-            socketRepository.setForUser(userId, connection);
-
-            const ongoingMatch = matchRepository.getForUser(userId);
-            if (ongoingMatch) {
-                try {
-                    await matchRepository.reconnect({
-                        playerId: userId,
-                        matchId: ongoingMatch.id
-                    });
-                }
-                catch (error) {
-                    deps.logger.log('Error when registering connection for user: ' + error.message, 'reconnect error');
-                    deps.logger.log('Raw error: ' + error, 'reconnect error');
-                }
-            }
-        });
-
-        connection.on('match', async data => {
-            if (!securityController.isAuthorized(data.secret, data.playerId)) {
-                deps.logger.log('Unauthorized user performing action on match', 'authorization');
-                return;
-            }
-
-            try {
-                await controllers.match.onAction(data);
-            }
-            catch (error) {
-                const rawErrorMessage = JSON.stringify(error, null, 4);
-                const dataString = JSON.stringify(data, null, 4);
-                const errorMessage = `(${new Date().toISOString()}) Error in action to match: ${error.message} - DATA: ${dataString} - RAW ERROR: ${rawErrorMessage}`
-                deps.logger.log(errorMessage, 'error');
-                deps.logger.log(error.stack, 'error-stack');
-            }
-        });
+        HandleConnection({ ...deps, controllers, connection });
     });
 }

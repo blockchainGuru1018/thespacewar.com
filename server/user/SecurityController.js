@@ -9,7 +9,7 @@ module.exports = function SecurityMiddleware({
     };
 
     function isAuthorized(secret, userId) {
-        return userId === userRepository.userIdFromSecret(secret);
+        return userRepository.authorizeWithSecret(userId, secret);
     }
 
     function middleware(req, res, next) {
