@@ -1,23 +1,39 @@
 <template>
-    <div class="lobby" v-if="ownUser">
-        <!--<div class="lobby-loggingOut">-->
-        <!--</div>-->
+    <div
+        v-if="ownUser"
+        class="lobby"
+    >
         <div class="users-container">
             <div class="users-header">
-                <div class="users-headerTitle">Users</div>
+                <div class="users-headerTitle">
+                    Select opponent
+                </div>
             </div>
             <div class="users-wrapper">
                 <div class="users">
-                    <div class="user">
-                        <div class="user-name">{{ ownUser.name }} (you)</div>
-                        <!--<button @click="logout" class="icon-logout"/>-->
+                    <div
+                        v-if="availableUsers.length === 0"
+                        class="users-noUsersAvailable"
+                    >
+                        None available
                     </div>
-                    <div @click="userClick(user)"
-                         @keydown.enter="userClick(user)"
-                         class="user"
-                         tabindex="0"
-                         v-for="user in otherUsers">
-                        <span class="user-name">{{ user.name }}</span>
+                    <template v-else>
+                        <div
+                            v-for="user in availableUsers"
+                            :key="user.id"
+                            tabindex="0"
+                            class="user"
+                            @click="userClick(user)"
+                            @keydown.enter="userClick(user)"
+                        >
+                            <span class="user-name">
+                                {{ user.name }}
+                            </span>
+                        </div>
+                    </template>
+
+                    <div class="users-sectionHeader">
+                        {{ usersInGameCount }} users playing
                     </div>
                 </div>
             </div>
@@ -37,10 +53,16 @@
                 'ownUser'
             ]),
             ...lobbyHelpers.mapState([
-                'loggingOut'
+                'loggingOut' //TODO Fully implement logout functionality or remove the traces of it that's left
             ]),
             otherUsers() {
                 return this.users.filter(u => u.id !== this.ownUser.id);
+            },
+            usersInGameCount() {
+                return this.otherUsers.filter(u => u.inMatch).length;
+            },
+            availableUsers() {
+                return this.otherUsers.filter(u => !u.inMatch);
             }
         },
         methods: {
@@ -49,14 +71,11 @@
             ]),
             userClick(user) {
                 this.startGameWithUser(user);
-            },
-            logout() {
             }
         }
     };
 </script>
 <style scoped lang="scss">
-
     .users-headerTitle {
         font-size: 16px;
         color: white;
@@ -79,16 +98,48 @@
         border: 1px solid rgba(255, 255, 255, .04);
     }
 
-    .user {
+    .users-noUsersAvailable {
+        margin-top: 10px;
+        margin-bottom: 10px;
         font-family: "Space Mono", monospace;
         font-size: 20px;
         color: white;
-        margin-bottom: 4px;
-        padding: 4px 6px;
+        text-align: center;
+    }
+
+    .users-sectionHeader {
+        margin-top: 30px;
+        margin-bottom: 10px;
+        font-family: "Space Mono", monospace;
+        font-size: 14px;
+        color: rgb(120, 120, 120);
+        text-align: center;
+    }
+
+    .user {
+        display: flex;
+        align-items: center;
+        font-family: "Space Mono", monospace;
+        font-size: 20px;
+        color: white;
+        padding: 4px 10px 8px 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, .2);
 
         &:hover, &:focus {
             background: rgba(0, 0, 0, .7);
             cursor: pointer;
         }
+    }
+
+    .user--inMatch {
+        color: rgb(120, 120, 120);
+        pointer-events: none;
+    }
+
+    .inGame {
+        display: inline-block;
+        padding-left: 5px;
+        font-size: .7em;
+        letter-spacing: .2em;
     }
 </style>

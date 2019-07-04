@@ -7,6 +7,7 @@ const SecurityController = require('./user/SecurityController.js');
 const SocketRepository = require('./user/SocketRepository.js');
 const UserRepository = require('./user/UserRepository.js');
 const UserController = require('./user/UserController.js');
+const MatchFactory = require('./match/MatchFactory.js');
 const MatchRepository = require('./match/MatchRepository.js');
 const MatchController = require('./match/MatchController.js');
 const CardController = require('./card/CardController.js');
@@ -82,6 +83,7 @@ async function run({ config, closeServer, exitProcess }) {
     await rawCardDataRepository.init();
     console.log(' - 1/2 SUCCESS');
 
+    //1st level dependencies
     const deps = {
         logger,
         rawCardDataRepository,
@@ -89,9 +91,15 @@ async function run({ config, closeServer, exitProcess }) {
         userRepository: UserRepository({ socketMaster }),
         socketRepository: SocketRepository({ socketMaster })
     };
+
+    //2nd level dependencies
     deps.securityController = SecurityController(deps);
+    deps.matchFactory = MatchFactory(deps);
+
+    //3rd level dependencies
     deps.matchRepository = MatchRepository(deps);
 
+    //4th level dependencies
     const controllers = {
         user: UserController(deps),
         match: MatchController(deps),

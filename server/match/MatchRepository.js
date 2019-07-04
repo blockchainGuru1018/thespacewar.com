@@ -1,20 +1,8 @@
-const Player = require('../player/Player.js');
-const Match = require('./Match.js');
-const CardDataAssembler = require('../../shared/CardDataAssembler.js');
-const CardInfoRepository = require('../../shared/CardInfoRepository.js');
-const DeckFactory = require('../deck/DeckFactory.js');
-
 module.exports = function ({
-    logger,
     userRepository,
     socketRepository,
-    rawCardDataRepository,
-    gameConfig
+    matchFactory
 }) {
-
-    const cardDataAssembler = CardDataAssembler({ rawCardDataRepository });
-    const deckFactory = DeckFactory({ cardDataAssembler });
-    const cardInfoRepository = CardInfoRepository({ cardDataAssembler });
 
     const matchById = new Map();
     const matchByUserId = new Map();
@@ -30,56 +18,30 @@ module.exports = function ({
         if (!socketRepository.hasConnectionToUser(opponentId)) {
             throw new Error('Opponent player is not connected');
         }
+        if (getForUser(playerId)) {
+            throw new Error('Player is already in a match');
+        }
+        if (getForUser(opponentId)) {
+            throw new Error('Opponent is already in a match');
+        }
 
-        const playerUsers = await Promise.all([
-            userRepository.getById(playerId),
-            userRepository.getById(opponentId)
-        ]);
-        const players = playerUsers.map(user => {
-            return Player({
-                id: user.id,
-                name: user.name,
-                connection: socketRepository.getForUser(user.id)
-            });
-        });
+        const users = await getUsers([playerId, opponentId]);
+        if (users.some(u => u === null)) throw new Error('Some users for the match does not exist');
 
-        let matchId = createId();
-        let match = Match({
-            players,
-            matchId,
-            deckFactory,
-            cardInfoRepository,
-            logger,
-            rawCardDataRepository,
-            gameConfig,
-            endMatch: () => end(matchId)
-        });
-        matchById.set(matchId, match);
-        matchByUserId.set(playerId, match);
-        matchByUserId.set(opponentId, match);
+        const match = matchFactory.create({ users, endMatch });
+        registerMatchWithUsers(match, users);
 
-        let matchClientModel = match.toClientModel();
-        let opponentSocket = socketRepository.getForUser(opponentId);
-        opponentSocket.emit('match/create', matchClientModel);
-        return matchClientModel;
+        emitMatchCreate(match, opponentId);
+
+        return match.toClientModel();
     }
 
     async function reconnect({ playerId, matchId }) {
-        console.log(' -- reconnecting user to match', playerId, matchId);
-        const match = await getById(matchId);
-        const connection = socketRepository.getForUser(playerId);
-        match.updatePlayer(playerId, { connection });
-    }
+        const match = getForUser(playerId);
+        if (!match) throw new Error('Cannot find match for player');
 
-    function end(matchId) {
-        matchById.delete(matchId);
-        let idsToRemove = [];
-        matchByUserId.forEach((match, userId) => {
-            if (match.id === matchId) {
-                idsToRemove.push(userId);
-            }
-        });
-        idsToRemove.forEach(id => matchByUserId.delete(id));
+        await updatePlayerMatchConnection(playerId, matchId);
+        registerUserEnteredMatch(playerId);
     }
 
     function getById(id) {
@@ -90,7 +52,61 @@ module.exports = function ({
         return matchByUserId.get(userId);
     }
 
-    function createId() {
-        return Math.round((Math.random() * 1000000)).toString().padStart(7, '0');
+    function endMatch(matchId) {
+        let userIdsWithMatchRegistered = getMatchUserIds(matchId);
+        for (const userId of userIdsWithMatchRegistered) {
+            registerUserExitedMatch(userId);
+            matchByUserId.delete(userId);
+        }
+
+        matchById.delete(matchId);
+    }
+
+    function getMatchUserIds(matchId) {
+        let userIds = [];
+        matchByUserId.forEach((match, userId) => {
+            if (match.id === matchId) {
+                userIds.push(userId);
+            }
+        });
+
+        return userIds;
+    }
+
+    async function updatePlayerMatchConnection(playerId, matchId) {
+        const match = await getById(matchId);
+        const connection = socketRepository.getForUser(playerId);
+        match.updatePlayer(playerId, { connection });
+    }
+
+    function getUsers(userIds) {
+        return Promise.all(userIds.map(id => userRepository.getUser(id)));
+    }
+
+    function emitMatchCreate(match, userId) {
+        let opponentSocket = socketRepository.getForUser(userId);
+        opponentSocket.emit('match/create', match.toClientModel());
+    }
+
+    function registerMatchWithUsers(match, users) {
+        matchById.set(match.id, match);
+
+        for (const user of users) {
+            const userId = user.id;
+            matchByUserId.set(userId, match);
+            registerUserEnteredMatch(userId);
+        }
+    }
+
+    function registerUserEnteredMatch(userId) {
+        userRepository.updateUser(userId, user => {
+            user.enteredMatch();
+        });
+    }
+
+    function registerUserExitedMatch(userId) {
+        userRepository.updateUser(userId, user => {
+            user.exitedMatch();
+        });
     }
 };

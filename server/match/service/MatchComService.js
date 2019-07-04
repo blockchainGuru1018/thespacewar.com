@@ -108,16 +108,17 @@ class MatchComService {
             const opponentState = this._getPlayerState(opponentId);
 
             const data = {
-                ...this._getGameEndedState(),
-
                 mode: this._matchService.mode(),
                 playerOrder: this._matchService.getPlayerOrder(),
                 readyPlayerIds: this._matchService.getReadyPlayerIds(),
                 currentPlayer: this._matchService.getCurrentPlayer(),
                 turn: this._matchService.getTurn(),
                 gameConfigEntity: this._matchService.getGameConfigEntity(),
+
                 ...preparePlayerState(playerState),
-                ...this._prepareOpponentState(opponentState)
+                ...this._prepareOpponentState(opponentState),
+
+                ...this._getGameEndedState()
             };
 
             if (Object.keys(data).length > 0) {
