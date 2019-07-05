@@ -11,7 +11,7 @@ module.exports = function (deps) {
         getAll,
         getById,//TODO Rename to getUserDataById
         getUser,
-        addUser,
+        addUserAndClearOldUsers,
         updateUser,
         authorizeWithSecret
     };
@@ -24,7 +24,9 @@ module.exports = function (deps) {
         return getUserData(id);
     }
 
-    function addUser(name, secret) {
+    function addUserAndClearOldUsers(name, secret) {
+        clearOldUsers();
+
         let user = createUser(name);
         storeUserData(user);
 
@@ -83,7 +85,22 @@ module.exports = function (deps) {
     }
 
     function emitUserChange() {
-        let users = Array.from(usersById.values());
-        socketMaster.emit('user/change', users);
+        socketMaster.emit('user/change', getUserDatas());
+    }
+
+    function getUserDatas() {
+        return Array.from(usersById.values());
+    }
+
+    function clearOldUsers() {
+        const users = getUserDatas();
+        const usersToRemove = users
+            .map(userData => User.fromData(userData))
+            .filter(user => {
+                return user.timeAlive() > 24 * 60 * 60 * 1000;
+            });
+        usersToRemove.forEach(user => {
+            usersById.delete(user.id);
+        });
     }
 };

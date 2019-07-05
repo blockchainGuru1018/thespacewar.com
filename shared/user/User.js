@@ -1,10 +1,11 @@
 class User {
 
-    constructor({ name, id, inMatch = false, isConnected = false }) {
+    constructor({ name, id, created = Date.now(), inMatch = false, isConnected = false }) {
         this.name = name;
         this.id = id;
         this.inMatch = inMatch;
         this.isConnected = isConnected;
+        this.created = created;
     }
 
     static get MaxNameLength() {
@@ -20,7 +21,8 @@ class User {
             name: this.name,
             id: this.id,
             inMatch: this.inMatch,
-            isConnected: this.isConnected
+            isConnected: this.isConnected,
+            created: this.created
         };
     }
 
@@ -38,6 +40,10 @@ class User {
 
     disconnected() {
         this.isConnected = false;
+    }
+
+    timeAlive() {
+        return Date.now() - this.created;
     }
 }
 

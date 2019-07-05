@@ -15,7 +15,7 @@ module.exports = function ({
         if (req.body.accessKey !== gameConfig.accessKey()) new Error('Wrong key');
 
         const name = req.body.name.trim().slice(0, User.MaxNameLength);
-        let user = await userRepository.addUser(name, req.body.secret);
+        let user = await userRepository.addUserAndClearOldUsers(name, req.body.secret);
         res.json(user);
     }
 
