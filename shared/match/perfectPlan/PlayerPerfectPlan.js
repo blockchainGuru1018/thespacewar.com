@@ -23,6 +23,7 @@ module.exports = function ({
         return playerCommanders.has(Commander.DrStein)
             && playerPhase.isAction()
             && hasEnoughUnflippedStationCards()
+            && !playerRequirementService.isWaitingOnOpponentFinishingRequirement();
     }
 
     function perfectPlan() {
