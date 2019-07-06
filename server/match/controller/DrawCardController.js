@@ -9,6 +9,7 @@ function DrawCardController(deps) {
 
     return {
         onDrawCard,
+        skipDrawCard,
         onDiscardOpponentTopTwoCards
     };
 
@@ -41,21 +42,20 @@ function DrawCardController(deps) {
         }
     }
 
-    function onDrawCardForRequirement({ playerId }) {
-        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-
-        playerStateService.drawCard({ byEvent: true });
-        const requirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'drawCard' });
-        requirementUpdater.progressRequirementByCount(1);
-    }
-
-    function onDrawCardBecauseOfDrawPhase({ playerId }) {
-        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        playerStateService.drawCard();
-
+    function skipDrawCard(playerId) {
         const playerRuleService = playerServiceFactory.playerRuleService(playerId);
-        const moreCardsCanBeDrawn = playerRuleService.moreCardsCanBeDrawnForDrawPhase();
-        matchComService.emitToPlayer(playerId, 'drawCards', { moreCardsCanBeDrawn });
+        if (!playerRuleService.canDrawCards()) {
+            return;
+        }
+
+        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
+        const drawCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'drawCard' });
+        if (drawCardRequirement) {
+            completeDrawCardRequirement({ playerId });
+        }
+        else {
+            matchComService.emitToPlayer(playerId, 'drawCards', { moreCardsCanBeDrawn: false });
+        }
     }
 
     function onDiscardOpponentTopTwoCards(playerId) {
@@ -79,6 +79,28 @@ function DrawCardController(deps) {
                 moreCardsCanBeDrawn: playerRuleService.moreCardsCanBeDrawnForDrawPhase()
             });
         }
+    }
+
+    function onDrawCardForRequirement({ playerId }) {
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+
+        playerStateService.drawCard({ byEvent: true });
+        const requirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'drawCard' });
+        requirementUpdater.progressRequirementByCount(1);
+    }
+
+    function onDrawCardBecauseOfDrawPhase({ playerId }) {
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        playerStateService.drawCard();
+
+        const playerRuleService = playerServiceFactory.playerRuleService(playerId);
+        const moreCardsCanBeDrawn = playerRuleService.moreCardsCanBeDrawnForDrawPhase();
+        matchComService.emitToPlayer(playerId, 'drawCards', { moreCardsCanBeDrawn });
+    }
+
+    function completeDrawCardRequirement({ playerId }) {
+        const requirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'drawCard' });
+        requirementUpdater.completeRequirement();
     }
 }
 

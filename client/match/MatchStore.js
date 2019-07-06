@@ -191,6 +191,7 @@ module.exports = function (deps) {
             overwork,
             perfectPlan,
             toggleControlOfTurn,
+            skipDrawCard,
 
             // local & remote
             discardCard,
@@ -793,6 +794,10 @@ module.exports = function (deps) {
 
     function toggleControlOfTurn() {
         matchController.emit('toggleControlOfTurn');
+    }
+
+    function skipDrawCard() {
+        matchController.emit('skipDrawCard');
     }
 
     function stateChanged({ state, commit, dispatch }, data) {

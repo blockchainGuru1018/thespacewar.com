@@ -269,6 +269,36 @@ module.exports = {
             }));
         }
     },
+    'when has draw card requirement with count 3 and skip draw card': {
+        setUp() {
+            this.firstPlayerConnection = FakeConnection2(['drawCards', 'stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['stateChanged', 'setOpponentCardCount']);
+            const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)]
+            this.match = createMatch({ players });
+            this.match.restoreFromState(createState({
+                playerStateById: {
+                    'P1A': {
+                        phase: 'draw',
+                        requirements: [{ type: 'drawCard', count: 3 }]
+                    }
+                },
+                deckByPlayerId: {
+                    'P1A': FakeDeck.fromCards([createCard({ id: 'C1A' })])
+                }
+            }));
+
+            this.match.skipDrawCard('P1A');
+        },
+        'should emit state changed with requirement removed and with NO cards drawn'() {
+            assert.calledOnce(this.firstPlayerConnection.stateChanged);
+            assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                requirements: []
+            }));
+        },
+        'should NOT emit state changed with cards drawn'() {
+            refute.defined(this.firstPlayerConnection.stateChanged.lastCall.args[0].cardsOnHand);
+        }
+    },
     'when has draw card requirement with count 1 and mill opponent': {
         setUp() {
             this.firstPlayerConnection = FakeConnection2(['drawCards', 'stateChanged']);

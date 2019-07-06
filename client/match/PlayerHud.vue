@@ -74,6 +74,7 @@
                         <div class="enlargeIcon enlargeIcon--small" />
                     </div>
                     {{ requirementGuideText }}
+                    <SkipDrawCard />
                 </div>
                 <template v-else-if="selectingStartingStationCards">
                     <div
@@ -133,6 +134,7 @@
                     class="guideText-drawCard guideText guideText--small"
                 >
                     {{ drawCardOrMillText }}
+                    <SkipDrawCard />
                 </div>
                 <div
                     v-else-if="inDiscardPhaseAndMustDiscardCard"
@@ -281,6 +283,7 @@
     const FindCard = resolveModuleWithPossibleDefault(require('./findCard/FindCard.vue'));
     const CounterCard = resolveModuleWithPossibleDefault(require('./counterCard/CounterCard.vue'));
     const CounterAttack = resolveModuleWithPossibleDefault(require('./counterAttack/CounterAttack.vue'));
+    const SkipDrawCard = resolveModuleWithPossibleDefault(require('./hud/SkipDrawCard.vue'));
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
     const { mapGetters: mapPermissionGetters } = Vuex.createNamespacedHelpers('permission');
     const cardHelpers = Vuex.createNamespacedHelpers('card');
@@ -366,7 +369,7 @@
                 'activateEventCardGhostVisible'
             ]),
             startGameButtonContainerVisible() {
-                return !this.gameOn;
+                return this.readyButtonVisible;
             },
             nextPhaseButtonContainerVisible() {
                 return this.gameOn && !this.holdingCard;
@@ -548,7 +551,8 @@
         components: {
             FindCard,
             CounterCard,
-            CounterAttack
+            CounterAttack,
+            SkipDrawCard
         }
     };
 
