@@ -4,20 +4,24 @@ module.exports = function ({
     canThePlayer
 }) {
 
+    //TODO Unsure whether the user of this module should shuffle that cards or this module.
+    // Although it is the case for all current users that they would like to shuffle, and there is the least amount of
+    // duplication by putting it here. But will have to reconsider if another use case shows up.
+
     return {
-        deck,
-        discardPile,
-        actionStationCards,
-        drawStationCards,
-        handSizeStationCards,
+        deck: shuffleOutput(deck),
+        discardPile: shuffleOutput(discardPile),
+        actionStationCards: shuffleOutput(actionStationCards),
+        drawStationCards: shuffleOutput(drawStationCards),
+        handSizeStationCards: shuffleOutput(handSizeStationCards),
         hand: () => [],
         opponentDeck: () => [],
         opponentDiscardPile: () => [],
-        opponentDrawStationCards,
-        opponentActionStationCards,
-        opponentHandSizeStationCards,
-        opponentHand,
-        opponentAny
+        opponentDrawStationCards: shuffleOutput(opponentDrawStationCards),
+        opponentActionStationCards: shuffleOutput(opponentActionStationCards),
+        opponentHandSizeStationCards: shuffleOutput(opponentHandSizeStationCards),
+        opponentHand: shuffleOutput(opponentHand),
+        opponentAny: shuffleOutput(opponentAny)
     };
 
     function deck(specFilter) {
@@ -146,3 +150,26 @@ module.exports = function ({
         return stationCard.card;
     }
 };
+
+function shuffleOutput(method) {
+    return (...args) => {
+        const output = method(...args);
+        shuffle(output);
+        return output;
+    };
+}
+
+function shuffle(array) {
+    let currentIndex = array.length;
+    let temporaryValue;
+    let randomIndex;
+
+    while (0 !== currentIndex) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+    }
+}
