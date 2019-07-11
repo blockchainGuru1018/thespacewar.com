@@ -73,6 +73,7 @@ class MatchComService {
         }
         playerConnection.emit('match', {
             matchId: this._matchId,
+            playerId: playerId,
             action,
             value
         });

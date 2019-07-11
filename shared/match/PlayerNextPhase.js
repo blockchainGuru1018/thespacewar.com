@@ -10,7 +10,8 @@ module.exports = function ({
     playerPhase,
     canThePlayer,
     playerCommanders,
-    playerGameTimer, //TODO Should it locally be called "gameTimer" or like here "playerGameTimer",
+    playerGameTimer, //TODO Should it locally be called "gameTimer" or like here "playerGameTimer",,
+    playerDiscardPhase,
     addRequirementFromSpec,
     opponentStateService
 }) {
@@ -33,7 +34,7 @@ module.exports = function ({
             leaveDrawPhaseForPlayer();
         }
         else if (playerPhase.isDiscard()) {
-            leaveDiscardPhaseForPlayer();
+            playerDiscardPhase.leavePhase();
         }
 
         if (!playerPhase.isLastPhase()) {
@@ -87,13 +88,6 @@ module.exports = function ({
             for (const specAndCardTuple of specAndCardTuples) {
                 addRequirementFromSpec.forCardAndSpec(specAndCardTuple.card, specAndCardTuple.requirementsSpec);
             }
-        }
-    }
-
-    function leaveDiscardPhaseForPlayer() {
-        const maxHandSize = playerRuleService.getMaximumHandSize();
-        if (playerStateService.getCardsOnHandCount() > maxHandSize) {
-            throw new CheatError('Cannot leave the discard phase without discarding enough cards'); //TODO SHOULD NOT THROW HERE?! Should check before executing code if its possible to do this.
         }
     }
 

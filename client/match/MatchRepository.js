@@ -7,12 +7,17 @@ module.exports = function (deps) {
 
     return {
         create,
+        createWithBot,
         getOwnState,
         onMatchCreatedForPlayer
     };
 
-    async function create({ playerId, opponentId }) {
-        return await ajax.jsonPost('/match', { playerId, opponentId });
+    function create({ playerId, opponentId }) {
+        return ajax.jsonPost('/match', { playerId, opponentId });
+    }
+
+    function createWithBot({ playerId }) {
+        return ajax.jsonPost(`/match/${encodeURIComponent(playerId)}/bot`);
     }
 
     async function getOwnState(matchId) {

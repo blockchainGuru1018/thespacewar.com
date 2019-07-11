@@ -1,8 +1,11 @@
 const localGameDataFacade = require("../utils/localGameDataFacade.js");
 
+const BotId = 'BOT';
+
 module.exports = function ({
     matchRepository,
     userRepository,
+    botFactory,
     route
 }) {
 
@@ -15,6 +18,7 @@ module.exports = function ({
         actions: {
             init,
             startGameWithUser,
+            startGameWithBot,
             logout
         }
     };
@@ -45,6 +49,30 @@ module.exports = function ({
 
         if (matchId) {
             route('match', { matchId, opponentUser });
+        }
+    }
+
+    async function startGameWithBot() {
+        let matchId;
+        try {
+            const playerId = userRepository.getOwnUser().id;
+            const match = await matchRepository.createWithBot({ playerId });
+            matchId = match.id;
+        }
+        catch (error) {
+            alert('Could not create match: ' + error.message);
+        }
+
+        if (matchId) {
+            const botUser = {
+                name: 'Mr.Roboto',
+                id: BotId
+            };
+            route('match', {
+                matchId,
+                opponentUser: botUser
+            });
+            botFactory.create({ matchId, botUser });
         }
     }
 

@@ -17,7 +17,7 @@ module.exports = function ({ rootStore, matchController, behaviour = DefaultBeha
 
     return {
         start
-    }
+    };
 
     function start() {
         rootStore.watch(() => rootStore.state.match.phase, onPhaseChange);

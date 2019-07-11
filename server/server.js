@@ -134,7 +134,8 @@ function setupRoutes(deps, controllers) {
     app.post('/login', controllers.user.login);
     app.post('/test-access-key', controllers.user.testAccessKey);
     app.get('/user', controllers.user.getAll);
-    app.post('/match', controllers.match.create);
+    app.post('/match', controllers.match.create); //TODO Have playerId be part of uri so that the route is authenticated
+    app.post('/match/:playerId/bot', controllers.match.createWithBot);
     app.get('/match/:matchId/player/:playerId/state', controllers.match.getOwnState);
     app.get('/card/:cardId/image', controllers.card.getImage);
     app.get('/card/back-image', controllers.card.getBackImage);

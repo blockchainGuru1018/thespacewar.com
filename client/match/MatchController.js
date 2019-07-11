@@ -39,7 +39,7 @@ module.exports = function (deps) { //TODO Rename MatchConnectionController or so
 
     function onSocketMatchEvent(data) {
         console.log('Got match event on client', data);
-        if (data.matchId === matchId) {
+        if (data.matchId === matchId && data.playerId === ownUserId) {
             dispatch(data.action, data.value);
         }
     }
