@@ -30,7 +30,7 @@ module.exports = {
             }
         }));
 
-        let error = catchError(() => this.match.nextPhase('P1A'));
+        let error = catchError(() => this.match.nextPhase('P1A', { currentPhase: 'discard' }));
 
         assert.equals(error.message, 'Cannot leave the discard phase without discarding enough cards');
         assert.equals(error.type, 'CheatDetected');

@@ -120,6 +120,7 @@ module.exports = function (deps) {
             isOwnTurn,
             nextPhase,
             nextPhaseWithAction,
+            numberOfPhasesUntilNextPhaseWithAction,
             cardsToDrawInDrawPhase,
             actionPointsFromStationCards,
             maxHandSize,
@@ -266,7 +267,7 @@ module.exports = function (deps) {
         let nextPhase = getters.nextPhase;
         if (nextPhase === PHASES.discard && getters.amountOfCardsToDiscard === 0) {
             nextPhase = whatIsNextPhase({
-                hasDurationCardsInPlay: getters.playerStateService.hasDurationCardsInPlay,
+                hasDurationCardInPlay: getters.playerStateService.hasDurationCardInPlay(),
                 currentPhase: PHASES.discard
             });
         }
@@ -278,7 +279,7 @@ module.exports = function (deps) {
 
             const someCardCanMoveInOpponentZone = state.playerCardsInOpponentZone
                 .map(c => getters.createCard(c))
-                .some(c => c.canMove({ phase: PHASES.attack }))
+                .some(c => c.canMove({ phase: PHASES.attack }));
             const noEnemiesAndNoCardsCanMoveInOpponentZone = state.opponentCardsInZone.length === 0 && !someCardCanMoveInOpponentZone;
 
             const noActionsInAttackPhase =
@@ -286,13 +287,19 @@ module.exports = function (deps) {
                 && (state.playerCardsInOpponentZone.length === 0 || noEnemiesAndNoCardsCanMoveInOpponentZone);
             if (noActionsInAttackPhase) {
                 nextPhase = whatIsNextPhase({
-                    hasDurationCardsInPlay: getters.playerStateService.hasDurationCardsInPlay,
+                    hasDurationCardInPlay: getters.playerStateService.hasDurationCardInPlay(),
                     currentPhase: PHASES.attack
                 })
             }
         }
 
         return nextPhase || PHASES.wait;
+    }
+
+    function numberOfPhasesUntilNextPhaseWithAction(state, getters) {
+        const currentNextPhase = getters.nextPhase;
+        const nextPhaseWithAction = getters.nextPhaseWithAction;
+        return Math.max(0, getNumberOfPhasesBetween(currentNextPhase, nextPhaseWithAction));
     }
 
     function cardsToDrawInDrawPhase(state) {
@@ -842,17 +849,18 @@ module.exports = function (deps) {
     }
 
     function goToNextPhase({ state, getters }) {
-        const nextPhase = getters.nextPhase;
-        const nextPhaseWithAction = getters.nextPhaseWithAction;
-        const phasesToSkip = Math.max(0, getNumberOfPhasesBetween(nextPhase, nextPhaseWithAction));
-        for (let i = 0; i < phasesToSkip; i++) {
-            matchController.emit('nextPhase');
+        const phasesUntilAction = getters.numberOfPhasesUntilNextPhaseWithAction;
+        for (let i = 0; i < phasesUntilAction; i++) {
+            matchController.emit('nextPhase', { currentPhase: state.phase });
+            state.phase = getters.nextPhase;
         }
+        matchController.emit('nextPhase', { currentPhase: state.phase });
+
+        const nextPhaseWithAction = getters.nextPhaseWithAction;
         state.phase = nextPhaseWithAction;
         if (nextPhaseWithAction === PHASES.wait) {
             state.currentPlayer = null;
         }
-        matchController.emit('nextPhase');
     }
 
     function placeCardInZone({ state }, card) {

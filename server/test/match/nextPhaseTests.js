@@ -22,9 +22,16 @@ const NeutralizationCommonId = '12';
 module.exports = {
     'when is not own players turn should throw error': function () {
         const match = createMatch({ players: [Player('P1A'), Player('P2A')] });
-        match.restoreFromState(createState({}));
+        match.restoreFromState(createState({
+            currentPlayer: 'P1A',
+            playerStateById: {
+                'P2A': {
+                    phase: 'wait'
+                }
+            }
+        }));
 
-        let error = catchError(() => match.nextPhase('P2A'));
+        let error = catchError(() => match.nextPhase('P2A', { currentPhase: 'wait' }));
 
         assert.equals(error.message, 'Switching phase when not your own turn');
         assert.equals(error.type, 'CheatDetected');
@@ -39,17 +46,18 @@ module.exports = {
                     createPlayer({ id: 'P2A', connection: this.playerTwoConnection })
                 ]
             });
+            const playerPhase = COMMON_PHASE_ORDER[COMMON_PHASE_ORDER.length - 1];
             match.restoreFromState(createState({
                 currentPlayer: 'P1A',
                 playerOrder: ['P1A', 'P2A'],
                 playerStateById: {
                     'P1A': {
-                        phase: COMMON_PHASE_ORDER[COMMON_PHASE_ORDER.length - 1]
+                        phase: playerPhase
                     }
                 }
             }));
 
-            match.nextPhase('P1A');
+            match.nextPhase('P1A', { currentPhase: playerPhase });
         },
         'should broadcast next player of the turn and turn count of 1 to playerOne'() {
             assert.calledWith(this.playerOneConnection.stateChanged, sinon.match({ turn: 1, currentPlayer: 'P2A' }));
@@ -64,6 +72,7 @@ module.exports = {
             this.secondPlayerConnection = FakeConnection2(['stateChanged']);
             const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
             const match = createMatch({ players });
+            const opponentPhase = COMMON_PHASE_ORDER[COMMON_PHASE_ORDER.length - 1];
             match.restoreFromState(createState({
                 currentPlayer: 'P2A',
                 playerStateById: {
@@ -71,12 +80,12 @@ module.exports = {
                         phase: 'wait'
                     },
                     'P2A': {
-                        phase: COMMON_PHASE_ORDER[COMMON_PHASE_ORDER.length - 1]
+                        phase: opponentPhase
                     }
                 }
             }));
 
-            match.nextPhase('P2A');
+            match.nextPhase('P2A', { currentPhase: opponentPhase });
         },
         'should broadcast next player of the turn and turn count of 2 to first player'() {
             assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({ turn: 2, currentPlayer: 'P1A' }));
@@ -113,7 +122,7 @@ module.exports = {
                 }
             }));
 
-            this.match.nextPhase('P2A');
+            this.match.nextPhase('P2A', { currentPhase: 'attack' });
         },
         'should add damage station card requirement to second player'() {
             this.match.refresh('P2A');
@@ -157,7 +166,7 @@ module.exports = {
                 }
             }));
 
-            this.match.nextPhase('P1A');
+            this.match.nextPhase('P1A', { currentPhase: 'preparation' });
         },
         'should be in action phase': function () {
             this.match.refresh('P1A');
@@ -186,7 +195,7 @@ module.exports = {
                     }
                 }));
 
-                this.match.nextPhase('P1A');
+                this.match.nextPhase('P1A', { currentPhase: 'draw' });
             },
             'should NOT have added any requirements'() {
                 assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
@@ -219,7 +228,7 @@ module.exports = {
                     }
                 }));
 
-                this.match.nextPhase('P1A');
+                this.match.nextPhase('P1A', { currentPhase: 'draw' });
             },
             'should emit requirement to player'() {
                 assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
@@ -249,7 +258,7 @@ module.exports = {
                     }
                 }));
 
-                this.match.nextPhase('P1A');
+                this.match.nextPhase('P1A', { currentPhase: 'draw' });
             },
             'should NOT emit requirement to player'() {
                 refute.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({

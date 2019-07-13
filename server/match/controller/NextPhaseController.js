@@ -16,9 +16,11 @@ function NextPhaseCardController(deps) {
         playerReady
     };
 
-    function onNextPhase(playerId) {
-        const playerPhaseControl = playerServiceFactory.playerPhaseControl(playerId);
+    function onNextPhase(playerId, { currentPhase }) {
+        const playerPhase = playerServiceFactory.playerPhase(playerId);
+        if (currentPhase !== playerPhase.get()) return;
 
+        const playerPhaseControl = playerServiceFactory.playerPhaseControl(playerId);
         playerPhaseControl.validateCanGoToNextPhase();
         playerPhaseControl.nextPhase();
 
@@ -45,7 +47,8 @@ function NextPhaseCardController(deps) {
             matchService.startGame();
             const playerOrder = matchService.getPlayerOrder();
             const firstPlayerId = playerOrder[0];
-            onNextPhase(firstPlayerId);
+            const playerPhase = playerServiceFactory.playerPhase(firstPlayerId);
+            onNextPhase(firstPlayerId, { currentPhase: playerPhase.get() });
         }
 
         matchComService.emitCurrentStateToPlayers();

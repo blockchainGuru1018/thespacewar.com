@@ -144,7 +144,7 @@ module.exports = {
                 }
             }));
 
-            this.match.nextPhase('P1A');
+            this.match.nextPhase('P1A', { currentPhase: 'wait' });
         },
         'should emit state changed with draw card requirement'() {
             assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
@@ -177,7 +177,7 @@ module.exports = {
                 }
             }));
 
-            this.match.nextPhase('P1A');
+            this.match.nextPhase('P1A', { currentPhase: 'draw' });
         },
         'should emit state changed with discard card requirement'() {
             assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({

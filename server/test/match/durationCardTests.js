@@ -146,7 +146,7 @@ module.exports = {
                 }
             }));
 
-            this.error = catchError(() => this.match.nextPhase('P1A'));
+            this.error = catchError(() => this.match.nextPhase('P1A', { currentPhase: 'preparation' }));
         },
         'should throw error'() {
             assert(this.error);

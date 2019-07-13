@@ -37,16 +37,20 @@ module.exports = function ({
         }
 
         if (!playerPhase.isLastPhase()) {
-            const nextPhase = whatIsNextPhase({
-                hasDurationCardInPlay: playerStateService.hasDurationCardInPlay(),
-                currentPhase: playerStateService.getPhase()
-            });
+            const nextPhase = getNextPhase();
             playerStateService.setPhase(nextPhase);
 
             if (playerPhase.isDraw()) {
                 enterDrawPhaseForPlayer();
             }
         }
+    }
+
+    function getNextPhase() {
+        return whatIsNextPhase({
+            hasDurationCardInPlay: playerStateService.hasDurationCardInPlay(),
+            currentPhase: playerStateService.getPhase()
+        });
     }
 
     function enterDrawPhaseForPlayer() {
