@@ -35,21 +35,6 @@ module.exports = function ({
         else if (opponentZoneAttacker.canAttackSomeCardInOpponentZone()) {
             opponentZoneAttacker.attackFirstAvailableTargetInOpponentZone();
         }
-
-        if(task === fun) {
-            doItRightNow(task);
-        }
-        else if(task === tedious) {
-            postPone(task);
-        }
-
-
-        if(task === fun) {
-            doItRightNow(task);
-        }
-        else if(task === tedious) {
-            postPone(task)
-        }
     }
 };
 
