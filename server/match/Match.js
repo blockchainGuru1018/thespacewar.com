@@ -27,7 +27,6 @@ const ServiceTypes = PlayerServiceProvider.TYPE;
 module.exports = function ({
     players,
     matchId,
-    deckFactory,
     cardInfoRepository,
     logger,
     rawCardDataRepository,
@@ -53,11 +52,7 @@ module.exports = function ({
         readyPlayerIds: [],
         ended: false,
         retreatedPlayerId: null,
-        playerStateById: {},
-        deckByPlayerId: {
-            [players[0].id]: deckFactory.create(),
-            [players[1].id]: deckFactory.create(),
-        }
+        playerStateById: {}
     };
 
     const gameServiceFactory = GameServiceFactory({

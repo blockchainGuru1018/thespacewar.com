@@ -6,6 +6,7 @@ let {
     refute,
     defaults
 } = require('bocha');
+const createState = require('../../../shared/test/fakeFactories/createState.js');
 const FakeDeck = require('../testUtils/FakeDeck.js');
 const FakeDeckFactory = require('../testUtils/FakeDeckFactory.js');
 const FakeCardDataAssembler = require('../testUtils/FakeCardDataAssembler.js');
@@ -149,12 +150,10 @@ function createMatch(deps = {}, testCardData = []) {
     if (deps.players && deps.players.length === 1) {
         deps.players.push(Player('P2A'));
     }
-    const deckFactory = deps.deckFactory || FakeDeckFactory.fromCards([createCard()]);
     const rawCardDataRepository = { get: () => testCardData };
     const cardDataAssembler = CardDataAssembler({ rawCardDataRepository });
     defaults(deps, {
         gameConfig: GameConfig({ amountOfCardsInStartHand: 7 }),
-        deckFactory,
         cardInfoRepository: CardInfoRepository({ cardDataAssembler }),
         rawCardDataRepository,
         players: [createPlayer('P1A'), createPlayer('P2A')],
@@ -214,36 +213,6 @@ function repeat(count, callback) {
     for (let i = 0; i < count; i++) {
         callback();
     }
-}
-
-function createState(options) {
-    defaults(options, {
-        turn: 1,
-        mode: 'game',
-        currentPlayer: 'P1A',
-        playerOrder: ['P1A', 'P2A'],
-        playerStateById: {},
-        deckByPlayerId: {}
-    });
-
-    const playerStateIds = Object.keys(options.playerStateById);
-    if (playerStateIds.length < 2) {
-        playerStateIds.push(options.playerOrder[1]);
-    }
-    for (let key of playerStateIds) {
-        options.playerStateById[key] = createPlayerState(options.playerStateById[key]);
-    }
-
-    for (let playerId of options.playerOrder) {
-        if (!options.deckByPlayerId[playerId]) {
-            options.deckByPlayerId[playerId] = FakeDeckFactory.createDeckFromCards([FakeCardDataAssembler.createCard()]);
-        }
-        if (!options.playerStateById[playerId]) {
-            options.playerStateById[playerId] = createPlayerState();
-        }
-    }
-
-    return options;
 }
 
 function createPlayerState(options = {}) {

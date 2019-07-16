@@ -4,12 +4,8 @@ const {
         assert,
         refute,
     },
-    FakeDeckFactory,
     createCard,
     Player,
-    createPlayer,
-    createMatchAndGoToFirstActionPhase,
-    createMatchAndGoToSecondActionPhase,
     createMatch,
     FakeConnection2,
     catchError,
@@ -128,19 +124,17 @@ module.exports = {
                 playerStateById: {
                     'P1A': {
                         phase: 'wait',
-                        cardsInZone: [createCard({ id: 'C1A', type: 'duration', commonId: GoodKarmaCommonId })]
+                        cardsInZone: [createCard({ id: 'C1A', type: 'duration', commonId: GoodKarmaCommonId })],
+                        cardsInDeck: [
+                            createCard({ id: 'C4A' }),
+                            createCard({ id: 'C5A' }),
+                            createCard({ id: 'C6A' }),
+                            createCard({ id: 'C6A' })
+                        ]
                     },
                     'P2A': {
                         phase: LastPhase
                     }
-                },
-                deckByPlayerId: {
-                    'P1A': FakeDeck.realDeckFromCards([
-                        createCard({ id: 'C4A' }),
-                        createCard({ id: 'C5A' }),
-                        createCard({ id: 'C6A' }),
-                        createCard({ id: 'C6A' })
-                    ])
                 }
             }));
 

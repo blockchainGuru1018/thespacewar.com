@@ -81,10 +81,10 @@ module.exports = {
                         phase: 'action',
                         cardsOnHand: [createCard({ id: 'C1A' })],
                         requirements: [{ type: 'discardCard', count: 2 }]
+                    },
+                    'P2A': {
+                        cardsInDeck: [createCard({ id: 'C2A' })]
                     }
-                },
-                deckByPlayerId: {
-                    'P2A': FakeDeck.fromCards([createCard({ id: 'C2A' })])
                 }
             }));
 

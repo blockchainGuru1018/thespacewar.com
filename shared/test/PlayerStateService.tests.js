@@ -1,19 +1,18 @@
 const {
     testCase,
-    sinon,
     assert,
     refute,
-    defaults,
     stub
 } = require('bocha');
+const createState = require('./fakeFactories/createState.js');
 const FakeCardDataAssembler = require("../../server/test/testUtils/FakeCardDataAssembler.js");//TODO Move to shared
 const createCard = FakeCardDataAssembler.createCard;
 const CardFactory = require('../card/CardFactory.js');
 const PlayerStateService = require('../match/PlayerStateService.js');
 const BaseCard = require('../card/BaseCard.js');
 const MatchService = require('../match/MatchService.js');
-const FakeDeckFactory = require('../../server/test/testUtils/FakeDeckFactory.js')
 const PlayerServiceProvider = require('../match/PlayerServiceProvider.js');
+const TestHelper = require('./fakeFactories/TestHelper.js');
 
 const FullForceForwardCommonId = '9';
 
@@ -154,28 +153,29 @@ module.exports = testCase('PlayerStateService', {
     },
     'removeCardFromDeck:': {
         'should remove card from deck': function () {
-            let deck = {
-                removeCard: stub()
-            };
-            const state = createState({
-                deckByPlayerId: { 'P1A': deck }
-            });
-            const service = createServiceForPlayer(state, 'P1A');
+            const testHelper = TestHelper(createState({
+                playerStateById: {
+                    'P1A': {
+                        cardsInDeck: [{ id: 'C2A' }, { id: 'C1A' }, { id: 'C3A' }]
+                    }
+                }
+            }));
+            const service = testHelper.playerStateService('P1A');
 
             service.removeCardFromDeck('C1A');
 
-            assert.calledOnce(deck.removeCard);
-            assert.calledWith(deck.removeCard, 'C1A');
+            const playerState = service.getPlayerState();
+            assert.equals(playerState.cardsInDeck, [{ id: 'C2A' }, { id: 'C3A' }]);
         },
         'should return card': function () {
-            const card = { id: 'C1A' };
-            let deck = {
-                removeCard: () => card
-            };
-            const state = createState({
-                deckByPlayerId: { 'P1A': deck }
-            });
-            const service = createServiceForPlayer(state, 'P1A');
+            const testHelper = TestHelper(createState({
+                playerStateById: {
+                    'P1A': {
+                        cardsInDeck: [{ id: 'C1A' }]
+                    }
+                }
+            }));
+            const service = testHelper.playerStateService('P1A');
 
             const removedCard = service.removeCardFromDeck('C1A');
 
@@ -235,50 +235,12 @@ function createServiceForPlayer(state, playerId) {
         playerServiceProvider,
         playerServiceFactory: { addRequirementFromSpec: () => {} }
     });
-    const playerStateService = new PlayerStateService({ playerId, matchService, cardFactory });
+    const playerStateService = new PlayerStateService({
+        playerId,
+        matchService,
+        cardFactory
+    });
     playerServiceProvider.registerService(PlayerServiceProvider.TYPE.state, playerId, playerServiceProvider);
 
     return playerStateService;
-}
-
-function createState(options = {}) {
-    defaults(options, {
-        turn: 1,
-        currentPlayer: 'P1A',
-        playerOrder: ['P1A', 'P2A'],
-        playerStateById: {},
-        deckByPlayerId: {}
-    });
-
-    const playerStateIds = Object.keys(options.playerStateById);
-    if (playerStateIds.length < 2) {
-        playerStateIds.push(options.playerOrder[1]);
-    }
-    for (let key of playerStateIds) {
-        options.playerStateById[key] = createPlayerState(options.playerStateById[key]);
-    }
-
-    for (let playerId of options.playerOrder) {
-        if (!options.deckByPlayerId[playerId]) {
-            options.deckByPlayerId[playerId] = FakeDeckFactory.createDeckFromCards([FakeCardDataAssembler.createCard()]);
-        }
-        if (!options.playerStateById[playerId]) {
-            options.playerStateById[playerId] = createPlayerState();
-        }
-    }
-
-    return options;
-}
-
-function createPlayerState(options = {}) {
-    return defaults(options, {
-        phase: 'wait',
-        cardsOnHand: [],
-        cardsInZone: [],
-        cardsInOpponentZone: [],
-        stationCards: [],
-        discardedCards: [],
-        events: [],
-        requirements: []
-    });
 }

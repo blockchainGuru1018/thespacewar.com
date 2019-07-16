@@ -99,15 +99,11 @@ module.exports = {
                     'P1A': {
                         phase: 'attack',
                         cardsInOpponentZone: [createCard({ id: 'C1A', attack: 1 })],
-                        events: [MoveCardEvent({ turn: 1, cardId: 'C1A' })]
+                        events: [MoveCardEvent({ turn: 1, cardId: 'C1A' })],
                     },
                     'P2A': {
                         cardsInZone: [createCard({ id: 'C2A' })],
                     }
-                },
-                deckByPlayerId: {
-                    'P1A': createDeckFromCards([{ id: 'C1A' }]),
-                    'P2A': createDeckFromCards([{ id: 'C2A' }])
                 }
             }));
 
@@ -144,10 +140,6 @@ module.exports = {
                         cardsInOpponentZone: [createCard({ id: 'C2A' })],
                     }
                 },
-                deckByPlayerId: {
-                    'P1A': createDeckFromCards([{ id: 'C1A' }]),
-                    'P2A': createDeckFromCards([{ id: 'C2A' }])
-                }
             }));
 
             const attackOptions = { attackerCardId: 'C1A', defenderCardId: 'C2A' }
@@ -182,10 +174,6 @@ module.exports = {
                     'P2A': {
                         cardsInZone: [createCard({ id: 'C2A' })],
                     }
-                },
-                deckByPlayerId: {
-                    'P1A': createDeckFromCards([{ id: 'C1A' }]),
-                    'P2A': createDeckFromCards([{ id: 'C2A' }])
                 }
             }));
 
@@ -221,10 +209,6 @@ module.exports = {
                     'P2A': {
                         cardsInZone: [createCard({ id: 'C2A' })],
                     }
-                },
-                deckByPlayerId: {
-                    'P1A': createDeckFromCards([{ id: 'C1A' }]),
-                    'P2A': createDeckFromCards([{ id: 'C2A' }])
                 }
             }));
 
@@ -261,10 +245,6 @@ module.exports = {
                         cardsInOpponentZone: [createCard({ id: 'C2A' })],
                         events: [MoveCardEvent({ turn: 1, cardId: 'C2A' })]
                     }
-                },
-                deckByPlayerId: {
-                    'P1A': createDeckFromCards([{ id: 'C1A' }]),
-                    'P2A': createDeckFromCards([{ id: 'C2A' }])
                 }
             }));
 

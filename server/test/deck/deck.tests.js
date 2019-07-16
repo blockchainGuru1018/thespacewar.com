@@ -7,23 +7,21 @@ const Deck = require('../../deck/Deck.js');
 module.exports = testCase('Deck', {
     'remove card:': {
         'should remove card from deck': function () {
-            const cards = [{ id: 'C1A' }];
-            const deck = Deck({ cardDataAssembler: { createAll: () => cards } });
+            const deck = Deck([{ id: 'C1A' }]);
 
             deck.removeCard('C1A');
 
             assert.equals(deck.getAll(), []);
         },
         'should return removed card': function () {
-            const cards = [{ id: 'C1A' }];
-            const deck = Deck({ cardDataAssembler: { createAll: () => cards } });
+            const deck = Deck([{ id: 'C1A' }]);
 
             const removedCard = deck.removeCard('C1A');
 
             assert.equals(removedCard.id, 'C1A');
         },
         'should return null when card does NOT exist': function () {
-            const deck = Deck({ cardDataAssembler: { createAll: () => [] } });
+            const deck = Deck([]);
 
             const removedCard = deck.removeCard('C1A');
 

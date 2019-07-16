@@ -26,13 +26,11 @@ module.exports = {
                     'P1A': {
                         phase: 'draw',
                         stationCards: [{ place: 'draw', card: createCard() }],
+                        cardsInDeck: [
+                            createCard({ id: 'C2A' }),
+                            createCard({ id: 'C1A' }),
+                        ]
                     }
-                },
-                deckByPlayerId: {
-                    'P1A': FakeDeck.fromCards([
-                        createCard({ id: 'C1A' }),
-                        createCard({ id: 'C2A' }),
-                    ])
                 }
             }));
 
@@ -77,13 +75,11 @@ module.exports = {
                             { place: 'draw', card: createCard() },
                             { place: 'draw', card: createCard() }
                         ],
+                        cardsInDeck: [
+                            createCard({ id: 'C2A' }),
+                            createCard({ id: 'C1A' }),
+                        ]
                     }
-                },
-                deckByPlayerId: {
-                    'P1A': FakeDeck.fromCards([
-                        createCard({ id: 'C1A' }),
-                        createCard({ id: 'C2A' }),
-                    ])
                 }
             }));
 
@@ -125,10 +121,8 @@ module.exports = {
                     'P1A': {
                         phase: 'draw',
                         stationCards: [{ place: 'draw', card: createCard() }],
+                        cardsInDeck: [createCard({ id: 'C1A' })]
                     }
-                },
-                deckByPlayerId: {
-                    'P1A': FakeDeck.fromCards([createCard({ id: 'C1A' })])
                 }
             }));
 
@@ -142,27 +136,29 @@ module.exports = {
     },
     'when has NO more cards but has 1 draw row station card and draws 1 card': {
         setUp() {
-            this.firstPlayerConnection = FakeConnection2(['drawCards']);
-            this.secondPlayerConnection = FakeConnection2(['stateChanged']);
-            const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
+            this.firstPlayerConnection = FakeConnection2(['drawCards', 'stateChanged']);
+            const players = [Player('P1A', this.firstPlayerConnection), Player('P2A')];
             this.match = createMatch({ players });
             this.match.restoreFromState(createState({
                 playerStateById: {
                     'P1A': {
                         phase: 'draw',
-                        stationCards: [{ place: 'draw', card: createCard() }]
+                        stationCards: [{ place: 'draw', card: createCard() }],
+                        cardsInDeck: []
                     }
-                },
-                deckByPlayerId: {
-                    'P1A': FakeDeck.fromCards([])
                 }
             }));
 
             this.match.drawCard('P1A');
         },
-        'should emit NO cards and that there are no more cards to draw'() {
+        'should emit that there are no more cards to draw'() {
             const args = this.firstPlayerConnection.drawCards.lastCall.args[0];
             assert.equals(args, { moreCardsCanBeDrawn: false });
+        },
+        'should have drawn no more cards to hand'() {
+            refute.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                cardsOnHand: sinon.match.array
+            }));
         }
     },
     'when discard opponent top 2 cards and has more cards to draw': {
@@ -179,14 +175,14 @@ module.exports = {
                             { place: 'draw', card: createCard() },
                             { place: 'draw', card: createCard() }
                         ],
-                        commanders: [Commander.TheMiller]
+                        commanders: [Commander.TheMiller],
+                    },
+                    'P2A': {
+                        cardsInDeck: [
+                            createCard({ id: 'C2A' }),
+                            createCard({ id: 'C3A' }),
+                        ]
                     }
-                },
-                deckByPlayerId: {
-                    'P2A': FakeDeck.fromCards([
-                        createCard({ id: 'C2A' }),
-                        createCard({ id: 'C3A' }),
-                    ])
                 }
             }));
 
@@ -244,11 +240,9 @@ module.exports = {
                 playerStateById: {
                     'P1A': {
                         phase: 'draw',
-                        requirements: [{ type: 'drawCard', count: 1 }]
+                        requirements: [{ type: 'drawCard', count: 1 }],
+                        cardsInDeck: [createCard({ id: 'C1A' })]
                     }
-                },
-                deckByPlayerId: {
-                    'P1A': FakeDeck.fromCards([createCard({ id: 'C1A' })])
                 }
             }));
 
@@ -279,11 +273,9 @@ module.exports = {
                 playerStateById: {
                     'P1A': {
                         phase: 'draw',
-                        requirements: [{ type: 'drawCard', count: 3 }]
+                        requirements: [{ type: 'drawCard', count: 3 }],
+                        cardsInDeck: [createCard({ id: 'C1A' })]
                     }
-                },
-                deckByPlayerId: {
-                    'P1A': FakeDeck.fromCards([createCard({ id: 'C1A' })])
                 }
             }));
 
@@ -310,14 +302,14 @@ module.exports = {
                     'P1A': {
                         phase: 'draw',
                         requirements: [{ type: 'drawCard', count: 1 }],
-                        commanders: [Commander.TheMiller]
+                        commanders: [Commander.TheMiller],
+                    },
+                    'P2A': {
+                        cardsInDeck: [
+                            createCard({ id: 'C1A' }),
+                            createCard({ id: 'C2A' })
+                        ]
                     }
-                },
-                deckByPlayerId: {
-                    'P2A': FakeDeck.fromCards([
-                        createCard({ id: 'C1A' }),
-                        createCard({ id: 'C2A' })
-                    ])
                 }
             }));
 

@@ -4,7 +4,6 @@ const DiscardCardEvent = require('../event/DiscardCardEvent.js');
 const MoveCardEvent = require('../event/MoveCardEvent.js');
 const PutDownCardEvent = require('../PutDownCardEvent.js');
 const RemoveStationCardEvent = require('../event/RemoveStationCardEvent.js');
-const Commander = require("./commander/Commander.js");
 const { PHASES } = require('../phases.js');
 
 class PlayerStateService {
@@ -17,14 +16,15 @@ class PlayerStateService {
         logger,
         cardFactory,
         eventFactory,
+        deckFactory,
         gameConfig
     }) {
         this._playerId = playerId;
         this._matchService = matchService;
-        this._queryEvents = queryEvents; //TODO Uses of this should be moved to "CanThePlayer" or "PlayerRuleService"
         this._actionPointsCalculator = actionPointsCalculator;
         this._cardFactory = cardFactory;
         this._eventFactory = eventFactory;
+        this._deckFactory = deckFactory;
         this._gameConfig = gameConfig;
         this._logger = logger || { log: (...args) => console.log('PlayerStateService logger: ', ...args) };
         this._stateTouchListeners = [];
@@ -34,12 +34,15 @@ class PlayerStateService {
         const playerId = this.getPlayerId();
         this._matchService.connectPlayer(playerId); //TODO This is already done in StartGame.js. Why is it also done here?
 
-        const playerDeck = this.getDeck();
-        const startingHandCount = this._gameConfig.amountOfCardsInStartHand();
-        const cardsOnHand = playerDeck.draw(startingHandCount);
+        this._resetState();
+        this._initializeDeck();
+        this._drawStartingCards();
+    }
 
+    _resetState() {
         this.update(playerState => {
-            playerState.cardsOnHand = cardsOnHand;
+            playerState.cardsInDeck = [];
+            playerState.cardsOnHand = [];
             playerState.stationCards = [];
             playerState.cardsInZone = [];
             playerState.cardsInOpponentZone = [];
@@ -51,6 +54,23 @@ class PlayerStateService {
             playerState.actionLogEntries = [];
             playerState.commanders = [];
             playerState.clock = {};
+        });
+    }
+
+    _initializeDeck() {
+        const cardsInDeck = this._deckFactory.createCardsForDeck();
+
+        this.update(playerState => {
+            playerState.cardsInDeck = cardsInDeck;
+        });
+    }
+
+    _drawStartingCards() {
+        const playerDeck = this.getDeck();
+        const startingHandCount = this._gameConfig.amountOfCardsInStartHand();
+        const cardsOnHand = playerDeck.draw(startingHandCount);
+        this.update(playerState => {
+            playerState.cardsOnHand = cardsOnHand;
         });
     }
 
@@ -240,8 +260,9 @@ class PlayerStateService {
     }
 
     getDeck() {
-        const state = this._matchService.getState();
-        return state.deckByPlayerId[this._playerId];
+        const state = this.getPlayerState();
+        const cardsInDeck = this._deckFactory.create(state.cardsInDeck);
+        return cardsInDeck;
     }
 
     getActionPointsForPlayer() {

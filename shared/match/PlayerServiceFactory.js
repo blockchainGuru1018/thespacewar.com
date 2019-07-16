@@ -380,6 +380,7 @@ module.exports = function ({
             cardFactory: api.cardFactory(),
             actionPointsCalculator,
             eventFactory: api.eventFactory(),
+            deckFactory: gameServiceFactory.deckFactory(),
             logger
         });
     }

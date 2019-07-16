@@ -81,7 +81,7 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
     }
 
     addDrawCardRequirement({ count, common = false, cardCommonId = null, whenResolvedAddAlso = [] }) {
-        let countToDraw = this.getCountOrMinimumAvailableForDrawingCards(count);
+        const countToDraw = this.getCountOrMinimumAvailableForDrawingCards(count);
         if (countToDraw > 0) {
             const requirement = { type: 'drawCard', count: countToDraw };
             if (common) {

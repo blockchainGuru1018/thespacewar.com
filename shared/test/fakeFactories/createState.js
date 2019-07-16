@@ -1,17 +1,16 @@
 const {
     defaults
 } = require('bocha');
-const FakeDeckFactory = require('../../../server/test/testUtils/FakeDeckFactory.js');
-const FakeCardDataAssembler = require('../../../server/test/testUtils/FakeCardDataAssembler.js');
 const playerStateFactory = require("../../match/playerStateFactory.js");
+const MatchMode = require("../../match/MatchMode.js");
 
 module.exports = function createState(options = {}) {
     defaults(options, {
+        mode: MatchMode.game,
         turn: 1,
         currentPlayer: 'P1A',
         playerOrder: ['P1A', 'P2A'],
-        playerStateById: {},
-        deckByPlayerId: {}
+        playerStateById: {}
     });
 
     const playerStateIds = Object.keys(options.playerStateById);
@@ -23,9 +22,6 @@ module.exports = function createState(options = {}) {
     }
 
     for (let playerId of options.playerOrder) {
-        if (!options.deckByPlayerId[playerId]) {
-            options.deckByPlayerId[playerId] = FakeDeckFactory.createDeckFromCards([FakeCardDataAssembler.createCard()]);
-        }
         if (!options.playerStateById[playerId]) {
             options.playerStateById[playerId] = createPlayerState();
         }

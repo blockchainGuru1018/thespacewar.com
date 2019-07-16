@@ -1,18 +1,13 @@
 const {
     bocha: {
-        stub,
         assert,
         refute,
         sinon
     },
-    FakeDeckFactory,
     createCard,
-    createPlayers,
     Player,
     createPlayer,
-    createMatchAndGoToFirstActionPhase,
     createMatch,
-    FakeConnection,
     FakeConnection2,
     catchError,
     createState,
@@ -590,14 +585,12 @@ module.exports = {
                         'P1A': {
                             phase: 'action',
                             cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: ExcellentWorkCommonId })],
+                            cardsInDeck: [
+                                createCard({ id: 'C2A' }),
+                                createCard({ id: 'C3A' }),
+                                createCard({ id: 'C4A' })
+                            ]
                         }
-                    },
-                    deckByPlayerId: {
-                        'P1A': FakeDeck.realDeckFromCards([
-                            createCard({ id: 'C2A' }),
-                            createCard({ id: 'C3A' }),
-                            createCard({ id: 'C4A' })
-                        ])
                     }
                 }));
 
@@ -641,10 +634,8 @@ module.exports = {
                         'P1A': {
                             phase: 'action',
                             cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: ExcellentWorkCommonId })],
+                            cardsInDeck: [createCard({ id: 'C2A' })]
                         }
-                    },
-                    deckByPlayerId: {
-                        'P1A': FakeDeck.realDeckFromCards([createCard({ id: 'C2A' })])
                     }
                 }));
 
@@ -666,10 +657,8 @@ module.exports = {
                         'P1A': {
                             phase: 'action',
                             cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: ExcellentWorkCommonId })],
+                            cardsInDeck: []
                         }
-                    },
-                    deckByPlayerId: {
-                        'P1A': FakeDeck.realDeckFromCards([])
                     }
                 }));
 
@@ -850,17 +839,15 @@ module.exports = {
                                 createCard({ id: 'C2A', type: 'event', commonId: GrandOpportunityCommonId }),
                                 createCard({ id: 'C3A', type: 'event', commonId: GrandOpportunityCommonId })
                             ],
+                            cardsInDeck: [
+                                createCard({ id: 'C4A' }),
+                                createCard({ id: 'C5A' }),
+                                createCard({ id: 'C6A' }),
+                                createCard({ id: 'C7A' }),
+                                createCard({ id: 'C8A' }),
+                                createCard({ id: 'C9A' }),
+                            ]
                         }
-                    },
-                    deckByPlayerId: {
-                        'P1A': FakeDeck.realDeckFromCards([
-                            createCard({ id: 'C4A' }),
-                            createCard({ id: 'C5A' }),
-                            createCard({ id: 'C6A' }),
-                            createCard({ id: 'C7A' }),
-                            createCard({ id: 'C8A' }),
-                            createCard({ id: 'C9A' }),
-                        ])
                     }
                 }));
 
@@ -900,10 +887,8 @@ module.exports = {
                                 createCard({ id: 'C1A', type: 'event', commonId: GrandOpportunityCommonId }),
                                 createCard({ id: 'C2A' })
                             ],
+                            cardsInDeck: [createCard({ id: 'C3A' })]
                         }
-                    },
-                    deckByPlayerId: {
-                        'P1A': FakeDeck.realDeckFromCards([createCard({ id: 'C3A' })])
                     }
                 }));
 
@@ -931,10 +916,8 @@ module.exports = {
                                 createCard({ id: 'C1A', type: 'event', commonId: GrandOpportunityCommonId }),
                                 createCard({ id: 'C2A' })
                             ],
+                            cardsInDeck: []
                         }
-                    },
-                    deckByPlayerId: {
-                        'P1A': FakeDeck.realDeckFromCards([])
                     }
                 }));
 
@@ -956,10 +939,8 @@ module.exports = {
                         'P1A': {
                             phase: 'action',
                             cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: GrandOpportunityCommonId })]
-                        }
-                    },
-                    deckByPlayerId: {
-                        'P1A': FakeDeck.realDeckFromCards([createCard({ id: 'C2A' })])
+                        },
+                        cardsInDeck: [createCard({ id: 'C2A' })]
                     }
                 }));
 
@@ -987,21 +968,21 @@ module.exports = {
                             cardsOnHand: [
                                 createCard({ id: 'C1A', type: 'event', commonId: DiscoveryCommonId }),
                             ],
+                            cardsInDeck: [
+                                createCard({ id: 'C4A' }),
+                                createCard({ id: 'C5A' }),
+                                createCard({ id: 'C6A' }),
+                                createCard({ id: 'C6A' })
+                            ]
+                        },
+                        'P2A': {
+                            cardsInDeck: [
+                                createCard({ id: 'C7A' }),
+                                createCard({ id: 'C8A' }),
+                                createCard({ id: 'C9A' }),
+                                createCard({ id: 'C10A' })
+                            ]
                         }
-                    },
-                    deckByPlayerId: {
-                        'P1A': FakeDeck.realDeckFromCards([
-                            createCard({ id: 'C4A' }),
-                            createCard({ id: 'C5A' }),
-                            createCard({ id: 'C6A' }),
-                            createCard({ id: 'C6A' })
-                        ]),
-                        'P2A': FakeDeck.realDeckFromCards([
-                            createCard({ id: 'C7A' }),
-                            createCard({ id: 'C8A' }),
-                            createCard({ id: 'C9A' }),
-                            createCard({ id: 'C10A' })
-                        ])
                     }
                 }));
 
@@ -1039,12 +1020,12 @@ module.exports = {
                             phase: 'action',
                             cardsOnHand: [
                                 createCard({ id: 'C1A', type: 'event', commonId: DiscoveryCommonId }),
-                            ]
+                            ],
+                            cardsInDeck: []
+                        },
+                        'P2A': {
+                            cardsInDeck: []
                         }
-                    },
-                    deckByPlayerId: {
-                        'P1A': FakeDeck.realDeckFromCards([]),
-                        'P2A': FakeDeck.realDeckFromCards([])
                     }
                 }));
 
@@ -1108,7 +1089,7 @@ module.exports = {
         'when put down Fatal Error': {
             setUp() {
                 this.secondPlayerConnection = FakeConnection2(['stateChanged']);
-                const players = [Player('P1A'), Player('P2A', this.secondPlayerConnection)]
+                const players = [Player('P1A'), Player('P2A', this.secondPlayerConnection)];
                 this.match = createMatch({ players });
                 this.match.restoreFromState(createState({
                     playerStateById: {
@@ -1117,14 +1098,12 @@ module.exports = {
                             cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: FatalErrorCommonId })]
                         },
                         'P2A': {
-                            cardsInOpponentZone: [createCard({ id: 'C2A' })]
+                            cardsInOpponentZone: [createCard({ id: 'C2A' })],
+                            cardsInDeck: [
+                                createCard({ id: 'C3A' }),
+                                createCard({ id: 'C4A' })
+                            ]
                         }
-                    },
-                    deckByPlayerId: {
-                        'P2A': FakeDeck.realDeckFromCards([
-                            createCard({ id: 'C3A' }),
-                            createCard({ id: 'C4A' })
-                        ])
                     }
                 }));
 
@@ -1155,14 +1134,12 @@ module.exports = {
                             ]
                         },
                         'P2A': {
-                            cardsInOpponentZone: [createCard({ id: 'C2A' })]
+                            cardsInOpponentZone: [createCard({ id: 'C2A' })],
+                            cardsInDeck: [
+                                createCard({ id: 'C3A' }),
+                                createCard({ id: 'C4A' })
+                            ]
                         }
-                    },
-                    deckByPlayerId: {
-                        'P2A': FakeDeck.realDeckFromCards([
-                            createCard({ id: 'C3A' }),
-                            createCard({ id: 'C4A' })
-                        ])
                     }
                 }));
 
@@ -1271,11 +1248,9 @@ module.exports = {
                         cardsOnHand: [
                             createCard({ id: 'C1A', type: 'event', commonId: MissilesLaunched.CommonId })
                         ],
-                        discardedCards: [createCard({ id: 'C2A', type: 'missile' })]
+                        discardedCards: [createCard({ id: 'C2A', type: 'missile' })],
+                        cardsInDeck: [createCard({ id: 'C3A', type: 'missile' })]
                     },
-                },
-                deckByPlayerId: {
-                    'P1A': FakeDeck.realDeckFromCards([createCard({ id: 'C3A', type: 'missile' })])
                 }
             }));
 
@@ -1317,11 +1292,9 @@ module.exports = {
                         },
                         'P2A': {
                             phase: 'wait',
-                            cardsOnHand: [createCard({ id: 'C2A' })]
+                            cardsOnHand: [createCard({ id: 'C2A' })],
+                            cardsInDeck: [createCard({ id: 'C3A' })]
                         }
-                    },
-                    deckByPlayerId: {
-                        'P2A': FakeDeck.realDeckFromCards([createCard({ id: 'C3A' })])
                     }
                 }));
 
@@ -1350,11 +1323,9 @@ module.exports = {
                         },
                         'P2A': {
                             phase: 'wait',
-                            cardsOnHand: [createCard({ id: 'C2A' })]
+                            cardsOnHand: [createCard({ id: 'C2A' })],
+                            cardsInDeck: [createCard({ id: 'C3A' })]
                         }
-                    },
-                    deckByPlayerId: {
-                        'P2A': FakeDeck.realDeckFromCards([createCard({ id: 'C3A' })])
                     }
                 }));
                 this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A', choice: null });

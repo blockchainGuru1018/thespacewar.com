@@ -111,14 +111,12 @@ module.exports = {
                             { card: createCard({ id: 'C1A' }) },
                             { card: createCard({ id: 'C2A' }) },
                             { card: createCard({ id: 'C3A' }) },
-                        ]
+                        ],
+                        cardsInDeck: []
                     },
                     'P2A': {
                         phase: 'attack'
                     }
-                },
-                deckByPlayerId: {
-                    'P1A': FakeDeck.realDeckFromCards([])
                 }
             }));
 

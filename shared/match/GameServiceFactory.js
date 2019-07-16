@@ -3,6 +3,7 @@ const StateMemento = require('./StateMemento.js');
 const CardDataAssembler = require('../CardDataAssembler.js');
 const CardInfoRepository = require('../CardInfoRepository.js');
 const StateSerializer = require('../../server/match/StateSerializer.js');
+const DeckFactory = require('../../server/deck/DeckFactory.js');
 
 module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig }) {
 
@@ -14,7 +15,8 @@ module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig 
         stateMemento: cached(stateMemento),
         cardDataAssembler: cached(cardDataAssembler),
         cardInfoRepository: cached(cardInfoRepository),
-        stateSerializer: cached(stateSerializer)
+        stateSerializer: cached(stateSerializer),
+        deckFactory: cached(deckFactory)
     };
 
     return api;
@@ -30,7 +32,11 @@ module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig 
     }
 
     function stateSerializer() {
-        return StateSerializer({
+        return StateSerializer();
+    }
+
+    function deckFactory() {
+        return DeckFactory({
             cardDataAssembler: api.cardDataAssembler()
         });
     }

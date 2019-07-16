@@ -1,3 +1,5 @@
+const FakeCardDataAssembler = require('../../server/test/testUtils/FakeCardDataAssembler.js');
+
 module.exports = {
     empty
 };
@@ -14,6 +16,7 @@ function empty() {
         requirements: [],
         commanders: [],
         actionLogEntries: [],
+        cardsInDeck: [FakeCardDataAssembler.createCard()],
         clock: {
             events: []
         }

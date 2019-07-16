@@ -2,7 +2,6 @@ const Player = require('../player/Player.js');
 const Match = require('./Match.js');
 const CardDataAssembler = require('../../shared/CardDataAssembler.js');
 const CardInfoRepository = require('../../shared/CardInfoRepository.js');
-const DeckFactory = require('../deck/DeckFactory.js');
 
 module.exports = function ({
     socketRepository,
@@ -12,7 +11,6 @@ module.exports = function ({
 }) {
 
     const cardDataAssembler = CardDataAssembler({ rawCardDataRepository });
-    const deckFactory = DeckFactory({ cardDataAssembler });
     const cardInfoRepository = CardInfoRepository({ cardDataAssembler });
 
     return {
@@ -25,7 +23,6 @@ module.exports = function ({
         return Match({
             players,
             matchId,
-            deckFactory,
             cardInfoRepository,
             logger,
             rawCardDataRepository,

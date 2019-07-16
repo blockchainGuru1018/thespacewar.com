@@ -2,13 +2,13 @@ let bocha = require('bocha');
 let assert = bocha.assert;
 let refute = bocha.refute;
 let defaults = bocha.defaults;
+const createState = require('./fakeFactories/createState.js');
 const FakeCardDataAssembler = require("../../server/test/testUtils/FakeCardDataAssembler.js");//TODO Move to shared
 const createCard = FakeCardDataAssembler.createCard;
 const CardFactory = require('../card/CardFactory.js');
 const PlayerStateService = require('../match/PlayerStateService.js');
 const PlayerRuleService = require('../match/PlayerRuleService.js');
 const MatchService = require('../match/MatchService.js');
-const FakeDeckFactory = require('../../server/test/testUtils/FakeDeckFactory.js');
 const PlayerServiceProvider = require('../match/PlayerServiceProvider.js');
 const TestHelper = require('./fakeFactories/TestHelper.js');
 const PutDownCardEvent = require('../PutDownCardEvent.js');
@@ -120,35 +120,6 @@ function createServiceForPlayer(playerId, state) {
     playerServiceProvider.registerService(PlayerServiceProvider.TYPE.state, playerId, playerServiceProvider);
     const canThePlayer = { useThisDurationCard() {} };
     return new PlayerRuleService({ playerStateService, canThePlayer });
-}
-
-function createState(options = {}) {
-    defaults(options, {
-        turn: 1,
-        currentPlayer: 'P1A',
-        playerOrder: ['P1A', 'P2A'],
-        playerStateById: {},
-        deckByPlayerId: {}
-    });
-
-    const playerStateIds = Object.keys(options.playerStateById);
-    if (playerStateIds.length < 2) {
-        playerStateIds.push(options.playerOrder[1]);
-    }
-    for (let key of playerStateIds) {
-        options.playerStateById[key] = createPlayerState(options.playerStateById[key]);
-    }
-
-    for (let playerId of options.playerOrder) {
-        if (!options.deckByPlayerId[playerId]) {
-            options.deckByPlayerId[playerId] = FakeDeckFactory.createDeckFromCards([FakeCardDataAssembler.createCard()]);
-        }
-        if (!options.playerStateById[playerId]) {
-            options.playerStateById[playerId] = createPlayerState();
-        }
-    }
-
-    return options;
 }
 
 function createPlayerState(options = {}) {
