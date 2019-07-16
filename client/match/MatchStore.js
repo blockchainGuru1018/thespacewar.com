@@ -40,8 +40,6 @@ const storeItemNameByServerItemName = {
     cardsOnHand: 'playerCardsOnHand'
 };
 
-//TODO Sometimes when discarding a card in the discard phase an error is thrown in the console. Does not appear to affect gameplay.
-
 module.exports = function (deps) {
 
     const route = deps.route;
@@ -52,10 +50,7 @@ module.exports = function (deps) {
     const actionPointsCalculator = deps.actionPointsCalculator || ActionPointsCalculator({ cardInfoRepository });
     const matchController = deps.matchController;
     const rawCardDataRepository = deps.rawCardDataRepository;
-    const getDeckSize = deps.getDeckSize || require('./getDeckSize.js'); //TODO Move to util and then require util at the top
     const ai = deps.ai;
-
-    const deckSize = getDeckSize(rawCardDataRepository);
 
     let gameHasBegun = false;
 
@@ -87,6 +82,7 @@ module.exports = function (deps) {
                 handSizeCards: []
             },
             playerCardsInOpponentZone: [],
+            playerCardsInDeckCount: 0,
             opponentCommanders: [],
             opponentPhase: '',
             opponentCardCount: 0,
@@ -98,6 +94,7 @@ module.exports = function (deps) {
             },
             opponentCardsInPlayerZone: [],
             opponentCardsInZone: [],
+            opponentCardsInDeckCount: 0,
             opponentEvents: [],
             opponentRequirements: [],
             attackerCardId: null,
@@ -167,8 +164,6 @@ module.exports = function (deps) {
             opponentActionLog,
             eventFactory,
             matchService,
-            playerCardsInDeckCount,
-            opponentCardsInDeckCount,
             opponentRetreated,
             playerRetreated,
             overworkEnabled,
@@ -551,7 +546,7 @@ module.exports = function (deps) {
             cardFactory: getters.cardFactory,
             gameConfig: getters.gameConfig,
             deckIsEmpty: () => {
-                return getters.playerCardsInDeckCount <= 0
+                return state.playerCardsInDeckCount <= 0
             }
         });
     }
@@ -567,7 +562,7 @@ module.exports = function (deps) {
             cardFactory: getters.cardFactory,
             gameConfig: getters.gameConfig,
             deckIsEmpty: () => {
-                return getters.opponentCardsInDeckCount <= 0
+                return state.opponentCardsInDeckCount <= 0
             }
         });
     }
@@ -622,24 +617,6 @@ module.exports = function (deps) {
         const serverState = mapFromClientToServerState(state);
         matchService.setState(serverState);
         return matchService;
-    }
-
-    function playerCardsInDeckCount(state, getters) {
-        return deckSize
-            - state.playerDiscardedCards.length
-            - state.playerCardsOnHand.length
-            - state.playerCardsInZone.length
-            - state.playerCardsInOpponentZone.length
-            - getters.allPlayerStationCards.length;
-    }
-
-    function opponentCardsInDeckCount(state, getters) {
-        return deckSize
-            - state.opponentDiscardedCards.length
-            - state.opponentCardCount
-            - state.opponentCardsInZone.length
-            - state.opponentCardsInPlayerZone.length
-            - getters.allOpponentStationCards.length;
     }
 
     function playerRetreated(state) {

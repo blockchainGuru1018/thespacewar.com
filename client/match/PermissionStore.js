@@ -52,14 +52,12 @@ module.exports = function (deps) {
         return getFrom('waitingForOtherPlayerToFinishRequirements', 'requirement');
     }
 
-    function deckIsEmpty() {
-        let playerCardsInDeckCount = getFrom('playerCardsInDeckCount', 'match');
-        return playerCardsInDeckCount <= 0;
+    function deckIsEmpty(state, getters, rootState) {
+        return rootState.match.playerCardsInDeckCount <= 0;
     }
 
-    function opponentDeckIsEmpty() {
-        let opponentCardsInDeckCount = getFrom('opponentCardsInDeckCount', 'match');
-        return opponentCardsInDeckCount <= 0;
+    function opponentDeckIsEmpty(state, getters, rootState) {
+        return rootState.match.opponentCardsInDeckCount <= 0;
     }
 
     function canMoveCardsFromHand(state, getters, rootState, rootGetters) {

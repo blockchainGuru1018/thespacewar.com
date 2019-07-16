@@ -465,7 +465,9 @@
                 'aiStarted',
                 'shake',
                 'flashDiscardPile',
-                'flashOpponentDiscardPile'
+                'flashOpponentDiscardPile',
+                'opponentCardsInDeckCount',
+                'playerCardsInDeckCount',
             ]),
             ...mapGetters([
                 'gameOn',
@@ -474,8 +476,6 @@
                 'canPutDownCard',
                 'createCard',
                 'allPlayerStationCards',
-                'opponentCardsInDeckCount',
-                'playerCardsInDeckCount',
                 'canThePlayer',
                 'selectingStartingStationCards',
                 'gameConfig',

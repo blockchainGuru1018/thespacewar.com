@@ -19,11 +19,13 @@ module.exports = function FakeState(options) {
         cardsInZone: [],
         cardsInOpponentZone: [],
         discardedCards: [],
+        playerCardsInDeckCount: 1,
         opponentCardCount: 0,
         opponentDiscardedCards: [],
         opponentStationCards: [{ place: 'draw' }], //Needed to not always show a Defeated screen
         opponentCardsInZone: [],
         opponentCardsInPlayerZone: [],
+        opponentCardsInDeckCount: 1,
         events: [],
         requirements: [],
         phase: 'wait',

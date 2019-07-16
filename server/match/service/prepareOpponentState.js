@@ -14,6 +14,12 @@ const obscurerByKey = {
         },
         key: 'opponentCardCount'
     },
+    cardsInDeck: {
+        obscure(cardsInDeck) {
+            return cardsInDeck.length;
+        },
+        key: 'opponentCardsInDeckCount'
+    },
     events: {
         obscure: obscureOpponentEvents,
         key: 'opponentEvents'

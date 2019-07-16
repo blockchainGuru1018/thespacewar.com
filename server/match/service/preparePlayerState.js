@@ -3,6 +3,12 @@ const obscureHandlerByKey = {
     stationCards: {
         obscure: require('./prepareStationCardsForClient'),
         key: 'stationCards'
+    },
+    cardsInDeck: {
+        obscure(cardsInDeck) {
+            return cardsInDeck.length;
+        },
+        key: 'playerCardsInDeckCount'
     }
 };
 
@@ -12,6 +18,7 @@ const whitelist = [
     'cardsInOpponentZone',
     'stationCards',
     'cardsOnHand',
+    'cardsInDeck',
     'events',
     'requirements',
     'phase',

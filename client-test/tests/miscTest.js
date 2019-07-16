@@ -92,15 +92,15 @@ describe('when in discard phase and is required to discard 2 cards', async () =>
 
 describe('when has NO cards left and it is draw phase and opponent has 1 card left', async () => {
     beforeEach(async () => {
-        const { dispatch, showPage } = setUpController({
-            getDeckSize: () => 2
-        });
+        const { dispatch, showPage } = setUpController();
         showPage();
         dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'draw',
             stationCards: [{ id: 'C1A', place: 'draw' }, { id: 'C2A', place: 'draw' }],
+            playerCardsInDeckCount: 0,
+            opponentCardsInDeckCount: 1,
             opponentStationCards: [{ id: 'C3A', place: 'draw' }],
             commanders: [Commander.TheMiller]
         }));
@@ -118,14 +118,13 @@ describe('when has NO cards left and it is draw phase and opponent has 1 card le
 
 describe('when has 1 card left and it is draw phase and opponent has NO cards left', async () => {
     beforeEach(async () => {
-        const { dispatch, showPage } = setUpController({
-            getDeckSize: () => 2
-        });
+        const { dispatch, showPage } = setUpController();
         showPage();
         dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'draw',
+            playerCardsInDeckCount: 2,
             stationCards: [{ id: 'C1A', place: 'draw' }],
             opponentStationCards: [{ id: 'C2A', place: 'draw' }, { id: 'C3A', place: 'draw' }]
         }));
@@ -143,14 +142,13 @@ describe('when has 1 card left and it is draw phase and opponent has NO cards le
 
 describe('when both players are out of cards', () => {
     beforeEach(async () => {
-        const { dispatch, showPage } = setUpController({
-            getDeckSize: () => 1
-        });
+        const { dispatch, showPage } = setUpController();
         showPage();
         dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'draw',
+            playerCardsInDeckCount: 2,
             stationCards: [{ id: 'C1A', place: 'draw' }],
             opponentStationCards: [{ id: 'C2A', place: 'draw' }]
         }));
@@ -167,14 +165,13 @@ describe('when both players are out of cards', () => {
 
 describe('when has and FullForceForward in play and a space ship with an attack of 1 in play', () => {
     beforeEach(async () => {
-        const { dispatch, showPage } = setUpController({
-            getDeckSize: () => 1
-        });
+        const { dispatch, showPage } = setUpController();
         showPage();
         dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'draw',
+            playerCardsInDeckCount: 1,
             cardsInZone: [
                 { id: 'C1A', type: 'spaceShip', attack: 1 },
                 { id: 'C2A', type: 'duration', commonId: FullForceForward.CommonId }

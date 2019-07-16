@@ -34,14 +34,13 @@ afterEach(() => {
 
 describe('when has duration card Neutralization and other duration card', () => {
     beforeEach(async () => {
-        const { dispatch, showPage } = setUpController({
-            getDeckSize: () => 1
-        });
+        const { dispatch, showPage } = setUpController();
         showPage();
         dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'draw',
+            playerCardsInDeckCount: 1,
             cardsInZone: [
                 { id: 'C1A', type: 'duration', commonId: Neutralization.CommonId },
                 { id: 'C2A', type: 'duration' }
@@ -57,14 +56,13 @@ describe('when has duration card Neutralization and other duration card', () => 
 
 describe('when has Disturbing Sensor and a missile in play and opponent has a missile in play', () => {
     beforeEach(async () => {
-        const { dispatch, showPage } = setUpController({
-            getDeckSize: () => 1
-        });
+        const { dispatch, showPage } = setUpController();
         showPage();
         dispatch('stateChanged', FakeState({
             turn: 1,
             currentPlayer: 'P1A',
             phase: 'draw',
+            playerCardsInDeckCount: 1,
             cardsInZone: [
                 { id: 'C1A', type: 'spaceShip', commonId: DisturbingSensor.CommonId },
                 { id: 'C2A', type: 'missile' }
