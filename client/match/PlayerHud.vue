@@ -74,7 +74,7 @@
                         <div class="enlargeIcon enlargeIcon--small" />
                     </div>
                     {{ requirementGuideText }}
-                    <SkipDrawCard />
+                    <SkipDrawCard v-if="firstRequirementIsDrawCard" />
                 </div>
                 <template v-else-if="selectingStartingStationCards">
                     <div

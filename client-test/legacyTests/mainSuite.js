@@ -14,7 +14,6 @@ const {
     refute,
     sinon,
     timeout,
-    defaults,
     stub,
     dom: {
         click
@@ -1074,7 +1073,7 @@ module.exports = {
                 await timeout();
             },
             'should show guide text'() {
-                assert.elementText('.guideText', 'Draw card or Mill opponent (x2)');
+                assert.elementTextStartsWith('.guideText', 'Draw card or Mill opponent (x2)');
             },
             'should show draw pile action overlay'() {
                 assert.elementCount('.drawPile-draw', 1);
@@ -1116,7 +1115,7 @@ module.exports = {
                 await timeout();
             },
             'should show draw card guide text'() {
-                assert.elementText('.guideText', 'Draw card or Mill opponent (x2)');
+                assert.elementTextStartsWith('.guideText', 'Draw card or Mill opponent (x2)');
             }
         }
     },
