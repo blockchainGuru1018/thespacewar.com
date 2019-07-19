@@ -24,6 +24,7 @@ const CardDataAssembler = require('../../shared/CardDataAssembler.js');
 const PlayerCommanders = require('../../shared/match/commander/PlayerCommanders.js');
 const Commander = require("../../shared/match/commander/Commander.js");
 const Clock = require('../../shared/gameTimer/Clock.js');
+const PlayerCardInPlay = require('./card/PlayerCardInPlay.js');
 
 const {
     COMMON_PHASE_ORDER,
@@ -118,6 +119,7 @@ module.exports = function (deps) {
             nextPhase,
             nextPhaseWithAction,
             numberOfPhasesUntilNextPhaseWithAction,
+            canSkipAttackPhaseWithPlayerCardsInPlay,
             cardsToDrawInDrawPhase,
             actionPointsFromStationCards,
             maxHandSize,
@@ -266,26 +268,15 @@ module.exports = function (deps) {
                 currentPhase: PHASES.discard
             });
         }
+
         if (nextPhase === PHASES.attack) {
-            const someCardCanMove = state.playerCardsInZone
-                .map(c => getters.createCard(c))
-                .some(c => c.canMove({ phase: PHASES.attack }))
-            const noEnemiesAndNoCardsCanMoveInHomeZone = state.opponentCardsInPlayerZone.length === 0 && !someCardCanMove;
-
-            const someCardCanMoveInOpponentZone = state.playerCardsInOpponentZone
-                .map(c => getters.createCard(c))
-                .some(c => c.canMove({ phase: PHASES.attack }));
-            const noEnemiesAndNoCardsCanMoveInOpponentZone = state.opponentCardsInZone.length === 0 && !someCardCanMoveInOpponentZone;
-
-            const noActionsInAttackPhase =
-                (state.playerCardsInZone.length === 0 || noEnemiesAndNoCardsCanMoveInHomeZone)
-                && (state.playerCardsInOpponentZone.length === 0 || noEnemiesAndNoCardsCanMoveInOpponentZone);
-            if (noActionsInAttackPhase) {
+            if (getters.canSkipAttackPhaseWithPlayerCardsInPlay) {
                 nextPhase = whatIsNextPhase({
                     hasDurationCardInPlay: getters.playerStateService.hasDurationCardInPlay(),
                     currentPhase: PHASES.attack
-                })
+                });
             }
+
         }
 
         return nextPhase || PHASES.wait;
@@ -295,6 +286,26 @@ module.exports = function (deps) {
         const currentNextPhase = getters.nextPhase;
         const nextPhaseWithAction = getters.nextPhaseWithAction;
         return Math.max(0, getNumberOfPhasesBetween(currentNextPhase, nextPhaseWithAction));
+    }
+
+    function canSkipAttackPhaseWithPlayerCardsInPlay(state, getters) {
+        const playerCardsInPlay = [...state.playerCardsInZone, ...state.playerCardsInOpponentZone]
+            .map(cardData => getters.createCard(cardData, { alternativeConditions: { phase: 'attack' } }))
+            .map(card => {
+                return PlayerCardInPlay({
+                    card,
+                    attackerSelected: false,
+                    canThePlayer: getters.canThePlayer,
+                    opponentStateService: getters.opponentStateService
+                });
+            });
+
+        for (const card of playerCardsInPlay) {
+            if (card.canMove() || card.canAttack() || card.canBeSacrificed() || card.canRepair()) return false;
+        }
+
+        return true;
+
     }
 
     function cardsToDrawInDrawPhase(state) {
@@ -336,9 +347,9 @@ module.exports = function (deps) {
     }
 
     function createCard(state, getters) {
-        return (cardData, { isOpponent = false, playerId = null } = {}) => {
+        return (cardData, { isOpponent = false, playerId = null, alternativeConditions } = {}) => {
             const id = playerId || (isOpponent ? state.opponentUser.id : state.ownUser.id);
-            return getters.cardFactory.createCardForPlayer(cardData, id);
+            return getters.cardFactory.createCardForPlayer(cardData, id, alternativeConditions);
         };
     }
 

@@ -16,7 +16,7 @@ module.exports = class CardFactory {
         this._playerServiceFactory = playerServiceFactory;
     }
 
-    createCardForPlayer(cardData, playerId) {
+    createCardForPlayer(cardData, playerId, alternativeConditions) {
         const matchService = this._matchService;
 
         const state = matchService.getState();
@@ -37,7 +37,8 @@ module.exports = class CardFactory {
             matchService: matchService,
             playerStateService: stateServiceById,
             canThePlayer: this._playerServiceProvider.getCanThePlayerServiceById(playerId),
-            addRequirementFromSpec: this._playerServiceFactory.addRequirementFromSpec(playerId)
+            addRequirementFromSpec: this._playerServiceFactory.addRequirementFromSpec(playerId),
+            alternativeConditions
         });
     }
 };

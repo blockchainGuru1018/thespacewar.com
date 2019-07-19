@@ -1,6 +1,4 @@
-const {
-    defaults
-} = require('bocha');
+const defaults = require('lodash/defaults');
 const playerStateFactory = require("../../match/playerStateFactory.js");
 const MatchMode = require("../../match/MatchMode.js");
 

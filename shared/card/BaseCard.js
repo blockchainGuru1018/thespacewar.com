@@ -10,7 +10,8 @@ class BaseCard {
         queryEvents,
         matchService,
         playerStateService,
-        canThePlayer
+        canThePlayer,
+        alternativeConditions = {}
     }) {
         this.playerId = playerId;
 
@@ -20,6 +21,7 @@ class BaseCard {
         this._matchService = matchService; // TODO remove similar assignments in subclasses
         this._playerStateService = playerStateService;
         this._canThePlayer = canThePlayer;
+        this._alternativeConditions = alternativeConditions;
     }
 
     get id() {
@@ -100,7 +102,7 @@ class BaseCard {
         if (!this.attack && !this.hasSpecialAttackForCardsInZones()) return false;
         if (!this._canThePlayer.attackWithThisCard(this)) return false;
         if (this.type === 'duration') return false;
-        const isAttackPhase = this._playerStateService.getPhase() === phases.PHASES.attack;
+        const isAttackPhase = this._getCurrentPhase() === phases.PHASES.attack;
         if (!isAttackPhase) return false;
 
         const turn = this._matchService.getTurn();
@@ -111,11 +113,10 @@ class BaseCard {
         return true;
     }
 
-    canAttackStationCards() {
+    canAttackStationCards() { //TODO Cleanup from changes to missiles, they can now "attackFromHomeZone" and should not be checked if has moved
         if (!this.canAttack()) return false;
         if (!this.attack) return false;
         if (!this._canThePlayer.attackStationCards()) return false;
-
         const turn = this._matchService.getTurn();
         const isInHomeZone = this.isInHomeZone();
         const isMissile = this.type === 'missile';
@@ -155,13 +156,12 @@ class BaseCard {
         return this._canThePlayer.useThisCard(this);
     }
 
-    canMove(alternativeConditions = {}) {
+    canMove() {
         if (this.type === 'defense') return false;
         if (this.type === 'duration') return false;
         if (this.paralyzed) return false;
 
-        const phase = alternativeConditions.phase || this._playerStateService.getPhase();
-        if (phase !== 'attack') return false;
+        if (this._getCurrentPhase() !== 'attack') return false;
         if (!this._canThePlayer.moveThisCard(this)) return false;
 
         if (this._hasMovedThisTurn()) return false;
@@ -283,6 +283,10 @@ class BaseCard {
         const currentTurn = this._matchService.getTurn();
         const attacksOnTurn = this._queryEvents.getAttacksOnTurn(this.id, currentTurn).length;
         return attacksOnTurn > 0;
+    }
+
+    _getCurrentPhase() {
+        return this._alternativeConditions.phase || this._playerStateService.getPhase();
     }
 }
 

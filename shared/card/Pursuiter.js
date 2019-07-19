@@ -20,7 +20,6 @@ module.exports = class Pursuiter extends BaseCard {
         const attacksOnTurn = this._queryEvents.getAttacksOnTurn(this.id, currentTurn);
         if (attacksOnTurn.length > 0) return false;
 
-        const playerPhase = this._playerStateService.getPhase();
-        return playerPhase === PHASES.attack;
+        return this._getCurrentPhase() === PHASES.attack;
     }
 };

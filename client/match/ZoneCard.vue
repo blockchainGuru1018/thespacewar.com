@@ -211,6 +211,7 @@
     const vClickOutside = require('v-click-outside');
     const longpress = require('../utils/longpress.js');
     const getCardImageUrl = require("../utils/getCardImageUrl.js");
+    const PlayerCardInPlay = require('./card/PlayerCardInPlay.js');
 
     const DAMAGE_WHEN_TARGET_FOR_SACRIFICE = 4;
 
@@ -245,6 +246,10 @@
                 'repairerCard',
                 'canThePlayer'
             ]),
+            ...mapGetters({
+                remotePlayerStateService: 'opponentStateService',
+                localPlayerStateService: 'playerStateService'
+            }),
             ...mapPermissionGetters([
                 'canSelectCardsForActiveAction',
                 'canDiscardActivateDurationCards'
@@ -336,6 +341,17 @@
             isPlayerCard() {
                 return this.ownerId === this.ownUser.id;
             },
+            opponentStateService() {
+                return this.isPlayerCard ? this.remotePlayerStateService : this.localPlayerStateService;
+            },
+            playerCardInPlay() {
+                return PlayerCardInPlay({
+                    card: this.behaviourCard,
+                    attackerSelected: !!this.attackerCardId,
+                    canThePlayer: this.canThePlayer,
+                    opponentStateService: this.opponentStateService
+                });
+            },
             selectedAsAttacker() {
                 return this.attackerCardId === this.card.id;
             },
@@ -351,66 +367,16 @@
                     && !this.activeAction;
             },
             canMove() {
-                if (!this.canThePlayer.moveCards()) return false;
-                if (this.shouldNotShowMoveOption) return false;
-
-                const card = this.createCard(this.card);
-                return card.canMove();
-            },
-            shouldNotShowMoveOption() {
-                //NOTE: Since June 2019 "Move" is not shown as an option for missile cards that can attack and move on the same turn.
-                // The player should never move them but instead just attack from home zone directly.
-                return this.card.type === 'missile'
-                    && this.behaviourCard.canMoveAndAttackOnSameTurn();
+                return this.playerCardInPlay.canMove();
             },
             canAttack() {
-                if (this.attackerCardId) return false;
-                if (!this.canThePlayer.attackCards()) return false;
-
-                const card = this.createCard(this.card);
-                if (!card.canAttack()) return false;
-
-                if (!card.canAttackCardsInOtherZone()
-                    && !this.canAttackSomeCardInSameZone) return false; //TODO According to this you should be able to select card for attack even though there are no cards in the opposite zone.. seems like a bug!
-
-                return true;
+                return this.playerCardInPlay.canAttack();
             },
             canBeSacrificed() {
-                if (!this.canThePlayer.sacrificeCards()) return false;
-
-                const card = this.createCard(this.card);
-                return card.canBeSacrificed()
-                    && (card.canTargetStationCardsForSacrifice() || this.canTargetCardInZoneForSacrifice);
+                return this.playerCardInPlay.canBeSacrificed();
             },
             canTriggerDormantEffect() {
                 return this.canThePlayer.triggerCardsDormantEffect(this.behaviourCard);
-            },
-            canAttackSomeCardInSameZone() {
-                return this.canAttackCardInZone || this.canAttackStationCards;
-            },
-            canTargetCardInZoneForSacrifice() { //TODO This should be done on the card that can sacrifice
-                const card = this.createCard(this.card);
-                return this.zoneOpponentRow
-                    .map(cardData => {
-                        const isOpponent = !!this.isPlayerCard;
-                        return this.createCard(cardData, { isOpponent });
-                    })
-                    .filter(target => card.canTargetCardForSacrifice(target))
-                    .length > 0;
-            },
-            canAttackCardInZone() {
-                const card = this.createCard(this.card);
-                return this.zoneOpponentRow
-                    .map(cardData => {
-                        const isOpponent = !!this.isPlayerCard;
-                        return this.createCard(cardData, { isOpponent });
-                    })
-                    .filter(target => card.canAttackCard(target))
-                    .length > 0;
-            },
-            canAttackStationCards() {
-                return this.createCard(this.card).canAttackStationCards()
-                    && this.allOpponentStationCards.length > 0;
             },
             canBeSelectedAsDefender() {
                 const card = this.createCard(this.card, { isOpponent: !this.isPlayerCard });
@@ -423,9 +389,7 @@
                 return this.canDiscardActivateDurationCards;
             },
             canRepair() {
-                if (!this.canThePlayer.repairCards()) return false;
-
-                return this.behaviourCard.canRepair();
+                return this.playerCardInPlay.canRepair();
             },
             canBeSelectedForRepair() {
                 if (!this.isPlayerCard) return false;

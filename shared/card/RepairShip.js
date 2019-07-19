@@ -15,7 +15,7 @@ module.exports = class RepairShip extends BaseCard {
 
     canRepair() {
         if (this.paralyzed) return false;
-        if (this._playerStateService.getPhase() !== phases.PHASES.attack) return false;
+        if (this._getCurrentPhase() !== phases.PHASES.attack) return false;
         if (this._hasRepairedThisTurn()) return false;
         if (this._hasAttackedThisTurn()) return false;
 
