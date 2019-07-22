@@ -13,8 +13,10 @@ function PutDownCardEvent({ turn, location, cardId, cardCommonId, grantedForFree
 }
 
 PutDownCardEvent.forTest = data => {
-    data.location = '';
-    return PutDownCardEvent(data);
+    data.location = 'location' in data ? data.location : '';
+    const event = PutDownCardEvent(data);
+    event.created = 'created' in data ? data.created : event.created;
+    return event;
 };
 
 module.exports = PutDownCardEvent;

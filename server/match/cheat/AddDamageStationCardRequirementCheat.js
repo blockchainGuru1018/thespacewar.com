@@ -9,6 +9,9 @@ module.exports = function ({
 
     function forPlayerWithData(playerId, { count }) {
         const addRequirementFromSpec = playerServiceFactory.addRequirementFromSpec(playerId);
-        addRequirementFromSpec.forReasonAndSpec('cheat', { type: 'damageStationCard', count });
+        addRequirementFromSpec.forReasonAndSpec('cheat', {
+            forPlayer: [{ type: 'damageStationCard', count }],
+            forOpponent: []
+        });
     }
 };

@@ -19,6 +19,7 @@ const TargetMissed = require('../../../shared/card/TargetMissed.js');
 const MoveCardEvent = require("../../../shared/event/MoveCardEvent.js");
 const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
 const MissilesLaunched = require("../../../shared/card/MissilesLaunched.js");
+const OverCapacity = require('../../../shared/card/OverCapacity.js');
 
 module.exports = {
     'counter:': {
@@ -224,6 +225,62 @@ module.exports = {
             },
             'second player should NOT have find card requirement'() {
                 this.secondPlayerAsserter.refuteHasRequirement({ type: 'findCard' });
+            }
+        },
+        'when using Luck to counter opponent playing flipped station card that was put down too long ago': {
+            async setUp() {
+                const LONG_TIME_AGO_UNIX_TIME = 0;
+                this.match.restoreFromState(createState({
+                    currentPlayer: 'P2A',
+                    turn: 2,
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'wait',
+                            cardsOnHand: [
+                                createCard({ id: 'C2A', type: 'event', commonId: Luck.CommonId, cost: 0 })
+                            ]
+                        },
+                        'P2A': {
+                            phase: 'action',
+                            stationCards: [
+                                { id: 'S1A', card: createCard({ id: 'S1A' }), place: 'action' },
+                                {
+                                    flipped: true,
+                                    place: 'action',
+                                    card: createCard({
+                                        id: 'C1A',
+                                        cost: 2,
+                                        type: 'duration',
+                                        commonId: OverCapacity.CommonId
+                                    })
+                                }
+                            ],
+                            events: [
+                                PutDownCardEvent({ turn: 1, location: 'station-action', cardId: 'S1A' }),
+                                PutDownCardEvent.forTest({
+                                    type: 'putDownCard',
+                                    created: LONG_TIME_AGO_UNIX_TIME,
+                                    turn: 1,
+                                    location: 'station-action',
+                                    cardId: 'C1A'
+                                })
+                            ]
+                        }
+                    }
+                }));
+                this.match.putDownCard('P2A', { cardId: 'C1A', location: 'zone' });
+                this.match.toggleControlOfTurn('P1A');
+                this.match.putDownCard('P1A', { cardId: 'C2A', location: 'zone', choice: 'counter' });
+
+                this.match.counterCard('P1A', { cardId: 'C2A', targetCardId: 'C1A' });
+            },
+            'first player should have moved card used to counter into the discard pile'() {
+                this.firstPlayerAsserter.send('P1A');
+                this.firstPlayerAsserter.hasDiscardedCard('C2A');
+            },
+            'second player should have countered card in discard pile'() {
+                this.secondPlayerAsserter.send('P2A');
+                this.secondPlayerAsserter.hasDiscardedCard('C1A');
             }
         },
         'when players luck counter opponents fatal error and opponents luck then counter players luck': {

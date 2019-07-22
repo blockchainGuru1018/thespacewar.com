@@ -61,7 +61,7 @@ class QueryEvents {
     }
 
     getTimeWhenOpponentCardWasPutDown(opponentCardId) {
-        const events = this._opponentEventRepository.getAll();
+        const events = this._opponentEventRepository.getAll().slice().reverse();
         const putDownEventForThisCard = events.find(e => {
             return e.type === 'putDownCard'
                 && e.cardId === opponentCardId;
