@@ -75,14 +75,15 @@ class QueryEvents {
     wasOpponentCardAtLatestPutDownInHomeZone(opponentCardId) {
         const eventsInReverse = this._opponentEventRepository.getAll().slice().reverse();
         const event = eventsInReverse.find(e => e.type === 'putDownCard' && e.cardId === opponentCardId);
-        return event.location === 'zone';
+        return event && event.location === 'zone';
     }
 
     wasOpponentCardAtLatestPutDownAsExtraStationCard(opponentCardId) {
         const eventsInReverse = this._opponentEventRepository.getAll().slice().reverse();
         const event = eventsInReverse.find(e => e.type === 'putDownCard' && e.cardId === opponentCardId);
 
-        return event.location.startsWith('station-')
+        return event
+            && event.location.startsWith('station-')
             && event.putDownAsExtraStationCard;
     }
 

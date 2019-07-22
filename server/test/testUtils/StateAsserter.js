@@ -14,7 +14,9 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
         hasUnflippedStationCard,
         hasStationCardInRow,
         hasDiscardedCard,
+        refuteHasDiscardedCard,
         hasCardInZone,
+        refuteHasCardInZone,
         countMatchingAttacks,
         hasRequirement,
         refuteHasRequirement,
@@ -29,15 +31,27 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
     }
 
     function hasDiscardedCard(cardId) {
-        assert.calledWith(playerConnection.stateChanged, sinon.match({
-            discardedCards: sinon.match.some(sinon.match({ id: cardId }))
-        }));
+        assertArrayOnStateHasSome('discardedCards', card => card.id === cardId, state => {
+            return `Card with ID "${cardId}" is not in discardedCards "${json(state.cardsInZone)}"`;
+        });
+    }
+
+    function refuteHasDiscardedCard(cardId) {
+        refuteArrayOnStateHasSome('discardedCards', card => card.id === cardId, () => {
+            return `Card with ID "${cardId}" should NOT be in discardedCards`;
+        });
     }
 
     function hasCardInZone(cardId) {
-        assert.calledWith(playerConnection.stateChanged, sinon.match({
-            cardsInZone: sinon.match.some(sinon.match({ id: cardId }))
-        }));
+        assertArrayOnStateHasSome('cardsInZone', card => card.id === cardId, state => {
+            return `Card with ID "${cardId}" is not in cardsInZone "${json(state.cardsInZone)}"`;
+        });
+    }
+
+    function refuteHasCardInZone(cardId) {
+        refuteArrayOnStateHasSome('cardsInZone', card => card.id === cardId, () => {
+            return `Card with ID "${cardId}" should NOT be in cardsInZone`;
+        });
     }
 
     function countMatchingAttacks(count, attackEvent) {
@@ -49,24 +63,39 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
     }
 
     function hasStationCard(cardId) {
-        assert.calledWith(playerConnection.stateChanged, sinon.match({
-            stationCards: sinon.match.some(sinon.match({ id: cardId }))
-        }));
+        assertArrayOnStateHasSome('stationCards', stationCard => stationCard.id === cardId, state => {
+            return `Station card with ID "${cardId}" is not in stationCards "${json(state.stationCards)}"`;
+        });
     }
 
     function hasUnflippedStationCard(cardId) {
-        assert.calledWith(playerConnection.stateChanged, sinon.match({
-            stationCards: sinon.match.some(sinon.match({ id: cardId, flipped: sinon.match.undefined }))
-        }));
+        assertArrayOnStateHasSome(
+            'stationCards',
+            stationCard => {
+                return stationCard.id === cardId
+                    && !stationCard.flipped
+            },
+            state => {
+                return `There is NO unflipped station card in stationCards "${json(state.stationCards)}"`;
+            });
     }
 
     function hasStationCardInRow(cardId, rowName) {
-        assert.calledWith(playerConnection.stateChanged, sinon.match({
-            stationCards: sinon.match.some(sinon.match({ id: cardId, place: rowName }))
-        }));
+        assertArrayOnStateHasSome(
+            'stationCards',
+            stationCard => {
+                return stationCard.id === cardId
+                    && stationCard.place === rowName;
+            },
+            state => {
+                return `There is NO station card with ID "${cardId}" in row "${rowName}" among stationCards "${json(state.stationCards)}"`;
+            });
     }
 
     function hasRequirement(requirement) {
+        refute.calledWith(playerConnection.stateChanged, sinon.match({
+            requirements: []
+        }));
         assert.calledWith(playerConnection.stateChanged, sinon.match({
             requirements: sinon.match.some(sinon.match(requirement))
         }));
@@ -100,5 +129,23 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
         assert.calledWith(playerConnection.stateChanged, sinon.match({
             ended: false
         }));
+    }
+
+    function getLastChangedState() {
+        return playerConnection.stateChanged.lastCall.args[0];
+    }
+
+    function assertArrayOnStateHasSome(arrayProperty, someMatcher, Message) {
+        const state = getLastChangedState();
+        assert(state[arrayProperty].some(someMatcher), Message(state));
+    }
+
+    function refuteArrayOnStateHasSome(property, matcher, Message) {
+        const state = getLastChangedState(playerConnection.stateChanged);
+        refute(state[property].some(matcher), Message(state));
+    }
+
+    function json(data) {
+        return `\njson:\n${JSON.stringify(data, null, 4)}\n`;
     }
 }

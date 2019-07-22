@@ -11,7 +11,8 @@ module.exports = function ({
     playerRequirementUpdaterFactory,
     playerServiceProvider,
     matchService,
-    playerServiceFactory
+    playerServiceFactory,
+    stateMemento
 }) {
 
     return {
@@ -25,6 +26,8 @@ module.exports = function ({
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
         const requirement = playerRequirementService.getFirstMatchingRequirement({ type: 'findCard' });
 
+        progressRequirementByCount(selectedCardsCount, playerId);
+
         if (requirement.target === 'homeZone') {
             moveCardsToHomeZone(cardGroups, playerId);
         }
@@ -34,8 +37,6 @@ module.exports = function ({
         else if (requirement.target === 'opponentDiscardPile') {
             moveCardsToOpponentDiscardPile(cardGroups, playerId);
         }
-
-        progressRequirementByCount(selectedCardsCount, playerId);
     }
 
     function validateIfCanProgressRequirementByCount(count, playerId) {
@@ -63,6 +64,20 @@ module.exports = function ({
 
                 cardIds.push(cardData.id);
                 cardCommonIds.push(cardData.commonId);
+            }
+        }
+
+        //NOTE:
+        // Problematic scenario: You put down 2 cards using Missiles Launched. Opponent counters one of them.
+        //  Depending on which card is countered, both cards might be removed, and you would get 2 choose 2 cards again
+        //  which could be the same cards again! But logically in the physical game, only the card countered in that scenario
+        //  should be removed. A workaround is as follows below, register the state after both cards has been played and
+        //  requirement removed. When you counter any of these cards they will be removed from play (as opposed to before being played).
+        //  A caveat is that if any card here would add a requirement when played, that requirement would still be active
+        //  after the card has been countered. If that would be the case in the future, this solution would have to be reconsidered.
+        for (const group of cardGroups) {
+            for (const cardId of group.cardIds) {
+                stateMemento.saveStateForCardId(cardId);
             }
         }
 

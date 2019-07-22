@@ -483,7 +483,7 @@ class PlayerStateService {
     }
 
     counterCard(cardId) { //TODO This should _always_ be called after has countered card and restored state to before that card was played. What could be a more descriptive name for this method?
-        const cardData = this.removeCardFromStationOrHand(cardId);
+        const cardData = this.removeCardFromAnySource(cardId);
         this.discardCard(cardData);
         this.storeEvent({
             type: 'counterCard',
@@ -576,6 +576,21 @@ class PlayerStateService {
         this.updateStationCard(cardId, card => {
             card.flipped = false;
         });
+    }
+
+    removeCardFromAnySource(cardId) {
+        let removedCard;
+
+        removedCard = this.removeCardFromStationOrHand(cardId);
+        if (removedCard) return removedCard;
+
+        removedCard = this.removeCard(cardId);
+        if (removedCard) return removedCard;
+
+        removedCard = this.removeCardFromDiscardPile(cardId);
+        if (removedCard) return removedCard;
+
+        return this.removeCardFromDeck(cardId);
     }
 
     removeCardFromStationOrZones(cardId) {

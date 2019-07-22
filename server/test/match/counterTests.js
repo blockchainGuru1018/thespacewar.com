@@ -18,6 +18,7 @@ const FatalError = require('../../../shared/card/FatalError.js');
 const TargetMissed = require('../../../shared/card/TargetMissed.js');
 const MoveCardEvent = require("../../../shared/event/MoveCardEvent.js");
 const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
+const MissilesLaunched = require("../../../shared/card/MissilesLaunched.js");
 
 module.exports = {
     'counter:': {
@@ -111,6 +112,118 @@ module.exports = {
             'second player should have countered card in discard pile'() {
                 this.secondPlayerAsserter.send('P2A');
                 this.secondPlayerAsserter.hasDiscardedCard('C1A');
+            }
+        },
+        'when counter twice': {
+            async setUp() {
+                this.match.restoreFromState(createState({
+                    currentPlayer: 'P2A',
+                    turn: 2,
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'wait',
+                            cardsOnHand: [
+                                createCard({ id: 'C2A', type: 'event', commonId: Luck.CommonId, cost: 0 }),
+                                createCard({ id: 'C4A', type: 'event', commonId: Luck.CommonId, cost: 0 })
+                            ]
+                        },
+                        'P2A': {
+                            phase: 'action',
+                            cardsOnHand: [
+                                createCard({ id: 'C1A', cost: 1 }),
+                                createCard({ id: 'C3A', cost: 1 })
+                            ],
+                            stationCards: [
+                                { id: 'S1A', card: createCard({ id: 'S1A' }), place: 'action' },
+                            ],
+                            events: [
+                                { type: 'putDownCard', turn: 1, location: 'station-action', cardId: 'S1A' }
+                            ]
+                        }
+                    }
+                }));
+                this.match.putDownCard('P2A', { cardId: 'C1A', location: 'zone' });
+                this.match.toggleControlOfTurn('P1A');
+                this.match.putDownCard('P1A', { cardId: 'C2A', location: 'zone', choice: 'counter' });
+                this.match.counterCard('P1A', { cardId: 'C2A', targetCardId: 'C1A' });
+
+                this.match.putDownCard('P2A', { cardId: 'C3A', location: 'zone' });
+                this.match.toggleControlOfTurn('P1A');
+                this.match.putDownCard('P1A', { cardId: 'C4A', location: 'zone', choice: 'counter' });
+
+                this.match.counterCard('P1A', { cardId: 'C4A', targetCardId: 'C3A' });
+            },
+            'first player should have moved cards used to counter into the discard pile'() {
+                this.firstPlayerAsserter.send('P1A');
+                this.firstPlayerAsserter.hasDiscardedCard('C2A');
+                this.firstPlayerAsserter.hasDiscardedCard('C4A');
+            },
+            'second player should have countered cards in discard pile'() {
+                this.secondPlayerAsserter.send('P2A');
+                this.secondPlayerAsserter.hasDiscardedCard('C1A');
+                this.secondPlayerAsserter.hasDiscardedCard('C3A');
+            }
+        },
+        'when counter missile played from Missiles Launched': {
+            async setUp() {
+                this.match.restoreFromState(createState({
+                    currentPlayer: 'P2A',
+                    turn: 2,
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'wait',
+                            cardsOnHand: [
+                                createCard({ id: 'C2A', type: 'event', commonId: Luck.CommonId, cost: 0 })
+                            ]
+                        },
+                        'P2A': {
+                            phase: 'action',
+                            cardsOnHand: [
+                                createCard({ id: 'C1A', type: 'event', commonId: MissilesLaunched.CommonId, cost: 0 }),
+                            ],
+                            discardedCards: [
+                                { id: 'C3A', type: 'missile' },
+                                { id: 'C4A', type: 'missile' }
+                            ],
+                            stationCards: [
+                                { id: 'S1A', card: createCard({ id: 'S1A' }), place: 'action' },
+                            ],
+                            events: [
+                                { type: 'putDownCard', turn: 1, location: 'station-action', cardId: 'S1A' }
+                            ]
+                        }
+                    }
+                }));
+                this.match.putDownCard('P2A', { cardId: 'C1A', location: 'zone' });
+                this.match.selectCardForFindCardRequirement('P2A', {
+                    cardGroups: [{
+                        source: 'discardPile',
+                        cardIds: ['C3A', 'C4A']
+                    }]
+                });
+
+                this.match.toggleControlOfTurn('P1A');
+                this.match.putDownCard('P1A', { cardId: 'C2A', location: 'zone', choice: 'counter' });
+                this.match.counterCard('P1A', { cardId: 'C2A', targetCardId: 'C3A' });
+            },
+            'first player should have moved cards used to counter into the discard pile'() {
+                this.firstPlayerAsserter.send('P1A');
+                this.firstPlayerAsserter.hasDiscardedCard('C2A');
+            },
+            'second player should have countered card and missiles launched in discard pile'() {
+                this.secondPlayerAsserter.send('P2A');
+                this.secondPlayerAsserter.hasDiscardedCard('C1A');
+
+                this.secondPlayerAsserter.hasDiscardedCard('C3A');
+                this.secondPlayerAsserter.refuteHasCardInZone('C3A');
+            },
+            'second player should still have card that was NOT countered in play'() {
+                this.secondPlayerAsserter.send('P2A');
+                this.secondPlayerAsserter.refuteHasDiscardedCard('C4A');
+                this.secondPlayerAsserter.hasCardInZone('C4A');
+            },
+            'second player should NOT have find card requirement'() {
+                this.secondPlayerAsserter.refuteHasRequirement({ type: 'findCard' });
             }
         },
         'when players luck counter opponents fatal error and opponents luck then counter players luck': {

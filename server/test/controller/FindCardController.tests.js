@@ -183,6 +183,9 @@ function Controller(deps = {}) {
                 if (playerId === 'P1A') return 'P2A';
                 return 'P1A';
             }
+        },
+        stateMemento: {
+            saveStateForCardId() {}
         }
     });
 

@@ -16,9 +16,10 @@ module.exports = function ({
 
     function clearOldPutDownCardState() {
         const now = Date.now();
-        stateCardIdTimeTuples = stateCardIdTimeTuples.filter(([state, cardId, time]) => {
-            return now - time <= gameConfig.timeToCounter();
-        });
+        stateCardIdTimeTuples = stateCardIdTimeTuples
+            .filter(([state, cardId, time]) => {
+                return now - time <= gameConfig.timeToCounter();
+            });
     }
 
     function clearOldAttackState() {
