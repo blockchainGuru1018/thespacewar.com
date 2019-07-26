@@ -52,6 +52,7 @@ module.exports = function ({
         readyPlayerIds: [],
         ended: false,
         retreatedPlayerId: null,
+        lastStandInfo: null,
         playerStateById: {}
     };
 
@@ -82,6 +83,7 @@ module.exports = function ({
         matchService,
         playerServiceProvider,
         playerServiceFactory,
+        gameServiceFactory,
         stateChangeListener
     });
 
@@ -166,6 +168,7 @@ module.exports = function ({
         overwork: overworkController.overwork,
         perfectPlan: perfectPlanController.perfectPlan,
         triggerDormantEffect: PlayerCommand(TriggerDormantEffect, controllerDeps),
+        endLastStand,
         repairCard,
         retreat,
         restoreSavedMatch: debugController.onRestoreSavedMatch,
@@ -203,6 +206,13 @@ module.exports = function ({
 
         const repair = playerServiceFactory.repair(playerId);
         repair.cardOrStationCard(repairerCardId, cardToRepairId);
+    }
+
+    function endLastStand() {
+        const lastStand = gameServiceFactory.lastStand();
+        if (lastStand.hasEnded()) {
+            matchComService.emitCurrentStateToPlayers();
+        }
     }
 
     function retreat(playerId) {

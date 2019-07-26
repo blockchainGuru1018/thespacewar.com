@@ -12,6 +12,10 @@ const {
     catchError,
     createState,
 } = require('./shared.js');
+const TargetMissed = require('../../../shared/card/TargetMissed.js');
+const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
+const MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
+const StateAsserter = require('../testUtils/StateAsserter.js');
 
 module.exports = {
     'when player has taken control of the turn and put down a card costing 0': {
@@ -102,5 +106,57 @@ module.exports = {
                 stationCards: [sinon.match({ id: 'C2A' })]
             }));
         }
+    },
+    '--- using state asserter ---': {
+        setUp() {
+            const firstPlayerConnection = FakeConnection2(['stateChanged']);
+            const secondPlayerConnection = FakeConnection2(['stateChanged']);
+            const players = [Player('P1A', firstPlayerConnection), Player('P2A', secondPlayerConnection)];
+            this.match = createMatch({ players });
+            this.firstPlayerAsserter = StateAsserter(this.match, firstPlayerConnection, 'P1A');
+            this.secondPlayerAsserter = StateAsserter(this.match, secondPlayerConnection, 'P2A');
+        },
+        'when flipping the opponent last station card and opponent has target missed on hand': {
+            async setUp() {
+                this.match.restoreFromState(createState({
+                    turn: 3,
+                    currentPlayer: 'P1A',
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'attack',
+                            cardsInOpponentZone: [
+                                createCard({ id: 'C1A', type: 'spaceShip', attack: 1 })
+                            ],
+                            events: [
+                                PutDownCardEvent({ cardId: 'C1A', turn: 1, location: 'zone' }),
+                                MoveCardEvent({ cardId: 'C1A', turn: 2 })
+                            ],
+                            stationCards: [stationCard()]
+                        },
+                        'P2A': {
+                            stationCards: [stationCard('S1A', 'action')],
+                            cardsOnHand: [createCard({ id: 'C2A', commonId: TargetMissed.CommonId, type: 'event' })]
+                        }
+                    }
+                }));
+
+                this.match.attackStationCard('P1A', { attackerCardId: 'C1A', targetStationCardIds: ['S1A'] });
+            },
+            'should trigger last stand'() {
+                this.firstPlayerAsserter.hasStartedLastStandForPlayer('P2A');
+                this.secondPlayerAsserter.hasStartedLastStandForPlayer('P2A');
+            },
+            'should give control of turn to opponent'() {
+                this.firstPlayerAsserter.playerHasControlOfTurn('P2A');
+                this.secondPlayerAsserter.playerHasControlOfTurn('P2A');
+            }
+        }
     }
 };
+
+function stationCard(id = 'some_id', place = 'draw') {
+    return {
+        place,
+        card: createCard({ id })
+    }
+}

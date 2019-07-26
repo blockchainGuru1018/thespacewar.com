@@ -25,6 +25,7 @@ const PlayerCommanders = require('../../shared/match/commander/PlayerCommanders.
 const Commander = require("../../shared/match/commander/Commander.js");
 const Clock = require('../../shared/gameTimer/Clock.js');
 const PlayerCardInPlay = require('./card/PlayerCardInPlay.js');
+const LastStand = require('../../shared/match/LastStand.js');
 
 const {
     COMMON_PHASE_ORDER,
@@ -54,6 +55,7 @@ module.exports = function (deps) {
     const ai = deps.ai;
 
     let gameHasBegun = false;
+    let endLastStandIntervalId = null;
 
     return {
         namespaced: true,
@@ -61,6 +63,7 @@ module.exports = function (deps) {
         state: {
             mode: MatchMode.firstMode,
             readyPlayerIds: [],
+            lastStandInfo: null,
             gameConfigEntity: null,
             commanders: [Commander.StartingCommander],
             actionLogEntries: [],
@@ -145,6 +148,7 @@ module.exports = function (deps) {
             opponentCommanders,
             moveStationCard,
             canPutDownCard,
+            lastStand,
             playerPerfectPlan,
             playerRuleService,
             opponentRuleService,
@@ -200,6 +204,7 @@ module.exports = function (deps) {
             selectStationCardAsDefender,
             discardDurationCard,
             endGame,
+            endLastStand,
 
             // local TODO many of these have since the start become only remote calls (barely changing any local state)
             stateChanged,
@@ -424,6 +429,12 @@ module.exports = function (deps) {
         };
     }
 
+    function lastStand(state, getters) {
+        return LastStand({
+            matchService: getters.matchService
+        });
+    }
+
     function playerPerfectPlan(state, getters) {
         return PlayerPerfectPlan({
             playerPhase: getters.playerPhase,
@@ -480,7 +491,8 @@ module.exports = function (deps) {
             turnControl: getters.turnControl,
             gameConfig: getters.gameConfig,
             playerPhase: getters.playerPhase,
-            playerCommanders: getters.playerCommanders
+            playerCommanders: getters.playerCommanders,
+            lastStand: getters.lastStand
         });
     }
 
@@ -816,6 +828,13 @@ module.exports = function (deps) {
                 else if (key === 'currentPlayer' && datum !== state.ownUser.id) {
                     dispatch('card/cancelCurrentUserInteraction', null, { root: true });
                 }
+                else if (key === 'lastStandInfo') {
+                    if (datum) {
+                        endLastStandIntervalId = setInterval(() => {
+                            dispatch('endLastStand');
+                        }, 5000);
+                    }
+                }
             }
 
             if (key === 'stationCards') {
@@ -1050,6 +1069,7 @@ module.exports = function (deps) {
     }
 
     function endGame() {
+        clearInterval(endLastStandIntervalId);
         deleteMatchLocalDataAndReturnToStart();
     }
 
@@ -1168,6 +1188,10 @@ module.exports = function (deps) {
 
     function matchIsDead() {
         endGame();
+    }
+
+    function endLastStand() {
+        matchController.emit('endLastStand');
     }
 };
 

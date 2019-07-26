@@ -148,6 +148,15 @@
                         {{ playerActionPointsText }}
                     </div>
                 </template>
+                <div v-else-if="lastStandText">
+
+                    <div class="guideText">
+                        Last stand
+                    </div>
+                    <div class="guideText-subText">
+                        {{ lastStandText }}
+                    </div>
+                </div>
                 <div
                     v-else-if="turnControl.canToggleControlOfTurn()"
                     class="guideText-wrapper"
@@ -291,12 +300,15 @@
     const requirementHelpers = Vuex.createNamespacedHelpers('requirement');
     const startGameHelpers = Vuex.createNamespacedHelpers('startGame');
     const MatchMode = require('../../shared/match/MatchMode.js');
+    const LastStand = require('../../shared/match/LastStand.js');
     const { PHASES } = require('./phases.js');
 
     module.exports = {
         data() {
             return {
-                enlargedCardVisible: false
+                enlargedCardVisible: false,
+                lastStandRemainingSeconds: Math.round(LastStand.LastStandLength / 1000),
+                lastStandUpdateIntervalId: null,
             };
         },
         computed: {
@@ -312,7 +324,8 @@
                 'selectedDefendingStationCards',
                 'requirements',
                 'playerCardsOnHand',
-                'readyPlayerIds'
+                'readyPlayerIds',
+                'lastStandInfo'
             ]),
             ...mapGetters([
                 'nextPhaseWithAction',
@@ -334,7 +347,8 @@
                 'isOwnTurn',
                 'gameOn',
                 'playerPerfectPlan',
-                'playerRuleService'
+                'playerRuleService',
+                'lastStand'
             ]),
             ...requirementHelpers.mapGetters([
                 'waitingForOtherPlayerToFinishRequirements',
@@ -405,14 +419,10 @@
                 return this.hasWonGame || this.hasLostGame;
             },
             hasWonGame() {
-                if (this.opponentRetreated) return true;
-
-                return this.gameOn && this.allOpponentStationCards.filter(s => !s.flipped).length === 0;
+                return this.opponentRetreated;
             },
             hasLostGame() {
-                if (this.playerRetreated) return true;
-
-                return this.gameOn && this.allPlayerStationCards.filter(s => !s.flipped).length === 0;
+                return this.playerRetreated;
             },
             PHASES() {
                 return PHASES;
@@ -424,6 +434,15 @@
 
                 const nameOfCurrentPhase = this.phase.substr(0, 1).toUpperCase() + this.phase.substr(1);
                 return `${nameOfCurrentPhase} phase`;
+            },
+            lastStandText() {
+                if (this.playerHasControlOfOpponentsTurn && !!this.lastStand.hasStarted()) {
+                    if (this.lastStand.hasEnded()) {
+                        return 'You were too late';
+                    }
+                    return `${this.lastStandRemainingSeconds}s left to counter defeat`;
+                }
+                return '';
             },
             endTurnButtonVisible() {
                 return !this.nextPhaseWithAction || this.nextPhaseWithAction === PHASES.wait;
@@ -524,6 +543,19 @@
                 return `Draw ${count} ${pluralize('card', count)}`;
             }
         },
+        watch: {
+            lastStandInfo: {
+                handler() {
+                    if (this.lastStandInfo === null) return;
+
+                    this.lastStandUpdateIntervalId = setInterval(() => {
+                        this.lastStandRemainingSeconds = this.lastStand.remainingSeconds();
+                        if (this.lastStandRemainingSeconds === 0) clearInterval(this.lastStandUpdateIntervalId);
+                    }, 200);
+                },
+                immediate: true
+            }
+        },
         methods: {
             ...mapActions([
                 'goToNextPhase',
@@ -547,6 +579,9 @@
             hideEnlargedCard() {
                 this.enlargedCardVisible = false;
             }
+        },
+        destroyed() {
+            if (this.lastStandRemainingSeconds === 0) clearInterval(this.lastStandUpdateIntervalId);
         },
         components: {
             FindCard,

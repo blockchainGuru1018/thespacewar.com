@@ -23,7 +23,9 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
         playerIsDefeated,
         noPlayerIsDefeated,
         gameHasEnded,
-        gameHasNotEnded
+        gameHasNotEnded,
+        hasStartedLastStandForPlayer,
+        playerHasControlOfTurn,
     };
 
     function send() {
@@ -128,6 +130,18 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
     function gameHasNotEnded() {
         assert.calledWith(playerConnection.stateChanged, sinon.match({
             ended: false
+        }));
+    }
+
+    function hasStartedLastStandForPlayer(playerId) {
+        assert.calledWith(playerConnection.stateChanged, sinon.match({
+            lastStandInfo: sinon.match({ playerId })
+        }));
+    }
+
+    function playerHasControlOfTurn(playerId) {
+        assert.calledWith(playerConnection.stateChanged, sinon.match({
+            currentPlayer: playerId
         }));
     }
 

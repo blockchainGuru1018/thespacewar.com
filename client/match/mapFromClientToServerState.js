@@ -6,6 +6,7 @@ module.exports = function (clientState) {
         currentPlayer: clientState.currentPlayer,
         ended: clientState.ended,
         retreatedPlayerId: clientState.retreatedPlayerId,
+        lastStandInfo: clientState.lastStandInfo,
         playerStateById: {
             [clientState.ownUser.id]: {
                 clock: clientState.clock,

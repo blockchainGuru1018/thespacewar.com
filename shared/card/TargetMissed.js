@@ -10,4 +10,8 @@ module.exports = class TargetMissed extends BaseCard {
     static get Info() {
         return info;
     }
+
+    get canCounterAttacks() {
+        return true;
+    }
 };

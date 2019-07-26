@@ -4,6 +4,7 @@ const CardDataAssembler = require('../CardDataAssembler.js');
 const CardInfoRepository = require('../CardInfoRepository.js');
 const StateSerializer = require('../../server/match/StateSerializer.js');
 const DeckFactory = require('../../server/deck/DeckFactory.js');
+const LastStand = require('./LastStand.js');
 
 module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig }) {
 
@@ -11,6 +12,7 @@ module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig 
 
     const api = {
         _cache: objectsByNameAndPlayerId,
+        lastStand: cached(lastStand),
         matchService: cached(matchService),
         stateMemento: cached(stateMemento),
         cardDataAssembler: cached(cardDataAssembler),
@@ -20,6 +22,12 @@ module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig 
     };
 
     return api;
+
+    function lastStand() {
+        return LastStand({
+            matchService: api.matchService()
+        });
+    }
 
     function cardDataAssembler() {
         return CardDataAssembler({ rawCardDataRepository });

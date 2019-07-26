@@ -482,6 +482,10 @@ module.exports = {
                         'P1A': {
                             phase: 'action',
                             cardsOnHand: [createCard({ id: 'C3A', type: 'event', commonId: SupernovaCommonId })],
+                            stationCards: []
+                        },
+                        'P2A': {
+                            stationCards: []
                         }
                     }
                 }));
@@ -761,7 +765,8 @@ module.exports = {
                             cardsOnHand: [
                                 createCard({ id: 'C1A', commonId: ExcellentWorkCommonId }),
                                 createCard({ id: 'C2A' }),
-                            ]
+                            ],
+                            stationCards: [{ card: createCard({ id: 'S1A' }), place: 'action' }]
                         },
                     }
                 }));
@@ -778,6 +783,7 @@ module.exports = {
                 this.match.refresh('P1A');
                 assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                     stationCards: [
+                        sinon.match({ id: 'S1A' }),
                         sinon.match({ id: 'C1A', place: 'draw' })
                     ]
                 }));

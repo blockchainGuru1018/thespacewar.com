@@ -29,6 +29,7 @@ const GameTimer = require('../gameTimer/GameTimer.js');
 const PlayerPhaseControl = require('./PlayerPhaseControl.js');
 const PlayerNextPhase = require('./PlayerNextPhase.js');
 const PlayerStationAttacker = require('../PlayerStationAttacker.js');
+const PlayerLastStand = require('./PlayerLastStand.js');
 
 const ServiceTypes = PlayerServiceProvider.TYPE;
 
@@ -70,6 +71,7 @@ module.exports = function ({
         playerRequirementService: cached(playerRequirementService),
         playerRuleService: cached(playerRuleService),
         playerPhase: cached(playerPhase),
+        playerLastStand: cached(playerLastStand),
         turnControl: cached(turnControl),
         playerRequirementFactory: cached(playerRequirementFactory),
         canThePlayer: cached(canThePlayer),
@@ -296,7 +298,17 @@ module.exports = function ({
             playerStateService: api.playerStateService(playerId),
             turnControl: api.turnControl(playerId),
             playerPhase: api.playerPhase(playerId),
+            lastStand: gameServiceFactory.lastStand(),
             gameConfig
+        });
+    }
+
+    function playerLastStand(playerId) {
+        return PlayerLastStand({
+            playerId,
+            matchService: api.matchService(),
+            playerTurnControl: api.turnControl(playerId),
+            opponentTurnControl: api.turnControl(api.opponentId(playerId))
         });
     }
 

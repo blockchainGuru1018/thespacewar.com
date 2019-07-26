@@ -446,7 +446,6 @@ module.exports = {
                     }
                 }));
                 this.match.attackStationCard('P2A', { attackerCardId: 'C3A', targetStationCardIds: ['S1A', 'S2A'] });
-                this.match.toggleControlOfTurn('P1A');
                 this.match.putDownCard('P1A', { cardId: 'C2A', location: 'zone' });
 
                 this.match.counterAttack('P1A', { attackIndex: 0 });
@@ -473,6 +472,7 @@ module.exports = {
             async setUp() {
                 this.match.restoreFromState(createState({
                     currentPlayer: 'P1A',
+                    turn: 1,
                     playerStateById: {
                         'P1A': {
                             phase: 'attack',

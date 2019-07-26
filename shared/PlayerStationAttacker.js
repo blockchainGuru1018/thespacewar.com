@@ -18,7 +18,6 @@ module.exports = function ({
     function validateAttackOnStationCards(playerId, { attackerCardId, targetStationCardIds }) {
         let cannotAttackStationCards = canThePlayer.attackStationCards();
         if (!cannotAttackStationCards) throw new CheatError('Cannot attack station cards');
-
         const attackerCardData = playerStateService.findCard(attackerCardId);
         const opponentStationCards = opponentStateService.getStationCards();
         const unflippedOpponentStationCardsCount = opponentStateService.getUnflippedStationCardsCount();

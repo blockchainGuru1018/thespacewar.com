@@ -10,7 +10,7 @@ function empty() {
         cardsOnHand: [],
         cardsInZone: [],
         cardsInOpponentZone: [],
-        stationCards: [],
+        stationCards: [{ card: { id: 'default_station_card' }, place: 'draw' }], //Almost none of the tests test end game conditions, so at least one station card is added as default to make it declutter the tests
         discardedCards: [],
         events: [],
         requirements: [],

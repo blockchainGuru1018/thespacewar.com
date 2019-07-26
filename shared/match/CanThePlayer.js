@@ -16,7 +16,8 @@ class CanThePlayer {
         opponentStateService,
         turnControl,
         gameConfig,
-        playerPhase
+        playerPhase,
+        lastStand
     } = {}) {
         this._matchService = matchService;
         this._queryEvents = queryEvents;
@@ -25,6 +26,7 @@ class CanThePlayer {
         this._turnControl = turnControl;
         this._gameConfig = gameConfig;
         this._playerPhase = playerPhase;
+        this._lastStand = lastStand;
     }
 
     triggerCardsDormantEffect(card) {
@@ -125,17 +127,21 @@ class CanThePlayer {
         const playerHasControlOfOwnTurn = this._turnControl.playerHasControlOfOwnTurn();
         if (playerHasControlOfOwnTurn) {
             const cardWasPutDownTooLongAgo = !this._queryEvents.putDownCardWithinTimeFrame(cardId, this._gameConfig.timeToCounter());
-            if (cardWasPutDownTooLongAgo) return false;
+            if (cardWasPutDownTooLongAgo) return this._isLastStand();
         }
         else {
             const tookControlOfTurnToLate = !this._queryEvents.lastTookControlWithinTimeFrameSincePutDownCard(cardId, this._gameConfig.timeToCounter());
             if (tookControlOfTurnToLate) {
-                return false;
+                return this._isLastStand();
             }
         }
 
         return this._queryEvents.wasOpponentCardAtLatestPutDownInHomeZone(cardId)
             || this._queryEvents.wasOpponentCardAtLatestPutDownAsExtraStationCard(cardId);
+    }
+
+    _isLastStand() {
+        return this._lastStand.hasStarted();
     }
 
     _findCardFromOpponentOrPlayer(cardId) {

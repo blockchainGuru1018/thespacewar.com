@@ -7,4 +7,8 @@ module.exports = (canCounterCardsWithCostOrLess, superclass) => class extends su
     canCounterCard(cardToCounter) {
         return cardToCounter.cost <= canCounterCardsWithCostOrLess;
     }
+
+    get canCounterCardsBeingPlayed() {
+        return true;
+    }
 };

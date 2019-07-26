@@ -173,6 +173,21 @@ class PlayerStateService {
         return [...matchingCardsInZone, ...matchingCardsInOpponentZone, ...matchingDiscardedCards, ...matchingStationCards];
     }
 
+    getMatchingPlayableBehaviourCards(matcher) {
+        const matchingCardsInZone = this.getCardsOnHand()
+            .map(c => this.createBehaviourCard(c))
+            .map(c => {
+                return c;
+            })
+            .filter(c => this.getActionPointsForPlayer() >= c.cost)
+            .filter(matcher);
+        const matchingCardsInOpponentZone = this.getFlippedStationCards()
+            .map(c => this.createBehaviourCard(c))
+            .filter(c => this.getActionPointsForPlayer() >= c.cost)
+            .filter(matcher);
+        return [...matchingCardsInZone, ...matchingCardsInOpponentZone];
+    }
+
     hasDurationCardOfType(cardCommonId) {
         return this.getDurationCards().some(c => c.commonId === cardCommonId);
     }
@@ -241,9 +256,13 @@ class PlayerStateService {
         return this.isFirstPlayer() ? stationCardsAtStart : stationCardsAtStart + 1;
     }
 
-    hasFlippedStationCards() {
+    getFlippedStationCards() {
         const playerState = this.getPlayerState();
-        return playerState.stationCards.filter(s => s.flipped).length > 0;
+        return playerState.stationCards.filter(s => s.flipped);
+    }
+
+    hasFlippedStationCards() {
+        return this.getFlippedStationCards().length > 0;
     }
 
     getEvents() {
