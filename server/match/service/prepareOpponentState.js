@@ -57,6 +57,7 @@ const whitelist = [
     'discardedCards',
     'cardsInZone',
     'cardsInOpponentZone',
+    'cardsInDeck',
     'stationCards',
     'cardsOnHand',
     'events',
