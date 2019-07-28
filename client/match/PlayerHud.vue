@@ -39,6 +39,8 @@
             </div>
 
             <div class="guideTextContainer" v-if="guideTextContainerVisible">
+
+                <!-- WAITING FOR OPPONENT REQUIREMENT texts -->
                 <div
                     v-if="waitingForOtherPlayerToFinishRequirements"
                     class="guideText-waitingForOtherPlayer guideText guideText--small"
@@ -50,6 +52,8 @@
                         Waiting for other player
                     </template>
                 </div>
+
+                <!-- ACTION and REQUIREMENT texts -->
                 <div
                     v-else-if="actionGuideText"
                     class="guideText guideText--small"
@@ -76,6 +80,8 @@
                     {{ requirementGuideText }}
                     <SkipDrawCard v-if="firstRequirementIsDrawCard" />
                 </div>
+
+                <!-- STARTING GAME texts -->
                 <template v-else-if="selectingStartingStationCards">
                     <div
                         v-if="startingStationCardsToPutDownCount > 0"
@@ -105,6 +111,8 @@
                     <span style="letter-spacing:.1em;">ir</span>
                     st
                 </div>
+
+                <!-- SELECT STATION CARDS FOR ATTACK texts -->
                 <div
                     v-else-if="numberOfStationCardsToSelect > 0"
                     class="guideText"
@@ -112,6 +120,26 @@
                     Select {{ numberOfStationCardsToSelect }}
                     more station {{ numberOfStationCardsToSelect === 1 ? 'card' : 'cards' }}
                 </div>
+
+                <!-- LAST STAND texts -->
+                <div v-else-if="opponentLastStandText">
+                    <div class="guideText">
+                        Your opponent is making a last stand
+                    </div>
+                    <div class="guideText-subText">
+                        {{ opponentLastStandText }}
+                    </div>
+                </div>
+                <div v-else-if="lastStandText">
+                    <div class="guideText">
+                        Last stand
+                    </div>
+                    <div class="guideText-subText">
+                        {{ lastStandText }}
+                    </div>
+                </div>
+
+                <!-- TURN CONTROL texts -->
                 <div
                     v-else-if="opponentHasControlOfPlayersTurn"
                     class="guideText-wrapper"
@@ -123,18 +151,20 @@
                         wait to have it back
                     </div>
                 </div>
-                <div
-                    v-else-if="phase === PHASES.preparation"
-                    class="guideText-discardDurationCards guideText guideText--small"
-                >
-                    Discard any duration card you don't want to pay for
-                </div>
+
+                <!-- PHASE texts -->
                 <div
                     v-else-if="phase === PHASES.draw"
                     class="guideText-drawCard guideText guideText--small"
                 >
                     {{ drawCardOrMillText }}
                     <SkipDrawCard />
+                </div>
+                <div
+                    v-else-if="phase === PHASES.preparation"
+                    class="guideText-discardDurationCards guideText guideText--small"
+                >
+                    Discard any duration card you don't want to pay for
                 </div>
                 <div
                     v-else-if="inDiscardPhaseAndMustDiscardCard"
@@ -148,15 +178,8 @@
                         {{ playerActionPointsText }}
                     </div>
                 </template>
-                <div v-else-if="lastStandText">
 
-                    <div class="guideText">
-                        Last stand
-                    </div>
-                    <div class="guideText-subText">
-                        {{ lastStandText }}
-                    </div>
-                </div>
+                <!-- WAIT PHASE and TURN CONTROL texts -->
                 <div
                     v-else-if="turnControl.canToggleControlOfTurn()"
                     class="guideText-wrapper"
@@ -441,6 +464,15 @@
                         return 'You were too late';
                     }
                     return `${this.lastStandRemainingSeconds}s left to counter defeat`;
+                }
+                return '';
+            },
+            opponentLastStandText() {
+                if (this.lastStand.hasStarted() && this.lastStandInfo.playerId !== this.ownUser.id) {
+                    if (this.lastStand.hasEnded()) {
+                        return 'You have won';
+                    }
+                    return `Your opponent has ${this.lastStandRemainingSeconds}s left to counter defeat`;
                 }
                 return '';
             },

@@ -508,6 +508,7 @@ module.exports = function (deps) {
     function turnControl(state, getters) {
         return new TurnControl({
             matchService: getters.matchService,
+            lastStand: getters.lastStand,
             playerStateService: getters.playerStateService,
             playerPhase: getters.playerPhase,
             opponentStateService: getters.opponentStateService,

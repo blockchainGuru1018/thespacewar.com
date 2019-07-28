@@ -1,4 +1,5 @@
 const MatchMode = require('./MatchMode.js');
+const EndMatchDelay = 5 * 60 * 1000;
 
 class MatchService {
 
@@ -59,7 +60,9 @@ class MatchService {
             state.ended = true;
             state.retreatedPlayerId = playerId;
         });
-        this.endMatch();
+
+        const endMatch = this.endMatch();
+        setTimeout(() => endMatch(), EndMatchDelay);
     }
 
     somePlayerHasAlreadyRetreated() {

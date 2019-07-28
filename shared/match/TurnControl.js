@@ -10,9 +10,11 @@ module.exports = class TurnControl {
         opponentStateService,
         opponentPhase,
         opponentActionLog,
-        opponentGameTimer
+        opponentGameTimer,
+        lastStand
     }) {
         this._matchService = matchService;
+        this._lastStand = lastStand;
 
         this._playerStateService = playerStateService;
         this._playerPhase = playerPhase;
@@ -71,7 +73,8 @@ module.exports = class TurnControl {
     }
 
     canReleaseControlOfTurn() {
-        return this.playerHasControlOfOpponentsTurn();
+        return this.playerHasControlOfOpponentsTurn()
+            && !this._lastStand.hasStarted();
     }
 
     playerHasControl() {

@@ -315,6 +315,7 @@ module.exports = function ({
     function turnControl(playerId) {
         return new TurnControl({
             matchService: api.matchService(),
+            lastStand: gameServiceFactory.lastStand(),
             playerStateService: api.playerStateService(playerId),
             opponentStateService: api.playerStateService(api.opponentId(playerId)),
             playerPhase: api.playerPhase(playerId),

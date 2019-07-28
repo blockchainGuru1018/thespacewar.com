@@ -1,4 +1,5 @@
 const Neutralization = require('../card/Neutralization.js');
+const LastStand = require("./LastStand.js");
 
 //TODO Idea for interface. Each method takes cardData, but if necessary or ideal they have a
 // sibling method with the same name and a suffix "byId" that get the cardData and runs the other method.
@@ -125,14 +126,15 @@ class CanThePlayer {
         if (!isOpponentCard) return false;
 
         const playerHasControlOfOwnTurn = this._turnControl.playerHasControlOfOwnTurn();
+        const timeToCounter = this._isLastStand ? LastStand.LastStandLength : this._gameConfig.timeToCounter();
         if (playerHasControlOfOwnTurn) {
-            const cardWasPutDownTooLongAgo = !this._queryEvents.putDownCardWithinTimeFrame(cardId, this._gameConfig.timeToCounter());
-            if (cardWasPutDownTooLongAgo) return this._isLastStand();
+            const cardWasPutDownTooLongAgo = !this._queryEvents.putDownCardWithinTimeFrame(cardId, timeToCounter);
+            if (cardWasPutDownTooLongAgo) return false;
         }
         else {
-            const tookControlOfTurnToLate = !this._queryEvents.lastTookControlWithinTimeFrameSincePutDownCard(cardId, this._gameConfig.timeToCounter());
+            const tookControlOfTurnToLate = !this._queryEvents.lastTookControlWithinTimeFrameSincePutDownCard(cardId, timeToCounter);
             if (tookControlOfTurnToLate) {
-                return this._isLastStand();
+                return false;
             }
         }
 
@@ -151,7 +153,3 @@ class CanThePlayer {
 }
 
 module.exports = CanThePlayer;
-
-function sum(arr, accessorKey) {
-    return arr.reduce((acc, v) => acc + (v[accessorKey] || 0), 0);
-}
