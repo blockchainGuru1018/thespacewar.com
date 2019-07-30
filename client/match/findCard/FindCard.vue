@@ -10,6 +10,11 @@
                     {{ findCardHeaderText }}
                 </div>
             </div>
+            <div class="findCard-subHeader">
+                <div class="findCard-subHeaderText">
+                    {{ subHeaderText }}
+                </div>
+            </div>
             <div
                 v-if="requirement"
                 class="findCard-groups"
@@ -52,6 +57,7 @@
     const Vuex = require('vuex');
     const getCardImageUrl = require('../../utils/getCardImageUrl');
     const findCardHelpers = Vuex.createNamespacedHelpers('findCard');
+    const matchHelpers = Vuex.createNamespacedHelpers('match');
     const Sabotage = require('../../../shared/card/Sabotage.js');
     const MissilesLaunched = require('../../../shared/card/MissilesLaunched.js');
 
@@ -76,6 +82,9 @@
                 'requirement',
                 'filteredRequirement'
             ]),
+            ...matchHelpers.mapGetters([
+                'actionPoints2'
+            ]),
             cardsToSelect() {
                 return this.requirement.count - this.selectedCardInfos.length;
             },
@@ -94,6 +103,10 @@
                 }
 
                 return `Pick ${this.cardsToSelect} ${pluralize('card', this.cardsToSelect)}${endText}`;
+            },
+            subHeaderText() {
+                const actionPoints = this.actionPoints2;
+                return `${actionPoints} action ${pluralize('point', actionPoints)} remaining`;
             }
         },
         methods: {

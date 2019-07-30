@@ -14,7 +14,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px 0 40px;
+  padding: 20px 0 0 0;
 }
 
 .findCard-headerText {
@@ -23,6 +23,22 @@
   width: 580px;
   text-align: center;
   color: white;
+  letter-spacing: .02em;
+}
+
+.findCard-subHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 0 40px;
+}
+
+.findCard-subHeaderText {
+  font-family: "Space Mono", monospace;
+  font-size: 26px;
+  width: 90%;
+  text-align: center;
+  color: rgb(120, 120, 120);
   letter-spacing: .02em;
 }
 
