@@ -11,7 +11,7 @@
                 </div>
             </div>
             <div class="findCard-subHeader">
-                <div class="findCard-subHeaderText">
+                <div class="findCard-subHeaderText" v-if="requirement.target === 'hand'">
                     {{ subHeaderText }}
                 </div>
             </div>
