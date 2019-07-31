@@ -297,10 +297,10 @@
                             />
                             <div class="stationCardWrapper stationCardWrapper--fullSize">
                                 <CardGhost
-                                    :element-hovered-over="elementHoveredOver"
-                                    @click="cardGhostClick"
                                     location="station-draw"
-                                    v-if="stationCardGhostVisible"
+                                    :element-hovered-over="elementHoveredOver"
+                                    v-if="drawStationCardGhostVisible"
+                                    @click="cardGhostClick"
                                 />
                                 <div
                                     class="card card-placeholder"
@@ -318,10 +318,10 @@
                             />
                             <div class="stationCardWrapper stationCardWrapper--fullSize">
                                 <CardGhost
-                                    :element-hovered-over="elementHoveredOver"
-                                    @click="cardGhostClick"
                                     location="station-action"
-                                    v-if="stationCardGhostVisible"
+                                    :element-hovered-over="elementHoveredOver"
+                                    v-if="actionStationCardGhostVisible"
+                                    @click="cardGhostClick"
                                 />
                                 <div
                                     class="card card-placeholder"
@@ -339,7 +339,7 @@
                             />
                             <div class="stationCardWrapper stationCardWrapper--fullSize">
                                 <CardGhost
-                                    v-if="stationCardGhostVisible"
+                                    v-if="handSizeStationCardGhostVisible"
                                     location="station-handSize"
                                     :element-hovered-over="elementHoveredOver"
                                     @click="cardGhostClick"
@@ -560,6 +560,33 @@
                 return this.holdingCard
                     && this.canDiscardCards
                     && (!this.showOnlyCardGhostsFor || this.showOnlyCardGhostsFor.includes('discardPile'));
+            },
+            drawStationCardGhostVisible() {
+                if (!this.gameOn) {
+                    if (this.playerVisibleDrawStationCards.length > 0
+                        && (this.playerVisibleActionStationCards.length === 0
+                            || this.playerVisibleHandSizeStationCards.length === 0)) return false;
+                }
+
+                return this.stationCardGhostVisible;
+            },
+            actionStationCardGhostVisible() {
+                if (!this.gameOn) {
+                    if (this.playerVisibleActionStationCards.length > 0
+                        && (this.playerVisibleDrawStationCards.length === 0
+                            || this.playerVisibleHandSizeStationCards.length === 0)) return false;
+                }
+
+                return this.stationCardGhostVisible;
+            },
+            handSizeStationCardGhostVisible() {
+                if (!this.gameOn) {
+                    if (this.playerVisibleHandSizeStationCards.length > 0
+                        && (this.playerVisibleActionStationCards.length === 0
+                            || this.playerVisibleDrawStationCards.length === 0)) return false;
+                }
+
+                return this.stationCardGhostVisible;
             },
             stationCardGhostVisible() {
                 if (!this.holdingCard) return false;
