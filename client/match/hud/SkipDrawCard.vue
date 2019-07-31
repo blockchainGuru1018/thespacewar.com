@@ -69,7 +69,6 @@
     }
 
     .reallySkipDrawCard {
-
         opacity: 1;
 
         &:hover {

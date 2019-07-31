@@ -319,6 +319,16 @@
   top: -2px;
 }
 
+.guideText-drawPhaseText {
+  font-size: 3em;
+  letter-spacing: .12em;
+}
+
+.guideText-wrapper > .guideText-drawPhaseSubText > .skipDrawCard,
+.guideText-wrapper > .guideText-drawPhaseSubText > .reallySkipDrawCard {
+  margin-left: 10px;
+}
+
 .drawPile-draw,
 .drawPile-discardTopTwo {
   background-color: rgba(0, 0, 0, .5);

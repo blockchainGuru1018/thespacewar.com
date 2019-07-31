@@ -155,10 +155,15 @@
                 <!-- PHASE texts -->
                 <div
                     v-else-if="phase === PHASES.draw"
-                    class="guideText-drawCard guideText guideText--small"
+                    class="guideText-wrapper"
                 >
-                    {{ drawCardOrMillText }}
-                    <SkipDrawCard />
+                    <div class="guideText-drawPhaseText guideText">
+                        Your turn
+                    </div>
+                    <div class="guideText-drawPhaseSubText guideText-drawCard guideText-subText">
+                        {{ drawCardOrMillText }}
+                        <SkipDrawCard />
+                    </div>
                 </div>
                 <div
                     v-else-if="phase === PHASES.preparation"
@@ -483,7 +488,7 @@
                 if (this.endTurnButtonVisible) return '';
                 if (this.phase === PHASES.wait) return '';
                 if (this.phase === PHASES.preparation) {
-                    return 'Start turn';
+                    return `Go to ${(this.nextPhaseWithAction)} phase`;
                 }
                 const cardDrawsOnTurn = this.queryEvents.getCardDrawsOnTurn(this.turn);
                 const hasDrawnEnoughCards = cardDrawsOnTurn.length === this.cardsToDrawInDrawPhase;
