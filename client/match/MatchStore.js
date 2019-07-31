@@ -808,7 +808,7 @@ module.exports = function (deps) {
         matchController.emit('skipDrawCard');
     }
 
-    function stateChanged({ state, commit, dispatch }, data) {
+    function stateChanged({ state, commit, getters, dispatch }, data) {
         for (let key of Object.keys(data)) {
             const datum = data[key];
             if (gameHasBegun) {
@@ -853,6 +853,10 @@ module.exports = function (deps) {
         if (!gameHasBegun) {
             gameHasBegun = true;
             dispatch('persistOngoingMatch');
+        }
+
+        if (getters.gameOn && getters.opponentClock.getTime() <= 0) {
+            setTimeout(() => window.location.reload(), 3 * 60 * 1000);
         }
     }
 
