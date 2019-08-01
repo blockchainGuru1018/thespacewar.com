@@ -1,6 +1,7 @@
 const Neutralization = require('../card/Neutralization.js');
 const LastStand = require("./LastStand.js");
 
+const ExtraTimeToCounterWhenOpponentEndedTurnQuickly = 3000;
 //TODO Idea for interface. Each method takes cardData, but if necessary or ideal they have a
 // sibling method with the same name and a suffix "byId" that get the cardData and runs the other method.
 // In an ideal world it would only take real "behaviourCards", that is NOT cardData but an instance of BaseCard.
@@ -128,7 +129,7 @@ class CanThePlayer {
         const playerHasControlOfOwnTurn = this._turnControl.playerHasControlOfOwnTurn();
         const timeToCounter = this._isLastStand ? LastStand.LastStandLength : this._gameConfig.timeToCounter();
         if (playerHasControlOfOwnTurn) {
-            const cardWasPutDownTooLongAgo = !this._queryEvents.putDownCardWithinTimeFrame(cardId, timeToCounter);
+            const cardWasPutDownTooLongAgo = !this._queryEvents.putDownCardWithinTimeFrame(cardId, timeToCounter + ExtraTimeToCounterWhenOpponentEndedTurnQuickly);
             if (cardWasPutDownTooLongAgo) return false;
         }
         else {

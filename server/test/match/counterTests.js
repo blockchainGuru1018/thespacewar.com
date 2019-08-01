@@ -418,6 +418,52 @@ module.exports = {
                 });
             }
         },
+        'when opponent attack and end turn quickly and player put down Target Missed on their own turn to counter that attack': {
+            async setUp() {
+                this.match.restoreFromState(createState({
+                    currentPlayer: 'P2A',
+                    turn: 2,
+                    playerStateById: {
+                        'P1A': {
+                            phase: 'wait',
+                            cardsInZone: [
+                                createCard({ id: 'C1A', type: 'spaceShip', cost: 0 })
+                            ],
+                            cardsOnHand: [
+                                createCard({ id: 'C2A', type: 'event', commonId: TargetMissed.CommonId, cost: 0 })
+                            ]
+                        },
+                        'P2A': {
+                            phase: 'attack',
+                            cardsInOpponentZone: [
+                                createCard({ id: 'C3A', type: 'spaceShip', attack: 1 })
+                            ]
+                        }
+                    }
+                }));
+                this.match.attack('P2A', { attackerCardId: 'C3A', defenderCardId: 'C1A' });
+                this.match.nextPhase('P2A', { currentPhase: 'attack' });
+
+                this.match.putDownCard('P1A', { cardId: 'C2A', location: 'zone' });
+                this.match.counterAttack('P1A', { attackIndex: 0 });
+            },
+            'should have moved card used to counter into the discard pile'() {
+                this.firstPlayerAsserter.send('P1A');
+                this.firstPlayerAsserter.hasDiscardedCard('C2A');
+            },
+            'should have attacked card back in zone'() {
+                this.firstPlayerAsserter.send('P1A');
+                this.firstPlayerAsserter.hasCardInZone('C1A');
+            },
+            'should have countered attack'() {
+                this.firstPlayerAsserter.send('P2A');
+                this.secondPlayerAsserter.countMatchingAttacks(1, {
+                    countered: true,
+                    attackerCardId: 'C3A',
+                    defenderCardId: 'C1A'
+                });
+            }
+        },
         'when put down Target Missed and select station attack to counter': {
             async setUp() {
                 this.match.restoreFromState(createState({

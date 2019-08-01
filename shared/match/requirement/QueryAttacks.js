@@ -1,9 +1,12 @@
-const TimeFrameMilliseconds = 5000;
+const ExtraTimeToCounterWhenOpponentEndedTurnQuickly = 3000;
 
+//TODO It is confusing that this is at a higher level with dependencies than QueryEvents... perhaps its just an issue with its name?
 module.exports = function ({
-    opponentStateService,
+    gameConfig,
+    playerTurnControl,
+    playerEventRepository,
     opponentEventRepository,
-    playerEventRepository
+    opponentStateService
 }) {
 
     return {
@@ -11,7 +14,7 @@ module.exports = function ({
     };
 
     function canBeCountered() {
-        return getCardAttacksSinceLastTookControlWithinTimeFrame(TimeFrameMilliseconds);
+        return getCardAttacksSinceLastTookControlWithinTimeFrame(gameConfig.timeToCounter());
     }
 
     function getCardAttacksSinceLastTookControlWithinTimeFrame(millisecondsTimeFrame) {
@@ -22,8 +25,15 @@ module.exports = function ({
             .filter(event => {
                 return event.type === 'attack'
                     && !event.countered
-                    && opponentStateService.findCardFromAnySource(event.attackerCardId).type === 'spaceShip'
-                    && playerLastTookControlWithinTimeFrameSinceAttackOnPlayer(event, millisecondsTimeFrame);
+                    && opponentStateService.findCardFromAnySource(event.attackerCardId).type === 'spaceShip';
+            })
+            .filter(event => {
+                if (playerTurnControl.playerHasControlOfOwnTurn()) {
+                    return timeSinceEvent(event) <= millisecondsTimeFrame + ExtraTimeToCounterWhenOpponentEndedTurnQuickly;
+                }
+                else {
+                    return playerLastTookControlWithinTimeFrameSinceAttackOnPlayer(event, millisecondsTimeFrame);
+                }
             });
     }
 
@@ -39,6 +49,10 @@ module.exports = function ({
         }
 
         return false;
+    }
+
+    function timeSinceEvent(event) {
+        return Date.now() - event.created;
     }
 
     function findLastIndex(collection, selector) {

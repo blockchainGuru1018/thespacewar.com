@@ -350,6 +350,8 @@ module.exports = function ({
     function queryAttacks(playerId) {
         const opponentId = api.opponentId(playerId);
         return QueryAttacks({
+            gameConfig,
+            playerTurnControl: api.turnControl(playerId),
             opponentStateService: api.playerStateService(opponentId),
             playerEventRepository: api.eventRepository(playerId),
             opponentEventRepository: api.eventRepository(opponentId)
