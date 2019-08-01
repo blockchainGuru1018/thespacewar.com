@@ -1,63 +1,65 @@
 <template>
     <div class="counterAttack-wrapper">
-        <div class="dimOverlay" />
-        <div class="counterAttack">
-            <div class="counterAttack-header">
-                <div class="counterAttack-requirementCard">
-                    <img :src="getCardImageUrl({commonId: requirement.cardCommonId})" />
-                </div>
-                <div class="counterAttack-headerText">
-                    {{ attacks.length > 0 ? 'Select attack to counter' : 'No attack to counter' }}
-                </div>
-            </div>
-            <template v-if="attacks.length > 0">
-                <div class="counterAttack-attacks">
-                    <div
-                        v-for="attack in attacks"
-                        :key="attack.time"
-                        class="counterAttack-attack"
-                        @click="attackClick(attack)"
-                    >
-                        <img
-                            :src="getCardImageUrl(attack.attackerCardData)"
-                            class="counterAttack-card"
-                        >
-                        <span>⟶</span>
-                        <div
-                            :class="['counterAttack-attackDefenderCards', {'counterAttack-attackDefenderCards--many': attack.defenderCardsData.length > 1}]"
-                        >
-                            <img
-                                v-for="defenderCardData in attack.defenderCardsData"
-                                :key="defenderCardData.id"
-                                :src="getCardImageUrl(defenderCardData)"
-                                class="counterAttack-card"
-                            >
-                        </div>
+        <DimOverlay>
+            <div class="counterAttack">
+                <div class="counterAttack-header">
+                    <div class="counterAttack-requirementCard">
+                        <img :src="getCardImageUrl({commonId: requirement.cardCommonId})" />
+                    </div>
+                    <div class="counterAttack-headerText">
+                        {{ attacks.length > 0 ? 'Select attack to counter' : 'No attack to counter' }}
                     </div>
                 </div>
-                <div class="counterAttack-cancelWrapper">
+                <template v-if="attacks.length > 0">
+                    <div class="counterAttack-attacks">
+                        <div
+                            :key="attack.time"
+                            @click="attackClick(attack)"
+                            class="counterAttack-attack"
+                            v-for="attack in attacks"
+                        >
+                            <img
+                                :src="getCardImageUrl(attack.attackerCardData)"
+                                class="counterAttack-card"
+                            >
+                            <span>⟶</span>
+                            <div
+                                :class="['counterAttack-attackDefenderCards', {'counterAttack-attackDefenderCards--many': attack.defenderCardsData.length > 1}]"
+                            >
+                                <img
+                                    :key="defenderCardData.id"
+                                    :src="getCardImageUrl(defenderCardData)"
+                                    class="counterAttack-card"
+                                    v-for="defenderCardData in attack.defenderCardsData"
+                                >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="counterAttack-cancelWrapper">
+                        <button
+                            @click="cancelClick"
+                            class="counterAttack-cancel darkButton"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </template>
+                <div class="counterAttack-cancelAloneWrapper" v-else>
                     <button
-                        class="counterAttack-cancel darkButton"
                         @click="cancelClick"
+                        class="counterAttack-cancel darkButton"
                     >
                         Cancel
                     </button>
                 </div>
-            </template>
-            <div v-else class="counterAttack-cancelAloneWrapper">
-                <button
-                    class="counterAttack-cancel darkButton"
-                    @click="cancelClick"
-                >
-                    Cancel
-                </button>
             </div>
-        </div>
-    </div>
+        </DimOverlay>
     </div>
 </template>
 <script>
     const Vuex = require('vuex');
+    const resolveModuleWithPossibleDefault = require('../../utils/resolveModuleWithPossibleDefault.js');
+    const DimOverlay = resolveModuleWithPossibleDefault(require('../overlay/DimOverlay.vue'));
     const getCardImageUrl = require('../../utils/getCardImageUrl');
     const counterAttackHelpers = Vuex.createNamespacedHelpers('counterAttack');
 
@@ -83,6 +85,9 @@
                 this.$emit('cancel');
                 this.cancel();
             }
+        },
+        components: {
+            DimOverlay
         }
     };
 </script>

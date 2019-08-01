@@ -1,56 +1,57 @@
 <template>
     <div class="findCard-wrapper">
-        <div class="dimOverlay" />
-        <div class="findCard">
-            <div class="findCard-header">
-                <div class="findCard-requirementCard">
-                    <img :src="getCardImageUrl({commonId: requirement.cardCommonId})" />
-                </div>
-                <div class="findCard-headerText">
-                    {{ findCardHeaderText }}
-                </div>
-            </div>
-            <div class="findCard-subHeader">
-                <div class="findCard-subHeaderText" v-if="requirement.target === 'hand'">
-                    {{ subHeaderText }}
-                </div>
-            </div>
-            <div
-                v-if="requirement"
-                class="findCard-groups"
-            >
-                <div
-                    v-for="group in filteredRequirement.cardGroups"
-                    :key="group.source"
-                    class="findCard-group"
-                >
-                    <div class="findCard-groupHeader">
-                        {{ getCardGroupTitle(group) }}
+        <DimOverlay>
+            <div class="findCard">
+                <div class="findCard-header">
+                    <div class="findCard-requirementCard">
+                        <img :src="getCardImageUrl({commonId: requirement.cardCommonId})" />
                     </div>
-                    <div class="findCard-groupCards">
-                        <div
-                            v-for="card in group.cards"
-                            :key="card.id"
-                            class="findCard-card"
-                            @click="cardClick(card, group)"
-                        >
-                            <img :src="getCardImageUrl(card)" />
+                    <div class="findCard-headerText">
+                        {{ findCardHeaderText }}
+                    </div>
+                </div>
+                <div class="findCard-subHeader">
+                    <div class="findCard-subHeaderText" v-if="requirement.target === 'hand'">
+                        {{ subHeaderText }}
+                    </div>
+                </div>
+                <div
+                    class="findCard-groups"
+                    v-if="requirement"
+                >
+                    <div
+                        :key="group.source"
+                        class="findCard-group"
+                        v-for="group in filteredRequirement.cardGroups"
+                    >
+                        <div class="findCard-groupHeader">
+                            {{ getCardGroupTitle(group) }}
+                        </div>
+                        <div class="findCard-groupCards">
+                            <div
+                                :key="card.id"
+                                @click="cardClick(card, group)"
+                                class="findCard-card"
+                                v-for="card in group.cards"
+                            >
+                                <img :src="getCardImageUrl(card)" />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div
-                v-if="cardsAvailableToSelect === 0"
-                class="findCard-doneWrapper"
-            >
-                <button
-                    class="findCard-done darkButton"
-                    @click="doneClick"
+                <div
+                    class="findCard-doneWrapper"
+                    v-if="cardsAvailableToSelect === 0"
                 >
-                    Done
-                </button>
+                    <button
+                        @click="doneClick"
+                        class="findCard-done darkButton"
+                    >
+                        Done
+                    </button>
+                </div>
             </div>
-        </div>
+        </DimOverlay>
     </div>
 </template>
 <script>
@@ -58,6 +59,8 @@
     const getCardImageUrl = require('../../utils/getCardImageUrl');
     const findCardHelpers = Vuex.createNamespacedHelpers('findCard');
     const matchHelpers = Vuex.createNamespacedHelpers('match');
+    const resolveModuleWithPossibleDefault = require('../../utils/resolveModuleWithPossibleDefault.js');
+    const DimOverlay = resolveModuleWithPossibleDefault(require('../overlay/DimOverlay.vue'));
     const Sabotage = require('../../../shared/card/Sabotage.js');
     const MissilesLaunched = require('../../../shared/card/MissilesLaunched.js');
 
@@ -126,6 +129,9 @@
             getCardGroupTitle(group) {
                 return nameBySource[group.source];
             }
+        },
+        components: {
+            DimOverlay
         }
     };
 

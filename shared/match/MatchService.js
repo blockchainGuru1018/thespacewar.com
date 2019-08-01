@@ -61,7 +61,7 @@ class MatchService {
             state.retreatedPlayerId = playerId;
         });
 
-        const endMatch = this.endMatch();
+        const endMatch = this.endMatch;
         setTimeout(() => endMatch(), EndMatchDelay);
     }
 
