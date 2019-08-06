@@ -1,14 +1,15 @@
-let bocha = require('bocha');
-let testCase = bocha.testCase;
-let assert = bocha.assert;
-let FakeCardDataAssembler = require('../testUtils/FakeCardDataAssembler.js');
+const bocha = require('bocha');
+const testCase = bocha.testCase;
+const assert = bocha.assert;
+const FakeCardDataAssembler = require('../testUtils/FakeCardDataAssembler.js');
 const createCard = FakeCardDataAssembler.createCard;
-let CardInfoRepository = require('../../../shared/CardInfoRepository.js');
-let ActionPointCalculator = require('../../../shared/match/ActionPointsCalculator.js');
-let DiscardCardEvent = require('../../../shared/event/DiscardCardEvent.js');
-let PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
-let RemoveStationCardEvent = require('../../../shared/event/RemoveStationCardEvent.js');
-let MoveStationCardEvent = require('../../../shared/event/MoveStationCardEvent.js');
+const CardInfoRepository = require('../../../shared/CardInfoRepository.js');
+const ActionPointCalculator = require('../../../shared/match/ActionPointsCalculator.js');
+const DiscardCardEvent = require('../../../shared/event/DiscardCardEvent.js');
+const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
+const RemoveStationCardEvent = require('../../../shared/event/RemoveStationCardEvent.js');
+const MoveStationCardEvent = require('../../../shared/event/MoveStationCardEvent.js');
+const FullForceForward = require('../../../shared/card/FullForceForward.js');
 
 module.exports = testCase('ActionPointCalculator', {
     'when put card in zone and then put down a station card in action row'() {
@@ -213,6 +214,31 @@ module.exports = testCase('ActionPointCalculator', {
             });
 
             assert.equals(actionPoints, 2);
+        },
+        'when has 5 action station cards but also has Full Attack duration card in play'() {
+            const calculator = ActionPointCalculator({
+                cardInfoRepository: FakeCardInfoRepository([{
+                    commonId: FullForceForward.CommonId,
+                    type: 'duration',
+                    cost: 3
+                }])
+            });
+
+            const actionPoints = calculator.calculate({
+                events: [
+                    PutDownCardEvent({
+                        turn: 1,
+                        location: 'zone',
+                        cardId: 'C1A',
+                        cardCommonId: FullForceForward.CommonId
+                    })
+                ],
+                turn: 2,
+                phase: 'action',
+                actionStationCardsCount: 5
+            });
+
+            assert.equals(actionPoints, 7);
         }
     },
     'when has 0 action row station cards': {

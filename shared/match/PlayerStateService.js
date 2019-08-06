@@ -513,6 +513,11 @@ class PlayerStateService {
 
     discardCard(cardData) {
         const turn = this._matchService.getTurn();
+
+        if (cardData.damage) {
+            cardData.damage = 0;
+        }
+
         this.update(playerState => {
             playerState.discardedCards.push(cardData);
         });

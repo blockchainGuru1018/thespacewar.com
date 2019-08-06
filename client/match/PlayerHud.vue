@@ -229,29 +229,31 @@
             </div>
         </portal>
         <portal to="match">
-            <div
-                v-if="gameHasEnded"
-                class="endGameOverlay"
-            >
+            <transition name="fade-slow">
                 <div
-                    v-if="hasLostGame"
-                    class="defeatText endGameText"
+                    class="endGameOverlay"
+                    v-if="showEndGameScreen"
                 >
-                    DEFEAT
+                    <div
+                        class="defeatText endGameText"
+                        v-if="hasLostGame"
+                    >
+                        DEFEAT
+                    </div>
+                    <div
+                        class="victoryText endGameText"
+                        v-else-if="hasWonGame"
+                    >
+                        VICTORY
+                    </div>
+                    <button
+                        @click="endGame"
+                        class="endGameButton"
+                    >
+                        End game
+                    </button>
                 </div>
-                <div
-                    v-else-if="hasWonGame"
-                    class="victoryText endGameText"
-                >
-                    VICTORY
-                </div>
-                <button
-                    class="endGameButton"
-                    @click="endGame"
-                >
-                    End game
-                </button>
-            </div>
+            </transition>
         </portal>
         <portal to="stationDrawRow">
             <span class="stationRowDescription descriptionText">
@@ -337,6 +339,7 @@
                 enlargedCardVisible: false,
                 lastStandRemainingSeconds: Math.round(LastStand.LastStandLength / 1000),
                 lastStandUpdateIntervalId: null,
+                showEndGameScreen: false
             };
         },
         computed: {
@@ -591,6 +594,16 @@
                     }, 200);
                 },
                 immediate: true
+            },
+            gameHasEnded: {
+                immediate: true,
+                handler() {
+                    if (this.gameHasEnded) {
+                        setTimeout(() => {
+                            this.showEndGameScreen = true;
+                        }, 2200);
+                    }
+                }
             }
         },
         methods: {
@@ -813,7 +826,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        z-index: 3;
+        z-index: 4;
     }
 
     .endGameText {

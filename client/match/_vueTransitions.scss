@@ -13,3 +13,4 @@
 }
 
 @include fade('fade-fast', $ghostFadeTime);
+@include fade('fade-slow', $endGameScreenFadeTime);
