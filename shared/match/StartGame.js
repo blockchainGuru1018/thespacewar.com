@@ -3,6 +3,7 @@ const EnergyShield = require('../card/EnergyShield.js');
 const Commander = require("./commander/Commander");
 
 function StartGameController({
+    gameConfig,
     matchService,
     playerStateService,
     playerRequirementService,
@@ -45,7 +46,7 @@ function StartGameController({
     }
 
     function startedGame() {
-        if (playerCommanders.has(Commander.NiciaSatu)) {
+        if (gameConfig.niciaSatuStartsWithEnergyShield() && playerCommanders.has(Commander.NiciaSatu)) {
             const deck = playerStateService.getDeck();
             const energyShield = deck.removeFirstCardOfType(EnergyShield.CommonId);
             playerStateService.putDownCardInZone(energyShield, { grantedForFreeByEvent: true });

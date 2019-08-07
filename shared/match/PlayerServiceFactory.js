@@ -372,7 +372,8 @@ module.exports = function ({
             canTheOpponent: api.canThePlayer(opponentId),
             playerCommanders: api.playerCommanders(playerId),
             playerActionLog: api.actionLog(playerId),
-            opponentActionLog: api.actionLog(opponentId)
+            opponentActionLog: api.actionLog(opponentId),
+            gameConfig
         });
     }
 

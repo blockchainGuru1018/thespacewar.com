@@ -7,7 +7,8 @@ const propertyMap = {
     MAX_STATION_CARDS: 'maxStationCards',
     MAX_REPLACES: 'maxReplaces',
     TIME_TO_COUNTER: 'timeToCounter',
-    ACCESS_KEY: 'accessKey'
+    ACCESS_KEY: 'accessKey',
+    NICIA_SATU_STARTS_WITH_ENERGY_SHIELD: 'niciaSatuStartsWithEnergyShield'
 };
 
 const Defaults = convertConfig(DEFAULT_CONFIG);
@@ -23,7 +24,8 @@ function GameConfig({
     maxStationCards = Defaults.maxStationCards,
     maxReplaces = Defaults.maxReplaces,
     timeToCounter = Defaults.timeToCounter,
-    accessKey = Defaults.accessKey
+    accessKey = Defaults.accessKey,
+    niciaSatuStartsWithEnergyShield = Defaults.niciaSatuStartsWithEnergyShield
 } = {}) {
 
     return {
@@ -34,7 +36,8 @@ function GameConfig({
         maxStationCards: () => maxStationCards,
         maxReplaces: () => maxReplaces,
         timeToCounter: () => timeToCounter,
-        accessKey: () => accessKey
+        accessKey: () => accessKey,
+        niciaSatuStartsWithEnergyShield: () => niciaSatuStartsWithEnergyShield
     };
 }
 
