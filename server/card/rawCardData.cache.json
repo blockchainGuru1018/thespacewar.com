@@ -345,7 +345,7 @@
             "name": "Discovery",
             "price": "0",
             "type_card": "orange",
-            "detail": "Draw 3 cards and the opponent may draw 2 cards. [ OR ] Discard 1 card and the opponent discards 2 cards.",
+            "detail": "Draw 3 cards and the opponent draws 2 cards. [ OR ] Discard 1 card and the opponent discards 2 cards.",
             "defense": "0",
             "attack": "0",
             "number_copies": "2"
