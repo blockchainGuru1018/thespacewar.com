@@ -45,7 +45,13 @@ function NextPhaseCardController(deps) {
 
         if (matchService.allPlayersReady()) {
             matchService.startGame();
+
             const playerOrder = matchService.getPlayerOrder();
+            for (playerId of playerOrder) {
+                const playerStartGame = playerServiceFactory.startGame(playerId);
+                playerStartGame.startedGame();
+            }
+
             const firstPlayerId = playerOrder[0];
             const playerPhase = playerServiceFactory.playerPhase(firstPlayerId);
             onNextPhase(firstPlayerId, { currentPhase: playerPhase.get() });

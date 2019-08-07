@@ -369,7 +369,10 @@ module.exports = function ({
             playerPhase: api.playerPhase(playerId),
             opponentPhase: api.playerPhase(opponentId),
             playerRuleService: api.playerRuleService(playerId),
-            canTheOpponent: api.canThePlayer(opponentId)
+            canTheOpponent: api.canThePlayer(opponentId),
+            playerCommanders: api.playerCommanders(playerId),
+            playerActionLog: api.actionLog(playerId),
+            opponentActionLog: api.actionLog(opponentId)
         });
     }
 

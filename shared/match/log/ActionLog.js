@@ -1,3 +1,5 @@
+const PerfectPlanIcon = 'played.svg'; //TODO Find an icon specifically for Perfect Plan
+
 const actionToIconUrl = {
     damagedInAttack: 'fire.svg',
     moved: 'move.svg',
@@ -9,7 +11,8 @@ const actionToIconUrl = {
     counteredAttackOnCard: 'countered.svg',
     expandedStation: 'expand.svg',
     issuedOverwork: 'recycle.svg',
-    issuedPerfectPlan: 'played.svg', //TODO Find an icon specifically for Perfect Plan
+    issuedPerfectPlan: PerfectPlanIcon,
+    receivedCardFromCommander: PerfectPlanIcon,
     milled: 'mill.svg',
     movedStationCard: 'move.svg',
     paralyzed: 'shock.svg',
@@ -52,7 +55,9 @@ module.exports = function ({
         opponentMilledCardsFromYourDeck,
         opponentMovedStationCard,
         opponentTookControlOfTurn,
-        opponentReleasedControlOfTurn
+        opponentReleasedControlOfTurn,
+        opponentReceivedCardFromCommander,
+        receivedCardFromCommander
     };
 
     function queryLatest() {
@@ -266,6 +271,22 @@ module.exports = function ({
         log({
             action: 'releasedControlOfTurn',
             text: `${opponentName()} released control of turn`
+        });
+    }
+
+    function opponentReceivedCardFromCommander(cardCommonId) {
+        const cardName = cardInfoRepository.getName(cardCommonId);
+        log({
+            action: 'receivedCardFromCommander',
+            text: `${opponentName()} received *${cardName}# from their commander`
+        });
+    }
+
+    function receivedCardFromCommander(cardCommonId) {
+        const cardName = cardInfoRepository.getName(cardCommonId);
+        log({
+            action: 'receivedCardFromCommander',
+            text: `You received *${cardName}# from your commander`
         });
     }
 

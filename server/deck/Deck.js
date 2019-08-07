@@ -6,6 +6,7 @@ module.exports = function (deck) {
         getCardCount,
         getPossibleMillCount: () => Math.floor(getCardCount() / 2),
         getAll: () => [...deck],
+        removeFirstCardOfType,
         removeCard,
         _getDeck: () => [...deck],
         _restoreDeck: previousDeck => { deck = [...previousDeck] }
@@ -33,6 +34,14 @@ module.exports = function (deck) {
 
     function removeCard(cardId) {
         const cardIndex = deck.findIndex(c => c.id === cardId);
+        if (cardIndex < 0) return null;
+
+        const [removedCard] = deck.splice(cardIndex, 1);
+        return removedCard;
+    }
+
+    function removeFirstCardOfType(cardCommonId) {
+        const cardIndex = deck.findIndex(c => c.commonId === cardCommonId);
         if (cardIndex < 0) return null;
 
         const [removedCard] = deck.splice(cardIndex, 1);

@@ -1,19 +1,25 @@
 const CheatError = require('../../server/match/CheatError.js');
+const EnergyShield = require('../card/EnergyShield.js');
+const Commander = require("./commander/Commander");
 
 function StartGameController({
     matchService,
     playerStateService,
     playerRequirementService,
+    playerPhase,
+    playerRuleService,
+    playerCommanders,
+    playerActionLog,
+    opponentActionLog,
     opponentStateService,
     opponentRequirementService,
-    playerPhase,
-    opponentPhase,
-    playerRuleService
+    opponentPhase
 }) {
 
     return {
         selectPlayerToStart,
-        selectStartingStationCard
+        selectStartingStationCard,
+        startedGame
     };
 
     function selectPlayerToStart(playerToStartId) {
@@ -36,6 +42,17 @@ function StartGameController({
         if (!playerStateService.hasCardOnHand(cardId)) throw new CheatError('Card is not on hand');
 
         playerStateService.selectStartingStationCard(cardId, location);
+    }
+
+    function startedGame() {
+        if (playerCommanders.has(Commander.NiciaSatu)) {
+            const deck = playerStateService.getDeck();
+            const energyShield = deck.removeFirstCardOfType(EnergyShield.CommonId);
+            playerStateService.putDownCardInZone(energyShield, { grantedForFreeByEvent: true });
+
+            opponentActionLog.opponentReceivedCardFromCommander(EnergyShield.CommonId);
+            playerActionLog.receivedCardFromCommander(EnergyShield.CommonId);
+        }
     }
 }
 

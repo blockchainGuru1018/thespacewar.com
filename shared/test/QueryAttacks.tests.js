@@ -85,7 +85,7 @@ module.exports = testCase('QueryAttacks', {
                             Attack('C2A', 'C1A', '2000-01-01T00:00:06.000Z'),
                             Attack('C2A', 'C1A', '2000-01-01T00:00:01.000Z'),
                             Attack('C2A', 'C1A', '2000-01-01T00:00:00.000Z')
-                        ],
+                        ]
                     }
                 }
             }), {
