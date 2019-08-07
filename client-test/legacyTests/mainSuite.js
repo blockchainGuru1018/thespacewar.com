@@ -15,6 +15,7 @@ const {
     sinon,
     timeout,
     stub,
+    fakeClock,
     dom: {
         click
     }
@@ -41,6 +42,7 @@ module.exports = {
         this.createController = createControllerBoundToTestContext(this);
     },
     tearDown() {
+        this.clock && this.clock.restore();
         getCardImageUrl.byCommonId.restore && getCardImageUrl.byCommonId.restore();
         this.controller && this.controller.tearDown();
 
@@ -670,8 +672,9 @@ module.exports = {
                 });
             }
         },
-        'when opponent has 0 unflipped station cards': {
+        'when game has ended and opponent has lost': {
             async setUp() {
+                this.clock = fakeClock();
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
@@ -680,21 +683,23 @@ module.exports = {
                     currentPlayer: 'P1A',
                     phase: 'attack',
                     stationCards: [{ id: 'C1A', place: 'action', card: createCard({ id: 'C1A' }) }],
-                    opponentStationCards: [
-                        { id: 'C2A', place: 'action', flipped: true, card: createCard({ id: 'C2A' }) }
-                    ]
+                    ended: true,
+                    retreatedPlayerId: 'P2A'
                 }));
-                await timeout();
+                await timeout(this.clock);
             },
-            'should show victory text'() {
+            async 'should show victory text'() {
+                await timeout(this.clock, 5000);
                 assert.elementCount('.victoryText', 1);
             },
-            'should show end game overlay'() {
+            async 'should show end game overlay'() {
+                await timeout(this.clock, 5000);
                 assert.elementCount('.endGameOverlay', 1);
             }
         },
-        'when you have 0 unflipped station cards': {
+        'when game ended and you lost': {
             async setUp() {
+                this.clock = fakeClock();
                 const { dispatch } = this.createController();
                 this.controller.showPage();
 
@@ -702,19 +707,21 @@ module.exports = {
                     turn: 3,
                     currentPlayer: 'P1A',
                     phase: 'attack',
-                    stationCards: [
-                        { id: 'C1A', place: 'action', flipped: true, card: createCard({ id: 'C1A' }) }
-                    ]
+                    ended: true,
+                    retreatedPlayerId: 'P1A'
                 }));
-                await timeout();
+                await timeout(this.clock);
             },
-            'should NOT show victory text'() {
+            async 'should NOT show victory text'() {
+                await timeout(this.clock, 5000);
                 assert.elementCount('.victoryText', 0);
             },
-            'should show defeat text'() {
+            async 'should show defeat text'() {
+                await timeout(this.clock, 5000);
                 assert.elementCount('.defeatText', 1);
             },
-            'should show end game overlay'() {
+            async 'should show end game overlay'() {
+                await timeout(this.clock, 5000);
                 assert.elementCount('.endGameOverlay', 1);
             }
         },

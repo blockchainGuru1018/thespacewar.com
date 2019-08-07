@@ -78,7 +78,7 @@
                         <div class="enlargeIcon enlargeIcon--small" />
                     </div>
                     {{ requirementGuideText }}
-                    <SkipDrawCard v-if="firstRequirementIsDrawCard" />
+                    <SkipDrawCard v-if="shouldShowSkipDrawCard" />
                 </div>
 
                 <!-- STARTING GAME texts -->
@@ -162,7 +162,6 @@
                     </div>
                     <div class="guideText-drawPhaseSubText guideText-drawCard guideText-subText">
                         {{ drawCardOrMillText }}
-                        <SkipDrawCard />
                     </div>
                 </div>
                 <div
@@ -332,6 +331,7 @@
     const MatchMode = require('../../shared/match/MatchMode.js');
     const LastStand = require('../../shared/match/LastStand.js');
     const { PHASES } = require('./phases.js');
+    const FatalError = require('../../shared/card/FatalError.js');
 
     module.exports = {
         data() {
@@ -530,6 +530,10 @@
                 else {
                     return '';
                 }
+            },
+            shouldShowSkipDrawCard() {
+                return this.firstRequirementIsDrawCard
+                    && this.firstRequirement.cardCommonId === FatalError.CommonId;
             },
             actionGuideText() {
                 if (!this.activeAction) return '';

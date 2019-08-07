@@ -2,6 +2,7 @@ let assert = require('bocha/lib/dom/assert.js');
 let refute = require('bocha/lib/dom/refute.js');
 let timeout = require('bocha/lib/timeoutPromise.js');
 let bochaDom = require('bocha/lib/dom/dom.js');
+let fakeClock = require('bocha/lib/fakeClock.js');
 let defaults = require('lodash/defaults');
 let sinon = require('sinon');
 let stub = sinon.stub;
@@ -25,5 +26,6 @@ module.exports = {
     refute,
     assert,
     toJestTest,
-    defaults
+    defaults,
+    fakeClock
 };

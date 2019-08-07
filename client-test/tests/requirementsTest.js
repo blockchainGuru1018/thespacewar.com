@@ -13,6 +13,7 @@ const {
         click
     }
 } = require('../bocha-jest/bocha-jest.js');
+const FatalError = require('../../shared/card/FatalError.js');
 
 let controller;
 let matchController;
@@ -259,5 +260,53 @@ describe('when has find card requirement', () => {
                 cardGroups: []
             });
         });
+    });
+});
+
+describe('when has draw card requirement', async () => {
+    beforeEach(async () => {
+        const { dispatch, showPage } = setUpController();
+        showPage();
+        dispatch('stateChanged', FakeState({
+            turn: 1,
+            currentPlayer: 'P1A',
+            phase: 'action',
+            requirements: [
+                { type: 'drawCard', count: 1 }
+            ]
+        }));
+        await timeout();
+    });
+
+    test('should show that there is 1 card left to draw', () => {
+        assert.elementTextStartsWith('.guideText', 'Draw 1 card');
+    });
+
+    test('should NOT show skip button', () => {
+        assert.elementCount('.skipDrawCard', 0);
+    });
+});
+
+describe('when has draw card requirement FROM FATAL ERROR', async () => {
+    beforeEach(async () => {
+        const { dispatch, showPage } = setUpController();
+        showPage();
+        dispatch('stateChanged', FakeState({
+            turn: 1,
+            currentPlayer: 'P1A',
+            phase: 'action',
+            requirements: [
+                { type: 'drawCard', count: 1, cardCommonId: FatalError.CommonId }
+            ]
+        }));
+        await timeout();
+    });
+
+    test('should show that there is 1 card left to draw', () => {
+        assert.elementTextStartsWith('.guideText', 'Draw 1 card');
+    });
+
+    test('should show skip button', () => {
+        assert.elementCount('.skipDrawCard', 1);
     });
 });

@@ -50,8 +50,12 @@ describe('when in draw phase and can draw 2 cards per turn and has drawn 1 card 
         await timeout();
     });
 
-    test('should show that there is 1 card left to draw', async () => {
-        assert.elementTextStartsWith('.guideText', 'Draw 1 card');
+    test('should show that there is 1 card left to draw', () => {
+        assert.elementTextStartsWith('.guideText-drawPhaseSubText', 'Draw 1 card');
+    });
+
+    test('should NOT show skip button', () => {
+        assert.elementCount('.skipDrawCard', 0);
     });
 });
 
