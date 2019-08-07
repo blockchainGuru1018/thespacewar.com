@@ -1,3 +1,5 @@
+const FatalError = require('../../../shared/card/FatalError.js');
+
 function DrawCardController(deps) {
 
     const {
@@ -50,11 +52,10 @@ function DrawCardController(deps) {
 
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
         const drawCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'drawCard' });
-        if (drawCardRequirement) {
+        const hasRequirement = !!drawCardRequirement;
+        const cardIsFatalError = drawCardRequirement.cardCommonId === FatalError.CommonId;
+        if (hasRequirement && cardIsFatalError) {
             completeDrawCardRequirement({ playerId });
-        }
-        else {
-            matchComService.emitToPlayer(playerId, 'drawCards', { moreCardsCanBeDrawn: false });
         }
     }
 

@@ -10,7 +10,7 @@ const {
     FakeConnection2,
     createState,
 } = require('./shared.js');
-const FakeDeck = require('../testUtils/FakeDeck.js');
+const FatalError = require('../../../shared/card/FatalError.js');
 const GameConfig = require('../../../shared/match/GameConfig.js');
 const Commander = require("../../../shared/match/commander/Commander.js");
 
@@ -273,7 +273,7 @@ module.exports = {
                 playerStateById: {
                     'P1A': {
                         phase: 'draw',
-                        requirements: [{ type: 'drawCard', count: 3 }],
+                        requirements: [{ type: 'drawCard', cardCommonId: FatalError.CommonId, count: 3 }],
                         cardsInDeck: [createCard({ id: 'C1A' })]
                     }
                 }

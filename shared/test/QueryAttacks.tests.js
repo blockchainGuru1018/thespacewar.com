@@ -7,6 +7,7 @@ const createCard = require('../../server/test/testUtils/FakeCardDataAssembler.js
 const TestHelper = require('./fakeFactories/TestHelper.js');
 const createState = require('./fakeFactories/createState.js');
 const AttackEvent = require('../event/AttackEvent.js');
+const GameConfig = require("../match/GameConfig");
 
 module.exports = testCase('QueryAttacks', {
     tearDown() {
@@ -34,7 +35,11 @@ module.exports = testCase('QueryAttacks', {
                         ],
                     }
                 }
-            }));
+            }), {
+                gameConfig: GameConfig({
+                    timeToCounter: 5000
+                })
+            });
             const queryAttacks = testHelper.queryAttacks('P1A');
 
             this.attackEvents = queryAttacks.canBeCountered();
@@ -43,10 +48,12 @@ module.exports = testCase('QueryAttacks', {
             assert.equals(this.attackEvents.length, 2);
         },
         'the second event should be the latest'() {
-            assert.equals(this.attackEvents[1].created, Date.parse('2000-01-01T00:00:06.000Z'));
+            const secondEvent = this.attackEvents[1];
+            assert.equals(new Date(secondEvent.created), new Date(Date.parse('2000-01-01T00:00:06.000Z')));
         },
         'the first event should be the earliest'() {
-            assert.equals(this.attackEvents[0].created, Date.parse('2000-01-01T00:00:01.000Z'));
+            const firstEvent = this.attackEvents[0];
+            assert.equals(firstEvent.created, Date.parse('2000-01-01T00:00:01.000Z'));
         }
     },
     'when has 2 attacks that happened within 5s before took control, but has previously taken and released control': {
@@ -81,7 +88,11 @@ module.exports = testCase('QueryAttacks', {
                         ],
                     }
                 }
-            }));
+            }), {
+                gameConfig: GameConfig({
+                    timeToCounter: 5000
+                })
+            });
             const queryAttacks = testHelper.queryAttacks('P1A');
 
             this.attackEvents = queryAttacks.canBeCountered();

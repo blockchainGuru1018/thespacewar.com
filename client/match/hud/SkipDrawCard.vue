@@ -58,6 +58,8 @@
     .skipDrawCard {
         padding: 8px 16px;
         margin-left: 40px;
+        position: relative;
+        top: 3px;
 
         transition: opacity .15s ease-in;
         opacity: .5;

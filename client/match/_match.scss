@@ -324,10 +324,12 @@
   letter-spacing: .12em;
 }
 
-.guideText-wrapper > .guideText-drawPhaseSubText > .skipDrawCard,
-.guideText-wrapper > .guideText-drawPhaseSubText > .reallySkipDrawCard {
-  margin-left: 10px;
-}
+/* It is under test that we do NOT show skip draw button during the draw phase, but we might need this later */
+//.guideText-wrapper > .guideText-drawPhaseSubText > .skipDrawCard,
+//.guideText-wrapper > .guideText-drawPhaseSubText > .reallySkipDrawCard {
+//  position: relative;
+//  top: 4px;
+//}
 
 .drawPile-draw,
 .drawPile-discardTopTwo {
