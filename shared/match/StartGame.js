@@ -49,10 +49,12 @@ function StartGameController({
         if (gameConfig.niciaSatuStartsWithEnergyShield() && playerCommanders.has(Commander.NiciaSatu)) {
             const deck = playerStateService.getDeck();
             const energyShield = deck.removeFirstCardOfType(EnergyShield.CommonId);
-            playerStateService.putDownCardInZone(energyShield, { grantedForFreeByEvent: true });
+            if (energyShield) {
+                playerStateService.putDownCardInZone(energyShield, { grantedForFreeByEvent: true });
 
-            opponentActionLog.opponentReceivedCardFromCommander(EnergyShield.CommonId);
-            playerActionLog.receivedCardFromCommander(EnergyShield.CommonId);
+                opponentActionLog.opponentReceivedCardFromCommander(EnergyShield.CommonId);
+                playerActionLog.receivedCardFromCommander(EnergyShield.CommonId);
+            }
         }
     }
 }
