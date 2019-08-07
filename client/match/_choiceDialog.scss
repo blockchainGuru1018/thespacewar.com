@@ -20,10 +20,11 @@
   display: flex;
   flex-direction: column;
   border-radius: 4px;
-  padding: 20px 0;
+  padding: 20px 0 40px 0;
   justify-content: center;
   align-items: stretch;
   background: $dialogColoredGradient;
+  border: 2px solid $dialogGlowingBorderColor;
 }
 
 .cardChoiceDialog-choice {
@@ -33,9 +34,34 @@
   padding: 18px 120px;
   background: transparent;
   font-weight: bold;
-  margin-bottom: 6px;
   font-family: "Space Mono", monospace;
   letter-spacing: .18em;
+  position: relative;
+  margin-bottom: 6px;
+  margin-top: 16px;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  &::after {
+    content: '';
+    height: 1px;
+    width: 75%;
+    background: rgba(255, 255, 255, .25);
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+
+    line-height: 0;
+    text-shadow: 2px 2px 2px red;
+
+  }
+
+  &:last-child::after {
+    content: none;
+  }
 
   &:hover {
     background-color: rgba(120, 120, 120, .06);
