@@ -1,10 +1,12 @@
 const localGameDataFacade = require("../utils/localGameDataFacade")
+const getCardImageUrl = require('../utils/getCardImageUrl.js');
 
 module.exports = function ({ pageDependencies }) {
 
     let progressIntervalId = null;
     const rawCardDataRepository = pageDependencies.rawCardDataRepository;
     const userRepository = pageDependencies.userRepository;
+    const cardDataAssembler = pageDependencies.cardDataAssembler;
 
     return {
         namespaced: true,
@@ -58,6 +60,10 @@ module.exports = function ({ pageDependencies }) {
         }
         console.log('restore match:', performance.now() - c);
 
+        console.log(' - loading images - ');
+        await loadAllImages();
+        console.log(' - FINISHED - ');
+
         state.loaded = true;
 
         console.log('total:', performance.now() - d)
@@ -65,8 +71,8 @@ module.exports = function ({ pageDependencies }) {
 
     function initFakeLoadingProgress({ state, getters }) {
         progressIntervalId = setInterval(() => {
-            // state.progress += Math.random() < .5 ? Math.random() < .5 ? .4 : .8 : 1.6;
-            state.progress += 100;
+            state.progress += Math.random() < .5 ? Math.random() < .5 ? .4 : .8 : 1.6;
+            // state.progress += 100;
             if (getters.loadingDone) {
                 clearInterval(progressIntervalId);
             }
@@ -75,5 +81,18 @@ module.exports = function ({ pageDependencies }) {
 
     function isAlreadyLoggedIn() {
         return !!localGameDataFacade.getOwnUser();
+    }
+
+    async function loadAllImages() {
+        const sources = cardDataAssembler.createAll().map(cardData => getCardImageUrl.byCommonId(cardData.commonId));
+        await Promise.all(sources.map(loadImage));
+    }
+
+    function loadImage(source) {
+        return new Promise(resolve => {
+            const image = new Image();
+            image.onload = resolve;
+            image.src = source;
+        });
     }
 };

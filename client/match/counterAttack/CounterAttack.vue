@@ -60,7 +60,7 @@
     const Vuex = require('vuex');
     const resolveModuleWithPossibleDefault = require('../../utils/resolveModuleWithPossibleDefault.js');
     const DimOverlay = resolveModuleWithPossibleDefault(require('../overlay/DimOverlay.vue'));
-    const getCardImageUrl = require('../../utils/getCardImageUrl');
+    const getCardImageUrl = require('../../utils/getCardImageUrl.js');
     const counterAttackHelpers = Vuex.createNamespacedHelpers('counterAttack');
 
     module.exports = {
