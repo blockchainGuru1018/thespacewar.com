@@ -5,7 +5,7 @@ const RawCardDataRepository = require('../../shared/card/RawCardDataRepository.j
 
 module.exports = function () {
     return RawCardDataRepository({ getCardData, cache: Cache() });
-}
+};
 
 async function getCardData() {
     const url = 'https://admin.thespacewar.com/services/api/cards';
@@ -24,19 +24,27 @@ function Cache() {
     };
 
     function setItem(key, item) {
-        const keyFilePath = filePath(key);
-
-        return new Promise((resolve, reject) => {
-            fs.writeFile(keyFilePath, item, 'utf8', err => {
-                if (err) reject(err);
-                else resolve();
-            });
-        });
+        return writeToFile(item, filePath(key));
     }
 
     function getItem(key) {
-        const keyFilePath = filePath(key);
+        return readFile(filePath(key));
+    }
 
+    async function removeItem(key) {
+        try {
+            await deleteFile(filePath(key));
+        }
+        catch (ex) {
+            console.error(`Failed removing file with name ${key}`);
+        }
+    }
+
+    function filePath(key) {
+        return path.join(__dirname, `${key}.cache.json`);
+    }
+
+    function readFile(keyFilePath) {
         return new Promise((resolve, reject) => {
             fs.readFile(keyFilePath, 'utf8', (err, data) => {
                 if (err) resolve(null);
@@ -45,18 +53,25 @@ function Cache() {
         });
     }
 
-    function removeItem(key) {
-        const keyFilePath = filePath(key);
-
+    function deleteFile(keyFilePath) {
         return new Promise((resolve, reject) => {
             fs.unlink(keyFilePath, err => {
-                if (err) console.error(`Failed removing file with name ${key}`);
-                resolve();
+                if (err) {
+                    reject();
+                }
+                else {
+                    resolve();
+                }
             });
         });
     }
 
-    function filePath(key) {
-        return path.join(__dirname, `${key}.cache.json`);
+    function writeToFile(item, keyFilePath) {
+        return new Promise((resolve, reject) => {
+            fs.writeFile(keyFilePath, item, 'utf8', err => {
+                if (err) reject(err);
+                else resolve();
+            });
+        });
     }
 }
