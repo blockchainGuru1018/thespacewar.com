@@ -1,10 +1,14 @@
-module.exports = function ({ turn, phase, cardId, cardCommonId }) {
+function DiscardCardEvent({ turn, phase, cardId, cardCommonId }) {
     return {
-        type: 'discardCard',
+        type: DiscardCardEvent.Type,
         created: Date.now(),
         turn,
         phase,
         cardId,
         cardCommonId
     };
-};
+}
+
+DiscardCardEvent.Type = 'discardCard';
+
+module.exports = DiscardCardEvent;

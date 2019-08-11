@@ -1,6 +1,6 @@
 function PutDownCardEvent({ turn, location, cardId, cardCommonId, grantedForFreeByEvent = false, putDownAsExtraStationCard = false, startingStation = false }) {
     return {
-        type: 'putDownCard',
+        type: PutDownCardEvent.Type,
         created: Date.now(),
         turn,
         location,
@@ -18,5 +18,7 @@ PutDownCardEvent.forTest = data => {
     event.created = 'created' in data ? data.created : event.created;
     return event;
 };
+
+PutDownCardEvent.Type = 'putDownCard';
 
 module.exports = PutDownCardEvent;

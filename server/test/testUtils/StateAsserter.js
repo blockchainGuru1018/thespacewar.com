@@ -3,6 +3,7 @@ const {
     refute,
     sinon
 } = require('bocha');
+const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
 
 module.exports = StateAsserter;
 
@@ -26,6 +27,8 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
         gameHasNotEnded,
         hasStartedLastStandForPlayer,
         playerHasControlOfTurn,
+        hasPutDownCardEvent,
+        hasEventBeforeOtherEvent
     };
 
     function send() {
@@ -143,6 +146,19 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
         assert.calledWith(playerConnection.stateChanged, sinon.match({
             currentPlayer: playerId
         }));
+    }
+
+    function hasPutDownCardEvent({ cardId }) {
+        const state = playerConnection.stateChanged.lastCall.args[0];
+        const matchingEvents = state.events.filter(event => event.type === PutDownCardEvent.Type && event.cardId === cardId);
+        assert(matchingEvents.length > 0, 'Should have at least 1 matching putDownCardEvent');
+    }
+
+    function hasEventBeforeOtherEvent(firstEvent, secondEvent) {
+        const state = playerConnection.stateChanged.lastCall.args[0];
+        const indexOfFirstEvent = state.events.findIndex(event => event.type === firstEvent.type && event.cardId === firstEvent.cardId);
+        const indexOfSecondEvent = state.events.findIndex(event => event.type === secondEvent.type && event.cardId === secondEvent.cardId);
+        assert(indexOfFirstEvent < indexOfSecondEvent, 'Two events are not registered in the correct order');
     }
 
     function getLastChangedState() {

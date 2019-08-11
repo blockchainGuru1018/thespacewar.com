@@ -18,6 +18,7 @@ const FatalError = require('../../../shared/card/FatalError.js');
 const TargetMissed = require('../../../shared/card/TargetMissed.js');
 const MoveCardEvent = require("../../../shared/event/MoveCardEvent.js");
 const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
+const DiscardCardEvent = require('../../../shared/event/DiscardCardEvent.js');
 const MissilesLaunched = require("../../../shared/card/MissilesLaunched.js");
 const OverCapacity = require('../../../shared/card/OverCapacity.js');
 
@@ -112,6 +113,15 @@ module.exports = {
         'second player should have countered card in discard pile'() {
             this.secondPlayerAsserter.send('P2A');
             this.secondPlayerAsserter.hasDiscardedCard('C1A');
+        },
+        'the card used to counter should have a putDownCardEvent'() {
+            this.firstPlayerAsserter.hasPutDownCardEvent({ cardId: 'C2A' });
+        },
+        'should have registered putDownCardEvent _after_ discardCardEvent for card used to counter'() {
+            this.firstPlayerAsserter.hasEventBeforeOtherEvent(
+                { type: PutDownCardEvent.Type, cardId: 'C2A' },
+                { type: DiscardCardEvent.Type, cardId: 'C2A' }
+            );
         }
     },
     'when counter twice': {

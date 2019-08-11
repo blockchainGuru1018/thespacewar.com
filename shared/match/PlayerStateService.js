@@ -475,7 +475,6 @@ class PlayerStateService {
 
     useToCounter(cardId) {
         const cardData = this.removeCardFromStationHandOrHomeZone(cardId);
-        this.discardCard(cardData);
 
         if (cardData.type === 'event') {
             this.registerEventForPutDownEventCardInZone(cardData);
@@ -483,6 +482,8 @@ class PlayerStateService {
         else {
             this.registerEventForPutDownCardInZone(cardData, { grantedForFreeByEvent: false });
         }
+
+        this.discardCard(cardData);
     }
 
     registerAttackCountered({ attackerCardId, defenderCardId = null, targetStationCardIds = null }) {
