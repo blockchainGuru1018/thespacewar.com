@@ -62,7 +62,9 @@ class MatchService {
         });
 
         const endMatch = this.endMatch;
-        setTimeout(() => endMatch(), EndMatchDelay);
+        setTimeout(() => {
+            endMatch()
+        }, EndMatchDelay);
     }
 
     somePlayerHasAlreadyRetreated() {

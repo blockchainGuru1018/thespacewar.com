@@ -42,15 +42,24 @@ module.exports = function ({ getCardData, cache = DummyCache() }) {
     async function updateCacheIfChanged() {
         let data = await getCardData();
 
-        const cacheDataJson = JSON.stringify(cacheData.data, null, 4);
-        const freshDataJson = JSON.stringify(data, null, 4);
-        if (freshDataJson !== cacheDataJson) {
+        if (newDataIsDifferentFromCurrent(data)) {
             saveNewCacheData(data);
-            await cache.setItem('rawCardData', cacheData);
+            const cacheDataJson = JSON.stringify(cacheData.data, null, 4);
+            await cache.setItem('rawCardData', cacheDataJson);
         }
     }
 
+    function newDataIsDifferentFromCurrent(data) {
+        if (!cacheData) return true;
+
+        const cacheDataJson = JSON.stringify(cacheData.data, null, 4);
+        const freshDataJson = JSON.stringify(data, null, 4);
+        return cacheDataJson !== freshDataJson;
+    }
+
     function saveNewCacheData(newData) {
+        if (!cacheData) cacheData = {};
+
         cacheData.data = newData;
         cacheData.saveTime = Date.now();
     }
