@@ -5,10 +5,21 @@ window.cheat = function (type, data) {
     if (type === 'test_findCard') {
         addCardsInDeckAsFindCardRequirement();
     }
+    else if (type === 'master_log') {
+        outputMasterLogToConsole();
+    }
     else {
         sendCheatAndLogResult(type, data);
     }
 };
+
+async function outputMasterLogToConsole() {
+    this.log = 'LOADING LOG';
+    const { text } = await ajax.jsonPost('/master-log', { password: localGameDataFacade.DebugPassword.get() });
+    console.log('\n\n --- MASTER LOG --- ');
+    console.log(text);
+    console.log(' --- END OF LOG --- \n\n');
+}
 
 async function addCardsInDeckAsFindCardRequirement() {
     const cardsInDeck = await sendCheat('getCardsInDeck');
