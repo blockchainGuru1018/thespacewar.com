@@ -1,5 +1,5 @@
 const MatchMode = require('./MatchMode.js');
-const EndMatchDelay = 5 * 60 * 1000;
+const EndMatchDelay = 15 * 1000;
 
 class MatchService {
 
