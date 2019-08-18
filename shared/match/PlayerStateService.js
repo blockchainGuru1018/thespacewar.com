@@ -474,7 +474,17 @@ class PlayerStateService {
     }
 
     useToCounter(cardId) {
-        const cardData = this.removeCardFromStationHandOrHomeZone(cardId);
+        const cardIsOnHandOrInStation = !!this.removeCardFromStationOrHand(cardId);
+        if (cardIsOnHandOrInStation) {
+            this.registerCounterWithCardOnHandOrInStation(cardId);
+        }
+        else {
+            this.registerCounterWithCardInZone(cardId);
+        }
+    }
+
+    registerCounterWithCardOnHandOrInStation(cardId) {
+        const cardData = this.removeCardFromStationOrHand(cardId);
 
         if (cardData.type === 'event') {
             this.registerEventForPutDownEventCardInZone(cardData);
@@ -483,6 +493,11 @@ class PlayerStateService {
             this.registerEventForPutDownCardInZone(cardData, { grantedForFreeByEvent: false });
         }
 
+        this.discardCard(cardData);
+    }
+
+    registerCounterWithCardInZone(cardId) {
+        const cardData = this.removeCardFromHomeZone(cardId);
         this.discardCard(cardData);
     }
 
