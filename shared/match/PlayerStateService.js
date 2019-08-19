@@ -380,6 +380,18 @@ class PlayerStateService {
         return null;
     }
 
+    findCardFromHandOrStation(cardId) {
+        const playerState = this.getPlayerState();
+
+        const cardInStation = playerState.stationCards.find(s => getStationCardId(s) === cardId);
+        if (cardInStation) return cardInStation.card;
+
+        const cardOnHand = playerState.cardsOnHand.find(c => c.id === cardId);
+        if (cardOnHand) return cardOnHand;
+
+        return null;
+    }
+
     setPhase(phase) {
         this.update(playerState => {
             playerState.phase = phase;
@@ -474,7 +486,7 @@ class PlayerStateService {
     }
 
     useToCounter(cardId) {
-        const cardIsOnHandOrInStation = !!this.removeCardFromStationOrHand(cardId);
+        const cardIsOnHandOrInStation = !!this.findCardFromHandOrStation(cardId);
         if (cardIsOnHandOrInStation) {
             this.registerCounterWithCardOnHandOrInStation(cardId);
         }
@@ -485,7 +497,6 @@ class PlayerStateService {
 
     registerCounterWithCardOnHandOrInStation(cardId) {
         const cardData = this.removeCardFromStationOrHand(cardId);
-
         if (cardData.type === 'event') {
             this.registerEventForPutDownEventCardInZone(cardData);
         }
