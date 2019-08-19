@@ -26,11 +26,18 @@ function FakeDeck(deps) {
 
     return {
         draw,
-        drawSingle,
         getCardCount: () => cards.length,
         getPossibleMillCount: () => Math.floor(cards.length / 2),
         _getDeck: () => [...cards]
     };
+
+    function draw(count) {
+        let result = [];
+        for (let i = 0; i < count; i++) {
+            result.push(drawSingle());
+        }
+        return result;
+    }
 
     function drawSingle() {
         const card = cards.shift();
@@ -39,13 +46,5 @@ function FakeDeck(deps) {
         }
         return card;
 
-    }
-
-    function draw(count) {
-        let result = [];
-        for (let i = 0; i < count; i++) {
-            result.push(drawSingle());
-        }
-        return result;
     }
 }

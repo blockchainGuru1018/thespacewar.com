@@ -47,8 +47,10 @@ function StartGameController({
 
     function startedGame() {
         if (gameConfig.niciaSatuStartsWithEnergyShield() && playerCommanders.has(Commander.NiciaSatu)) {
-            const deck = playerStateService.getDeck();
-            const energyShield = deck.removeFirstCardOfType(EnergyShield.CommonId);
+            let energyShield;
+            playerStateService.useDeck(deck => {
+                energyShield = deck.removeFirstCardOfType(EnergyShield.CommonId);
+            });
             if (energyShield) {
                 playerStateService.putDownCardInZone(energyShield, { grantedForFreeByEvent: true });
 

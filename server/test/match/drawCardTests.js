@@ -48,11 +48,15 @@ module.exports = {
             assert.equals(cardsOnHand.length, 1);
             assert.equals(cardsOnHand[0].id, 'C1A');
         },
-        'should emit stateChanged to first player'() {
-            assert.calledOnce(this.firstPlayerConnection.stateChanged);
-            assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
-                cardsOnHand: [sinon.match({ id: 'C1A' })]
-            }));
+        'first player should have changed cards in deck count'() {
+            this.match.refresh('P1A');
+            const { playerCardsInDeckCount } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
+            assert.equals(playerCardsInDeckCount, 1);
+        },
+        'second player should have changed opponent cards in deck count'() {
+            this.match.refresh('P2A');
+            const { opponentCardsInDeckCount } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
+            assert.equals(opponentCardsInDeckCount, 1);
         },
         'should emit stateChanged to second player'() {
             assert.calledOnce(this.secondPlayerConnection.stateChanged);
@@ -389,11 +393,13 @@ module.exports = {
                 playerStateById: {
                     'P1A': {
                         phase: 'draw',
-                        requirements: [{ type: 'drawCard', count: 1, common: true }]
+                        requirements: [{ type: 'drawCard', count: 1, common: true }],
+                        cardsInDeck: [createCard({ id: 'C1A' })]
                     },
                     'P2A': {
                         phase: 'wait',
-                        requirements: [{ type: 'drawCard', count: 0, common: true, waiting: true }]
+                        requirements: [{ type: 'drawCard', count: 0, common: true, waiting: true }],
+                        cardsInDeck: [createCard({ id: 'C2A' })]
                     }
                 }
             }));
@@ -405,6 +411,16 @@ module.exports = {
             assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                 requirements: []
             }));
+        },
+        'first player should have changed cards in deck count'() {
+            this.match.refresh('P1A');
+            const { playerCardsInDeckCount } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
+            assert.equals(playerCardsInDeckCount, 0);
+        },
+        'second player should have changed opponent cards in deck count'() {
+            this.match.refresh('P2A');
+            const { opponentCardsInDeckCount } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
+            assert.equals(opponentCardsInDeckCount, 0);
         },
         'should emit state changed WITHOUT requirement to second player'() {
             assert.calledOnce(this.secondPlayerConnection.stateChanged);

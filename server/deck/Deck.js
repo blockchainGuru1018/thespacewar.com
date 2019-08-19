@@ -1,7 +1,8 @@
-module.exports = function (deck) {
+module.exports = function (originalDeck) {
+
+    let deck = originalDeck.slice();
 
     return {
-        drawSingle,
         draw,
         getCardCount,
         getPossibleMillCount: () => Math.floor(getCardCount() / 2),
@@ -11,10 +12,6 @@ module.exports = function (deck) {
         _getDeck: () => [...deck],
         _restoreDeck: previousDeck => { deck = [...previousDeck] }
     };
-
-    function drawSingle() {
-        return draw(1)[0];
-    }
 
     function draw(count = 1) {
         const countAvailableToDraw = Math.min(getCardCount(), count);

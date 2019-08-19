@@ -66,9 +66,11 @@ class PlayerStateService {
     }
 
     _drawStartingCards() {
-        const playerDeck = this.getDeck();
         const startingHandCount = this._gameConfig.amountOfCardsInStartHand();
-        const cardsOnHand = playerDeck.draw(startingHandCount);
+        let cardsOnHand;
+        this.useDeck(deck => {
+            cardsOnHand = deck.draw(startingHandCount);
+        });
         this.update(playerState => {
             playerState.cardsOnHand = cardsOnHand;
         });
@@ -477,12 +479,22 @@ class PlayerStateService {
             return;
         }
 
-        const milledCards = deck.draw(this._gameConfig.millCardCount());
+        const millCardCount = this._gameConfig.millCardCount();
+        const milledCards = this._drawCount(millCardCount);
         for (let card of milledCards) {
             this.discardCard(card);
         }
 
         return milledCards;
+    }
+
+    _drawCount(count) {
+        let drawnCards;
+        this.useDeck(deck => {
+            drawnCards = deck.draw(count);
+        });
+
+        return drawnCards;
     }
 
     useToCounter(cardId) {
@@ -563,9 +575,9 @@ class PlayerStateService {
             return;
         }
 
-        const card = deck.drawSingle();
+        const cards = this._drawCount(1);
         this.update(state => {
-            state.cardsOnHand.push(card);
+            state.cardsOnHand.push(...cards);
         });
 
         const turn = this._matchService.getTurn();
@@ -753,8 +765,11 @@ class PlayerStateService {
     }
 
     removeCardFromDeck(cardId) {
-        const deck = this.getDeck();
-        const card = deck.removeCard(cardId);
+        let card;
+        this.useDeck(deck => {
+            card = deck.removeCard(cardId);
+        });
+
         return card;
     }
 
@@ -766,6 +781,14 @@ class PlayerStateService {
         return this.update(playerState => {
             const [removedCard] = playerState.discardedCards.splice(cardIndex, 1);
             return removedCard;
+        });
+    }
+
+    useDeck(updateFn) {
+        const deck = this.getDeck();
+        updateFn(deck);
+        this.update(state => {
+            state.cardsInDeck = deck.getAll();
         });
     }
 

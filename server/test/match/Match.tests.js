@@ -21,7 +21,6 @@ module.exports = testCase('Match', {
     'discard phase': require('./discardPhaseTests.js'),
     'attack phase:': require('./attackPhaseTests.js'),
     'duration card:': require('./durationCardTests.js'),
-    'behaviour card': require('./behaviourCardTests.js'),
     'damage station cards': require('./damageStationCardsTests.js'),
     'overwork': require('./overworkTests.js'),
     'putDownExtraStationCards': require('./putDownExtraStationCardsTests.js'),
