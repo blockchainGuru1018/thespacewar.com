@@ -1,4 +1,4 @@
-const LastStandLength = 30 * 1000 + 499;
+const LastStandLength = 15 * 1000 + 499;
 const LastStandLengthWithMargin = LastStandLength - 500;
 
 LastStand.LastStandLength = LastStandLength;
