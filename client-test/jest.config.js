@@ -14,6 +14,8 @@ module.exports = {
     // An array of file extensions your modules use
     moduleFileExtensions: ['js', 'json', 'jsx'],
 
+    projects: ['<rootDir>', '<rootDir>/../client'],
+
     setupFilesAfterEnv: ['<rootDir>/setupTests.js'],
 
     // The test environment that will be used for testing

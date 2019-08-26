@@ -1,4 +1,8 @@
 ./idea
+./.idea
+.idea
+.idea/jsLibraryMappings.xml
+
 ./client/node_modules
 ./client-test/node_modules
 ./client-test/build
