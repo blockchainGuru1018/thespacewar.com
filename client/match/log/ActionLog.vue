@@ -59,8 +59,10 @@
                     .split('_amp_').join('&')
                     .split('_115_').join('s')
                     .split('_83_').join('S')
-                    .split(/\*/).join('<strong>')
-                    .split(/#/).join('</strong>');
+                    .split(/\*/)
+                    .join('<strong>')
+                    .split(/#/)
+                    .join('</strong>');
             },
             getTitleText(entry) {
                 return entry.text

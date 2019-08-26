@@ -71,88 +71,58 @@ module.exports = function ({
     }
 
     function damagedInAttack({ defenderCardId, defenderCardCommonId, damageInflictedByDefender }) {
-        const cardName = cardInfoRepository.getName(defenderCardCommonId);
         log({
             action: 'damagedInAttack',
-            text: `*${cardName}# took ${damageInflictedByDefender} damage`,
+            text: `${cardInfoText(defenderCardCommonId)} took ${damageInflictedByDefender} damage`,
             defenderCardId
         });
     }
 
     function paralyzed({ defenderCardId, defenderCardCommonId }) {
-        const cardName = cardInfoRepository.getName(defenderCardCommonId);
         log({
             action: 'paralyzed',
-            text: `*${cardName}# was paralyzed`,
+            text: `${cardInfoText(defenderCardCommonId)} was paralyzed`,
             defenderCardId
         });
     }
 
     function cardDestroyed({ cardCommonId }) {
-        const cardName = cardInfoRepository.getName(cardCommonId);
         log({
             action: 'destroyed',
-            text: `*${cardName}# was discarded`
+            text: `${cardInfoText(cardCommonId)} was discarded`
         });
     }
 
     function cardsDiscarded({ cardCommonIds }) {
-        const cardNames = cardCommonIds.map(cardCommonId => cardInfoRepository.getName(cardCommonId));
-        if (cardNames.length === 0) {
-            return;
-        }
+        if (cardCommonIds.length === 0) return;
 
-        let text = '';
-        if (cardNames.length === 1) {
-            text = `*${cardNames[0]}# was discarded`;
-        }
-        else if (cardNames.length === 2) {
-            text = `*${cardNames[0]}# & *${cardNames[1]}# were discarded`;
-        }
-        else {
-            text = `${cardNames.slice(0, 1).map(name => `*${name}#`).join(', ')} & *${cardNames[cardNames.length - 1]}# were discarded`;
-        }
+        const text = listInTextWithCorrectGrammar({
+            cardCommonIds,
+            suffixSingle: ' was discarded',
+            suffixMany: ' were discarded'
+        });
 
         log({ action: 'discarded', text });
     }
 
     function opponentPlayedCards({ cardIds, cardCommonIds }) {
-        const cardNames = cardCommonIds.map(cardCommonId => cardInfoRepository.getName(cardCommonId));
-        if (cardNames.length === 0) {
-            return;
-        }
+        if (cardCommonIds.length === 0) return;
 
-        let text = '';
-        if (cardNames.length === 1) {
-            text = `*${cardNames[0]}#`;
-        }
-        else if (cardNames.length === 2) {
-            text = `*${cardNames[0]}# & *${cardNames[1]}#`;
-        }
-        else {
-            text = `${cardNames.slice(0, 1).map(name => `*${name}#`).join(', ')} & *${cardNames[cardNames.length - 1]}#`;
-        }
-
-        log({
-            action: 'played',
-            text: `${opponentName()} played *${text}#`,
-            cardIds
-        });
+        const text = `${opponentName()} played *${(listInTextWithCorrectGrammar({ cardCommonIds }))}#`;
+        log({ action: 'played', text, cardIds });
     }
 
     function opponentMovedCard({ cardCommonId }) {
-        const cardName = cardInfoRepository.getName(cardCommonId);
         log({
             action: 'moved',
-            text: `${opponentName()} moved *${cardName}#`
+            text: `${opponentName()} moved ${cardInfoText(cardCommonId)}`
         });
     }
 
     function opponentRepairedCard({ repairedCardId, repairedCardCommonId }) {
-        const cardName = cardInfoRepository.getName(repairedCardCommonId);
         log({
             action: 'repairedCard',
-            text: `${opponentName()} moved *${cardName}#`,
+            text: `${opponentName()} moved ${cardInfoText(repairedCardCommonId)}`,
             repairedCardId
         });
     }
@@ -174,18 +144,16 @@ module.exports = function ({
     }
 
     function opponentCounteredCard({ cardCommonId }) {
-        const cardName = cardInfoRepository.getName(cardCommonId);
         log({
             action: 'countered',
-            text: `${opponentName()} countered *${cardName}#`
+            text: `${opponentName()} countered ${cardInfoText(cardCommonId)}`
         });
     }
 
     function opponentCounteredAttackOnCard({ defenderCardId, defenderCardCommonId }) {
-        const cardName = cardInfoRepository.getName(defenderCardCommonId);
         log({
             action: 'counteredAttackOnCard',
-            text: `${opponentName()} countered attack on *${cardName}#`,
+            text: `${opponentName()} countered attack on ${cardInfoText(defenderCardCommonId)}`,
             defenderCardId
         });
     }
@@ -241,22 +209,12 @@ module.exports = function ({
     }
 
     function opponentMilledCardsFromYourDeck({ milledCardCommonIds }) {
-        const cardNames = milledCardCommonIds.map(cardCommonId => cardInfoRepository.getName(cardCommonId));
-
-        let text = '';
-        if (cardNames.length === 0) {
-            text = `${opponentName()} milled but no cards were discarded`;
-        }
-        else if (cardNames.length === 1) {
-            text = `*${cardNames[0]}# was milled`;
-        }
-        else if (cardNames.length === 2) {
-            text = `*${cardNames[0]}# & *${cardNames[1]}# were milled`;
-        }
-        else {
-            text = `${cardNames.slice(0, 1).map(name => `*${name}#`).join(', ')} & *${cardNames[cardNames.length - 1]}# were milled`;
-        }
-
+        const text = listInTextWithCorrectGrammar({
+            cardCommonIds: milledCardCommonIds,
+            suffixNone: ' milled but no cards were discarded',
+            suffixSingle: ' was milled',
+            suffixMany: ' were milled'
+        });
         log({ action: 'milled', text });
     }
 
@@ -275,19 +233,41 @@ module.exports = function ({
     }
 
     function opponentReceivedCardFromCommander(cardCommonId) {
-        const cardName = cardInfoRepository.getName(cardCommonId);
         log({
             action: 'receivedCardFromCommander',
-            text: `${opponentName()} received *${cardName}# from their commander`
+            text: `${opponentName()} received ${cardInfoText(cardCommonId)} from their commander`
         });
     }
 
     function receivedCardFromCommander(cardCommonId) {
-        const cardName = cardInfoRepository.getName(cardCommonId);
         log({
             action: 'receivedCardFromCommander',
-            text: `You received *${cardName}# from your commander`
+            text: `You received ${cardInfoText(cardCommonId)} from your commander`
         });
+    }
+
+    function listInTextWithCorrectGrammar({ cardCommonIds, suffixNone = '', suffixSingle = '', suffixMany = '' }) {
+        let text = '';
+        if (cardCommonIds.length === 0) {
+            text = `${opponentName()}${suffixNone}`;
+        }
+        else if (cardCommonIds.length === 1) {
+            text = `${cardInfoText(cardCommonIds[0])}${suffixSingle}`;
+        }
+        else if (cardCommonIds.length === 2) {
+            text = `${cardInfoText(cardCommonIds[0])} & ${cardInfoText(cardCommonIds[1])}${suffixMany}`;
+        }
+        else {
+            const cardInfoTextsListed = cardCommonIds.slice(0, -1).map(id => cardInfoText(id)).join(', ');
+            const lastCardInfoText = cardInfoText(cardCommonIds[cardCommonIds.length - 1]);
+            text = `${cardInfoTextsListed} & ${lastCardInfoText} were milled`;
+        }
+        return text;
+    }
+
+    function cardInfoText(cardCommonId) {
+        const cardName = cardInfoRepository.getName(cardCommonId);
+        return `*${cardName}--${cardCommonId}#`
     }
 
     function log({
