@@ -3,8 +3,19 @@ const Vuex = resolveModuleWithPossibleDefault(require('vuex'));
 const FakeUserRepository = require('./FakeUserRepository.js');
 const FakeMatchControllerFactory = require('./FakeMatchControllerFactory');
 const FakeMatchController = require('./FakeMatchController');
-const MatchPage = require('../../client/match/MatchPage.js');
 const cardsJson = require('../../server/card/rawCardData.cache.json').data;
+const {mount, createLocalVue} = require('@vue/test-utils');
+
+const MatchView = resolveModuleWithPossibleDefault(require('../../client/match/Match.vue'));
+const MatchStores = require('../../client/match/MatchStores.js');
+const PortalVue = resolveModuleWithPossibleDefault(require('portal-vue'));
+const vClickOutside = resolveModuleWithPossibleDefault(require('v-click-outside'));
+
+const localVue = createLocalVue();
+
+localVue.use(Vuex);
+localVue.use(PortalVue);
+localVue.use(vClickOutside);
 
 const dummyCardInfoRepository = {
     getType() { },
@@ -13,7 +24,7 @@ const dummyCardInfoRepository = {
 };
 
 module.exports = function TestController({ playerIds = ['P1A', 'P2A'], matchId = 'M1A', ...pageDeps } = {}) {
-    const store = new Vuex.Store({});
+    const store = new Vuex.Store({strict: false});
     registerFakeAudioModule(store);
 
     const [ownId, opponentId] = playerIds;
@@ -25,17 +36,22 @@ module.exports = function TestController({ playerIds = ['P1A', 'P2A'], matchId =
     pageDeps.rawCardDataRepository = { init() { }, get: () => cardsJson };
     pageDeps.rootStore = store;
 
-    const page = MatchPage(pageDeps);
+    MatchStores({ ...pageDeps, rootStore: store, matchId, opponentUser: { id: opponentId } });
+    let wrapper;
 
     return {
         dispatch(...args) {
             pageDeps.matchControllerFactory.getStoreDispatch()(...args);
         },
         showPage() {
-            page.show({ matchId, opponentUser: { id: opponentId } });
+            wrapper = mount(MatchView, {
+                store,
+                localVue,
+                attachToDocument: true
+            });
         },
         tearDown() {
-            page.hide();
+            wrapper.destroy();
         }
     };
 };

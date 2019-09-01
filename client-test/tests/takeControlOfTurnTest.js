@@ -30,7 +30,7 @@ afterEach(() => {
     controller = null;
 });
 
-describe('when phase is wait but is current player', async () => {
+describe('when phase is wait but is current player', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
@@ -48,7 +48,7 @@ describe('when phase is wait but is current player', async () => {
     });
 });
 
-describe('when phase is wait and is NOT current player', async () => {
+describe('when phase is wait and is NOT current player', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
@@ -66,7 +66,7 @@ describe('when phase is wait and is NOT current player', async () => {
     });
 });
 
-describe('when phase is action but is not current player', async () => {
+describe('when phase is action but is not current player', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
@@ -84,7 +84,7 @@ describe('when phase is action but is not current player', async () => {
     });
 });
 
-describe('when has taken control of the turn and is holding a 0 cost card', async () => {
+describe('when has taken control of the turn and is holding a 0 cost card', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
@@ -104,7 +104,7 @@ describe('when has taken control of the turn and is holding a 0 cost card', asyn
     });
 });
 
-describe('when has taken control of the turn and is holding a card costing more than 0', async () => {
+describe('when has taken control of the turn and is holding a card costing more than 0', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();

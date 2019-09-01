@@ -33,7 +33,7 @@ afterEach(() => {
     controller = null;
 });
 
-describe('when in draw phase and can draw 2 cards per turn and has drawn 1 card already', async () => {
+describe('when in draw phase and can draw 2 cards per turn and has drawn 1 card already', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
@@ -50,7 +50,7 @@ describe('when in draw phase and can draw 2 cards per turn and has drawn 1 card 
         await timeout();
     });
 
-    test('should show that there is 1 card left to draw', () => {
+    test('should show that there is 1 card left to draw', async () => {
         assert.elementTextStartsWith('.guideText-drawPhaseSubText', 'Draw 1 card');
     });
 

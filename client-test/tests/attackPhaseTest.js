@@ -3,7 +3,7 @@ const createState = require('../../shared/test/fakeFactories/createState.js');
 const TestHelper = require('../../shared/test/fakeFactories/TestHelper.js');
 const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
 
-describe('when have had missile in home zone for 1 turn', async () => {
+describe('when have had missile in home zone for 1 turn', () => {
     let playerCardInPlay;
 
     beforeEach(async () => {
@@ -24,7 +24,7 @@ describe('when have had missile in home zone for 1 turn', async () => {
     });
 });
 
-describe('when card cannot attack', async () => {
+describe('when card cannot attack', () => {
     let playerCardInPlay;
 
     beforeEach(async () => {

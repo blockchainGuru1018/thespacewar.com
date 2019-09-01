@@ -31,7 +31,7 @@ afterEach(() => {
     controller = null;
 });
 
-describe('when has 1 station card in draw row in action phase and click move', async () => {
+describe('when has 1 station card in draw row in action phase and click move', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
@@ -58,7 +58,7 @@ describe('when has 1 station card in draw row in action phase and click move', a
     });
 });
 
-describe('when move station card from draw row to action row', async () => {
+describe('when move station card from draw row to action row', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();

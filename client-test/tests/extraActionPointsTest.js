@@ -34,7 +34,7 @@ afterEach(() => {
     controller = null;
 });
 
-describe('when has unflipped 2 station cards and click overwork', async () => {
+describe('when has unflipped 2 station cards and click overwork', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
@@ -57,7 +57,7 @@ describe('when has unflipped 2 station cards and click overwork', async () => {
     });
 });
 
-describe('when has 1 unflipped station card', async () => {
+describe('when has 1 unflipped station card', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();

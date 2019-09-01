@@ -12,7 +12,7 @@ module.exports = {
     coverageDirectory: 'coverage',
 
     // An array of file extensions your modules use
-    moduleFileExtensions: ['js', 'json', 'jsx'],
+    moduleFileExtensions: ['js', 'json', 'vue'],
 
     projects: ['<rootDir>', '<rootDir>/../client'],
 
@@ -22,7 +22,8 @@ module.exports = {
     testEnvironment: 'jsdom',
 
     // The glob patterns Jest uses to detect test files
-    testMatch: ['**/__tests__/**/*.js?(x)', '**/?(*.)+(spec|test).js?(x)'],
+    // testMatch: ['**/__tests__/**/*.js?(x)', '**/?(*.)+(spec|test).js?(x)'],
+    testMatch: ['**/tests/?(*)+(Test).js?(x)','**/legacyTests/?(*)+(Test).js?(x)'],
 
     // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
     testPathIgnorePatterns: ['\\\\node_modules\\\\'],
@@ -32,6 +33,11 @@ module.exports = {
 
     // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
     transformIgnorePatterns: ['<rootDir>/node_modules/'],
+
+    transform: {
+        "^.+\\.js$": "babel-jest",
+        "^.+\\.vue$": "vue-jest"
+    },
 
     // Indicates whether each individual test should be reported during the run
     verbose: true,

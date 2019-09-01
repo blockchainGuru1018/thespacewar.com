@@ -4,6 +4,7 @@ const getCardImageUrl = require('../../client/utils/getCardImageUrl.js');
 const FakeState = require('../matchTestUtils/FakeState.js');
 const FakeMatchController = require('../matchTestUtils/FakeMatchController.js');
 const { createController } = require('../matchTestUtils/index.js');
+
 const {
     assert,
     refute,
@@ -24,7 +25,6 @@ function setUpController(optionsAndPageDeps = {}) { //Has side effects to afford
 
     return controller;
 }
-
 beforeEach(() => {
     getCardImageUrl.byCommonId = commonId => `/${commonId}`
 });
@@ -35,7 +35,7 @@ afterEach(() => {
     controller = null;
 });
 
-describe('when has damageStationCard requirement by emptyDeck and is waiting', async () => {
+describe('when has damageStationCard requirement by emptyDeck and is waiting', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
@@ -263,7 +263,7 @@ describe('when has find card requirement', () => {
     });
 });
 
-describe('when has draw card requirement', async () => {
+describe('when has draw card requirement', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
@@ -287,7 +287,7 @@ describe('when has draw card requirement', async () => {
     });
 });
 
-describe('when has draw card requirement FROM FATAL ERROR', async () => {
+describe('when has draw card requirement FROM FATAL ERROR', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();

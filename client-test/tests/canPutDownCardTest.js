@@ -35,7 +35,7 @@ afterEach(() => {
     controller = null;
 });
 
-describe('when has Destiny decided in play and hold event card', async () => {
+describe('when has Destiny decided in play and hold event card', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
@@ -56,7 +56,7 @@ describe('when has Destiny decided in play and hold event card', async () => {
     });
 });
 
-describe('when does NOT have Destiny decided in play and hold event card', async () => {
+describe('when does NOT have Destiny decided in play and hold event card', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
@@ -76,7 +76,7 @@ describe('when does NOT have Destiny decided in play and hold event card', async
     });
 });
 
-describe('when has Destiny decided in play and has event card as flipped station card', async () => {
+describe('when has Destiny decided in play and has event card as flipped station card', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
@@ -99,7 +99,7 @@ describe('when has Destiny decided in play and has event card as flipped station
     });
 });
 
-describe('when has Destiny decided in play and hold any card (not an event card as that is covered by previous tests)', async () => {
+describe('when has Destiny decided in play and hold any card (not an event card as that is covered by previous tests)', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
@@ -120,7 +120,7 @@ describe('when has Destiny decided in play and hold any card (not an event card 
     });
 });
 
-describe('when opponent has Destiny decided in play and player has put down 1 card this turn and is holding a card', async () => {
+describe('when opponent has Destiny decided in play and player has put down 1 card this turn and is holding a card', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
@@ -143,7 +143,7 @@ describe('when opponent has Destiny decided in play and player has put down 1 ca
     });
 });
 
-describe('when opponent has Destiny decided in play and player has put down 1 card this turn and is holding a card, but player has Neutralization in play', async () => {
+describe('when opponent has Destiny decided in play and player has put down 1 card this turn and is holding a card, but player has Neutralization in play', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
@@ -166,7 +166,7 @@ describe('when opponent has Destiny decided in play and player has put down 1 ca
     });
 });
 
-describe('when opponent has Destiny decided in play and player has NOT put down ANY card this turn and is holding a card', async () => {
+describe('when opponent has Destiny decided in play and player has NOT put down ANY card this turn and is holding a card', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();

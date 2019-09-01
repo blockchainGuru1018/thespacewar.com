@@ -38,7 +38,7 @@ afterEach(() => {
     controller = null;
 });
 
-describe('misc', async () => {
+describe('misc', () => {
     test('when in "start" phase and click card on hand should NOT see ANY card ghosts', async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
@@ -57,7 +57,7 @@ describe('misc', async () => {
     });
 });
 
-describe('when in discard phase and is required to discard 2 cards', async () => {
+describe('when in discard phase and is required to discard 2 cards', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
@@ -90,7 +90,7 @@ describe('when in discard phase and is required to discard 2 cards', async () =>
     });
 });
 
-describe('when has NO cards left and it is draw phase and opponent has 1 card left', async () => {
+describe('when has NO cards left and it is draw phase and opponent has 1 card left', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
@@ -116,7 +116,7 @@ describe('when has NO cards left and it is draw phase and opponent has 1 card le
     });
 });
 
-describe('when has 1 card left and it is draw phase and opponent has NO cards left', async () => {
+describe('when has 1 card left and it is draw phase and opponent has NO cards left', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();

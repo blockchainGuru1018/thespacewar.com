@@ -40,7 +40,7 @@ afterEach(() => {
     controller = null;
 });
 
-describe('when has already put down station card this turn and holding Excellent work', async () => {
+describe('when has already put down station card this turn and holding Excellent work', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
@@ -75,8 +75,7 @@ describe('when has already put down station card this turn and holding Excellent
     });
 });
 
-describe('when has already put down station card this turn and holding Excellent work and cannot afford card',
-    async () => {
+describe('when has already put down station card this turn and holding Excellent work and cannot afford card', () => {
         beforeEach(async () => {
             const { dispatch, showPage } = setUpController();
             showPage();
@@ -110,7 +109,7 @@ describe('when has already put down station card this turn and holding Excellent
         });
     });
 
-describe('when has NOT put down station card this turn and holding Excellent work and cannot afford card', async () => {
+describe('when has NOT put down station card this turn and holding Excellent work and cannot afford card', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
@@ -162,8 +161,7 @@ describe('when has NOT put down station card this turn and holding Excellent wor
 //     });
 // });
 
-describe('have put down Excellent work and selected "Put down as extra station card" and put down in first station row',
-    async () => {
+describe('have put down Excellent work and selected "Put down as extra station card" and put down in first station row', () => {
         beforeEach(async () => {
             const { dispatch, showPage } = setUpController({
                 cardInfoRepository: FakeCardInfoRepository([
@@ -198,7 +196,7 @@ describe('have put down Excellent work and selected "Put down as extra station c
         });
     });
 
-describe('when has excellent work as flipped station card and move it to zone', async () => {
+describe('when has excellent work as flipped station card and move it to zone', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();

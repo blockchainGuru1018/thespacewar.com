@@ -27,7 +27,7 @@ afterEach(() => {
 });
 
 describe('action phase', () => {
-    describe('when in action phase and click card on hand', async () => {
+    describe('when in action phase and click card on hand', () => {
         beforeEach(async () => {
             const { dispatch, showPage } = controller;
             showPage();
