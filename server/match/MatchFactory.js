@@ -3,6 +3,8 @@ const Match = require('./Match.js');
 const CardDataAssembler = require('../../shared/CardDataAssembler.js');
 const CardInfoRepository = require('../../shared/CardInfoRepository.js');
 
+const BotId = 'BOT';
+
 module.exports = function ({
     socketRepository,
     rawCardDataRepository,
@@ -14,7 +16,8 @@ module.exports = function ({
     const cardInfoRepository = CardInfoRepository({ cardDataAssembler });
 
     return {
-        create
+        create,
+        createWithBot
     };
 
     function create({ users, endMatch }) {
@@ -31,11 +34,37 @@ module.exports = function ({
         });
     }
 
+    function createWithBot({ user, endMatch }) {
+        const players = [
+            createPlayer(user),
+            createBotForPlayer(user)
+        ];
+        const matchId = createId();
+        return Match({
+            players,
+            matchId,
+            deckFactory,
+            cardInfoRepository,
+            logger,
+            rawCardDataRepository,
+            gameConfig,
+            endMatch: () => endMatch(matchId)
+        });
+    }
+
     function createPlayer(user) {
         return Player({
             id: user.id,
             name: user.name,
             connection: socketRepository.getForUser(user.id)
+        });
+    }
+
+    function createBotForPlayer(playerUser) {
+        return Player({
+            id: BotId,
+            name: 'Mr.Roboto',
+            connection: socketRepository.getForUser(playerUser.id)
         });
     }
 

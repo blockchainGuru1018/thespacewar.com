@@ -12,6 +12,16 @@
             <div class="users-wrapper">
                 <div class="users">
                     <div
+                        tabindex="0"
+                        class="user"
+                        @click="startGameWithBot"
+                        @keydown.enter="startGameWithBot"
+                    >
+                        <span class="user-name">
+                            Mr.Roboto
+                        </span>
+                    </div>
+                    <div
                         v-if="availableUsers.length === 0"
                         class="users-noUsersAvailable"
                     >
@@ -69,7 +79,8 @@
         },
         methods: {
             ...mapActions([
-                'startGameWithUser'
+                'startGameWithUser',
+                'startGameWithBot'
             ]),
             userClick(user) {
                 this.startGameWithUser(user);

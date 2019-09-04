@@ -26,6 +26,7 @@ const Commander = require("../../shared/match/commander/Commander.js");
 const Clock = require('../../shared/gameTimer/Clock.js');
 const PlayerCardInPlay = require('./card/PlayerCardInPlay.js');
 const LastStand = require('../../shared/match/LastStand.js');
+const ClientStateChanger = require('../state/ClientStateChanger.js');
 
 const {
     COMMON_PHASE_ORDER,
@@ -34,13 +35,6 @@ const {
 
 const FlashCardTime = 2000;
 const ClientLimitNotice = { note: 'not_allowed_on_client' };
-
-const storeItemNameByServerItemName = {
-    cardsInZone: 'playerCardsInZone',
-    cardsInOpponentZone: 'playerCardsInOpponentZone',
-    discardedCards: 'playerDiscardedCards',
-    cardsOnHand: 'playerCardsOnHand'
-};
 
 module.exports = function (deps) {
 
@@ -177,12 +171,6 @@ module.exports = function (deps) {
             opponentMaxStationCardCount,
             gameConfig,
             cardDataAssembler
-        },
-        mutations: {
-            setPlayerStationCards,
-            setPlayerCardsOnHand,
-            setOpponentStationCards,
-            addOpponentStationCards
         },
         actions: {
             // remote
@@ -728,47 +716,6 @@ module.exports = function (deps) {
         return getters.allOpponentStationCards.filter(s => !s.flipped).length;
     }
 
-    function setPlayerStationCards(state, stationCards) {
-        state.playerStation.drawCards = stationCards
-            .filter(s => s.place === 'draw')
-            .sort(stationCardsByIsFlippedComparer);
-        state.playerStation.actionCards = stationCards
-            .filter(s => s.place === 'action')
-            .sort(stationCardsByIsFlippedComparer);
-        state.playerStation.handSizeCards = stationCards
-            .filter(s => s.place === 'handSize')
-            .sort(stationCardsByIsFlippedComparer);
-    }
-
-    function setPlayerCardsOnHand(state, cards) {
-        state.playerCardsOnHand = cards;
-    }
-
-    function setOpponentStationCards(state, stationCards) {
-        state.opponentStation.drawCards = stationCards
-            .filter(s => s.place === 'draw')
-            .sort(stationCardsByIsFlippedComparer);
-        state.opponentStation.actionCards = stationCards
-            .filter(s => s.place === 'action')
-            .sort(stationCardsByIsFlippedComparer);
-        state.opponentStation.handSizeCards = stationCards
-            .filter(s => s.place === 'handSize')
-            .sort(stationCardsByIsFlippedComparer);
-    }
-
-    function addOpponentStationCards(state, stationCard) {
-        const location = stationCard.place;
-        if (location === 'draw') {
-            state.opponentStation.drawCards.push(stationCard);
-        }
-        else if (location === 'action') {
-            state.opponentStation.actionCards.push(stationCard);
-        }
-        else if (location === 'handSize') {
-            state.opponentStation.handSizeCards.push(stationCard);
-        }
-    }
-
     function askToDrawCard() {
         matchController.emit('drawCard');
     }
@@ -808,9 +755,20 @@ module.exports = function (deps) {
         matchController.emit('skipDrawCard');
     }
 
-    function stateChanged({ state, commit, getters, dispatch }, data) {
-        for (let key of Object.keys(data)) {
-            const datum = data[key];
+    function stateChanged({ state, getters, dispatch }, data) {
+        const clientStateChanger = ClientStateChanger({ state, preMergeHook });
+        clientStateChanger.stateChanged(data);
+
+        if (!gameHasBegun) {
+            gameHasBegun = true;
+            dispatch('persistOngoingMatch');
+        }
+
+        if (getters.gameOn && getters.opponentClock.getTime() <= 0) {
+            setTimeout(() => window.location.reload(), 3 * 60 * 1000);
+        }
+
+        function preMergeHook(key, datum) {
             if (gameHasBegun) {
                 if (key === 'actionLogEntries') {
                     if (datum.length !== state.actionLogEntries.length) {
@@ -837,26 +795,6 @@ module.exports = function (deps) {
                     }
                 }
             }
-
-            if (key === 'stationCards') {
-                commit('setPlayerStationCards', datum);
-            }
-            else if (key === 'opponentStationCards') {
-                commit('setOpponentStationCards', datum);
-            }
-            else {
-                const localKey = storeItemNameByServerItemName[key] || key;
-                state[localKey] = datum;
-            }
-        }
-
-        if (!gameHasBegun) {
-            gameHasBegun = true;
-            dispatch('persistOngoingMatch');
-        }
-
-        if (getters.gameOn && getters.opponentClock.getTime() <= 0) {
-            setTimeout(() => window.location.reload(), 3 * 60 * 1000);
         }
     }
 

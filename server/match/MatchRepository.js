@@ -1,3 +1,5 @@
+const BotId = 'BOT';
+
 module.exports = function ({
     userRepository,
     socketRepository,
@@ -9,6 +11,7 @@ module.exports = function ({
 
     return {
         create,
+        createWithBot,
         reconnect,
         getById,
         getForUser,
@@ -33,6 +36,20 @@ module.exports = function ({
         registerMatchWithUsers(match, users);
 
         emitMatchCreate(match, opponentId);
+
+        return match.toClientModel();
+    }
+
+    async function createWithBot({ playerId }) {
+        if (getForUser(playerId)) {
+            throw new Error('Player is already in a match');
+        }
+
+        const user = await userRepository.getUser(playerId);
+        if (!user) throw new Error('Some users for the match does not exist');
+
+        const match = matchFactory.createWithBot({ user, endMatch });
+        registerMatchWithUsers(match, [user]);
 
         return match.toClientModel();
     }

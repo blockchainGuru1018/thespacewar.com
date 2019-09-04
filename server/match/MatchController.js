@@ -6,6 +6,7 @@ module.exports = function (deps) {
 
     return {
         create,
+        createWithBot,
         getOwnState,
         onAction
     };
@@ -17,6 +18,16 @@ module.exports = function (deps) {
 
         matchRepository.clearOldMatches();
         const match = await matchRepository.create({ playerId, opponentId });
+
+        res.json(match);
+    }
+
+    async function createWithBot(req, res) {
+        const playerId = req.params.playerId;
+        if (!playerId) throw new Error('Illegal operation');
+
+        matchRepository.clearOldMatches();
+        const match = await matchRepository.createWithBot({ playerId });
 
         res.json(match);
     }
@@ -50,6 +61,6 @@ module.exports = function (deps) {
 
     function sendMatchIsDeadMessageToUserSocketConnection({ userId, matchId }) {
         const userConnection = socketRepository.getForUser(userId);
-        userConnection.emit('match', { matchId, action: 'matchIsDead' });
+        userConnection.emit('match', { matchId, playerId: userId, action: 'matchIsDead' });
     }
 };

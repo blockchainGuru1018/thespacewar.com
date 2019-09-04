@@ -4,6 +4,7 @@ const CardDataAssembler = require('../CardDataAssembler.js');
 const CardInfoRepository = require('../CardInfoRepository.js');
 const StateSerializer = require('../../server/match/StateSerializer.js');
 const DeckFactory = require('../../server/deck/DeckFactory.js');
+const ActionPointsCalculator = require('./ActionPointsCalculator.js');
 const LastStand = require('./LastStand.js');
 
 module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig }) {
@@ -17,6 +18,7 @@ module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig 
         stateMemento: cached(stateMemento),
         cardDataAssembler: cached(cardDataAssembler),
         cardInfoRepository: cached(cardInfoRepository),
+        actionPointsCalculator: cached(actionPointsCalculator),
         stateSerializer: cached(stateSerializer),
         deckFactory: cached(deckFactory)
     };
@@ -36,6 +38,12 @@ module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig 
     function cardInfoRepository() {
         return CardInfoRepository({
             cardDataAssembler: api.cardDataAssembler()
+        });
+    }
+
+    function actionPointsCalculator() {
+        return ActionPointsCalculator({
+            cardInfoRepository: api.cardInfoRepository()
         });
     }
 
