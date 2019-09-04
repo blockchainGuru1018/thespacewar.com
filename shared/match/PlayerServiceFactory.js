@@ -167,7 +167,7 @@ module.exports = function ({
 
     function playerDiscardPhase(playerId) {
         return PlayerDiscardPhase({
-            playerRuleService: api.playerId(playerId),
+            playerRuleService: api.playerRuleService(playerId),
             playerStateService: api.playerStateService(playerId)
         });
     }

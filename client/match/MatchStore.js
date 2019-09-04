@@ -51,6 +51,8 @@ module.exports = function (deps) {
     let gameHasBegun = false;
     let endLastStandIntervalId = null;
 
+    persistOngoingMatch();
+
     return {
         namespaced: true,
         name: 'match',
@@ -59,7 +61,7 @@ module.exports = function (deps) {
             readyPlayerIds: [],
             lastStandInfo: null,
             gameConfigEntity: null,
-            commanders: [Commander.StartingCommander],
+            commanders: [],
             actionLogEntries: [],
             opponentActionLogEntries: [],
             turn: 1,
@@ -199,7 +201,6 @@ module.exports = function (deps) {
             placeCardInZone,
             opponentDiscardedDurationCard,
             opponentMovedCard,
-            persistOngoingMatch,
             drawCards,
             selectAsAttacker,
             selectAsDefender,
@@ -761,7 +762,6 @@ module.exports = function (deps) {
 
         if (!gameHasBegun) {
             gameHasBegun = true;
-            dispatch('persistOngoingMatch');
         }
 
         if (getters.gameOn && getters.opponentClock.getTime() <= 0) {
@@ -854,13 +854,6 @@ module.exports = function (deps) {
         let cardIndex = state.opponentCardsInZone.findIndex(c => c.id === cardId);
         let [card] = state.opponentCardsInZone.splice(cardIndex, 1);
         state.opponentCardsInPlayerZone.push(card);
-    }
-
-    function persistOngoingMatch({ state }) {
-        const playerIds = [state.ownUser.id, state.opponentUser.id];
-        const matchData = { id: matchId, playerIds };
-
-        localGameDataFacade.setOngoingMatch(matchData);
     }
 
     //TODO Should NOT take "cards" as a parameter. This should be emitted and received by a StateChanged event
@@ -1136,8 +1129,11 @@ module.exports = function (deps) {
     function endLastStand() {
         matchController.emit('endLastStand');
     }
-};
 
-function stationCardsByIsFlippedComparer(a, b) {
-    return (a.flipped ? 1 : 0) - (b.flipped ? 1 : 0);
-}
+    function persistOngoingMatch() {
+        const playerIds = [userRepository.getOwnUser().id, opponentUser.id];
+        const matchData = { id: matchId, playerIds };
+
+        localGameDataFacade.setOngoingMatch(matchData);
+    }
+};

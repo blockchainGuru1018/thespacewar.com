@@ -4,6 +4,7 @@ const DiscardCardEvent = require('../event/DiscardCardEvent.js');
 const MoveCardEvent = require('../event/MoveCardEvent.js');
 const PutDownCardEvent = require('../PutDownCardEvent.js');
 const RemoveStationCardEvent = require('../event/RemoveStationCardEvent.js');
+const MatchMode = require('./MatchMode.js');
 const { PHASES } = require('../phases.js');
 
 class PlayerStateService {
@@ -86,6 +87,14 @@ class PlayerStateService {
     selectStartingStationCard(cardId, location) {
         const cardData = this.removeCardFromHand(cardId);
         this.addStationCard(cardData, location, { startingStation: true });
+    }
+
+    isReadyForGame() {
+        const state = this._matchService.getState();
+        const playerId = this.getPlayerId();
+
+        return state.mode === MatchMode.selectStationCards
+            && state.readyPlayerIds.includes(playerId);
     }
 
     isFirstPlayer() {

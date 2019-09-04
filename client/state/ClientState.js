@@ -2,6 +2,7 @@ const MatchMode = require('../../shared/match/MatchMode.js');
 const Commander = require("../../shared/match/commander/Commander.js");
 const ClientStateChanger = require('./ClientStateChanger.js');
 const mapFromClientToServerState = require('../../client/match/mapFromClientToServerState.js');
+const GameConfig = require('../../shared/match/GameConfig.js');
 
 function ClientState({
     userRepository,
@@ -14,7 +15,7 @@ function ClientState({
         readyPlayerIds: [],
         lastStandInfo: null,
         gameConfigEntity: null,
-        commanders: [Commander.StartingCommander],
+        commanders: [],
         actionLogEntries: [],
         opponentActionLogEntries: [],
         turn: 1,
@@ -69,11 +70,12 @@ function ClientState({
         update,
         onUpdate,
         read: () => state,
-        toServerState
+        toServerState,
+        gameConfig
     };
 
     async function update(serverState) {
-        const stateChanger = ClientStateChanger({state});
+        const stateChanger = ClientStateChanger({ state });
         stateChanger.stateChanged(serverState);
         await updateListener();
     }
@@ -84,6 +86,14 @@ function ClientState({
 
     function toServerState() {
         return mapFromClientToServerState(state);
+    }
+
+    function gameConfig() {
+        if (!state.gameConfigEntity) {
+            return GameConfig.notLoaded();
+        }
+
+        return GameConfig(state.gameConfigEntity);
     }
 }
 

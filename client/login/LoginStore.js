@@ -1,10 +1,12 @@
 const ajax = require('../utils/ajax.js');
 const localGameDataFacade = require("../utils/localGameDataFacade.js")
+const createBotUser = require('../../shared/user/createBotUser.js');
+const BotId = 'BOT';
 
 module.exports = function ({
     route,
-    rootStore,
-    userRepository
+    userRepository,
+    botUpdateListener
 }) {
 
     return {
@@ -66,15 +68,28 @@ module.exports = function ({
     async function restoreFromPreviousSession() {
         const matchData = localGameDataFacade.getOngoingMatch();
         if (matchData) {
-            await joinMatch(matchData);
+            const { id: matchId, playerIds } = matchData;
+            if (playerIds.includes(BotId)) {
+                joinBotMatch(matchId);
+            }
+            else {
+                joinPlayerMatch(matchId, playerIds);
+            }
         }
     }
 
-    async function joinMatch({ id: matchId, playerIds }) {
-        let ownUserId = userRepository.getOwnUser().id;
-        let opponentUserId = playerIds.find(id => id !== ownUserId);
-        let users = userRepository.getAllLocal();
-        let opponentUser = users.find(u => u.id === opponentUserId);
+    function joinBotMatch(matchId) {
+        const botUser = createBotUser();
+        route('match', { matchId, opponentUser: botUser });
+
+        botUpdateListener.start({ matchId, botUser, playerUser: userRepository.getOwnUser() });
+    }
+
+    function joinPlayerMatch(matchId, playerIds) {
+        const ownUserId = userRepository.getOwnUser().id;
+        const opponentUserId = playerIds.find(id => id !== ownUserId);
+        const users = userRepository.getAllLocal();
+        const opponentUser = users.find(u => u.id === opponentUserId);
         route('match', { matchId, opponentUser });
     }
 };

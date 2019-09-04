@@ -1,11 +1,12 @@
 const localGameDataFacade = require("../utils/localGameDataFacade.js");
+const createBotUser = require('../../shared/user/createBotUser.js');
 
 const BotId = 'BOT';
 
 module.exports = function ({
     matchRepository,
     userRepository,
-    botFactory,
+    botUpdateListener,
     route
 }) {
 
@@ -35,7 +36,7 @@ module.exports = function ({
         route('match', { matchId, opponentUser });
     }
 
-    async function startGameWithUser({ state }, opponentUser) {
+    async function startGameWithUser(actionContext, opponentUser) {
         let matchId;
         try {
             const playerId = userRepository.getOwnUser().id;
@@ -54,6 +55,7 @@ module.exports = function ({
 
     async function startGameWithBot() {
         let matchId;
+
         try {
             const playerId = userRepository.getOwnUser().id;
             const match = await matchRepository.createWithBot({ playerId });
@@ -64,15 +66,12 @@ module.exports = function ({
         }
 
         if (matchId) {
-            const botUser = {
-                name: 'Mr.Roboto',
-                id: BotId
-            };
+            const botUser = createBotUser();
             route('match', {
                 matchId,
                 opponentUser: botUser
             });
-            botFactory.create({ matchId, botUser });
+            botUpdateListener.start({ matchId, botUser, playerUser: userRepository.getOwnUser() });
         }
     }
 

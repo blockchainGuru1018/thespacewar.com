@@ -5,6 +5,7 @@ const ActionPhaseController = require('./ActionPhaseController.js');
 const DiscardPhaseController = require('./DiscardPhaseController.js');
 const AttackPhaseController = require('./AttackPhaseController.js');
 const MatchMode = require('../../shared/match/MatchMode.js');
+const Commander = require('../../shared/match/commander/Commander.js');
 
 const WaitTime = 800;
 const BotId = 'BOT';
@@ -12,6 +13,8 @@ const BotId = 'BOT';
 module.exports = async function ({
     matchService,
     playerStateService,
+    playerRuleService,
+    playerCommanders,
     matchController
 }) {
 
@@ -25,6 +28,7 @@ module.exports = async function ({
     // else if (isGameOn()) {
     //     gameOn();
     // }
+
     if (isChoosingStartingPlayer()) {
         choosingStartingPlayer();
     }
@@ -68,12 +72,21 @@ module.exports = async function ({
     }
 
     function selectingStartingStationCards() {
-        const cardsOnHand = playerStateService.getCardsOnHand();
-        matchController.emit('selectStartingStationCard', { cardId: cardsOnHand[0].id, location: 'action' });
+        const canPutDownMoreStationCards = playerRuleService.canPutDownMoreStartingStationCards();
+        if (canPutDownMoreStationCards) {
+            const cardsOnHand = playerStateService.getCardsOnHand();
+            matchController.emit('selectStartingStationCard', { cardId: cardsOnHand[0].id, location: 'action' });
+        }
+        else if (!playerCommanders.hasSelectedSomeCommander()) {
+            matchController.emit('selectCommander', { commander: Commander.FrankJohnson });
+        }
+        else if (!playerStateService.isReadyForGame()) {
+            matchController.emit('playerReady');
+        }
     }
 
     function choosingStartingPlayer() {
-        matchController.emit('selectPlayerToStart', BotId);
+        matchController.emit('selectPlayerToStart', { playerToStartId: BotId });
     }
 };
 

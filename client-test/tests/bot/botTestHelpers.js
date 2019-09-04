@@ -17,7 +17,10 @@ module.exports = {
 
 async function setupClientState(fakeServerState) {
     const clientState = ClientState({
-        userRepository: FakeUserRepository({ ownUser: { id: BotId } }),
+        userRepository: FakeUserRepository({
+            ownUser: { id: BotId, name: 'Mr.Robot' },
+            opponentUser: { id: PlayerId, name: 'P1B' }
+        }),
         opponentUser: { id: PlayerId }
     });
 
@@ -43,14 +46,13 @@ function spawnBot({ clientState, matchController }) {
     botSpawner.spawn();
 }
 
-function createFakeUserRepositoryToSpawnBot(clientState) {
+function createFakeUserRepositoryToSpawnBot({ ownUser, opponentUser }) {
     return {
         getUserById: id => {
-            const state = clientState.read();
-            if (id === state.ownUser.id) {
+            if (id === ownUser.id) {
                 return { name: 'Mr. Roboto', id: 'BOT' };
             }
-            return state.opponentUser;
+            return opponentUser;
         }
     };
 }

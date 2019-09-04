@@ -6,6 +6,7 @@ module.exports = function (deps) { //TODO Rename MatchConnectionController or so
     const ownUserId = deps.ownUserId;
     const matchId = deps.matchId;
     const dispatch = deps.dispatch;
+    const playerIdControllerBot = deps.playerIdControllerBot || '';
 
     return {
         start,
@@ -22,13 +23,17 @@ module.exports = function (deps) { //TODO Rename MatchConnectionController or so
 
     function emit(action, value) {
         console.log(`\n[${new Date().toISOString()}] MatchController.emit(${action}, ${JSON.stringify(value, null, 4)})`);
-        socket.emit('match', {
+        const data = {
             matchId,
             playerId: ownUserId,
             secret: ajax.secret(),
             action,
             value
-        });
+        };
+        if (playerIdControllerBot) {
+            data.playerIdControllerBot = playerIdControllerBot;
+        }
+        socket.emit('match', data);
     }
 
     function stop() {

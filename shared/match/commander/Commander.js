@@ -6,7 +6,6 @@ const TheMiller = 'TheMiller';
 const KeveBakins = 'KeveBakins';
 
 module.exports = {
-    StartingCommander: FrankJohnson,
     FrankJohnson,
     NiciaSatu,
     GeneralJackson,

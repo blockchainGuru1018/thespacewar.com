@@ -43,7 +43,6 @@ module.exports = function ({
         return Match({
             players,
             matchId,
-            deckFactory,
             cardInfoRepository,
             logger,
             rawCardDataRepository,

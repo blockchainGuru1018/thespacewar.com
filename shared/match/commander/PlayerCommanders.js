@@ -5,7 +5,8 @@ module.exports = function ({ playerStateService }) {
     return {
         has,
         get,
-        select
+        select,
+        hasSelectedSomeCommander
     };
 
     function has(commanderType) {
@@ -22,5 +23,11 @@ module.exports = function ({ playerStateService }) {
         playerStateService.update(playerState => {
             playerState.commanders = [commanderType];
         });
+    }
+
+    function hasSelectedSomeCommander() {
+        const playerState = playerStateService.getPlayerState();
+        const commanders = playerState.commanders;
+        return commanders.length > 0;
     }
 };

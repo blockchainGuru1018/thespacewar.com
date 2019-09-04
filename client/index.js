@@ -17,7 +17,7 @@ const CardDataAssembler = require('../shared/CardDataAssembler.js');
 const CardInfoRepository = require('../shared/CardInfoRepository.js');
 const UserStore = require('./users/UserStore.js');
 const AudioStore = require('./match/audio/AudioStore.js');
-const BotFactory = require('./ai/BotFactory.js');
+const BotUpdateListener = require('./ai/BotUpdateListener.js');
 const localGameDataFacade = require('./utils/localGameDataFacade.js');
 const ajax = require('./utils/ajax.js');
 require('./utils/cheatEngine.js');
@@ -65,17 +65,15 @@ function bootstrap() {
         matchControllerFactory
     });
 
-    // 4th order dependencies
-    const botFactory = BotFactory({
-        userRepository,
-        matchControllerFactory
+    // 4th order dependencies, page bootstrapping
+    const botUpdateListener = BotUpdateListener({
+        socket,
+        rawCardDataRepository
     });
-
-    // 5th order dependencies, page bootstrapping
     const stores = [
         LoadingStore({ rootStore, pageDependencies }),
-        LoginStore({ route: router.route, rootStore, userRepository }),
-        LobbyStore({ route: router.route, rootStore, userRepository, matchRepository, botFactory }),
+        LoginStore({ route: router.route, rootStore, userRepository, botUpdateListener }),
+        LobbyStore({ route: router.route, rootStore, userRepository, matchRepository, botUpdateListener }),
         UserStore({ rootStore, userRepository }),
         AudioStore()
     ];

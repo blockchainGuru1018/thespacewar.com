@@ -8,6 +8,7 @@ module.exports = function ({
     connection
 }) {
 
+    const BotId = 'BOT';
     let connectedUserId;
 
     init();
@@ -55,7 +56,7 @@ module.exports = function ({
     }
 
     async function onMatchMessage(data) {
-        if (!securityController.isAuthorized(data.secret, data.playerId)) {
+        if (!isSocketMessageAuthorized(data)) {
             logger.log('Unauthorized user performing action on match', 'authorization');
             return;
         }
@@ -70,5 +71,10 @@ module.exports = function ({
             logger.log(errorMessage, 'error');
             logger.log(error.stack, 'error-stack');
         }
+    }
+
+    function isSocketMessageAuthorized(data) {
+        const playerId = data.playerId === BotId ? data.playerIdControllerBot : data.playerId;
+        return securityController.isAuthorized(data.secret, playerId);
     }
 };
