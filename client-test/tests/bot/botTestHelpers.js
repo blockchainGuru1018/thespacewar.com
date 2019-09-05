@@ -32,6 +32,8 @@ async function setupClientState(fakeServerState) {
 
 function defaultFakeServerState(stateOptions = {}) {
     stateOptions.playerOrder = [BotId, PlayerId];
+
+    //TODO SHOULD CREATE FAKE SERVER STAET??? NOT CLIENT STATE!
     return FakeState(stateOptions);
 }
 
