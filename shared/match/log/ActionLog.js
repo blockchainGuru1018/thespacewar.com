@@ -267,7 +267,7 @@ module.exports = function ({
 
     function cardInfoText(cardCommonId) {
         const cardName = cardInfoRepository.getName(cardCommonId);
-        return `*${cardName}--${cardCommonId}#`
+        return `*${cardName}#`
     }
 
     function log({
