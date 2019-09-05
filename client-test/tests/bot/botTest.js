@@ -63,8 +63,8 @@ describe('Selecting starting player', () => {
     });
 });
 
-describe('Select starting station cards', () => {
-    test('When is selecting starting station cards and has to select 2 more cards', async () => {
+describe('In match mode for "select starting station cards"', () => {
+    test('when has to select 2 more cards', async () => {
         await setupFromState({
             mode: MatchMode.selectStationCards,
             currentPlayer: BotId,
@@ -80,7 +80,7 @@ describe('Select starting station cards', () => {
         assert.calledWith(matchController.emit, 'selectStartingStationCard', { cardId: 'C2A', location: 'action' });
     });
 
-    test('When is selecting starting station card and has NO more station cards to select should select a commander', async () => {
+    test('When has NO more station cards to select should select a commander', async () => {
         await setupFromState({
             mode: MatchMode.selectStationCards,
             currentPlayer: BotId,
@@ -120,7 +120,7 @@ describe('Select starting station cards', () => {
         assert.calledWith(matchController.emit, 'playerReady');
     });
 
-    test('when is selecting starting station cards and is already ready should NOT emit player ready', async () => {
+    test('when is already ready should NOT emit player ready', async () => {
         await setupFromState({
             mode: MatchMode.selectStationCards,
             currentPlayer: BotId,
@@ -147,3 +147,23 @@ describe('Select starting station cards', () => {
         refute.calledWith(matchController.emit, 'selectStartingStationCard');
     });
 });
+
+// describe('In Game', () => {
+//     describe('In Draw phase', () => {
+//         test('When can draw 1 more card', async () => {
+//             await setupFromState({
+//                 currentPlayer: BotId,
+//                 playerOrder: [BotId, PlayerId],
+//                 readyPlayerIds: [BotId],
+//                 stationCards: [
+//                     unflippedStationCard('S1A', 'draw')
+//                 ],
+//                 cardsOnHand: [
+//                     createCard({ id: 'C2A' })
+//                 ]
+//             });
+//
+//             assert.calledWith(matchController.emit, 'drawCard');
+//         });
+//     });
+// });
