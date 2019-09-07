@@ -153,9 +153,6 @@ describe('In Game', () => {
     describe('In Draw phase', () => {
         test('When can draw 1 more card should draw a card', async () => {
             await setupFromState({
-                currentPlayer: BotId,
-                playerOrder: [BotId, PlayerId],
-                readyPlayerIds: [BotId],
                 phase: 'draw',
                 stationCards: [
                     unflippedStationCard('S1A', 'draw')
@@ -184,9 +181,6 @@ describe('In Game', () => {
 
         test('When cannot draw card should NOT draw card', async () => {
             await setupFromState({
-                currentPlayer: BotId,
-                playerOrder: [BotId, PlayerId],
-                readyPlayerIds: [BotId],
                 turn: 1,
                 stationCards: [
                     unflippedStationCard('S1A', 'draw')
