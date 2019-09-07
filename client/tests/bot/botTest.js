@@ -5,6 +5,7 @@ const StateAsserter = require('../../testUtils/ClientStateAsserter.js');
 const FakeMatchController = require('../../testUtils/FakeMatchController.js');
 const MatchMode = require('../../../shared/match/MatchMode.js');
 const Commander = require('../../../shared/match/commander/Commander.js');
+const DrawCardEvent = require('../../../shared/event/DrawCardEvent.js');
 const { setupClientState, spawnBot, BotId, PlayerId } = require('./botTestHelpers.js');
 const { unflippedStationCard } = require('../../testUtils/factories.js');
 const {
@@ -150,7 +151,7 @@ describe('In match mode for "select starting station cards"', () => {
 
 describe('In Game', () => {
     describe('In Draw phase', () => {
-        test('When can draw 1 more card', async () => {
+        test('When can draw 1 more card should draw a card', async () => {
             await setupFromState({
                 currentPlayer: BotId,
                 playerOrder: [BotId, PlayerId],
@@ -164,6 +165,26 @@ describe('In Game', () => {
             });
 
             assert.calledWith(matchController.emit, 'drawCard');
+        });
+
+        test('When cannot draw card should NOT draw card', async () => {
+            await setupFromState({
+                currentPlayer: BotId,
+                playerOrder: [BotId, PlayerId],
+                readyPlayerIds: [BotId],
+                turn: 1,
+                stationCards: [
+                    unflippedStationCard('S1A', 'draw')
+                ],
+                cardsOnHand: [
+                    createCard({ id: 'C2A' })
+                ],
+                events: [
+                    DrawCardEvent({turn: 1})
+                ]
+            });
+
+            refute.calledWith(matchController.emit, 'drawCard');
         });
     });
 });

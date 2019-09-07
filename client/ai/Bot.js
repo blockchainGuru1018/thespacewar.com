@@ -36,7 +36,9 @@ module.exports = async function ({
         selectingStartingStationCards();
     }
     else {
-        matchController.emit('drawCard');
+        if (playerRuleService.moreCardsCanBeDrawnForDrawPhase()) {
+            matchController.emit('drawCard');
+        }
     }
 
     function gameOn() {
