@@ -37,13 +37,24 @@ module.exports = async function ({
         selectingStartingStationCards();
     }
     else {
-        drawPhase();
+        if (playerPhase.isDraw()) {
+            drawPhase();
+        }
+        else if (playerPhase.isAction()) {
+            actionPhase();
+        }
     }
 
     function drawPhase() {
-        if (playerPhase.isDraw() && playerRuleService.moreCardsCanBeDrawnForDrawPhase()) {
+        if (playerRuleService.moreCardsCanBeDrawnForDrawPhase()) {
             matchController.emit('drawCard');
         }
+    }
+
+    function actionPhase() {
+        const cardsOnHand = playerStateService.getCardsOnHand();
+        const firstCardOnHand = cardsOnHand[0];
+        matchController.emit('putDownCard', { cardId: firstCardOnHand.id, location: 'zone' });
     }
 
     function gameOn() {

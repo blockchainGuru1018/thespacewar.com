@@ -55,3 +55,17 @@ describe('In Draw phase', () => {
         refute.calledWith(matchController.emit, 'drawCard');
     });
 });
+
+describe('Being in the action phase', () => {
+    it('playing a card', async () => {
+        const { matchController } = await setupFromState({
+            turn: 1,
+            phase: 'action',
+            cardsOnHand: [
+                createCard({ id: 'C1A', cost: 0 }),
+            ]
+        });
+
+        assert.calledWith(matchController.emit, 'putDownCard', { location: 'zone', cardId: 'C1A' });
+    });
+});
