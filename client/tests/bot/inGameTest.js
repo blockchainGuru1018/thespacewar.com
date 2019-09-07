@@ -80,11 +80,29 @@ describe('Being in the action phase', () => {
         const { matchController } = await setupFromState({
             turn: 1,
             phase: 'action',
+            stationCards: [
+                unflippedStationCard('S1A', 'draw')
+            ],
             cardsOnHand: [
                 createCard({ id: 'C1A', cost: 0 }),
             ]
         });
 
         assert.calledWith(matchController.emit, 'putDownCard', { location: 'zone', cardId: 'C1A' });
+    });
+
+    it('cannot play a card, should NOT try to play a card', async () => {
+        const { matchController } = await setupFromState({
+            turn: 1,
+            phase: 'action',
+            stationCards: [
+                unflippedStationCard('S1A', 'draw')
+            ],
+            cardsOnHand: [
+                createCard({ id: 'C1A', cost: 1 }),
+            ]
+        });
+
+        refute.calledWith(matchController.emit, 'putDownCard');
     });
 });

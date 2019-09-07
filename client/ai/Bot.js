@@ -56,8 +56,11 @@ module.exports = async function ({
 
     function actionPhase() {
         const cardsOnHand = playerStateService.getCardsOnHand();
-        const firstCardOnHand = cardsOnHand[0];
-        matchController.emit('putDownCard', { cardId: firstCardOnHand.id, location: 'zone' });
+        const actionPoints = playerStateService.getActionPointsForPlayer();
+        const affordableCard = cardsOnHand.find(c => c.cost <= actionPoints);
+        if (affordableCard) {
+            matchController.emit('putDownCard', { cardId: affordableCard.id, location: 'zone' });
+        }
     }
 
     function gameOn() {
