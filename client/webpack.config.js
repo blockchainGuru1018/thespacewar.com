@@ -3,7 +3,7 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 module.exports = {
     mode: 'development',
-    entry: ['./index.js'],
+    entry: ['./root/index.js'],
     output: {
         filename: 'index.js',
         path: path.resolve(__dirname, '..', 'server', 'client-dist')
