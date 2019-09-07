@@ -1,6 +1,7 @@
 const FakeState = require('../../testUtils/FakeState.js');
 const ClientState = require('../../state/ClientState.js');
 const FakeUserRepository = require('../../testUtils/FakeUserRepository.js');
+const FakeMatchController = require('../../testUtils/FakeMatchController.js');
 const FakeRawCardDataRepository = require('../../testUtils/FakeRawCardDataRepository.js');
 const BotSpawner = require('../../ai/BotSpawner.js');
 const GameConfig = require('../../../shared/match/GameConfig.js');
@@ -9,11 +10,19 @@ const BotId = 'BOT';
 const PlayerId = 'P1A';
 
 module.exports = {
-    setupClientState,
-    spawnBot,
+    setupFromState,
     BotId,
     PlayerId
 };
+
+async function setupFromState(fakeClientState = {}) {
+    const clientState = await setupClientState(fakeClientState);
+    const matchController = FakeMatchController();
+
+    spawnBot({ matchController, clientState });
+
+    return {matchController};
+}
 
 async function setupClientState(fakeClientState) {
     const clientState = ClientState({
