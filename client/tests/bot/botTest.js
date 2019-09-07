@@ -182,6 +182,7 @@ describe('In Game', () => {
         test('When cannot draw card should NOT draw card', async () => {
             await setupFromState({
                 turn: 1,
+                phase: 'draw',
                 stationCards: [
                     unflippedStationCard('S1A', 'draw')
                 ],
