@@ -61,6 +61,9 @@ module.exports = async function ({
         if (affordableCard) {
             matchController.emit('putDownCard', { cardId: affordableCard.id, location: 'zone' });
         }
+        else {
+            matchController.emit('nextPhase', { currentPhase: PHASES.action });
+        }
     }
 
     function gameOn() {

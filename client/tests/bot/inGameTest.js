@@ -105,4 +105,19 @@ describe('Being in the action phase', () => {
 
         refute.calledWith(matchController.emit, 'putDownCard');
     });
+
+    it('cannot play a card, should proceed to next phase', async () => {
+        const { matchController } = await setupFromState({
+            turn: 1,
+            phase: 'action',
+            stationCards: [
+                unflippedStationCard('S1A', 'draw')
+            ],
+            cardsOnHand: [
+                createCard({ id: 'C1A', cost: 1 }),
+            ]
+        });
+
+        assert.calledWith(matchController.emit, 'nextPhase', { currentPhase: PHASES.action });
+    });
 });
