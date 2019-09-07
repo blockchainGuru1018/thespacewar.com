@@ -15,7 +15,7 @@ module.exports = {
     PlayerId
 };
 
-async function setupClientState(fakeServerState) {
+async function setupClientState(fakeClientState) {
     const clientState = ClientState({
         userRepository: FakeUserRepository({
             ownUser: { id: BotId, name: 'Mr.Robot' },
@@ -24,16 +24,15 @@ async function setupClientState(fakeServerState) {
         opponentUser: { id: PlayerId }
     });
 
-    const defaultedFakeServerState = defaultFakeServerState(fakeServerState);
-    await clientState.update(defaultedFakeServerState);
+    const defaultedFakeClientState = defaultFakeClientState(fakeClientState);
+    await clientState.update(defaultedFakeClientState);
 
     return clientState;
 }
 
-function defaultFakeServerState(stateOptions = {}) {
+function defaultFakeClientState(stateOptions = {}) {
     stateOptions.playerOrder = [BotId, PlayerId];
 
-    //TODO SHOULD CREATE FAKE SERVER STAET??? NOT CLIENT STATE!
     return FakeState(stateOptions);
 }
 

@@ -19,8 +19,8 @@ let clientState;
 let stateAsserter;
 let matchController;
 
-async function setupFromState(fakeServerState = {}) {
-    clientState = await setupClientState(fakeServerState);
+async function setupFromState(fakeClientState = {}) {
+    clientState = await setupClientState(fakeClientState);
     matchController = FakeMatchController();
 
     spawnBot({

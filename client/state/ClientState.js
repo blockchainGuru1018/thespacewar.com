@@ -74,9 +74,9 @@ function ClientState({
         gameConfig
     };
 
-    async function update(serverState) {
+    async function update(clientState) {
         const stateChanger = ClientStateChanger({ state });
-        stateChanger.stateChanged(serverState);
+        stateChanger.stateChanged(clientState);
         await updateListener();
     }
 
