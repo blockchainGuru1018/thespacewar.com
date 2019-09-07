@@ -148,22 +148,22 @@ describe('In match mode for "select starting station cards"', () => {
     });
 });
 
-// describe('In Game', () => {
-//     describe('In Draw phase', () => {
-//         test('When can draw 1 more card', async () => {
-//             await setupFromState({
-//                 currentPlayer: BotId,
-//                 playerOrder: [BotId, PlayerId],
-//                 readyPlayerIds: [BotId],
-//                 stationCards: [
-//                     unflippedStationCard('S1A', 'draw')
-//                 ],
-//                 cardsOnHand: [
-//                     createCard({ id: 'C2A' })
-//                 ]
-//             });
-//
-//             assert.calledWith(matchController.emit, 'drawCard');
-//         });
-//     });
-// });
+describe('In Game', () => {
+    describe('In Draw phase', () => {
+        test('When can draw 1 more card', async () => {
+            await setupFromState({
+                currentPlayer: BotId,
+                playerOrder: [BotId, PlayerId],
+                readyPlayerIds: [BotId],
+                stationCards: [
+                    unflippedStationCard('S1A', 'draw')
+                ],
+                cardsOnHand: [
+                    createCard({ id: 'C2A' })
+                ]
+            });
+
+            assert.calledWith(matchController.emit, 'drawCard');
+        });
+    });
+});

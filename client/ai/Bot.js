@@ -35,6 +35,9 @@ module.exports = async function ({
     else if (isSelectingStartingStationCards()) {
         selectingStartingStationCards();
     }
+    else {
+        matchController.emit('drawCard');
+    }
 
     function gameOn() {
         // if (turnControl.playerHasControlOfOwnTurn()) {
