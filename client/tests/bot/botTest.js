@@ -156,6 +156,7 @@ describe('In Game', () => {
                 currentPlayer: BotId,
                 playerOrder: [BotId, PlayerId],
                 readyPlayerIds: [BotId],
+                phase: 'draw',
                 stationCards: [
                     unflippedStationCard('S1A', 'draw')
                 ],
@@ -165,6 +166,20 @@ describe('In Game', () => {
             });
 
             assert.calledWith(matchController.emit, 'drawCard');
+        });
+
+        test('When is not draw phase should NOT draw card', async () => {
+            await setupFromState({
+                phase: 'action',
+                stationCards: [
+                    unflippedStationCard('S1A', 'draw')
+                ],
+                cardsOnHand: [
+                    createCard({ id: 'C2A' })
+                ]
+            });
+
+            refute.calledWith(matchController.emit, 'drawCard');
         });
 
         test('When cannot draw card should NOT draw card', async () => {
