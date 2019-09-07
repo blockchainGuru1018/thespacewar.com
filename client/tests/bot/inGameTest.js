@@ -1,6 +1,7 @@
 const FakeCardDataAssembler = require('../../../server/test/testUtils/FakeCardDataAssembler.js');
 const createCard = FakeCardDataAssembler.createCard;
 const DrawCardEvent = require('../../../shared/event/DrawCardEvent.js');
+const { PHASES } = require('../../../shared/phases.js');
 const { setupFromState, BotId, PlayerId } = require('./botTestHelpers.js');
 const { unflippedStationCard } = require('../../testUtils/factories.js');
 const {
@@ -53,6 +54,24 @@ describe('In Draw phase', () => {
         });
 
         refute.calledWith(matchController.emit, 'drawCard');
+    });
+
+    test('When cannot draw card should proceed to next phase', async () => {
+        const { matchController } = await setupFromState({
+            turn: 1,
+            phase: 'draw',
+            stationCards: [
+                unflippedStationCard('S1A', 'draw')
+            ],
+            cardsOnHand: [
+                createCard({ id: 'C2A' })
+            ],
+            events: [
+                DrawCardEvent({ turn: 1 })
+            ]
+        });
+
+        assert.calledWith(matchController.emit, 'nextPhase', { currentPhase: PHASES.draw });
     });
 });
 

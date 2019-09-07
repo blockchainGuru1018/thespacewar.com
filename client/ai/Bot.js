@@ -49,6 +49,9 @@ module.exports = async function ({
         if (playerRuleService.moreCardsCanBeDrawnForDrawPhase()) {
             matchController.emit('drawCard');
         }
+        else {
+            matchController.emit('nextPhase', { currentPhase: PHASES.draw });
+        }
     }
 
     function actionPhase() {
