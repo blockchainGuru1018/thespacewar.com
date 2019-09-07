@@ -1,4 +1,4 @@
-const resolveModuleWithPossibleDefault = require('../../client/utils/resolveModuleWithPossibleDefault.js');
+const resolveModuleWithPossibleDefault = require('../utils/resolveModuleWithPossibleDefault.js');
 const Vue = resolveModuleWithPossibleDefault(require('vue'));
 const Vuex = resolveModuleWithPossibleDefault(require('vuex'));
 const PortalVue = resolveModuleWithPossibleDefault(require('portal-vue'));

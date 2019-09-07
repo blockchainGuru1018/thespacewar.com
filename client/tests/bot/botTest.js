@@ -1,19 +1,19 @@
 const FakeCardDataAssembler = require('../../../server/test/testUtils/FakeCardDataAssembler.js');
 const createCard = FakeCardDataAssembler.createCard;
-const getCardImageUrl = require('../../../client/utils/getCardImageUrl.js');
-const StateAsserter = require('../../matchTestUtils/ClientStateAsserter.js');
-const FakeMatchController = require('../../matchTestUtils/FakeMatchController.js');
+const getCardImageUrl = require('../../utils/getCardImageUrl.js');
+const StateAsserter = require('../../testUtils/ClientStateAsserter.js');
+const FakeMatchController = require('../../testUtils/FakeMatchController.js');
 const MatchMode = require('../../../shared/match/MatchMode.js');
 const Commander = require('../../../shared/match/commander/Commander.js');
 const { setupClientState, spawnBot, BotId, PlayerId } = require('./botTestHelpers.js');
-const { unflippedStationCard } = require('../../matchTestUtils/factories.js');
+const { unflippedStationCard } = require('../../testUtils/factories.js');
 const {
     assert,
     refute,
     timeout,
     fakeCLock,
     sinon
-} = require('../../bocha-jest/bocha-jest.js');
+} = require('../../testUtils/bocha-jest/bocha-jest.js');
 
 let clientState;
 let stateAsserter;

@@ -1,14 +1,14 @@
-const getCardImageUrl = require('../../client/utils/getCardImageUrl.js');
-const FakeState = require('../matchTestUtils/FakeState.js');
-const FakeMatchController = require('../matchTestUtils/FakeMatchController.js');
+const getCardImageUrl = require('../utils/getCardImageUrl.js');
+const FakeState = require('../testUtils/FakeState.js');
+const FakeMatchController = require('../testUtils/FakeMatchController.js');
 const Neutralization = require('../../shared/card/Neutralization.js');
 const DisturbingSensor = require('../../shared/card/DisturbingSensor.js');
-const { createController } = require('../matchTestUtils/index.js');
+const { createController } = require('../testUtils');
 const {
     assert,
     sinon,
     timeout,
-} = require('../bocha-jest/bocha-jest.js');
+} = require('../testUtils/bocha-jest/bocha-jest.js');
 
 let controller;
 let matchController;

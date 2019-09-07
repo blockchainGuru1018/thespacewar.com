@@ -1,13 +1,13 @@
 const FakeCardDataAssembler = require('../../server/test/testUtils/FakeCardDataAssembler.js');
 const createCard = FakeCardDataAssembler.createCard;
-const getCardImageUrl = require('../../client/utils/getCardImageUrl.js');
-const FakeState = require('../matchTestUtils/FakeState.js');
-const FakeMatchController = require('../matchTestUtils/FakeMatchController.js');
+const getCardImageUrl = require('../utils/getCardImageUrl.js');
+const FakeState = require('../testUtils/FakeState.js');
+const FakeMatchController = require('../testUtils/FakeMatchController.js');
 const ExcellentWork = require('../../shared/card/ExcellentWork.js');
 const Expansion = require('../../shared/card/Expansion.js');
 const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
 const CardInfoRepository = require('../../shared/CardInfoRepository.js');
-const { createController } = require('../matchTestUtils/index.js');
+const { createController } = require('../testUtils');
 const {
     assert,
     refute,
@@ -16,7 +16,7 @@ const {
     dom: {
         click
     }
-} = require('../bocha-jest/bocha-jest.js');
+} = require('../testUtils/bocha-jest/bocha-jest.js');
 
 let controller;
 let matchController;

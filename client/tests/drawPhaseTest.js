@@ -1,7 +1,7 @@
-const getCardImageUrl = require('../../client/utils/getCardImageUrl.js');
-const FakeState = require('../matchTestUtils/FakeState.js');
-const FakeMatchController = require('../matchTestUtils/FakeMatchController.js');
-const { createController } = require('../matchTestUtils/index.js');
+const getCardImageUrl = require('../utils/getCardImageUrl.js');
+const FakeState = require('../testUtils/FakeState.js');
+const FakeMatchController = require('../testUtils/FakeMatchController.js');
+const { createController } = require('../testUtils');
 const {
     assert,
     refute,
@@ -10,7 +10,7 @@ const {
     dom: {
         click
     }
-} = require('../bocha-jest/bocha-jest.js');
+} = require('../testUtils/bocha-jest/bocha-jest.js');
 const DrawCardEvent = require('../../shared/event/DrawCardEvent.js');
 
 let controller;

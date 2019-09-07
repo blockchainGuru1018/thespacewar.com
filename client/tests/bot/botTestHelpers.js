@@ -1,8 +1,8 @@
-const FakeState = require('../../matchTestUtils/FakeState.js');
-const ClientState = require('../../../client/state/ClientState.js');
-const FakeUserRepository = require('../../matchTestUtils/FakeUserRepository.js');
-const FakeRawCardDataRepository = require('../../matchTestUtils/FakeRawCardDataRepository.js');
-const BotSpawner = require('../../../client/ai/BotSpawner.js');
+const FakeState = require('../../testUtils/FakeState.js');
+const ClientState = require('../../state/ClientState.js');
+const FakeUserRepository = require('../../testUtils/FakeUserRepository.js');
+const FakeRawCardDataRepository = require('../../testUtils/FakeRawCardDataRepository.js');
+const BotSpawner = require('../../ai/BotSpawner.js');
 const GameConfig = require('../../../shared/match/GameConfig.js');
 
 const BotId = 'BOT';

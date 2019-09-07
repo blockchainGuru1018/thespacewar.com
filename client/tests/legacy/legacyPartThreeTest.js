@@ -3,10 +3,10 @@ const createCard = FakeCardDataAssembler.createCard;
 const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
 const MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
 const AttackEvent = require('../../../shared/event/AttackEvent.js');
-const getCardImageUrl = require('../../../client/utils/getCardImageUrl.js');
-const FakeState = require('../../matchTestUtils/FakeState.js');
-const FakeMatchController = require('../../matchTestUtils/FakeMatchController.js');
-const { createController: createTestController } = require('../../matchTestUtils');
+const getCardImageUrl = require('../../utils/getCardImageUrl.js');
+const FakeState = require('../../testUtils/FakeState.js');
+const FakeMatchController = require('../../testUtils/FakeMatchController.js');
+const { createController: createTestController } = require('../../testUtils');
 const {
     assert,
     sinon,
@@ -15,7 +15,7 @@ const {
     dom: {
         click
     }
-} = require('../../bocha-jest/bocha-jest.js');
+} = require('../../testUtils/bocha-jest/bocha-jest.js');
 
 const FatalErrorCommonId = '38';
 const TriggerHappyJoeCommonId = '24';

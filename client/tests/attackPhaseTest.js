@@ -1,4 +1,4 @@
-const PlayerCardInPlay = require('../../client/match/card/PlayerCardInPlay.js');
+const PlayerCardInPlay = require('../match/card/PlayerCardInPlay.js');
 const createState = require('../../shared/test/fakeFactories/createState.js');
 const TestHelper = require('../../shared/test/fakeFactories/TestHelper.js');
 const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');

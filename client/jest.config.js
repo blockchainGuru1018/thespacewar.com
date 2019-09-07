@@ -16,7 +16,7 @@ module.exports = {
 
     projects: ['<rootDir>/../'],
 
-    setupFilesAfterEnv: ['<rootDir>/setupTests.js'],
+    setupFilesAfterEnv: ['<rootDir>/testUtils/setupTests.js'],
 
     // The test environment that will be used for testing
     testEnvironment: 'jsdom',

@@ -2,11 +2,11 @@ const FakeCardDataAssembler = require('../../../server/test/testUtils/FakeCardDa
 const createCard = FakeCardDataAssembler.createCard;
 const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
 const MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
-const getCardImageUrl = require('../../../client/utils/getCardImageUrl.js');
-const FakeState = require('../../matchTestUtils/FakeState.js');
-const FakeMatchController = require('../../matchTestUtils/FakeMatchController.js');
+const getCardImageUrl = require('../../utils/getCardImageUrl.js');
+const FakeState = require('../../testUtils/FakeState.js');
+const FakeMatchController = require('../../testUtils/FakeMatchController.js');
 const Commander = require("../../../shared/match/commander/Commander.js");
-const { createController: createTestController } = require('../../matchTestUtils');
+const { createController: createTestController } = require('../../testUtils');
 const {
     assert,
     refute,
@@ -17,7 +17,7 @@ const {
     dom: {
         click
     }
-} = require('../../bocha-jest/bocha-jest.js');
+} = require('../../testUtils/bocha-jest/bocha-jest.js');
 
 const FastMissileId = '6';
 

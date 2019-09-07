@@ -1,13 +1,13 @@
-const resolveModuleWithPossibleDefault = require('../../client/utils/resolveModuleWithPossibleDefault.js');
+const resolveModuleWithPossibleDefault = require('../utils/resolveModuleWithPossibleDefault.js');
 const Vuex = resolveModuleWithPossibleDefault(require('vuex'));
 const FakeUserRepository = require('./FakeUserRepository.js');
-const FakeMatchControllerFactory = require('./FakeMatchControllerFactory');
-const FakeMatchController = require('./FakeMatchController');
+const FakeMatchControllerFactory = require('./FakeMatchControllerFactory.js');
+const FakeMatchController = require('./FakeMatchController.js');
 const cardsJson = require('../../server/card/rawCardData.cache.json').data;
 const {mount, createLocalVue} = require('@vue/test-utils');
 
-const MatchView = resolveModuleWithPossibleDefault(require('../../client/match/Match.vue'));
-const MatchStores = require('../../client/match/MatchStores.js');
+const MatchView = resolveModuleWithPossibleDefault(require('../match/Match.vue'));
+const MatchStores = require('../match/MatchStores.js');
 const PortalVue = resolveModuleWithPossibleDefault(require('portal-vue'));
 const vClickOutside = resolveModuleWithPossibleDefault(require('v-click-outside'));
 
