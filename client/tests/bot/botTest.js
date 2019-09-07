@@ -1,23 +1,16 @@
 const FakeCardDataAssembler = require('../../../server/test/testUtils/FakeCardDataAssembler.js');
 const createCard = FakeCardDataAssembler.createCard;
-const getCardImageUrl = require('../../utils/getCardImageUrl.js');
-const StateAsserter = require('../../testUtils/ClientStateAsserter.js');
 const FakeMatchController = require('../../testUtils/FakeMatchController.js');
 const MatchMode = require('../../../shared/match/MatchMode.js');
 const Commander = require('../../../shared/match/commander/Commander.js');
-const DrawCardEvent = require('../../../shared/event/DrawCardEvent.js');
 const { setupClientState, spawnBot, BotId, PlayerId } = require('./botTestHelpers.js');
 const { unflippedStationCard } = require('../../testUtils/factories.js');
 const {
     assert,
     refute,
-    timeout,
-    fakeCLock,
-    sinon
 } = require('../../testUtils/bocha-jest/bocha-jest.js');
 
 let clientState;
-let stateAsserter;
 let matchController;
 
 async function setupFromState(fakeClientState = {}) {
@@ -28,21 +21,7 @@ async function setupFromState(fakeClientState = {}) {
         matchController,
         clientState
     });
-
-    stateAsserter = StateAsserter(() => clientState.toServerState());
 }
-
-beforeEach(() => {
-    sinon.stub(getCardImageUrl, 'byCommonId').returns('/#');
-});
-
-afterEach(() => {
-    getCardImageUrl.byCommonId.restore && getCardImageUrl.byCommonId.restore();
-
-    clientState = null;
-    stateAsserter = null;
-    matchController = null;
-});
 
 describe('Selecting starting player', () => {
     test('When is choosing starting player should select starting player', async () => {
@@ -146,55 +125,5 @@ describe('In match mode for "select starting station cards"', () => {
         });
 
         refute.calledWith(matchController.emit, 'selectStartingStationCard');
-    });
-});
-
-describe('In Game', () => {
-    describe('In Draw phase', () => {
-        test('When can draw 1 more card should draw a card', async () => {
-            await setupFromState({
-                phase: 'draw',
-                stationCards: [
-                    unflippedStationCard('S1A', 'draw')
-                ],
-                cardsOnHand: [
-                    createCard({ id: 'C2A' })
-                ]
-            });
-
-            assert.calledWith(matchController.emit, 'drawCard');
-        });
-
-        test('When is not draw phase should NOT draw card', async () => {
-            await setupFromState({
-                phase: 'action',
-                stationCards: [
-                    unflippedStationCard('S1A', 'draw')
-                ],
-                cardsOnHand: [
-                    createCard({ id: 'C2A' })
-                ]
-            });
-
-            refute.calledWith(matchController.emit, 'drawCard');
-        });
-
-        test('When cannot draw card should NOT draw card', async () => {
-            await setupFromState({
-                turn: 1,
-                phase: 'draw',
-                stationCards: [
-                    unflippedStationCard('S1A', 'draw')
-                ],
-                cardsOnHand: [
-                    createCard({ id: 'C2A' })
-                ],
-                events: [
-                    DrawCardEvent({turn: 1})
-                ]
-            });
-
-            refute.calledWith(matchController.emit, 'drawCard');
-        });
     });
 });
