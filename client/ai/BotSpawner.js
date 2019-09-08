@@ -1,6 +1,7 @@
 const Bot = require('./Bot.js');
 const GameServiceFactory = require('../../shared/match/GameServiceFactory.js');
 const PlayerServiceFactory = require('../../shared/match/PlayerServiceFactory.js');
+const ActionPhaseDecider = require('./ActionPhaseDecider.js');
 
 const BotId = 'BOT';
 
@@ -12,18 +13,21 @@ module.exports = function ({
     gameConfig
 }) {
 
+    let playerServiceFactory;
+    let gameServiceFactory;
+
     return {
         spawn
     };
 
     function spawn() {
-        const gameServiceFactory = GameServiceFactory({
+        gameServiceFactory = GameServiceFactory({
             state: clientState.read(),
             endMatch: () => console.log('END MATCH'),
             rawCardDataRepository,
             gameConfig
         });
-        const playerServiceFactory = PlayerServiceFactory({
+        playerServiceFactory = PlayerServiceFactory({
             state: clientState.toServerState(),
             logger: (...args) => console.log('LOGGER:', ...args),
             endMatch: () => console.log('END MATCH'),
@@ -39,8 +43,16 @@ module.exports = function ({
             playerRuleService: playerServiceFactory.playerRuleService(BotId),
             playerCommanders: playerServiceFactory.playerCommanders(BotId),
             playerPhase: playerServiceFactory.playerPhase(BotId),
+            actionPhaseDecider: actionPhaseDecider(),
             matchController,
             clientState
+        });
+    }
+
+    function actionPhaseDecider() {
+        return ActionPhaseDecider({
+            playerStateService: playerServiceFactory.playerStateService(BotId),
+            matchController
         });
     }
 };
