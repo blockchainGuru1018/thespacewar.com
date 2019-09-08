@@ -29,6 +29,9 @@ module.exports = async function ({
         else if (playerPhase.isAction()) {
             actionPhaseDecider.decide();
         }
+        else if (playerPhase.isDiscard()) {
+            discardPhase();
+        }
     }
 
     function drawPhase() {
@@ -38,6 +41,10 @@ module.exports = async function ({
         else {
             matchController.emit('nextPhase', { currentPhase: PHASES.draw });
         }
+    }
+
+    function discardPhase() {
+        matchController.emit('nextPhase', { currentPhase: PHASES.discard });
     }
 
     function isChoosingStartingPlayer() {

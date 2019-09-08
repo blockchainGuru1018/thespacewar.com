@@ -1,0 +1,26 @@
+/**
+ * @jest-environment node
+ */
+const FakeCardDataAssembler = require('../../../server/test/testUtils/FakeCardDataAssembler.js');
+const createCard = FakeCardDataAssembler.createCard;
+const { PHASES } = require('../../../shared/phases.js');
+const { setupFromState, BotId, PlayerId } = require('./botTestHelpers.js');
+const { unflippedStationCard } = require('../../testUtils/factories.js');
+
+describe('Being in the discard phase', () => {
+    it('does not need to discard any cards', async () => {
+        const { matchController } = await setupFromState({
+            turn: 1,
+            phase: 'discard',
+            stationCards: [
+                unflippedStationCard('S1A', 'handSize')
+            ],
+            cardsOnHand: [
+                createCard({ id: 'C1A' }),
+                createCard({ id: 'C2A' }),
+            ]
+        });
+
+        expect(matchController.emit).toBeCalledWith('nextPhase', { currentPhase: PHASES.discard });
+    });
+});
