@@ -10,6 +10,7 @@ const BotId = 'BOT';
 const PlayerId = 'P1A';
 
 module.exports = {
+    createMatchController,
     setupFromState,
     BotId,
     PlayerId
@@ -17,11 +18,15 @@ module.exports = {
 
 async function setupFromState(fakeClientState = {}) {
     const clientState = await setupClientState(fakeClientState);
-    const matchController = FakeMatchController({}, { stub: jest.fn() });
+    const matchController = createMatchController();
 
     spawnBot({ matchController, clientState });
 
     return { matchController };
+}
+
+function createMatchController() {
+    return FakeMatchController({}, { stub: jest.fn() });
 }
 
 async function setupClientState(fakeClientState) {

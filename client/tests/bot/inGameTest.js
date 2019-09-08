@@ -83,7 +83,7 @@ describe('Being in the action phase', () => {
                 unflippedStationCard('S1A', 'draw')
             ],
             cardsOnHand: [
-                createCard({ id: 'C1A', cost: 0 }),
+                createCard({ id: 'C1A', cost: 0, type: 'spaceShip' }),
             ]
         });
 

@@ -12,10 +12,12 @@ const playerStateServiceFactory = {
             isCardStationCard: () => false,
             hasMatchingCardInSameZone: () => false,
             getCardsInDeck: () => [],
+            getCardsOnHand: () => [],
             getDiscardedCards: () => [],
             putDownEventCardInZone() {},
             putDownCardInZone() {},
             removeCardFromDeck() {},
+            getActionPointsForPlayer: () => 0,
             ...stubs
         };
     }
