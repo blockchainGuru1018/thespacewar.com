@@ -4,11 +4,11 @@
 const FakeCardDataAssembler = require('../../../server/test/testUtils/FakeCardDataAssembler.js');
 const createCard = FakeCardDataAssembler.createCard;
 const { PHASES } = require('../../../shared/phases.js');
-const { setupFromState, BotId, PlayerId } = require('./botTestHelpers.js');
+const { setupFromState, setupFromStateWithStubs, BotId, PlayerId } = require('./botTestHelpers.js');
 const { unflippedStationCard } = require('../../testUtils/factories.js');
 
 describe('Being in the discard phase', () => {
-    it('does not need to discard any cards, should proceed to the next phase', async () => {
+    it('and does not need to discard any cards, should proceed to the next phase', async () => {
         const { matchController } = await setupFromState({
             turn: 1,
             phase: 'discard',
@@ -22,5 +22,17 @@ describe('Being in the discard phase', () => {
         });
 
         expect(matchController.emit).toBeCalledWith('nextPhase', { currentPhase: PHASES.discard });
+    });
+
+    it('when in discard phase, should delegate to DiscardPhaseDecider', async () => {
+        const discardPhaseDecider = { decide: jest.fn() };
+        await setupFromStateWithStubs({
+            turn: 1,
+            phase: 'discard',
+        }, {
+            discardPhaseDecider
+        });
+
+        expect(discardPhaseDecider.decide).toBeCalledTimes(1);
     });
 });

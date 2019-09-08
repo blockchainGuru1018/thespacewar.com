@@ -12,6 +12,7 @@ module.exports = async function ({
     playerCommanders,
     turnControl,
     actionPhaseDecider,
+    discardPhaseDecider,
     matchController
 }) {
     if (turnControl.opponentHasControl()) return;
@@ -44,7 +45,7 @@ module.exports = async function ({
     }
 
     function discardPhase() {
-        matchController.emit('nextPhase', { currentPhase: PHASES.discard });
+        discardPhaseDecider.decide();
     }
 
     function isChoosingStartingPlayer() {

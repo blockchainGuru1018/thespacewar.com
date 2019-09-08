@@ -2,6 +2,7 @@ const Bot = require('./Bot.js');
 const GameServiceFactory = require('../../shared/match/GameServiceFactory.js');
 const PlayerServiceFactory = require('../../shared/match/PlayerServiceFactory.js');
 const ActionPhaseDecider = require('./ActionPhaseDecider.js');
+const DiscardPhaseDecider = require('./DiscardPhaseDecider.js');
 
 const BotId = 'BOT';
 
@@ -10,7 +11,8 @@ module.exports = function ({
     matchController,
     rawCardDataRepository,
     userRepository,
-    gameConfig
+    gameConfig,
+    createBot = options => Bot(options)
 }) {
 
     let playerServiceFactory;
@@ -37,7 +39,7 @@ module.exports = function ({
             userRepository
         });
 
-        Bot({
+        createBot({
             matchService: gameServiceFactory.matchService(),
             playerStateService: playerServiceFactory.playerStateService(BotId),
             playerRuleService: playerServiceFactory.playerRuleService(BotId),
@@ -45,6 +47,7 @@ module.exports = function ({
             playerPhase: playerServiceFactory.playerPhase(BotId),
             turnControl: playerServiceFactory.turnControl(BotId),
             actionPhaseDecider: actionPhaseDecider(),
+            discardPhaseDecider: discardPhaseDecider(),
             matchController,
             clientState
         });
@@ -53,6 +56,13 @@ module.exports = function ({
     function actionPhaseDecider() {
         return ActionPhaseDecider({
             playerStateService: playerServiceFactory.playerStateService(BotId),
+            matchController
+        });
+    }
+
+    function discardPhaseDecider() {
+        return DiscardPhaseDecider({
+            playerDiscardPhase: playerServiceFactory.playerDiscardPhase(BotId),
             matchController
         });
     }

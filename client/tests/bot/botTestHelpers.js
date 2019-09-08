@@ -4,23 +4,53 @@ const FakeUserRepository = require('../../testUtils/FakeUserRepository.js');
 const FakeMatchController = require('../../testUtils/FakeMatchController.js');
 const FakeRawCardDataRepository = require('../../testUtils/FakeRawCardDataRepository.js');
 const BotSpawner = require('../../ai/BotSpawner.js');
+const Bot = require('../../ai/Bot.js');
 const GameConfig = require('../../../shared/match/GameConfig.js');
 
 const BotId = 'BOT';
 const PlayerId = 'P1A';
 
 module.exports = {
-    createMatchController,
+    setupFromStateWithStubs,
     setupFromState,
+    createMatchController,
     BotId,
     PlayerId
 };
 
-async function setupFromState(fakeClientState = {}) {
+async function setupFromStateWithStubs(fakeClientState = {}, stubs = {}) {
     const clientState = await setupClientState(fakeClientState);
     const matchController = createMatchController();
 
-    spawnBot({ matchController, clientState });
+    const botSpawner = BotSpawner({
+        matchController,
+        clientState,
+        rawCardDataRepository: FakeRawCardDataRepository(),
+        userRepository: createFakeUserRepositoryToSpawnBot(clientState),
+        gameConfig: GameConfig(),
+        createBot: options => {
+            Bot({
+                ...options,
+                ...stubs
+            });
+        }
+    });
+    botSpawner.spawn();
+
+    return { matchController };
+}
+
+async function setupFromState(fakeClientState = {}) {
+    const clientState = await setupClientState(fakeClientState);
+    const matchController = createMatchController();
+    const botSpawner = BotSpawner({
+        matchController,
+        clientState,
+        rawCardDataRepository: FakeRawCardDataRepository(),
+        userRepository: createFakeUserRepositoryToSpawnBot(clientState),
+        gameConfig: GameConfig()
+    });
+    botSpawner.spawn();
 
     return { matchController };
 }
@@ -49,17 +79,6 @@ function defaultFakeClientState(stateOptions = {}) {
     stateOptions.playerOrder = stateOptions.playerOrder || [BotId, PlayerId];
 
     return FakeState(stateOptions);
-}
-
-function spawnBot({ clientState, matchController }) {
-    const botSpawner = BotSpawner({
-        matchController,
-        clientState,
-        rawCardDataRepository: FakeRawCardDataRepository(),
-        userRepository: createFakeUserRepositoryToSpawnBot(clientState),
-        gameConfig: GameConfig()
-    });
-    botSpawner.spawn();
 }
 
 function createFakeUserRepositoryToSpawnBot({ ownUser, opponentUser }) {
