@@ -1468,7 +1468,7 @@ eval("module.exports = function () {\n  return {\n    id: 'BOT',\n    name: 'Mr.
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("const {\n  PHASES\n} = __webpack_require__(/*! ../../shared/phases.js */ \"../shared/phases.js\");\n\nmodule.exports = function ({\n  playerStateService,\n  matchController\n}) {\n  return {\n    decide\n  };\n\n  function decide() {\n    const cardsOnHand = playerStateService.getCardsOnHand();\n    const actionPoints = playerStateService.getActionPointsForPlayer();\n    const affordableCard = cardsOnHand.find(c => c.cost <= actionPoints);\n\n    if (affordableCard) {\n      matchController.emit('putDownCard', {\n        cardId: affordableCard.id,\n        location: 'zone'\n      });\n    } else {\n      matchController.emit('nextPhase', {\n        currentPhase: PHASES.action\n      });\n    }\n  }\n};\n\n//# sourceURL=webpack:///./ai/ActionPhaseDecider.js?");
+eval("const {\n  PHASES\n} = __webpack_require__(/*! ../../shared/phases.js */ \"../shared/phases.js\");\n\nmodule.exports = function ({\n  playerStateService,\n  matchController\n}) {\n  return {\n    decide\n  };\n\n  function decide() {\n    const cardsOnHand = playerStateService.getCardsOnHand();\n    const actionPoints = playerStateService.getActionPointsForPlayer();\n    const affordableCard = cardsOnHand.find(c => c.cost <= actionPoints && c.type === 'spaceShip');\n\n    if (affordableCard) {\n      matchController.emit('putDownCard', {\n        cardId: affordableCard.id,\n        location: 'zone'\n      });\n    } else {\n      matchController.emit('nextPhase', {\n        currentPhase: PHASES.action\n      });\n    }\n  }\n};\n\n//# sourceURL=webpack:///./ai/ActionPhaseDecider.js?");
 
 /***/ }),
 
