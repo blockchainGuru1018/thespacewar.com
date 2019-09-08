@@ -17,11 +17,11 @@ module.exports = {
 
 async function setupFromState(fakeClientState = {}) {
     const clientState = await setupClientState(fakeClientState);
-    const matchController = FakeMatchController();
+    const matchController = FakeMatchController({}, { stub: jest.fn() });
 
     spawnBot({ matchController, clientState });
 
-    return {matchController};
+    return { matchController };
 }
 
 async function setupClientState(fakeClientState) {
