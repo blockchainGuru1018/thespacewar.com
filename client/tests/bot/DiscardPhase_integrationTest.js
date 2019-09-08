@@ -8,7 +8,7 @@ const { setupFromState, BotId, PlayerId } = require('./botTestHelpers.js');
 const { unflippedStationCard } = require('../../testUtils/factories.js');
 
 describe('Being in the discard phase', () => {
-    it('does not need to discard any cards', async () => {
+    it('does not need to discard any cards, should proceed to the next phase', async () => {
         const { matchController } = await setupFromState({
             turn: 1,
             phase: 'discard',
