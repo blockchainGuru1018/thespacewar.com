@@ -82,6 +82,11 @@ module.exports = class TurnControl {
             || this.playerHasControlOfOwnTurn();
     }
 
+    opponentHasControl() {
+        return this.opponentHasControlOfPlayersTurn()
+            || this.opponentHasControlOfOwnTurn();
+    }
+
     playerHasControlOfOwnTurn() {
         return this._matchService.getCurrentPlayer() === this._playerId()
             && !this._playerPhase.isWait();

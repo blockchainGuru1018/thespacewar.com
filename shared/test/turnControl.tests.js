@@ -64,5 +64,41 @@ module.exports = testCase('Turn control', {
 
             assert(hasPermission);
         }
+    },
+    'opponent has control of turn:': {
+        'when is "current player" on players turn'() {
+            const testHelper = TestHelper(createState({
+                currentPlayer: 'P2A',
+                playerStateById: {
+                    'P1A': {
+                        phase: 'action'
+                    },
+                    'P2A': {
+                        phase: 'wait'
+                    }
+                }
+            }));
+
+            const turnControl = testHelper.turnControl('P1A');
+
+            assert(turnControl.opponentHasControl());
+        },
+        'when is "current player" on own turn'() {
+            const testHelper = TestHelper(createState({
+                currentPlayer: 'P2A',
+                playerStateById: {
+                    'P1A': {
+                        phase: 'wait'
+                    },
+                    'P2A': {
+                        phase: 'action'
+                    }
+                }
+            }));
+
+            const turnControl = testHelper.turnControl('P1A');
+
+            assert(turnControl.opponentHasControl());
+        }
     }
 });

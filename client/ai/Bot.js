@@ -10,9 +10,11 @@ module.exports = async function ({
     playerRuleService,
     playerPhase,
     playerCommanders,
+    turnControl,
     actionPhaseDecider,
     matchController
 }) {
+    if (turnControl.opponentHasControl()) return;
 
     if (isChoosingStartingPlayer()) {
         choosingStartingPlayer();

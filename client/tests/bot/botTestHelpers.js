@@ -45,7 +45,8 @@ async function setupClientState(fakeClientState) {
 }
 
 function defaultFakeClientState(stateOptions = {}) {
-    stateOptions.playerOrder = [BotId, PlayerId];
+    stateOptions.currentPlayer = stateOptions.currentPlayer || BotId;
+    stateOptions.playerOrder = stateOptions.playerOrder || [BotId, PlayerId];
 
     return FakeState(stateOptions);
 }

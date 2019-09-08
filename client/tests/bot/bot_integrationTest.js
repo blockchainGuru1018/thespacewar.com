@@ -8,6 +8,17 @@ const Commander = require('../../../shared/match/commander/Commander.js');
 const { setupFromState, BotId, PlayerId } = require('./botTestHelpers.js');
 const { unflippedStationCard } = require('../../testUtils/factories.js');
 
+test('When does NOT have control of turn should NOT emit anything', async () => {
+    const { matchController } = await setupFromState({
+        mode: MatchMode.game,
+        currentPlayer: PlayerId,
+        phase: 'action',
+        cardsOnHand: [{ id: 'C1A', cost: 0 }],
+    });
+
+    expect(matchController.emit).not.toBeCalled();
+});
+
 describe('Selecting starting player', () => {
     test('When is choosing starting player should select starting player', async () => {
         const { matchController } = await setupFromState({

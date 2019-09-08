@@ -43,6 +43,7 @@ module.exports = function ({
             playerRuleService: playerServiceFactory.playerRuleService(BotId),
             playerCommanders: playerServiceFactory.playerCommanders(BotId),
             playerPhase: playerServiceFactory.playerPhase(BotId),
+            turnControl: playerServiceFactory.turnControl(BotId),
             actionPhaseDecider: actionPhaseDecider(),
             matchController,
             clientState
