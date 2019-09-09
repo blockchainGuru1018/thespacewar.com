@@ -1,7 +1,11 @@
 module.exports = function DecideCardToDiscard({ playerStateService }) {
     return () => {
         const cards = playerStateService.getCardsOnHand();
-        const eventCardToDiscard = cards.find(c => c.type === 'event');
+        const eventCardToDiscard = cards
+            .filter(c => c.type === 'event')
+            .slice()
+            .sort((a, b) => a.cost - b.cost)
+            [0];
         if (eventCardToDiscard) return eventCardToDiscard.id;
 
         const spaceShipToDiscard = cards
