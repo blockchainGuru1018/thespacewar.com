@@ -154,7 +154,7 @@ module.exports = function ({
         drawCard: drawCardController.onDrawCard,
         skipDrawCard: drawCardController.skipDrawCard,
         discardOpponentTopTwoCards: drawCardController.onDiscardOpponentTopTwoCards,
-        discardCard: discardCardController.onDiscardCard, //TODO Rename discardFromHand
+        discardCard: discardCardController.onDiscardCard,
         discardDurationCard,
         moveCard: moveCardController.onMoveCard,
         moveStationCard: moveCardController.moveStationCard,
