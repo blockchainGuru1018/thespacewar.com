@@ -1,8 +1,9 @@
 const { PHASES } = require('../../shared/phases.js');
 
 module.exports = function ({
+    matchController,
     playerDiscardPhase,
-    matchController
+    decideCardToDiscard
 }) {
     return {
         decide
@@ -11,6 +12,10 @@ module.exports = function ({
     function decide() {
         if (playerDiscardPhase.canLeavePhase()) {
             matchController.emit('nextPhase', { currentPhase: PHASES.discard });
+        }
+        else {
+            const cardToDiscard = decideCardToDiscard();
+            matchController.emit('discardCard', { cardId: cardToDiscard });
         }
     }
 };
