@@ -30,6 +30,18 @@ test('should chose spaceShip if it is the only card left', () => {
     expect(cardToDiscard).toBe('C1A');
 });
 
+test('should chose cheapest spaceShip', () => {
+    const decider = createDecider({
+        playerStateService: {
+            getCardsOnHand: () => [{ id: 'C1A', type: 'spaceShip', cost: 2 }, { id: 'C2A', type: 'spaceShip', cost: 1 }]
+        }
+    });
+
+    const cardToDiscard = decider();
+
+    expect(cardToDiscard).toBe('C2A');
+});
+
 function createDecider(stubs = {}) {
     return DecideCardToDiscard({ ...stubs });
 }
