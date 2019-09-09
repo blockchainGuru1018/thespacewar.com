@@ -4,14 +4,16 @@ const TypesInOrder = [
     'spaceShip'
 ];
 
-module.exports = function DecideCardToDiscard({ playerStateService }) {
+module.exports = function DecideCardToDiscard({ playerStateService, types = TypesInOrder }) {
     return () => {
         const cards = playerStateService.getCardsOnHand();
 
-        for (let type of TypesInOrder) {
+        for (let type of types) {
             const eventCardToDiscard = chooseCheapestCardOfType(cards, type);
             if (eventCardToDiscard) return eventCardToDiscard.id;
         }
+
+        throw new Error('No cards to discard');
     };
 };
 
