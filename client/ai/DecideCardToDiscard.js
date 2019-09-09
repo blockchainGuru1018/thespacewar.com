@@ -1,14 +1,17 @@
+const TypesInOrder = [
+    'event',
+    'duration',
+    'spaceShip'
+];
+
 module.exports = function DecideCardToDiscard({ playerStateService }) {
     return () => {
         const cards = playerStateService.getCardsOnHand();
-        const eventCardToDiscard = chooseCheapestCardOfType(cards, 'event');
-        if (eventCardToDiscard) return eventCardToDiscard.id;
 
-        const durationCardToDiscard = chooseCheapestCardOfType(cards, 'duration');
-        if (durationCardToDiscard) return durationCardToDiscard.id;
-
-        const spaceShipToDiscard = chooseCheapestCardOfType(cards, 'spaceShip');
-        return spaceShipToDiscard.id;
+        for (let type of TypesInOrder) {
+            const eventCardToDiscard = chooseCheapestCardOfType(cards, type);
+            if (eventCardToDiscard) return eventCardToDiscard.id;
+        }
     };
 };
 
