@@ -4,6 +4,9 @@ module.exports = function DecideCardToDiscard({ playerStateService }) {
         const eventCardToDiscard = chooseCheapestCardOfType(cards, 'event');
         if (eventCardToDiscard) return eventCardToDiscard.id;
 
+        const durationCardToDiscard = chooseCheapestCardOfType(cards, 'duration');
+        if (durationCardToDiscard) return durationCardToDiscard.id;
+
         const spaceShipToDiscard = chooseCheapestCardOfType(cards, 'spaceShip');
         return spaceShipToDiscard.id;
     };

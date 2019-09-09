@@ -54,6 +54,18 @@ test('if only has event cards, should chose cheapest event card ', () => {
     expect(cardToDiscard).toBe('C2A');
 });
 
+test('if has a duration card and a spaceShip should discard duration card', () => {
+    const decider = createDecider({
+        playerStateService: {
+            getCardsOnHand: () => [{ id: 'C1A', type: 'spaceShip', cost: 0 }, { id: 'C2A', type: 'duration', cost: 0 }]
+        }
+    });
+
+    const cardToDiscard = decider();
+
+    expect(cardToDiscard).toBe('C2A');
+});
+
 function createDecider(stubs = {}) {
     return DecideCardToDiscard({ ...stubs });
 }
