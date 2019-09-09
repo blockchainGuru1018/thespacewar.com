@@ -1,7 +1,8 @@
 const TypesInOrder = [
-    'event',
     'duration',
-    'spaceShip'
+    'event',
+    'spaceShip',
+    'missile'
 ];
 
 module.exports = function DecideCardToDiscard({ playerStateService, types = TypesInOrder }) {
