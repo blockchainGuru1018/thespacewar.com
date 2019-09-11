@@ -22,6 +22,5 @@ function chooseCheapestCardOfType(cards, type) {
     return cards
         .filter(c => c.type === type)
         .slice()
-        .sort((a, b) => a.cost - b.cost)
-        [0];
+        .sort((a, b) => a.cost - b.cost)[0];
 }
