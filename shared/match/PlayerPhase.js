@@ -55,6 +55,10 @@ module.exports = class PlayerPhase {
         return this._playerStateService.getPhase() === PHASES.action;
     }
 
+    isAttack() {
+        return this._playerStateService.getPhase() === PHASES.attack;
+    }
+
     isWait() {
         return this._playerStateService.getPhase() === PHASES.wait;
     }

@@ -33,6 +33,9 @@ module.exports = async function ({
         else if (playerPhase.isDiscard()) {
             discardPhase();
         }
+        else if (playerPhase.isAttack()) {
+            matchController.emit('nextPhase', { currentPhase: PHASES.attack });
+        }
     }
 
     function drawPhase() {
