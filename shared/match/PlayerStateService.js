@@ -391,6 +391,18 @@ class PlayerStateService {
         return null;
     }
 
+    nameOfCardSource(cardId) {
+        const playerState = this.getPlayerState();
+
+        const cardInZone = playerState.cardsInZone.find(c => c.id === cardId);
+        if (cardInZone) return 'zone';
+
+        const cardInStation = playerState.stationCards.find(s => getStationCardId(s) === cardId);
+        if (cardInStation) return 'station-' + cardInStation.place;
+
+        return 'other';
+    }
+
     findCardFromHandOrStation(cardId) {
         const playerState = this.getPlayerState();
 

@@ -15,6 +15,7 @@ module.exports = function ({
 
     function init() {
         connection.on('registerConnection', onRegisterConnection);
+        connection.on('reconnectBot', onReconnectBot);
         connection.on('disconnect', onDisconnect);
         connection.on('match', onMatchMessage);
     }
@@ -42,6 +43,27 @@ module.exports = function ({
             }
             catch (error) {
                 logger.log('Error when registering connection for user: ' + error.message, 'reconnect error');
+                logger.log('Raw error: ' + error, 'reconnect error');
+            }
+        }
+    }
+
+    async function onReconnectBot({ secret, userId }) {
+        if (!securityController.isAuthorized(secret, userId)) {
+            logger.log('Unauthorized user performing action on match', 'authorization');
+            return;
+        }
+
+        const ongoingMatch = matchRepository.getForUser(userId);
+        if (ongoingMatch) {
+            try {
+                await matchRepository.reconnectBot({
+                    playerId: userId,
+                    matchId: ongoingMatch.id
+                });
+            }
+            catch (error) {
+                logger.log('Error when reconnecting bot: ' + error.message, 'reconnect error');
                 logger.log('Raw error: ' + error, 'reconnect error');
             }
         }

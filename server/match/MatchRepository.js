@@ -13,6 +13,7 @@ module.exports = function ({
         create,
         createWithBot,
         reconnect,
+        reconnectBot,
         getById,
         getForUser,
         clearOldMatches
@@ -62,6 +63,14 @@ module.exports = function ({
         registerUserEnteredMatch(playerId);
     }
 
+    async function reconnectBot({ playerId, matchId }) {
+        const match = getForUser(playerId);
+        if (!match) throw new Error('Cannot find match for player');
+
+        console.log('UPDATE BOT IN MATCH');
+        await updateBotMatchConnection(playerId, BotId, matchId);
+    }
+
     function getById(id) {
         return matchById.get(id) || null;
     }
@@ -105,6 +114,12 @@ module.exports = function ({
         const match = await getById(matchId);
         const connection = socketRepository.getForUser(playerId);
         match.updatePlayer(playerId, { connection });
+    }
+
+    async function updateBotMatchConnection(playerId, botId, matchId) {
+        const match = await getById(matchId);
+        const connection = socketRepository.getForUser(playerId);
+        match.updatePlayer(botId, { connection });
     }
 
     function getUsers(userIds) {

@@ -25,6 +25,7 @@ function PutDownCardController(deps) {
 
     function onPutDownCard(playerId, { location, cardId, choice }) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        if (playerStateService.nameOfCardSource(cardId) === location) throw new CheatError('Card is already at location');
         let cardData = playerStateService.findCardFromAnySource(cardId);
         if (!cardData) throw new CheatError(`Cannot find card`);
 
