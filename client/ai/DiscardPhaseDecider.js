@@ -14,8 +14,8 @@ module.exports = function ({
             matchController.emit('nextPhase', { currentPhase: PHASES.discard });
         }
         else {
-            const cardToDiscard = decideCardToDiscard();
-            matchController.emit('discardCard', { cardId: cardToDiscard });
+            const cardToDiscardId = decideCardToDiscard();
+            matchController.emit('discardCard', cardToDiscardId);
         }
     }
 };

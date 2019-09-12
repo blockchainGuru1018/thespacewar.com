@@ -28,7 +28,7 @@ test('should shepard card decided to be discarded to a discardCard event through
 
     decider.decide();
 
-    expect(matchController.emit).toBeCalledWith('discardCard', { cardId: 'C1A' });
+    expect(matchController.emit).toBeCalledWith('discardCard', 'C1A');
 });
 
 function createDecider(stubs = {}) {

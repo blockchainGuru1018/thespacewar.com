@@ -14,6 +14,7 @@ module.exports = function (deps) {
 
     return {
         storeOwnUser,
+        reconnectBot,
         getOwnUser,
         getAll,
         getAllLocal,
@@ -26,6 +27,10 @@ module.exports = function (deps) {
         if (!!user) {
             socket.emit('registerConnection', { secret: ajax.secret(), userId: user.id });
         }
+    }
+
+    function reconnectBot() {
+        socket.emit('reconnectBot', { secret: ajax.secret(), userId: ownUser.id });
     }
 
     function getOwnUser() {

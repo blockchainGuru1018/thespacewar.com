@@ -83,6 +83,8 @@ module.exports = function ({
         route('match', { matchId, opponentUser: botUser });
 
         botUpdateListener.start({ matchId, botUser, playerUser: userRepository.getOwnUser() });
+        
+        userRepository.reconnectBot();
     }
 
     function joinPlayerMatch(matchId, playerIds) {

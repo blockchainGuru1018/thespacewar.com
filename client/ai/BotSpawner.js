@@ -3,6 +3,7 @@ const GameServiceFactory = require('../../shared/match/GameServiceFactory.js');
 const PlayerServiceFactory = require('../../shared/match/PlayerServiceFactory.js');
 const ActionPhaseDecider = require('./ActionPhaseDecider.js');
 const DiscardPhaseDecider = require('./DiscardPhaseDecider.js');
+const DecideCardToDiscard = require('./DecideCardToDiscard.js');
 
 const BotId = 'BOT';
 
@@ -63,6 +64,7 @@ module.exports = function ({
     function discardPhaseDecider() {
         return DiscardPhaseDecider({
             playerDiscardPhase: playerServiceFactory.playerDiscardPhase(BotId),
+            decideCardToDiscard: DecideCardToDiscard({ playerStateService: playerServiceFactory.playerStateService(BotId) }),
             matchController
         });
     }
