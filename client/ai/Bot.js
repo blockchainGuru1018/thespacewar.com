@@ -63,13 +63,24 @@ module.exports = async function ({
         const canPutDownMoreStationCards = playerRuleService.canPutDownMoreStartingStationCards();
         if (canPutDownMoreStationCards) {
             const cardsOnHand = playerStateService.getCardsOnHand();
-            matchController.emit('selectStartingStationCard', { cardId: cardsOnHand[0].id, location: 'action' });
+            const location = locationForStartingStationCard();
+            matchController.emit('selectStartingStationCard', { cardId: cardsOnHand[0].id, location });
         }
         else if (!playerCommanders.hasSelectedSomeCommander()) {
             matchController.emit('selectCommander', { commander: Commander.FrankJohnson });
         }
         else if (!playerStateService.isReadyForGame()) {
             matchController.emit('playerReady');
+        }
+    }
+
+    function locationForStartingStationCard() {
+        const cardsLeftToSelect = playerRuleService.startingStationCardsLeftToSelect();
+        if (cardsLeftToSelect === 1) {
+            return 'draw';
+        }
+        else {
+            return 'action';
         }
     }
 

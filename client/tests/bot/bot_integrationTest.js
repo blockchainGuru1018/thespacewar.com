@@ -40,7 +40,7 @@ describe('Selecting starting player', () => {
 });
 
 describe('In match mode for "select starting station cards"', () => {
-    test('when has to select 2 more cards', async () => {
+    test('when has to select 2 more cards should put down card in action-row', async () => {
         const { matchController } = await setupFromState({
             mode: MatchMode.selectStationCards,
             currentPlayer: BotId,
@@ -54,6 +54,23 @@ describe('In match mode for "select starting station cards"', () => {
         });
 
         expect(matchController.emit).toBeCalledWith('selectStartingStationCard', { cardId: 'C2A', location: 'action' });
+    });
+
+    test('when has to select 1 more card should put down card in draw-row', async () => {
+        const { matchController } = await setupFromState({
+            mode: MatchMode.selectStationCards,
+            currentPlayer: BotId,
+            playerOrder: [BotId, PlayerId],
+            stationCards: [
+                unflippedStationCard('S1A', 'action'),
+                unflippedStationCard('S1A', 'action')
+            ],
+            cardsOnHand: [
+                createCard({ id: 'C2A' })
+            ]
+        });
+
+        expect(matchController.emit).toBeCalledWith('selectStartingStationCard', { cardId: 'C2A', location: 'draw' });
     });
 
     test('When has NO more station cards to select should select a commander', async () => {

@@ -73,10 +73,13 @@ class PlayerRuleService {
     }
 
     canPutDownMoreStartingStationCards() {
-        const totalAllowedCount = this._playerStateService.allowedStartingStationCardCount();
-        const stationCardsLeftToSelect = totalAllowedCount - this._playerStateService.getUnflippedStationCardsCount();
         return this._matchService.mode() === MatchMode.selectStationCards
-            && stationCardsLeftToSelect > 0;
+            && this.startingStationCardsLeftToSelect() > 0;
+    }
+
+    startingStationCardsLeftToSelect() {
+        const totalAllowedCount = this._playerStateService.allowedStartingStationCardCount();
+        return totalAllowedCount - this._playerStateService.getUnflippedStationCardsCount();
     }
 
     canPutDownMoreStationCardsThisTurn() {
