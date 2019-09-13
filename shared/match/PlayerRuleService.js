@@ -82,6 +82,10 @@ class PlayerRuleService {
         return totalAllowedCount - this._playerStateService.getUnflippedStationCardsCount();
     }
 
+    amountOfStartingStationCardsSelected() {
+        return this._playerStateService.getUnflippedStationCardsCount();
+    }
+
     canPutDownMoreStationCardsThisTurn() {
         const currentTurn = this._matchService.getTurn();
 

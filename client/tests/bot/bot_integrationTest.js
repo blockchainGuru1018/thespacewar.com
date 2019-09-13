@@ -40,7 +40,22 @@ describe('Selecting starting player', () => {
 });
 
 describe('In match mode for "select starting station cards"', () => {
-    test('when has to select 2 more cards should put down card in action-row', async () => {
+    test('should put down first starting station card in the draw-row', async () => {
+        const { matchController } = await setupFromState({
+            mode: MatchMode.selectStationCards,
+            currentPlayer: BotId,
+            playerOrder: [BotId, PlayerId],
+            stationCards: [
+            ],
+            cardsOnHand: [
+                createCard({ id: 'C2A' })
+            ]
+        });
+
+        expect(matchController.emit).toBeCalledWith('selectStartingStationCard', { cardId: 'C2A', location: 'draw' });
+    });
+
+    test('should put down the second starting station card in the action-row', async () => {
         const { matchController } = await setupFromState({
             mode: MatchMode.selectStationCards,
             currentPlayer: BotId,
@@ -56,7 +71,7 @@ describe('In match mode for "select starting station cards"', () => {
         expect(matchController.emit).toBeCalledWith('selectStartingStationCard', { cardId: 'C2A', location: 'action' });
     });
 
-    test('when has to select 1 more card should put down card in draw-row', async () => {
+    test('should put down the third starting station card in the handSize-row', async () => {
         const { matchController } = await setupFromState({
             mode: MatchMode.selectStationCards,
             currentPlayer: BotId,
@@ -70,7 +85,7 @@ describe('In match mode for "select starting station cards"', () => {
             ]
         });
 
-        expect(matchController.emit).toBeCalledWith('selectStartingStationCard', { cardId: 'C2A', location: 'draw' });
+        expect(matchController.emit).toBeCalledWith('selectStartingStationCard', { cardId: 'C2A', location: 'handSize' });
     });
 
     test('When has NO more station cards to select should select a commander', async () => {
@@ -139,4 +154,6 @@ describe('In match mode for "select starting station cards"', () => {
 
         expect(matchController.emit).not.toBeCalledWith('selectStartingStationCard');
     });
+
+    test.todo('SHOULD BE ABLE TO MANAGE WHEN OPPONENT STARTS THE GAME VS BOT STARTS THE GAME');
 });

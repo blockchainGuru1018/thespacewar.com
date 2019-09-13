@@ -75,12 +75,15 @@ module.exports = async function ({
     }
 
     function locationForStartingStationCard() {
-        const cardsLeftToSelect = playerRuleService.startingStationCardsLeftToSelect();
-        if (cardsLeftToSelect === 1) {
+        const cardsSelected = playerRuleService.amountOfStartingStationCardsSelected();
+        if (cardsSelected === 0) {
             return 'draw';
         }
-        else {
+        else if (cardsSelected === 1) {
             return 'action';
+        }
+        else {
+            return 'handSize';
         }
     }
 
