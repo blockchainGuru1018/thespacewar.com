@@ -15,7 +15,7 @@ module.exports = async function ({
     discardPhaseDecider,
     matchController
 }) {
-    if (turnControl.opponentHasControl()) return;
+    if (matchService.isGameOn() && turnControl.opponentHasControl()) return;
 
     if (isChoosingStartingPlayer()) {
         choosingStartingPlayer();
@@ -82,8 +82,11 @@ module.exports = async function ({
         else if (cardsSelected === 1) {
             return 'action';
         }
-        else {
+        else if (cardsSelected === 2) {
             return 'handSize';
+        }
+        else {
+            return 'action';
         }
     }
 

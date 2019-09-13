@@ -45,8 +45,7 @@ describe('In match mode for "select starting station cards"', () => {
             mode: MatchMode.selectStationCards,
             currentPlayer: BotId,
             playerOrder: [BotId, PlayerId],
-            stationCards: [
-            ],
+            stationCards: [],
             cardsOnHand: [
                 createCard({ id: 'C2A' })
             ]
@@ -78,14 +77,35 @@ describe('In match mode for "select starting station cards"', () => {
             playerOrder: [BotId, PlayerId],
             stationCards: [
                 unflippedStationCard('S1A', 'action'),
-                unflippedStationCard('S1A', 'action')
+                unflippedStationCard('S2A', 'action')
             ],
             cardsOnHand: [
                 createCard({ id: 'C2A' })
             ]
         });
 
-        expect(matchController.emit).toBeCalledWith('selectStartingStationCard', { cardId: 'C2A', location: 'handSize' });
+        expect(matchController.emit).toBeCalledWith('selectStartingStationCard', {
+            cardId: 'C2A',
+            location: 'handSize'
+        });
+    });
+
+    test('when can put down a fourth starting station card should put down card in the action-row', async () => {
+        const { matchController } = await setupFromState({
+            mode: MatchMode.selectStationCards,
+            currentPlayer: PlayerId,
+            playerOrder: [PlayerId, BotId],
+            stationCards: [
+                unflippedStationCard('S1A', 'draw'),
+                unflippedStationCard('S2A', 'action'),
+                unflippedStationCard('S3A', 'handSize')
+            ],
+            cardsOnHand: [
+                createCard({ id: 'C2A' })
+            ]
+        });
+
+        expect(matchController.emit).toBeCalledWith('selectStartingStationCard', { cardId: 'C2A', location: 'action' });
     });
 
     test('When has NO more station cards to select should select a commander', async () => {
