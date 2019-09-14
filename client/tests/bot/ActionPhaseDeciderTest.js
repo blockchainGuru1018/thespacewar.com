@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-const FakeCardDataAssembler = require('../../../server/test/testUtils/FakeCardDataAssembler.js');
+const { createCard } = require('../../../server/test/testUtils/FakeCardDataAssembler.js');
 const { createMatchController, BotId, PlayerId } = require('./botTestHelpers.js');
 const fakePlayerStateServiceFactory = require('../../../shared/test/fakeFactories/playerStateServiceFactory.js');
 const FakeMatchController = require('../../testUtils/FakeMatchController.js');
@@ -12,7 +12,7 @@ test('When only card left is EVENT card should NOT put down card', () => {
     const decider = createDecider({
         matchController,
         playerStateService: fakePlayerStateServiceFactory.withStubs({
-            getCardsOnHand: () => [{ id: 'C1A', cost: 0, type: 'event' }]
+            getCardsOnHand: () => [createCard({ id: 'C1A', cost: 0, type: 'event' })]
         }),
     });
 
@@ -21,31 +21,12 @@ test('When only card left is EVENT card should NOT put down card', () => {
     expect(matchController.emit).not.toBeCalledWith('putDownCard', { cardId: 'C1A', location: 'zone' });
 });
 
-test('When has 1 card that costs too much to play, should put down as station card in SOME station row', () => {
+test('When can NOT place station card, should NOT place station card', () => {
     const matchController = createMatchController();
     const decider = createDecider({
         matchController,
         playerStateService: fakePlayerStateServiceFactory.withStubs({
-            getCardsOnHand: () => [{ id: 'C1A', cost: 1, type: 'event' }],
-            getActionPointsForPlayer: () => 0
-        }),
-        playerRuleService: {
-            canPutDownMoreStationCardsThisTurn: () => true
-        },
-        decideRowForStationCard: () => 'action'
-    });
-
-    decider.decide();
-
-    expect(matchController.emit).toBeCalledWith('putDownCard', { cardId: 'C1A', location: 'station-action' });
-});
-
-test('When has ALREADY placed station card and has 1 card that costs too much to play, should NOT place another station card', () => {
-    const matchController = createMatchController();
-    const decider = createDecider({
-        matchController,
-        playerStateService: fakePlayerStateServiceFactory.withStubs({
-            getCardsOnHand: () => [{ id: 'C1A', cost: 1, type: 'event' }],
+            getCardsOnHand: () => [createCard({ id: 'C1A', cost: 1, type: 'event' })],
             getActionPointsForPlayer: () => 0
         }),
         playerRuleService: {
@@ -58,6 +39,28 @@ test('When has ALREADY placed station card and has 1 card that costs too much to
     expect(matchController.emit).not.toBeCalledWith('putDownCard', expect.any(Object));
 });
 
+test('When can place station cards, should place _certain_ card in _some_ place', () => {
+    const matchController = createMatchController();
+    const decider = createDecider({
+        matchController,
+        playerStateService: fakePlayerStateServiceFactory.withStubs({
+            getCardsOnHand: () => [createCard()]
+        }),
+        playerRuleService: {
+            canPutDownMoreStationCardsThisTurn: () => true
+        },
+        decideRowForStationCard: () => '_some_place_',
+        decideCardToPlaceAsStationCard: () => '_certain_card_'
+    });
+
+    decider.decide();
+
+    expect(matchController.emit).toBeCalledWith('putDownCard', {
+        cardId: '_certain_card_',
+        location: 'station-_some_place_'
+    });
+});
+
 function createDecider(stubs = {}) {
     return ActionPhaseDecider({
         matchController: FakeMatchController({}, { stub: jest.fn() }),
@@ -66,6 +69,7 @@ function createDecider(stubs = {}) {
             canPutDownMoreStationCardsThisTurn() {}
         },
         decideRowForStationCard: () => '',
+        decideCardToPlaceAsStationCard: () => '',
         ...stubs
     });
 }

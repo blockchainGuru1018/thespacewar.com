@@ -4,6 +4,7 @@ module.exports = function ({
     playerStateService,
     matchController,
     decideRowForStationCard,
+    decideCardToPlaceAsStationCard,
     playerRuleService
 }) {
 
@@ -18,10 +19,10 @@ module.exports = function ({
         if (affordableCard) {
             matchController.emit('putDownCard', { cardId: affordableCard.id, location: 'zone' });
         }
-        else if (playerRuleService.canPutDownMoreStationCardsThisTurn() && cardsOnHand.some(c => c.cost > actionPoints)) {
+        else if (playerRuleService.canPutDownMoreStationCardsThisTurn() && cardsOnHand.length) {
             const stationRow = decideRowForStationCard();
             const location = 'station-' + stationRow;
-            const cardId = cardsOnHand.find(c => c.cost > actionPoints).id;
+            const cardId = decideCardToPlaceAsStationCard();
             matchController.emit('putDownCard', { cardId, location });
         }
         else {
