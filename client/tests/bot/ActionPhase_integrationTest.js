@@ -50,4 +50,16 @@ describe('Being in the action phase', () => {
 
         expect(matchController.emit).toBeCalledWith('nextPhase', { currentPhase: PHASES.action });
     });
+
+    it('when has card too expensive to play, should place as station card', async () => {
+        const { matchController } = await setupFromState({
+            turn: 1,
+            phase: 'action',
+            cardsOnHand: [
+                createCard({ id: 'C1A', cost: 1 })
+            ]
+        });
+
+        expect(matchController.emit).toBeCalledWith('putDownCard', { cardId: 'C1A', location: expect.any(String) });
+    });
 });

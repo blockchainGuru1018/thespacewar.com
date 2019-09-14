@@ -4,6 +4,8 @@ const PlayerServiceFactory = require('../../shared/match/PlayerServiceFactory.js
 const ActionPhaseDecider = require('./ActionPhaseDecider.js');
 const DiscardPhaseDecider = require('./DiscardPhaseDecider.js');
 const DecideCardToDiscard = require('./DecideCardToDiscard.js');
+const DecideRowForStationCard = require('./DecideRowForStationCard.js');
+const DecideCardToPlaceAsStationCard = require('./DecideCardToPlaceAsStationCard.js');
 
 const BotId = 'BOT';
 
@@ -55,11 +57,12 @@ module.exports = function ({
     }
 
     function actionPhaseDecider() {
+        const playerStateService = playerServiceFactory.playerStateService(BotId);
         return ActionPhaseDecider({
-            playerStateService: playerServiceFactory.playerStateService(BotId),
+            playerStateService,
             playerRuleService: playerServiceFactory.playerRuleService(BotId),
-            decideRowForStationCard: () => '',
-            decideCardToPlaceAsStationCard: () => '',
+            decideRowForStationCard: DecideRowForStationCard(),
+            decideCardToPlaceAsStationCard: DecideCardToPlaceAsStationCard({ playerStateService }),
             matchController
         });
     }
