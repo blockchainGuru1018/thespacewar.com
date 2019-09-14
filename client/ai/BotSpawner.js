@@ -57,6 +57,7 @@ module.exports = function ({
     function actionPhaseDecider() {
         return ActionPhaseDecider({
             playerStateService: playerServiceFactory.playerStateService(BotId),
+            playerRuleService: playerServiceFactory.playerRuleService(BotId),
             decideRowForStationCard: () => '',
             matchController
         });

@@ -29,6 +29,9 @@ test('When has 1 card that costs too much to play, should put down as station ca
             getCardsOnHand: () => [{ id: 'C1A', cost: 1, type: 'event' }],
             getActionPointsForPlayer: () => 0
         }),
+        playerRuleService: {
+            canPutDownMoreStationCardsThisTurn: () => true
+        },
         decideRowForStationCard: () => 'action'
     });
 
@@ -37,10 +40,32 @@ test('When has 1 card that costs too much to play, should put down as station ca
     expect(matchController.emit).toBeCalledWith('putDownCard', { cardId: 'C1A', location: 'station-action' });
 });
 
+test('When has ALREADY placed station card and has 1 card that costs too much to play, should NOT place another station card', () => {
+    const matchController = createMatchController();
+    const decider = createDecider({
+        matchController,
+        playerStateService: fakePlayerStateServiceFactory.withStubs({
+            getCardsOnHand: () => [{ id: 'C1A', cost: 1, type: 'event' }],
+            getActionPointsForPlayer: () => 0
+        }),
+        playerRuleService: {
+            canPutDownMoreStationCardsThisTurn: () => false
+        }
+    });
+
+    decider.decide();
+
+    expect(matchController.emit).not.toBeCalledWith('putDownCard', expect.any(Object));
+});
+
 function createDecider(stubs = {}) {
     return ActionPhaseDecider({
         matchController: FakeMatchController({}, { stub: jest.fn() }),
         playerStateService: fakePlayerStateServiceFactory.withStubs(),
+        playerRuleService: {
+            canPutDownMoreStationCardsThisTurn() {}
+        },
+        decideRowForStationCard: () => '',
         ...stubs
     });
 }

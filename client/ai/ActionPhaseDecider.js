@@ -3,7 +3,8 @@ const { PHASES } = require('../../shared/phases.js');
 module.exports = function ({
     playerStateService,
     matchController,
-    decideRowForStationCard
+    decideRowForStationCard,
+    playerRuleService
 }) {
 
     return {
@@ -17,7 +18,7 @@ module.exports = function ({
         if (affordableCard) {
             matchController.emit('putDownCard', { cardId: affordableCard.id, location: 'zone' });
         }
-        else if (cardsOnHand.some(c => c.cost > actionPoints)) {
+        else if (playerRuleService.canPutDownMoreStationCardsThisTurn() && cardsOnHand.some(c => c.cost > actionPoints)) {
             const stationRow = decideRowForStationCard();
             const location = 'station-' + stationRow;
             const cardId = cardsOnHand.find(c => c.cost > actionPoints).id;
