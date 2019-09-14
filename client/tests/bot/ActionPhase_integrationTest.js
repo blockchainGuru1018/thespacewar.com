@@ -38,16 +38,14 @@ describe('Being in the action phase', () => {
         expect(matchController.emit).not.toBeCalledWith('putDownCard');
     });
 
-    it('cannot play a card, should proceed to next phase', async () => {
+    it('when has NO card to play, should proceed to next phase', async () => {
         const { matchController } = await setupFromState({
             turn: 1,
             phase: 'action',
             stationCards: [
                 unflippedStationCard('S1A', 'draw')
             ],
-            cardsOnHand: [
-                createCard({ id: 'C1A', cost: 1 }),
-            ]
+            cardsOnHand: []
         });
 
         expect(matchController.emit).toBeCalledWith('nextPhase', { currentPhase: PHASES.action });
