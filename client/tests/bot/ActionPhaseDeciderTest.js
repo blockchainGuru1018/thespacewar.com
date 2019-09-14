@@ -30,6 +30,7 @@ test('When can NOT place station card, should NOT place station card', () => {
             getActionPointsForPlayer: () => 0
         }),
         playerRuleService: {
+            canPutDownStationCards: () => true,
             canPutDownMoreStationCardsThisTurn: () => false
         }
     });
@@ -47,6 +48,7 @@ test('When can place station cards, should place _certain_ card in _some_ place'
             getCardsOnHand: () => [createCard()]
         }),
         playerRuleService: {
+            canPutDownStationCards: () => true,
             canPutDownMoreStationCardsThisTurn: () => true
         },
         decideRowForStationCard: () => '_some_place_',
@@ -61,12 +63,33 @@ test('When can place station cards, should place _certain_ card in _some_ place'
     });
 });
 
+test('When can NOT place station cards in general but can place station cards this turn, should NOT place any station card', () => {
+    const matchController = createMatchController();
+    const decider = createDecider({
+        matchController,
+        playerStateService: fakePlayerStateServiceFactory.withStubs({
+            getCardsOnHand: () => [createCard()]
+        }),
+        playerRuleService: {
+            canPutDownStationCards: () => false,
+            canPutDownMoreStationCardsThisTurn: () => true
+        },
+        decideRowForStationCard: () => '_some_place_',
+        decideCardToPlaceAsStationCard: () => '_certain_card_'
+    });
+
+    decider.decide();
+
+    expect(matchController.emit).not.toBeCalledWith('putDownCard', expect.any(Object));
+});
+
 function createDecider(stubs = {}) {
     return ActionPhaseDecider({
         matchController: FakeMatchController({}, { stub: jest.fn() }),
         playerStateService: fakePlayerStateServiceFactory.withStubs(),
         playerRuleService: {
-            canPutDownMoreStationCardsThisTurn() {}
+            canPutDownMoreStationCardsThisTurn() {},
+            canPutDownStationCards() {}
         },
         decideRowForStationCard: () => '',
         decideCardToPlaceAsStationCard: () => '',

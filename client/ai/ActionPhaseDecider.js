@@ -19,7 +19,7 @@ module.exports = function ({
         if (affordableCard) {
             matchController.emit('putDownCard', { cardId: affordableCard.id, location: 'zone' });
         }
-        else if (playerRuleService.canPutDownMoreStationCardsThisTurn() && cardsOnHand.length) {
+        else if (shouldPutDownStationCard()) {
             const stationRow = decideRowForStationCard();
             const location = 'station-' + stationRow;
             const cardId = decideCardToPlaceAsStationCard();
@@ -28,5 +28,13 @@ module.exports = function ({
         else {
             matchController.emit('nextPhase', { currentPhase: PHASES.action });
         }
+    }
+
+    function shouldPutDownStationCard() {
+        const cardsOnHand = playerStateService.getCardsOnHand();
+
+        return playerRuleService.canPutDownStationCards()
+            && playerRuleService.canPutDownMoreStationCardsThisTurn()
+            && cardsOnHand.length;
     }
 };
