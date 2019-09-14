@@ -12,7 +12,8 @@ function PutDownCardController(deps) {
         playerServiceProvider,
         stateMemento,
         playerRequirementUpdaterFactory,
-        playerServiceFactory
+        playerServiceFactory,
+        CardFacade
     } = deps;
 
     const cardApplier = CardApplier({ playerServiceProvider, playerServiceFactory, matchService });
@@ -25,7 +26,6 @@ function PutDownCardController(deps) {
 
     function onPutDownCard(playerId, { location, cardId, choice }) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        if (playerStateService.nameOfCardSource(cardId) === location) throw new CheatError('Card is already at location');
         let cardData = playerStateService.findCardFromAnySource(cardId);
         if (!cardData) throw new CheatError(`Cannot find card`);
 
@@ -102,6 +102,9 @@ function PutDownCardController(deps) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         const ruleService = playerServiceProvider.byTypeAndId(PlayerServiceProvider.TYPE.rule, playerId);
 
+        const nameOfCardSource = playerStateService.nameOfCardSource(cardData.id);
+        if (nameOfCardSource === location) throw new CheatError('Card is already at location');
+
         if (location === 'zone') {
             const card = playerStateService.createBehaviourCard(cardData);
             const canBePutDownAnyway = matchService.isGameOn() && card.canBePutDownAnyTime();
@@ -123,15 +126,8 @@ function PutDownCardController(deps) {
             }
         }
         else if (location.startsWith('station')) {
-            if (!ruleService.canPutDownStationCards()) {
-                throw new CheatError('Cannot put down card');
-            }
-
-            const card = cardFactory.createCardForPlayer(cardData, playerId);
-            const playerRuleService = playerServiceFactory.playerRuleService(playerId);
-            if (!card.canBePutDownAsExtraStationCard && !playerRuleService.canPutDownMoreStationCardsThisTurn()) {
-                throw new CheatError('Cannot put down more station cards this turn');
-            }
+            CardFacade(cardData.id, playerId)
+                .CardCanBePlacedInStation()({ withError: true });
         }
     }
 

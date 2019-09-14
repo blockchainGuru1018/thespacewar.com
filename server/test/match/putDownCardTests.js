@@ -139,7 +139,6 @@ module.exports = {
                         cardsOnHand: [],
                         cardsInZone: [createCard({ id: 'C1A', cost: 1 })],
                         stationCards: [{ card: createCard({ id: 'C2A' }), place: 'action' }],
-                        events: [{ type: 'putDownCard', turn: 1, location: 'zone', cardId: 'C1A' }]
                     }
                 }
             }));
@@ -152,14 +151,56 @@ module.exports = {
             assert.equals(state.cardsInZone.length, 1);
             assert.equals(state.cardsInZone[0].id, 'C1A');
         },
-        'should NOT add another event'() {
+        'should NOT add an event'() {
             this.match.refresh('P1A');
             let state = this.firstPlayerConnection.stateChanged.firstCall.args[0];
-            assert.equals(state.events.length, 1);
+            assert.equals(state.events.length, 0);
         },
         'should throw error'() {
             assert(this.error);
             assert.equals(this.error.message, 'Card is already at location');
+        }
+    },
+    'when put down card in station and card is in zone': {
+        async setUp() {
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['stateChanged']);
+            this.match = createMatch({
+                players: [
+                    createPlayer({ id: 'P1A', connection: this.firstPlayerConnection }),
+                    createPlayer({ id: 'P2A', connection: this.secondPlayerConnection })
+                ]
+            });
+            this.match.restoreFromState(createState({
+                turn: 1,
+                currentPlayer: 'P1A',
+                playerOrder: ['P1A', 'P2A'],
+                playerStateById: {
+                    'P1A': {
+                        phase: 'action',
+                        cardsOnHand: [],
+                        cardsInZone: [createCard({ id: 'C1A', cost: 1 })],
+                        stationCards: [{ card: createCard({ id: 'C2A' }), place: 'action' }]
+                    }
+                }
+            }));
+
+            this.error = catchError(() => this.match.putDownCard('P1A', { location: 'station-action', cardId: 'C1A' }));
+        },
+        'should only have one copy of the card in the zone'() {
+            this.match.refresh('P1A');
+            let state = this.firstPlayerConnection.stateChanged.firstCall.args[0];
+            assert.equals(state.cardsInZone.length, 1);
+            assert.equals(state.cardsInZone[0].id, 'C1A');
+        },
+        'should NOT add an event'() {
+            this.match.refresh('P1A');
+            let state = this.firstPlayerConnection.stateChanged.firstCall.args[0];
+            assert.equals(state.events.length, 0);
+        },
+        'should throw error'() {
+            assert(this.error);
+            assert.equals(this.error.message, 'Cannot move card from zone to station');
         }
     },
     'when put down station card and has already put down a station this turn should throw error': function () {

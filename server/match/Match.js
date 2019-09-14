@@ -19,6 +19,7 @@ const PlayerServiceProvider = require('../../shared/match/PlayerServiceProvider.
 const PlayerOverworkFactory = require('../../shared/match/overwork/PlayerOverworkFactory.js');
 const PlayerServiceFactory = require('../../shared/match/PlayerServiceFactory.js');
 const GameServiceFactory = require('../../shared/match/GameServiceFactory.js');
+const ServiceFactoryFactory = require('../../shared/match/ServiceFactoryFactory.js');
 const MatchMode = require('../../shared/match/MatchMode.js');
 const { PHASES } = require('../../shared/phases.js');
 
@@ -56,23 +57,21 @@ module.exports = function ({
         playerStateById: {}
     };
 
-    const gameServiceFactory = GameServiceFactory({
+    const serviceFactoryFactory = ServiceFactoryFactory({
         state,
-        endMatch,
-        rawCardDataRepository,
-        gameConfig
-    });
-    const playerServiceFactory = PlayerServiceFactory({
-        state,
-        endMatch,
-        actionPointsCalculator,
-        logger,
+        players,
         gameConfig,
-        gameServiceFactory,
-        userRepository: {
-            getById: id => players.find(p => p.id === id)
-        }
+        rawCardDataRepository,
+        cardInfoRepository,
+        actionPointsCalculator,
+        endMatch,
+        logger
     });
+
+    const gameServiceFactory = serviceFactoryFactory.gameServiceFactory();
+    const playerServiceFactory = serviceFactoryFactory.playerServiceFactory();
+    const CardFacade = serviceFactoryFactory.cardFacadeContext();
+
     const matchService = playerServiceFactory.matchService();
     const playerServiceProvider = playerServiceFactory.playerServiceProvider();
     const stateChangeListener = new StateChangeListener({ playerServiceProvider, matchService, logger });
@@ -107,6 +106,7 @@ module.exports = function ({
         rawCardDataRepository,
         playerOverworkFactory,
         stateSerializer,
+        CardFacade,
         playerServiceFactory,
         stateMemento: gameServiceFactory.stateMemento(),
         gameConfig

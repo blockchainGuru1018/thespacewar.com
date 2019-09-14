@@ -400,6 +400,9 @@ class PlayerStateService {
         const cardInStation = playerState.stationCards.find(s => getStationCardId(s) === cardId);
         if (cardInStation) return 'station-' + cardInStation.place;
 
+        const cardOnHand = playerState.cardsOnHand.find(c => c.id === cardId);
+        if (cardOnHand) return 'hand';
+
         return 'other';
     }
 
