@@ -11,6 +11,7 @@ module.exports = async function ({
     playerPhase,
     playerCommanders,
     turnControl,
+    drawPhaseDecider,
     actionPhaseDecider,
     discardPhaseDecider,
     attackPhaseDecider,
@@ -26,7 +27,7 @@ module.exports = async function ({
     }
     else {
         if (playerPhase.isDraw()) {
-            drawPhase();
+            drawPhaseDecider.decide();
         }
         else if (playerPhase.isAction()) {
             actionPhaseDecider.decide();
@@ -36,15 +37,6 @@ module.exports = async function ({
         }
         else if (playerPhase.isAttack()) {
             attackPhaseDecider.decide();
-        }
-    }
-
-    function drawPhase() {
-        if (playerRuleService.moreCardsCanBeDrawnForDrawPhase()) {
-            matchController.emit('drawCard');
-        }
-        else {
-            matchController.emit('nextPhase', { currentPhase: PHASES.draw });
         }
     }
 

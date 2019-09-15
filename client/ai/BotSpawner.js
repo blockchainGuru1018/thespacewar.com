@@ -1,6 +1,7 @@
 const Bot = require('./Bot.js');
 const GameServiceFactory = require('../../shared/match/GameServiceFactory.js');
 const PlayerServiceFactory = require('../../shared/match/PlayerServiceFactory.js');
+const DrawPhaseDecider = require('./DrawPhaseDecider.js');
 const ActionPhaseDecider = require('./ActionPhaseDecider.js');
 const DiscardPhaseDecider = require('./DiscardPhaseDecider.js');
 const AttackPhaseDecider = require('./AttackPhaseDecider.js');
@@ -50,11 +51,19 @@ module.exports = function ({
             playerCommanders: playerServiceFactory.playerCommanders(BotId),
             playerPhase: playerServiceFactory.playerPhase(BotId),
             turnControl: playerServiceFactory.turnControl(BotId),
+            drawPhaseDecider: drawPhaseDecider(),
             actionPhaseDecider: actionPhaseDecider(),
             discardPhaseDecider: discardPhaseDecider(),
             attackPhaseDecider: attackPhaseDecider(),
             matchController,
             clientState
+        });
+    }
+
+    function drawPhaseDecider() {
+        return DrawPhaseDecider({
+            playerRuleService: playerServiceFactory.playerRuleService(BotId),
+            matchController
         });
     }
 
