@@ -1,3 +1,6 @@
+const CardTypeComparer = require('./CardTypeComparer.js');
+const CardCostComparer = require('./CardCostComparer.js');
+
 module.exports = function ({
     playerStateService
 }) {

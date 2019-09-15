@@ -10,15 +10,12 @@ const TypesInOrder = [
 
 module.exports = function DecideCardToDiscard({ playerStateService, types = TypesInOrder }) {
     return () => {
-        const cards = playerStateService.getCardsOnHand();
-
-        const cardsSorted = cards.slice()
+        const cards = playerStateService.getCardsOnHand()
+            .slice()
             .sort(CardCostComparer())
             .sort(CardTypeComparer(types));
 
-        const topHit = cardsSorted[0];
-        if (topHit) return topHit.id;
-
+        if (cards.length) return cards[0].id;
         throw new Error('No cards to discard');
     };
 };
