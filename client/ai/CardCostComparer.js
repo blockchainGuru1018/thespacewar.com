@@ -1,3 +1,5 @@
-module.exports = function () {
-    return (a, b) => a.cost - b.cost;
+module.exports = function ({ expensiveFirst = false } = {}) {
+    return (a, b) => expensiveFirst
+        ? b.cost - a.cost
+        : a.cost - b.cost;
 };

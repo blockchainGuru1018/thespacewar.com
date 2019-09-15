@@ -1,10 +1,23 @@
 const CardTypeComparer = require('./CardTypeComparer.js');
 const CardCostComparer = require('./CardCostComparer.js');
 
+const TypesInOrder = [
+    'defense',
+    'missile',
+    'spaceShip'
+];
+
 module.exports = function ({
-    playerStateService
+    playerStateService,
+    types = TypesInOrder
 }) {
     return () => {
-        return playerStateService.getCardsOnHand()[0].id;
+        const cards = playerStateService.getCardsOnHand()
+            .slice()
+            .sort(CardCostComparer({ expensiveFirst: true }))
+            .sort(CardTypeComparer(types));
+
+        if (cards.length) return cards[0].id;
+        throw new Error('No cards to discard');
     };
 };
