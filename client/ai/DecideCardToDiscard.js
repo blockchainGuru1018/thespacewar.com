@@ -1,3 +1,6 @@
+const CardTypeComparer = require('./CardTypeComparer.js');
+const CardCostComparer = require('./CardCostComparer.js');
+
 const TypesInOrder = [
     'duration',
     'event',
@@ -9,18 +12,13 @@ module.exports = function DecideCardToDiscard({ playerStateService, types = Type
     return () => {
         const cards = playerStateService.getCardsOnHand();
 
-        for (let type of types) {
-            const eventCardToDiscard = chooseCheapestCardOfType(cards, type);
-            if (eventCardToDiscard) return eventCardToDiscard.id;
-        }
+        const cardsSorted = cards.slice()
+            .sort(CardCostComparer())
+            .sort(CardTypeComparer(types));
+
+        const topHit = cardsSorted[0];
+        if (topHit) return topHit.id;
 
         throw new Error('No cards to discard');
     };
 };
-
-function chooseCheapestCardOfType(cards, type) {
-    return cards
-        .filter(c => c.type === type)
-        .slice()
-        .sort((a, b) => a.cost - b.cost)[0];
-}
