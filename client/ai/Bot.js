@@ -4,7 +4,7 @@ const Commander = require('../../shared/match/commander/Commander.js');
 
 const BotId = 'BOT';
 
-module.exports = async function ({
+module.exports = function ({
     matchService,
     playerStateService,
     playerRuleService,

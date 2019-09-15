@@ -12,6 +12,7 @@ const DecideCardToPlaceAsStationCard = require('./DecideCardToPlaceAsStationCard
 const BotId = 'BOT';
 
 module.exports = function ({
+    opponentUserId,
     clientState,
     matchController,
     rawCardDataRepository,
@@ -70,26 +71,27 @@ module.exports = function ({
     function actionPhaseDecider() {
         const playerStateService = playerServiceFactory.playerStateService(BotId);
         return ActionPhaseDecider({
+            matchController,
             playerStateService,
             playerRuleService: playerServiceFactory.playerRuleService(BotId),
             decideRowForStationCard: DecideRowForStationCard(),
-            decideCardToPlaceAsStationCard: DecideCardToPlaceAsStationCard({ playerStateService }),
-            matchController
+            decideCardToPlaceAsStationCard: DecideCardToPlaceAsStationCard({ playerStateService })
         });
     }
 
     function discardPhaseDecider() {
         return DiscardPhaseDecider({
+            matchController,
             playerDiscardPhase: playerServiceFactory.playerDiscardPhase(BotId),
-            decideCardToDiscard: DecideCardToDiscard({ playerStateService: playerServiceFactory.playerStateService(BotId) }),
-            matchController
+            decideCardToDiscard: DecideCardToDiscard({ playerStateService: playerServiceFactory.playerStateService(BotId) })
         });
     }
 
     function attackPhaseDecider() {
         return AttackPhaseDecider({
+            matchController,
             playerStateService: playerServiceFactory.playerStateService(BotId),
-            matchController
+            opponentStateService: playerServiceFactory.playerStateService(opponentUserId)
         });
     }
 };

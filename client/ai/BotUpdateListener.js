@@ -31,6 +31,7 @@ module.exports = function ({
 
         clientState.onUpdate(() => {
             const botSpawner = BotSpawner({
+                opponentUserId: playerUser.id,
                 clientState,
                 matchController,
                 rawCardDataRepository,

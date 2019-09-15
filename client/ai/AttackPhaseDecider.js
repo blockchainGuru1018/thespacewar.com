@@ -1,8 +1,9 @@
 const { PHASES } = require('../../shared/phases.js');
 
 module.exports = function ({
+    matchController,
     playerStateService,
-    matchController
+    opponentStateService
 }) {
 
     return {
@@ -12,6 +13,12 @@ module.exports = function ({
     function decide() {
         cardsThatCanMove().forEach(card => matchController.emit('moveCard', card.id));
 
+        const targetStationCardIds = opponentStateService.getStationCards().map(s => s.id);
+        cardsThatCanAttackStation().forEach(card => matchController.emit('attackStationCard', {
+            attackerCardId: card.id,
+            targetStationCardIds
+        }));
+
         matchController.emit('nextPhase', { currentPhase: PHASES.attack });
     }
 
@@ -20,5 +27,12 @@ module.exports = function ({
             .getCardsInZone()
             .map(cardData => playerStateService.createBehaviourCard(cardData))
             .filter(card => card.canMove());
+    }
+
+    function cardsThatCanAttackStation() {
+        return playerStateService
+            .getCardsInOpponentZone()
+            .map(cardData => playerStateService.createBehaviourCard(cardData))
+            .filter(card => card.canAttackStationCards());
     }
 };
