@@ -79,6 +79,16 @@ describe('Being in the attack phase', () => {
         const { matchController } = await setupFromState({ turn: 1, phase: 'attack' });
         expect(matchController.emit).toBeCalledWith('nextPhase', { currentPhase: PHASES.attack });
     });
+
+    test.todo('SHOULD NOT GO TO NEXT PHASE IF HAS BOTH CARD THAT CAN MOVE AND CARD THAT CAN ATTACK STATION');
+    test.todo('SHOULD ATTACK CARD IN HOME ZONE INSTEAD OF MOVING');
+    test.todo('SHOULD ATTACK CARD IN ENEMY ZONE IF CAN NOT ATTACK STATION');
+
+    test.todo('MISSILE CARDS SHOULD NOT MOVE');
+    test.todo('MISSILE CARDS SHOULD ATTACK ENEMY STATION WHEN POSSIBLE');
+    test.todo('SHOULD NOT TRY TO MOVE DEFENSE CARDS');
+
+    test.todo('HANDLE REQUIREMENTS OF TYPES: DRAW & DISCARD');
 });
 
 function unflippedStationCard(id, place = 'draw') {
