@@ -3,6 +3,7 @@ const GameServiceFactory = require('../../shared/match/GameServiceFactory.js');
 const PlayerServiceFactory = require('../../shared/match/PlayerServiceFactory.js');
 const ActionPhaseDecider = require('./ActionPhaseDecider.js');
 const DiscardPhaseDecider = require('./DiscardPhaseDecider.js');
+const AttackPhaseDecider = require('./AttackPhaseDecider.js');
 const DecideCardToDiscard = require('./DecideCardToDiscard.js');
 const DecideRowForStationCard = require('./DecideRowForStationCard.js');
 const DecideCardToPlaceAsStationCard = require('./DecideCardToPlaceAsStationCard.js');
@@ -51,6 +52,7 @@ module.exports = function ({
             turnControl: playerServiceFactory.turnControl(BotId),
             actionPhaseDecider: actionPhaseDecider(),
             discardPhaseDecider: discardPhaseDecider(),
+            attackPhaseDecider: attackPhaseDecider(),
             matchController,
             clientState
         });
@@ -71,6 +73,13 @@ module.exports = function ({
         return DiscardPhaseDecider({
             playerDiscardPhase: playerServiceFactory.playerDiscardPhase(BotId),
             decideCardToDiscard: DecideCardToDiscard({ playerStateService: playerServiceFactory.playerStateService(BotId) }),
+            matchController
+        });
+    }
+
+    function attackPhaseDecider() {
+        return AttackPhaseDecider({
+            playerStateService: playerServiceFactory.playerStateService(BotId),
             matchController
         });
     }

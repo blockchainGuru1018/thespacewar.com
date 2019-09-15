@@ -13,6 +13,7 @@ module.exports = async function ({
     turnControl,
     actionPhaseDecider,
     discardPhaseDecider,
+    attackPhaseDecider,
     matchController
 }) {
     if (matchService.isGameOn() && turnControl.opponentHasControl()) return;
@@ -34,7 +35,7 @@ module.exports = async function ({
             discardPhase();
         }
         else if (playerPhase.isAttack()) {
-            matchController.emit('nextPhase', { currentPhase: PHASES.attack });
+            attackPhaseDecider.decide();
         }
     }
 
