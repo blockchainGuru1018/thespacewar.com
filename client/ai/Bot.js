@@ -32,7 +32,7 @@ module.exports = async function ({
             actionPhaseDecider.decide();
         }
         else if (playerPhase.isDiscard()) {
-            discardPhase();
+            discardPhaseDecider.decide();
         }
         else if (playerPhase.isAttack()) {
             attackPhaseDecider.decide();
@@ -46,10 +46,6 @@ module.exports = async function ({
         else {
             matchController.emit('nextPhase', { currentPhase: PHASES.draw });
         }
-    }
-
-    function discardPhase() {
-        discardPhaseDecider.decide();
     }
 
     function isChoosingStartingPlayer() {
