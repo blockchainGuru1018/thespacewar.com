@@ -606,10 +606,6 @@
             playerTopDiscardCard() {
                 return this.playerDiscardedCards[this.playerDiscardedCards.length - 1];
             },
-            calculatedActionPointsForActionPhaseVisible() {
-                return this.phase === 'action'
-                    && this.hasPutDownNonFreeCardThisTurn;
-            },
             visiblePlayerCards() {
                 const allCards = [...this.playerCardsInZone, ...this.transientPlayerCardsInHomeZone];
                 const leftMostCardTypes = ['duration'];
