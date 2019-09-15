@@ -11,15 +11,19 @@ module.exports = function ({
     };
 
     function decide() {
-        cardsThatCanMove().forEach(card => matchController.emit('moveCard', card.id));
+        const toMove = cardsThatCanMove();
+        toMove.forEach(card => matchController.emit('moveCard', card.id));
 
         const targetStationCardIds = opponentStateService.getStationCards().map(s => s.id);
-        cardsThatCanAttackStation().forEach(card => matchController.emit('attackStationCard', {
+        const toAttackStation = cardsThatCanAttackStation();
+        toAttackStation.forEach(card => matchController.emit('attackStationCard', {
             attackerCardId: card.id,
             targetStationCardIds
         }));
 
-        matchController.emit('nextPhase', { currentPhase: PHASES.attack });
+        if (toMove.length === 0 && toAttackStation.length === 0) {
+            matchController.emit('nextPhase', { currentPhase: PHASES.attack });
+        }
     }
 
     function cardsThatCanMove() {

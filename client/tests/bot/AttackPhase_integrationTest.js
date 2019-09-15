@@ -7,6 +7,28 @@ const { PHASES } = require('../../../shared/phases.js');
 const { setupFromState, BotId, PlayerId } = require('./botTestHelpers.js');
 
 describe('Being in the attack phase', () => {
+    describe('when has spaceShip that has been in play for 1 turn', () => {
+        let matchController;
+
+        beforeEach(async () => {
+            const stubs = await setupFromState({
+                turn: 2,
+                phase: 'attack',
+                cardsInZone: [{ id: 'C1A', type: 'spaceShip' }],
+                events: [PutDownCardEvent({ cardId: 'C1A', turn: 1, location: 'zone' })]
+            });
+            matchController = stubs.matchController;
+        });
+
+        it('should move', () => {
+            expect(matchController.emit).toBeCalledWith('moveCard', 'C1A');
+        });
+
+        it('should NOT go to the next phase move', () => {
+            expect(matchController.emit).not.toBeCalledWith('nextPhase', expect.any(Object));
+        });
+    });
+
     it('when has spaceShip that has been in play for 1 turn should move it', async () => {
         const { matchController } = await setupFromState({
             turn: 2,
@@ -42,6 +64,10 @@ describe('Being in the attack phase', () => {
                 attackerCardId: 'C1A',
                 targetStationCardIds: ['S1A']
             });
+        });
+
+        it('should NOT go to next phase', () => {
+            expect(matchController.emit).not.toBeCalledWith('nextPhase', expect.any(Object));
         });
 
         it('should NOT move card', () => {
