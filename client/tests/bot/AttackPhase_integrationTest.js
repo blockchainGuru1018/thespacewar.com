@@ -89,6 +89,8 @@ describe('Being in the attack phase', () => {
     test.todo('SHOULD NOT TRY TO MOVE DEFENSE CARDS');
 
     test.todo('HANDLE REQUIREMENTS OF TYPES: DRAW & DISCARD');
+
+    //TODO Should create better abstraction that makes for easier testing when implementing tests above.. ?
 });
 
 function unflippedStationCard(id, place = 'draw') {
