@@ -69,6 +69,13 @@ module.exports = function ({
                 defenderCardId: targets[0].id
             });
         }
+
+        function attackableOpponentCardsInHomeZone(playerCard) {
+            return opponentStateService
+                .getCardsInOpponentZone()
+                .map(opponentCardData => opponentStateService.createBehaviourCard(opponentCardData))
+                .filter(opponentCard => playerCard.canAttackCard(opponentCard));
+        }
     }
 
     function cardsThatCanAttackStation() {
@@ -78,17 +85,4 @@ module.exports = function ({
             .filter(card => card.canAttackStationCards());
     }
 
-    function cardsThatCanAttackCardsInHomeZone() {
-        return playerStateService
-            .getCardsInZone()
-            .map(cardData => playerStateService.createBehaviourCard(cardData))
-            .filter(card => attackableOpponentCardsInHomeZone(card).length > 0);
-    }
-
-    function attackableOpponentCardsInHomeZone(playerCard) {
-        return opponentStateService
-            .getCardsInOpponentZone()
-            .map(opponentCardData => opponentStateService.createBehaviourCard(opponentCardData))
-            .filter(opponentCard => playerCard.canAttackCard(opponentCard));
-    }
 };
