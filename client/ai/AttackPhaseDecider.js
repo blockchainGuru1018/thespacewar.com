@@ -17,13 +17,14 @@ module.exports = function ({
         ];
         const cards = cardsFromHomeAndOpponentZone.map(cardData => playerStateService.createBehaviourCard(cardData));
 
-        const toAttackStation = cards
-            .map(CardAttackStationCardCapability)
-            .filter(c => c.canDoIt());
+        const toAttackStation = cards.map(CardAttackStationCardCapability).filter(c => c.canDoIt());
         toAttackStation.forEach(c => c.doIt());
 
-        const toAttackCardInHomeZone = cards.map(CardAttackInHomeZoneCapability).filter(c => c.canDoIt());
-        toAttackCardInHomeZone.forEach(c => c.doIt());
+        let toAttackCardInHomeZone = [];
+        if (toAttackStation.length === 0) {
+            toAttackCardInHomeZone = cards.map(CardAttackInHomeZoneCapability).filter(c => c.canDoIt());
+            toAttackCardInHomeZone.forEach(c => c.doIt());
+        }
 
         let toMove = [];
         if (toAttackStation.length === 0 && toAttackCardInHomeZone.length === 0) {
