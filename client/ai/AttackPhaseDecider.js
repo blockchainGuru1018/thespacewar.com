@@ -23,11 +23,12 @@ module.exports = function ({
             toMove.forEach(c => c.doIt());
         }
 
-        const toAttackStation = cardsThatCanAttackStation();
-        toAttackStation.forEach(card => matchController.emit('attackStationCard', {
-            attackerCardId: card.id,
-            targetStationCardIds: getTargetStationCardIds()
-        }));
+        const toAttackStation = playerStateService
+            .getCardsInOpponentZone()
+            .map(cardData => playerStateService.createBehaviourCard(cardData))
+            .map(CardAttackStationCardCapability)
+            .filter(c => c.canDoIt());
+        toAttackStation.forEach(c => c.doIt());
 
         if (toMove.length === 0 && toAttackStation.length === 0 && toAttackCardInHomeZone.length === 0) {
             matchController.emit('nextPhase', { currentPhase: PHASES.attack });
@@ -36,6 +37,24 @@ module.exports = function ({
 
     function getTargetStationCardIds() {
         return opponentStateService.getStationCards().map(s => s.id);
+    }
+
+    function CardAttackStationCardCapability(card) {
+        return {
+            canDoIt,
+            doIt
+        };
+
+        function canDoIt() {
+            return card.canAttackStationCards();
+        }
+
+        function doIt() {
+            matchController.emit('attackStationCard', {
+                attackerCardId: card.id,
+                targetStationCardIds: getTargetStationCardIds()
+            });
+        }
     }
 
     function CardMoveCapability(card) {
@@ -80,12 +99,4 @@ module.exports = function ({
                 .filter(opponentCard => playerCard.canAttackCard(opponentCard));
         }
     }
-
-    function cardsThatCanAttackStation() {
-        return playerStateService
-            .getCardsInOpponentZone()
-            .map(cardData => playerStateService.createBehaviourCard(cardData))
-            .filter(card => card.canAttackStationCards());
-    }
-
 };
