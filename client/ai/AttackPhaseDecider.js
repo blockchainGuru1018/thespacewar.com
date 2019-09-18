@@ -33,7 +33,7 @@ module.exports = function ({
             targetStationCardIds
         }));
 
-        if (toMove.length === 0 && toAttackStation.length === 0) {
+        if (toMove.length === 0 && toAttackStation.length === 0 && toAttackCardInHomeZone.length === 0) {
             matchController.emit('nextPhase', { currentPhase: PHASES.attack });
         }
     }
