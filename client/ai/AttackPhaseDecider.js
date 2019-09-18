@@ -24,7 +24,7 @@ module.exports = function ({
             .map(cardData => playerStateService.createBehaviourCard(cardData));
         let toMove = [];
         if (toAttackCardInHomeZone.length === 0) {
-            toMove = cards.map(cardMoveCapability).filter(c => c.canDoIt());
+            toMove = cards.map(CardMoveCapability).filter(c => c.canDoIt());
             toMove.forEach(c => c.doIt());
         }
 
@@ -40,7 +40,7 @@ module.exports = function ({
         }
     }
 
-    function cardMoveCapability(card) {
+    function CardMoveCapability(card) {
 
         return {
             canDoIt,
