@@ -11,24 +11,25 @@ module.exports = function ({
     };
 
     function decide() {
-        const cards = playerStateService.getCardsInZone()
-            .map(cardData => playerStateService.createBehaviourCard(cardData));
+        const cardsFromHomeAndOpponentZone = [
+            ...playerStateService.getCardsInZone(),
+            ...playerStateService.getCardsInOpponentZone()
+        ];
+        const cards = cardsFromHomeAndOpponentZone.map(cardData => playerStateService.createBehaviourCard(cardData));
+
+        const toAttackStation = cards
+            .map(CardAttackStationCardCapability)
+            .filter(c => c.canDoIt());
+        toAttackStation.forEach(c => c.doIt());
 
         const toAttackCardInHomeZone = cards.map(CardAttackInHomeZoneCapability).filter(c => c.canDoIt());
         toAttackCardInHomeZone.forEach(c => c.doIt());
 
         let toMove = [];
-        if (toAttackCardInHomeZone.length === 0) {
+        if (toAttackStation.length === 0 && toAttackCardInHomeZone.length === 0) {
             toMove = cards.map(CardMoveCapability).filter(c => c.canDoIt());
             toMove.forEach(c => c.doIt());
         }
-
-        const toAttackStation = playerStateService
-            .getCardsInOpponentZone()
-            .map(cardData => playerStateService.createBehaviourCard(cardData))
-            .map(CardAttackStationCardCapability)
-            .filter(c => c.canDoIt());
-        toAttackStation.forEach(c => c.doIt());
 
         if (toMove.length === 0 && toAttackStation.length === 0 && toAttackCardInHomeZone.length === 0) {
             matchController.emit('nextPhase', { currentPhase: PHASES.attack });
