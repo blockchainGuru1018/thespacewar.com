@@ -20,10 +20,12 @@ module.exports = function ({
             });
         });
 
+        const cards = playerStateService.getCardsInZone()
+            .map(cardData => playerStateService.createBehaviourCard(cardData));
         let toMove = [];
         if (toAttackCardInHomeZone.length === 0) {
-            toMove = cardsThatCanMove();
-            toMove.forEach(card => matchController.emit('moveCard', card.id));
+            toMove = cards.map(cardMoveCapability).filter(c => c.canDoIt());
+            toMove.forEach(c => c.doIt());
         }
 
         const targetStationCardIds = opponentStateService.getStationCards().map(s => s.id);
@@ -35,6 +37,22 @@ module.exports = function ({
 
         if (toMove.length === 0 && toAttackStation.length === 0 && toAttackCardInHomeZone.length === 0) {
             matchController.emit('nextPhase', { currentPhase: PHASES.attack });
+        }
+    }
+
+    function cardMoveCapability(card) {
+
+        return {
+            canDoIt,
+            doIt
+        };
+
+        function canDoIt() {
+            return card.canMove();
+        }
+
+        function doIt() {
+            matchController.emit('moveCard', card.id);
         }
     }
 
