@@ -11,17 +11,12 @@ module.exports = function ({
     };
 
     function decide() {
-        const toAttackCardInHomeZone = cardsThatCanAttackCardsInHomeZone();
-        toAttackCardInHomeZone.forEach(card => {
-            const defenderCard = attackableOpponentCardsInHomeZone(card)[0];
-            matchController.emit('attack', {
-                attackerCardId: card.id,
-                defenderCardId: defenderCard.id
-            });
-        });
-
         const cards = playerStateService.getCardsInZone()
             .map(cardData => playerStateService.createBehaviourCard(cardData));
+
+        const toAttackCardInHomeZone = cards.map(CardAttackInHomeZoneCapability).filter(c => c.canDoIt());
+        toAttackCardInHomeZone.forEach(c => c.doIt());
+
         let toMove = [];
         if (toAttackCardInHomeZone.length === 0) {
             toMove = cards.map(CardMoveCapability).filter(c => c.canDoIt());
@@ -41,7 +36,6 @@ module.exports = function ({
     }
 
     function CardMoveCapability(card) {
-
         return {
             canDoIt,
             doIt
@@ -53,6 +47,27 @@ module.exports = function ({
 
         function doIt() {
             matchController.emit('moveCard', card.id);
+        }
+    }
+
+    function CardAttackInHomeZoneCapability(card) {
+        return {
+            canDoIt,
+            doIt
+        };
+
+        function canDoIt() {
+            const targets = attackableOpponentCardsInHomeZone(card);
+            return targets.length > 0;
+        }
+
+        function doIt() {
+            const targets = attackableOpponentCardsInHomeZone(card);
+
+            matchController.emit('attack', {
+                attackerCardId: card.id,
+                defenderCardId: targets[0].id
+            });
         }
     }
 
