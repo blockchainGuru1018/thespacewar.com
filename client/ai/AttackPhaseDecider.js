@@ -11,8 +11,20 @@ module.exports = function ({
     };
 
     function decide() {
-        const toMove = cardsThatCanMove();
-        toMove.forEach(card => matchController.emit('moveCard', card.id));
+        const toAttackCardInHomeZone = cardsThatCanAttackCardsInHomeZone();
+        toAttackCardInHomeZone.forEach(card => {
+            const defenderCard = attackableOpponentCardsInHomeZone(card)[0];
+            matchController.emit('attack', {
+                attackerCardId: card.id,
+                defenderCardId: defenderCard.id
+            });
+        });
+
+        let toMove = [];
+        if (toAttackCardInHomeZone.length === 0) {
+            toMove = cardsThatCanMove();
+            toMove.forEach(card => matchController.emit('moveCard', card.id));
+        }
 
         const targetStationCardIds = opponentStateService.getStationCards().map(s => s.id);
         const toAttackStation = cardsThatCanAttackStation();
@@ -38,5 +50,19 @@ module.exports = function ({
             .getCardsInOpponentZone()
             .map(cardData => playerStateService.createBehaviourCard(cardData))
             .filter(card => card.canAttackStationCards());
+    }
+
+    function cardsThatCanAttackCardsInHomeZone() {
+        return playerStateService
+            .getCardsInZone()
+            .map(cardData => playerStateService.createBehaviourCard(cardData))
+            .filter(card => attackableOpponentCardsInHomeZone(card).length > 0);
+    }
+
+    function attackableOpponentCardsInHomeZone(playerCard) {
+        return opponentStateService
+            .getCardsInOpponentZone()
+            .map(opponentCardData => opponentStateService.createBehaviourCard(opponentCardData))
+            .filter(opponentCard => playerCard.canAttackCard(opponentCard));
     }
 };

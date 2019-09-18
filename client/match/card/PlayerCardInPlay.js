@@ -1,8 +1,6 @@
 module.exports = function ({
     card,
-
     attackerSelected,
-
     canThePlayer,
     opponentStateService
 }) {
@@ -13,8 +11,6 @@ module.exports = function ({
         canBeSacrificed,
         canRepair
     };
-
-    //Move
 
     function canMove(alternativeConditions = {}) {
         if (!canThePlayer.moveCards()) return false;
@@ -30,8 +26,6 @@ module.exports = function ({
             && card.canMoveAndAttackOnSameTurn();
     }
 
-    //Attack
-
     function canAttack() {
         if (attackerSelected) return false;
         if (!canThePlayer.attackCards()) return false;
@@ -43,8 +37,6 @@ module.exports = function ({
         }
         return card.canAttackStationCards();
     }
-
-    //Sacrifice
 
     function canBeSacrificed() {
         if (!canThePlayer.sacrificeCards()) return false;
@@ -58,8 +50,6 @@ module.exports = function ({
             if (card.canTargetCardForSacrifice(opponentCard)) return true;
         }
     }
-
-    //Repair
 
     function canRepair() {
         if (!canThePlayer.repairCards()) return false;

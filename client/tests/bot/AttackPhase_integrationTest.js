@@ -80,7 +80,38 @@ describe('Being in the attack phase', () => {
         expect(matchController.emit).toBeCalledWith('nextPhase', { currentPhase: PHASES.attack });
     });
 
-    test.todo('SHOULD NOT GO TO NEXT PHASE IF HAS BOTH CARD THAT CAN MOVE AND CARD THAT CAN ATTACK STATION');
+    it('when card can attack in home zone should attack', async () => {
+        const { matchController } = await setupFromState({
+            turn: 1,
+            phase: 'attack',
+            cardsInZone: [{ id: 'C1A', type: 'spaceShip', attack: 1 }],
+            opponentCardsInPlayerZone: [
+                { id: 'C2A', type: 'spaceShip', defense: 1 }
+            ],
+            events: [
+                PutDownCardEvent({ cardId: 'C1A', turn: 1, location: 'zone' }),
+            ]
+        });
+
+        expect(matchController.emit).toBeCalledWith('attack', { attackerCardId: 'C1A', defenderCardId: 'C2A' });
+    });
+
+    it('when card can attack in home zone and move, should NOT move', async () => {
+        const { matchController } = await setupFromState({
+            turn: 2,
+            phase: 'attack',
+            cardsInZone: [{ id: 'C1A', type: 'spaceShip', attack: 1 }],
+            opponentCardsInPlayerZone: [
+                { id: 'C2A', type: 'spaceShip', defense: 1 }
+            ],
+            events: [
+                PutDownCardEvent({ cardId: 'C1A', turn: 1, location: 'zone' }),
+            ]
+        });
+
+        expect(matchController.emit).not.toBeCalledWith('move', 'C1A');
+    });
+
     test.todo('SHOULD ATTACK CARD IN HOME ZONE INSTEAD OF MOVING');
     test.todo('SHOULD ATTACK CARD IN ENEMY ZONE IF CAN NOT ATTACK STATION');
 
@@ -90,7 +121,14 @@ describe('Being in the attack phase', () => {
 
     test.todo('HANDLE REQUIREMENTS OF TYPES: DRAW & DISCARD');
 
-    //TODO Should create better abstraction that makes for easier testing when implementing tests above.. ?
+    //TODO 09-15 Should create better abstraction that makes for easier testing when implementing tests above.. ?
+    //TODO 09-16 Maybe a decider from the scope of a behaviourCard?
+    // How do we deal we if it can't do anything then we should take the next card?
+    // It is unfortunate if we have to duplicate all the canMove, canAttack checks etc.
+    // A) Could return a boolean, but that breaks command/query separation
+    // B) Could perhaps give matchController.emit as a callback from the decider to the cardDecider?
+    //    That way, when a card has emitted using the callback, the loop over all the cards break.
+    // I THINK WE SHOULD GO WITH B!
 });
 
 function unflippedStationCard(id, place = 'draw') {
