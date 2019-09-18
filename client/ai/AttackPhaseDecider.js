@@ -56,13 +56,6 @@ module.exports = function ({
         }
     }
 
-    function cardsThatCanMove() {
-        return playerStateService
-            .getCardsInZone()
-            .map(cardData => playerStateService.createBehaviourCard(cardData))
-            .filter(card => card.canMove());
-    }
-
     function cardsThatCanAttackStation() {
         return playerStateService
             .getCardsInOpponentZone()
