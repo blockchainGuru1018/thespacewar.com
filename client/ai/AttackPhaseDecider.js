@@ -17,11 +17,7 @@ module.exports = function ({
     };
 
     function decide() {
-        const cardsFromHomeAndOpponentZone = [
-            ...playerStateService.getCardsInZone(),
-            ...playerStateService.getCardsInOpponentZone()
-        ];
-        const cards = cardsFromHomeAndOpponentZone.map(cardData => playerStateService.createBehaviourCard(cardData));
+        const cards = getCardsFromBothZones();
 
         for (const card of cards) {
             for (const Capability of Capabilities) {
@@ -38,6 +34,14 @@ module.exports = function ({
 
     function getTargetStationCardIds() {
         return opponentStateService.getStationCards().map(s => s.id);
+    }
+
+    function getCardsFromBothZones() {
+        const cardDataFromZones = [
+            ...playerStateService.getCardsInZone(),
+            ...playerStateService.getCardsInOpponentZone()
+        ];
+        return cardDataFromZones.map(cardData => playerStateService.createBehaviourCard(cardData));
     }
 
     function CardAttackStationCardCapability(card) {
