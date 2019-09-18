@@ -18,10 +18,14 @@ module.exports = function ({
 
     function decide() {
         const cards = getCardsFromBothZones();
+        useCardOrProceedToNextPhase(cards);
+    }
 
+    function useCardOrProceedToNextPhase(cards) {
         for (const card of cards) {
             for (const Capability of Capabilities) {
                 const capability = Capability(card);
+
                 if (capability.canDoIt()) {
                     capability.doIt();
                     return;
