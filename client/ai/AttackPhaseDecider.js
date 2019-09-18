@@ -23,16 +23,19 @@ module.exports = function ({
             toMove.forEach(c => c.doIt());
         }
 
-        const targetStationCardIds = opponentStateService.getStationCards().map(s => s.id);
         const toAttackStation = cardsThatCanAttackStation();
         toAttackStation.forEach(card => matchController.emit('attackStationCard', {
             attackerCardId: card.id,
-            targetStationCardIds
+            targetStationCardIds: getTargetStationCardIds()
         }));
 
         if (toMove.length === 0 && toAttackStation.length === 0 && toAttackCardInHomeZone.length === 0) {
             matchController.emit('nextPhase', { currentPhase: PHASES.attack });
         }
+    }
+
+    function getTargetStationCardIds() {
+        return opponentStateService.getStationCards().map(s => s.id);
     }
 
     function CardMoveCapability(card) {
