@@ -8,6 +8,7 @@ module.exports = function ({
 
     const Capabilities = [
         capabilityFactory.attackStationCard,
+        capabilityFactory.attackEnergyShield,
         capabilityFactory.attackInHomeZone,
         capabilityFactory.move
     ];
