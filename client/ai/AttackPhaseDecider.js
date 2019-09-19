@@ -36,10 +36,6 @@ module.exports = function ({
         matchController.emit('nextPhase', { currentPhase: PHASES.attack });
     }
 
-    function getTargetStationCardIds() {
-        return opponentStateService.getStationCards().map(s => s.id);
-    }
-
     function getCardsFromBothZones() {
         const cardDataFromZones = [
             ...playerStateService.getCardsInZone(),
@@ -63,6 +59,10 @@ module.exports = function ({
                 attackerCardId: card.id,
                 targetStationCardIds: getTargetStationCardIds()
             });
+        }
+
+        function getTargetStationCardIds() {
+            return opponentStateService.getStationCards().map(s => s.id);
         }
     }
 
