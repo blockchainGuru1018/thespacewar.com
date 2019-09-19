@@ -3,13 +3,12 @@ const { PHASES } = require('../../shared/phases.js');
 module.exports = function ({
     matchController,
     playerStateService,
-    opponentStateService,
     capabilityFactory
 }) {
 
     const Capabilities = [
         capabilityFactory.attackStationCard,
-        CardAttackInHomeZoneCapability,
+        capabilityFactory.attackInHomeZone,
         CardMoveCapability
     ];
 
@@ -57,34 +56,6 @@ module.exports = function ({
 
         function doIt() {
             matchController.emit('moveCard', card.id);
-        }
-    }
-
-    function CardAttackInHomeZoneCapability(card) {
-        return {
-            canDoIt,
-            doIt
-        };
-
-        function canDoIt() {
-            const targets = attackableOpponentCardsInHomeZone(card);
-            return targets.length > 0;
-        }
-
-        function doIt() {
-            const targets = attackableOpponentCardsInHomeZone(card);
-
-            matchController.emit('attack', {
-                attackerCardId: card.id,
-                defenderCardId: targets[0].id
-            });
-        }
-
-        function attackableOpponentCardsInHomeZone(playerCard) {
-            return opponentStateService
-                .getCardsInOpponentZone()
-                .map(opponentCardData => opponentStateService.createBehaviourCard(opponentCardData))
-                .filter(opponentCard => playerCard.canAttackCard(opponentCard));
         }
     }
 };
