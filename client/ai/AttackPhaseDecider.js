@@ -9,7 +9,7 @@ module.exports = function ({
     const Capabilities = [
         capabilityFactory.attackStationCard,
         capabilityFactory.attackInHomeZone,
-        CardMoveCapability
+        capabilityFactory.move
     ];
 
     return {
@@ -42,20 +42,5 @@ module.exports = function ({
             ...playerStateService.getCardsInOpponentZone()
         ];
         return cardDataFromZones.map(cardData => playerStateService.createBehaviourCard(cardData));
-    }
-
-    function CardMoveCapability(card) {
-        return {
-            canDoIt,
-            doIt
-        };
-
-        function canDoIt() {
-            return card.canMove();
-        }
-
-        function doIt() {
-            matchController.emit('moveCard', card.id);
-        }
     }
 };
