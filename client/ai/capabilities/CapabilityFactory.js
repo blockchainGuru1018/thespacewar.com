@@ -1,7 +1,7 @@
 const AttackStationCardCapability = require('./AttackStationCardCapability.js');
 const AttackEnergyShieldCardCapability = require('./AttackEnergyShieldCardCapability.js');
 const AttackInHomeZoneCardCapability = require('./AttackInHomeZoneCardCapability.js');
-const CardMoveCapability = require('./CardMoveCapability.js');
+const MoveCardCapability = require('./MoveCardCapability.js');
 
 module.exports = function ({
     playerServiceFactory,
@@ -40,7 +40,7 @@ module.exports = function ({
     }
 
     function move(card) {
-        return CardMoveCapability({
+        return MoveCardCapability({
             card,
             matchController,
             opponentStateService: playerServiceFactory.playerStateService(opponentId),
