@@ -54,6 +54,7 @@ module.exports = function ({
             playerCommanders: playerServiceFactory.playerCommanders(BotId),
             playerPhase: playerServiceFactory.playerPhase(BotId),
             turnControl: playerServiceFactory.turnControl(BotId),
+            decideCardToDiscard: decideCardToDiscard(),
             drawPhaseDecider: drawPhaseDecider(),
             actionPhaseDecider: actionPhaseDecider(),
             discardPhaseDecider: discardPhaseDecider(),
@@ -85,7 +86,7 @@ module.exports = function ({
         return DiscardPhaseDecider({
             matchController,
             playerDiscardPhase: playerServiceFactory.playerDiscardPhase(BotId),
-            decideCardToDiscard: DecideCardToDiscard({ playerStateService: playerServiceFactory.playerStateService(BotId) })
+            decideCardToDiscard: decideCardToDiscard()
         });
     }
 
@@ -94,7 +95,15 @@ module.exports = function ({
             matchController,
             playerStateService: playerServiceFactory.playerStateService(BotId),
             opponentStateService: playerServiceFactory.playerStateService(opponentUserId),
-            cardCapabilityFactory: CardCapabilityFactory({ playerServiceFactory, opponentId: opponentUserId, matchController })
+            cardCapabilityFactory: CardCapabilityFactory({
+                playerServiceFactory,
+                opponentId: opponentUserId,
+                matchController
+            })
         });
+    }
+
+    function decideCardToDiscard() {
+        return DecideCardToDiscard({ playerStateService: playerServiceFactory.playerStateService(BotId) });
     }
 };

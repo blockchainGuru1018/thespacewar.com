@@ -15,6 +15,7 @@ module.exports = function ({
     drawPhaseDecider,
     actionPhaseDecider,
     discardPhaseDecider,
+    decideCardToDiscard,
     attackPhaseDecider,
     matchController
 }) {
@@ -24,6 +25,9 @@ module.exports = function ({
 
     if (hasDrawRequirement()) {
         matchController.emit('drawCard');
+    }
+    else if (hasDiscardCardRequirement()) {
+        matchController.emit('discardCard', decideCardToDiscard());
     }
     else if (isChoosingStartingPlayer()) {
         choosingStartingPlayer();
@@ -91,5 +95,9 @@ module.exports = function ({
 
     function hasDrawRequirement() {
         return !!playerRequirementService.getFirstMatchingRequirement({ type: 'drawCard' });
+    }
+
+    function hasDiscardCardRequirement() {
+        return !!playerRequirementService.getFirstMatchingRequirement({ type: 'discardCard' });
     }
 };
