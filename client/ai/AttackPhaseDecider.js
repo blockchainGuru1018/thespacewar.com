@@ -6,7 +6,7 @@ module.exports = function ({
     capabilityFactory
 }) {
 
-    const Capabilities = [
+    const CapabilitiesInPriorityOrder = [
         capabilityFactory.attackStationCard,
         capabilityFactory.attackEnergyShield,
         capabilityFactory.attackInHomeZone,
@@ -24,7 +24,7 @@ module.exports = function ({
 
     function useCardOrProceedToNextPhase(cards) {
         for (const card of cards) {
-            for (const Capability of Capabilities) {
+            for (const Capability of CapabilitiesInPriorityOrder) {
                 const capability = Capability(card);
 
                 if (capability.canDoIt()) {

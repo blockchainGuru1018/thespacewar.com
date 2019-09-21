@@ -138,15 +138,6 @@ test.todo('SHOULD NOT TRY TO MOVE DEFENSE CARDS');
 
 test.todo('HANDLE REQUIREMENTS OF TYPES: DRAW & DISCARD');
 
-//TODO 09-15 Should create better abstraction that makes for easier testing when implementing tests above.. ?
-//TODO 09-16 Maybe a decider from the scope of a behaviourCard?
-// How do we deal we if it can't do anything then we should take the next card?
-// It is unfortunate if we have to duplicate all the canMove, canAttack checks etc.
-// A) Could return a boolean, but that breaks command/query separation
-// B) Could perhaps give matchController.emit as a callback from the decider to the cardDecider?
-//    That way, when a card has emitted using the callback, the loop over all the cards break.
-// I THINK WE SHOULD GO WITH B!
-
 function unflippedStationCard(id, place = 'draw') {
     return {
         id,
