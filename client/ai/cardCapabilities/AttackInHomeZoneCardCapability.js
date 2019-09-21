@@ -9,7 +9,8 @@ module.exports = function AttackInHomeZoneCardCapability({
     };
 
     function canDoIt() {
-        return targets(card).length > 0;
+        return !card.canAttackStationCards()
+            && hasAvailableTargets();
     }
 
     function doIt() {
@@ -17,6 +18,10 @@ module.exports = function AttackInHomeZoneCardCapability({
             attackerCardId: card.id,
             defenderCardId: firstTarget().id
         });
+    }
+
+    function hasAvailableTargets() {
+        return targets(card).length > 0;
     }
 
     function firstTarget() {
