@@ -8,7 +8,7 @@ const AttackPhaseDecider = require('./AttackPhaseDecider.js');
 const DecideCardToDiscard = require('./DecideCardToDiscard.js');
 const DecideRowForStationCard = require('./DecideRowForStationCard.js');
 const DecideCardToPlaceAsStationCard = require('./DecideCardToPlaceAsStationCard.js');
-const CardCapabilityFactory = require('./capabilities/CardCapabilityFactory.js');
+const CardCapabilityFactory = require('./cardCapabilities/CardCapabilityFactory.js');
 
 const BotId = 'BOT';
 

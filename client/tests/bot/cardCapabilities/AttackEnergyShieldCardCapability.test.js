@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-const AttackEnergyShieldCardCapability = require('../../../ai/capabilities/AttackEnergyShieldCardCapability.js');
+const AttackEnergyShieldCardCapability = require('../../../ai/cardCapabilities/AttackEnergyShieldCardCapability.js');
 
 test('when card is in opponents zone and opponent has energy shield in play', () => {
     const energyShield = { stopsStationAttack: () => true };
