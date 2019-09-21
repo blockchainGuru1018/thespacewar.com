@@ -36,7 +36,7 @@ module.exports = function ({
                 matchController,
                 rawCardDataRepository,
                 userRepository,
-                delay: 1200,
+                delay: 800,
                 gameConfig: clientState.gameConfig()
             });
             botSpawner.spawn();
