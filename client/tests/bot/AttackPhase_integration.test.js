@@ -144,8 +144,6 @@ test('when card in opponent zone, cannot attack station and has 1 available targ
     expect(matchController.emit).toBeCalledWith('attack', { attackerCardId: 'C1A', defenderCardId: 'C2A' });
 });
 
-test.todo('HANDLE REQUIREMENTS OF TYPES: DRAW & DISCARD');
-
 function unflippedStationCard(id, place = 'draw') {
     return {
         id,

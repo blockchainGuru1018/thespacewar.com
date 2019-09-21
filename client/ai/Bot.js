@@ -7,6 +7,7 @@ const BotId = 'BOT';
 module.exports = function ({
     matchService,
     playerStateService,
+    playerRequirementService,
     playerRuleService,
     playerPhase,
     playerCommanders,
@@ -19,7 +20,10 @@ module.exports = function ({
 }) {
     if (matchService.isGameOn() && turnControl.opponentHasControl()) return;
 
-    if (isChoosingStartingPlayer()) {
+    if (hasDrawRequirement()) {
+        matchController.emit('drawCard');
+    }
+    else if (isChoosingStartingPlayer()) {
         choosingStartingPlayer();
     }
     else if (isSelectingStartingStationCards()) {
@@ -81,5 +85,9 @@ module.exports = function ({
 
     function choosingStartingPlayer() {
         matchController.emit('selectPlayerToStart', { playerToStartId: BotId });
+    }
+
+    function hasDrawRequirement() {
+        return !!playerRequirementService.getFirstMatchingRequirement({ type: 'drawCard' });
     }
 };
