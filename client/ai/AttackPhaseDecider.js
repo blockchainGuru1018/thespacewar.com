@@ -3,14 +3,14 @@ const { PHASES } = require('../../shared/phases.js');
 module.exports = function ({
     matchController,
     playerStateService,
-    capabilityFactory
+    cardCapabilityFactory
 }) {
 
     const CapabilitiesInPriorityOrder = [
-        capabilityFactory.attackStationCard,
-        capabilityFactory.attackEnergyShield,
-        capabilityFactory.attackInHomeZone,
-        capabilityFactory.move
+        cardCapabilityFactory.attackStationCard,
+        cardCapabilityFactory.attackEnergyShield,
+        cardCapabilityFactory.attackInHomeZone,
+        cardCapabilityFactory.move
     ];
 
     return {
