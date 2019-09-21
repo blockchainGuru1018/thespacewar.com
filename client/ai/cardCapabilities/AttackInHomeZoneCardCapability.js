@@ -9,23 +9,21 @@ module.exports = function AttackInHomeZoneCardCapability({
     };
 
     function canDoIt() {
-        const targets = attackableOpponentCardsInHomeZone(card);
-        return targets.length > 0;
+        return targets(card).length > 0;
     }
 
     function doIt() {
-        const targets = attackableOpponentCardsInHomeZone(card);
-
         matchController.emit('attack', {
             attackerCardId: card.id,
-            defenderCardId: targets[0].id
+            defenderCardId: firstTarget().id
         });
     }
 
-    function attackableOpponentCardsInHomeZone(playerCard) {
-        return opponentStateService
-            .getCardsInOpponentZone()
-            .map(opponentCardData => opponentStateService.createBehaviourCard(opponentCardData))
-            .filter(opponentCard => playerCard.canAttackCard(opponentCard));
+    function firstTarget() {
+        return targets(card)[0];
+    }
+
+    function targets(playerCard) {
+        return opponentStateService.getMatchingBehaviourCards(opponentCard => playerCard.canAttackCard(opponentCard));
     }
 };
