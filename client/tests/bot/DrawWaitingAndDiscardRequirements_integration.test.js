@@ -1,9 +1,6 @@
 /**
  * @jest-environment node
  */
-const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
-const MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
-const { PHASES } = require('../../../shared/phases.js');
 const { setupFromState, BotId, PlayerId } = require('./botTestHelpers.js');
 
 test('when has requirement draw should draw a card', async () => {
@@ -50,8 +47,6 @@ test('when is waiting on opponent with draw requirement should NOT EMIT ANYTHING
     });
     expect(matchController.emit).not.toBeCalled();
 });
-
-test.todo('HANDLE REQUIREMENTS OF TYPES: DISCARD, DESTROY OPPONENT STATION, ');
 
 function unflippedStationCard(id, place = 'draw') {
     return {
