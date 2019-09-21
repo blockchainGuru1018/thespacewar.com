@@ -1,4 +1,4 @@
-module.exports = function CardAttackStationCardCapability({
+module.exports = function AttackInHomeZoneCardCapability({
     card,
     matchController,
     opponentStateService,
