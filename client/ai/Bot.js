@@ -1,4 +1,3 @@
-const { PHASES } = require('../../shared/phases.js');
 const MatchMode = require('../../shared/match/MatchMode.js');
 const Commander = require('../../shared/match/commander/Commander.js');
 
