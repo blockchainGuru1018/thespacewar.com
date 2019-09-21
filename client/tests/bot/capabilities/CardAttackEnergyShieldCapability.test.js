@@ -1,11 +1,11 @@
 /**
  * @jest-environment node
  */
-const CardAttackEnergyShieldCapability = require('../../../ai/capabilities/CardAttackEnergyShieldCapability.js');
+const AttackEnergyShieldCardCapability = require('../../../ai/capabilities/AttackEnergyShieldCardCapability.js');
 
 test('when card is in opponents zone and opponent has energy shield in play', () => {
     const energyShield = { stopsStationAttack: () => true };
-    const capability = CardAttackEnergyShieldCapability({
+    const capability = AttackEnergyShieldCardCapability({
         card: {
             isInHomeZone: () => false
         },
@@ -19,7 +19,7 @@ test('when card is in opponents zone and opponent has energy shield in play', ()
 
 test('when card is NOT in opponents zone and opponent has energy shield in play', () => {
     const energyShield = { stopsStationAttack: () => true };
-    const capability = CardAttackEnergyShieldCapability({
+    const capability = AttackEnergyShieldCardCapability({
         card: {
             isInHomeZone: () => true
         },
@@ -35,7 +35,7 @@ test('when perform capability should attack first available target', () => {
     const firstTarget = { id: 'C1A', };
     const secondTarget = { id: 'C2A' };
     const matchController = { emit: jest.fn() };
-    const capability = CardAttackEnergyShieldCapability({
+    const capability = AttackEnergyShieldCardCapability({
         card: {
             id: 'C3A',
         },

@@ -1,4 +1,4 @@
-module.exports = function CardAttackEnergyShieldCapability({
+module.exports = function AttackEnergyShieldCardCapability({
     card,
     matchController,
     opponentStateService,

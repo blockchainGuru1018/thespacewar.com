@@ -1,5 +1,5 @@
 const CardAttackStationCardCapability = require('./CardAttackStationCardCapability.js');
-const CardAttackEnergyShieldCapability = require('./CardAttackEnergyShieldCapability.js');
+const AttackEnergyShieldCardCapability = require('./AttackEnergyShieldCardCapability.js');
 const CardAttackInHomeZoneCapability = require('./CardAttackInHomeZoneCapability.js');
 const CardMoveCapability = require('./CardMoveCapability.js');
 
@@ -24,7 +24,7 @@ module.exports = function ({
     }
 
     function attackEnergyShield(card) {
-        return CardAttackEnergyShieldCapability({
+        return AttackEnergyShieldCardCapability({
             card,
             matchController,
             opponentStateService: playerServiceFactory.playerStateService(opponentId),

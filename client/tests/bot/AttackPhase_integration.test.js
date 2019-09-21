@@ -129,7 +129,6 @@ describe('attacking in home zone', () => {
     });
 });
 
-test.todo('SHOULD ATTACK CARD IN HOME ZONE INSTEAD OF MOVING');
 test.todo('SHOULD ATTACK CARD IN ENEMY ZONE IF CAN NOT ATTACK STATION');
 
 test.todo('MISSILE CARDS SHOULD NOT MOVE');
