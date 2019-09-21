@@ -19,20 +19,14 @@ module.exports = function ({
     attackPhaseDecider,
     matchController
 }) {
+    if (playerRequirementService.isWaitingOnOpponentFinishingRequirement()) return;
+    if (hasAnyRequirement()) {
+        performRequirement();
+    }
+
     if (matchService.isGameOn() && turnControl.opponentHasControl()) return;
 
-    if (playerRequirementService.isWaitingOnOpponentFinishingRequirement()) return;
-
-    if (hasRequirementOfType('drawCard')) {
-        matchController.emit('drawCard');
-    }
-    else if (hasRequirementOfType('discardCard')) {
-        matchController.emit('discardCard', decideCardToDiscard());
-    }
-    else if (hasRequirementOfType('damageStationCard')) {
-        damageOpponentStationCards();
-    }
-    else if (isChoosingStartingPlayer()) {
+    if (isChoosingStartingPlayer()) {
         choosingStartingPlayer();
     }
     else if (isSelectingStartingStationCards()) {
@@ -111,5 +105,21 @@ module.exports = function ({
 
     function getRequirementOfType(type) {
         return playerRequirementService.getFirstMatchingRequirement({ type });
+    }
+
+    function hasAnyRequirement() {
+        return playerRequirementService.hasAnyRequirement();
+    }
+
+    function performRequirement() {
+        if (hasRequirementOfType('drawCard')) {
+            matchController.emit('drawCard');
+        }
+        else if (hasRequirementOfType('discardCard')) {
+            matchController.emit('discardCard', decideCardToDiscard());
+        }
+        else if (hasRequirementOfType('damageStationCard')) {
+            damageOpponentStationCards();
+        }
     }
 };

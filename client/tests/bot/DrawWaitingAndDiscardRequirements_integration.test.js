@@ -5,6 +5,7 @@ const { setupFromState, BotId, PlayerId } = require('./botTestHelpers.js');
 
 test('when has requirement draw should draw a card', async () => {
     const { matchController } = await setupFromState({
+        currentPlayer: PlayerId,
         requirements: [{
             type: 'drawCard',
             count: 1
@@ -15,6 +16,7 @@ test('when has requirement draw should draw a card', async () => {
 
 test('when has requirement discard should discard a card', async () => {
     const { matchController } = await setupFromState({
+        currentPlayer: PlayerId,
         requirements: [{
             type: 'discardCard',
             count: 1
@@ -26,6 +28,7 @@ test('when has requirement discard should discard a card', async () => {
 
 test('when has requirement damageStationCard of count 2 should damage two of the opponents station cards', async () => {
     const { matchController } = await setupFromState({
+        currentPlayer: PlayerId,
         requirements: [{
             type: 'damageStationCard',
             count: 2
