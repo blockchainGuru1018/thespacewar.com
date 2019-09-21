@@ -16,4 +16,14 @@ test('when has requirement draw should draw a card', async () => {
     expect(matchController.emit).toBeCalledWith('drawCard');
 });
 
-test.todo('HANDLE REQUIREMENTS OF TYPES: -D-R-A-W- & DISCARD');
+test('when is waiting on opponent with draw requirement should NOT EMIT ANYTHING', async () => {
+    const { matchController } = await setupFromState({
+        requirements: [{
+            type: 'drawCard',
+            waiting: true
+        }]
+    });
+    expect(matchController.emit).not.toBeCalled();
+});
+
+test.todo('HANDLE REQUIREMENTS OF TYPES: DISCARD, DESTROY OPPONENT STATION, ');

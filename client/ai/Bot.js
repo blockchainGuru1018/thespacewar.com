@@ -20,7 +20,9 @@ module.exports = function ({
 }) {
     if (matchService.isGameOn() && turnControl.opponentHasControl()) return;
 
-    if (hasDrawRequirement()) {
+    if (playerRequirementService.isWaitingOnOpponentFinishingRequirement()) return;
+
+    else if (hasDrawRequirement()) {
         matchController.emit('drawCard');
     }
     else if (isChoosingStartingPlayer()) {
