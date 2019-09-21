@@ -145,8 +145,6 @@ test('when card in opponent zone, cannot attack station and has 1 available targ
 })
 ;
 
-test.todo('SHOULD ATTACK CARD IN ENEMY ZONE IF CAN NOT ATTACK STATION');
-
 test.todo('MISSILE CARDS SHOULD NOT MOVE');
 test.todo('MISSILE CARDS SHOULD ATTACK ENEMY STATION WHEN POSSIBLE');
 test.todo('SHOULD NOT TRY TO MOVE DEFENSE CARDS');
