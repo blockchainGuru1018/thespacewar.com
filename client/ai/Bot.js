@@ -12,6 +12,7 @@ module.exports = function ({
     playerPhase,
     playerCommanders,
     turnControl,
+    opponentStateService,
     drawPhaseDecider,
     actionPhaseDecider,
     discardPhaseDecider,
@@ -23,11 +24,15 @@ module.exports = function ({
 
     if (playerRequirementService.isWaitingOnOpponentFinishingRequirement()) return;
 
-    if (hasDrawRequirement()) {
+    if (hasRequirementOfType('drawCard')) {
         matchController.emit('drawCard');
     }
-    else if (hasDiscardCardRequirement()) {
+    else if (hasRequirementOfType('discardCard')) {
         matchController.emit('discardCard', decideCardToDiscard());
+    }
+    else if (hasRequirementOfType('damageStationCard')) {
+        const targetIds = opponentStateService.getUnflippedStationCards().slice(0, getDamageStationCardRequirementCount()).map(c => c.id);
+        matchController.emit('damageStationCards', { targetIds });
     }
     else if (isChoosingStartingPlayer()) {
         choosingStartingPlayer();
@@ -93,11 +98,15 @@ module.exports = function ({
         matchController.emit('selectPlayerToStart', { playerToStartId: BotId });
     }
 
-    function hasDrawRequirement() {
-        return !!playerRequirementService.getFirstMatchingRequirement({ type: 'drawCard' });
+    function hasRequirementOfType(type) {
+        return !!getRequirementOfType(type);
     }
 
-    function hasDiscardCardRequirement() {
-        return !!playerRequirementService.getFirstMatchingRequirement({ type: 'discardCard' });
+    function getDamageStationCardRequirementCount() {
+        return getRequirementOfType('damageStationCard').count;
+    }
+
+    function getRequirementOfType(type) {
+        return playerRequirementService.getFirstMatchingRequirement({ type });
     }
 };

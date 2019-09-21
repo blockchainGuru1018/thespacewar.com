@@ -27,6 +27,20 @@ test('when has requirement discard should discard a card', async () => {
     expect(matchController.emit).toBeCalledWith('discardCard', 'C1A');
 });
 
+test('when has requirement damageStationCard of count 2 should damage two of the opponents station cards', async () => {
+    const { matchController } = await setupFromState({
+        requirements: [{
+            type: 'damageStationCard',
+            count: 2
+        }],
+        opponentStationCards: [
+            unflippedStationCard('S1A'),
+            unflippedStationCard('S2A')
+        ]
+    });
+    expect(matchController.emit).toBeCalledWith('damageStationCards', { targetIds: ['S1A', 'S2A'] });
+});
+
 test('when is waiting on opponent with draw requirement should NOT EMIT ANYTHING', async () => {
     const { matchController } = await setupFromState({
         requirements: [{
@@ -38,3 +52,11 @@ test('when is waiting on opponent with draw requirement should NOT EMIT ANYTHING
 });
 
 test.todo('HANDLE REQUIREMENTS OF TYPES: DISCARD, DESTROY OPPONENT STATION, ');
+
+function unflippedStationCard(id, place = 'draw') {
+    return {
+        id,
+        place,
+        card: { id }
+    }
+}

@@ -54,6 +54,7 @@ module.exports = function ({
             playerCommanders: playerServiceFactory.playerCommanders(BotId),
             playerPhase: playerServiceFactory.playerPhase(BotId),
             turnControl: playerServiceFactory.turnControl(BotId),
+            opponentStateService: playerServiceFactory.playerStateService(opponentUserId),
             decideCardToDiscard: decideCardToDiscard(),
             drawPhaseDecider: drawPhaseDecider(),
             actionPhaseDecider: actionPhaseDecider(),

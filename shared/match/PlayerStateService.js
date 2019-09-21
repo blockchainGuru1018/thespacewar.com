@@ -258,8 +258,12 @@ class PlayerStateService {
     }
 
     getUnflippedStationCardsCount() {
+        return this.getUnflippedStationCards().length;
+    }
+
+    getUnflippedStationCards() {
         const playerState = this.getPlayerState();
-        return playerState.stationCards.filter(s => !s.flipped).length;
+        return playerState.stationCards.filter(s => !s.flipped);
     }
 
     allowedStartingStationCardCount() {
