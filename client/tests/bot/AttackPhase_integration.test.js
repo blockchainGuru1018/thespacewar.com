@@ -142,8 +142,7 @@ test('when card in opponent zone, cannot attack station and has 1 available targ
     });
 
     expect(matchController.emit).toBeCalledWith('attack', { attackerCardId: 'C1A', defenderCardId: 'C2A' });
-})
-;
+});
 
 test.todo('MISSILE CARDS SHOULD NOT MOVE');
 test.todo('MISSILE CARDS SHOULD ATTACK ENEMY STATION WHEN POSSIBLE');
