@@ -22,7 +22,7 @@ module.exports = function ({
 
     if (playerRequirementService.isWaitingOnOpponentFinishingRequirement()) return;
 
-    else if (hasDrawRequirement()) {
+    if (hasDrawRequirement()) {
         matchController.emit('drawCard');
     }
     else if (isChoosingStartingPlayer()) {
