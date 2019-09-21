@@ -12,6 +12,8 @@ const CardCapabilityFactory = require('./cardCapabilities/CardCapabilityFactory.
 
 const BotId = 'BOT';
 
+let timeoutId = null;
+
 module.exports = function ({
     opponentUserId,
     clientState,
@@ -19,6 +21,7 @@ module.exports = function ({
     rawCardDataRepository,
     userRepository,
     gameConfig,
+    delay = 0,
     createBot = options => Bot(options)
 }) {
 
@@ -26,8 +29,18 @@ module.exports = function ({
     let gameServiceFactory;
 
     return {
-        spawn
+        spawn: spawnWithDelayIfSet
     };
+
+    function spawnWithDelayIfSet() {
+        if (delay) {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(spawn, delay);
+        }
+        else {
+            spawn();
+        }
+    }
 
     function spawn() {
         gameServiceFactory = GameServiceFactory({
