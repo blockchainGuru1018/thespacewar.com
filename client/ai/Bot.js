@@ -31,8 +31,7 @@ module.exports = function ({
         matchController.emit('discardCard', decideCardToDiscard());
     }
     else if (hasRequirementOfType('damageStationCard')) {
-        const targetIds = opponentStateService.getUnflippedStationCards().slice(0, getDamageStationCardRequirementCount()).map(c => c.id);
-        matchController.emit('damageStationCards', { targetIds });
+        damageOpponentStationCards();
     }
     else if (isChoosingStartingPlayer()) {
         choosingStartingPlayer();
@@ -96,6 +95,11 @@ module.exports = function ({
 
     function choosingStartingPlayer() {
         matchController.emit('selectPlayerToStart', { playerToStartId: BotId });
+    }
+
+    function damageOpponentStationCards() {
+        const targetIds = opponentStateService.getUnflippedStationCards().slice(0, getDamageStationCardRequirementCount()).map(c => c.id);
+        matchController.emit('damageStationCards', { targetIds });
     }
 
     function hasRequirementOfType(type) {
