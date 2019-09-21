@@ -10,6 +10,7 @@ module.exports = function ({
         cardCapabilityFactory.attackStationCard,
         cardCapabilityFactory.attackEnergyShield,
         cardCapabilityFactory.attackInHomeZone,
+        cardCapabilityFactory.attackInOpponentZone,
         cardCapabilityFactory.move
     ];
 

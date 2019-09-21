@@ -7,7 +7,7 @@ describe('canDoIt', () => {
     test('Player can attack if card in opponent zone and there is an available target', () => {
         const target = { id: 'C1A' };
         const capability = Capability({
-            card: { inHomeZone: () => false, canAttackCard: _target => _target.id === 'C1A' },
+            card: { isInHomeZone: () => false, canAttackCard: _target => _target.id === 'C1A' },
             opponentStateService: {
                 getMatchingBehaviourCards: matcher => matcher(target) ? [target] : null
             }
@@ -18,7 +18,7 @@ describe('canDoIt', () => {
 
     test('Player can NOT attack if card is NOT in opponent zone', () => {
         const capability = createCapability({
-            card: { inHomeZone: () => true }
+            card: { isInHomeZone: () => true }
         });
 
         expect(capability.canDoIt()).toBe(false);
@@ -26,7 +26,7 @@ describe('canDoIt', () => {
 
     test('Player can NOT attack if there are no available targets', () => {
         const capability = createCapability({
-            card: { inHomeZone: () => false },
+            card: { isInHomeZone: () => false },
             opponentStateService: {
                 getMatchingBehaviourCards: () => []
             }
@@ -56,7 +56,7 @@ describe('doIt', () => {
 
 function createCapability(options = {}) {
     return Capability({
-        card: { inHomeZone: () => false },
+        card: { isInHomeZone: () => false },
         opponentStateService: {
             getMatchingBehaviourCards: () => []
         },

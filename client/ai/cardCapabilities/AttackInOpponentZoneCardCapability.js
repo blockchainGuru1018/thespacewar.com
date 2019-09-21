@@ -9,7 +9,7 @@ module.exports = function ({
     };
 
     function canDoIt() {
-        return !card.inHomeZone()
+        return !card.isInHomeZone()
             && targets().length > 0;
     }
 

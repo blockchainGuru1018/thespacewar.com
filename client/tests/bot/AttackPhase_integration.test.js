@@ -129,6 +129,22 @@ describe('attacking in home zone', () => {
     });
 });
 
+test('when card in opponent zone, cannot attack station and has 1 available target should attack it', async () => {
+    const { matchController } = await setupFromState({
+        phase: 'attack',
+        cardsInOpponentZone: [{ id: 'C1A', type: 'spaceShip', attack: 1 }],
+        opponentCardsInZone: [
+            { id: 'C2A', type: 'spaceShip', defense: 1 }
+        ],
+        events: [
+            PutDownCardEvent({ cardId: 'C1A', turn: 1, location: 'zone' })
+        ]
+    });
+
+    expect(matchController.emit).toBeCalledWith('attack', { attackerCardId: 'C1A', defenderCardId: 'C2A' });
+})
+;
+
 test.todo('SHOULD ATTACK CARD IN ENEMY ZONE IF CAN NOT ATTACK STATION');
 
 test.todo('MISSILE CARDS SHOULD NOT MOVE');
