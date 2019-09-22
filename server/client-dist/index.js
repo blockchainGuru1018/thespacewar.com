@@ -1633,7 +1633,7 @@ eval("module.exports = function ({\n  card,\n  opponentStateService,\n  matchCon
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("module.exports = function AttackStationCardCapability({\n  card,\n  matchController,\n  opponentStateService\n}) {\n  return {\n    canDoIt,\n    doIt\n  };\n\n  function canDoIt() {\n    return card.canAttackStationCards();\n  }\n\n  function doIt() {\n    matchController.emit('attackStationCard', {\n      attackerCardId: card.id,\n      targetStationCardIds: getTargetStationCardIds()\n    });\n  }\n\n  function getTargetStationCardIds() {\n    return opponentStateService.getStationCards().map(s => s.id);\n  }\n};\n\n//# sourceURL=webpack:///./ai/cardCapabilities/AttackStationCardCapability.js?");
+eval("module.exports = function AttackStationCardCapability({\n  card,\n  matchController,\n  opponentStateService\n}) {\n  return {\n    canDoIt,\n    doIt\n  };\n\n  function canDoIt() {\n    return card.canAttackStationCards();\n  }\n\n  function doIt() {\n    matchController.emit('attackStationCard', {\n      attackerCardId: card.id,\n      targetStationCardIds: getTargetStationCardIds(card.attack)\n    });\n  }\n\n  function getTargetStationCardIds(count) {\n    return opponentStateService.getUnflippedStationCards().slice(0, count).map(s => s.id);\n  }\n};\n\n//# sourceURL=webpack:///./ai/cardCapabilities/AttackStationCardCapability.js?");
 
 /***/ }),
 
