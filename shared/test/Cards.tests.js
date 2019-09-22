@@ -41,8 +41,7 @@ module.exports = testCase('Cards', {
                 this.card = createCard(BaseCard, {
                     card: { id: 'C1A', attack: 1 },
                     playerStateService: playerStateServiceFactory.withStubs({
-                        getPhase: () => 'attack',
-                        cardCanMoveOnTurnWhenPutDown: () => false
+                        getPhase: () => 'attack'
                     }),
                     matchService: {
                         getTurn: () => 1
@@ -57,13 +56,15 @@ module.exports = testCase('Cards', {
                 refute(this.card.canMove());
             }
         },
-        'when card was put down this turn and player state service says it can move on turn when put down': {
+        'when card was put down this turn and cardEffect says it can move on turn when put down': {
             async setUp() {
                 this.card = createCard(BaseCard, {
-                    card: { id: 'C1A', attack: 1 },
+                    card: { id: 'C1A', attack: 1, type: 'spaceShip' },
+                    cardEffect: {
+                        cardTypeCanMoveOnTurnPutDown: type => type === 'spaceShip'
+                    },
                     playerStateService: playerStateServiceFactory.withStubs({
-                        getPhase: () => 'attack',
-                        cardCanMoveOnTurnWhenPutDown: card => card.id === 'C1A'
+                        getPhase: () => 'attack'
                     }),
                     matchService: {
                         getTurn: () => 1

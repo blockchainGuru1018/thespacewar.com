@@ -3,13 +3,25 @@ module.exports = function ({
     playerStateService
 }) {
     return {
-        attackBoostForCardType
+        attackBoostForCardType,
+        cardTypeCanMoveOnTurnPutDown
     };
 
     function attackBoostForCardType(type) {
         if (type !== 'spaceShip') return 0;
 
         return sum(attackBoostForEachDurationCard());
+    }
+
+    function cardTypeCanMoveOnTurnPutDown(type) {
+        if (type !== 'spaceShip') return false;
+
+        return cardsWithEffectToMoveTurnWhenPutDown().length > 0;
+    }
+
+    function cardsWithEffectToMoveTurnWhenPutDown() {
+        return usableDurationCards()
+            .filter(c => c.allowsFriendlySpaceShipsToMoveTurnWhenPutDown);
     }
 
     function attackBoostForEachDurationCard() {

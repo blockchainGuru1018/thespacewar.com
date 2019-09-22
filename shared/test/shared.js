@@ -15,7 +15,7 @@ function createCard(Constructor, options = {}) {
         canThePlayer: canThePlayerFactory.withStubs(),
         queryEvents: queryEventsFactory.withStubs(),
         playerStateService: playerStateServiceFactory.withStubs(),
-        cardEffect: { attackBoostForCardType: () => 0 },
+        cardEffect: { attackBoostForCardType: () => 0, cardTypeCanMoveOnTurnPutDown: () => false },
     });
     return new Constructor(options);
 }

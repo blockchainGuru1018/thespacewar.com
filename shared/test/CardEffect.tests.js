@@ -5,6 +5,62 @@ const {
 const CardEffect = require('../match/CardEffect.js');
 
 module.exports = testCase('CardEffect', {
+    'can move on turn put down:': {
+        'when has duration card with "allowsFriendlySpaceShipsToMoveTurnWhenPutDown"'() {
+            const cardEffect = CardEffect({
+                playerStateService: {
+                    getDurationBehaviourCards: () => [{ allowsFriendlySpaceShipsToMoveTurnWhenPutDown: true }]
+                },
+                canThePlayer: {
+                    useThisDurationCard: () => true
+                }
+            });
+
+            assert.equals(cardEffect.cardTypeCanMoveOnTurnPutDown('spaceShip'), true);
+        },
+        'when does NOT have duration card with "allowsFriendlySpaceShipsToMoveTurnWhenPutDown"'() {
+            const cardEffect = CardEffect({
+                playerStateService: {
+                    getDurationBehaviourCards: () => [{}]
+                },
+                canThePlayer: {
+                    useThisDurationCard: () => true
+                }
+            });
+
+            assert.equals(cardEffect.cardTypeCanMoveOnTurnPutDown('spaceShip'), false);
+        },
+        'when has duration card with effect but cannot use it'() {
+            const cardEffect = CardEffect({
+                playerStateService: {
+                    getDurationBehaviourCards: () => [{
+                        id: 'C1A',
+                        allowsFriendlySpaceShipsToMoveTurnWhenPutDown: true
+                    }]
+                },
+                canThePlayer: {
+                    useThisDurationCard: id => id !== 'C1A'
+                }
+            });
+
+            assert.equals(cardEffect.cardTypeCanMoveOnTurnPutDown('spaceShip'), false);
+        },
+        'when has duration card with effect and can use it, but card is NOT of type spaceShip'() {
+            const cardEffect = CardEffect({
+                playerStateService: {
+                    getDurationBehaviourCards: () => [{
+                        id: 'C1A',
+                        allowsFriendlySpaceShipsToMoveTurnWhenPutDown: true
+                    }]
+                },
+                canThePlayer: {
+                    useThisDurationCard: () => true
+                }
+            });
+
+            assert.equals(cardEffect.cardTypeCanMoveOnTurnPutDown('defense'), false);
+        }
+    },
     'attack boost:': {
         'when has duration card that gives attack boost of 1 should return 1'() {
             const cardEffect = CardEffect({

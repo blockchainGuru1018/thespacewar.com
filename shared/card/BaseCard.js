@@ -249,7 +249,7 @@ class BaseCard {
     }
 
     canMoveOnTurnWhenPutDown() {
-        return this._playerStateService.cardCanMoveOnTurnWhenPutDown(this);
+        return this._cardEffect.cardTypeCanMoveOnTurnPutDown(this.type);
     }
 
     hasSpecialAttackForCardsInZones() {
