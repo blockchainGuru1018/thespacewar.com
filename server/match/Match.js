@@ -88,7 +88,7 @@ module.exports = function ({
 
     const playerRequirementUpdaterFactory = new PlayerRequirementUpdaterFactory({
         playerServiceProvider,
-        matchComService,
+        matchService,
         playerServiceFactory
     });
     const playerOverworkFactory = PlayerOverworkFactory({ playerServiceFactory });

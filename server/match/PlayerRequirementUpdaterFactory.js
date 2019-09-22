@@ -4,16 +4,16 @@ class PlayerRequirementUpdaterFactory {
 
     constructor({
         playerServiceProvider,
-        matchComService, //TODO Should use matchService
+        matchService,
         playerServiceFactory
     }) {
         this._playerServiceProvider = playerServiceProvider;
-        this._matchComService = matchComService;
+        this._matchService = matchService;
         this._playerServiceFactory = playerServiceFactory;
     }
 
     create(playerId, requirementMatchConditions) {
-        const opponentId = this._matchComService.getOpponentId(playerId);
+        const opponentId = this._matchService.getOpponentId(playerId);
         return new PlayerRequirementUpdater({
             requirementMatchConditions,
             playerStateService: this._playerServiceProvider.getStateServiceById(playerId),

@@ -79,7 +79,7 @@ module.exports = {
                 playerStateById: {
                     'P1A': {
                         phase: 'action',
-                        cardsOnHand: [createCard({ id: 'C1A' })],
+                        cardsOnHand: [createCard({ id: 'C1A' }), createCard({ id: 'C2A' })],
                         requirements: [{ type: 'discardCard', count: 2 }]
                     },
                     'P2A': {
@@ -98,7 +98,8 @@ module.exports = {
         'first player should NOT have discarded card on hand'() {
             this.match.refresh('P1A');
             const { cardsOnHand } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
-            assert.equals(cardsOnHand.length, 0);
+            assert.equals(cardsOnHand.length, 1);
+            assert.equals(cardsOnHand[0].id, 'C2A');
         },
         'first player should have requirement to discard 1 card'() {
             this.match.refresh('P1A');
@@ -242,6 +243,38 @@ module.exports = {
             }));
 
             this.match.discardCard('P1A', 'C1A');
+        },
+        'should emit an empty array of requirements to first player'() {
+            assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                requirements: []
+            }));
+        },
+        'should emit an empty array of requirements to second player'() {
+            assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
+                requirements: []
+            }));
+        }
+    },
+    'when the opponent has NO cards on hand but a discard card requirement, should remove requirement from both players when someone emits start': {
+        setUp() {
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+            this.secondPlayerConnection = FakeConnection2(['stateChanged']);
+            const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];
+            this.match = createMatch({ players });
+            this.match.restoreFromState(createState({
+                playerStateById: {
+                    'P1A': {
+                        phase: 'action',
+                        requirements: [{ type: 'discardCard', count: 0, common: true, waiting: true }]
+                    },
+                    'P2A': {
+                        cardsOnHand: [],
+                        requirements: [{ type: 'discardCard', count: 1, common: true }]
+                    }
+                }
+            }));
+
+            this.match.start('P2A');
         },
         'should emit an empty array of requirements to first player'() {
             assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({

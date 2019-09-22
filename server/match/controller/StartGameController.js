@@ -2,7 +2,8 @@ function StartGameController({
     matchService,
     matchComService,
     playerServiceProvider,
-    playerServiceFactory
+    playerServiceFactory,
+    playerRequirementUpdaterFactory
 }) {
 
     return {
@@ -70,13 +71,20 @@ function StartGameController({
     function repairPotentiallyInconsistentState(playerId) {
         const opponentId = matchService.getOpponentId(playerId);
         repairRequirements({
+            playerStateService: playerServiceFactory.playerStateService(playerId),
+            playerRequirementUpdaterFactory,
             playerRequirementService: playerServiceProvider.getRequirementServiceById(playerId),
             opponentRequirementService: playerServiceProvider.getRequirementServiceById(opponentId)
         });
     }
 }
 
-function repairRequirements({ playerRequirementService, opponentRequirementService }) {
+function repairRequirements({
+    playerStateService,
+    playerRequirementUpdaterFactory,
+    playerRequirementService,
+    opponentRequirementService
+}) {
     let playerWaitingRequirement = playerRequirementService.getFirstMatchingRequirement({ waiting: true });
     let opponentWaitingRequirement = opponentRequirementService.getFirstMatchingRequirement({ waiting: true });
     while (!!playerWaitingRequirement !== !!opponentWaitingRequirement) {
@@ -89,6 +97,16 @@ function repairRequirements({ playerRequirementService, opponentRequirementServi
 
         playerWaitingRequirement = playerRequirementService.getFirstMatchingRequirement({ waiting: true });
         opponentWaitingRequirement = opponentRequirementService.getFirstMatchingRequirement({ waiting: true });
+    }
+
+    const discardCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'discardCard' });
+    if (discardCardRequirement && discardCardRequirement.count > 0) {
+        const cardsOnHandCount = playerStateService.getCardsOnHandCount();
+        if (cardsOnHandCount === 0) {
+            const playerId = playerStateService.getPlayerId();
+            const requirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'discardCard' });
+            requirementUpdater.completeRequirement();
+        }
     }
 }
 
