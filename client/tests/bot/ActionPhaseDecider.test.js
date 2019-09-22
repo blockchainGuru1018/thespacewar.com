@@ -6,14 +6,20 @@ const { createMatchController, BotId, PlayerId } = require('./botTestHelpers.js'
 const fakePlayerStateServiceFactory = require('../../../shared/test/fakeFactories/playerStateServiceFactory.js');
 const FakeMatchController = require('../../testUtils/FakeMatchController.js');
 const ActionPhaseDecider = require('../../ai/ActionPhaseDecider.js');
+const PlayCardCapability = require('../../ai/PlayCardCapability.js');
 
 test('When only card left is EVENT card should NOT put down card', () => {
     const matchController = createMatchController();
+    const playerStateService = fakePlayerStateServiceFactory.withStubs({
+        getCardsOnHand: () => [createCard({ id: 'C1A', cost: 0, type: 'event' })]
+    });
     const decider = createDecider({
         matchController,
-        playerStateService: fakePlayerStateServiceFactory.withStubs({
-            getCardsOnHand: () => [createCard({ id: 'C1A', cost: 0, type: 'event' })]
-        }),
+        playerStateService,
+        playCardCapability: PlayCardCapability({
+            playerStateService,
+            matchController
+        })
     });
 
     decider.decide();
@@ -93,6 +99,9 @@ function createDecider(stubs = {}) {
         },
         decideRowForStationCard: () => '',
         decideCardToPlaceAsStationCard: () => '',
+        playCardCapability: {
+            canDoIt() {}
+        },
         ...stubs
     });
 }

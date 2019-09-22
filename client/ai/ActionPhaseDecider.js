@@ -3,6 +3,7 @@ const { PHASES } = require('../../shared/phases.js');
 module.exports = function ({
     playerStateService,
     matchController,
+    playCardCapability,
     decideRowForStationCard,
     decideCardToPlaceAsStationCard,
     playerRuleService
@@ -13,11 +14,8 @@ module.exports = function ({
     };
 
     function decide() {
-        const cardsOnHand = playerStateService.getCardsOnHand();
-        const actionPoints = playerStateService.getActionPointsForPlayer();
-        const affordableCard = cardsOnHand.find(c => c.cost <= actionPoints && c.type === 'spaceShip');
-        if (affordableCard) {
-            matchController.emit('putDownCard', { cardId: affordableCard.id, location: 'zone' });
+        if (playCardCapability.canDoIt()) {
+            playCardCapability.doIt();
         }
         else if (shouldPutDownStationCard()) {
             const stationRow = decideRowForStationCard();

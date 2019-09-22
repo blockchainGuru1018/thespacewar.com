@@ -8,6 +8,7 @@ const AttackPhaseDecider = require('./AttackPhaseDecider.js');
 const DecideCardToDiscard = require('./DecideCardToDiscard.js');
 const DecideRowForStationCard = require('./DecideRowForStationCard.js');
 const DecideCardToPlaceAsStationCard = require('./DecideCardToPlaceAsStationCard.js');
+const PlayCardCapability = require('./PlayCardCapability.js');
 const CardCapabilityFactory = require('./cardCapabilities/CardCapabilityFactory.js');
 
 const BotId = 'BOT';
@@ -92,7 +93,11 @@ module.exports = function ({
             playerStateService,
             playerRuleService: playerServiceFactory.playerRuleService(BotId),
             decideRowForStationCard: DecideRowForStationCard({ playerStateService }),
-            decideCardToPlaceAsStationCard: DecideCardToPlaceAsStationCard({ playerStateService })
+            decideCardToPlaceAsStationCard: DecideCardToPlaceAsStationCard({ playerStateService }),
+            playCardCapability: PlayCardCapability({
+                playerStateService,
+                matchController
+            }),
         });
     }
 
