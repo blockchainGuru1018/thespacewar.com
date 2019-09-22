@@ -67,7 +67,6 @@ module.exports = function ({
         const match = getForUser(playerId);
         if (!match) throw new Error('Cannot find match for player');
 
-        console.log('UPDATE BOT IN MATCH');
         await updateBotMatchConnection(playerId, BotId, matchId);
     }
 
