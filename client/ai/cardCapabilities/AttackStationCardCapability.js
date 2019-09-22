@@ -15,11 +15,11 @@ module.exports = function AttackStationCardCapability({
     function doIt() {
         matchController.emit('attackStationCard', {
             attackerCardId: card.id,
-            targetStationCardIds: getTargetStationCardIds()
+            targetStationCardIds: getTargetStationCardIds(card.attack)
         });
     }
 
-    function getTargetStationCardIds() {
-        return opponentStateService.getStationCards().map(s => s.id);
+    function getTargetStationCardIds(count) {
+        return opponentStateService.getUnflippedStationCards().slice(0, count).map(s => s.id);
     }
 };
