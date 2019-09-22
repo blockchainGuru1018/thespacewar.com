@@ -27,8 +27,8 @@ module.exports = testCase('Cards', {
             async setUp() {
                 this.card = createCard(BaseCard, {
                     card: { id: 'C1A', attack: 1, type: 'spaceShip' },
-                    cardAttackBoost: {
-                        forCardType: type => type === 'spaceShip' ? 1 : 0
+                    cardEffect: {
+                        attackBoostForCardType: type => type === 'spaceShip' ? 1 : 0
                     }
                 });
             },

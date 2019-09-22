@@ -3,7 +3,7 @@ const classByCardCommonId = require('./classByCardCommonId.js');
 const MatchInfoRepository = require('../match/MatchInfoRepository.js');
 const EventRepository = require('../event/EventRepository.js');
 const QueryEvents = require('../event/QueryEvents.js');
-const CardAttackBoost = require('../match/CardAttackBoost.js');
+const CardEffect = require('../match/CardEffect.js');
 
 module.exports = class CardFactory {
 
@@ -39,7 +39,7 @@ module.exports = class CardFactory {
             matchService: matchService,
             playerStateService,
             canThePlayer,
-            cardAttackBoost: CardAttackBoost({
+            cardEffect: CardEffect({
                 playerStateService,
                 canThePlayer
             }),

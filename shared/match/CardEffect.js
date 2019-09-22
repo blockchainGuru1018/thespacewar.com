@@ -3,10 +3,10 @@ module.exports = function ({
     playerStateService
 }) {
     return {
-        forCardType
+        attackBoostForCardType
     };
 
-    function forCardType(type) {
+    function attackBoostForCardType(type) {
         if (type !== 'spaceShip') return 0;
 
         return sum(attackBoostForEachDurationCard());

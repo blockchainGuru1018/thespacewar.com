@@ -11,7 +11,7 @@ class BaseCard {
         matchService,
         playerStateService,
         canThePlayer,
-        cardAttackBoost,
+        cardEffect,
         alternativeConditions = {}
     }) {
         this.playerId = playerId;
@@ -22,7 +22,7 @@ class BaseCard {
         this._matchService = matchService; // TODO remove similar assignments in subclasses
         this._playerStateService = playerStateService;
         this._canThePlayer = canThePlayer;
-        this._cardAttackBoost = cardAttackBoost;
+        this._cardEffect = cardEffect;
         this._alternativeConditions = alternativeConditions;
     }
 
@@ -51,7 +51,7 @@ class BaseCard {
     }
 
     get attackBoost() {
-        return this._cardAttackBoost.forCardType(this.type);
+        return this._cardEffect.attackBoostForCardType(this.type);
     }
 
     get defense() {
