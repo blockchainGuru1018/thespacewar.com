@@ -91,7 +91,7 @@ module.exports = function ({
             matchController,
             playerStateService,
             playerRuleService: playerServiceFactory.playerRuleService(BotId),
-            decideRowForStationCard: DecideRowForStationCard(),
+            decideRowForStationCard: DecideRowForStationCard({ playerStateService }),
             decideCardToPlaceAsStationCard: DecideCardToPlaceAsStationCard({ playerStateService })
         });
     }
