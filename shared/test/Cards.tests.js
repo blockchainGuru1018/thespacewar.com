@@ -26,13 +26,10 @@ module.exports = testCase('Cards', {
         'when card has 1 attack but has attack boost of 1': {
             async setUp() {
                 this.card = createCard(BaseCard, {
-                    card: { id: 'C1A', attack: 1 },
-                    playerStateService: playerStateServiceFactory.withStubs({
-                        getAttackBoostForCard: card => {
-                            if (card.id === 'C1A') return 1;
-                            return 0;
-                        }
-                    }),
+                    card: { id: 'C1A', attack: 1, type: 'spaceShip' },
+                    cardAttackBoost: {
+                        forCardType: type => type === 'spaceShip' ? 1 : 0
+                    }
                 });
             },
             'card should have attack of 2'() {
@@ -369,7 +366,6 @@ module.exports = testCase('Cards', {
                     getMovesOnTurn: () => [MoveCardEvent({ turn: 2, cardId: 'C1A' })]
                 }),
                 playerStateService: playerStateServiceFactory.withStubs({
-                    getAttackBoostForCard: () => 0,
                     getPhase: () => 'attack'
                 })
             });
@@ -389,7 +385,6 @@ module.exports = testCase('Cards', {
                     getMovesOnTurn: () => [MoveCardEvent({ turn: 2, cardId: 'C1A' })]
                 }),
                 playerStateService: playerStateServiceFactory.withStubs({
-                    getAttackBoostForCard: () => 0,
                     getPhase: () => 'attack'
                 })
             });
@@ -524,7 +519,6 @@ module.exports = testCase('Cards', {
                         getMovesOnTurn: () => [MoveCardEvent({ turn: 2, cardId: 'C1A' })]
                     }),
                     playerStateService: playerStateServiceFactory.withStubs({
-                        getAttackBoostForCard: () => 0,
                         getPhase: () => 'attack'
                     })
                 });
@@ -556,7 +550,6 @@ module.exports = testCase('Cards', {
                         getMovesOnTurn: () => [MoveCardEvent({ turn: 2, cardId: 'C1A' })]
                     }),
                     playerStateService: playerStateServiceFactory.withStubs({
-                        getAttackBoostForCard: () => 0,
                         getPhase: () => 'attack'
                     })
                 });
@@ -591,7 +584,6 @@ module.exports = testCase('Cards', {
                         getMovesOnTurn: () => [MoveCardEvent({ turn: 2, cardId: 'C1A' })]
                     }),
                     playerStateService: playerStateServiceFactory.withStubs({
-                        getAttackBoostForCard: () => 0,
                         getPhase: () => 'attack'
                     })
                 });
@@ -625,7 +617,6 @@ module.exports = testCase('Cards', {
                     getMovesOnTurn: () => [MoveCardEvent({ turn: 1, cardId: 'C1A' })]
                 }),
                 playerStateService: playerStateServiceFactory.withStubs({
-                    getAttackBoostForCard: () => 0,
                     getPhase: () => 'attack',
                     isCardInHomeZone: () => false
                 })
@@ -646,7 +637,6 @@ module.exports = testCase('Cards', {
                     getMovesOnTurn: () => [MoveCardEvent({ turn: 1, cardId: 'C1A' })]
                 }),
                 playerStateService: playerStateServiceFactory.withStubs({
-                    getAttackBoostForCard: () => 0,
                     getPhase: () => 'attack',
                     isCardInHomeZone: () => false
                 })
@@ -668,7 +658,6 @@ module.exports = testCase('Cards', {
                     getMovesOnTurn: () => [MoveCardEvent({ turn: 1, cardId: 'C1A' })]
                 }),
                 playerStateService: playerStateServiceFactory.withStubs({
-                    getAttackBoostForCard: () => 0,
                     getPhase: () => 'attack',
                     isCardInHomeZone: () => false
                 })
@@ -692,7 +681,6 @@ module.exports = testCase('Cards', {
                     moveThisCard: () => true
                 }),
                 playerStateService: playerStateServiceFactory.withStubs({
-                    getAttackBoostForCard: () => 0,
                     getPhase: () => 'attack',
                     isCardStationCard: () => false
                 }),

@@ -141,6 +141,10 @@ class PlayerStateService {
             .filter(c => c.type === 'duration');
     }
 
+    getDurationBehaviourCards() {
+        return this.getDurationCards().map(c => this.createBehaviourCard(c));
+    }
+
     hasCardOnHand(cardId) {
         return this
             .getPlayerState()
@@ -313,14 +317,6 @@ class PlayerStateService {
     }
 
     /// These methods do queries on behaviour cards, perhaps these belong in a separate service?
-
-    getAttackBoostForCard(card) {
-        if (card.type === 'spaceShip') {
-            const durationCards = this.getDurationCards().map(c => this.createBehaviourCard(c));
-            return sum(durationCards, 'friendlySpaceShipAttackBonus');
-        }
-        return 0;
-    }
 
     cardCanMoveOnTurnWhenPutDown(card) {
         if (card.type === 'spaceShip') {
@@ -899,10 +895,6 @@ class PlayerStateService {
 }
 
 module.exports = PlayerStateService;
-
-function sum(arr, accessorKey) {
-    return arr.reduce((acc, v) => acc + (v[accessorKey] || 0), 0);
-}
 
 function getStationCardId(stationCard) {
     return stationCard.card ? stationCard.card.id : stationCard.id;

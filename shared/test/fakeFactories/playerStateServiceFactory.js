@@ -7,7 +7,6 @@ const playerStateServiceFactory = {
     fromIdAndState,
     withStubs: (stubs = {}) => {
         return {
-            getAttackBoostForCard: () => 0,
             cardCanMoveOnTurnWhenPutDown: () => false,
             isCardStationCard: () => false,
             hasMatchingCardInSameZone: () => false,

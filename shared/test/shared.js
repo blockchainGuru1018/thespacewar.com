@@ -14,7 +14,8 @@ function createCard(Constructor, options = {}) {
     defaults(options, {
         canThePlayer: canThePlayerFactory.withStubs(),
         queryEvents: queryEventsFactory.withStubs(),
-        playerStateService: playerStateServiceFactory.withStubs()
+        playerStateService: playerStateServiceFactory.withStubs(),
+        cardAttackBoost: { forCardType: () => 0 },
     });
     return new Constructor(options);
 }

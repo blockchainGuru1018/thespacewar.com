@@ -3,6 +3,7 @@ const classByCardCommonId = require('./classByCardCommonId.js');
 const MatchInfoRepository = require('../match/MatchInfoRepository.js');
 const EventRepository = require('../event/EventRepository.js');
 const QueryEvents = require('../event/QueryEvents.js');
+const CardAttackBoost = require('../match/CardAttackBoost.js');
 
 module.exports = class CardFactory {
 
@@ -21,13 +22,14 @@ module.exports = class CardFactory {
 
         const state = matchService.getState();
         const Constructor = getCardConstructor(cardData);
-        const stateServiceById = this._playerServiceProvider.getStateServiceById(playerId);
+        const playerStateService = this._playerServiceProvider.getStateServiceById(playerId);
 
         const playerServiceProvider = this._playerServiceProvider;
         const eventRepository = EventRepository({ playerId, playerServiceProvider });
         const opponentId = matchService.getOpponentId(playerId);
         const opponentEventRepository = EventRepository({ playerId: opponentId, playerServiceProvider });
         const queryEvents = new QueryEvents({ eventRepository, opponentEventRepository, matchService });
+        const canThePlayer = this._playerServiceProvider.getCanThePlayerServiceById(playerId);
 
         return new Constructor({
             card: cardData,
@@ -35,8 +37,12 @@ module.exports = class CardFactory {
             queryEvents,
             matchInfoRepository: MatchInfoRepository(state),
             matchService: matchService,
-            playerStateService: stateServiceById,
-            canThePlayer: this._playerServiceProvider.getCanThePlayerServiceById(playerId),
+            playerStateService,
+            canThePlayer,
+            cardAttackBoost: CardAttackBoost({
+                playerStateService,
+                canThePlayer
+            }),
             addRequirementFromSpec: this._playerServiceFactory.addRequirementFromSpec(playerId),
             alternativeConditions
         });
