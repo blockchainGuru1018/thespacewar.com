@@ -9,8 +9,6 @@ module.exports = function AttackEnergyShieldCardCapability({
     };
 
     function canDoIt() {
-        if (card.isInHomeZone()) return false;
-
         return targets().length > 0;
     }
 
@@ -26,6 +24,9 @@ module.exports = function AttackEnergyShieldCardCapability({
     }
 
     function targets() {
-        return opponentStateService.getMatchingBehaviourCards(card => card.stopsStationAttack());
+        return opponentStateService.getMatchingBehaviourCards(opponentCard => {
+            return opponentCard.stopsStationAttack()
+                && card.canAttackCard(opponentCard);
+        });
     }
 };
