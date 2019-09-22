@@ -3,9 +3,9 @@
  */
 const Capability = require('../../../ai/cardCapabilities/MoveCardCapability.js');
 
-test('when card is a missile can NOT move', () => {
+test('when card can attack card in other zone should NOT move', () => {
     const capability = Capability({
-        card: { canMove: () => true, type: 'missile' }
+        card: { canMove: () => true, canAttackCardsInOtherZone: () => true }
     });
     expect(capability.canDoIt()).toBe(false);
 });

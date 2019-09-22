@@ -8,7 +8,7 @@ module.exports = function MoveCardCapability({
     };
 
     function canDoIt() {
-        return card.canMove() && card.type !== 'missile';
+        return card.canMove() && !card.canAttackCardsInOtherZone();
     }
 
     function doIt() {
