@@ -6,14 +6,14 @@ const MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
 const { PHASES } = require('../../../shared/phases.js');
 const { setupFromState, BotId, PlayerId } = require('./botTestHelpers.js');
 
-describe('when has spaceShip that has been in play for 1 turn', () => {
+describe('when has spaceShip (with attack strength) that has been in play for 1 turn', () => {
     let matchController;
 
     beforeEach(async () => {
         const stubs = await setupFromState({
             turn: 2,
             phase: 'attack',
-            cardsInZone: [{ id: 'C1A', type: 'spaceShip' }],
+            cardsInZone: [{ id: 'C1A', type: 'spaceShip', attack: 1 }],
             events: [PutDownCardEvent({ cardId: 'C1A', turn: 1, location: 'zone' })]
         });
         matchController = stubs.matchController;
@@ -28,11 +28,11 @@ describe('when has spaceShip that has been in play for 1 turn', () => {
     });
 });
 
-it('when has spaceShip that has been in play for 1 turn should move it', async () => {
+it('when has spaceShip (with an attack strength) that has been in play for 1 turn should move it', async () => {
     const { matchController } = await setupFromState({
         turn: 2,
         phase: 'attack',
-        cardsInZone: [{ id: 'C1A', type: 'spaceShip' }],
+        cardsInZone: [{ id: 'C1A', type: 'spaceShip', attack: 1 }],
         events: [PutDownCardEvent({ cardId: 'C1A', turn: 1, location: 'zone' })]
     });
 

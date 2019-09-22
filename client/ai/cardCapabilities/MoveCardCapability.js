@@ -8,7 +8,9 @@ module.exports = function MoveCardCapability({
     };
 
     function canDoIt() {
-        return card.canMove() && !card.canAttackCardsInOtherZone();
+        return card.canMove()
+            && !card.canAttackCardsInOtherZone()
+            && card.attack > 0;
     }
 
     function doIt() {
