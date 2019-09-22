@@ -27,10 +27,10 @@ describe('Selecting starting player', () => {
 
     test('When opponent is choosing starting player should NOT select starting player', async () => {
         const { matchController } = await setupFromState({
-            mode: 'selectStartingPlayer',
+            mode: 'chooseStartingPlayer',
             currentPlayer: PlayerId
         });
 
-        expect(matchController.emit).not.toBeCalledWith('selectPlayerToStart');
+        expect(matchController.emit).not.toBeCalledWith('selectPlayerToStart', expect.any(Object));
     });
 });

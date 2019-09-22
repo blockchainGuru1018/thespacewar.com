@@ -1,8 +1,6 @@
 const MatchMode = require('../../shared/match/MatchMode.js');
 const Commander = require('../../shared/match/commander/Commander.js');
 
-const BotId = 'BOT';
-
 module.exports = function ({
     matchService,
     playerStateService,
@@ -48,7 +46,8 @@ module.exports = function ({
     }
 
     function isChoosingStartingPlayer() {
-        return matchService.mode() === MatchMode.chooseStartingPlayer;
+        return matchService.mode() === MatchMode.chooseStartingPlayer
+            && matchService.getCurrentPlayer() === playerStateService.getPlayerId();
     }
 
     function isSelectingStartingStationCards() {
@@ -87,7 +86,7 @@ module.exports = function ({
     }
 
     function choosingStartingPlayer() {
-        matchController.emit('selectPlayerToStart', { playerToStartId: BotId });
+        matchController.emit('selectPlayerToStart', { playerToStartId: playerStateService.getPlayerId() });
     }
 
     function damageOpponentStationCards() {
