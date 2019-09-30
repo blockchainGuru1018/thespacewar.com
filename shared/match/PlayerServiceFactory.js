@@ -31,6 +31,7 @@ const PlayerNextPhase = require('./PlayerNextPhase.js');
 const PlayerDiscardPhase = require('./PlayerDiscardPhase.js');
 const PlayerStationAttacker = require('../PlayerStationAttacker.js');
 const PlayerLastStand = require('./PlayerLastStand.js');
+const PlayerDrawPhase = require('./PlayerDrawPhase.js');
 
 const ServiceTypes = PlayerServiceProvider.TYPE;
 
@@ -54,6 +55,7 @@ module.exports = function ({
         playerStationAttacker: cached(playerStationAttacker),
         playerPhaseControl: cached(playerPhaseControl),
         playerDiscardPhase: cached(playerDiscardPhase),
+        playerDrawPhase: cached(playerDrawPhase),
         playerNextPhase: cached(playerNextPhase),
         playerCommanders: cached(playerCommanders),
         miller: cached(miller),
@@ -168,6 +170,14 @@ module.exports = function ({
     function playerDiscardPhase(playerId) {
         return PlayerDiscardPhase({
             playerRuleService: api.playerRuleService(playerId),
+            playerStateService: api.playerStateService(playerId)
+        });
+    }
+
+    function playerDrawPhase(playerId) {
+        return PlayerDrawPhase({
+            miller: api.miller(playerId),
+            playerPhase: api.playerPhase(playerId),
             playerStateService: api.playerStateService(playerId)
         });
     }

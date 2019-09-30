@@ -63,6 +63,19 @@ module.exports = bocha.testCase('PlayerRequirementService', {
             { type: 'drawCard', count: 1 }
         ]);
     },
+    'when player has 2 cards in deck and opponent has 1 card in deck and adds 1 draw card requirements of count 3 should only add a requirement of count 2': function () {
+        const testHelper = TestHelper(createState({
+            playerStateById: {
+                'P1A': { cardsInDeck: [createCard({ id: 'C1A' }), createCard({ id: 'C2A' })] },
+                'P2A': { cardsInDeck: [createCard({ id: 'C3A' })] }
+            }
+        }));
+        const service = testHelper.playerRequirementService('P1A');
+
+        service.addCardRequirement({ type: 'drawCard', count: 3 });
+
+        assert.equals(service.getRequirements(), [{ type: 'drawCard', count: 2 }]);
+    },
     'when player has 2 station cards and adds 3 damage own station card requirements of count 1 should only add the first 2': function () {
         const state = createState({
             playerStateById: {

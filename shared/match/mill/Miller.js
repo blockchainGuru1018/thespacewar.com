@@ -21,7 +21,7 @@ module.exports = function ({
         const hasTheMiller = playerCommanders.has(Commander.TheMiller);
         if (!hasTheMiller) return false;
 
-        const drawCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'drawCard' });
+        const drawCardRequirement = playerRequirementService.firstRequirementIsOfType('drawCard');
         return drawCardRequirement || playerRuleService.moreCardsCanBeDrawnForDrawPhase();
     }
 

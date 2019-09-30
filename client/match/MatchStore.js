@@ -16,6 +16,8 @@ const EventFactory = require('../../shared/event/EventFactory.js');
 const GameConfig = require('../../shared/match/GameConfig.js');
 const MoveStationCard = require('../../shared/match/MoveStationCard.js');
 const ActionLog = require('../../shared/match/log/ActionLog.js');
+const Miller = require('../../shared/match/mill/Miller.js');
+const PlayerDrawPhase = require('../../shared/match/PlayerDrawPhase.js');
 const mapFromClientToServerState = require('./mapFromClientToServerState.js');
 const localGameDataFacade = require('../utils/localGameDataFacade.js');
 const whatIsNextPhase = require('../../shared/match/whatIsNextPhase.js');
@@ -140,6 +142,8 @@ module.exports = function (deps) {
             findPlayerCardFromAllSources,
             cardFactory,
             playerServiceProvider,
+            miller,
+            playerDrawPhase,
             playerCommanders,
             opponentCommanders,
             moveStationCard,
@@ -387,6 +391,23 @@ module.exports = function (deps) {
     function playerCommanders(state, getters) {
         return PlayerCommanders({
             playerStateService: getters.playerStateService
+        });
+    }
+
+    function playerDrawPhase(state, getters) {
+        return PlayerDrawPhase({
+            playerStateService: getters.playerStateService,
+            miller: getters.miller,
+            playerPhase: getters.playerPhase
+        });
+    }
+
+    function miller(state, getters) {
+        return Miller({
+            playerRequirementService: getters.playerRequirementService,
+            playerCommanders: getters.playerCommanders,
+            playerRuleService: getters.playerRuleService,
+            opponentStateService: getters.opponentStateService,
         });
     }
 

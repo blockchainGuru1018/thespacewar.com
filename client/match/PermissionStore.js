@@ -135,10 +135,10 @@ module.exports = function (deps) {
     }
 
     function canPassDrawPhase(state, getters, rootState, rootGetters) {
-        return rootGetters['match/playerRuleService'].canPassDrawPhase();
+        return rootGetters['match/playerDrawPhase'].canPass();
     }
 
     function canMill(state, getters, rootState, rootGetters) {
-        return rootGetters['match/playerRuleService'].canMill();
+        return rootGetters['match/miller'].canMill();
     }
 };

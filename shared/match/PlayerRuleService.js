@@ -135,24 +135,6 @@ class PlayerRuleService {
         return true;
     }
 
-    canPassDrawPhase() {
-        return !this.canMill()
-            && this._playerPhase.isDraw()
-            && this._playerStateService.deckIsEmpty();
-    }
-
-    canMill() {
-        const playerRequirements = this._playerRequirementService;
-        if (playerRequirements.isWaitingOnOpponentFinishingRequirement()) return false;
-        if (this._opponentStateService.deckIsEmpty()) return false;
-
-        const hasTheMiller = this._playerCommanders.has(Commander.TheMiller);
-        if (!hasTheMiller) return false;
-
-        return this._playerPhase.isDraw()
-            || playerRequirements.firstRequirementIsOfType('drawCard');
-    }
-
     canDiscardCards() { //TODO Confusing that you "discard" when you want to "replace". Should ideally be 2 separate things (even if they are both performed on the discard pile).
         const playerRequirements = this._playerRequirementService;
         if (playerRequirements.isWaitingOnOpponentFinishingRequirement()) return false;
@@ -183,7 +165,8 @@ class PlayerRuleService {
     }
 
     moreCardsCanBeDrawnForDrawPhase() {
-        return this.countCardsLeftToDrawForDrawPhase() > 0;
+        return this._playerPhase.isDraw()
+            && this.countCardsLeftToDrawForDrawPhase() > 0;
     }
 
     countCardsLeftToDrawForDrawPhase() {
