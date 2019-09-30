@@ -418,7 +418,7 @@ module.exports = function ({
         return new PlayerRuleService({
             matchService: api.matchService(),
             playerStateService: api.playerStateService(playerId),
-            opponentStateService: api.playerStateService(playerId),
+            opponentStateService: api.playerStateService(api.opponentId(playerId)),
             playerRequirementService: api.playerRequirementService(playerId),
             canThePlayer: api.canThePlayer(playerId),
             canTheOpponent: api.canThePlayer(api.opponentId(playerId)),

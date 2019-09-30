@@ -2,6 +2,7 @@ let bocha = require('bocha');
 let assert = bocha.assert;
 let refute = bocha.refute;
 let defaults = bocha.defaults;
+const Commander = require('../match/commander/Commander.js');
 const createState = require('./fakeFactories/createState.js');
 const FakeCardDataAssembler = require("../../server/test/testUtils/FakeCardDataAssembler.js");//TODO Move to shared
 const createCard = FakeCardDataAssembler.createCard;
@@ -15,6 +16,101 @@ const PutDownCardEvent = require('../PutDownCardEvent.js');
 const GameConfig = require('../match/GameConfig.js');
 
 module.exports = bocha.testCase('PlayerRuleService', {
+    'draw cards:': {
+        'when deck is empty and opponent deck is not empty can draw cards'() {
+            const testHelper = TestHelper(createState({
+                currentPlayer: 'P1A',
+                playerStateById: {
+                    'P1A': {
+                        phase: 'draw',
+                        cardsInDeck: []
+                    },
+                    'P2A': {
+                        cardsInDeck: [{}]
+                    }
+                }
+            }));
+
+            const service = testHelper.playerRuleService('P1A');
+
+            refute(service.canDrawCards());
+        }
+    },
+    'pass draw phase': {
+        'can pass, when is draw phase and player deck is empty'() {
+            const testHelper = TestHelper(createState({
+                currentPlayer: 'P1A',
+                playerStateById: {
+                    'P1A': {
+                        phase: 'draw',
+                        cardsInDeck: []
+                    },
+                    'P2A': {
+                        cardsInDeck: [{}]
+                    }
+                }
+            }));
+
+            const service = testHelper.playerRuleService('P1A');
+
+            assert(service.canPassDrawPhase());
+        },
+        'can NOT pass, when is NOT draw phase but player deck is empty'() {
+            const testHelper = TestHelper(createState({
+                currentPlayer: 'P1A',
+                playerStateById: {
+                    'P1A': {
+                        phase: 'action',
+                        cardsInDeck: []
+                    },
+                    'P2A': {
+                        cardsInDeck: [{}]
+                    }
+                }
+            }));
+
+            const service = testHelper.playerRuleService('P1A');
+
+            refute(service.canPassDrawPhase());
+        },
+        'can NOT pass, when is draw phase but player deck is NOT empty'() {
+            const testHelper = TestHelper(createState({
+                currentPlayer: 'P1A',
+                playerStateById: {
+                    'P1A': {
+                        phase: 'draw',
+                        cardsInDeck: [{}]
+                    },
+                    'P2A': {
+                        cardsInDeck: [{}]
+                    }
+                }
+            }));
+
+            const service = testHelper.playerRuleService('P1A');
+
+            refute(service.canPassDrawPhase());
+        },
+        'can NOT pass, when is draw phase and player deck is empty, BUT CAN MILL'() {
+            const testHelper = TestHelper(createState({
+                currentPlayer: 'P1A',
+                playerStateById: {
+                    'P1A': {
+                        phase: 'draw',
+                        cardsInDeck: [],
+                        commanders: [Commander.TheMiller]
+                    },
+                    'P2A': {
+                        cardsInDeck: [createCard()]
+                    }
+                }
+            }));
+
+            const service = testHelper.playerRuleService('P1A');
+
+            refute(service.canPassDrawPhase());
+        }
+    },
     'when max number of station cards is 1 and has 1 station card': {
         setUp() {
             const testHelper = TestHelper(createState({

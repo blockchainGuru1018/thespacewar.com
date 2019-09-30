@@ -181,11 +181,11 @@
                                 </div>
                                 <div
                                     class="card card-emptyDeck"
-                                    v-else-if="canDrawCards"
+                                    v-else-if="canPassDrawPhase"
                                 >
                                     <div class="actionOverlays">
                                         <div
-                                            @click="playerDrawPileClick"
+                                            @click="passDrawPhase"
                                             class="drawPile-draw actionOverlay actionOverlay--hinted"
                                         >
                                             Pass
@@ -502,6 +502,7 @@
                 'canPutDownMoreStationCardsThisTurn',
                 'canPutDownMoreStartingStationCards',
                 'canDrawCards',
+                'canPassDrawPhase',
                 'canMill',
                 'opponentDeckIsEmpty'
             ]),
@@ -666,6 +667,7 @@
                 'selectAsDefender',
                 'retreat',
                 'askToDrawCard',
+                'passDrawPhase',
                 'askToDiscardOpponentTopTwoCards',
                 'saveMatch',
                 'restoreSavedMatch',

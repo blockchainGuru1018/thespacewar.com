@@ -28,6 +28,7 @@ module.exports = function (deps) {
             canPutDownStationCardInHomeZone,
             canIssueOverwork: canIssueOverworkGetter,
             canDrawCards,
+            canPassDrawPhase,
             canMill,
             deckIsEmpty,
             opponentDeckIsEmpty
@@ -131,6 +132,10 @@ module.exports = function (deps) {
 
     function canDrawCards(state, getters, rootState, rootGetters) {
         return rootGetters['match/playerRuleService'].canDrawCards();
+    }
+
+    function canPassDrawPhase(state, getters, rootState, rootGetters) {
+        return rootGetters['match/playerRuleService'].canPassDrawPhase();
     }
 
     function canMill(state, getters, rootState, rootGetters) {

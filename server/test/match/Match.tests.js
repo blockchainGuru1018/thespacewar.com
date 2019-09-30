@@ -14,6 +14,7 @@ const MatchMode = require("../../../shared/match/MatchMode.js");
 
 module.exports = testCase('Match', {
     'draw card:': require('./drawCardTests.js'),
+    'pass draw phase:': require('./passDrawPhaseTests.js'),
     'putDownCard:': require('./putDownCardTests.js'),
     'discardCard:': require('./discardCardTests.js'),
     'nextPhase:': require('./nextPhaseTests.js'),

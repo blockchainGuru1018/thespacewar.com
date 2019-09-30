@@ -13,7 +13,8 @@ function NextPhaseCardController(deps) {
     return {
         onNextPhase,
         onToggleControlOfTurn,
-        playerReady
+        playerReady,
+        passDrawPhase
     };
 
     function onNextPhase(playerId, { currentPhase }) {
@@ -58,6 +59,15 @@ function NextPhaseCardController(deps) {
         }
 
         matchComService.emitCurrentStateToPlayers();
+    }
+
+    function passDrawPhase(playerId) {
+        const canPassDrawPhase = playerServiceFactory.playerRuleService(playerId).canPassDrawPhase(playerId);
+        if (!canPassDrawPhase) {
+            throw new CheatError('Cannot pass draw phase');
+        }
+
+        onNextPhase(playerId, { currentPhase: 'draw' });
     }
 }
 

@@ -177,6 +177,7 @@ module.exports = function (deps) {
         actions: {
             // remote
             askToDrawCard,
+            passDrawPhase,
             askToDiscardOpponentTopTwoCards,
             saveMatch,
             restoreSavedMatch,
@@ -719,6 +720,10 @@ module.exports = function (deps) {
 
     function askToDrawCard() {
         matchController.emit('drawCard');
+    }
+
+    function passDrawPhase() {
+        matchController.emit('passDrawPhase');
     }
 
     function askToDiscardOpponentTopTwoCards() {

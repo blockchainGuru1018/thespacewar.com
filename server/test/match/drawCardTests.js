@@ -138,7 +138,7 @@ module.exports = {
             assert.equals(args, { moreCardsCanBeDrawn: false });
         }
     },
-    'when has NO more cards but has 1 draw row station card and draws 1 card': {
+    'when can NOT draw more cards in draw phase, but draws one anyway': {
         setUp() {
             this.firstPlayerConnection = FakeConnection2(['drawCards', 'stateChanged']);
             const players = [Player('P1A', this.firstPlayerConnection), Player('P2A')];
@@ -149,15 +149,17 @@ module.exports = {
                         phase: 'draw',
                         stationCards: [{ place: 'draw', card: createCard() }],
                         cardsInDeck: []
+                    },
+                    'P2A': {
+                        cardsInDeck: [createCard()]
                     }
                 }
             }));
 
             this.match.drawCard('P1A');
         },
-        'should emit that there are no more cards to draw'() {
-            const args = this.firstPlayerConnection.drawCards.lastCall.args[0];
-            assert.equals(args, { moreCardsCanBeDrawn: false });
+        'should NOT emit drawCards event'() {
+            refute.called(this.firstPlayerConnection.drawCards);
         },
         'should have drawn no more cards to hand'() {
             refute.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({

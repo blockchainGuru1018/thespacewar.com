@@ -145,6 +145,7 @@ module.exports = function ({
         selectPlayerToStart: startGameController.selectPlayerToStart,
         selectCommander: startGameController.selectCommander,
         nextPhase: nextPhaseController.onNextPhase,
+        passDrawPhase: nextPhaseController.passDrawPhase,
         toggleControlOfTurn: nextPhaseController.onToggleControlOfTurn,
         playerReady: nextPhaseController.playerReady,
         putDownCard: putDownCardController.onPutDownCard,

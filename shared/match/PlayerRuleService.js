@@ -130,13 +130,15 @@ class PlayerRuleService {
         const playerRequirements = this._playerRequirementService;
         if (playerRequirements.isWaitingOnOpponentFinishingRequirement()) return false;
         if (!this._playerPhase.isDraw() && !playerRequirements.firstRequirementIsOfType('drawCard')) return false;
+        if (this._playerStateService.deckIsEmpty()) return false;
 
-        if (this._playerStateService.deckIsEmpty()) {
-            return this._opponentStateService.deckIsEmpty();
-        }
-        else {
-            return true;
-        }
+        return true;
+    }
+
+    canPassDrawPhase() {
+        return !this.canMill()
+            && this._playerPhase.isDraw()
+            && this._playerStateService.deckIsEmpty();
     }
 
     canMill() {
