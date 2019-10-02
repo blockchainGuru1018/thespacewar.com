@@ -5,7 +5,7 @@ module.exports = function (originalDeck) {
     return {
         draw,
         getCardCount,
-        getPossibleMillCount: () => Math.floor(getCardCount() / 2),
+        getPossibleMillCount: () => Math.round(getCardCount() / 2),
         getAll: () => [...deck],
         removeFirstCardOfType,
         removeCard,

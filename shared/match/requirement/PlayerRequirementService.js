@@ -1,11 +1,22 @@
-class PlayerRequirementService { //TODO Rename PlayerRequirements
+const canMill = require('../mill/canMill.js');
+const Commander = require('../commander/Commander.js');
+
+//TODO Separate querying for requirements and adding requirements
+// A lot more information is required to add a requirement than to query once that are added.
+// This leads to circular dependencies or to duplicated business logic, as objects needs this service to query
+// and this service needs those objects to add requirements.
+class PlayerRequirementService {
 
     constructor({
         playerStateService,
         opponentStateService,
+        playerCommanders,
+        moreCardsCanBeDrawnForDrawPhase
     }) {
         this._playerStateService = playerStateService;
         this._opponentStateService = opponentStateService;
+        this._playerCommanders = playerCommanders;
+        this._moreCardsCanBeDrawnForDrawPhase = moreCardsCanBeDrawnForDrawPhase;
     }
 
     getRequirements() {
@@ -193,15 +204,32 @@ class PlayerRequirementService { //TODO Rename PlayerRequirements
 
     getCountOrMinimumAvailableForDrawingCards(maxCount) {
         const deckCardCount = this._playerStateService.getDeck().getCardCount();
-        const opponentDeckPossibleMillsCount = this._opponentStateService.getDeck().getPossibleMillCount();
+        const availableDrawsAndMills = deckCardCount + this._opponentDeckPossibleMillsCount();
+        const maxDrawCount = availableDrawsAndMills - this._currentDrawCardRequirementsCount();
+        return Math.min(maxDrawCount, maxCount);
+    }
 
-        const currentDrawCardRequirementsCount = this
+    _currentDrawCardRequirementsCount() {
+        return this
             .getRequirements()
             .filter(r => r.type === 'drawCard')
             .reduce((total, requirement) => total + requirement.count, 0);
+    }
 
-        const maxDrawCount = (deckCardCount + opponentDeckPossibleMillsCount) - currentDrawCardRequirementsCount;
-        return Math.min(maxDrawCount, maxCount);
+    _opponentDeckPossibleMillsCount() {
+        if (!this._canMill()) return 0;
+
+        this._opponentStateService.getDeck().getPossibleMillCount();
+    }
+
+    _canMill() {
+        return canMill({
+            isWaitingOnOpponentFinishingRequirement: this.isWaitingOnOpponentFinishingRequirement(),
+            firstRequirementIsDrawCard: this.firstRequirementIsOfType('drawCard'),
+            opponentDeckIsEmpty: this._opponentStateService.deckIsEmpty(),
+            playerHasTheMiller: this._playerCommanders.has(Commander.TheMiller),
+            moreCardsCanBeDrawnForDrawPhase: this._moreCardsCanBeDrawnForDrawPhase()
+        })
     }
 
     addRequirement(requirement) { //TODO Find a better name to differentiate this from addCardRequirement

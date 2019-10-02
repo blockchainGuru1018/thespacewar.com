@@ -1,5 +1,6 @@
 const Commander = require('./commander/Commander.js');
 const MatchMode = require("./MatchMode.js");
+
 const ALLOWED_STATION_CARDS_EACH_TURN = 1;
 
 class PlayerRuleService {
@@ -15,7 +16,9 @@ class PlayerRuleService {
         turnControl,
         gameConfig,
         queryEvents,
-        playerCommanders
+        playerCommanders,
+        countCardsLeftToDrawForDrawPhase,
+        moreCardsCanBeDrawnForDrawPhase
     } = {}) {
         this._matchService = matchService;
         this._playerStateService = playerStateService;
@@ -28,6 +31,9 @@ class PlayerRuleService {
         this._gameConfig = gameConfig;
         this._playerCommanders = playerCommanders;
         this._queryEvents = queryEvents;
+
+        this.countCardsLeftToDrawForDrawPhase = countCardsLeftToDrawForDrawPhase;
+        this.moreCardsCanBeDrawnForDrawPhase = moreCardsCanBeDrawnForDrawPhase;
     }
 
     canPutDownCardsInHomeZone() { // TODO Since event cards are graphically put down in the home zone, this name could be confusing as it still covers event cards.
@@ -162,18 +168,6 @@ class PlayerRuleService {
         }
 
         return false;
-    }
-
-    moreCardsCanBeDrawnForDrawPhase() {
-        return this._playerPhase.isDraw()
-            && this.countCardsLeftToDrawForDrawPhase() > 0;
-    }
-
-    countCardsLeftToDrawForDrawPhase() {
-        let currentTurn = this._matchService.getTurn();
-        let cardDrawEvents = this._queryEvents.getCardDrawsOnTurn(currentTurn);
-        let cardsToDrawOnTurnCount = this._playerStateService.getStationDrawCardsCount();
-        return cardsToDrawOnTurnCount - cardDrawEvents.length;
     }
 
     _playerHasControlOfTheirOwnActionPhase() {

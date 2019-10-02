@@ -1,4 +1,5 @@
 const Commander = require("../commander/Commander.js");
+const _canMill = require('./canMill.js');
 
 module.exports = function ({
     playerRequirementService,
@@ -15,14 +16,13 @@ module.exports = function ({
     };
 
     function canMill() {
-        if (playerRequirementService.isWaitingOnOpponentFinishingRequirement()) return false;
-        if (opponentDeckIsEmpty()) return false;
-
-        const hasTheMiller = playerCommanders.has(Commander.TheMiller);
-        if (!hasTheMiller) return false;
-
-        const drawCardRequirement = playerRequirementService.firstRequirementIsOfType('drawCard');
-        return drawCardRequirement || playerRuleService.moreCardsCanBeDrawnForDrawPhase();
+        return _canMill({
+            isWaitingOnOpponentFinishingRequirement: playerRequirementService.isWaitingOnOpponentFinishingRequirement(),
+            opponentDeckIsEmpty: opponentDeckIsEmpty(),
+            playerHasTheMiller: playerCommanders.has(Commander.TheMiller),
+            firstRequirementIsDrawCard: playerRequirementService.firstRequirementIsOfType('drawCard'),
+            moreCardsCanBeDrawnForDrawPhase: playerRuleService.moreCardsCanBeDrawnForDrawPhase()
+        });
     }
 
     function mill() {

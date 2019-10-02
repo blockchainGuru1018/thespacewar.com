@@ -1028,15 +1028,15 @@ module.exports = {
                     playerStateById: {
                         'P1A': {
                             phase: 'action',
-                            cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: GrandOpportunityCommonId })]
-                        },
-                        cardsInDeck: [createCard({ id: 'C2A' })]
+                            cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: GrandOpportunityCommonId })],
+                            cardsInDeck: [createCard({ id: 'C2A' })]
+                        }
                     }
                 }));
 
                 this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A' });
             },
-            'should emit stateChanged to first player with ONLY draw card'() {
+            'should emit draw card requirement of count 1'() {
                 assert.calledOnce(this.firstPlayerConnection.stateChanged);
                 assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                     requirements: [sinon.match({ type: 'drawCard', count: 1 })],

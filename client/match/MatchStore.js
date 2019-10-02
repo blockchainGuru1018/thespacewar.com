@@ -29,6 +29,8 @@ const Clock = require('../../shared/gameTimer/Clock.js');
 const PlayerCardInPlay = require('./card/PlayerCardInPlay.js');
 const LastStand = require('../../shared/match/LastStand.js');
 const ClientStateChanger = require('../state/ClientStateChanger.js');
+const CountCardsLeftToDrawForDrawPhase = require('../../shared/match/rules/CountCardsLeftToDrawForDrawPhase.js');
+const MoreCardsCanBeDrawnForDrawPhase = require('../../shared/match/rules/MoreCardsCanBeDrawnForDrawPhase.js');
 
 const {
     COMMON_PHASE_ORDER,
@@ -152,6 +154,8 @@ module.exports = function (deps) {
             playerPerfectPlan,
             playerRuleService,
             opponentRuleService,
+            calculateMoreCardsCanBeDrawnForDrawPhase,
+            calculateCountCardsLeftToDrawForDrawPhase,
             getCanThePlayer,
             canThePlayer,
             canTheOpponent,
@@ -470,7 +474,9 @@ module.exports = function (deps) {
             playerPhase: getters.playerPhase,
             gameConfig: getters.gameConfig,
             playerCommanders: getters.playerCommanders,
-            queryEvents: getters.queryEvents
+            queryEvents: getters.queryEvents,
+            moreCardsCanBeDrawnForDrawPhase: getters.calculateMoreCardsCanBeDrawnForDrawPhase,
+            countCardsLeftToDrawForDrawPhase: getters.calculateCountCardsLeftToDrawForDrawPhase
         });
     }
 
@@ -483,7 +489,24 @@ module.exports = function (deps) {
             playerRequirementService: ClientLimitNotice,
             canThePlayer: ClientLimitNotice,
             turnControl: ClientLimitNotice,
-            playerPhase: ClientLimitNotice
+            playerPhase: ClientLimitNotice,
+            moreCardsCanBeDrawnForDrawPhase: getters.calculateMoreCardsCanBeDrawnForDrawPhase,
+            countCardsLeftToDrawForDrawPhase: getters.calculateCountCardsLeftToDrawForDrawPhase
+        });
+    }
+
+    function calculateMoreCardsCanBeDrawnForDrawPhase(state, getters) {
+        return MoreCardsCanBeDrawnForDrawPhase({
+            playerPhase: getters.playerPhase,
+            countCardsLeftToDrawForDrawPhase: getters.calculateCountCardsLeftToDrawForDrawPhase
+        });
+    }
+
+    function calculateCountCardsLeftToDrawForDrawPhase(state, getters) {
+        return CountCardsLeftToDrawForDrawPhase({
+            matchService: getters.matchService,
+            queryEvents: getters.queryEvents,
+            playerStateService: getters.playerStateService
         });
     }
 
@@ -542,14 +565,18 @@ module.exports = function (deps) {
     function playerRequirementService(state, getters) {
         return new PlayerRequirementService({
             playerStateService: getters.playerStateService,
-            opponentStateService: getters.opponentStateService
+            opponentStateService: getters.opponentStateService,
+            playerCommanders: ClientLimitNotice,
+            moreCardsCanBeDrawnForDrawPhase: ClientLimitNotice
         });
     }
 
     function opponentRequirementService(state, getters) {
         return new PlayerRequirementService({
             playerStateService: getters.opponentStateService,
-            opponentStateService: getters.playerStateService
+            opponentStateService: getters.playerStateService,
+            playerCommanders: ClientLimitNotice,
+            moreCardsCanBeDrawnForDrawPhase: ClientLimitNotice
         });
     }
 

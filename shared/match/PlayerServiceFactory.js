@@ -32,6 +32,8 @@ const PlayerDiscardPhase = require('./PlayerDiscardPhase.js');
 const PlayerStationAttacker = require('../PlayerStationAttacker.js');
 const PlayerLastStand = require('./PlayerLastStand.js');
 const PlayerDrawPhase = require('./PlayerDrawPhase.js');
+const CountCardsLeftToDrawForDrawPhase = require('./rules/CountCardsLeftToDrawForDrawPhase.js');
+const MoreCardsCanBeDrawnForDrawPhase = require('./rules/MoreCardsCanBeDrawnForDrawPhase.js');
 
 const ServiceTypes = PlayerServiceProvider.TYPE;
 
@@ -52,6 +54,8 @@ module.exports = function ({
     const api = {
         _cache: objectsByNameAndPlayerId,
         playerServiceProvider: () => playerServiceProvider,
+        countCardsLeftToDrawForDrawPhase: cached(countCardsLeftToDrawForDrawPhase),
+        moreCardsCanBeDrawnForDrawPhase: cached(moreCardsCanBeDrawnForDrawPhase),
         playerStationAttacker: cached(playerStationAttacker),
         playerPhaseControl: cached(playerPhaseControl),
         playerDiscardPhase: cached(playerDiscardPhase),
@@ -128,6 +132,21 @@ module.exports = function ({
     };
 
     return api;
+
+    function moreCardsCanBeDrawnForDrawPhase(playerId) {
+        return MoreCardsCanBeDrawnForDrawPhase({
+            playerPhase: api.playerPhase(playerId),
+            countCardsLeftToDrawForDrawPhase: api.countCardsLeftToDrawForDrawPhase(playerId)
+        });
+    }
+
+    function countCardsLeftToDrawForDrawPhase(playerId) {
+        return CountCardsLeftToDrawForDrawPhase({
+            matchService: api.matchService(),
+            queryEvents: api.queryEvents(playerId),
+            playerStateService: api.playerStateService(playerId)
+        });
+    }
 
     function playerStationAttacker(playerId) {
         return PlayerStationAttacker({
@@ -289,7 +308,9 @@ module.exports = function ({
         const opponentId = api.opponentId(playerId);
         return new PlayerRequirementService({
             playerStateService: api.playerStateService(playerId),
-            opponentStateService: api.playerStateService(opponentId)
+            opponentStateService: api.playerStateService(opponentId),
+            playerCommanders: api.playerCommanders(playerId),
+            moreCardsCanBeDrawnForDrawPhase: api.moreCardsCanBeDrawnForDrawPhase(playerId)
         });
     }
 
@@ -436,6 +457,8 @@ module.exports = function ({
             playerPhase: api.playerPhase(playerId),
             playerCommanders: api.playerCommanders(playerId),
             queryEvents: api.queryEvents(playerId),
+            countCardsLeftToDrawForDrawPhase: api.countCardsLeftToDrawForDrawPhase(playerId),
+            moreCardsCanBeDrawnForDrawPhase: api.moreCardsCanBeDrawnForDrawPhase(playerId),
             gameConfig
         });
     }

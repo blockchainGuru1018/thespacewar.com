@@ -62,7 +62,7 @@ function NextPhaseCardController(deps) {
     }
 
     function passDrawPhase(playerId) {
-        const canPassDrawPhase = playerServiceFactory.playerDrawPhase.canPass(playerId)();
+        const canPassDrawPhase = playerServiceFactory.playerDrawPhase(playerId).canPass();
         if (!canPassDrawPhase) {
             throw new CheatError('Cannot pass draw phase');
         }
