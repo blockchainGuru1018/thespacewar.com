@@ -7,63 +7,25 @@
             class="escapeMenu-overlay"
             @click.self="hide"
         />
-        <div
+        <MainMenu
             v-if="view === 'main'"
             class="escapeMenu"
-        >
-            <button
-                class="escapeMenu-option"
-                title="If something appears to be wrong, this might fix it. No data will be lost when you reload the page!"
-                @click="hideAnd(reloadPage)"
-            >
-                Reload page
-            </button>
-            <button class="escapeMenu-option">
-                Sound:
-                <MasterGainSlider />
-            </button>
-            <button
-                class="escapeMenu-retreat escapeMenu-option"
-                @click="hideAnd(retreat)"
-            >
-                Retreat
-            </button>
-            <button
-                v-if="aiStarted"
-                class="escapeMenu-option"
-                @click="reloadPage"
-            >
-                Stop AI
-            </button>
-            <button
-                v-else
-                class="escapeMenu-startAi escapeMenu-fadedOption escapeMenu-option"
-                @click="hideAnd(startAI)"
-            >
-                Start AI (experimental)
-            </button>
-            <button
-                v-if="validatedDebug"
-                class="escapeMenu-fadedOption escapeMenu-option"
-                @click="showDebugOptions"
-            >
-                Debug options
-            </button>
-        </div>
-
+            :validatedDebug="validatedDebug"
+            @showDebugOptions="showDebugOptions"
+        />
         <div
             v-else-if="view === 'debug'"
             class="debugMenu escapeMenu"
         >
             <button
-                @click="showLog"
                 class="escapeMenu-option"
+                @click="showLog"
             >
                 Master log
             </button>
             <button
-                @click="showCheatOptions"
                 class="escapeMenu-option"
+                @click="showCheatOptions"
             >
                 Cheats
             </button>
@@ -128,7 +90,10 @@
                     <span>
                         Count*
                     </span>
-                    <input v-model.number="cheatCount" type="number" />
+                    <input
+                        v-model.number="cheatCount"
+                        type="number"
+                    >
                 </label>
             </div>
             <div
@@ -186,6 +151,7 @@
     const escapeMenuHelpers = Vuex.createNamespacedHelpers('escapeMenu');
     const matchHelpers = Vuex.createNamespacedHelpers('match');
     const resolveModule = require('../../utils/resolveModuleWithPossibleDefault.js');
+    const MainMenu = resolveModule(require('./MainMenu.vue'));
     const MasterGainSlider = resolveModule(require('../../audio/MasterGainSlider.vue'));
     const localGameDataFacade = require('../../utils/localGameDataFacade.js');
     const ajax = require('../../utils/ajax.js');
@@ -205,9 +171,6 @@
         computed: {
             ...escapeMenuHelpers.mapState([
                 'visible'
-            ]),
-            ...matchHelpers.mapState([
-                'aiStarted'
             ]),
             ...matchHelpers.mapGetters([
                 'cardDataAssembler'
@@ -241,19 +204,6 @@
             ...escapeMenuHelpers.mapActions([
                 'hide'
             ]),
-            ...matchHelpers.mapActions([
-                'saveMatch',
-                'restoreSavedMatch',
-                'retreat',
-                'startAI'
-            ]),
-            hideAnd(method) {
-                this.hide();
-                method();
-            },
-            reloadPage() {
-                window.location.reload();
-            },
             showDebugOptions() {
                 this.view = 'debug';
             },
@@ -300,11 +250,10 @@
             }
         },
         components: {
-            MasterGainSlider
+            MasterGainSlider,
+            MainMenu
         }
     };
 </script>
-<style lang="scss">
-    @import "escapeMenu";
-    @import "debugMenu";
-</style>
+<style lang="scss" src="./_escapeMenu.scss"/>
+<style lang="scss" src="./_debugMenu.scss"/>

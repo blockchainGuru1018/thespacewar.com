@@ -11,6 +11,9 @@ module.exports = {
             "closeBracket": 0,
             "alignAttributesVertically": true,
             "ignores": []
+        }],
+        "vue/attribute-hyphenation": ["never", {
+            "ignore": []
         }]
     },
     'env': {
