@@ -25,14 +25,13 @@ function DebugController(deps) {
         const { state: restoredState, saverPlayerId } = readSavedGameData(saveName);
         const previousOpponentId = restoredState.playerOrder.find(id => id !== saverPlayerId);
 
-        const newPlayerStateById = {
+        restoredState.playerStateById = {
             [playerId]: restoredState.playerStateById[saverPlayerId],
             [opponentId]: restoredState.playerStateById[previousOpponentId]
         };
-        restoredState.playerStateById = newPlayerStateById;
 
         restoredState.currentPlayer = restoredState.currentPlayer === saverPlayerId ? playerId : opponentId;
-        let { playerOrder } = matchService.getState();
+        const { playerOrder } = matchService.getState();
         restoredState.playerOrder = playerOrder;
 
         restoreFromState(restoredState);
