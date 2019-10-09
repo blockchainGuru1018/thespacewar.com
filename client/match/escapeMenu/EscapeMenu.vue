@@ -13,54 +13,14 @@
             :validatedDebug="validatedDebug"
             @showDebugOptions="showDebugOptions"
         />
-        <div
+        <DebugMenu
             v-else-if="view === 'debug'"
             class="debugMenu escapeMenu"
-        >
-            <button
-                class="escapeMenu-option"
-                @click="showLog"
-            >
-                Master log
-            </button>
-            <button
-                class="escapeMenu-option"
-                @click="showCheatOptions"
-            >
-                Cheats
-            </button>
-            <button
-                v-if="audioMuted"
-                class="escapeMenu-option"
-                @click="unmuteAudio"
-            >
-                Un-mute audio
-            </button>
-            <button
-                v-else
-                class="escapeMenu-option"
-                @click="muteAudio"
-            >
-                Mute audio
-            </button>
-            <button
-                class="escapeMenu-option"
-                @click="view = 'main'"
-            >
-                Back
-            </button>
-            <button class="escapeMenu-option" />
-            <button class="escapeMenu-option" />
-            <button class="escapeMenu-option" />
-            <button class="escapeMenu-option" />
-            <button
-                class="escapeMenu-danger escapeMenu-option"
-                @click="_danger_restart_danger_"
-            >
-                R E S T A R T
-            </button>
-        </div>
-
+            :view="view"
+            @showLog="showLog"
+            @showCheatOptions="showCheatOptions"
+            @showMainMenu="showMainMenu"
+        />
         <div
             v-else-if="view === 'cheat'"
             class="cheatMenu escapeMenu"
@@ -152,6 +112,7 @@
     const matchHelpers = Vuex.createNamespacedHelpers('match');
     const resolveModule = require('../../utils/resolveModuleWithPossibleDefault.js');
     const MainMenu = resolveModule(require('./MainMenu.vue'));
+    const DebugMenu = resolveModule(require('./DebugMenu.vue'));
     const MasterGainSlider = resolveModule(require('../../audio/MasterGainSlider.vue'));
     const localGameDataFacade = require('../../utils/localGameDataFacade.js');
     const ajax = require('../../utils/ajax.js');
@@ -160,7 +121,6 @@
         data() {
             return {
                 view: 'main', //main, debug, cheat, log
-                audioMuted: window.audioMuted,
                 cheatType: 'addCard',
                 cheatCount: 1,
                 cheatCommonId: '',
@@ -210,6 +170,9 @@
             showCheatOptions() {
                 this.view = 'cheat';
             },
+            showMainMenu() {
+                this.view = 'main';
+            },
             sendCheat() {
                 window.cheat(this.cheatType, {
                     count: this.cheatCount,
@@ -222,26 +185,6 @@
                 const { text } = await ajax.jsonPost('/master-log', { password: localGameDataFacade.DebugPassword.get() });
                 this.log = text;
             },
-            async _danger_restart_danger_() {
-                const confirmed = confirm('WARNING!   REALLY RESTART?   THIS IS DANGEROUS.');
-                if (confirmed) {
-                    const superConfirmed = confirm('REALLY REALLY SURE?');
-                    if (superConfirmed) {
-                        const response = await ajax.jsonPost('/restart', { password: localGameDataFacade.DebugPassword.get() });
-                        if (response) {
-                            alert(`Response from server: ${response.text}`);
-                        }
-                    }
-                }
-            },
-            unmuteAudio() {
-                window.unmute();
-                this.audioMuted = false;
-            },
-            muteAudio() {
-                window.mute();
-                this.audioMuted = true;
-            },
             async validateDebug() {
                 const { valid } = await ajax.jsonPost('/test-debug', { password: localGameDataFacade.DebugPassword.get() });
                 if (valid) {
@@ -251,9 +194,9 @@
         },
         components: {
             MasterGainSlider,
-            MainMenu
+            MainMenu,
+            DebugMenu
         }
     };
 </script>
-<style lang="scss" src="./_escapeMenu.scss"/>
-<style lang="scss" src="./_debugMenu.scss"/>
+<style lang="scss" src="./_escapeMenu.scss" />
