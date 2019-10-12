@@ -12,7 +12,8 @@ const STORES = [
     require('./chooseStartingPlayer/ChooseStartingPlayerStore.js'),
     require('./escapeMenu/EscapeMenuStore.js'),
     require('./ghost/GhostStore.js'),
-    require('./StartGameStore.js')
+    require('./StartGameStore.js'),
+    require('./debug/DebugStore.js'),
 ];
 const LOGGING_ENABLED = false;
 

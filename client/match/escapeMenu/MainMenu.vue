@@ -51,8 +51,6 @@
                 'selectView'
             ]),
             ...matchHelpers.mapActions([
-                'saveMatch',
-                'restoreSavedMatch',
                 'retreat',
             ]),
             hideAnd(method) {

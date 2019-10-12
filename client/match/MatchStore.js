@@ -185,8 +185,6 @@ module.exports = function (deps) {
             askToDrawCard,
             passDrawPhase,
             askToDiscardOpponentTopTwoCards,
-            saveMatch,
-            restoreSavedMatch,
             overwork,
             perfectPlan,
             toggleControlOfTurn,
@@ -773,21 +771,6 @@ module.exports = function (deps) {
 
     function askToDiscardOpponentTopTwoCards() {
         matchController.emit('discardOpponentTopTwoCards');
-    }
-
-    function saveMatch() {
-        let name = prompt('Name match save:');
-        matchController.emit('saveMatch', name);
-    }
-
-    function restoreSavedMatch({ state }) {
-        let saveName = prompt('Restore match with name:');
-        matchController.emit('restoreSavedMatch', {
-            saveName,
-            opponentId: state.opponentUser.id
-        });
-        document.body.innerHTML = '<marquee><h1>Loading...</h1></marquee>';
-        setTimeout(() => window.location.reload(), 3000);
     }
 
     function overwork() {

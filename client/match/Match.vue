@@ -668,8 +668,6 @@
                 'askToDrawCard',
                 'passDrawPhase',
                 'askToDiscardOpponentTopTwoCards',
-                'saveMatch',
-                'restoreSavedMatch'
             ]),
             ...mapCardActions({
                 showCardChoiceDialog: 'showChoiceDialog',

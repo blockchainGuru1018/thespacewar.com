@@ -31,6 +31,18 @@
         </button>
         <button
             class="escapeMenu-option"
+            @click="saveMatch"
+        >
+            Save state
+        </button>
+        <button
+            class="escapeMenu-option"
+            @click="restoreSavedMatch"
+        >
+            Restored saved match
+        </button>
+        <button
+            class="escapeMenu-option"
             @click="showMainMenu"
         >
             Back
@@ -48,12 +60,13 @@
     </div>
 </template>
 <script>
+    import Vuex from "vuex";
     import {ViewNames} from "./views.js";
+    import localGameDataFacade from "../../utils/localGameDataFacade.js";
+    import ajax from "../../utils/ajax.js";
 
-    const Vuex = require('vuex');
     const escapeMenuHelpers = Vuex.createNamespacedHelpers('escapeMenu');
-    const localGameDataFacade = require('../../utils/localGameDataFacade.js');
-    const ajax = require('../../utils/ajax.js');
+    const debugHelpers = Vuex.createNamespacedHelpers('debug');
 
     module.exports = {
         data() {
@@ -72,6 +85,10 @@
         methods: {
             ...escapeMenuHelpers.mapActions([
                 'selectView'
+            ]),
+            ...debugHelpers.mapActions([
+                'saveMatch',
+                'restoreSavedMatch'
             ]),
             showLog() {
                 this.selectView(ViewNames.log);
