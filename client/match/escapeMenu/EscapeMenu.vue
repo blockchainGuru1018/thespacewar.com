@@ -8,13 +8,12 @@
             @click.self="hide"
         />
         <MainMenu
-            v-if="view === 'main'"
             class="escapeMenu"
             :validatedDebug="validatedDebug"
             @showDebugOptions="showDebugOptions"
         />
         <DebugMenu
-            v-else-if="view === 'debug'"
+            v-if="view === 'debug'"
             class="debugMenu escapeMenu"
             :view="view"
             @showLog="showLog"

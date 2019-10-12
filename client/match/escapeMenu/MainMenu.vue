@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="view === 'main'">
         <button
             class="escapeMenu-option"
             title="If something appears to be wrong, this might fix it. No data will be lost when you reload the page!"
@@ -52,6 +52,7 @@
         props: ['validatedDebug'],
         computed: {
             ...escapeMenuHelpers.mapState([
+                'view',
                 'visible'
             ]),
             ...matchHelpers.mapState([
@@ -63,7 +64,8 @@
         },
         methods: {
             ...escapeMenuHelpers.mapActions([
-                'hide'
+                'hide',
+                'selectView'
             ]),
             ...matchHelpers.mapActions([
                 'saveMatch',
@@ -79,7 +81,7 @@
                 window.location.reload();
             },
             showDebugOptions() {
-                this.$emit('showDebugOptions');
+                this.selectView('debug');
             }
         },
         components: {
