@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="visible">
         <button
             class="escapeMenu-option"
             @click="showLog"
@@ -51,10 +51,17 @@
     const ajax = require('../../utils/ajax.js');
 
     module.exports = {
-        props: ['view'],
         data() {
             return {
                 audioMuted: window.audioMuted
+            }
+        },
+        computed: {
+            ...escapeMenuHelpers.mapState([
+                'view'
+            ]),
+            visible() {
+                return this.view === 'debug';
             }
         },
         methods: {
