@@ -1,12 +1,13 @@
 import localGameDataFacade from '../../utils/localGameDataFacade.js';
 import ajax from '../../utils/ajax.js';
+import {ViewNames} from "./views.js";
 
 module.exports = function () {
     return {
         namespaced: true,
         name: 'escapeMenu',
         state: {
-            view: 'main',
+            view: ViewNames.main,
             visible: false,
             validatedDebug: false,
         },
