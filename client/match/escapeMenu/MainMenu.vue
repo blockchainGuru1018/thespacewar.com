@@ -41,11 +41,12 @@
     </div>
 </template>
 <script>
+    import {ViewNames} from "./views.js";
+    import MasterGainSlider from '../../audio/MasterGainSlider.vue';
+
     const Vuex = require('vuex');
     const escapeMenuHelpers = Vuex.createNamespacedHelpers('escapeMenu');
     const matchHelpers = Vuex.createNamespacedHelpers('match');
-    const resolveModule = require('../../utils/resolveModuleWithPossibleDefault.js');
-    const MasterGainSlider = resolveModule(require('../../audio/MasterGainSlider.vue'));
 
     module.exports = {
         name: 'MainMenu',
@@ -58,7 +59,7 @@
                 'aiStarted'
             ]),
             visible() {
-                return this.view === 'main';
+                return this.view === ViewNames.main;
             }
         },
         methods: {
@@ -80,7 +81,7 @@
                 window.location.reload();
             },
             showDebugOptions() {
-                this.selectView('debug');
+                this.selectView(ViewNames.debug);
             }
         },
         components: {
