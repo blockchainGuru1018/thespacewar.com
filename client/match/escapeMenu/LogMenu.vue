@@ -16,6 +16,7 @@
     </div>
 </template>
 <script>
+    const localGameDataFacade = require('../../utils/localGameDataFacade.js');
     const ajax = require('../../utils/ajax.js');
 
     module.exports = {
