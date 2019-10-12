@@ -1,5 +1,5 @@
 <template>
-    <div v-if="view === 'main'">
+    <div v-if="visible">
         <button
             class="escapeMenu-option"
             title="If something appears to be wrong, this might fix it. No data will be lost when you reload the page!"
@@ -52,15 +52,14 @@
         computed: {
             ...escapeMenuHelpers.mapState([
                 'view',
-                'visible',
                 'validatedDebug'
             ]),
             ...matchHelpers.mapState([
                 'aiStarted'
             ]),
-            ...matchHelpers.mapGetters([
-                'cardDataAssembler'
-            ]),
+            visible() {
+                return this.view === 'main';
+            }
         },
         methods: {
             ...escapeMenuHelpers.mapActions([
