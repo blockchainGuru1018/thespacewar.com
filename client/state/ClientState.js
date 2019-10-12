@@ -54,7 +54,6 @@ function ClientState({
         attackerCardId: null,
         selectedDefendingStationCards: [],
         repairerCardId: null,
-        aiStarted: false,
         ended: false,
         retreatedPlayerId: null,
         shake: false,

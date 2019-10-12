@@ -462,7 +462,6 @@
                 'opponentDiscardedCards',
                 'opponentCardsInZone',
                 'opponentCardsInPlayerZone',
-                'aiStarted',
                 'shake',
                 'flashDiscardPile',
                 'flashOpponentDiscardPile',
@@ -670,8 +669,7 @@
                 'passDrawPhase',
                 'askToDiscardOpponentTopTwoCards',
                 'saveMatch',
-                'restoreSavedMatch',
-                'startAI'
+                'restoreSavedMatch'
             ]),
             ...mapCardActions({
                 showCardChoiceDialog: 'showChoiceDialog',

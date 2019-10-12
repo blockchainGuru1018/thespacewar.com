@@ -50,7 +50,6 @@ module.exports = function (deps) {
     const actionPointsCalculator = deps.actionPointsCalculator || ActionPointsCalculator({ cardInfoRepository });
     const matchController = deps.matchController;
     const rawCardDataRepository = deps.rawCardDataRepository;
-    const ai = deps.ai;
 
     let gameHasBegun = false;
     let endLastStandIntervalId = null;
@@ -104,7 +103,6 @@ module.exports = function (deps) {
             attackerCardId: null,
             selectedDefendingStationCards: [],
             repairerCardId: null,
-            aiStarted: false,
             ended: false,
             retreatedPlayerId: null,
             shake: false,
@@ -223,7 +221,6 @@ module.exports = function (deps) {
             cancelRepair,
             selectForRepair,
             damageStationCards, //todo rename to "damageStationCardsForRequirement",
-            startAI,
             flashFocusLatestAction,
             flashFocusLatestOpponentAction,
             triggerCardAttackedEffect,
@@ -1070,11 +1067,6 @@ module.exports = function (deps) {
     function getNumberOfPhasesBetween(a, b) {
         const phasesIncludingWaitInOrder = [...COMMON_PHASE_ORDER, PHASES.wait];
         return phasesIncludingWaitInOrder.indexOf(b) - phasesIncludingWaitInOrder.indexOf(a);
-    }
-
-    function startAI({ state }) {
-        state.aiStarted = true;
-        ai.start();
     }
 
     function flashFocusLatestAction({ state, dispatch }) {

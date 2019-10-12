@@ -18,20 +18,6 @@
             Retreat
         </button>
         <button
-            v-if="aiStarted"
-            class="escapeMenu-option"
-            @click="reloadPage"
-        >
-            Stop AI
-        </button>
-        <button
-            v-else
-            class="escapeMenu-startAi escapeMenu-fadedOption escapeMenu-option"
-            @click="hideAnd(startAI)"
-        >
-            Start AI (experimental)
-        </button>
-        <button
             v-if="validatedDebug"
             class="escapeMenu-fadedOption escapeMenu-option"
             @click="showDebugOptions"
@@ -55,9 +41,6 @@
                 'view',
                 'validatedDebug'
             ]),
-            ...matchHelpers.mapState([
-                'aiStarted'
-            ]),
             visible() {
                 return this.view === ViewNames.main;
             }
@@ -71,7 +54,6 @@
                 'saveMatch',
                 'restoreSavedMatch',
                 'retreat',
-                'startAI'
             ]),
             hideAnd(method) {
                 this.hide();

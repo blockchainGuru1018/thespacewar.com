@@ -14,7 +14,6 @@ const STORES = [
     require('./ghost/GhostStore.js'),
     require('./StartGameStore.js')
 ];
-const AI = require('./AI.js');
 const LOGGING_ENABLED = false;
 
 module.exports = function (deps) {
@@ -29,7 +28,6 @@ module.exports = function (deps) {
     deps.rootDispatch = createRootDispatch(rootStore);
     deps.getFrom = createRootGetFrom(rootStore);
     deps.matchController = matchController;
-    deps.ai = AI({ rootStore, matchController });
 
     for (const Store of STORES) {
         const store = createStore(Store, deps);
