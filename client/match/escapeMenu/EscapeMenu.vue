@@ -7,10 +7,10 @@
             class="escapeMenu-overlay"
             @click.self="hide"
         />
-        <MainMenu class="escapeMenu" />
-        <DebugMenu class="debugMenu escapeMenu" />
-        <CheatMenu class="escapeMenu" />
-        <LogMenuShell class="escapeMenu" />
+        <component
+            :is="currentMenuView"
+            class="escapeMenu"
+        />
     </div>
 </template>
 <script>
@@ -28,7 +28,15 @@
             ...escapeMenuHelpers.mapState([
                 'view',
                 'visible'
-            ])
+            ]),
+            currentMenuView() {
+                return {
+                    main: MainMenu,
+                    debug: DebugMenu,
+                    cheat: CheatMenu,
+                    log: LogMenuShell,
+                }[this.view];
+            }
         },
         watch: {
             async visible() {

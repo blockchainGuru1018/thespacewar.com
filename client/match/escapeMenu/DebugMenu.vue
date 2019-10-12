@@ -1,5 +1,8 @@
 <template>
-    <div v-if="visible">
+    <div
+        v-if="visible"
+        class="debugMenu"
+    >
         <button
             class="escapeMenu-option"
             @click="showLog"
