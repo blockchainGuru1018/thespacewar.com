@@ -45,6 +45,8 @@
     </div>
 </template>
 <script>
+    const Vuex = require('vuex');
+    const escapeMenuHelpers = Vuex.createNamespacedHelpers('escapeMenu');
     const localGameDataFacade = require('../../utils/localGameDataFacade.js');
     const ajax = require('../../utils/ajax.js');
 
@@ -56,8 +58,11 @@
             }
         },
         methods: {
+            ...escapeMenuHelpers.mapActions([
+                'selectView'
+            ]),
             showLog() {
-                this.$emit('showLog');
+                this.selectView('log');
             },
             showCheatOptions() {
                 this.$emit('showCheatOptions');

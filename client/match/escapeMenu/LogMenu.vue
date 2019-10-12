@@ -1,5 +1,6 @@
 <template>
     <div
+        v-if="visible"
         class="logMenu"
     >
         <div class="escapeMenu-logOption escapeMenu-option">
@@ -16,6 +17,8 @@
     </div>
 </template>
 <script>
+    const Vuex = require('vuex');
+    const escapeMenuHelpers = Vuex.createNamespacedHelpers('escapeMenu');
     const localGameDataFacade = require('../../utils/localGameDataFacade.js');
     const ajax = require('../../utils/ajax.js');
 
@@ -25,14 +28,30 @@
                 log: ''
             };
         },
-        async mounted() {
-            this.log = 'LOADING LOG';
-            const { text } = await ajax.jsonPost('/master-log', { password: localGameDataFacade.DebugPassword.get() });
-            this.log = text;
+        watch: {
+            visible: {
+                immediate: true,
+                async handler() {
+                    this.log = 'LOADING LOG';
+                    const { text } = await ajax.jsonPost('/master-log', { password: localGameDataFacade.DebugPassword.get() });
+                    this.log = text;
+                }
+            }
+        },
+        computed: {
+            visible() {
+                return this.view === 'log';
+            },
+            ...escapeMenuHelpers.mapState([
+                'view'
+            ]),
         },
         methods: {
+            ...escapeMenuHelpers.mapActions([
+                'selectView'
+            ]),
             showDebugOptions() {
-                this.$emit('showDebugOptions');
+                this.selectView('debug');
             }
         }
     };

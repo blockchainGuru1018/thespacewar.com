@@ -27,7 +27,6 @@
             @showDebugOptions="showDebugOptions"
         />
         <LogMenu
-            v-else-if="view === 'log'"
             class="escapeMenu"
             @showDebugOptions="showDebugOptions"
         />
