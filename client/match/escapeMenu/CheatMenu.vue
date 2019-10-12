@@ -63,6 +63,7 @@
 
 <script>
     import Vuex from "vuex";
+    import {ViewNames} from "./views.js";
 
     const escapeMenuHelpers = Vuex.createNamespacedHelpers('escapeMenu');
     const matchHelpers = Vuex.createNamespacedHelpers('match');
@@ -83,7 +84,7 @@
                 'cardDataAssembler'
             ]),
             visible() {
-                return this.view === 'cheat';
+                return this.view === ViewNames.cheat;
             },
             cheatTypeOptions() {
                 return [
@@ -106,7 +107,7 @@
                 'selectView',
             ]),
             showDebugOptions() {
-                this.selectView('debug');
+                this.selectView(ViewNames.debug);
             },
             sendCheat() {
                 window.cheat(this.cheatType, {
