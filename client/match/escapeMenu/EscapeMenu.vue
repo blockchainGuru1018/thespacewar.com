@@ -26,23 +26,11 @@
             class="escapeMenu"
             @showDebugOptions="showDebugOptions"
         />
-
-        <div
+        <LogMenu
             v-else-if="view === 'log'"
-            class="logMenu escapeMenu"
-        >
-            <div class="escapeMenu-logOption escapeMenu-option">
-                <pre>
-                    {{ log }}
-                </pre>
-            </div>
-            <button
-                class="escapeMenu-option"
-                @click="view = 'debug'"
-            >
-                Back
-            </button>
-        </div>
+            class="escapeMenu"
+            @showDebugOptions="showDebugOptions"
+        />
     </div>
 </template>
 <script>
@@ -52,6 +40,7 @@
     const MainMenu = resolveModule(require('./MainMenu.vue'));
     const DebugMenu = resolveModule(require('./DebugMenu.vue'));
     const CheatMenu = resolveModule(require('./CheatMenu.vue'));
+    const LogMenu = resolveModule(require('./LogMenu.vue'));
     const MasterGainSlider = resolveModule(require('../../audio/MasterGainSlider.vue'));
     const localGameDataFacade = require('../../utils/localGameDataFacade.js');
     const ajax = require('../../utils/ajax.js');
@@ -60,7 +49,6 @@
         data() {
             return {
                 view: 'main', //main, debug, cheat, log
-                log: '',
                 validatedDebug: false
             };
         },
@@ -93,9 +81,6 @@
             },
             async showLog() {
                 this.view = 'log';
-                this.log = 'LOADING LOG';
-                const { text } = await ajax.jsonPost('/master-log', { password: localGameDataFacade.DebugPassword.get() });
-                this.log = text;
             },
             async validateDebug() {
                 const { valid } = await ajax.jsonPost('/test-debug', { password: localGameDataFacade.DebugPassword.get() });
@@ -108,7 +93,8 @@
             MasterGainSlider,
             MainMenu,
             DebugMenu,
-            CheatMenu
+            CheatMenu,
+            LogMenu
         }
     };
 </script>
