@@ -3,15 +3,14 @@ import DebugMenu from './DebugMenu.vue';
 import CheatMenu from './CheatMenu.vue';
 import LogMenuShell from './logMenu/LogMenuShell.vue';
 
-const ViewNames = {
+export const ViewNames = {
     main: 'main',
     debug: 'debug',
     cheat: 'cheat',
     log: 'log',
 };
 
-export default {
-    ViewNames,
+export const views = {
     [ViewNames.main]: MainMenu,
     [ViewNames.debug]: DebugMenu,
     [ViewNames.cheat]: CheatMenu,

@@ -14,7 +14,7 @@
     </div>
 </template>
 <script>
-    import views from './views.js';
+    import {views, ViewNames} from './views.js';
 
     const Vuex = require('vuex');
     const escapeMenuHelpers = Vuex.createNamespacedHelpers('escapeMenu');
@@ -31,7 +31,7 @@
         },
         watch: {
             async visible() {
-                this.selectView('main');
+                this.selectView(ViewNames.main);
 
                 if (this.visible) {
                     await this.validateDebug();
