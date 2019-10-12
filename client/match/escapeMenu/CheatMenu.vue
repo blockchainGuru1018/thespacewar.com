@@ -1,5 +1,8 @@
 <template>
-    <div class="cheatMenu">
+    <div
+        v-if="visible"
+        class="cheatMenu"
+    >
         <div class="escapeMenu-option">
             <label>
                 <span>
@@ -59,7 +62,9 @@
 </template>
 
 <script>
-    const Vuex = require('vuex');
+    import Vuex from "vuex";
+
+    const escapeMenuHelpers = Vuex.createNamespacedHelpers('escapeMenu');
     const matchHelpers = Vuex.createNamespacedHelpers('match');
 
     module.exports = {
@@ -71,9 +76,15 @@
             };
         },
         computed: {
+            ...escapeMenuHelpers.mapState([
+                'view'
+            ]),
             ...matchHelpers.mapGetters([
                 'cardDataAssembler'
             ]),
+            visible() {
+                return this.view === 'cheat';
+            },
             cheatTypeOptions() {
                 return [
                     { value: 'addCard', text: 'Add card' },

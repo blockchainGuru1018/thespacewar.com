@@ -12,7 +12,6 @@
             class="debugMenu escapeMenu"
         />
         <CheatMenu
-            v-if="view === 'cheat'"
             class="escapeMenu"
             @showDebugOptions="showDebugOptions"
         />
