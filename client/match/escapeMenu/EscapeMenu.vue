@@ -9,15 +9,10 @@
         />
         <MainMenu class="escapeMenu" />
         <DebugMenu
-            v-if="view === 'debug'"
             class="debugMenu escapeMenu"
-            :view="view"
-            @showLog="showLog"
-            @showCheatOptions="showCheatOptions"
-            @showMainMenu="showMainMenu"
         />
         <CheatMenu
-            v-else-if="view === 'cheat'"
+            v-if="view === 'cheat'"
             class="escapeMenu"
             @showDebugOptions="showDebugOptions"
         />

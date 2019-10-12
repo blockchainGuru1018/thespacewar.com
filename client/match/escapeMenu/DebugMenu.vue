@@ -72,10 +72,10 @@
                 this.selectView('log');
             },
             showCheatOptions() {
-                this.$emit('showCheatOptions');
+                this.selectView('cheat');
             },
             showMainMenu() {
-                this.$emit('showMainMenu');
+                this.selectView('main');
             },
             unmuteAudio() {
                 window.unmute();
