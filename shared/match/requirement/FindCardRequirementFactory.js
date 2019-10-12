@@ -13,11 +13,22 @@ function FindCardRequirementFactory({
     function create() {
         return {
             type: requirementSpec.type,
-            cardGroups: requirementSpec.sources.map(cardGroupFromSource),
-            count: requirementSpec.count,
+            cardGroups: cardGroupsFromSpec(requirementSpec),
             cardCommonId: card.commonId,
-            target: requirementSpec.target
+            count: requirementSpec.count,
+            target: requirementSpec.target,
+            common: requirementSpec.common,
+            waiting: requirementSpec.count === 0 && requirementSpec.common
         };
+    }
+
+    function cardGroupsFromSpec(spec) {
+        if (spec.count > 0) {
+            return requirementSpec.sources.map(cardGroupFromSource);
+        }
+        else {
+            return [];
+        }
     }
 
     function cardGroupFromSource(source) {

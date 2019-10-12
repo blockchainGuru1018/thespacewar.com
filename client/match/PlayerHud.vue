@@ -296,7 +296,7 @@
             />
         </portal>
         <portal
-            v-if="firstRequirementIsFindCard"
+            v-if="firstRequirementIsFindCard && !waitingForOtherPlayerToFinishRequirements"
             to="match"
         >
             <FindCard />

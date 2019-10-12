@@ -20,6 +20,7 @@ module.exports = {
                     forOpponent: [{
                         type: 'findCard',
                         count: 1,
+                        common: true,
                         sources: [
                             'opponentHand',
                             "opponentDrawStationCards",
@@ -31,7 +32,12 @@ module.exports = {
                         },
                         target: 'opponentDiscardPile'
                     }],
-                    forPlayer: []
+                    forPlayer: [{
+                        type: 'findCard',
+                        count: 0,
+                        waiting: true,
+                        common: true,
+                    }]
                 }]
             }
         ],
