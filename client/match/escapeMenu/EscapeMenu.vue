@@ -18,7 +18,6 @@
 
     const Vuex = require('vuex');
     const escapeMenuHelpers = Vuex.createNamespacedHelpers('escapeMenu');
-    const MasterGainSlider = require('../../audio/MasterGainSlider.vue');
 
     module.exports = {
         computed: {
@@ -57,9 +56,6 @@
             async showLog() {
                 this.selectView('log');
             }
-        },
-        components: {
-            MasterGainSlider,
         }
     };
 </script>
