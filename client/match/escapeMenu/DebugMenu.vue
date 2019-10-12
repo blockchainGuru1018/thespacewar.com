@@ -48,6 +48,8 @@
     </div>
 </template>
 <script>
+    import {ViewNames} from "./views.js";
+
     const Vuex = require('vuex');
     const escapeMenuHelpers = Vuex.createNamespacedHelpers('escapeMenu');
     const localGameDataFacade = require('../../utils/localGameDataFacade.js');
@@ -64,7 +66,7 @@
                 'view'
             ]),
             visible() {
-                return this.view === 'debug';
+                return this.view === ViewNames.debug;
             }
         },
         methods: {
@@ -72,13 +74,13 @@
                 'selectView'
             ]),
             showLog() {
-                this.selectView('log');
+                this.selectView(ViewNames.log);
             },
             showCheatOptions() {
-                this.selectView('cheat');
+                this.selectView(ViewNames.cheat);
             },
             showMainMenu() {
-                this.selectView('main');
+                this.selectView(ViewNames.main);
             },
             unmuteAudio() {
                 window.unmute();
