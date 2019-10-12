@@ -26,10 +26,7 @@
             class="escapeMenu"
             @showDebugOptions="showDebugOptions"
         />
-        <LogMenu
-            class="escapeMenu"
-            @showDebugOptions="showDebugOptions"
-        />
+        <LogMenuShell class="escapeMenu" />
     </div>
 </template>
 <script>
@@ -39,8 +36,8 @@
     const MainMenu = resolveModule(require('./MainMenu.vue'));
     const DebugMenu = resolveModule(require('./DebugMenu.vue'));
     const CheatMenu = resolveModule(require('./CheatMenu.vue'));
-    const LogMenu = resolveModule(require('./LogMenu.vue'));
-    const MasterGainSlider = resolveModule(require('../../audio/MasterGainSlider.vue'));
+    const LogMenuShell = resolveModule(require('./logMenu/LogMenuShell.vue'));
+    const MasterGainSlider = require('../../audio/MasterGainSlider.vue');
     const localGameDataFacade = require('../../utils/localGameDataFacade.js');
     const ajax = require('../../utils/ajax.js');
 
@@ -93,7 +90,7 @@
             MainMenu,
             DebugMenu,
             CheatMenu,
-            LogMenu
+            LogMenuShell
         }
     };
 </script>
