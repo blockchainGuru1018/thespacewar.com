@@ -8,13 +8,8 @@
             @click.self="hide"
         />
         <MainMenu class="escapeMenu" />
-        <DebugMenu
-            class="debugMenu escapeMenu"
-        />
-        <CheatMenu
-            class="escapeMenu"
-            @showDebugOptions="showDebugOptions"
-        />
+        <DebugMenu class="debugMenu escapeMenu" />
+        <CheatMenu class="escapeMenu" />
         <LogMenuShell class="escapeMenu" />
     </div>
 </template>

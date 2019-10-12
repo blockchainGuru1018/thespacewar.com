@@ -102,8 +102,11 @@
             }
         },
         methods: {
+            ...escapeMenuHelpers.mapActions([
+                'selectView',
+            ]),
             showDebugOptions() {
-                this.$emit('showDebugOptions');
+                this.selectView('debug');
             },
             sendCheat() {
                 window.cheat(this.cheatType, {
