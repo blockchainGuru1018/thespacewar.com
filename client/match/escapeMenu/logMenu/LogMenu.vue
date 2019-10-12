@@ -17,6 +17,7 @@
     import Vuex from 'vuex';
     import localGameDataFacade from "../../../utils/localGameDataFacade.js";
     import ajax from "../../../utils/ajax.js";
+    import {ViewNames} from "../views.js";
 
     const escapeMenuHelpers = Vuex.createNamespacedHelpers('escapeMenu');
 
@@ -36,7 +37,7 @@
                 'selectView'
             ]),
             showDebugOptions() {
-                this.selectView('debug');
+                this.selectView(ViewNames.debug);
             }
         }
     };
