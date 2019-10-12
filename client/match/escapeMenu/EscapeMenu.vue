@@ -43,19 +43,7 @@
                 'hide',
                 'validateDebug',
                 'selectView',
-            ]),
-            showDebugOptions() {
-                this.selectView('debug');
-            },
-            showCheatOptions() {
-                this.selectView('cheat');
-            },
-            showMainMenu() {
-                this.selectView('main');
-            },
-            async showLog() {
-                this.selectView('log');
-            }
+            ])
         }
     };
 </script>
