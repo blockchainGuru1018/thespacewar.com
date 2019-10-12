@@ -7,11 +7,7 @@
             class="escapeMenu-overlay"
             @click.self="hide"
         />
-        <MainMenu
-            class="escapeMenu"
-            :validatedDebug="validatedDebug"
-            @showDebugOptions="showDebugOptions"
-        />
+        <MainMenu class="escapeMenu" />
         <DebugMenu
             v-if="view === 'debug'"
             class="debugMenu escapeMenu"
@@ -37,51 +33,40 @@
     const CheatMenu = resolveModule(require('./CheatMenu.vue'));
     const LogMenuShell = resolveModule(require('./logMenu/LogMenuShell.vue'));
     const MasterGainSlider = require('../../audio/MasterGainSlider.vue');
-    const localGameDataFacade = require('../../utils/localGameDataFacade.js');
-    const ajax = require('../../utils/ajax.js');
 
     module.exports = {
-        data() {
-            return {
-                view: 'main', //main, debug, cheat, log
-                validatedDebug: false
-            };
-        },
         computed: {
             ...escapeMenuHelpers.mapState([
+                'view',
                 'visible'
             ])
         },
         watch: {
-            visible() {
-                this.view = 'main';
+            async visible() {
+                this.selectView('main');
 
                 if (this.visible) {
-                    this.validateDebug();
+                    await this.validateDebug();
                 }
             }
         },
         methods: {
             ...escapeMenuHelpers.mapActions([
-                'hide'
+                'hide',
+                'validateDebug',
+                'selectView',
             ]),
             showDebugOptions() {
-                this.view = 'debug';
+                this.selectView('debug');
             },
             showCheatOptions() {
-                this.view = 'cheat';
+                this.selectView('cheat');
             },
             showMainMenu() {
-                this.view = 'main';
+                this.selectView('main');
             },
             async showLog() {
-                this.view = 'log';
-            },
-            async validateDebug() {
-                const { valid } = await ajax.jsonPost('/test-debug', { password: localGameDataFacade.DebugPassword.get() });
-                if (valid) {
-                    this.validatedDebug = true;
-                }
+                this.selectView('log');
             }
         },
         components: {

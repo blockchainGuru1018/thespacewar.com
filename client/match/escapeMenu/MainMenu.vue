@@ -49,11 +49,11 @@
 
     module.exports = {
         name: 'MainMenu',
-        props: ['validatedDebug'],
         computed: {
             ...escapeMenuHelpers.mapState([
                 'view',
-                'visible'
+                'visible',
+                'validatedDebug'
             ]),
             ...matchHelpers.mapState([
                 'aiStarted'

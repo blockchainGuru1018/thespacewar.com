@@ -1,18 +1,30 @@
+import localGameDataFacade from '../../utils/localGameDataFacade.js';
+import ajax from '../../utils/ajax.js';
+
 module.exports = function () {
     return {
         namespaced: true,
         name: 'escapeMenu',
         state: {
             view: 'main',
-            visible: false
+            visible: false,
+            validatedDebug: false,
         },
         actions: {
+            validateDebug,
             toggleVisible,
             selectView,
             show,
             hide,
         }
     };
+
+    async function validateDebug({ state }) {
+        const { valid } = await ajax.jsonPost('/test-debug', { password: localGameDataFacade.DebugPassword.get() });
+        if (valid) {
+            state.validatedDebug = true;
+        }
+    }
 
     function toggleVisible({ state }) {
         state.visible = !state.visible;
