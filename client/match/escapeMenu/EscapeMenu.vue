@@ -14,13 +14,10 @@
     </div>
 </template>
 <script>
+    import views from './views.js';
+
     const Vuex = require('vuex');
     const escapeMenuHelpers = Vuex.createNamespacedHelpers('escapeMenu');
-    const resolveModule = require('../../utils/resolveModuleWithPossibleDefault.js');
-    const MainMenu = resolveModule(require('./MainMenu.vue'));
-    const DebugMenu = resolveModule(require('./DebugMenu.vue'));
-    const CheatMenu = resolveModule(require('./CheatMenu.vue'));
-    const LogMenuShell = resolveModule(require('./logMenu/LogMenuShell.vue'));
     const MasterGainSlider = require('../../audio/MasterGainSlider.vue');
 
     module.exports = {
@@ -30,12 +27,7 @@
                 'visible'
             ]),
             currentMenuView() {
-                return {
-                    main: MainMenu,
-                    debug: DebugMenu,
-                    cheat: CheatMenu,
-                    log: LogMenuShell,
-                }[this.view];
+                return views[this.view];
             }
         },
         watch: {
@@ -68,10 +60,6 @@
         },
         components: {
             MasterGainSlider,
-            MainMenu,
-            DebugMenu,
-            CheatMenu,
-            LogMenuShell
         }
     };
 </script>
