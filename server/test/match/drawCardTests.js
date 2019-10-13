@@ -258,7 +258,7 @@ module.exports = {
             assert.calledOnce(this.firstPlayerConnection.stateChanged);
             assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                 cardsOnHand: [createCard({ id: 'C1A' })],
-                events: [sinon.match({ type: 'drawCard', byEvent: true })],
+                events: sinon.match.some(sinon.match({ type: 'drawCard', byEvent: true })),
                 requirements: []
             }));
         },

@@ -2,6 +2,7 @@ const AttackEvent = require('../event/AttackEvent.js');
 const DrawCardEvent = require('../event/DrawCardEvent.js');
 const DiscardCardEvent = require('../event/DiscardCardEvent.js');
 const MoveCardEvent = require('../event/MoveCardEvent.js');
+const AddCardToHandEvent = require('../event/AddCardToHandEvent.js');
 const PutDownCardEvent = require('../PutDownCardEvent.js');
 const RemoveStationCardEvent = require('../event/RemoveStationCardEvent.js');
 const MatchMode = require('./MatchMode.js');
@@ -446,6 +447,7 @@ class PlayerStateService {
         this.update(playerState => {
             playerState.cardsOnHand.push(cardData);
         });
+        this.storeEvent(AddCardToHandEvent({ cardId: cardData.id }));
     }
 
     putDownCardInZone(cardData, { grantedForFreeByEvent = false } = {}) {
@@ -600,9 +602,9 @@ class PlayerStateService {
         }
 
         const cards = this._drawCount(1);
-        this.update(state => {
-            state.cardsOnHand.push(...cards);
-        });
+        for (const card of cards) {
+            this.addCardToHand(card)
+        }
 
         const turn = this._matchService.getTurn();
         this.storeEvent(DrawCardEvent({ turn, byEvent }));

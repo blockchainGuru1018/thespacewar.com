@@ -25,6 +25,30 @@ class QueryEvents {
         return currentTurn - moveCardEvent.turn;
     }
 
+    playerCardWasInHandAfterOpponentCardWasPlayed(playerCard, opponentCard) {
+        const playerCardInHandAtTime = this._timeWhenCardWasLastPlacedInHand(playerCard.id, this._eventRepository.getAll());
+        const opponentCardDrawnAtTime = this._timeWhenCardWasLastPlayed(opponentCard.id, this._opponentEventRepository.getAll());
+        return playerCardInHandAtTime > opponentCardDrawnAtTime;
+    }
+
+    _timeWhenCardWasLastPlacedInHand(cardId, events) {
+        const drawEvent = this._findAddCardToHandEvent(cardId, events);
+        return drawEvent ? drawEvent.created : 0;
+    }
+
+    _findAddCardToHandEvent(cardId, events) {
+        return events.slice().reverse().find(e => e.type === 'addCardToHand' && e.cardId === cardId);
+    }
+
+    _timeWhenCardWasLastPlayed(cardId, events) {
+        const drawEvent = this._findLastPlayedCardEvent(cardId, events);
+        return drawEvent ? drawEvent.created : 0;
+    }
+
+    _findLastPlayedCardEvent(cardId, events) {
+        return events.slice().reverse().find(e => e.type === 'putDownCard' && e.location === 'zone' && e.cardId === cardId);
+    }
+
     putDownCardInHomeZoneCountOnTurn(turn) {
         const events = this._eventRepository.getAll();
         const putDownCardEvents = events.filter(event => {

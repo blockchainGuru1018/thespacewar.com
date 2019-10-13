@@ -5,6 +5,7 @@ const queryEventsFactory = {
             hasMovedOnPreviousTurn: () => false,
             getRepairsOnTurn: () => [],
             getAttacksOnTurn: () => [],
+            playerCardWasInHandAfterOpponentCardWasPlayed: () => false,
             ...stubs
         };
     }

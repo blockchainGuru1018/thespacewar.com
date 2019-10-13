@@ -710,20 +710,6 @@ module.exports = testCase('Cards', {
             assert(this.card.canBeRepaired());
         }
     },
-    'can counter cards costing 2 or less': {
-        'can counter card costing 2'() {
-            const card = createCard(CanCounterCardsWithCostOrLess(2, BaseCard), {});
-            assert(card.canCounterCard({ cost: 2 }));
-        },
-        'can NOT counter card costing 3'() {
-            const card = createCard(CanCounterCardsWithCostOrLess(2, BaseCard), {});
-            refute(card.canCounterCard({ cost: 3 }));
-        },
-        'can counter card costing 0'() {
-            const card = createCard(CanCounterCardsWithCostOrLess(2, BaseCard), {});
-            assert(card.canCounterCard({ cost: 0 }));
-        }
-    },
     'Fast missile': {
         'when was played in home zone this turn can attack station cards'() {
             const card = createCard(FastMissile, {
@@ -918,8 +904,6 @@ module.exports = testCase('Cards', {
             assert(card.canBePlayed());
         }
     }
-    //Check if can put down card in home zone at all (should perhaps not check this if is event card..?)
-    //Check old code putDownThisEventCard in canThePlayer so that all requirements are captured
 });
 
 function catchError(callback) {
