@@ -362,8 +362,7 @@ module.exports = function ({
             playerPhase: api.playerPhase(playerId),
             playerGameTimer: api.gameTimer(playerId),
             opponentPhase: api.playerPhase(api.opponentId(playerId)),
-            opponentActionLog: api.actionLog(api.opponentId(playerId)),
-            opponentGameTimer: api.gameTimer(api.opponentId(playerId))
+            opponentActionLog: api.actionLog(api.opponentId(playerId))
         });
     }
 

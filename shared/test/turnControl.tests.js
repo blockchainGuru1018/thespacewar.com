@@ -5,6 +5,7 @@ const {
 } = require('bocha');
 const TestHelper = require('./fakeFactories/TestHelper.js');
 const createState = require('./fakeFactories/createState.js');
+const DestinyDecided = require("../card/DestinyDecided.js");
 
 module.exports = testCase('Turn control', {
     'can toggle turn control': {
@@ -66,6 +67,26 @@ module.exports = testCase('Turn control', {
 
             refute(hasPermission);
         },
+        'when opponent has destiny decided in play can NOT toggle turn control'() {
+            const testHelper = TestHelper(createState({
+                currentPlayer: 'P2A',
+                turn: 1,
+                playerStateById: {
+                    'P1A': {
+                        phase: 'wait'
+                    },
+                    'P2A': {
+                        phase: 'action',
+                        cardsInZone: [{ commonId: DestinyDecided.CommonId }]
+                    }
+                }
+            }));
+            const turnControl = testHelper.turnControl('P1A');
+
+            const hasPermission = turnControl.canToggleControlOfTurn();
+
+            refute(hasPermission);
+        }
     },
     'opponent has control of turn:': {
         'when is "current player" on players turn'() {

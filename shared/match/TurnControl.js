@@ -10,7 +10,6 @@ module.exports = class TurnControl {
         opponentStateService,
         opponentPhase,
         opponentActionLog,
-        opponentGameTimer,
         lastStand
     }) {
         this._matchService = matchService;
@@ -23,7 +22,6 @@ module.exports = class TurnControl {
         this._opponentStateService = opponentStateService;
         this._opponentPhase = opponentPhase;
         this._opponentActionLog = opponentActionLog;
-        this._opponentGameTimer = opponentGameTimer;
     }
 
     toggleControlOfTurn() {
@@ -69,7 +67,8 @@ module.exports = class TurnControl {
         return !this._opponentPhase.isStart()
             && !this._opponentPhase.isFirstDraw()
             && this._playerPhase.isWait()
-            && this.opponentHasControlOfOwnTurn();
+            && this.opponentHasControlOfOwnTurn()
+            && !this._opponentHasCardThatPreventsPlayerPlayingEventCards();
     }
 
     canReleaseControlOfTurn() {
@@ -105,6 +104,11 @@ module.exports = class TurnControl {
     opponentHasControlOfPlayersTurn() {
         return this._matchService.getCurrentPlayer() !== this._playerId()
             && !this._playerPhase.isWait();
+    }
+
+    _opponentHasCardThatPreventsPlayerPlayingEventCards() {
+        const cards = this._opponentStateService.getMatchingBehaviourCards(card => card.preventsOpponentFromPlayingAnEventCard);
+        return cards.length > 0;
     }
 
     _playerId() {
