@@ -36,7 +36,7 @@ class PlayerRuleService {
         this.moreCardsCanBeDrawnForDrawPhase = moreCardsCanBeDrawnForDrawPhase;
     }
 
-    canPutDownCardsInHomeZone() { // TODO Since event cards are graphically put down in the home zone, this name could be confusing as it still covers event cards.
+    canPutDownCardsInHomeZone() { // TODO Could be confusing as event cards are put down in home zone but graphically they are put down in an "Activate" zone.
         if (!this._matchService.isGameOn()) return false;
         let playerRequirements = this._playerRequirementService;
         if (playerRequirements.hasAnyRequirement()) return false;
