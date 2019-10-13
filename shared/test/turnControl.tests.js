@@ -8,6 +8,27 @@ const createState = require('./fakeFactories/createState.js');
 
 module.exports = testCase('Turn control', {
     'can toggle turn control': {
+        'when player phase is "wait" and opponent is in action phase of first turn'() {
+            const testHelper = TestHelper(createState({
+                currentPlayer: 'P2A',
+                turn: 1,
+                playerStateById: {
+                    'P1A': {
+                        phase: 'wait'
+                    },
+                    'P2A': {
+                        phase: 'action'
+                    }
+                }
+            }));
+            const turnControl = testHelper.turnControl('P1A');
+
+            const hasPermission = turnControl.canToggleControlOfTurn();
+
+            assert(hasPermission);
+        }
+    },
+    'can NOT toggle control of turn:': {
         'when opponent phase is "start" and player does NOT have control of turn should NOT have permission'() {
             const testHelper = TestHelper(createState({
                 currentPlayer: 'P2A',
@@ -45,25 +66,6 @@ module.exports = testCase('Turn control', {
 
             refute(hasPermission);
         },
-        'when player phase is "wait" and opponent is in action phase of first turn'() {
-            const testHelper = TestHelper(createState({
-                currentPlayer: 'P2A',
-                turn: 1,
-                playerStateById: {
-                    'P1A': {
-                        phase: 'wait'
-                    },
-                    'P2A': {
-                        phase: 'action'
-                    }
-                }
-            }));
-            const turnControl = testHelper.turnControl('P1A');
-
-            const hasPermission = turnControl.canToggleControlOfTurn();
-
-            assert(hasPermission);
-        }
     },
     'opponent has control of turn:': {
         'when is "current player" on players turn'() {
