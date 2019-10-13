@@ -153,7 +153,7 @@ module.exports = function ({
     function opponentCounteredAttackOnCard({ defenderCardId, defenderCardCommonId }) {
         log({
             action: 'counteredAttackOnCard',
-            text: `${opponentName()} countered attack on ${cardInfoText(defenderCardCommonId)}`,
+            text: `${opponentName()} stopped attack on ${cardInfoText(defenderCardCommonId)}`,
             defenderCardId
         });
     }
@@ -162,7 +162,7 @@ module.exports = function ({
         const count = targetStationCardIds.length;
         log({
             action: 'counteredAttackOnCard',
-            text: `${opponentName()} countered attack on *${count} station ${count === 1 ? 'card' : 'cards'}#`,
+            text: `${opponentName()} stopped attack on *${count} station ${count === 1 ? 'card' : 'cards'}#`,
             targetStationCardIds
         });
     }
