@@ -14,6 +14,8 @@ const PlayerServiceProvider = require('../match/PlayerServiceProvider.js');
 const TestHelper = require('./fakeFactories/TestHelper.js');
 const PutDownCardEvent = require('../PutDownCardEvent.js');
 const GameConfig = require('../match/GameConfig.js');
+const DestinyDecided = require("../card/DestinyDecided.js");
+const fakePlayerServiceFactory = require("./fakeFactories/fakePlayerServiceFactory.js");
 
 module.exports = bocha.testCase('PlayerRuleService', {
     'draw cards:': {
@@ -122,6 +124,45 @@ module.exports = bocha.testCase('PlayerRuleService', {
 
             assert.equals(result, 6);
         }
+    },
+    'can put down event cards': {
+        'when nothing to stop it'() {
+            const testHelper = TestHelper(createState({
+                currentPlayer: 'P1A',
+                playerStateById: {
+                    'P1A': {
+                        phase: 'draw',
+                        cardsInDeck: []
+                    },
+                    'P2A': {
+                        cardsInDeck: [{}]
+                    }
+                }
+            }));
+
+            const playerRuleService = testHelper.playerRuleService('P1A');
+
+            assert.equals(playerRuleService.canPutDownEventCards(), true);
+        }
+    },
+    'can NOT put down event cards': {
+        'when opponent has destiny decided in play'() {
+            const testHelper = TestHelper(createState({
+                currentPlayer: 'P1A',
+                playerStateById: {
+                    'P1A': {
+                        phase: 'draw',
+                    },
+                    'P2A': {
+                        cardsInZone: [{ commonId: DestinyDecided.CommonId }]
+                    }
+                }
+            }));
+
+            const playerRuleService = testHelper.playerRuleService('P1A');
+
+            assert.equals(playerRuleService.canPutDownEventCards(), false);
+        }
     }
 });
 
@@ -136,7 +177,7 @@ function createServiceForPlayer(playerId, state) {
     const matchService = new MatchService();
     matchService.setState(state);
     const playerServiceProvider = PlayerServiceProvider();
-    const cardFactory = new CardFactory({ matchService, playerServiceProvider });
+    const cardFactory = new CardFactory({ matchService, playerServiceProvider, playerServiceFactory: fakePlayerServiceFactory.withStubs() });
     const playerStateService = new PlayerStateService({ playerId, matchService, cardFactory });
     playerServiceProvider.registerService(PlayerServiceProvider.TYPE.state, playerId, playerServiceProvider);
     const canThePlayer = { useThisDurationCard() {} };

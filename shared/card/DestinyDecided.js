@@ -14,6 +14,10 @@ class DestinyDecided extends BaseCard {
         return true;
     }
 
+    get preventsOpponentFromPlayingAnEventCard() {
+        return true;
+    }
+
     get preventsPlayerFromPlayingAnyCards() {
         return true;
     }

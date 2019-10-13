@@ -5,7 +5,6 @@ module.exports = class RepairShip extends BaseCard {
     constructor({ repairCapability, ...deps }) {
         super(deps);
 
-        this._matchService = deps.matchService;
         this._repairCapability = repairCapability;
     }
 

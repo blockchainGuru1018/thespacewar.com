@@ -288,7 +288,7 @@ module.exports = function ({
         return new CardFactory({
             matchService: api.matchService(),
             playerServiceProvider,
-            playerServiceFactory: api,
+            playerServiceFactory: api
         });
     }
 

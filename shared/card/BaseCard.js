@@ -11,6 +11,8 @@ class BaseCard {
         matchService,
         playerStateService,
         canThePlayer,
+        playerRuleService,
+        turnControl,
         cardEffect,
         alternativeConditions = {}
     }) {
@@ -19,9 +21,11 @@ class BaseCard {
         this._card = { ...card };
         this._matchInfoRepository = matchInfoRepository;
         this._queryEvents = queryEvents;
-        this._matchService = matchService; // TODO remove similar assignments in subclasses
+        this._matchService = matchService;
         this._playerStateService = playerStateService;
         this._canThePlayer = canThePlayer;
+        this._playerRuleService = playerRuleService;
+        this._turnControl = turnControl;
         this._cardEffect = cardEffect;
         this._alternativeConditions = alternativeConditions;
     }
@@ -31,7 +35,11 @@ class BaseCard {
     }
 
     get commonId() {
-        return this._card.commonId;
+        return this._card.commonId
+    }
+
+    get CommonId() {
+        return this.constructor.CommonId;
     }
 
     get name() {
@@ -269,6 +277,40 @@ class BaseCard {
     }
 
     canBePutDownAnyTime() {
+        return false;
+    }
+
+    canBePlayed() {
+        return this._canGenerallyPlayCardsOrCanAlwaysPlayCard()
+            && this._ifHasControlOfOpponentTurnCanPlayCard()
+            && this._isEventCardAndCanPlayEventCards()
+            && this._canThePlayer.affordCard(this)
+            && !this._wouldOverstepMaxInPlayLimit();
+    }
+
+    _canGenerallyPlayCardsOrCanAlwaysPlayCard() {
+        return this._playerRuleService.canPutDownCardsInHomeZone() || this.canBePutDownAnyTime();
+    }
+
+    _ifHasControlOfOpponentTurnCanPlayCard() {
+        if (this._turnControl.playerHasControlOfOpponentsTurn()) {
+            return this.cost === 0;
+        }
+        return true;
+    }
+
+    _isEventCardAndCanPlayEventCards() {
+        if (this.type === 'event') {
+            return this._playerRuleService.canPutDownEventCards();
+        }
+        return true;
+    }
+
+    _wouldOverstepMaxInPlayLimit() {
+        if (this.canOnlyHaveOneInHomeZone()) {
+            return this._playerStateService.hasCardOfTypeInZone(this.CommonId);
+        }
+
         return false;
     }
 

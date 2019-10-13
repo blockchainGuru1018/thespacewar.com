@@ -886,11 +886,18 @@ class PlayerStateService {
 
     createBehaviourCardById(cardId) {
         const cardData = this.findCardFromAnySource(cardId);
-        return this._cardFactory.createCardForPlayer(cardData, this._playerId);
+        return this._getCardFactory().createCardForPlayer(cardData, this._playerId);
     }
 
     createBehaviourCard(cardData) {
-        return this._cardFactory.createCardForPlayer(cardData, this._playerId);
+        return this._getCardFactory().createCardForPlayer(cardData, this._playerId);
+    }
+
+    _getCardFactory() {
+        if (typeof this._cardFactory === 'function') {
+            return this._cardFactory();
+        }
+        return this._cardFactory;
     }
 }
 

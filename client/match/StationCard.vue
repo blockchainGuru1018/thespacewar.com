@@ -90,7 +90,6 @@
                 'attackerCanAttackStationCards',
                 'actionPoints2',
                 'createCard',
-                'canPutDownCard',
                 'moveStationCard'
             ]),
             ...mapPermissionGetters([
@@ -134,7 +133,7 @@
                     && this.stationCard.flipped
                     && this.actionPoints2 >= this.stationCard.card.cost
                     && this.canPutDownStationCardInHomeZone
-                    && this.canPutDownCard(this.stationCard.card)
+                    && this.createCard(this.stationCard.card).canBePlayed();
             },
             canMoveCardToOtherStationRow() {
                 if (this.isOpponentStationCard) return false;

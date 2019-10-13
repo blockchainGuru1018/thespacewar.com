@@ -1,5 +1,6 @@
 module.exports = superclass => class extends superclass {
     canBePutDownAnyTime() {
-        return this.type === 'event';
+        return this._matchService.isGameOn()
+            && this.type === 'event';
     }
 };

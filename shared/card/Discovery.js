@@ -3,8 +3,6 @@ const BaseCard = require('./BaseCard.js');
 module.exports = class Discover extends BaseCard {
     constructor(deps) {
         super(deps);
-
-        this._matchService = deps.matchService;
     }
 
     static get CommonId() {

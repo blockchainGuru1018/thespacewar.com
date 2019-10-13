@@ -61,31 +61,6 @@ class CanThePlayer {
         return noPlayerHasNeutralizationInPlay;
     }
 
-    putDownThisCard(cardData) {
-        if (this._turnControl.playerHasControlOfOpponentsTurn() && cardData.cost > 0) return false;
-
-        if (cardData.type === 'event') {
-            return this.putDownThisEventCard();
-        }
-
-        return true;
-    }
-
-    putDownThisEventCard() { //Move to RuleService and rename to "putDownEventCards"
-        return !this._somePlayerHasCardThatPreventsEventCards();
-    }
-
-    _somePlayerHasCardThatPreventsEventCards() {
-        return this._playerStateService.hasMatchingCardInSomeZone(card => {
-                return card.preventsAnyPlayerFromPlayingAnEventCard
-                    && this.useThisCard(card);
-            })
-            || this._opponentStateService.hasMatchingCardInSomeZone(card => {
-                return card.preventsAnyPlayerFromPlayingAnEventCard
-                    && this.useThisCard(card);
-            });
-    }
-
     moveThisCard(card) {
         if (card.type === 'missile') {
             return !this._opponentStateService.hasMatchingCardInSomeZone(
@@ -141,6 +116,10 @@ class CanThePlayer {
 
         return this._queryEvents.wasOpponentCardAtLatestPutDownInHomeZone(cardId)
             || this._queryEvents.wasOpponentCardAtLatestPutDownAsExtraStationCard(cardId);
+    }
+
+    affordCard(card) {
+        return this._playerStateService.getActionPointsForPlayer() >= card.cost;
     }
 
     _isLastStand() {

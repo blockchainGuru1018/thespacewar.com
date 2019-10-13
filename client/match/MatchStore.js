@@ -147,7 +147,6 @@ module.exports = function (deps) {
             playerCommanders,
             opponentCommanders,
             moveStationCard,
-            canPutDownCard,
             lastStand,
             playerPerfectPlan,
             playerRuleService,
@@ -378,7 +377,8 @@ module.exports = function (deps) {
             matchService: getters.matchService,
             playerServiceProvider: getters.playerServiceProvider,
             playerServiceFactory: {
-                addRequirementFromSpec: () => ClientLimitNotice
+                addRequirementFromSpec: () => ClientLimitNotice,
+                turnControl: () => getters.turnControl
             }
         });
     }
@@ -424,19 +424,6 @@ module.exports = function (deps) {
             opponentActionLog: getters.opponentActionLog,
             playerCommanders: getters.playerCommanders
         });
-    }
-
-    function canPutDownCard(state, getters) {
-        return cardData => {
-
-            //TODO Incorporate this into canThePlayer.putDownThisCard
-            const canOnlyHaveOneInHomeZone = getters.createCard(cardData).canOnlyHaveOneInHomeZone();
-            if (canOnlyHaveOneInHomeZone) {
-                if (state.playerCardsInZone.some(c => c.commonId === cardData.commonId)) return false;
-            }
-
-            return getters.canThePlayer.putDownThisCard(cardData);
-        };
     }
 
     function lastStand(state, getters) {
@@ -600,7 +587,7 @@ module.exports = function (deps) {
             matchService: getters.matchService,
             actionPointsCalculator,
             queryEvents: getters.queryEvents,
-            cardFactory: getters.cardFactory,
+            cardFactory: () => getters.cardFactory,
             gameConfig: getters.gameConfig,
             deckIsEmpty: () => {
                 return state.playerCardsInDeckCount <= 0
@@ -616,7 +603,7 @@ module.exports = function (deps) {
             playerId: state.opponentUser.id,
             matchService: getters.matchService,
             queryEvents: getters.queryOpponentEvents,
-            cardFactory: getters.cardFactory,
+            cardFactory: () => getters.cardFactory,
             gameConfig: getters.gameConfig,
             deckIsEmpty: () => {
                 return state.opponentCardsInDeckCount <= 0

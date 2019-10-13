@@ -30,6 +30,8 @@ module.exports = class CardFactory {
         const opponentEventRepository = EventRepository({ playerId: opponentId, playerServiceProvider });
         const queryEvents = new QueryEvents({ eventRepository, opponentEventRepository, matchService });
         const canThePlayer = this._playerServiceProvider.getCanThePlayerServiceById(playerId);
+        const playerRuleService = this._playerServiceProvider.getRuleServiceById(playerId);
+        const turnControl = this._playerServiceFactory.turnControl(playerId);
 
         return new Constructor({
             card: cardData,
@@ -39,6 +41,8 @@ module.exports = class CardFactory {
             matchService: matchService,
             playerStateService,
             canThePlayer,
+            playerRuleService,
+            turnControl,
             cardEffect: CardEffect({
                 playerStateService,
                 canThePlayer

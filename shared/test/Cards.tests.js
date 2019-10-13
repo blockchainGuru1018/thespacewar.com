@@ -13,9 +13,11 @@ const NuclearMissile = require('../card/NuclearMissile.js');
 const EmpMissile = require('../card/EmpMissile.js');
 const EnergyShield = require('../card/EnergyShield.js');
 const Pursuiter = require('../card/Pursuiter.js');
+const CanBePutDownAnyTime = require('../card/mixins/CanBePutDownAnyTime.js');
 const CanCounterCardsWithCostOrLess = require('../card/mixins/CanCounterCardsWithCostOrLess.js');
 const canThePlayerFactory = require('./fakeFactories/canThePlayerFactory.js');
 const playerStateServiceFactory = require('./fakeFactories/playerStateServiceFactory.js');
+const playerRuleServiceFactory = require('./fakeFactories/playerRuleServiceFactory.js');
 const queryEventsFactory = require('./fakeFactories/queryEventsFactory.js');
 const {
     createCard
@@ -808,7 +810,116 @@ module.exports = testCase('Cards', {
 
             assert(card.canAttackCard(targetCard));
         }
+    },
+    'canBePlayed = true': {
+        'when is event card and can put down event cards'() {
+            const card = createCard(BaseCard, {
+                playerRuleService: playerRuleServiceFactory.withStubs({
+                    canPutDownEventCards: () => true
+                }),
+                card: { type: 'event' }
+            });
+
+            assert(card.canBePlayed());
+        },
+        'when is NOT event card and can NOT put down event cards'() {
+            const card = createCard(BaseCard, {
+                playerRuleService: playerRuleServiceFactory.withStubs({
+                    canPutDownEventCards: () => false
+                }),
+                card: { type: 'spaceShip' },
+            });
+
+            assert(card.canBePlayed());
+        }
+    },
+    'canBePlayed = false': {
+        'when is event card and can NOT put down event cards'() {
+            const card = createCard(BaseCard, {
+                playerRuleService: playerRuleServiceFactory.withStubs({
+                    canPutDownEventCards: () => false
+                }),
+                card: { type: 'event' }
+            });
+
+            refute(card.canBePlayed());
+        },
+        'when cannot afford card'() {
+            const card = createCard(BaseCard, {
+                card: {},
+                canThePlayer: {
+                    affordCard: () => false
+                }
+            });
+
+            refute(card.canBePlayed());
+        },
+        'when card is event card and can play event cards and cannot afford card'() {
+            const card = createCard(BaseCard, {
+                playerRuleService: playerRuleServiceFactory.withStubs({
+                    canPutDownEventCards: () => true
+                }),
+                card: { type: 'event' },
+                canThePlayer: {
+                    affordCard: () => false
+                }
+            });
+
+            refute(card.canBePlayed());
+        },
+    },
+    'when can and can not play card': {
+        'can only has one of type in play but has NONE in play'() {
+            const card = createCard(EnergyShield, {
+                playerStateService: playerStateServiceFactory.withStubs({
+                    hasCardOfTypeInZone: () => false
+                })
+            });
+            assert(card.canBePlayed());
+        },
+        'can only has one of type in play and has one already'() {
+            const card = createCard(EnergyShield, {
+                playerStateService: playerStateServiceFactory.withStubs({
+                    hasCardOfTypeInZone: commonId => commonId === EnergyShield.CommonId
+                })
+            });
+            refute(card.canBePlayed());
+        },
+        'when can NOT play cards in home zone'() {
+            const card = createCard(BaseCard, {
+                playerRuleService: playerRuleServiceFactory.withStubs({
+                    canPutDownCardsInHomeZone: () => false
+                })
+            });
+            refute(card.canBePlayed());
+        },
+        'when has control of opponents turn and card costs MORE than 0'() {
+            const card = createCard(BaseCard, {
+                card: { cost: 1 },
+                turnControl: { playerHasControlOfOpponentsTurn: () => true },
+            });
+            refute(card.canBePlayed());
+        },
+        'when has control of opponents turn and card costs 0'() {
+            const card = createCard(BaseCard, {
+                card: { cost: 0 },
+                turnControl: { playerHasControlOfOpponentsTurn: () => true },
+            });
+            assert(card.canBePlayed());
+        },
+        'when can be put down any time when is event card and game is on, but cannot generally play cards'() {
+            const card = createCard(CanBePutDownAnyTime(BaseCard), {
+                card: { type: 'event' },
+                matchService: { isGameOn: () => true },
+                playerRuleService: playerRuleServiceFactory.withStubs({
+                    canPutDownCardsInHomeZone: () => false
+                }),
+            });
+            assert(card.canBePlayed());
+        }
     }
+    //Check if can put down card in home zone at all (should perhaps not check this if is event card..?)
+    //Check old code putDownThisEventCard in canThePlayer so that all requirements are captured
 });
 
 function catchError(callback) {

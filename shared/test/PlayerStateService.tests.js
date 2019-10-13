@@ -155,7 +155,7 @@ function createServiceForPlayer(state, playerId) {
     const cardFactory = new CardFactory({
         matchService,
         playerServiceProvider,
-        playerServiceFactory: { addRequirementFromSpec: () => {} }
+        playerServiceFactory: { addRequirementFromSpec: () => {}, turnControl: () => ({}) }
     });
     const playerStateService = new PlayerStateService({
         playerId,

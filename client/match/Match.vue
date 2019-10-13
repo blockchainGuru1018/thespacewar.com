@@ -472,7 +472,6 @@
                 'gameOn',
                 'hasPutDownNonFreeCardThisTurn',
                 'actionPoints2',
-                'canPutDownCard',
                 'createCard',
                 'allPlayerStationCards',
                 'canThePlayer',
@@ -545,13 +544,7 @@
                     && !this.canPutDownHoldingCard;
             },
             canPutDownHoldingCard() {
-                if (!this.canAffordHoldingCard) return false;
-
-                return (this.gameOn && this.createCard(this.holdingCard).canBePutDownAnyTime())
-                    || (this.canPutDownCards && this.canPutDownCard(this.holdingCard));
-            },
-            canAffordHoldingCard() {
-                return this.canAffordCard(this.holdingCard);
+                return this.createCard(this.holdingCard).canBePlayed()
             },
             holdingEventCard() {
                 return this.holdingCard && this.holdingCard.type === 'event';

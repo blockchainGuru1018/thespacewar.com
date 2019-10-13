@@ -4,9 +4,6 @@ module.exports = class EnergyShield extends BaseCard {
 
     constructor(deps) {
         super(deps);
-
-        this._playerId = deps.playerId;
-        this._matchService = deps.matchService;
     }
 
     static get CommonId() {
@@ -20,4 +17,4 @@ module.exports = class EnergyShield extends BaseCard {
     canOnlyHaveOneInHomeZone() {
         return true;
     }
-}
+};

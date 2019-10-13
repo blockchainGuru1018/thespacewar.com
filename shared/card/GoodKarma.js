@@ -3,8 +3,6 @@ const BaseCard = require('./BaseCard.js');
 class GoodKarma extends BaseCard {
     constructor(deps) {
         super(deps);
-
-        this._matchService = deps.matchService;
     }
 
     static get CommonId() {

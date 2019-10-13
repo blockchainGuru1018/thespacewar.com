@@ -10,6 +10,7 @@ const PlayerServiceProvider = require('../match/PlayerServiceProvider.js');
 const PlayerRequirementService = require('../match/requirement/PlayerRequirementService.js');
 const FakeDeck = require("../../server/test/testUtils/FakeDeck.js");
 const TestHelper = require('./fakeFactories/TestHelper.js');
+const fakePlayerServiceFactory = require("./fakeFactories/fakePlayerServiceFactory.js");
 
 module.exports = bocha.testCase('PlayerRequirementService', {
     'when player has 0 cards on hand and adds a discard card requirement it should NOT be added': function () {
@@ -138,7 +139,7 @@ function createServiceForPlayer(state, playerId = 'P1A', opponentId = 'P2A') {
     const matchService = new MatchService();
     matchService.setState(state);
     const playerServiceProvider = PlayerServiceProvider();
-    const cardFactory = new CardFactory({ matchService, playerServiceProvider });
+    const cardFactory = new CardFactory({ matchService, playerServiceProvider, playerServiceFactory: fakePlayerServiceFactory.withStubs() });
     const playerStateService = new PlayerStateService({ playerId, matchService, cardFactory });
     const opponentStateService = new PlayerStateService({ playerId: opponentId, matchService, cardFactory });
     const playerRequirementService = new PlayerRequirementService({ playerStateService, opponentStateService });

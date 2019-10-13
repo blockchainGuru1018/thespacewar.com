@@ -36,7 +36,7 @@ class PlayerRuleService {
         this.moreCardsCanBeDrawnForDrawPhase = moreCardsCanBeDrawnForDrawPhase;
     }
 
-    canPutDownCardsInHomeZone() { // TODO Could be confusing as event cards are put down in home zone but graphically they are put down in an "Activate" zone.
+    canPutDownCardsInHomeZone() { // TODO Could be a confusing method name as event cards are put down in home zone but graphically they are put down in an "Activate" zone.
         if (!this._matchService.isGameOn()) return false;
         let playerRequirements = this._playerRequirementService;
         if (playerRequirements.hasAnyRequirement()) return false;
@@ -100,6 +100,15 @@ class PlayerRuleService {
 
         const putDownStationCards = this._queryEvents.countRegularStationCardsPutDownOnTurn(currentTurn);
         return putDownStationCards < totalAllowedStationCards;
+    }
+
+    canPutDownEventCards() {
+        return !this._opponentHasCardPreventingEventCardsBeingPlayed();
+    }
+
+    _opponentHasCardPreventingEventCardsBeingPlayed() {
+        const cards = this._opponentStateService.getMatchingBehaviourCards(card => card.preventsOpponentFromPlayingAnEventCard);
+        return cards.length > 0;
     }
 
     getMaximumHandSize() {
