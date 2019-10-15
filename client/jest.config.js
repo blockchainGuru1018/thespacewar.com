@@ -23,13 +23,6 @@ module.exports = {
 
     // The glob patterns Jest uses to detect test files
     testMatch: ['**/?(*.)+(spec|test).js?(x)'],
-    // testMatch: [
-    //     'Test.js',
-    //     '(*)+(Test).js',
-    //     // '**/tests/legacy/?(*)+(Test).js?(x)',
-    //     // '**/tests/bot/?(*)+(Test).js?(x)',
-    //     // '**/tests/*?(*)+(Test).js?(x)'
-    // ],
 
     // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
     testPathIgnorePatterns: ['\\\\node_modules\\\\'],
