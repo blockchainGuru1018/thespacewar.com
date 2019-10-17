@@ -11,19 +11,12 @@ $durationCardsMarginToOtherCards: 35px;
   flex-direction: column;
   background-size: 100% 100%;
   box-sizing: border-box;
+  -webkit-user-select: none;
+  user-select: none;
 
   &--turnedAround {
     transform: rotate(180deg);
   }
-}
-
-.card {
-  -webkit-user-select: none;
-  user-select: none;
-  display: flex;
-  flex-direction: column;
-  background-size: 100% 100%;
-  box-sizing: border-box;
 }
 
 .field-opponent .card {
