@@ -68,7 +68,8 @@ module.exports = class TurnControl {
             && !this._opponentPhase.isFirstDraw()
             && this._playerPhase.isWait()
             && this.opponentHasControlOfOwnTurn()
-            && !this._opponentHasCardThatPreventsPlayerPlayingEventCards();
+            && !this._opponentHasCardThatPreventsPlayerPlayingEventCards()
+            && !this._playerHasCardThatPreventsPlayerPlayingEventCards();
     }
 
     canReleaseControlOfTurn() {
@@ -108,6 +109,11 @@ module.exports = class TurnControl {
 
     _opponentHasCardThatPreventsPlayerPlayingEventCards() {
         const cards = this._opponentStateService.getMatchingBehaviourCards(card => card.preventsOpponentFromPlayingAnEventCard);
+        return cards.length > 0;
+    }
+
+    _playerHasCardThatPreventsPlayerPlayingEventCards() {
+        const cards = this._playerStateService.getMatchingBehaviourCards(card => card.preventsOpponentFromPlayingAnEventCard);
         return cards.length > 0;
     }
 

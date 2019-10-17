@@ -86,6 +86,26 @@ module.exports = testCase('Turn control', {
             const hasPermission = turnControl.canToggleControlOfTurn();
 
             refute(hasPermission);
+        },
+        'when player has destiny decided in play can NOT toggle turn control'() {
+            const testHelper = TestHelper(createState({
+                currentPlayer: 'P2A',
+                turn: 1,
+                playerStateById: {
+                    'P1A': {
+                        phase: 'wait',
+                        cardsInZone: [{ commonId: DestinyDecided.CommonId }]
+                    },
+                    'P2A': {
+                        phase: 'action'
+                    }
+                }
+            }));
+            const turnControl = testHelper.turnControl('P1A');
+
+            const hasPermission = turnControl.canToggleControlOfTurn();
+
+            refute(hasPermission);
         }
     },
     'opponent has control of turn:': {
