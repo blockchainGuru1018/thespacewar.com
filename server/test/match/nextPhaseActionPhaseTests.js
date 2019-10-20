@@ -11,6 +11,7 @@ const {
     catchError,
     createState,
 } = require('./shared.js');
+const Commander = require('../../../shared/match/commander/Commander.js');
 const GoodKarma = require('../../../shared/card/GoodKarma.js');
 const FakeDeck = require('../testUtils/FakeDeck.js');
 const EnergyShieldId = '21';
@@ -147,6 +148,38 @@ module.exports = {
         },
         'when restore state should have requirement'() {
             this.match.refresh('P1A');
+            assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                requirements: [sinon.match({ type: 'drawCard', count: GoodKarmaDrawCardRequirementCount() })]
+            }));
+        }
+    },
+    'when has commander "The Miller" and has "Good karma" in play and enters draw phase': {
+        setUp() {
+            this.firstPlayerConnection = FakeConnection2(['stateChanged']);
+            this.match = createMatch({ players: [Player('P1A', this.firstPlayerConnection), Player('P2A')] });
+            this.match.restoreFromState(createState({
+                turn: 1,
+                currentPlayer: 'P1A',
+                playerStateById: {
+                    'P1A': {
+                        phase: 'wait',
+                        cardsInZone: [createCard({ id: 'C1A', type: 'duration', commonId: GoodKarmaCommonId })],
+                        cardsInDeck: [
+                            createCard(),
+                            createCard(),
+                            createCard()
+                        ],
+                        commanders: [Commander.TheMiller]
+                    },
+                    'P2A': {
+                        phase: LastPhase
+                    }
+                }
+            }));
+
+            this.match.nextPhase('P1A', { currentPhase: 'wait' });
+        },
+        'should emit state changed with draw card requirement'() {
             assert.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
                 requirements: [sinon.match({ type: 'drawCard', count: GoodKarmaDrawCardRequirementCount() })]
             }));

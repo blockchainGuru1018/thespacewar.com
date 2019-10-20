@@ -219,7 +219,7 @@ class PlayerRequirementService {
     _opponentDeckPossibleMillsCount() {
         if (!this._canMill()) return 0;
 
-        this._opponentStateService.getDeck().getPossibleMillCount();
+        return this._opponentStateService.getDeck().getPossibleMillCount();
     }
 
     _canMill() {
