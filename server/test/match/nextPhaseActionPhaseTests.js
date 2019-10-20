@@ -217,7 +217,7 @@ module.exports = {
                 requirements: [sinon.match({ type: 'discardCard', count: GoodKarmaDiscardCardRequirementCount() })]
             }));
         }
-    }
+    },
 };
 
 function GoodKarmaDrawCardRequirementCount() {

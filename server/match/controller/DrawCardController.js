@@ -66,15 +66,17 @@ function DrawCardController(deps) {
             return;
         }
 
-        miller.mill();
-
         const playerRequirementService = playerServiceFactory.playerRequirementService(playerId);
         const drawCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'drawCard' });
         if (drawCardRequirement) {
+            miller.mill({ byEvent: true });
+
             const requirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'drawCard' });
             requirementUpdater.progressRequirementByCount(1);
         }
         else {
+            miller.mill();
+
             const playerRuleService = playerServiceFactory.playerRuleService(playerId);
             matchComService.emitToPlayer(playerId, 'drawCards', {
                 moreCardsCanBeDrawn: playerRuleService.moreCardsCanBeDrawnForDrawPhase()

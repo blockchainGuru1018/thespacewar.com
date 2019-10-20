@@ -327,6 +327,12 @@ module.exports = {
                 requirements: []
             }));
         },
+        'should NOT register drawCard event'() {
+            assert.calledOnce(this.firstPlayerConnection.stateChanged);
+            refute.calledWith(this.firstPlayerConnection.stateChanged, sinon.match({
+                events: [],
+            }));
+        },
         'should emit state changed to second player'() {
             assert.calledOnce(this.secondPlayerConnection.stateChanged);
             assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({

@@ -25,9 +25,9 @@ module.exports = function ({
         });
     }
 
-    function mill() {
+    function mill({ byEvent = false } = {}) {
         const milledCards = opponentStateService.discardTopTwoCardsInDrawPile();
-        playerStateService.registerMill();
+        playerStateService.registerMill({ byEvent });
 
         opponentActionLog.opponentMilledCardsFromYourDeck({
             milledCardCommonIds: milledCards.map(cardData => cardData.commonId)
