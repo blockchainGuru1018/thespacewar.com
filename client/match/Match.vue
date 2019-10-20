@@ -26,7 +26,10 @@
                                 :station-card="card"
                                 v-for="card in opponentStation.drawCards"
                             />
-                            <div class="stationCardWrapper stationCardWrapper--fullSize">
+                            <div
+                                class="stationCardWrapper stationCardWrapper--fullSize"
+                                :style="{pointerEvents: 'none'}"
+                            >
                                 <div class="card card-placeholder" />
                             </div>
                         </div>
@@ -38,7 +41,10 @@
                                 :station-card="card"
                                 v-for="card in opponentStation.actionCards"
                             />
-                            <div class="stationCardWrapper stationCardWrapper--fullSize">
+                            <div
+                                class="stationCardWrapper stationCardWrapper--fullSize"
+                                :style="{pointerEvents: 'none'}"
+                            >
                                 <div class="card card-placeholder" />
                             </div>
                         </div>
@@ -50,7 +56,10 @@
                                 :station-card="card"
                                 v-for="card in opponentStation.handSizeCards"
                             />
-                            <div class="stationCardWrapper stationCardWrapper--fullSize">
+                            <div
+                                class="stationCardWrapper stationCardWrapper--fullSize"
+                                :style="{pointerEvents: 'none'}"
+                            >
                                 <div class="card card-placeholder" />
                             </div>
                         </div>
