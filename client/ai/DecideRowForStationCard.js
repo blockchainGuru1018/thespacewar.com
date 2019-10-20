@@ -15,16 +15,47 @@ function SortRowsByOccurrence(stationCards) {
     return (a, b) => {
         const aCount = stationCards.filter(s => s.place === a).length;
         const bCount = stationCards.filter(s => s.place === b).length;
-        return (aCount - getPriority(a, aCount)) - (bCount - getPriority(b, bCount));
+        const counts = stationRowCounts(stationCards);
+        return (aCount - getPriorityInRelationToCardCounts(a, counts)) - (bCount - getPriorityInRelationToCardCounts(b, counts));
     };
 }
 
-function getPriority(row, currentCount) {
-    if (currentCount === 0) return TopPriority;
-    if (currentCount === 4) return 0;
+function getPriorityInRelationToCardCounts(row, { draw, action, handSize }) {
+    if (draw === 0) {
+        if (row === 'draw') return TopPriority;
+        if (row === 'action') return 0;
+        if (row === 'handSize') return 0;
+    }
+    if (handSize === 0) {
+        if (row === 'draw') return 0;
+        if (row === 'action') return 0;
+        if (row === 'handSize') return TopPriority;
+    }
+    if (action === 0) {
+        if (row === 'draw') return 0;
+        if (row === 'action') return TopPriority;
+        if (row === 'handSize') return 0;
+    }
 
-    if (row === 'draw') return 1;
-    if (row === 'action') return 4;
-    if (row === 'handSize') return 1;
+    if (row === 'draw') {
+        if (draw === 2) return 0;
+        if (action > 2) return TopPriority;
+        return 3;
+    }
+    if (row === 'action') {
+        return 6;
+    }
+    if (row === 'handSize') {
+        if (handSize === 2) return 0;
+        return 3;
+    }
     return 0;
+}
+
+function stationRowCounts(stationCards) {
+    return {
+        draw: stationCards.filter(s => s.place === 'draw').length,
+        action: stationCards.filter(s => s.place === 'action').length,
+        handSize: stationCards.filter(s => s.place === 'handSize').length
+    };
 }
