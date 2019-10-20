@@ -804,7 +804,7 @@ module.exports = function (deps) {
                         });
                     }
                 }
-                else if (key === 'currentPlayer' && datum !== state.ownUser.id) {
+                else if (key === 'currentPlayer' && datum !== state.currentPlayer) {
                     dispatch('card/cancelCurrentUserInteraction', null, { root: true });
                 }
                 else if (key === 'lastStandInfo') {

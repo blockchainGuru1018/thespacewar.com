@@ -84,6 +84,28 @@ describe('when phase is action but is not current player', () => {
     });
 });
 
+describe('when is holding a card and opponent takes control of turn', () => {
+    beforeEach(async () => {
+        const { dispatch, showPage } = setUpController();
+        showPage();
+        dispatch('stateChanged', FakeState({
+            turn: 1,
+            currentPlayer: 'P1A',
+            phase: 'action',
+            cardsOnHand: [{ id: 'C1A', cost: 0 }]
+        }));
+        await timeout();
+        await click('.playerCardsOnHand .cardOnHand');
+
+        dispatch('stateChanged', { currentPlayer: 'P2A' });
+        await timeout();
+    });
+
+    test('should drop card', async () => {
+        assert.elementCount('.holdingCard', 0);
+    });
+});
+
 describe('when has taken control of the turn and is holding a 0 cost card', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();

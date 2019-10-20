@@ -25,25 +25,34 @@ afterEach(() => {
     controller && controller.tearDown();
 });
 
-describe('when is holding card and opponent selects station card', () => {
+describe('when player is chosen as "second player" and is holding card while opponent selects station card', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = controller;
         showPage();
         dispatch('stateChanged', FakeState({
             turn: 1,
-            currentPlayer: 'P1A',
+            currentPlayer: 'P2A',
             phase: 'start',
             mode: MatchMode.selectStationCards,
             cardsOnHand: [createCard({ id: 'C1A', commonId: 'C1B' })],
-            opponentStationCards: [],
-            playerStationCards: []
+            playerStationCards: [],
+            opponentStationCards: []
         }));
         await timeout();
 
         await click('.playerCardsOnHand .cardOnHand');
-        dispatch('stateChanged', {
+        await timeout();
+
+        dispatch('stateChanged', FakeState({
+            turn: 1,
+            currentPlayer: 'P2A',
+            phase: 'start',
+            mode: MatchMode.selectStationCards,
+            cardsOnHand: [createCard({ id: 'C1A', commonId: 'C1B' })],
+            playerStationCards: [],
             opponentStationCards: [{ place: 'draw' }]
-        });
+        }));
+        await timeout();
     });
 
     test('should still be holding card', async () => {
