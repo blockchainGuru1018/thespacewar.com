@@ -2,6 +2,7 @@ const Bot = require('./Bot.js');
 const GameServiceFactory = require('../../shared/match/GameServiceFactory.js');
 const PlayerServiceFactory = require('../../shared/match/PlayerServiceFactory.js');
 const DrawPhaseDecider = require('./DrawPhaseDecider.js');
+const PreparationPhaseDecider = require('./PreparationPhaseDecider.js');
 const ActionPhaseDecider = require('./ActionPhaseDecider.js');
 const DiscardPhaseDecider = require('./DiscardPhaseDecider.js');
 const AttackPhaseDecider = require('./AttackPhaseDecider.js');
@@ -71,6 +72,7 @@ module.exports = function ({
             opponentStateService: playerServiceFactory.playerStateService(opponentUserId),
             decideCardToDiscard: decideCardToDiscard(),
             drawPhaseDecider: drawPhaseDecider(),
+            preparationPhaseDecider: preparationPhaseDecider(),
             actionPhaseDecider: actionPhaseDecider(),
             discardPhaseDecider: discardPhaseDecider(),
             attackPhaseDecider: attackPhaseDecider(),
@@ -82,6 +84,12 @@ module.exports = function ({
     function drawPhaseDecider() {
         return DrawPhaseDecider({
             playerRuleService: playerServiceFactory.playerRuleService(BotId),
+            matchController
+        });
+    }
+
+    function preparationPhaseDecider() {
+        return PreparationPhaseDecider({
             matchController
         });
     }

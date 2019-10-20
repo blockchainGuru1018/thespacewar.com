@@ -11,6 +11,7 @@ module.exports = function ({
     turnControl,
     opponentStateService,
     drawPhaseDecider,
+    preparationPhaseDecider,
     actionPhaseDecider,
     discardPhaseDecider,
     decideCardToDiscard,
@@ -33,6 +34,9 @@ module.exports = function ({
     else {
         if (playerPhase.isDraw()) {
             drawPhaseDecider.decide();
+        }
+        else if (playerPhase.isPreparation()) {
+            preparationPhaseDecider.decide();
         }
         else if (playerPhase.isAction()) {
             actionPhaseDecider.decide();

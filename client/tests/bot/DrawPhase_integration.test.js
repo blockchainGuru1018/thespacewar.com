@@ -73,3 +73,14 @@ describe('In Draw phase', () => {
         expect(matchController.emit).toBeCalledWith('nextPhase', { currentPhase: PHASES.draw });
     });
 });
+
+describe('In preparation phase', () => {
+    test('Should proceed to next phase', async () => {
+        const { matchController } = await setupFromState({
+            turn: 1,
+            phase: 'preparation',
+        });
+
+        expect(matchController.emit).toBeCalledWith('nextPhase', { currentPhase: PHASES.preparation });
+    });
+});
