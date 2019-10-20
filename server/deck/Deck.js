@@ -5,7 +5,7 @@ module.exports = function (originalDeck) {
     return {
         draw,
         getCardCount,
-        getPossibleMillCount: () => Math.round(getCardCount() / 2),
+        getPossibleMillCount,
         getAll: () => [...deck],
         removeFirstCardOfType,
         removeCard,
@@ -27,6 +27,10 @@ module.exports = function (originalDeck) {
 
     function getCardCount() {
         return deck.length;
+    }
+
+    function getPossibleMillCount() {
+        return Math.round(getCardCount() / 2);
     }
 
     function removeCard(cardId) {
