@@ -1,13 +1,21 @@
+const GoodKarma = require("../../shared/card/GoodKarma.js");
+
 const PlayableTypes = [
     'spaceShip',
     'defense',
     'missile'
 ];
 
+const PlayableCards = [
+    GoodKarma.CommonId
+];
+
 module.exports = function DecideCardToPlay({
     playerStateService,
     matchController,
-    playableTypes = PlayableTypes
+    playableTypes = PlayableTypes,
+    playableCards = PlayableCards,
+    cardRules = []
 }) {
     return {
         canDoIt,
@@ -16,16 +24,29 @@ module.exports = function DecideCardToPlay({
 
     function canDoIt() {
         const cardsOnHand = playerStateService.getCardsOnHand();
-        const actionPoints = playerStateService.getActionPointsForPlayer();
-        const affordableCard = cardsOnHand.find(c => c.cost <= actionPoints && playableTypes.includes(c.type));
-        return !!affordableCard;
+        const playableCards = cardsOnHand.filter(canPlayCard);
+        return playableCards.length > 0;
     }
 
     function doIt() {
         const cardsOnHand = playerStateService.getCardsOnHand();
-        const actionPoints = playerStateService.getActionPointsForPlayer();
-        const affordableCard = cardsOnHand.filter(c => c.cost <= actionPoints && playableTypes.includes(c.type)).sort((a, b) => a.cost - b.cost)[0];
-        const cardId = affordableCard.id;
+        const playableCards = cardsOnHand
+            .filter(canPlayCard)
+            .sort((a, b) => a.cost - b.cost);
+        const cardId = playableCards[0].id;
         matchController.emit('putDownCard', { cardId, location: 'zone' });
+    }
+
+    function canPlayCard(card) {
+        const actionPoints = playerStateService.getActionPointsForPlayer();
+
+        return card.cost <= actionPoints
+            && canPlayCardTypeOrSpecificCard(card)
+            && cardRules.every(rule => rule(card));
+    }
+
+    function canPlayCardTypeOrSpecificCard(card) {
+        return playableTypes.includes(card.type)
+            || playableCards.includes(card.commonId);
     }
 };

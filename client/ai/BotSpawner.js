@@ -1,6 +1,7 @@
 const Bot = require('./Bot.js');
 const GameServiceFactory = require('../../shared/match/GameServiceFactory.js');
 const PlayerServiceFactory = require('../../shared/match/PlayerServiceFactory.js');
+const CardRulesFactory = require('./cardRules/CardRulesFactory.js');
 const DrawPhaseDecider = require('./DrawPhaseDecider.js');
 const PreparationPhaseDecider = require('./PreparationPhaseDecider.js');
 const ActionPhaseDecider = require('./ActionPhaseDecider.js');
@@ -104,8 +105,9 @@ module.exports = function ({
             decideCardToPlaceAsStationCard: DecideCardToPlaceAsStationCard({ playerStateService }),
             playCardCapability: PlayCardCapability({
                 playerStateService,
-                matchController
-            }),
+                matchController,
+                cardRules: cardRules()
+            })
         });
     }
 
@@ -132,5 +134,13 @@ module.exports = function ({
 
     function decideCardToDiscard() {
         return DecideCardToDiscard({ playerStateService: playerServiceFactory.playerStateService(BotId) });
+    }
+
+    function cardRules() {
+        const cardRulesFactory = CardRulesFactory({
+            BotId,
+            playerServiceFactory
+        });
+        return cardRulesFactory.createAll();
     }
 };
