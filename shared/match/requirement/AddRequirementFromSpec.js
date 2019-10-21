@@ -55,7 +55,7 @@ module.exports = function ({ //TODO Is there a better name for this class? Perha
 
         const requirementSpecs = playerId === playerStateService.getPlayerId() ? spec.forPlayer : spec.forOpponent;
         for (const spec of requirementSpecs) {
-            const requirement = requirementFactory.create(card, spec);
+            const requirement = requirementFactory.createForCardAndSpec(card, spec);
 
             let addedRequirement;
             if (isEmptyCommonWaitingRequirement(requirement)) {

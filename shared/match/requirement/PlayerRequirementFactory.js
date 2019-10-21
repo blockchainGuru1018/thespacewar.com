@@ -16,10 +16,10 @@ module.exports = function ({
     ];
 
     return {
-        create, // TODO rename "createForCard", or rename module to something mentioning "card"
+        createForCardAndSpec,
     };
 
-    function create(card, requirementSpec) {
+    function createForCardAndSpec(card, requirementSpec) {
         const Constructor = factories.find(f => f.type === requirementSpec.type);
         if (!Constructor) {
             //WARNING: Mutating argument //TODO Out of my lazyness this will mutate requirementSpec. Would be great to have some deepClone in the future!

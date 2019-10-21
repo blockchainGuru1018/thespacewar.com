@@ -35,7 +35,7 @@ module.exports = testCase('PlayerRequirementFactory', {
         const playerRequirementFactory = testHelper.playerRequirementFactory('P1A');
         const targetMissed = testHelper.playerStateService('P1A').createBehaviourCardById('C1A');
 
-        const requirement = playerRequirementFactory.create(targetMissed, { type: 'counterAttack', count: 1 });
+        const requirement = playerRequirementFactory.createForCardAndSpec(targetMissed, { type: 'counterAttack', count: 1 });
 
         assert.match(requirement, {
             type: 'counterAttack',
