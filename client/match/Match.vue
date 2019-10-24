@@ -304,18 +304,14 @@
                                 :station-card="card"
                                 v-for="card in playerVisibleDrawStationCards"
                             />
-                            <div class="stationCardWrapper stationCardWrapper--fullSize">
+                            <StationCardWrapper :transparent="!drawStationCardGhostVisible">
                                 <CardGhost
+                                    v-if="drawStationCardGhostVisible"
                                     location="station-draw"
                                     :element-hovered-over="elementHoveredOver"
-                                    v-if="drawStationCardGhostVisible"
                                     @click="cardGhostClick"
                                 />
-                                <div
-                                    class="card card-placeholder"
-                                    v-else
-                                />
-                            </div>
+                            </StationCardWrapper>
                         </div>
                         <div class="field-stationRow">
                             <portal-target name="stationActionRow" />
