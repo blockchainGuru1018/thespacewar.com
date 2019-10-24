@@ -26,12 +26,7 @@
                                 :station-card="card"
                                 v-for="card in opponentStation.drawCards"
                             />
-                            <div
-                                class="stationCardWrapper stationCardWrapper--fullSize"
-                                :style="{pointerEvents: 'none'}"
-                            >
-                                <div class="card card-placeholder" />
-                            </div>
+                            <StationCardWrapper :transparent="true" />
                         </div>
                         <div class="field-stationRow">
                             <station-card
@@ -41,12 +36,7 @@
                                 :station-card="card"
                                 v-for="card in opponentStation.actionCards"
                             />
-                            <div
-                                class="stationCardWrapper stationCardWrapper--fullSize"
-                                :style="{pointerEvents: 'none'}"
-                            >
-                                <div class="card card-placeholder" />
-                            </div>
+                            <StationCardWrapper :transparent="true" />
                         </div>
                         <div class="field-stationRow">
                             <station-card
@@ -56,12 +46,7 @@
                                 :station-card="card"
                                 v-for="card in opponentStation.handSizeCards"
                             />
-                            <div
-                                class="stationCardWrapper stationCardWrapper--fullSize"
-                                :style="{pointerEvents: 'none'}"
-                            >
-                                <div class="card card-placeholder" />
-                            </div>
+                            <StationCardWrapper :transparent="true" />
                         </div>
                     </div>
                     <div class="field-zoneRows field-opponentZoneRows">
