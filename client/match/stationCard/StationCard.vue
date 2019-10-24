@@ -53,7 +53,7 @@
 </template>
 <script>
     const Vuex = require('vuex');
-    const getCardImageUrl = require("../utils/getCardImageUrl.js");
+    const getCardImageUrl = require("../../utils/getCardImageUrl.js");
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
     const {
         mapGetters: mapPermissionGetters,
@@ -67,7 +67,7 @@
         mapActions: mapCardActions
     } = Vuex.createNamespacedHelpers('card');
     const expandedCardHelpers = Vuex.createNamespacedHelpers('expandedCard');
-    const longpress = require('../utils/longpress.js');
+    const longpress = require('../../utils/longpress.js');
 
     module.exports = {
         props: [

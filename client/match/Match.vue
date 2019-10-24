@@ -325,18 +325,14 @@
                                 :station-card="card"
                                 v-for="card in playerVisibleActionStationCards"
                             />
-                            <div class="stationCardWrapper stationCardWrapper--fullSize">
+                            <StationCardWrapper :transparent="!actionStationCardGhostVisible">
                                 <CardGhost
-                                    location="station-action"
-                                    :element-hovered-over="elementHoveredOver"
                                     v-if="actionStationCardGhostVisible"
+                                    :element-hovered-over="elementHoveredOver"
+                                    location="station-action"
                                     @click="cardGhostClick"
                                 />
-                                <div
-                                    class="card card-placeholder"
-                                    v-else
-                                />
-                            </div>
+                            </StationCardWrapper>
                         </div>
                         <div class="field-stationRow">
                             <portal-target name="stationHandSizeRow" />
@@ -346,18 +342,14 @@
                                 :is-holding-card="!!holdingCard"
                                 :station-card="card"
                             />
-                            <div class="stationCardWrapper stationCardWrapper--fullSize">
+                            <StationCardWrapper :transparent="!handSizeStationCardGhostVisible">
                                 <CardGhost
                                     v-if="handSizeStationCardGhostVisible"
                                     location="station-handSize"
                                     :element-hovered-over="elementHoveredOver"
                                     @click="cardGhostClick"
                                 />
-                                <div
-                                    v-else
-                                    class="card card-placeholder"
-                                />
-                            </div>
+                            </StationCardWrapper>
                         </div>
                     </div>
                     <PlayerHud />
@@ -428,7 +420,7 @@
     const longpress = require('../utils/longpress.js');
     const resolveModule = require('../utils/resolveModuleWithPossibleDefault.js');
     const ZoneCard = resolveModule(require('./ZoneCard.vue'));
-    const StationCard = resolveModule(require('./StationCard.vue'));
+    const StationCard = resolveModule(require('./stationCard/StationCard.vue'));
     const PlayerHud = resolveModule(require('./PlayerHud.vue'));
     const CardChoiceDialog = resolveModule(require('./CardChoiceDialog.vue'));
     const LoadingIndicator = resolveModule(require('./loadingIndicator/LoadingIndicator.vue'));
@@ -443,6 +435,7 @@
     const PlayerCommanderCards = resolveModule(require('./commander/PlayerCommanderCards.vue'));
     const OpponentCommanderCards = resolveModule(require('./commander/OpponentCommanderCards.vue'));
     const OpponentPreGameOverlay = resolveModule(require('./OpponentPreGameOverlay.vue'));
+    const StationCardWrapper = resolveModule(require('./stationCard/StationCardWrapper.vue'));
     const { PHASES } = require('./phases.js');
 
     module.exports = {
@@ -846,7 +839,8 @@
             CommanderSelection,
             PlayerCommanderCards,
             OpponentCommanderCards,
-            OpponentPreGameOverlay
+            OpponentPreGameOverlay,
+            StationCardWrapper
         },
         directives: {
             longpress
