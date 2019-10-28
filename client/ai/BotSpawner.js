@@ -13,6 +13,7 @@ const DecideCardToPlaceAsStationCard = require('./DecideCardToPlaceAsStationCard
 const PlayCardCapability = require('./cardCapabilities/PlayCardCapability.js');
 const CardCapabilityFactory = require('./cardCapabilities/CardCapabilityFactory.js');
 const LuckPlayer = require('./cardPlayers/LuckPlayer.js');
+const ExcellentWorkPlayer = require('./cardPlayers/ExcellentWorkPlayer.js');
 
 const BotId = 'BOT';
 
@@ -102,7 +103,7 @@ module.exports = function ({
             matchController,
             playerStateService,
             playerRuleService: playerServiceFactory.playerRuleService(BotId),
-            decideRowForStationCard: DecideRowForStationCard({ playerStateService }),
+            decideRowForStationCard: decideRowForStationCard(),
             decideCardToPlaceAsStationCard: DecideCardToPlaceAsStationCard({ playerStateService }),
             playCardCapability: playCardCapability()
         });
@@ -113,7 +114,13 @@ module.exports = function ({
             playerStateService: playerServiceFactory.playerStateService(BotId),
             matchController,
             cardRules: cardRules(),
-            cardPlayers: [LuckPlayer({ matchController })]
+            cardPlayers: [
+                LuckPlayer({ matchController }),
+                ExcellentWorkPlayer({
+                    matchController,
+                    decideRowForStationCard: decideRowForStationCard()
+                }),
+            ]
         });
     }
 
@@ -140,6 +147,10 @@ module.exports = function ({
 
     function decideCardToDiscard() {
         return DecideCardToDiscard({ playerStateService: playerServiceFactory.playerStateService(BotId) });
+    }
+
+    function decideRowForStationCard() {
+        return DecideRowForStationCard({ playerStateService: playerServiceFactory.playerStateService(BotId) });
     }
 
     function cardRules() {
