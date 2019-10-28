@@ -1,8 +1,8 @@
 /**
  * @jest-environment node
  */
-const Capability = require('../../ai/PlayCardCapability.js');
-const GoodKarma = require("../../../shared/card/GoodKarma.js");
+const Capability = require('../../../ai/cardCapabilities/PlayCardCapability.js');
+const GoodKarma = require("../../../../shared/card/GoodKarma.js");
 
 test('when has event card and defense card and only defense card is a playableType, can play card', () => {
     const capability = Capability({

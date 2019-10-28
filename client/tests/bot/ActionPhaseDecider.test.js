@@ -6,7 +6,7 @@ const { createMatchController, BotId, PlayerId } = require('./botTestHelpers.js'
 const fakePlayerStateServiceFactory = require('../../../shared/test/fakeFactories/playerStateServiceFactory.js');
 const FakeMatchController = require('../../testUtils/FakeMatchController.js');
 const ActionPhaseDecider = require('../../ai/ActionPhaseDecider.js');
-const PlayCardCapability = require('../../ai/PlayCardCapability.js');
+const PlayCardCapability = require('../../ai/cardCapabilities/PlayCardCapability.js');
 
 test('When only card left is EVENT card should NOT put down card', () => {
     const matchController = createMatchController();

@@ -1,4 +1,4 @@
-const GoodKarma = require("../../shared/card/GoodKarma.js");
+const GoodKarma = require("../../../shared/card/GoodKarma.js");
 
 const PlayableTypes = [
     'spaceShip',
