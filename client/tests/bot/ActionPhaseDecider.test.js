@@ -16,7 +16,7 @@ test('When only card left is EVENT card should NOT put down card', () => {
     const decider = createDecider({
         matchController,
         playerStateService,
-        playCardCapability: PlayCardCapability({
+        playCardCapability: createPlayCardCapability({
             playerStateService,
             matchController
         })
@@ -102,6 +102,16 @@ function createDecider(stubs = {}) {
         playCardCapability: {
             canDoIt() {}
         },
+        ...stubs
+    });
+}
+
+function createPlayCardCapability(stubs) {
+    return PlayCardCapability({
+        playableCards: [],
+        playableTypes: [],
+        cardPlayers: [],
+        cardRules: [],
         ...stubs
     });
 }

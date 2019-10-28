@@ -103,11 +103,16 @@ module.exports = function ({
             playerRuleService: playerServiceFactory.playerRuleService(BotId),
             decideRowForStationCard: DecideRowForStationCard({ playerStateService }),
             decideCardToPlaceAsStationCard: DecideCardToPlaceAsStationCard({ playerStateService }),
-            playCardCapability: PlayCardCapability({
-                playerStateService,
-                matchController,
-                cardRules: cardRules()
-            })
+            playCardCapability: playCardCapability()
+        });
+    }
+
+    function playCardCapability() {
+        return PlayCardCapability({
+            playerStateService: playerServiceFactory.playerStateService(BotId),
+            matchController,
+            cardRules: cardRules(),
+            cardPlayers: []
         });
     }
 

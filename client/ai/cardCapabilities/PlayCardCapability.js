@@ -10,12 +10,13 @@ const PlayableCards = [
     GoodKarma.CommonId
 ];
 
-module.exports = function DecideCardToPlay({
+module.exports = function PlayerCardCapability({
     playerStateService,
     matchController,
     playableTypes = PlayableTypes,
     playableCards = PlayableCards,
-    cardRules = []
+    cardPlayers,
+    cardRules
 }) {
     return {
         canDoIt,
@@ -33,8 +34,19 @@ module.exports = function DecideCardToPlay({
         const playableCards = cardsOnHand
             .filter(canPlayCard)
             .sort((a, b) => a.cost - b.cost);
-        const cardId = playableCards[0].id;
-        matchController.emit('putDownCard', { cardId, location: 'zone' });
+
+        const card = playableCards[0];
+        playCard(card);
+    }
+
+    function playCard(card) {
+        const hasSpecificPlayer = cardPlayers.find(player => player.forCard(card));
+        if (hasSpecificPlayer) {
+            hasSpecificPlayer.play(card);
+        }
+        else {
+            matchController.emit('putDownCard', { cardId: card.id, location: 'zone' });
+        }
     }
 
     function canPlayCard(card) {
@@ -47,6 +59,7 @@ module.exports = function DecideCardToPlay({
 
     function canPlayCardTypeOrSpecificCard(card) {
         return playableTypes.includes(card.type)
-            || playableCards.includes(card.commonId);
+            || playableCards.includes(card.commonId)
+            || cardPlayers.some(player => player.forCard(card));
     }
 };
