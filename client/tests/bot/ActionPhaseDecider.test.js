@@ -8,25 +8,6 @@ const FakeMatchController = require('../../testUtils/FakeMatchController.js');
 const ActionPhaseDecider = require('../../ai/ActionPhaseDecider.js');
 const PlayCardCapability = require('../../ai/cardCapabilities/PlayCardCapability.js');
 
-test('When only card left is EVENT card should NOT put down card', () => {
-    const matchController = createMatchController();
-    const playerStateService = fakePlayerStateServiceFactory.withStubs({
-        getCardsOnHand: () => [createCard({ id: 'C1A', cost: 0, type: 'event' })]
-    });
-    const decider = createDecider({
-        matchController,
-        playerStateService,
-        playCardCapability: createPlayCardCapability({
-            playerStateService,
-            matchController
-        })
-    });
-
-    decider.decide();
-
-    expect(matchController.emit).not.toBeCalledWith('putDownCard', { cardId: 'C1A', location: 'zone' });
-});
-
 test('When can NOT place station card, should NOT place station card', () => {
     const matchController = createMatchController();
     const decider = createDecider({
