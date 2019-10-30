@@ -2,13 +2,13 @@ const ExcellentWorkPlayer = require('../../../ai/cardPlayers/ExcellentWorkPlayer
 const ExcellentWork = require('../../../../shared/card/ExcellentWork.js');
 
 test('when card has common ID of Excellent Work should accept card', () => {
-    const player = ExcellentWorkPlayer({});
+    const player = createPlayer({});
     expect(player.forCard({ commonId: ExcellentWork.CommonId })).toBe(true);
 });
 
 test('should play Excellent Work to station row decided by decider', () => {
     const matchController = { emit: jest.fn() };
-    const player = ExcellentWorkPlayer({ matchController, decideRowForStationCard: () => 'action' });
+    const player = createPlayer({ matchController, decideRowForStationCard: () => 'action' });
 
     player.play({ id: 'C1A' });
 
@@ -18,3 +18,31 @@ test('should play Excellent Work to station row decided by decider', () => {
         choice: 'putDownAsExtraStationCard'
     });
 });
+
+test('when can NOT put down station card should play Excellent Work with choice "draw"', () => {
+    const matchController = { emit: jest.fn() };
+    const player = createPlayer({
+        matchController,
+        decideRowForStationCard: () => 'action',
+        playerRuleService: {
+            hasReachedMaximumStationCardCapacity: () => true
+        }
+    });
+
+    player.play({ id: 'C1A' });
+
+    expect(matchController.emit).toBeCalledWith('putDownCard', {
+        cardId: 'C1A',
+        location: 'zone',
+        choice: 'draw'
+    });
+});
+
+function createPlayer(stubs) {
+    return ExcellentWorkPlayer({
+        playerRuleService: {
+            hasReachedMaximumStationCardCapacity() {}
+        },
+        ...stubs
+    });
+}

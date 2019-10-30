@@ -118,7 +118,8 @@ module.exports = function ({
                 LuckPlayer({ matchController }),
                 ExcellentWorkPlayer({
                     matchController,
-                    decideRowForStationCard: decideRowForStationCard()
+                    decideRowForStationCard: decideRowForStationCard(),
+                    playerRuleService: playerServiceFactory.playerRuleService(BotId),
                 }),
             ]
         });
