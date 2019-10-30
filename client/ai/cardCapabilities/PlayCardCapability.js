@@ -24,19 +24,23 @@ module.exports = function PlayerCardCapability({
     };
 
     function canDoIt() {
-        const cardsOnHand = playerStateService.getCardsOnHand();
-        const playableCards = cardsOnHand.filter(canPlayCard);
+        const playableCards = playableCardsOnHandAndInStation();
         return playableCards.length > 0;
     }
 
     function doIt() {
-        const cardsOnHand = playerStateService.getCardsOnHand();
-        const playableCards = cardsOnHand
-            .filter(canPlayCard)
-            .sort((a, b) => a.cost - b.cost);
+        const playableCards = playableCardsOnHandAndInStation().sort(CheapestFirst());
 
         const card = playableCards[0];
         playCard(card);
+    }
+
+    function playableCardsOnHandAndInStation() {
+        return playerStateService.getMatchingPlayableBehaviourCards(canPlayCard);
+    }
+
+    function CheapestFirst() {
+        return (a, b) => a.cost - b.cost;
     }
 
     function playCard(card) {
@@ -50,10 +54,7 @@ module.exports = function PlayerCardCapability({
     }
 
     function canPlayCard(card) {
-        const actionPoints = playerStateService.getActionPointsForPlayer();
-
-        return card.cost <= actionPoints
-            && canPlayCardTypeOrSpecificCard(card)
+        return canPlayCardTypeOrSpecificCard(card)
             && cardRules.every(rule => rule(card));
     }
 

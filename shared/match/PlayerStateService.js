@@ -195,15 +195,15 @@ class PlayerStateService {
     }
 
     getMatchingPlayableBehaviourCards(matcher) {
-        const matchingCardsInZone = this.getCardsOnHand()
+        const matchingCardsOnHand = this.getCardsOnHand()
             .map(c => this.createBehaviourCard(c))
-            .filter(c => this.getActionPointsForPlayer() >= c.cost)
+            .filter(c => c.canBePlayed())
             .filter(matcher);
-        const matchingCardsInOpponentZone = this.getFlippedStationCards()
+        const matchingCardsAmongFlippedStationCards = this.getFlippedStationCards()
             .map(c => this.createBehaviourCard(c))
-            .filter(c => this.getActionPointsForPlayer() >= c.cost)
+            .filter(c => c.canBePlayed())
             .filter(matcher);
-        return [...matchingCardsInZone, ...matchingCardsInOpponentZone];
+        return [...matchingCardsOnHand, ...matchingCardsAmongFlippedStationCards];
     }
 
     hasDurationCardOfType(cardCommonId) {
