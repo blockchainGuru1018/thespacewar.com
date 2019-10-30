@@ -4,6 +4,7 @@ const AttackInHomeZoneCardCapability = require('./AttackInHomeZoneCardCapability
 const AttackInOpponentZoneCardCapability = require('./AttackInOpponentZoneCardCapability.js');
 const MoveCardCapability = require('./MoveCardCapability.js');
 const RepairCardCapability = require('./RepairCardCapability.js');
+const RepairCardPriority = require('./repair/RepairCardPriority.js');
 
 module.exports = function ({
     playerServiceFactory,
@@ -63,8 +64,9 @@ module.exports = function ({
     function repair(card) {
         return RepairCardCapability({
             card,
-            matchController,
             playerStateService: playerServiceFactory.playerStateService(playerId),
+            repairCardPriority: RepairCardPriority(),
+            matchController
         })
     }
 };

@@ -1,6 +1,7 @@
 module.exports = function ({
     card,
     playerStateService,
+    repairCardPriority,
     matchController
 }) {
     return {
@@ -14,10 +15,12 @@ module.exports = function ({
 
     function doIt() {
         const repairableCards = playerStateService.getMatchingBehaviourCardsFromZoneOrStation(canRepairCard);
-        matchController.emit('repairCard', {
-            repairerCardId: card.id,
-            cardToRepairId: repairableCards[0].id
-        });
+        const cardToRepairId = repairCardPriority(repairableCards);
+        repairCard(cardToRepairId);
+    }
+
+    function repairCard(cardToRepairId) {
+        matchController.emit('repairCard', { repairerCardId: card.id, cardToRepairId });
     }
 
     function canRepairCard(otherCard) {
