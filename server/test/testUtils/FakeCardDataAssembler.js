@@ -7,7 +7,7 @@ FakeCardDataAssembler.createCard = function (options = {}) {
         id: 'DEFAULT_TEST_CARD_ID',
         cost: 0
     });
-}
+};
 
 FakeCardDataAssembler.fromCards = cards => {
     return FakeCardDataAssembler({ createAll: () => [...cards] });

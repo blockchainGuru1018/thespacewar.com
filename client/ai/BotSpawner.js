@@ -139,6 +139,7 @@ module.exports = function ({
             opponentStateService: playerServiceFactory.playerStateService(opponentUserId),
             cardCapabilityFactory: CardCapabilityFactory({
                 playerServiceFactory,
+                playerId: BotId,
                 opponentId: opponentUserId,
                 matchController
             })

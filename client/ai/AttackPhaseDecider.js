@@ -8,9 +8,10 @@ module.exports = function ({
 
     const CapabilitiesInPriorityOrder = [
         cardCapabilityFactory.attackStationCard,
-        cardCapabilityFactory.attackEnergyShield,
+        cardCapabilityFactory.repair,
         cardCapabilityFactory.attackInHomeZone,
         cardCapabilityFactory.attackInOpponentZone,
+        cardCapabilityFactory.attackEnergyShield,
         cardCapabilityFactory.move
     ];
 

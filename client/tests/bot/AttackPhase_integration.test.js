@@ -3,6 +3,7 @@
  */
 const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
 const MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
+const SmallRepairShop = require("../../../shared/card/SmallRepairShop.js");
 const { PHASES } = require('../../../shared/phases.js');
 const { setupFromState, BotId, PlayerId } = require('./botTestHelpers.js');
 
@@ -142,6 +143,41 @@ test('when card in opponent zone, cannot attack station and has 1 available targ
     });
 
     expect(matchController.emit).toBeCalledWith('attack', { attackerCardId: 'C1A', defenderCardId: 'C2A' });
+});
+
+test('when repair ship in home zone and damaged card in home zone zone should repair it', async () => {
+    const { matchController } = await setupFromState({
+        phase: 'attack',
+        cardsInZone: [
+            { id: 'C1A', type: 'spaceShip', commonId: SmallRepairShop.CommonId },
+            { id: 'C2A', type: 'spaceShip', damage: 1 }
+        ],
+        events: [
+            PutDownCardEvent({ cardId: 'C1A', turn: 1, location: 'zone' }),
+            PutDownCardEvent({ cardId: 'C2A', turn: 1, location: 'zone' })
+        ]
+    });
+
+    expect(matchController.emit).toBeCalledWith('repairCard', { repairerCardId: 'C1A', cardToRepairId: 'C2A' });
+});
+
+test('when has repair ship is in opponent zone and has damaged card both in home zone and in opponent zone, should repair card in opponent zone', async () => {
+    const { matchController } = await setupFromState({
+        phase: 'attack',
+        cardsInZone: [
+            { id: 'C1A', type: 'spaceShip', damage: 1 },
+        ],
+        cardsInOpponentZone: [
+            { id: 'C2A', type: 'spaceShip', commonId: SmallRepairShop.CommonId },
+            { id: 'C3A', type: 'spaceShip', damage: 1 }
+        ],
+        events: [
+            PutDownCardEvent({ cardId: 'C1A', turn: 1, location: 'zone' }),
+            PutDownCardEvent({ cardId: 'C2A', turn: 1, location: 'zone' })
+        ]
+    });
+
+    expect(matchController.emit).toBeCalledWith('repairCard', { repairerCardId: 'C2A', cardToRepairId: 'C3A' });
 });
 
 function unflippedStationCard(id, place = 'draw') {

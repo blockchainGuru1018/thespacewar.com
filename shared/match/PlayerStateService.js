@@ -189,12 +189,14 @@ class PlayerStateService {
         return [...matchingCardsInZone, ...matchingCardsInOpponentZone, ...matchingDiscardedCards, ...matchingStationCards];
     }
 
+    getMatchingBehaviourCardsFromZoneOrStation(matcher) {
+        const matchingStationCards = this.getStationCards().filter(s => !!s.card).map(s => s.card).map(c => this.createBehaviourCard(c)).filter(matcher);
+        return [...matchingStationCards, ...this.getMatchingBehaviourCards(matcher)];
+    }
+
     getMatchingPlayableBehaviourCards(matcher) {
         const matchingCardsInZone = this.getCardsOnHand()
             .map(c => this.createBehaviourCard(c))
-            .map(c => {
-                return c;
-            })
             .filter(c => this.getActionPointsForPlayer() >= c.cost)
             .filter(matcher);
         const matchingCardsInOpponentZone = this.getFlippedStationCards()
