@@ -86,13 +86,3 @@ function createDecider(stubs = {}) {
         ...stubs
     });
 }
-
-function createPlayCardCapability(stubs) {
-    return PlayCardCapability({
-        playableCards: [],
-        playableTypes: [],
-        cardPlayers: [],
-        cardRules: [],
-        ...stubs
-    });
-}
