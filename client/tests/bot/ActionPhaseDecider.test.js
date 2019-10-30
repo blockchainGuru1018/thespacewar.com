@@ -6,7 +6,6 @@ const { createMatchController, BotId, PlayerId } = require('./botTestHelpers.js'
 const fakePlayerStateServiceFactory = require('../../../shared/test/fakeFactories/playerStateServiceFactory.js');
 const FakeMatchController = require('../../testUtils/FakeMatchController.js');
 const ActionPhaseDecider = require('../../ai/ActionPhaseDecider.js');
-const PlayCardCapability = require('../../ai/cardCapabilities/PlayCardCapability.js');
 
 test('When can NOT place station card, should NOT place station card', () => {
     const matchController = createMatchController();
