@@ -1,7 +1,7 @@
-let bocha = require('bocha');
-let assert = bocha.assert;
-let refute = bocha.refute;
-let defaults = bocha.defaults;
+const bocha = require('bocha');
+const assert = bocha.assert;
+const refute = bocha.refute;
+const defaults = bocha.defaults;
 const Commander = require('../match/commander/Commander.js');
 const createState = require('./fakeFactories/createState.js');
 const FakeCardDataAssembler = require("../../server/test/testUtils/FakeCardDataAssembler.js");//TODO Move to shared

@@ -23,7 +23,7 @@ module.exports = class Avoid extends CanBePutDownAnyTime(CanCounterCardsWithCost
     }
 
     triggerDormantEffect() {
-        let spec = Avoid.Info.dormantEffectRequirementSpec;
+        const spec = Avoid.Info.dormantEffectRequirementSpec;
         this._addRequirementFromSpec.forCardAndSpec(this, spec);
     }
 };

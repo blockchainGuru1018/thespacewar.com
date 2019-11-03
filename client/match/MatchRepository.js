@@ -21,13 +21,13 @@ module.exports = function (deps) {
     }
 
     async function getOwnState(matchId) {
-        let playerId = userRepository.getOwnUser().id;
+        const playerId = userRepository.getOwnUser().id;
         return await ajax.get(`/match/${matchId}/player/${playerId}/state`);
     }
 
     function onMatchCreatedForPlayer(callback) {
         socket.on('match/create', matchData => {
-            let ownUserId = userRepository.getOwnUser().id;
+            const ownUserId = userRepository.getOwnUser().id;
             if (matchData.playerIds.includes(ownUserId)) {
                 callback(matchData);
             }

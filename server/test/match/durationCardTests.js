@@ -12,8 +12,8 @@ const {
     catchError,
     createState,
 } = require('./shared.js');
-let PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
-let MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
+const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
+const MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
 
 module.exports = {
     'when try to move duration card should throw error': function () {
@@ -29,7 +29,7 @@ module.exports = {
             }
         }));
 
-        let error = catchError(() => this.match.moveCard('P1A', 'C1A'));
+        const error = catchError(() => this.match.moveCard('P1A', 'C1A'));
 
         assert(error);
         assert.equals(error.message, 'Cannot move card');
@@ -52,7 +52,7 @@ module.exports = {
             }
         }));
 
-        let error = catchError(() => this.match.attack('P1A', { attackerCardId: 'C1A', defenderCardId: 'C2A' }));
+        const error = catchError(() => this.match.attack('P1A', { attackerCardId: 'C1A', defenderCardId: 'C2A' }));
 
         assert(error);
         assert.equals(error.message, 'Cannot attack');
@@ -75,7 +75,7 @@ module.exports = {
             }
         }));
 
-        let error = catchError(() => this.match.attack('P1A', { attackerCardId: 'C1A', defenderCardId: 'C2A' }));
+        const error = catchError(() => this.match.attack('P1A', { attackerCardId: 'C1A', defenderCardId: 'C2A' }));
 
         assert(error);
         assert.equals(error.message, 'Cannot attack that card');

@@ -8,6 +8,7 @@ module.exports = function ({ cardInfoRepository }) {
 
     function calculate({ phase, turn, events, actionStationCardsCount }) {
         let actionPoints = actionStationCardsCount * 2;
+
         const playerIsPastActionPhase = PHASES_AFTER_ACTION_PHASE.includes(phase);
         if (playerIsPastActionPhase) return actionPoints;
 
@@ -60,6 +61,7 @@ module.exports = function ({ cardInfoRepository }) {
 
     function getCostOfDurationCardsLeftFromPreviousTurns(events, turn) {
         let totalCost = 0;
+
         const durationCardsInPlay = new Set();
         for (const event of events) {
             if (eventIsPutDownDurationCardInZone(event, turn)) {

@@ -147,7 +147,7 @@ function AttackController(deps) {
 
     function validateIfCanProgressCounterAttackRequirementByCount(count, playerId) {
         const playerRequirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'counterAttack' });
-        let canProgressRequirement = playerRequirementUpdater.canProgressRequirementByCount(count);
+        const canProgressRequirement = playerRequirementUpdater.canProgressRequirementByCount(count);
         if (!canProgressRequirement) {
             throw new CheatError('Cannot counter attack');
         }
@@ -211,7 +211,7 @@ function AttackController(deps) {
     function onSacrifice(playerId, { cardId, targetCardId, targetCardIds }) {
         if (!!targetCardIds && !!targetCardId) throw new CheatError('Cannot sacrifice');
 
-        let cannotSacrifice = playerServiceProvider.byTypeAndId(PlayerServiceProvider.TYPE.canThePlayer, playerId).sacrificeCards();
+        const cannotSacrifice = playerServiceProvider.byTypeAndId(PlayerServiceProvider.TYPE.canThePlayer, playerId).sacrificeCards();
         if (!cannotSacrifice) throw new CheatError('Cannot sacrifice');
 
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);

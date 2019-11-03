@@ -211,7 +211,6 @@ module.exports = function (deps) {
             opponentAttackedCard,
             registerAttack,
             removePlayerCard,
-            updatePlayerCard,
             cancelAttack,
             endAttack,
             selectAsRepairer,
@@ -250,7 +249,7 @@ module.exports = function (deps) {
     }
 
     function nextPhase(state, getters) {
-        let nextPhase = whatIsNextPhase({
+        const nextPhase = whatIsNextPhase({
             hasDurationCardInPlay: getters.playerStateService.hasDurationCardInPlay(),
             currentPhase: state.phase
         });
@@ -577,7 +576,7 @@ module.exports = function (deps) {
     function playerStateService(state, getters) {
         const updateStore = (clientState) => {
             let changedProperties = Object.keys(clientState);
-            for (let property of changedProperties) {
+            for (const property of changedProperties) {
                 state[property] = clientState[property];
             }
         };
@@ -871,8 +870,8 @@ module.exports = function (deps) {
     }
 
     function opponentMovedCard({ state }, cardId) {
-        let cardIndex = state.opponentCardsInZone.findIndex(c => c.id === cardId);
-        let [card] = state.opponentCardsInZone.splice(cardIndex, 1);
+        const cardIndex = state.opponentCardsInZone.findIndex(c => c.id === cardId);
+        const [card] = state.opponentCardsInZone.splice(cardIndex, 1);
         state.opponentCardsInPlayerZone.push(card);
     }
 
@@ -904,12 +903,12 @@ module.exports = function (deps) {
         attackerCardWasDestroyed,
         defenderCardWasDestroyed
     }) {
-        let defenderCardInPlayerZone = state.playerCardsInZone.find(c => c.id === defenderCardId);
-        let defenderCardInOpponentZone = state.playerCardsInOpponentZone.find(c => c.id === defenderCardId);
-        let defenderCard = defenderCardInPlayerZone || defenderCardInOpponentZone;
-        let defenderCardZone = defenderCardInPlayerZone ? state.playerCardsInZone : state.playerCardsInOpponentZone;
+        const defenderCardInPlayerZone = state.playerCardsInZone.find(c => c.id === defenderCardId);
+        const defenderCardInOpponentZone = state.playerCardsInOpponentZone.find(c => c.id === defenderCardId);
+        const defenderCard = defenderCardInPlayerZone || defenderCardInOpponentZone;
+        const defenderCardZone = defenderCardInPlayerZone ? state.playerCardsInZone : state.playerCardsInOpponentZone;
         if (defenderCardWasDestroyed) {
-            let defenderCardIndex = defenderCardZone.findIndex(c => c.id === defenderCardId);
+            const defenderCardIndex = defenderCardZone.findIndex(c => c.id === defenderCardId);
             defenderCardZone.splice(defenderCardIndex, 1);
         }
         else {
@@ -917,9 +916,9 @@ module.exports = function (deps) {
         }
 
         if (attackerCardWasDestroyed) {
-            let attackerCardInPlayerZone = state.opponentCardsInZone.find(c => c.id === attackerCardId);
-            let attackerCardZone = attackerCardInPlayerZone ? state.opponentCardsInZone : state.opponentCardsInPlayerZone;
-            let attackerCardIndex = attackerCardZone.findIndex(c => c.id === attackerCardId);
+            const attackerCardInPlayerZone = state.opponentCardsInZone.find(c => c.id === attackerCardId);
+            const attackerCardZone = attackerCardInPlayerZone ? state.opponentCardsInZone : state.opponentCardsInPlayerZone;
+            const attackerCardIndex = attackerCardZone.findIndex(c => c.id === attackerCardId);
             attackerCardZone.splice(attackerCardIndex, 1);
         }
     }
@@ -998,12 +997,6 @@ module.exports = function (deps) {
                 state.playerCardsInOpponentZone.splice(cardInOpponentZoneIndex, 1);
             }
         }
-    }
-
-    function updatePlayerCard({ state, getters }, { cardId, updateFn }) {
-        const card = getters.findPlayerCardFromAllSources(cardId);
-        if (!card) throw Error('Could not find card when trying to update it. ID: ' + cardId);
-        updateFn(card);
     }
 
     function discardDurationCard({ state, getters, dispatch }, cardData) {

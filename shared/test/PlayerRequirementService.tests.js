@@ -125,7 +125,7 @@ module.exports = bocha.testCase('PlayerRequirementService', {
                 cardCommonId: '1'
             });
 
-            let requirements = service.getRequirements();
+            const requirements = service.getRequirements();
             assert.equals(requirements.length, 1);
             assert.match(requirements[0], {
                 type: 'findCard',

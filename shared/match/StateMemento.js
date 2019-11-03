@@ -83,7 +83,7 @@ module.exports = function ({
             restoreState.playerStateById[playerId].actionLogEntries = state.playerStateById[playerId].actionLogEntries;
         }
 
-        for (let key of Object.keys(restoreState)) {
+        for (const key of Object.keys(restoreState)) {
             state[key] = restoreState[key];
         }
 
@@ -99,7 +99,7 @@ module.exports = function ({
             const now = Date.now();
             const timeSinceAction = now - timeForAction;
             clock.startTime += timeSinceAction;
-            for (let event of clock.events) {
+            for (const event of clock.events) {
                 event.time += timeSinceAction;
             }
         }

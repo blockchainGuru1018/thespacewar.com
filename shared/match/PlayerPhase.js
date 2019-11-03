@@ -64,7 +64,7 @@ module.exports = class PlayerPhase {
     }
 
     isStart() {
-        let phase = this._playerStateService.getPhase();
+        const phase = this._playerStateService.getPhase();
         return phase === PHASES.start;
     }
 

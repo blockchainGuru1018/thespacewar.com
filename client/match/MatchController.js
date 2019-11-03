@@ -45,8 +45,8 @@ module.exports = function (deps) { //TODO Rename MatchConnectionController or so
     function onSocketMatchEvent(data) {
         console.log('Got match event on client', data);
 
-        let isMatchEvent = data.matchId === matchId;
-        let shouldReactToPlayerEvent = data.playerId === ownUserId;
+        const isMatchEvent = data.matchId === matchId;
+        const shouldReactToPlayerEvent = data.playerId === ownUserId;
 
         if (isMatchEvent && shouldReactToPlayerEvent) {
             dispatch(data.action, data.value);

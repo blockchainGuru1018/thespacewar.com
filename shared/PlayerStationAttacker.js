@@ -46,7 +46,7 @@ module.exports = function ({
 
         const stateBeforeAttack = stateSerializer.serialize(matchService.getState());
 
-        for (let targetCardId of targetStationCardIds) {
+        for (const targetCardId of targetStationCardIds) {
             opponentStateService.flipStationCard(targetCardId);
         }
 

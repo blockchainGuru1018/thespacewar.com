@@ -38,7 +38,7 @@ module.exports = function (deps) {
     }
 
     async function getAll() {
-        let users = await ajax.get('/user');
+        const users = await ajax.get('/user');
         cachedUsers = [...users];
         return users;
     }

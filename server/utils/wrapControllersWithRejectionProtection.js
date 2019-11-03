@@ -1,5 +1,5 @@
 module.exports = function wrapControllersWithRejectionProtection(controllerMap) {
-    let wrappedControllerMap = {};
+    const wrappedControllerMap = {};
     Object.keys(controllerMap).forEach(name => {
         wrappedControllerMap[name] = {};
         Object.keys(controllerMap[name]).forEach(methodName => {

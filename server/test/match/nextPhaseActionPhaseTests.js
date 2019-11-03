@@ -46,7 +46,7 @@ module.exports = {
         },
         'when restore state should NOT have card in zone': function () {
             this.match.refresh('P1A');
-            let { cardsInZone } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
+            const { cardsInZone } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
             assert.equals(cardsInZone.length, 0);
         }
     },
@@ -229,6 +229,6 @@ function GoodKarmaDiscardCardRequirementCount() {
 }
 
 function getCount(CardConstructor, keyInCard, keyInRequirement, type) {
-    let card = new CardConstructor({ card: {} });
+    const card = new CardConstructor({ card: {} });
     return card[keyInCard][keyInRequirement].find(r => r.type === type).count;
 }

@@ -50,14 +50,6 @@
             ...loginHelpers.mapState([
                 'hasAccess'
             ]),
-            backdropClasses() {
-                let classes = ['loading-backdrop'];
-                if (this.loadingDone) {
-                    classes.push('loading-backdrop--blur');
-                    classes.push('loading-backdrop--animate');
-                }
-                return classes;
-            },
             progressStyle() {
                 const progress = Math.max(0, Math.min(100, this.progress));
                 return {
@@ -65,7 +57,7 @@
                 }
             },
             viewClasses() {
-                let classes = ['view-wrapper'];
+                const classes = ['view-wrapper'];
                 if (this.loadingDone) {
                     classes.push('view-wrapper--visible');
                 }

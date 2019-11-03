@@ -27,7 +27,7 @@ module.exports = function ({
     }
 
     function attacks(state, getters) {
-        let requirement = getters.requirement;
+        const requirement = getters.requirement;
         if (!requirement) return [];
 
         return requirement.attacks;

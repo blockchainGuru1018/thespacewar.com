@@ -33,7 +33,7 @@ module.exports = function ({
     }
 
     function registerEvent(repairerCard, cardToRepair) {
-        let currentTurn = matchService.getTurn();
+        const currentTurn = matchService.getTurn();
         playerStateService.storeEvent(RepairCardEvent({
             turn: currentTurn,
             cardId: repairerCard.id,

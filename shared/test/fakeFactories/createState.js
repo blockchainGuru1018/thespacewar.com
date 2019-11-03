@@ -15,11 +15,11 @@ module.exports = function createState(options = {}) {
     if (playerStateIds.length < 2) {
         playerStateIds.push(options.playerOrder[1]);
     }
-    for (let key of playerStateIds) {
+    for (const key of playerStateIds) {
         options.playerStateById[key] = createPlayerState(options.playerStateById[key]);
     }
 
-    for (let playerId of options.playerOrder) {
+    for (const playerId of options.playerOrder) {
         if (!options.playerStateById[playerId]) {
             options.playerStateById[playerId] = createPlayerState();
         }

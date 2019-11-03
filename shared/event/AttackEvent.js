@@ -1,5 +1,5 @@
 function AttackEvent({ turn, attackerCardId, defenderCardId = null, targetStationCardIds = null, cardCommonId, countered = false }) {
-    let event = {
+    const event = {
         type: 'attack',
         created: Date.now(),
         turn,

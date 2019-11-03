@@ -61,7 +61,7 @@ module.exports = function ({
             cardIdsBySource[info.source].push(info.id);
         }
 
-        let allSources = Object.keys(cardIdsBySource);
+        const allSources = Object.keys(cardIdsBySource);
         return allSources.map(source => ({ source, cardIds: cardIdsBySource[source] }));
     }
 };

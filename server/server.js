@@ -26,7 +26,8 @@ let inDevelopment;
 let app;
 let server;
 let socketMaster;
-let logger = new Logger();
+
+const logger = new Logger();
 
 let restartListener = () => {};
 

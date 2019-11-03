@@ -86,7 +86,7 @@ class MatchComService {
     }
 
     prepareStationCardForClient(stationCard) {
-        let model = {
+        const model = {
             id: stationCard.card.id,
             place: stationCard.place
         };
@@ -107,7 +107,7 @@ class MatchComService {
             const playerId = player.id;
             const playerState = this._getPlayerState(playerId);
 
-            let opponentId = this.getOpponentId(playerId);
+            const opponentId = this.getOpponentId(playerId);
             const opponentState = this._getPlayerState(opponentId);
 
             const data = {

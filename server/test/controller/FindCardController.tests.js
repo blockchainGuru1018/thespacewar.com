@@ -21,7 +21,7 @@ module.exports = testCase('FindCardController', {
                 removeCardFromDiscardPile: stub().returns({ id: 'C2A' }),
                 putDownCardInZone: stub()
             });
-            let playerServiceProvider = {
+            const playerServiceProvider = {
                 getStateServiceById: stub().returns(this.playerStateService),
                 getRequirementServiceById: () => ({
                     getFirstMatchingRequirement: () => ({ target: 'homeZone' })
@@ -72,7 +72,7 @@ module.exports = testCase('FindCardController', {
         this.playerStateService = fakePlayerStateServiceFactory.withStubs({
             removeCardFromDeck: () => ({ id: 'C1A' })
         });
-        let playerServiceProvider = {
+        const playerServiceProvider = {
             getStateServiceById: stub().returns(this.playerStateService),
             getRequirementServiceById: () => ({
                 getFirstMatchingRequirement: () => ({ target: 'homeZone' })
@@ -112,7 +112,7 @@ module.exports = testCase('FindCardController', {
                     }
                 });
 
-                let options = {
+                const options = {
                     cardGroups: [
                         { source: 'deck', cardIds: ['C1A'] },
                         { source: 'discardPile', cardIds: ['C2A'] }
@@ -138,7 +138,7 @@ module.exports = testCase('FindCardController', {
                 removeStationCard: stub().returns({ card: { id: 'C1A' } }),
                 addCardToHand: stub()
             });
-            let playerServiceProvider = {
+            const playerServiceProvider = {
                 getStateServiceById: stub().returns(this.playerStateService),
                 getRequirementServiceById: () => ({
                     getFirstMatchingRequirement: () => ({ target: 'hand' })

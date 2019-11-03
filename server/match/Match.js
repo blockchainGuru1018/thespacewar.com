@@ -226,7 +226,7 @@ module.exports = function ({
     }
 
     function restoreFromState(restoreState) {
-        for (let key of Object.keys(restoreState)) {
+        for (const key of Object.keys(restoreState)) {
             state[key] = restoreState[key];
             matchService.setState(state);
         }
@@ -249,7 +249,7 @@ module.exports = function ({
 
 function wrapApi({ api, matchComService, stateChangeListener }) {
     const wrappedApi = {};
-    for (let name of Object.keys(api)) {
+    for (const name of Object.keys(api)) {
         if (typeof api[name] === 'function') {
             wrappedApi[name] = (...args) => {
 

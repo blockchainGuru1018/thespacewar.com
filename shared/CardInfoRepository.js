@@ -13,7 +13,7 @@ module.exports = function ({
 
     function getCost(cardCommonId) {
         const card = getCard(cardCommonId);
-        let costTextOrZero = card.cost || '0';
+        const costTextOrZero = card.cost || '0';
         return parseInt(costTextOrZero, 10) || 0;
     }
 

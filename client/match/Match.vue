@@ -714,15 +714,10 @@
                 const cardCount = this.opponentCardCount;
                 const turnDistance = 1.5;
                 const startDegrees = -((cardCount - 1) * turnDistance * .5);
-                let degrees = index * turnDistance;
+                const degrees = index * turnDistance;
                 return {
                     transform: 'rotate(' + (startDegrees + degrees) + 'deg)',
                     transformOrigin: 'center -1600%'
-                }
-            },
-            getCardInZoneStyle(card) {
-                return {
-                    ...this.getCardImageStyle(card)
                 }
             },
             getCardImageStyle(card) {
@@ -754,7 +749,7 @@
             documentTouchend() {
                 if (!this.holdingCard) return;
 
-                let elementAtPosition = document.elementFromPoint(this.mousePosition.x, this.mousePosition.y);
+                const elementAtPosition = document.elementFromPoint(this.mousePosition.x, this.mousePosition.y);
                 if (elementAtPosition.className.includes('ghost')) {
                     this.cardGhostClick(elementAtPosition.dataset.location);
                 }

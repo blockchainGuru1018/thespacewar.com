@@ -15,7 +15,7 @@ module.exports = function StateChanger({
     };
 
     function stateChanged(data) {
-        for (let key of Object.keys(data)) {
+        for (const key of Object.keys(data)) {
             const datum = data[key];
             preMergeHook(key, datum);
 

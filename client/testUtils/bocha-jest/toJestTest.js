@@ -1,4 +1,4 @@
-let methods = {
+const methods = {
     describe,
     test,
     beforeEach,
@@ -7,15 +7,15 @@ let methods = {
 
 module.exports = function (bochaTests) {
 
-    let testContext = {};
+    const testContext = {};
 
-    let testTree = createTraversableTreeFromBochaTests(bochaTests);
-    let tests = createFinalJestTests(testTree);
-    
+    const testTree = createTraversableTreeFromBochaTests(bochaTests);
+    const tests = createFinalJestTests(testTree);
+
     return () => runTests(tests);
-    
+
     function createFinalJestTests(stack, depth = 0) {
-        let callbacks = [];
+        const callbacks = [];
         while (stack.length > 0) {
             let piece = stack.pop();
 
@@ -25,11 +25,11 @@ module.exports = function (bochaTests) {
                 });
             }
             else if (piece.method === 'describe') {
-                let subCallbacks = createFinalJestTests(piece.stack, depth + 1);
+                const subCallbacks = createFinalJestTests(piece.stack, depth + 1);
                 if (piece.name.startsWith('=>')) {
                     callbacks.push(function () {
                         methods[piece.method].only(piece.name, function () {
-                            for (let subCallback of subCallbacks) {
+                            for (const subCallback of subCallbacks) {
                                 subCallback();
                             }
                         });
@@ -38,7 +38,7 @@ module.exports = function (bochaTests) {
                 else {
                     callbacks.push(function () {
                         methods[piece.method](piece.name, function () {
-                            for (let subCallback of subCallbacks) {
+                            for (const subCallback of subCallbacks) {
                                 subCallback();
                             }
                         });
@@ -47,7 +47,7 @@ module.exports = function (bochaTests) {
             }
             else if (piece.method === 'test') {
                 while (piece && piece.method === 'test') {
-                    let pieceToUse = piece;
+                    const pieceToUse = piece;
                     if (piece.name.startsWith('=>')) {
                         callbacks.push(function () {
                             methods[pieceToUse.method].only(pieceToUse.name, pieceToUse.fn);
@@ -68,9 +68,9 @@ module.exports = function (bochaTests) {
     }
 
     function createTraversableTreeFromBochaTests(config) {
-        let stack = [];
+        const stack = [];
 
-        for (let key of Object.keys(config)) {
+        for (const key of Object.keys(config)) {
             if (key === 'setUp') {
                 stack.push({ method: 'beforeEach', fn: config[key].bind(testContext) });
             }
@@ -79,7 +79,7 @@ module.exports = function (bochaTests) {
             }
             else {
                 if (typeof config[key] === 'object') {
-                    let subStack = createTraversableTreeFromBochaTests(config[key]);
+                    const subStack = createTraversableTreeFromBochaTests(config[key]);
                     stack.push({
                         method: 'describe',
                         name: key,
@@ -96,8 +96,8 @@ module.exports = function (bochaTests) {
     }
 
     function runTests(jestTestCallbacks) {
-        for(let callback of jestTestCallbacks) {
+        for(const callback of jestTestCallbacks) {
             callback();
         }
     }
-}
+};

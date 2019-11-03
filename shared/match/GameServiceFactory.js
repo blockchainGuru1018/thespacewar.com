@@ -66,7 +66,7 @@ module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig 
     }
 
     function matchService() {
-        let matchService = new MatchService({ gameConfig, endMatch });
+        const matchService = new MatchService({ gameConfig, endMatch });
         matchService.setState(state);
         return matchService;
     }

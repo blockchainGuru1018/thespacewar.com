@@ -22,7 +22,7 @@ function FakeDeck(deps) {
 
     const cardDataAssembler = deps.cardDataAssembler;
 
-    let cards = cardDataAssembler.createAll();
+    const cards = cardDataAssembler.createAll();
 
     return {
         draw,
@@ -32,7 +32,7 @@ function FakeDeck(deps) {
     };
 
     function draw(count) {
-        let result = [];
+        const result = [];
         for (let i = 0; i < count; i++) {
             result.push(drawSingle());
         }
@@ -40,11 +40,6 @@ function FakeDeck(deps) {
     }
 
     function drawSingle() {
-        const card = cards.shift();
-        if (cards.length === 0) {
-            cards = cardDataAssembler.createAll();
-        }
-        return card;
-
+        return cards.shift();
     }
 }

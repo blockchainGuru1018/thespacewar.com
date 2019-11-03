@@ -41,7 +41,7 @@ module.exports = function ({
 
     function validateIfCanProgressRequirementByCount(count, playerId) {
         const playerRequirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'findCard' });
-        let canProgressRequirement = playerRequirementUpdater.canProgressRequirementByCount(count);
+        const canProgressRequirement = playerRequirementUpdater.canProgressRequirementByCount(count);
         if (!canProgressRequirement) {
             throw new CheatError('Cannot select more cards than required');
         }

@@ -1,4 +1,4 @@
-let {
+const {
     testCase,
     stub,
     sinon,
@@ -178,7 +178,7 @@ function FakeConnection(listenerByActionName) { // TODO Migrate this to the new 
 
 function FakeConnection2(namesOfActionsToStub = []) {
     const stubMap = {};
-    for (let name of namesOfActionsToStub) {
+    for (const name of namesOfActionsToStub) {
         stubMap[name] = stub();
     }
     const listenersByActionName = {};

@@ -40,7 +40,7 @@ module.exports = function ({ getCardData, cache = DummyCache() }) {
     }
 
     async function updateCacheIfChanged() {
-        let data = await getCardData();
+        const data = await getCardData();
 
         if (newDataIsDifferentFromCurrent(data)) {
             saveNewCacheData(data);

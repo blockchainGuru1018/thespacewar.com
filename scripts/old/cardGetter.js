@@ -11,13 +11,13 @@ const cardErrorLog = [];
     const cardInfos = imageUrls.map(url => toCardInfo(url));
     console.log('\t\t\t')
     console.log(' - DOWNLOADING')
-    for (let card of cardInfos) {
+    for (const card of cardInfos) {
         await downloadCard(card);
     }
     console.log(' - DONE')
     if (cardErrorLog.length) {
         console.log(' ---- Could not download the following cards --- ');
-        for (let entry of cardErrorLog) {
+        for (const entry of cardErrorLog) {
             console.log(entry.cardInfo.name);
         }
     }

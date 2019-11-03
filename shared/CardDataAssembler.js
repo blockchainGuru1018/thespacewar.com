@@ -17,9 +17,9 @@ module.exports = function ({
     };
 
     function createAll() {
-        let rawCardData = rawCardDataRepository.get();
-        let cards = [];
-        for (let cardJson of rawCardData) {
+        const rawCardData = rawCardDataRepository.get();
+        const cards = [];
+        for (const cardJson of rawCardData) {
             const copies = cardJson.number_copies ? parseInt(cardJson.number_copies) : 1;
             for (let i = 0; i < copies; i++) {
                 const card = CardData(cardJson);
@@ -35,7 +35,7 @@ module.exports = function ({
     }
 
     function createFromCommonId(commonId) {
-        let unmappedCardData = rawCardDataRepository.get();
+        const unmappedCardData = rawCardDataRepository.get();
         const cardJson = unmappedCardData.find(c => c.id === commonId.toString());
         if (!cardJson) {
             console.error('Could not find card data for card with ID ' + commonId);
@@ -64,6 +64,6 @@ function CardData(cardJson) {
 }
 
 function createUniqueCardId(cardCommonId) {
-    let uniqueId = Math.round(Date.now() * .1 * Math.random()).toString().substr(0, 5).padStart(5, '0');
+    const uniqueId = Math.round(Date.now() * .1 * Math.random()).toString().substr(0, 5).padStart(5, '0');
     return `${cardCommonId}:${uniqueId}`;
 }

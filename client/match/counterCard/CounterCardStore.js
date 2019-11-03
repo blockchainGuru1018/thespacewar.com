@@ -26,10 +26,10 @@ module.exports = function ({
     }
 
     function cards(state, getters) {
-        let requirement = getters.requirement;
+        const requirement = getters.requirement;
         if (!requirement) return [];
 
-        let opponentAnyCardGroup = requirement.cardGroups.find(g => g.source === 'opponentAny');
+        const opponentAnyCardGroup = requirement.cardGroups.find(g => g.source === 'opponentAny');
         if (!opponentAnyCardGroup) return [];
 
         return opponentAnyCardGroup.cards;

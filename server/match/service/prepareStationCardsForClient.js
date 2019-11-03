@@ -3,7 +3,7 @@ function prepareStationCardsForClient(stationCards) {
 }
 
 function prepareStationCardForClient(stationCard) {
-    let model = {
+    const model = {
         id: stationCard.card.id,
         place: stationCard.place
     };

@@ -40,7 +40,7 @@ module.exports = {
         }));
 
         const putDownCardOptions = { location: 'zone', cardId: 'C1A' };
-        let error = catchError(() => this.match.putDownCard('P1A', putDownCardOptions));
+        const error = catchError(() => this.match.putDownCard('P1A', putDownCardOptions));
 
         assert.equals(error.message, 'Cannot find card');
     },
@@ -59,7 +59,7 @@ module.exports = {
         }));
 
         const putDownCardOptions = { location: 'zone', cardId: 'C1A' };
-        let error = catchError(() => this.match.putDownCard('P1A', putDownCardOptions));
+        const error = catchError(() => this.match.putDownCard('P1A', putDownCardOptions));
 
         assert.equals(error.message, 'Cannot afford card');
         assert.equals(error.type, 'CheatDetected');
@@ -91,18 +91,18 @@ module.exports = {
         },
         'should put card in zone'() {
             this.match.refresh('P1A');
-            let state = this.firstPlayerConnection.stateChanged.firstCall.args[0];
+            const state = this.firstPlayerConnection.stateChanged.firstCall.args[0];
             assert.equals(state.cardsInZone.length, 1);
             assert.equals(state.cardsInZone[0].id, 'C1A');
         },
         'should remove card from hand'() {
             this.match.refresh('P1A');
-            let state = this.firstPlayerConnection.stateChanged.firstCall.args[0];
+            const state = this.firstPlayerConnection.stateChanged.firstCall.args[0];
             assert.equals(state.cardsOnHand.length, 0);
         },
         'should add event'() {
             this.match.refresh('P1A');
-            let state = this.firstPlayerConnection.stateChanged.firstCall.args[0];
+            const state = this.firstPlayerConnection.stateChanged.firstCall.args[0];
             assert.equals(state.events.length, 1);
             assert.match(state.events[0], {
                 type: 'putDownCard',
@@ -147,13 +147,13 @@ module.exports = {
         },
         'should only have one copy of the card in the zone'() {
             this.match.refresh('P1A');
-            let state = this.firstPlayerConnection.stateChanged.firstCall.args[0];
+            const state = this.firstPlayerConnection.stateChanged.firstCall.args[0];
             assert.equals(state.cardsInZone.length, 1);
             assert.equals(state.cardsInZone[0].id, 'C1A');
         },
         'should NOT add an event'() {
             this.match.refresh('P1A');
-            let state = this.firstPlayerConnection.stateChanged.firstCall.args[0];
+            const state = this.firstPlayerConnection.stateChanged.firstCall.args[0];
             assert.equals(state.events.length, 0);
         },
         'should throw error'() {
@@ -189,13 +189,13 @@ module.exports = {
         },
         'should only have one copy of the card in the zone'() {
             this.match.refresh('P1A');
-            let state = this.firstPlayerConnection.stateChanged.firstCall.args[0];
+            const state = this.firstPlayerConnection.stateChanged.firstCall.args[0];
             assert.equals(state.cardsInZone.length, 1);
             assert.equals(state.cardsInZone[0].id, 'C1A');
         },
         'should NOT add an event'() {
             this.match.refresh('P1A');
-            let state = this.firstPlayerConnection.stateChanged.firstCall.args[0];
+            const state = this.firstPlayerConnection.stateChanged.firstCall.args[0];
             assert.equals(state.events.length, 0);
         },
         'should throw error'() {
@@ -240,7 +240,7 @@ module.exports = {
             }
         }));
 
-        let error = catchError(() => match.putDownCard('P2A', { location: 'zone', cardId: 'C2A' }));
+        const error = catchError(() => match.putDownCard('P2A', { location: 'zone', cardId: 'C2A' }));
 
         assert.equals(error.message, 'Cannot put down card');
         assert.equals(error.type, 'CheatDetected');
@@ -310,7 +310,7 @@ module.exports = {
             }
         }));
 
-        let error = catchError(() => this.match.putDownCard('P1A', { location: 'zone', cardId: 'C2A' }));
+        const error = catchError(() => this.match.putDownCard('P1A', { location: 'zone', cardId: 'C2A' }));
 
         assert(error);
         assert.equals(error.message, 'Cannot afford card');
@@ -332,7 +332,7 @@ module.exports = {
             }
         }));
 
-        let error = catchError(() => this.match.putDownCard('P1A', { location: 'zone', cardId: 'C2A' }));
+        const error = catchError(() => this.match.putDownCard('P1A', { location: 'zone', cardId: 'C2A' }));
 
         assert(error);
         assert.equals(error.message, 'Cannot move station card that is not flipped to zone');

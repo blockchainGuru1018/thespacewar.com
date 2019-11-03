@@ -413,7 +413,7 @@ module.exports = testCase('ActionPointCalculator', {
 });
 
 function FakeCardInfoRepository(cards) {
-    let cardDataAssembler = {
+    const cardDataAssembler = {
         createAll: () => cards.map(c => createCard(c))
     };
     return CardInfoRepository({ cardDataAssembler });

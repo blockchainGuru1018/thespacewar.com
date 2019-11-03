@@ -31,7 +31,7 @@ module.exports = {
             }
         }));
 
-        let error = catchError(() => match.nextPhase('P2A', { currentPhase: 'wait' }));
+        const error = catchError(() => match.nextPhase('P2A', { currentPhase: 'wait' }));
 
         assert.equals(error.message, 'Switching phase when not your own turn');
         assert.equals(error.type, 'CheatDetected');

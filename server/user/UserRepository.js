@@ -27,7 +27,7 @@ module.exports = function (deps) {
     function addUserAndClearOldUsers(name, secret) {
         clearOldUsers();
 
-        let user = createUser(name);
+        const user = createUser(name);
         storeUserData(user);
 
         secretToUserId.set(secret, user.id);
@@ -61,7 +61,7 @@ module.exports = function (deps) {
     }
 
     function createUser(name) {
-        let id = createId();
+        const id = createId();
         return User.fromData({ name, id });
     }
 

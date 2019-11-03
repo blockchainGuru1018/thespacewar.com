@@ -122,7 +122,7 @@
                 const cardCount = this.playerCardsOnHand.length;
                 const turnDistance = 1.5;
                 const startDegrees = -((cardCount - 1) * turnDistance * .5);
-                let degrees = index * turnDistance;
+                const degrees = index * turnDistance;
                 return {
                     transform: 'rotate(' + (startDegrees + degrees) + 'deg)',
                     transformOrigin: 'center 1600%',
@@ -134,8 +134,8 @@
                 const cardCount = this.playerCardsOnHand.length;
                 const turnDistance = 80;
                 const startDegrees = -((cardCount - 1) * turnDistance * .5);
-                let degrees = index * turnDistance;
-                const number = startDegrees + degrees
+                const degrees = index * turnDistance;
+                const number = startDegrees + degrees;
                 return {
                     left: `${number}px`
                 }
@@ -146,7 +146,7 @@
                 const cardCount = this.playerCardsOnHand.length;
                 const turnDistance = 80;
                 const startDegrees = -((cardCount - 1) * turnDistance * .5);
-                let degrees = index * turnDistance;
+                const degrees = index * turnDistance;
                 const number = startDegrees + degrees;
                 return {
                     left: `${number}px`,
@@ -176,7 +176,7 @@
                     }
                 }
 
-                let touchedElement = document.elementFromPoint(event.touches[0].clientX, event.touches[0].clientY);
+                const touchedElement = document.elementFromPoint(event.touches[0].clientX, event.touches[0].clientY);
                 const activator = this.$refs.cardHoverActivator.find(activator => activator === touchedElement);
                 if (activator) {
                     this.hoveringOverCardAtIndex = parseInt(activator.dataset.index);

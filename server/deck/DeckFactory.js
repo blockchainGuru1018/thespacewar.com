@@ -14,7 +14,7 @@ module.exports = function (deps) {
     }
 
     function createCardsForDeck() {
-        let deck = cardDataAssembler.createAll();
+        const deck = cardDataAssembler.createAll();
         shuffle(deck);
         return deck;
     }

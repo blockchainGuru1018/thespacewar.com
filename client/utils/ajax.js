@@ -11,7 +11,7 @@ module.exports = {
             data.secret = secret;
         }
 
-        let response = await fetch(url, {
+        const response = await fetch(url, {
             method: "POST",
             credentials: "same-origin",
             headers: {
@@ -21,16 +21,12 @@ module.exports = {
         });
 
         const contentType = response.headers.get("content-type");
-        let responseContentIsJSON = contentType && contentType.indexOf("application/json") !== -1;
+        const responseContentIsJSON = contentType && contentType.indexOf("application/json") !== -1;
         return responseContentIsJSON ? response.json() : response.text();
     },
     async get(url) {
-        let response = await fetch(url);
+        const response = await fetch(url);
         return response.json();
-    },
-    async getText(url) {
-        let response = await fetch(url);
-        return response.text();
     },
     secret() {
         return secret;

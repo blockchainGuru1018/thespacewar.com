@@ -10,8 +10,8 @@ module.exports = class DeadlySniper extends BaseCard {
     }
 
     canAttackCardsInOtherZone() {
-        let currentTurn = this._matchService.getTurn();
-        let turnsSinceWasPutDown = currentTurn - this._queryEvents.getTurnWhenCardWasPutDown(this.id);
+        const currentTurn = this._matchService.getTurn();
+        const turnsSinceWasPutDown = currentTurn - this._queryEvents.getTurnWhenCardWasPutDown(this.id);
         return turnsSinceWasPutDown > 0;
     }
 };

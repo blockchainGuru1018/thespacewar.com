@@ -37,7 +37,7 @@ module.exports = function ({
     }
 
     async function login({ state, dispatch }) {
-        let ownUser = await ajax.jsonPost('/login', { name: state.username });
+        const ownUser = await ajax.jsonPost('/login', { name: state.username });
         localGameDataFacade.setOwnUser(ownUser);
         dispatch('user/storeOwnUser', ownUser, { root: true });
     }
@@ -83,7 +83,7 @@ module.exports = function ({
         route('match', { matchId, opponentUser: botUser });
 
         botUpdateListener.start({ matchId, botUser, playerUser: userRepository.getOwnUser() });
-        
+
         userRepository.reconnectBot();
     }
 

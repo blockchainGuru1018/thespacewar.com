@@ -1,4 +1,4 @@
-let {
+const {
     testCase,
     assert,
     refute

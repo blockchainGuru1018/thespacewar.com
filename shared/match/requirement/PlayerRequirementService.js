@@ -71,7 +71,7 @@ class PlayerRequirementService {
     }
 
     addDiscardCardRequirement({ count, common = false, cardCommonId = null }) {
-        let countToDiscard = this.getCountOrMinimumAvailableForDiscardingCards(count);
+        const countToDiscard = this.getCountOrMinimumAvailableForDiscardingCards(count);
         if (countToDiscard > 0) {
             const requirement = {
                 type: 'discardCard',

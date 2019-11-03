@@ -16,9 +16,9 @@ module.exports = function (originalDeck) {
     function draw(count = 1) {
         const countAvailableToDraw = Math.min(getCardCount(), count);
 
-        let cards = [];
+        const cards = [];
         for (let i = 0; i < countAvailableToDraw; i++) {
-            let topCard = deck.pop();
+            const topCard = deck.pop();
             cards.push(topCard);
         }
         cards.reverse();

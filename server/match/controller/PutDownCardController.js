@@ -26,7 +26,7 @@ function PutDownCardController(deps) {
 
     function onPutDownCard(playerId, { location, cardId, choice }) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        let cardData = playerStateService.findCardFromAnySource(cardId);
+        const cardData = playerStateService.findCardFromAnySource(cardId);
         if (!cardData) throw new CheatError(`Cannot find card`);
 
         checkIfCanPutDownCard({ playerId, location, cardData });
@@ -52,7 +52,7 @@ function PutDownCardController(deps) {
 
     function counterCard(playerId, { cardId, targetCardId }) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        let cardData = playerStateService.findCardFromAnySource(cardId);
+        const cardData = playerStateService.findCardFromAnySource(cardId);
         if (!cardData) throw new CheatError(`Cannot find card`);
 
         validateIfCanProgressCounterCardRequirementByCount(1, playerId);
@@ -82,7 +82,7 @@ function PutDownCardController(deps) {
 
     function validateIfCanProgressCounterCardRequirementByCount(count, playerId) {
         const playerRequirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'counterCard' });
-        let canProgressRequirement = playerRequirementUpdater.canProgressRequirementByCount(count);
+        const canProgressRequirement = playerRequirementUpdater.canProgressRequirementByCount(count);
         if (!canProgressRequirement) {
             throw new CheatError('Cannot counter card');
         }

@@ -4,12 +4,12 @@ const FakeDeck = require('./FakeDeck.js');
 module.exports = FakeDeckFactory;
 
 FakeDeckFactory.fromCards = cards => {
-    let cardDataAssembler = { createAll: () => [...cards] };
+    const cardDataAssembler = { createAll: () => [...cards] };
     return FakeDeckFactory({ cardDataAssembler });
 };
 
 FakeDeckFactory.createDeckFromCards = cards => {
-    let cardDataAssembler = { createAll: () => cards.map(c => FakeCardDataAssembler.createCard(c)) };
+    const cardDataAssembler = { createAll: () => cards.map(c => FakeCardDataAssembler.createCard(c)) };
     return FakeDeck({ cardDataAssembler });
 };
 

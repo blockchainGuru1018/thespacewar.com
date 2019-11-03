@@ -23,8 +23,8 @@ module.exports = function (deps) {
     const matchId = deps.matchId;
     const matchControllerFactory = deps.matchControllerFactory;
 
-    let matchController = matchControllerFactory.create({ matchId, dispatch: createMatchDispatch(rootStore) });
-    let stores = [];
+    const matchController = matchControllerFactory.create({ matchId, dispatch: createMatchDispatch(rootStore) });
+    const stores = [];
 
     deps.rootDispatch = createRootDispatch(rootStore);
     deps.getFrom = createRootGetFrom(rootStore);
@@ -114,7 +114,7 @@ function createRootDispatch(rootStore) {
                     return reciever;
                 }
                 else {
-                    let storeName = target.store;
+                    const storeName = target.store;
                     target.store = '';
                     return (...args) => rootStore.dispatch(`${storeName}/${property}`, ...args);
                 }

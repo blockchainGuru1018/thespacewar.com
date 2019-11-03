@@ -77,10 +77,10 @@ function bootstrap() {
         UserStore({ rootStore, userRepository }),
         AudioStore()
     ];
-    for (let store of stores) {
+    for (const store of stores) {
         rootStore.registerModule(store.name, store);
     }
-    for (let store of stores) {
+    for (const store of stores) {
         if (store.actions && store.actions.init) {
             rootStore.dispatch(`${store.name}/init`);
         }

@@ -250,7 +250,7 @@ module.exports = function (deps) {
         dispatch('_hideChoiceDialog');
 
         if (choice === 'putDownAsExtraStationCard') {
-            let choiceData = choices.find(c => c.name === 'putDownAsExtraStationCard');
+            const choiceData = choices.find(c => c.name === 'putDownAsExtraStationCard');
             dispatch('_applyChoicePutDownAsExtraStationCard', { cardData, choiceData });
         }
         else {

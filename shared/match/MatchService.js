@@ -114,15 +114,6 @@ class MatchService {
         return updateFn(this._state);
     }
 
-    updatePlayerCard(playerId, cardId, updateFn) {
-        const playerState = this.getPlayerState(playerId);
-        let card = playerState.cardsInZone.find(c => c.id === cardId)
-            || playerState.cardsInOpponentZone.find(c => c.id === cardId);
-        if (!card) throw Error('Could not find card when trying to update it. ID: ' + cardId);
-
-        updateFn(card);
-    }
-
     getPlayerState(playerId) {
         return this._state.playerStateById[playerId];
     }

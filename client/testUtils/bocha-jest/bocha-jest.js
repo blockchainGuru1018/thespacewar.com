@@ -1,13 +1,13 @@
-let assert = require('bocha/lib/dom/assert.js');
-let refute = require('bocha/lib/dom/refute.js');
-let timeout = require('bocha/lib/timeoutPromise.js');
-let bochaDom = require('bocha/lib/dom/dom.js');
-let fakeClock = require('bocha/lib/fakeClock.js');
-let defaults = require('lodash/defaults');
-let sinon = require('sinon');
-let stub = sinon.stub;
-let click = bochaDom.clickAndTick;
-let toJestTest = require('./toJestTest.js');
+const assert = require('bocha/lib/dom/assert.js');
+const refute = require('bocha/lib/dom/refute.js');
+const timeout = require('bocha/lib/timeoutPromise.js');
+const bochaDom = require('bocha/lib/dom/dom.js');
+const fakeClock = require('bocha/lib/fakeClock.js');
+const defaults = require('lodash/defaults');
+const sinon = require('sinon');
+const stub = sinon.stub;
+const click = bochaDom.clickAndTick;
+const toJestTest = require('./toJestTest.js');
 const nodeAssert = require('assert');
 
 assert.elementTextStartsWith = function (selector, text) {

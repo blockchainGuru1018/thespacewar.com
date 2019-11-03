@@ -27,7 +27,7 @@ module.exports = function ({
     }
 
     function perfectPlan() {
-        let unflippedStationCardsCount = playerStateService.getUnflippedStationCardsCount();
+        const unflippedStationCardsCount = playerStateService.getUnflippedStationCardsCount();
         if (unflippedStationCardsCount < PerfectPlanStationCardCost + 1) throw new CheatError('Too few undamaged station cards');
 
         opponentRequirementService.addDamageStationCardRequirement({

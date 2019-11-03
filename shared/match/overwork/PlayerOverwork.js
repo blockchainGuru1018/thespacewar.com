@@ -29,7 +29,7 @@ module.exports = function ({
     }
 
     function overwork() {
-        let unflippedStationCardsCount = playerStateService.getUnflippedStationCardsCount();
+        const unflippedStationCardsCount = playerStateService.getUnflippedStationCardsCount();
         if (unflippedStationCardsCount < 2) throw new CheatError('Too few undamaged station cards');
 
         opponentRequirementService.addDamageStationCardRequirement({ count: 1, reason: 'overwork', common: true });

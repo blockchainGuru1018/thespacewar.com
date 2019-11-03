@@ -63,7 +63,7 @@ module.exports = {
         },
         'when restore state for second player should have card in opponentCardsInPlayerZone'() {
             this.match.refresh('P2A');
-            let state = this.secondPlayerConnection.stateChanged.lastCall.args[0];
+            const state = this.secondPlayerConnection.stateChanged.lastCall.args[0];
             assert.equals(state.opponentCardsInPlayerZone.length, 1);
             assert.match(state.opponentCardsInPlayerZone[0], { id: 'C1A' });
         }
@@ -83,7 +83,7 @@ module.exports = {
             }
         }));
 
-        let error = catchError(() => this.match.moveCard('P1A', 'C1A'));
+        const error = catchError(() => this.match.moveCard('P1A', 'C1A'));
 
         assert(error);
         assert.equals(error.message, 'Cannot move card');
@@ -595,10 +595,10 @@ module.exports = {
             },
             'should flip attacked station card': function () {
                 this.match.refresh('P2A');
-                let { stationCards } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
+                const { stationCards } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
                 assert.equals(stationCards.length, 2);
 
-                let flippedCards = stationCards.filter(s => s.flipped);
+                const flippedCards = stationCards.filter(s => s.flipped);
                 assert.equals(flippedCards.length, 1);
                 assert.match(flippedCards[0].card, { id: 'C2A' });
                 assert.match(flippedCards[0], { flipped: true, place: 'action' });
@@ -607,7 +607,7 @@ module.exports = {
                 const { stationCards } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
                 assert.equals(stationCards.length, 2);
 
-                let flippedCards = stationCards.filter(s => s.flipped);
+                const flippedCards = stationCards.filter(s => s.flipped);
                 assert.equals(flippedCards.length, 1);
                 assert.match(flippedCards[0].card, { id: 'C2A' });
                 assert.match(flippedCards[0], { flipped: true, place: 'action' });
@@ -616,7 +616,7 @@ module.exports = {
                 const { opponentStationCards } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
                 assert.equals(opponentStationCards.length, 2);
 
-                let flippedCards = opponentStationCards.filter(s => s.flipped);
+                const flippedCards = opponentStationCards.filter(s => s.flipped);
                 assert.equals(flippedCards.length, 1);
                 assert.match(flippedCards[0].card, { id: 'C2A' });
                 assert.match(flippedCards[0], { flipped: true, place: 'action' });
@@ -667,10 +667,10 @@ module.exports = {
             },
             'when second player restore state should have 1 station card flipped': function () {
                 this.match.refresh('P2A');
-                let { stationCards } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
+                const { stationCards } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
                 assert.equals(stationCards.length, 3);
 
-                let flippedCards = stationCards.filter(s => s.flipped);
+                const flippedCards = stationCards.filter(s => s.flipped);
                 assert.equals(flippedCards.length, 2);
                 assert.match(flippedCards[0].card, { id: 'C2A' });
                 assert.match(flippedCards[0], { flipped: true, place: 'action' });
@@ -679,10 +679,10 @@ module.exports = {
             },
             'when first player restore state 1 of the opponent station cards should be flipped': function () {
                 this.match.refresh('P1A');
-                let { opponentStationCards } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
+                const { opponentStationCards } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
                 assert.equals(opponentStationCards.length, 3);
 
-                let flippedCards = opponentStationCards.filter(s => s.flipped);
+                const flippedCards = opponentStationCards.filter(s => s.flipped);
                 assert.equals(flippedCards.length, 2);
                 assert.match(flippedCards[0].card, { id: 'C2A' });
                 assert.match(flippedCards[0], { flipped: true, place: 'action' });
@@ -693,7 +693,7 @@ module.exports = {
                 const { stationCards } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
                 assert.equals(stationCards.length, 3);
 
-                let flippedCards = stationCards.filter(s => s.flipped);
+                const flippedCards = stationCards.filter(s => s.flipped);
                 assert.equals(flippedCards.length, 2);
                 assert.match(flippedCards[0].card, { id: 'C2A' });
                 assert.match(flippedCards[0], { flipped: true, place: 'action' });
@@ -704,7 +704,7 @@ module.exports = {
                 const { opponentStationCards } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
                 assert.equals(opponentStationCards.length, 3);
 
-                let flippedCards = opponentStationCards.filter(s => s.flipped);
+                const flippedCards = opponentStationCards.filter(s => s.flipped);
                 assert.equals(flippedCards.length, 2);
                 assert.match(flippedCards[0].card, { id: 'C2A' });
                 assert.match(flippedCards[0], { flipped: true, place: 'action' });
@@ -850,10 +850,10 @@ module.exports = {
             },
             'when second player restore state should have 2 station cards flipped': function () {
                 this.match.refresh('P2A');
-                let { stationCards } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
+                const { stationCards } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
                 assert.equals(stationCards.length, 3);
 
-                let flippedCards = stationCards.filter(s => s.flipped);
+                const flippedCards = stationCards.filter(s => s.flipped);
                 assert.equals(flippedCards.length, 2);
                 assert.match(flippedCards[0].card, { id: 'C3A' });
                 assert.match(flippedCards[0], { flipped: true, place: 'action' });
@@ -862,10 +862,10 @@ module.exports = {
             },
             'when first player restore state 2 of the opponent station cards should be flipped': function () {
                 this.match.refresh('P1A');
-                let { opponentStationCards } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
+                const { opponentStationCards } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
                 assert.equals(opponentStationCards.length, 3);
 
-                let flippedCards = opponentStationCards.filter(s => s.flipped);
+                const flippedCards = opponentStationCards.filter(s => s.flipped);
                 assert.equals(flippedCards.length, 2);
                 assert.match(flippedCards[0].card, { id: 'C3A' });
                 assert.match(flippedCards[0], { flipped: true, place: 'action' });
@@ -876,7 +876,7 @@ module.exports = {
                 const { stationCards } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
                 assert.equals(stationCards.length, 3);
 
-                let flippedCards = stationCards.filter(s => s.flipped);
+                const flippedCards = stationCards.filter(s => s.flipped);
                 assert.equals(flippedCards.length, 2);
                 assert.match(flippedCards[0].card, { id: 'C3A' });
                 assert.match(flippedCards[0], { flipped: true, place: 'action' });
@@ -887,7 +887,7 @@ module.exports = {
                 const { opponentStationCards } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
                 assert.equals(opponentStationCards.length, 3);
 
-                let flippedCards = opponentStationCards.filter(s => s.flipped);
+                const flippedCards = opponentStationCards.filter(s => s.flipped);
                 assert.equals(flippedCards.length, 2);
                 assert.match(flippedCards[0].card, { id: 'C3A' });
                 assert.match(flippedCards[0], { flipped: true, place: 'action' });
@@ -932,14 +932,14 @@ module.exports = {
             },
             'when second player restore state should NOT have any station cards flipped'() {
                 this.match.refresh('P2A');
-                let { stationCards } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
-                let flippedCards = stationCards.filter(s => s.flipped);
+                const { stationCards } = this.secondPlayerConnection.stateChanged.lastCall.args[0];
+                const flippedCards = stationCards.filter(s => s.flipped);
                 assert.equals(flippedCards.length, 0);
             },
             'when first player restore state none of the opponent station cards should be flipped'() {
                 this.match.refresh('P1A');
-                let { opponentStationCards } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
-                let flippedCards = opponentStationCards.filter(s => s.flipped);
+                const { opponentStationCards } = this.firstPlayerConnection.stateChanged.lastCall.args[0];
+                const flippedCards = opponentStationCards.filter(s => s.flipped);
                 assert.equals(flippedCards.length, 0);
             },
             'should NOT emit flipped station card to second player'() {

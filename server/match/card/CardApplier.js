@@ -28,7 +28,7 @@ module.exports = function CardApplier(deps) {
     }
 
     function putDownCard(playerId, cardData, { choice = '' } = {}) {
-        let command = getCommandForCard(cardData);
+        const command = getCommandForCard(cardData);
         if (command) {
             command.forPlayer(playerId, cardData, { choice });
         }

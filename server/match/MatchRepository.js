@@ -89,7 +89,7 @@ module.exports = function ({
     }
 
     function endMatch(matchId) {
-        let userIdsWithMatchRegistered = getMatchUserIds(matchId);
+        const userIdsWithMatchRegistered = getMatchUserIds(matchId);
         for (const userId of userIdsWithMatchRegistered) {
             registerUserExitedMatch(userId);
             matchByUserId.delete(userId);
@@ -99,7 +99,7 @@ module.exports = function ({
     }
 
     function getMatchUserIds(matchId) {
-        let userIds = [];
+        const userIds = [];
         matchByUserId.forEach((match, userId) => {
             if (match.id === matchId) {
                 userIds.push(userId);
@@ -126,7 +126,7 @@ module.exports = function ({
     }
 
     function emitMatchCreate(match, userId) {
-        let opponentSocket = socketRepository.getForUser(userId);
+        const opponentSocket = socketRepository.getForUser(userId);
         opponentSocket.emit('match/create', match.toClientModel());
     }
 

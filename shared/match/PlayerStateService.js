@@ -294,7 +294,7 @@ class PlayerStateService {
     }
 
     getStationDrawCardsCount() {
-        let stationCards = this.getStationCards();
+        const stationCards = this.getStationCards();
         return stationCards
             .filter(card => card.place === 'draw')
             .length;
@@ -509,7 +509,7 @@ class PlayerStateService {
 
         const millCardCount = this._gameConfig.millCardCount();
         const milledCards = this._drawCount(millCardCount);
-        for (let card of milledCards) {
+        for (const card of milledCards) {
             this.discardCard(card);
         }
 
@@ -764,7 +764,7 @@ class PlayerStateService {
     }
 
     removeStationCard(cardId) {
-        let stationCard = this.findStationCard(cardId);
+        const stationCard = this.findStationCard(cardId);
         this.update(playerState => {
             playerState.stationCards = playerState.stationCards.filter(s => s.card.id !== cardId);
         });

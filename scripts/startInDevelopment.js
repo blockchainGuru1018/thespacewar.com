@@ -16,7 +16,7 @@ async function onServerRestart() {
 }
 
 function reloadServerModule() {
-    for (let key of Object.keys(require.cache)) {
+    for (const key of Object.keys(require.cache)) {
         delete require.cache[key];
     }
     server = require(serverRelativePath);

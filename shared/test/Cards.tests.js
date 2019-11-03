@@ -666,7 +666,7 @@ module.exports = testCase('Cards', {
                 })
             });
 
-            let energyShield = {
+            const energyShield = {
                 id: 'C2A',
                 canBeTargeted: () => true,
                 type: 'defense',

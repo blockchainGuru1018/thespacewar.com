@@ -55,7 +55,7 @@ module.exports = class RepairShip extends BaseCard {
 
     _hasRepairedThisTurn() {
         const currentTurn = this._matchService.getTurn();
-        let repairsThisTurn = this._queryEvents.getRepairsOnTurn(this.id, currentTurn);
+        const repairsThisTurn = this._queryEvents.getRepairsOnTurn(this.id, currentTurn);
         return repairsThisTurn.length > 0;
     }
 

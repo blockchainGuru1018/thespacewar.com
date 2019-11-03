@@ -29,10 +29,10 @@ module.exports = function ({
     }
 
     async function joinMatch({ id: matchId, playerIds }) {
-        let ownUserId = userRepository.getOwnUser().id;
-        let opponentUserId = playerIds.find(id => id !== ownUserId);
-        let users = userRepository.getAllLocal();
-        let opponentUser = users.find(u => u.id === opponentUserId);
+        const ownUserId = userRepository.getOwnUser().id;
+        const opponentUserId = playerIds.find(id => id !== ownUserId);
+        const users = userRepository.getAllLocal();
+        const opponentUser = users.find(u => u.id === opponentUserId);
         route('match', { matchId, opponentUser });
     }
 
