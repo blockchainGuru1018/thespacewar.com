@@ -210,7 +210,7 @@ module.exports = function ({
 
     function miller(playerId) {
         return Miller({
-            playerRequirementService: api.playerRequirementService(playerId),
+            queryPlayerRequirements: api.queryPlayerRequirements(playerId),
             playerStateService: api.playerStateService(playerId),
             playerCommanders: api.playerCommanders(playerId),
             playerRuleService: api.playerRuleService(playerId),
@@ -243,6 +243,7 @@ module.exports = function ({
             overworkEventFactory: api.overworkEventFactory(playerId),
             playerStateService: api.playerStateService(playerId),
             playerRequirementService: api.playerRequirementService(playerId),
+            queryPlayerRequirements: api.queryPlayerRequirements(playerId),
             opponentRequirementService: api.playerRequirementService(api.opponentId(playerId)),
             opponentActionLog: api.actionLog(api.opponentId(playerId)),
             playerCommanders: api.playerCommanders(playerId)
@@ -254,6 +255,7 @@ module.exports = function ({
             playerPhase: api.playerPhase(playerId),
             overworkEventFactory: api.overworkEventFactory(playerId),
             playerStateService: api.playerStateService(playerId),
+            queryPlayerRequirements: api.queryPlayerRequirements(playerId),
             playerRequirementService: api.playerRequirementService(playerId),
             opponentRequirementService: api.playerRequirementService(api.opponentId(playerId)),
             opponentActionLog: api.actionLog(api.opponentId(playerId)),
@@ -460,6 +462,7 @@ module.exports = function ({
             matchService: api.matchService(),
             playerStateService: api.playerStateService(playerId),
             opponentStateService: api.playerStateService(api.opponentId(playerId)),
+            queryPlayerRequirements: api.queryPlayerRequirements(playerId),
             playerRequirementService: api.playerRequirementService(playerId),
             canThePlayer: api.canThePlayer(playerId),
             canTheOpponent: api.canThePlayer(api.opponentId(playerId)),

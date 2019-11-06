@@ -405,7 +405,7 @@ module.exports = function (deps) {
 
     function miller(state, getters) {
         return Miller({
-            playerRequirementService: getters.playerRequirementService,
+            queryPlayerRequirements: getters.queryPlayerRequirements,
             playerCommanders: getters.playerCommanders,
             playerRuleService: getters.playerRuleService,
             opponentStateService: getters.opponentStateService,
@@ -438,6 +438,7 @@ module.exports = function (deps) {
         return PlayerPerfectPlan({
             playerPhase: getters.playerPhase,
             playerStateService: getters.playerStateService,
+            queryPlayerRequirements: getters.queryPlayerRequirements,
             playerRequirementService: getters.playerRequirementService,
             opponentRequirementService: getters.opponentRequirementService,
             playerCommanders: getters.playerCommanders,
@@ -451,6 +452,7 @@ module.exports = function (deps) {
             matchService: getters.matchService,
             playerStateService: getters.playerStateService,
             opponentStateService: getters.opponentStateService,
+            queryPlayerRequirements: getters.queryPlayerRequirements,
             playerRequirementService: getters.playerRequirementService,
             canThePlayer: getters.canThePlayer,
             canTheOpponent: getters.canTheOpponent,

@@ -67,7 +67,7 @@ module.exports = function ({
         createBot({
             matchService: gameServiceFactory.matchService(),
             playerStateService: playerServiceFactory.playerStateService(BotId),
-            playerRequirementService: playerServiceFactory.playerRequirementService(BotId),
+            queryPlayerRequirements: playerServiceFactory.queryPlayerRequirements(BotId),
             playerRuleService: playerServiceFactory.playerRuleService(BotId),
             playerCommanders: playerServiceFactory.playerCommanders(BotId),
             playerPhase: playerServiceFactory.playerPhase(BotId),

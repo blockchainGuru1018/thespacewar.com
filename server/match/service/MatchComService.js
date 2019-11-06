@@ -201,13 +201,13 @@ class MatchComService {
 
     _playerCanAvoidStationCardAttack(playerId) {
         const playerStateService = this._playerServiceProvider.getStateServiceById(playerId);
-        const playerRequirementService = this._playerServiceProvider.getRequirementServiceById(playerId);
+        const queryPlayerRequirements = this._playerServiceFactory.queryPlayerRequirements(playerId);
         const cardsCanBeUsedToCounter = playerStateService.getMatchingPlayableBehaviourCards(card => {
             return card.canCounterCardsBeingPlayed
                 || card.canCounterAttacks;
         });
-        const isCurrentlyUsingCounter = playerRequirementService.getFirstMatchingRequirement({ type: 'counterCard' })
-            || playerRequirementService.getFirstMatchingRequirement({ type: 'counterAttack' });
+        const isCurrentlyUsingCounter = queryPlayerRequirements.getFirstMatchingRequirement({ type: 'counterCard' })
+            || queryPlayerRequirements.getFirstMatchingRequirement({ type: 'counterAttack' });
         return cardsCanBeUsedToCounter.length > 0
             || isCurrentlyUsingCounter;
     }
@@ -239,16 +239,16 @@ class MatchComService {
 
     _computeGameTimerStateForWhenGameIsOn() {
         const [firstPlayerId, secondPlayerId] = this._matchService.getPlayerOrder();
-        const firstPlayerRequirementService = this._playerServiceFactory.playerRequirementService(firstPlayerId);
-        if (firstPlayerRequirementService.isWaitingOnOpponentFinishingRequirement()) {
+        const queryFirstPlayerRequirements = this._playerServiceFactory.queryPlayerRequirements(firstPlayerId);
+        if (queryFirstPlayerRequirements.isWaitingOnOpponentFinishingRequirement()) {
             const secondPlayerGameTimer = this._playerServiceFactory.playerGameTimer(secondPlayerId);
             secondPlayerGameTimer.switchTo();
 
             return;
         }
 
-        const secondPlayerRequirementService = this._playerServiceFactory.playerRequirementService(secondPlayerId);
-        if (secondPlayerRequirementService.isWaitingOnOpponentFinishingRequirement()) {
+        const querySecondPlayerRequirements = this._playerServiceFactory.queryPlayerRequirements(secondPlayerId);
+        if (querySecondPlayerRequirements.isWaitingOnOpponentFinishingRequirement()) {
             const firstPlayerGameTimer = this._playerServiceFactory.playerGameTimer(firstPlayerId);
             firstPlayerGameTimer.switchTo();
 

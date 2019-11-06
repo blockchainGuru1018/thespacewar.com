@@ -14,9 +14,6 @@ function PlayerRequirementService({
 }) {
 
     return {
-        all: queryPlayerRequirements.all,
-        hasAnyRequirements: queryPlayerRequirements.hasAnyRequirements,
-        isWaitingOnOpponentFinishingRequirement: queryPlayerRequirements.isWaitingOnOpponentFinishingRequirement,
         getFirstMatchingRequirement: queryPlayerRequirements.getFirstMatchingRequirement,
         firstRequirementIsOfType: queryPlayerRequirements.firstRequirementIsOfType,
 
@@ -43,20 +40,8 @@ function PlayerRequirementService({
             .slice();
     }
 
-    function hasAnyRequirements() {
-        return all().length > 0;
-    }
-
     function isWaitingOnOpponentFinishingRequirement() {
         return all().some(r => r.waiting);
-    }
-
-    function getFirstMatchingRequirement({ type, common = null, waiting = null }) {
-        const requirements = playerStateService
-            .getPlayerState()
-            .requirements
-            .slice();
-        return findMatchingRequirement(requirements, { type, common, waiting });
     }
 
     function firstRequirementIsOfType(type) {

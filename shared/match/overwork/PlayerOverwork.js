@@ -6,6 +6,7 @@ module.exports = function ({
     matchService,
     playerStateService,
     playerRequirementService,
+    queryPlayerRequirements,
     opponentRequirementService,
     overworkEventFactory,
     playerCommanders,
@@ -23,7 +24,7 @@ module.exports = function ({
                 playerId: playerStateService.getPlayerId(),
                 currentPlayer: matchService.getCurrentPlayer(),
                 unflippedStationCardCount: playerStateService.getUnflippedStationCardsCount(),
-                hasRequirements: playerRequirementService.hasAnyRequirements(),
+                hasRequirements: queryPlayerRequirements.hasAnyRequirements(),
                 phase: playerStateService.getPhase()
             });
     }

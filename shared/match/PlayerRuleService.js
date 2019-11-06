@@ -11,6 +11,7 @@ class PlayerRuleService {
         opponentStateService,
         canThePlayer,
         canTheOpponent,
+        queryPlayerRequirements,
         playerRequirementService,
         playerPhase,
         turnControl,
@@ -22,6 +23,7 @@ class PlayerRuleService {
     } = {}) {
         this._matchService = matchService;
         this._playerStateService = playerStateService;
+        this._queryPlayerRequirements = queryPlayerRequirements;
         this._playerRequirementService = playerRequirementService;
         this._turnControl = turnControl;
         this._playerPhase = playerPhase;
@@ -38,9 +40,8 @@ class PlayerRuleService {
 
     canPutDownCardsInHomeZone() { // TODO Could be a confusing method name as event cards are put down in home zone but graphically they are put down in an "Activate" zone.
         if (!this._matchService.isGameOn()) return false;
-        const playerRequirements = this._playerRequirementService;
-        if (playerRequirements.hasAnyRequirements()) return false;
-        if (playerRequirements.isWaitingOnOpponentFinishingRequirement()) return false;
+        if (this._queryPlayerRequirements.hasAnyRequirements()) return false;
+        if (this._queryPlayerRequirements.isWaitingOnOpponentFinishingRequirement()) return false;
         if (this._playerHasCardThatPreventsThemFromPlayingAnyCards()) return false;
         if (this._opponentHasCardThatPreventsPlayerFromPlayingMoreCards()) return false;
 
@@ -71,9 +72,8 @@ class PlayerRuleService {
 
         if (this.hasReachedMaximumStationCardCapacity()) return false;
 
-        const playerRequirements = this._playerRequirementService;
-        if (playerRequirements.hasAnyRequirements()) return false;
-        if (playerRequirements.isWaitingOnOpponentFinishingRequirement()) return false;
+        if (this._queryPlayerRequirements.hasAnyRequirements()) return false;
+        if (this._queryPlayerRequirements.isWaitingOnOpponentFinishingRequirement()) return false;
 
         return this._playerHasControlOfTheirOwnActionPhase();
     }
@@ -142,20 +142,18 @@ class PlayerRuleService {
     }
 
     canDrawCards() {
-        const playerRequirements = this._playerRequirementService;
-        if (playerRequirements.isWaitingOnOpponentFinishingRequirement()) return false;
-        if (!this._playerPhase.isDraw() && !playerRequirements.firstRequirementIsOfType('drawCard')) return false;
+        if (this._queryPlayerRequirements.isWaitingOnOpponentFinishingRequirement()) return false;
+        if (!this._playerPhase.isDraw() && !this._queryPlayerRequirements.firstRequirementIsOfType('drawCard')) return false;
         if (this._playerStateService.deckIsEmpty()) return false;
 
         return true;
     }
 
     canDiscardCards() { //TODO Confusing that you "discard" when you want to "replace". Should ideally be 2 separate things (even if they are both performed on the discard pile).
-        const playerRequirements = this._playerRequirementService;
-        if (playerRequirements.isWaitingOnOpponentFinishingRequirement()) return false;
+        if (this._queryPlayerRequirements.isWaitingOnOpponentFinishingRequirement()) return false;
 
         return this.canReplaceCards()
-            || playerRequirements.firstRequirementIsOfType('discardCard')
+            || this._queryPlayerRequirements.firstRequirementIsOfType('discardCard')
             || this._playerPhase.isDiscard();
     }
 

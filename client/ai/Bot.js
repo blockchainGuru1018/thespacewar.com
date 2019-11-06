@@ -4,7 +4,7 @@ const Commander = require('../../shared/match/commander/Commander.js');
 module.exports = function ({
     matchService,
     playerStateService,
-    playerRequirementService,
+    queryPlayerRequirements,
     playerRuleService,
     playerPhase,
     playerCommanders,
@@ -18,7 +18,7 @@ module.exports = function ({
     attackPhaseDecider,
     matchController
 }) {
-    if (playerRequirementService.isWaitingOnOpponentFinishingRequirement()) return;
+    if (queryPlayerRequirements.isWaitingOnOpponentFinishingRequirement()) return;
     if (hasAnyRequirements()) {
         performRequirement();
     }
@@ -107,11 +107,11 @@ module.exports = function ({
     }
 
     function getRequirementOfType(type) {
-        return playerRequirementService.getFirstMatchingRequirement({ type });
+        return queryPlayerRequirements.getFirstMatchingRequirement({ type });
     }
 
     function hasAnyRequirements() {
-        return playerRequirementService.hasAnyRequirements();
+        return queryPlayerRequirements.hasAnyRequirements();
     }
 
     function performRequirement() {

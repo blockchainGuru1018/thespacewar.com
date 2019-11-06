@@ -7,6 +7,7 @@ const PerfectPlanStationCardCost = 2;
 module.exports = function ({
     playerPhase,
     playerStateService,
+    queryPlayerRequirements,
     playerRequirementService,
     opponentRequirementService,
     playerCommanders,
@@ -23,7 +24,7 @@ module.exports = function ({
         return playerCommanders.has(Commander.DrStein)
             && playerPhase.isAction()
             && hasEnoughUnflippedStationCards()
-            && !playerRequirementService.isWaitingOnOpponentFinishingRequirement();
+            && !queryPlayerRequirements.isWaitingOnOpponentFinishingRequirement();
     }
 
     function perfectPlan() {

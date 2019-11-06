@@ -2,7 +2,7 @@ const Commander = require("../commander/Commander.js");
 const _canMill = require('./canMill.js');
 
 module.exports = function ({
-    playerRequirementService,
+    queryPlayerRequirements,
     playerStateService,
     playerCommanders,
     playerRuleService,
@@ -17,10 +17,10 @@ module.exports = function ({
 
     function canMill() {
         return _canMill({
-            isWaitingOnOpponentFinishingRequirement: playerRequirementService.isWaitingOnOpponentFinishingRequirement(),
+            isWaitingOnOpponentFinishingRequirement: queryPlayerRequirements.isWaitingOnOpponentFinishingRequirement(),
             opponentDeckIsEmpty: opponentDeckIsEmpty(),
             playerHasTheMiller: playerCommanders.has(Commander.TheMiller),
-            firstRequirementIsDrawCard: playerRequirementService.firstRequirementIsOfType('drawCard'),
+            firstRequirementIsDrawCard: queryPlayerRequirements.firstRequirementIsOfType('drawCard'),
             moreCardsCanBeDrawnForDrawPhase: playerRuleService.moreCardsCanBeDrawnForDrawPhase()
         });
     }
