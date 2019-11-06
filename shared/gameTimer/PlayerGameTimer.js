@@ -1,4 +1,4 @@
-module.exports = function ({ //TODO Rename => PlayerGameTimer
+module.exports = function ({
     opponentClock,
     playerClock
 }) {

@@ -26,7 +26,7 @@ function StartGameController({
             if (matchService.allPlayersConnected()) {
                 resetPlayers(playerIds);
 
-                const playerGameTimer = playerServiceFactory.gameTimer(playerId);
+                const playerGameTimer = playerServiceFactory.playerGameTimer(playerId);
                 playerGameTimer.resetAll();
 
                 matchComService.emitCurrentStateToPlayers();

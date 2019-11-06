@@ -25,7 +25,7 @@ const Repair = require('./Repair.js');
 const Miller = require('./mill/Miller.js');
 const PlayerCommanders = require('./commander/PlayerCommanders.js');
 const Clock = require('../gameTimer/Clock.js');
-const GameTimer = require('../gameTimer/GameTimer.js');
+const PlayerGameTimer = require('../gameTimer/PlayerGameTimer.js');
 const PlayerPhaseControl = require('./PlayerPhaseControl.js');
 const PlayerNextPhase = require('./PlayerNextPhase.js');
 const PlayerDiscardPhase = require('./PlayerDiscardPhase.js');
@@ -72,7 +72,7 @@ module.exports = function ({
         matchService: cached(matchService),
         queryAttacks: cached(queryAttacks),
         startGame: cached(startGame),
-        gameTimer: cached(gameTimer),
+        playerGameTimer: cached(playerGameTimer),
         clock: cached(clock),
         playerStateService: cached(playerStateService),
         addRequirementFromSpec: cached(addRequirementFromSpec),
@@ -178,7 +178,7 @@ module.exports = function ({
             playerPhase: api.playerPhase(playerId),
             canThePlayer: api.canThePlayer(playerId),
             playerCommanders: api.playerCommanders(playerId),
-            playerGameTimer: api.gameTimer(playerId),
+            playerGameTimer: api.playerGameTimer(playerId),
             playerDiscardPhase: api.playerDiscardPhase(playerId),
             addRequirementFromSpec: api.addRequirementFromSpec(playerId),
             opponentStateService: api.playerStateService(api.opponentId(playerId)),
@@ -360,7 +360,7 @@ module.exports = function ({
             playerStateService: api.playerStateService(playerId),
             opponentStateService: api.playerStateService(api.opponentId(playerId)),
             playerPhase: api.playerPhase(playerId),
-            playerGameTimer: api.gameTimer(playerId),
+            playerGameTimer: api.playerGameTimer(playerId),
             opponentPhase: api.playerPhase(api.opponentId(playerId)),
             opponentActionLog: api.actionLog(api.opponentId(playerId))
         });
@@ -417,8 +417,8 @@ module.exports = function ({
         });
     }
 
-    function gameTimer(playerId) {
-        return GameTimer({
+    function playerGameTimer(playerId) {
+        return PlayerGameTimer({
             playerClock: api.clock(playerId),
             opponentClock: api.clock(api.opponentId(playerId))
         });

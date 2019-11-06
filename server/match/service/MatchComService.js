@@ -233,7 +233,7 @@ class MatchComService {
         const playerReadyId = this._matchService.getReadyPlayerIds()[0];
         if (!playerReadyId) return;
 
-        const playerNotReadyGameTimer = this._playerServiceFactory.gameTimer(this._matchService.getOpponentId(playerReadyId));
+        const playerNotReadyGameTimer = this._playerServiceFactory.playerGameTimer(this._matchService.getOpponentId(playerReadyId));
         playerNotReadyGameTimer.switchTo();
     }
 
@@ -241,7 +241,7 @@ class MatchComService {
         const [firstPlayerId, secondPlayerId] = this._matchService.getPlayerOrder();
         const firstPlayerRequirementService = this._playerServiceFactory.playerRequirementService(firstPlayerId);
         if (firstPlayerRequirementService.isWaitingOnOpponentFinishingRequirement()) {
-            const secondPlayerGameTimer = this._playerServiceFactory.gameTimer(secondPlayerId);
+            const secondPlayerGameTimer = this._playerServiceFactory.playerGameTimer(secondPlayerId);
             secondPlayerGameTimer.switchTo();
 
             return;
@@ -249,7 +249,7 @@ class MatchComService {
 
         const secondPlayerRequirementService = this._playerServiceFactory.playerRequirementService(secondPlayerId);
         if (secondPlayerRequirementService.isWaitingOnOpponentFinishingRequirement()) {
-            const firstPlayerGameTimer = this._playerServiceFactory.gameTimer(firstPlayerId);
+            const firstPlayerGameTimer = this._playerServiceFactory.playerGameTimer(firstPlayerId);
             firstPlayerGameTimer.switchTo();
 
             return;
@@ -257,11 +257,11 @@ class MatchComService {
 
         const firstPlayerTurnControl = this._playerServiceFactory.turnControl(firstPlayerId);
         if (firstPlayerTurnControl.playerHasControl()) {
-            const firstPlayerGameTimer = this._playerServiceFactory.gameTimer(firstPlayerId);
+            const firstPlayerGameTimer = this._playerServiceFactory.playerGameTimer(firstPlayerId);
             firstPlayerGameTimer.switchTo();
         }
         else {
-            const secondPlayerGameTimer = this._playerServiceFactory.gameTimer(secondPlayerId);
+            const secondPlayerGameTimer = this._playerServiceFactory.playerGameTimer(secondPlayerId);
             secondPlayerGameTimer.switchTo();
         }
     }

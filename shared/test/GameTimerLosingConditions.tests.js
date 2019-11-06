@@ -18,7 +18,7 @@ module.exports = testCase('Game timer losing conditions', {
                     }
                 }
             }));
-            this.testHelper.stub('gameTimer', 'P1A', FakeGameTimer({ hasEnded: () => true }));
+            this.testHelper.stub('playerGameTimer', 'P1A', FakeGameTimer({ hasEnded: () => true }));
 
             const playerPhaseControl = this.testHelper.playerPhaseControl('P1A');
             playerPhaseControl.nextPhase();
@@ -38,7 +38,7 @@ module.exports = testCase('Game timer losing conditions', {
                     }
                 }
             }));
-            this.testHelper.stub('gameTimer', 'P1A', FakeGameTimer({ hasEnded: () => false }));
+            this.testHelper.stub('playerGameTimer', 'P1A', FakeGameTimer({ hasEnded: () => false }));
 
             const playerPhaseControl = this.testHelper.playerPhaseControl('P1A');
             playerPhaseControl.nextPhase();
@@ -61,7 +61,7 @@ module.exports = testCase('Game timer losing conditions', {
                     }
                 }
             }));
-            this.testHelper.stub('gameTimer', 'P1A', FakeGameTimer({ hasEnded: () => true }));
+            this.testHelper.stub('playerGameTimer', 'P1A', FakeGameTimer({ hasEnded: () => true }));
 
             const playerTurnControl = this.testHelper.turnControl('P1A');
             playerTurnControl.toggleControlOfTurn();
@@ -84,7 +84,7 @@ module.exports = testCase('Game timer losing conditions', {
                     }
                 }
             }));
-            this.testHelper.stub('gameTimer', 'P1A', FakeGameTimer({ hasEnded: () => false }));
+            this.testHelper.stub('playerGameTimer', 'P1A', FakeGameTimer({ hasEnded: () => false }));
 
             const playerTurnControl = this.testHelper.turnControl('P1A');
             playerTurnControl.toggleControlOfTurn();

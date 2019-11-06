@@ -5,12 +5,11 @@ const CheatError = require('../../server/match/CheatError.js');
 
 module.exports = function ({
     matchService,
-    playerRuleService,
     playerStateService,
     playerPhase,
     canThePlayer,
     playerCommanders,
-    playerGameTimer, //TODO Should it locally be called "gameTimer" or like here "playerGameTimer",,
+    playerGameTimer,
     playerDiscardPhase,
     addRequirementFromSpec,
     opponentStateService
