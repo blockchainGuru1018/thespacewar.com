@@ -306,7 +306,7 @@ module.exports = function ({
 
     function playerRequirementService(playerId) {
         const opponentId = api.opponentId(playerId);
-        return new PlayerRequirementService({
+        return PlayerRequirementService({
             playerStateService: api.playerStateService(playerId),
             opponentStateService: api.playerStateService(opponentId),
             playerCommanders: api.playerCommanders(playerId),

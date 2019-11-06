@@ -23,7 +23,7 @@ module.exports = function ({
                 playerId: playerStateService.getPlayerId(),
                 currentPlayer: matchService.getCurrentPlayer(),
                 unflippedStationCardCount: playerStateService.getUnflippedStationCardsCount(),
-                hasRequirements: playerRequirementService.hasAnyRequirement(),
+                hasRequirements: playerRequirementService.hasAnyRequirements(),
                 phase: playerStateService.getPhase()
             });
     }

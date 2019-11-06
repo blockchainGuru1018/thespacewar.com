@@ -25,7 +25,7 @@ module.exports = bocha.testCase('PlayerRequirementService', {
 
         service.addDiscardCardRequirement({ count: 1 });
 
-        assert.equals(service.getRequirements(), []);
+        assert.equals(service.all(), []);
     },
     'when player has 2 cards on hand and adds 3 discard card requirements of count 1 should only add the first 2': function () {
         const state = createState({
@@ -41,7 +41,7 @@ module.exports = bocha.testCase('PlayerRequirementService', {
         service.addCardRequirement({ type: 'discardCard', count: 1 });
         service.addCardRequirement({ type: 'discardCard', count: 1 });
 
-        assert.equals(service.getRequirements(), [
+        assert.equals(service.all(), [
             { type: 'discardCard', count: 1 },
             { type: 'discardCard', count: 1 }
         ]);
@@ -59,7 +59,7 @@ module.exports = bocha.testCase('PlayerRequirementService', {
         service.addCardRequirement({ type: 'drawCard', count: 1 });
         service.addCardRequirement({ type: 'drawCard', count: 1 });
 
-        assert.equals(service.getRequirements(), [
+        assert.equals(service.all(), [
             { type: 'drawCard', count: 1 },
             { type: 'drawCard', count: 1 }
         ]);
@@ -75,7 +75,7 @@ module.exports = bocha.testCase('PlayerRequirementService', {
 
         service.addCardRequirement({ type: 'drawCard', count: 3 });
 
-        assert.equals(service.getRequirements(), [{ type: 'drawCard', count: 2 }]);
+        assert.equals(service.all(), [{ type: 'drawCard', count: 2 }]);
     },
     'when player has 2 station cards and adds 3 damage own station card requirements of count 1 should only add the first 2': function () {
         const state = createState({
@@ -91,7 +91,7 @@ module.exports = bocha.testCase('PlayerRequirementService', {
         service.addCardRequirement({ type: 'damageStationCard', count: 1 });
         service.addCardRequirement({ type: 'damageStationCard', count: 1 });
 
-        assert.equals(service.getRequirements(), [
+        assert.equals(service.all(), [
             { type: 'damageStationCard', count: 1 },
             { type: 'damageStationCard', count: 1 }
         ]);
@@ -109,7 +109,7 @@ module.exports = bocha.testCase('PlayerRequirementService', {
                 cardCommonId: '1'
             });
 
-            assert.equals(service.getRequirements(), [{
+            assert.equals(service.all(), [{
                 type: 'findCard', count: 1, cardGroups: [
                     { source: 'deck', cards: [{}] }
                 ],
@@ -125,7 +125,7 @@ module.exports = bocha.testCase('PlayerRequirementService', {
                 cardCommonId: '1'
             });
 
-            const requirements = service.getRequirements();
+            const requirements = service.all();
             assert.equals(requirements.length, 1);
             assert.match(requirements[0], {
                 type: 'findCard',
@@ -142,7 +142,7 @@ function createServiceForPlayer(state, playerId = 'P1A', opponentId = 'P2A') {
     const cardFactory = new CardFactory({ matchService, playerServiceProvider, playerServiceFactory: fakePlayerServiceFactory.withStubs() });
     const playerStateService = new PlayerStateService({ playerId, matchService, cardFactory });
     const opponentStateService = new PlayerStateService({ playerId: opponentId, matchService, cardFactory });
-    const playerRequirementService = new PlayerRequirementService({ playerStateService, opponentStateService });
+    const playerRequirementService = PlayerRequirementService({ playerStateService, opponentStateService });
     playerServiceProvider.registerService(PlayerServiceProvider.TYPE.state, playerId, playerStateService);
     playerServiceProvider.registerService(PlayerServiceProvider.TYPE.requirement, playerId, playerRequirementService);
 

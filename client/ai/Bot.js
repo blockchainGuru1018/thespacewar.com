@@ -19,7 +19,7 @@ module.exports = function ({
     matchController
 }) {
     if (playerRequirementService.isWaitingOnOpponentFinishingRequirement()) return;
-    if (hasAnyRequirement()) {
+    if (hasAnyRequirements()) {
         performRequirement();
     }
 
@@ -110,8 +110,8 @@ module.exports = function ({
         return playerRequirementService.getFirstMatchingRequirement({ type });
     }
 
-    function hasAnyRequirement() {
-        return playerRequirementService.hasAnyRequirement();
+    function hasAnyRequirements() {
+        return playerRequirementService.hasAnyRequirements();
     }
 
     function performRequirement() {

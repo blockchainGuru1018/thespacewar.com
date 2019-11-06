@@ -544,7 +544,7 @@ module.exports = function (deps) {
     }
 
     function playerRequirementService(state, getters) {
-        return new PlayerRequirementService({
+        return PlayerRequirementService({
             playerStateService: getters.playerStateService,
             opponentStateService: getters.opponentStateService,
             playerCommanders: ClientLimitNotice,
@@ -553,7 +553,7 @@ module.exports = function (deps) {
     }
 
     function opponentRequirementService(state, getters) {
-        return new PlayerRequirementService({
+        return PlayerRequirementService({
             playerStateService: getters.opponentStateService,
             opponentStateService: getters.playerStateService,
             playerCommanders: ClientLimitNotice,

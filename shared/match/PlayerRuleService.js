@@ -39,7 +39,7 @@ class PlayerRuleService {
     canPutDownCardsInHomeZone() { // TODO Could be a confusing method name as event cards are put down in home zone but graphically they are put down in an "Activate" zone.
         if (!this._matchService.isGameOn()) return false;
         const playerRequirements = this._playerRequirementService;
-        if (playerRequirements.hasAnyRequirement()) return false;
+        if (playerRequirements.hasAnyRequirements()) return false;
         if (playerRequirements.isWaitingOnOpponentFinishingRequirement()) return false;
         if (this._playerHasCardThatPreventsThemFromPlayingAnyCards()) return false;
         if (this._opponentHasCardThatPreventsPlayerFromPlayingMoreCards()) return false;
@@ -72,7 +72,7 @@ class PlayerRuleService {
         if (this.hasReachedMaximumStationCardCapacity()) return false;
 
         const playerRequirements = this._playerRequirementService;
-        if (playerRequirements.hasAnyRequirement()) return false;
+        if (playerRequirements.hasAnyRequirements()) return false;
         if (playerRequirements.isWaitingOnOpponentFinishingRequirement()) return false;
 
         return this._playerHasControlOfTheirOwnActionPhase();

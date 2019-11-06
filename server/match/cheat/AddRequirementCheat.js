@@ -13,6 +13,6 @@ module.exports = function ({
         addRequirementFromSpec.forReasonAndSpec('cheat', requirement);
 
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
-        return { message: 'all requirements', requirements: playerRequirementService.getRequirements() };
+        return { message: 'all requirements', requirements: playerRequirementService.all() };
     }
 };
