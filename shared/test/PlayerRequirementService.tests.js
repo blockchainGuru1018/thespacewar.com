@@ -7,21 +7,21 @@ const CardFactory = require('../card/CardFactory.js');
 const PlayerStateService = require('../match/PlayerStateService.js');
 const MatchService = require('../match/MatchService.js');
 const PlayerServiceProvider = require('../match/PlayerServiceProvider.js');
+const QueryPlayerRequirements = require('../match/requirement/QueryPlayerRequirements.js');
 const PlayerRequirementService = require('../match/requirement/PlayerRequirementService.js');
-const FakeDeck = require("../../server/test/testUtils/FakeDeck.js");
 const TestHelper = require('./fakeFactories/TestHelper.js');
 const fakePlayerServiceFactory = require("./fakeFactories/fakePlayerServiceFactory.js");
 
 module.exports = bocha.testCase('PlayerRequirementService', {
     'when player has 0 cards on hand and adds a discard card requirement it should NOT be added': function () {
-        const state = createState({
+        const testHelper = TestHelper(createState({
             playerStateById: {
                 'P1A': {
                     cardsOnHand: []
                 }
             }
-        });
-        const service = createServiceForPlayer(state, 'P1A');
+        }));
+        const service = testHelper.playerRequirementService('P1A');
 
         service.addDiscardCardRequirement({ count: 1 });
 
@@ -139,10 +139,20 @@ function createServiceForPlayer(state, playerId = 'P1A', opponentId = 'P2A') {
     const matchService = new MatchService();
     matchService.setState(state);
     const playerServiceProvider = PlayerServiceProvider();
-    const cardFactory = new CardFactory({ matchService, playerServiceProvider, playerServiceFactory: fakePlayerServiceFactory.withStubs() });
+    const cardFactory = new CardFactory({
+        matchService,
+        playerServiceProvider,
+        playerServiceFactory: fakePlayerServiceFactory.withStubs()
+    });
     const playerStateService = new PlayerStateService({ playerId, matchService, cardFactory });
     const opponentStateService = new PlayerStateService({ playerId: opponentId, matchService, cardFactory });
-    const playerRequirementService = PlayerRequirementService({ playerStateService, opponentStateService });
+
+    const queryPlayerRequirements = QueryPlayerRequirements({ playerStateService, opponentStateService });
+    const playerRequirementService = PlayerRequirementService({
+        playerStateService,
+        opponentStateService,
+        queryPlayerRequirements
+    });
     playerServiceProvider.registerService(PlayerServiceProvider.TYPE.state, playerId, playerStateService);
     playerServiceProvider.registerService(PlayerServiceProvider.TYPE.requirement, playerId, playerRequirementService);
 

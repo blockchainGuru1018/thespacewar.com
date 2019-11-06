@@ -9,15 +9,16 @@ function PlayerRequirementService({
     playerStateService,
     opponentStateService,
     playerCommanders,
-    moreCardsCanBeDrawnForDrawPhase
+    moreCardsCanBeDrawnForDrawPhase,
+    queryPlayerRequirements
 }) {
 
     return {
-        all,
-        hasAnyRequirements,
-        isWaitingOnOpponentFinishingRequirement,
-        getFirstMatchingRequirement,
-        firstRequirementIsOfType,
+        all: queryPlayerRequirements.all,
+        hasAnyRequirements: queryPlayerRequirements.hasAnyRequirements,
+        isWaitingOnOpponentFinishingRequirement: queryPlayerRequirements.isWaitingOnOpponentFinishingRequirement,
+        getFirstMatchingRequirement: queryPlayerRequirements.getFirstMatchingRequirement,
+        firstRequirementIsOfType: queryPlayerRequirements.firstRequirementIsOfType,
 
         addCardRequirement,
         addDrawCardRequirement,

@@ -8,6 +8,7 @@ const TurnControl = require("../../shared/match/TurnControl.js");
 const PlayerPhase = require("../../shared/match/PlayerPhase.js");
 const PlayerRuleService = require("../../shared/match/PlayerRuleService.js");
 const ClientPlayerStateService = require("./ClientPlayerStateService");
+const QueryPlayerRequirements = require('../../shared/match/requirement/QueryPlayerRequirements.js');
 const PlayerRequirementService = require('../../shared/match/requirement/PlayerRequirementService.js');
 const PlayerPerfectPlan = require('../../shared/match/perfectPlan/PlayerPerfectPlan.js');
 const CardFactory = require('../../shared/card/CardFactory.js');
@@ -159,6 +160,8 @@ module.exports = function (deps) {
             turnControl,
             playerPhase,
             opponentPhase,
+            queryPlayerRequirements,
+            queryOpponentRequirements,
             playerRequirementService,
             opponentRequirementService,
             playerClock,
@@ -543,10 +546,29 @@ module.exports = function (deps) {
         });
     }
 
+    function queryPlayerRequirements(state, getters) {
+        return QueryPlayerRequirements({
+            playerStateService: getters.playerStateService,
+            opponentStateService: getters.opponentStateService,
+            playerCommanders: ClientLimitNotice,
+            moreCardsCanBeDrawnForDrawPhase: ClientLimitNotice
+        });
+    }
+
+    function queryOpponentRequirements(state, getters) {
+        return QueryPlayerRequirements({
+            playerStateService: getters.opponentStateService,
+            opponentStateService: getters.playerStateService,
+            playerCommanders: ClientLimitNotice,
+            moreCardsCanBeDrawnForDrawPhase: ClientLimitNotice
+        });
+    }
+
     function playerRequirementService(state, getters) {
         return PlayerRequirementService({
             playerStateService: getters.playerStateService,
             opponentStateService: getters.opponentStateService,
+            queryPlayerRequirements: getters.queryPlayerRequirements,
             playerCommanders: ClientLimitNotice,
             moreCardsCanBeDrawnForDrawPhase: ClientLimitNotice
         });
@@ -556,6 +578,7 @@ module.exports = function (deps) {
         return PlayerRequirementService({
             playerStateService: getters.opponentStateService,
             opponentStateService: getters.playerStateService,
+            queryPlayerRequirements: getters.queryOpponentRequirements,
             playerCommanders: ClientLimitNotice,
             moreCardsCanBeDrawnForDrawPhase: ClientLimitNotice
         });

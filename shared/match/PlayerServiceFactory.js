@@ -34,7 +34,7 @@ const PlayerLastStand = require('./PlayerLastStand.js');
 const PlayerDrawPhase = require('./PlayerDrawPhase.js');
 const CountCardsLeftToDrawForDrawPhase = require('./rules/CountCardsLeftToDrawForDrawPhase.js');
 const MoreCardsCanBeDrawnForDrawPhase = require('./rules/MoreCardsCanBeDrawnForDrawPhase.js');
-
+const QueryPlayerRequirements = require('./requirement/QueryPlayerRequirements.js');
 const ServiceTypes = PlayerServiceProvider.TYPE;
 
 module.exports = function ({
@@ -77,6 +77,7 @@ module.exports = function ({
         playerStateService: cached(playerStateService),
         addRequirementFromSpec: cached(addRequirementFromSpec),
         playerRequirementService: cached(playerRequirementService),
+        queryPlayerRequirements: cached(queryPlayerRequirements),
         playerRuleService: cached(playerRuleService),
         playerPhase: cached(playerPhase),
         playerLastStand: cached(playerLastStand),
@@ -310,8 +311,18 @@ module.exports = function ({
             playerStateService: api.playerStateService(playerId),
             opponentStateService: api.playerStateService(opponentId),
             playerCommanders: api.playerCommanders(playerId),
-            moreCardsCanBeDrawnForDrawPhase: api.moreCardsCanBeDrawnForDrawPhase(playerId)
+            moreCardsCanBeDrawnForDrawPhase: api.moreCardsCanBeDrawnForDrawPhase(playerId),
+            queryPlayerRequirements: api.queryPlayerRequirements(playerId)
         });
+    }
+
+    function queryPlayerRequirements(playerId) {
+        return QueryPlayerRequirements({
+            playerStateService: api.playerStateService(playerId),
+            opponentStateService: api.playerStateService(api.opponentId(playerId)),
+            playerCommanders: api.playerCommanders(playerId),
+            moreCardsCanBeDrawnForDrawPhase: api.moreCardsCanBeDrawnForDrawPhase(playerId)
+        })
     }
 
     function playerRequirementFactory(playerId) {
