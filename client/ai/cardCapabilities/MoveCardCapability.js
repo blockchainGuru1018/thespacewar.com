@@ -9,6 +9,7 @@ module.exports = function MoveCardCapability({
 
     function canDoIt() {
         return card.canMove()
+            && card.isInHomeZone()
             && !card.canAttackCardsInOtherZone()
             && card.attack > 0;
     }
