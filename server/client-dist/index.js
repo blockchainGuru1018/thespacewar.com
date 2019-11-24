@@ -225,7 +225,7 @@ eval("\n\nconst classes = [__webpack_require__(/*! ./EnergyShield.js */ \"../sha
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nfunction _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }\n\nfunction _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }\n\nconst info = __webpack_require__(/*! ./info/34.config.js */ \"../shared/card/info/34.config.js\");\n\nconst BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nconst CanCounterCardsWithCostOrLess = __webpack_require__(/*! ./mixins/CanCounterCardsWithCostOrLess.js */ \"../shared/card/mixins/CanCounterCardsWithCostOrLess.js\");\n\nconst CanBePutDownAnyTime = __webpack_require__(/*! ./mixins/CanBePutDownAnyTime.js */ \"../shared/card/mixins/CanBePutDownAnyTime.js\");\n\nmodule.exports = class Avoid extends CanBePutDownAnyTime(CanCounterCardsWithCostOrLess(Infinity, BaseCard)) {\n  constructor(_ref) {\n    let {\n      addRequirementFromSpec\n    } = _ref,\n        deps = _objectWithoutProperties(_ref, [\"addRequirementFromSpec\"]);\n\n    super(deps);\n    this._addRequirementFromSpec = addRequirementFromSpec;\n  }\n\n  static get CommonId() {\n    return info.CommonId;\n  }\n\n  static get Info() {\n    return info;\n  }\n\n  canTriggerDormantEffect() {\n    return true;\n  }\n\n  triggerDormantEffect() {\n    const spec = Avoid.Info.dormantEffectRequirementSpec;\n\n    this._addRequirementFromSpec.forCardAndSpec(this, spec);\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/Avoid.js?");
+eval("\n\nfunction _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }\n\nfunction _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }\n\nconst info = __webpack_require__(/*! ./info/34.config.js */ \"../shared/card/info/34.config.js\");\n\nconst BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nconst CanCounterCardsWithCostOrLess = __webpack_require__(/*! ./mixins/CanCounterCardsWithCostOrLess.js */ \"../shared/card/mixins/CanCounterCardsWithCostOrLess.js\");\n\nmodule.exports = class Avoid extends CanCounterCardsWithCostOrLess(Infinity, BaseCard) {\n  constructor(_ref) {\n    let {\n      addRequirementFromSpec\n    } = _ref,\n        deps = _objectWithoutProperties(_ref, [\"addRequirementFromSpec\"]);\n\n    super(deps);\n    this._addRequirementFromSpec = addRequirementFromSpec;\n  }\n\n  static get CommonId() {\n    return info.CommonId;\n  }\n\n  static get Info() {\n    return info;\n  }\n\n  canTriggerDormantEffect() {\n    return true;\n  }\n\n  triggerDormantEffect() {\n    const spec = Avoid.Info.dormantEffectRequirementSpec;\n\n    this._addRequirementFromSpec.forCardAndSpec(this, spec);\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/Avoid.js?");
 
 /***/ }),
 
@@ -453,7 +453,7 @@ eval("\n\nconst info = __webpack_require__(/*! ./info/17.json */ \"../shared/car
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nconst BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nclass Neutralization extends BaseCard {\n  constructor(deps) {\n    super(deps);\n  }\n\n  static get CommonId() {\n    return '12';\n  }\n\n  get disablesDurationCards() {\n    return true;\n  }\n\n}\n\nmodule.exports = Neutralization;\n\n//# sourceURL=webpack:///../shared/card/Neutralization.js?");
+eval("\n\nconst info = __webpack_require__(/*! ./info/12.config.js */ \"../shared/card/info/12.config.js\");\n\nconst BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nclass Neutralization extends BaseCard {\n  constructor(deps) {\n    super(deps);\n  }\n\n  static get CommonId() {\n    return info.CommonId;\n  }\n\n  static get Info() {\n    return info;\n  }\n\n  get disablesDurationCards() {\n    return true;\n  }\n\n}\n\nmodule.exports = Neutralization;\n\n//# sourceURL=webpack:///../shared/card/Neutralization.js?");
 
 /***/ }),
 
@@ -646,6 +646,18 @@ eval("\n\nconst BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/
 
 "use strict";
 eval("\n\nconst AllCards = __webpack_require__(/*! ./AllCards.js */ \"../shared/card/AllCards.js\");\n\nconst classByCardCommonId = {};\nAllCards.forEach(c => {\n  classByCardCommonId[c.CommonId] = c;\n});\nmodule.exports = classByCardCommonId;\n\n//# sourceURL=webpack:///../shared/card/classByCardCommonId.js?");
+
+/***/ }),
+
+/***/ "../shared/card/info/12.config.js":
+/*!****************************************!*\
+  !*** ../shared/card/info/12.config.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\nconst CommonId = '12';\nmodule.exports = {\n  CommonId\n};\n\n//# sourceURL=webpack:///../shared/card/info/12.config.js?");
 
 /***/ }),
 
@@ -1890,7 +1902,7 @@ eval("\n\nconst AttackStationCardCapability = __webpack_require__(/*! ./AttackSt
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nmodule.exports = function MoveCardCapability({\n  card,\n  matchController\n}) {\n  return {\n    canDoIt,\n    doIt\n  };\n\n  function canDoIt() {\n    return card.canMove() && !card.canAttackCardsInOtherZone() && card.attack > 0;\n  }\n\n  function doIt() {\n    matchController.emit('moveCard', card.id);\n  }\n};\n\n//# sourceURL=webpack:///./ai/cardCapabilities/MoveCardCapability.js?");
+eval("\n\nmodule.exports = function MoveCardCapability({\n  card,\n  matchController\n}) {\n  return {\n    canDoIt,\n    doIt\n  };\n\n  function canDoIt() {\n    return card.canMove() && card.isInHomeZone() && !card.canAttackCardsInOtherZone() && card.attack > 0;\n  }\n\n  function doIt() {\n    matchController.emit('moveCard', card.id);\n  }\n};\n\n//# sourceURL=webpack:///./ai/cardCapabilities/MoveCardCapability.js?");
 
 /***/ }),
 

@@ -1,3 +1,4 @@
+const info = require('./info/12.config.js');
 const BaseCard = require('./BaseCard.js');
 
 class Neutralization extends BaseCard {
@@ -7,7 +8,11 @@ class Neutralization extends BaseCard {
     }
 
     static get CommonId() {
-        return '12';
+        return info.CommonId;
+    }
+
+    static get Info() {
+        return info;
     }
 
     get disablesDurationCards() {
