@@ -4,6 +4,7 @@ const actionToIconUrl = {
     damagedInAttack: 'fire.svg',
     moved: 'move.svg',
     played: 'played.svg',
+    triggered: 'played.svg',
     stationCardsDamaged: 'target-hit.svg',
     destroyed: 'target-hit.svg',
     discarded: 'mill.svg',
@@ -52,6 +53,7 @@ module.exports = function ({
         opponentExpandedStation,
         opponentIssuedOverwork,
         opponentIssuedPerfectPlan,
+        opponentTriggeredCard,
         opponentMilledCardsFromYourDeck,
         opponentMovedStationCard,
         opponentTookControlOfTurn,
@@ -196,6 +198,14 @@ module.exports = function ({
         log({
             action: 'issuedPerfectPlan',
             text: `${opponentName()} issued Perfect Plan`
+        });
+    }
+
+    function opponentTriggeredCard(cardInfo) {
+        log({
+            action: 'triggered',
+            text: `${opponentName()} triggered ${cardInfoText(cardInfo.commonId)}`,
+            cardId: cardInfo.id
         });
     }
 

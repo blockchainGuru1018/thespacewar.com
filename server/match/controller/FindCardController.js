@@ -13,6 +13,7 @@ module.exports = function ({
         onSelectCard
     };
 
+    //TODO Should check if selected card is present in the requirement. (too safe guard against cheating)
     function onSelectCard(playerId, { cardGroups }) {
         const selectedCardsCount = getSelectedCardsCount(cardGroups);
         validateIfCanProgressRequirementByCount(selectedCardsCount, playerId);
@@ -22,6 +23,10 @@ module.exports = function ({
 
         progressRequirementByCount(selectedCardsCount, playerId);
 
+        if (destroyCardFromUseOfDormantEffect(requirement)) {
+            logUseOfDormantEffect(playerId, requirement.usedDormantEffect.cardId);
+        }
+
         if (requirement.target === 'homeZone') {
             moveCardsToHomeZone(cardGroups, playerId);
         }
@@ -30,6 +35,10 @@ module.exports = function ({
         }
         else if (requirement.target === 'opponentDiscardPile') {
             moveCardsToOpponentDiscardPile(cardGroups, playerId);
+        }
+
+        if (destroyCardFromUseOfDormantEffect(requirement)) {
+            destroyTriggerCard(playerId, requirement.usedDormantEffect.cardId);
         }
     }
 
@@ -126,6 +135,24 @@ module.exports = function ({
             const stationCard = playerStateService.removeStationCard(cardId);
             return stationCard.card;
         }
+    }
+
+    function destroyCardFromUseOfDormantEffect(requirement) {
+        return !!requirement.usedDormantEffect && requirement.usedDormantEffect.destroyCard;
+    }
+
+    function destroyTriggerCard(playerId, triggerCardId) {
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        playerStateService.removeCardFromAnySource(triggerCardId);
+    }
+
+    function logUseOfDormantEffect(playerId, triggerCardId) {
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const triggerCard = playerStateService.findCardFromAnySource(triggerCardId);
+
+        const opponentId = matchService.getOpponentId(playerId);
+        const opponentActionLog = playerServiceFactory.actionLog(opponentId);
+        opponentActionLog.opponentTriggeredCard(triggerCard);
     }
 
     function sourceIsStationCard(source) {

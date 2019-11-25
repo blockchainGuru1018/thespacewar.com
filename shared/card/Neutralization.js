@@ -21,7 +21,7 @@ class Neutralization extends BaseCard {
     }
 
     canTriggerDormantEffect() {
-        return false; //2019-11-25: Feature toggled off due to defect
+        return true;
     }
 
     triggerDormantEffect() {

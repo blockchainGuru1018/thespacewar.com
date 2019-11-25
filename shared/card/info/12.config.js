@@ -14,7 +14,8 @@ module.exports = {
                 filter: {
                     type: 'duration'
                 },
-                target: 'opponentDiscardPile'
+                target: 'opponentDiscardPile',
+                dormantEffect: { destroyTriggerCard: true }
             }
         ]
     }

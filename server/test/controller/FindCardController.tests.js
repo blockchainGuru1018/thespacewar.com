@@ -9,6 +9,9 @@ const {
 const FindCardController = require('../../match/controller/FindCardController.js');
 const fakePlayerStateServiceFactory = require('../../../shared/test/fakeFactories/playerStateServiceFactory.js');
 
+const PlayerId = 'P1A';
+const OpponentId = 'P2A';
+
 module.exports = testCase('FindCardController', {
     'when has selected 2 cards': {
         setUp() {
@@ -41,7 +44,7 @@ module.exports = testCase('FindCardController', {
                 }
             });
 
-            controller.onSelectCard('P1A', {
+            controller.onSelectCard(PlayerId, {
                 cardGroups: [
                     { source: 'deck', cardIds: ['C1A'] },
                     { source: 'discardPile', cardIds: ['C2A'] }
@@ -65,7 +68,7 @@ module.exports = testCase('FindCardController', {
             assert.calledWith(this.playerStateService.putDownCardInZone, sinon.match({ id: 'C2A' }), { grantedForFreeByEvent: true });
         },
         'should create requirement updater correctly'() {
-            assert.calledWith(this.playerRequirementUpdaterFactory.create, 'P1A', { type: 'findCard' });
+            assert.calledWith(this.playerRequirementUpdaterFactory.create, PlayerId, { type: 'findCard' });
         }
     },
     'checks if can progress requirement correctly': function () {
@@ -89,7 +92,7 @@ module.exports = testCase('FindCardController', {
             playerServiceProvider
         });
 
-        controller.onSelectCard('P1A', { cardGroups: [{ source: 'deck', cardIds: ['C1A'] }] });
+        controller.onSelectCard(PlayerId, { cardGroups: [{ source: 'deck', cardIds: ['C1A'] }] });
 
         assert.calledWith(playerRequirementUpdater.canProgressRequirementByCount, 1);
     },
@@ -118,7 +121,7 @@ module.exports = testCase('FindCardController', {
                         { source: 'discardPile', cardIds: ['C2A'] }
                     ]
                 };
-                this.error = catchError(() => controller.onSelectCard('P1A', options));
+                this.error = catchError(() => controller.onSelectCard(PlayerId, options));
             },
             'should throw'() {
                 assert(this.error);
@@ -146,7 +149,7 @@ module.exports = testCase('FindCardController', {
             };
             const controller = Controller({ playerServiceProvider });
 
-            controller.onSelectCard('P1A', {
+            controller.onSelectCard(PlayerId, {
                 cardGroups: [
                     { source: 'actionStationCards', cardIds: ['C1A'] }
                 ]
@@ -160,8 +163,125 @@ module.exports = testCase('FindCardController', {
             assert.calledOnce(this.playerStateService.addCardToHand);
             assert.calledWith(this.playerStateService.addCardToHand, sinon.match({ id: 'C1A' }));
         }
+    },
+    'when select card in opponents home zone and target is opponent discard pile': {
+        setUp() {
+            this.playerStateService = fakePlayerStateServiceFactory.withStubs({
+                removeCardFromAnySource: stub().returns({ id: 'C1A' })
+            });
+            this.opponentStateService = fakePlayerStateServiceFactory.withStubs({
+                removeCardFromHomeZone: stub().returns({ id: 'C2A' }),
+                discardCard: stub()
+            });
+            const playerServiceProvider = FakePlayerServiceProvider({
+                playerStateService: this.playerStateService,
+                opponentStateService: this.opponentStateService,
+                playerRequirementService: FakeRequirementService({
+                    firstMatchingRequirement: {
+                        target: 'opponentDiscardPile'
+                    }
+                })
+            });
+            const controller = Controller({ playerServiceProvider });
+
+            controller.onSelectCard(PlayerId, {
+                cardGroups: [
+                    { source: 'opponentCardsInZone', cardIds: ['C2A'] }
+                ]
+            });
+        },
+        'should discard opponent card'() {
+            assert.calledOnce(this.opponentStateService.discardCard);
+            assert.calledWith(this.opponentStateService.discardCard, sinon.match({ id: 'C2A' }));
+        },
+        'should remove opponent card from opponents home zone'() {
+            assert.calledOnce(this.opponentStateService.removeCardFromHomeZone);
+            assert.calledWith(this.opponentStateService.removeCardFromHomeZone, 'C2A');
+        }
+    },
+    'when requirement is card used dormant effect and is set to be destroyed': {
+        setUp() {
+            this.playerStateService = fakePlayerStateServiceFactory.withStubs({
+                findCardFromAnySource: () => ({ id: 'C1A', commonId: 'C1B' }),
+                removeCardFromAnySource: stub()
+            });
+            this.opponentActionLog = FakeActionLog({
+                opponentTriggeredCard: stub()
+            });
+            const controller = Controller({
+                playerServiceProvider: FakePlayerServiceProvider({
+                    playerStateService: this.playerStateService,
+                    opponentStateService: fakePlayerStateServiceFactory.withStubs({ removeCardFromHomeZone: () => ({}) }),
+                    playerRequirementService: FakeRequirementService({
+                        firstMatchingRequirement: {
+                            target: 'opponentDiscardPile',
+                            usedDormantEffect: {
+                                cardId: 'C1A',
+                                destroyCard: true
+                            }
+                        }
+                    })
+                }),
+                playerServiceFactory: {
+                    actionLog: () => this.opponentActionLog
+                }
+            });
+
+            controller.onSelectCard(PlayerId, { cardGroups: [{ source: 'opponentCardsInZone', cardIds: ['C2A'] }] });
+        },
+        'should remove trigger card from player'() {
+            assert.calledOnce(this.playerStateService.removeCardFromAnySource);
+            assert.calledWith(this.playerStateService.removeCardFromAnySource, 'C1A');
+        },
+        'should append to action log'() {
+            assert.calledOnce(this.opponentActionLog.opponentTriggeredCard);
+            assert.calledWith(this.opponentActionLog.opponentTriggeredCard, sinon.match({
+                id: 'C1A',
+                commonId: 'C1B'
+            }));
+        }
+    },
+    'when requirement is card used dormant effect and is set to NOT be destroyed': {
+        setUp() {
+            this.playerStateService = fakePlayerStateServiceFactory.withStubs({
+                removeCardFromAnySource: stub().returns({ id: 'C1A' })
+            });
+            const playerServiceProvider = FakePlayerServiceProvider({
+                playerStateService: this.playerStateService,
+                opponentStateService: fakePlayerStateServiceFactory.withStubs({ removeCardFromHomeZone: () => ({}) }),
+                playerRequirementService: FakeRequirementService({
+                    firstMatchingRequirement: {
+                        target: 'opponentDiscardPile',
+                        usedDormantEffect: {
+                            cardId: 'C1A',
+                            destroyCard: false
+                        }
+                    }
+                })
+            });
+            const controller = Controller({ playerServiceProvider });
+
+            controller.onSelectCard(PlayerId, { cardGroups: [{ source: 'opponentCardsInZone', cardIds: ['C2A'] }] });
+        },
+        'should NOT remove trigger card from player'() {
+            refute.called(this.playerStateService.removeCardFromAnySource);
+        }
     }
 });
+
+function FakePlayerServiceProvider({ playerStateService, playerRequirementService, opponentStateService }) {
+    return {
+        getStateServiceById: playerId => {
+            if (playerId === PlayerId) return playerStateService;
+            return opponentStateService;
+        },
+        getRequirementServiceById: () => playerRequirementService
+    };
+}
+
+function FakeRequirementService({ firstMatchingRequirement }) {
+    return { getFirstMatchingRequirement: () => firstMatchingRequirement };
+}
 
 function Controller(deps = {}) {
     defaults(deps, {
@@ -173,15 +293,12 @@ function Controller(deps = {}) {
             })
         },
         playerServiceFactory: {
-            actionLog: () => ({
-                opponentPlayedCards() {},
-                cardsDiscarded() {}
-            })
+            actionLog: () => FakeActionLog()
         },
         matchService: {
             getOpponentId(playerId) {
-                if (playerId === 'P1A') return 'P2A';
-                return 'P1A';
+                if (playerId === PlayerId) return OpponentId;
+                return PlayerId;
             }
         },
         stateMemento: {
@@ -193,10 +310,20 @@ function Controller(deps = {}) {
         getStateServiceById: () => fakePlayerStateServiceFactory.withStubs(),
         getRequirementServiceById: () => ({
             getFirstMatchingRequirement: () => null
-        })
+        }),
+        removeCardFromHomeZone() {}
     });
 
     return FindCardController(deps);
+}
+
+function FakeActionLog(stubs) {
+    return {
+        opponentPlayedCards() {},
+        cardsDiscarded() {},
+        opponentTriggeredCard() {},
+        ...stubs
+    };
 }
 
 function catchError(callback) {

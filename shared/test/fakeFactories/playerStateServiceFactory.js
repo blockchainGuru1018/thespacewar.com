@@ -18,6 +18,9 @@ const playerStateServiceFactory = {
             putDownCardInZone() {},
             removeCardFromDeck() {},
             getActionPointsForPlayer: () => 0,
+            removeCardFromHomeZone() {},
+            findCardFromAnySource() {},
+            discardCard() {},
             ...stubs
         };
     }
@@ -27,7 +30,11 @@ function fromIdAndState(playerId, state) {
     const matchService = new MatchService();
     matchService.setState(state);
     const playerServiceProvider = PlayerServiceProvider();
-    const cardFactory = new CardFactory({ matchService, playerServiceProvider, playerServiceFactory: fakePlayerServiceFactory.withStubs() });
+    const cardFactory = new CardFactory({
+        matchService,
+        playerServiceProvider,
+        playerServiceFactory: fakePlayerServiceFactory.withStubs()
+    });
     const playerStateService = new PlayerStateService({ playerId, matchService, cardFactory });
     playerServiceProvider.registerService(PlayerServiceProvider.TYPE.state, playerId, playerServiceProvider);
     return playerStateService;

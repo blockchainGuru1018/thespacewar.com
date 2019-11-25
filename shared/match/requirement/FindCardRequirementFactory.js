@@ -11,7 +11,7 @@ function FindCardRequirementFactory({
     };
 
     function create() {
-        return {
+        const requirement = {
             type: requirementSpec.type,
             cardGroups: cardGroupsFromSpec(requirementSpec),
             cardCommonId: card.commonId,
@@ -20,6 +20,14 @@ function FindCardRequirementFactory({
             common: requirementSpec.common,
             waiting: requirementSpec.count === 0 && requirementSpec.common
         };
+        if (requirementSpec.dormantEffect) {
+            requirement.usedDormantEffect = {
+                cardId: card.id,
+                destroyCard: requirementSpec.dormantEffect.destroyTriggerCard
+            }
+        }
+
+        return requirement;
     }
 
     function cardGroupsFromSpec(spec) {
