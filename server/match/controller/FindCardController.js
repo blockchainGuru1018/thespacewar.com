@@ -143,7 +143,8 @@ module.exports = function ({
 
     function destroyTriggerCard(playerId, triggerCardId) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        playerStateService.removeCardFromAnySource(triggerCardId);
+        const triggeredCard = playerStateService.removeCardFromAnySource(triggerCardId);
+        playerStateService.discardCard(triggeredCard);
     }
 
     function logUseOfDormantEffect(playerId, triggerCardId) {

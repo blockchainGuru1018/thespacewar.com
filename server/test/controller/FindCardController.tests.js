@@ -203,7 +203,8 @@ module.exports = testCase('FindCardController', {
         setUp() {
             this.playerStateService = fakePlayerStateServiceFactory.withStubs({
                 findCardFromAnySource: () => ({ id: 'C1A', commonId: 'C1B' }),
-                removeCardFromAnySource: stub()
+                removeCardFromAnySource: stub().returns({ id: 'C1A', commonId: 'C1B' }),
+                discardCard: stub()
             });
             this.opponentActionLog = FakeActionLog({
                 opponentTriggeredCard: stub()
@@ -229,9 +230,13 @@ module.exports = testCase('FindCardController', {
 
             controller.onSelectCard(PlayerId, { cardGroups: [{ source: 'opponentCardsInZone', cardIds: ['C2A'] }] });
         },
-        'should remove trigger card from player'() {
+        'should remove triggered card from player'() {
             assert.calledOnce(this.playerStateService.removeCardFromAnySource);
             assert.calledWith(this.playerStateService.removeCardFromAnySource, 'C1A');
+        },
+        'should discard players triggered card'() {
+            assert.calledOnce(this.playerStateService.discardCard);
+            assert.calledWith(this.playerStateService.discardCard, sinon.match({ id: 'C1A' }));
         },
         'should append to action log'() {
             assert.calledOnce(this.opponentActionLog.opponentTriggeredCard);
@@ -263,7 +268,7 @@ module.exports = testCase('FindCardController', {
 
             controller.onSelectCard(PlayerId, { cardGroups: [{ source: 'opponentCardsInZone', cardIds: ['C2A'] }] });
         },
-        'should NOT remove trigger card from player'() {
+        'should NOT remove triggered card from player'() {
             refute.called(this.playerStateService.removeCardFromAnySource);
         }
     }
