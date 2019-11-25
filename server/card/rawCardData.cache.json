@@ -104,7 +104,7 @@
         "name": "Neutralization",
         "price": "2",
         "type_card": "violet",
-        "detail": "No other duration card has any effect.",
+        "detail": "No other duration card has any effect.\r\nRemove from play to destroy another duration card.",
         "defense": "0",
         "attack": "0",
         "number_copies": "2"
@@ -112,7 +112,7 @@
     {
         "id": "13",
         "name": "Over Capacity",
-        "price": "2",
+        "price": "1",
         "type_card": "violet",
         "detail": "You have no maximum hand size.",
         "defense": "0",
@@ -132,7 +132,7 @@
     {
         "id": "15",
         "name": "Supernova",
-        "price": "10",
+        "price": "8",
         "type_card": "orange",
         "detail": "All cards except station cards are destroyed. Each player receives 3 station damage.",
         "defense": "0",

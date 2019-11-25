@@ -3,8 +3,9 @@ const BaseCard = require('./BaseCard.js');
 
 class Neutralization extends BaseCard {
 
-    constructor(deps) {
+    constructor({ addRequirementFromSpec, ...deps }) {
         super(deps);
+        this._addRequirementFromSpec = addRequirementFromSpec;
     }
 
     static get CommonId() {
@@ -17,6 +18,15 @@ class Neutralization extends BaseCard {
 
     get disablesDurationCards() {
         return true;
+    }
+
+    canTriggerDormantEffect() {
+        return true;
+    }
+
+    triggerDormantEffect() {
+        const spec = Neutralization.Info.dormantEffectRequirementSpec;
+        this._addRequirementFromSpec.forCardAndSpec(this, spec);
     }
 }
 

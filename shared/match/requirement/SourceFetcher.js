@@ -21,7 +21,8 @@ module.exports = function ({
         opponentActionStationCards: shuffleOutput(opponentActionStationCards),
         opponentHandSizeStationCards: shuffleOutput(opponentHandSizeStationCards),
         opponentHand: shuffleOutput(opponentHand),
-        opponentAny: shuffleOutput(opponentAny)
+        opponentAny: shuffleOutput(opponentAny),
+        opponentCardsInZone
     };
 
     function deck(specFilter) {
@@ -73,6 +74,12 @@ module.exports = function ({
     function opponentAny(specFilter, { triggerCard } = { triggerCard: null }) {
         return opponentStateService
             .getMatchingBehaviourCardsPutDownAnywhere(cardFilter(specFilter, triggerCard))
+            .map(card => card.getCardData());
+    }
+
+    function opponentCardsInZone(specFilter) {
+        return opponentStateService
+            .getMatchingBehaviourCardsInZone(cardFilter(specFilter))
             .map(card => card.getCardData());
     }
 
