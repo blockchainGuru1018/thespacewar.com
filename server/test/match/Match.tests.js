@@ -28,6 +28,7 @@ module.exports = testCase('Match', {
     'moveStationCard': require('./moveStationCardTests.js'),
     'turnControlTests': require('./turnControlTests.js'),
     'counterTests': require('./counterTests.js'),
+    'findCardTests': require('./findCardTests.js'),
     'when first player retreats from match should emit updated game state with retreated player id': {
         setUp() {
             this.firstPlayerConnection = FakeConnection2(['stateChanged']);

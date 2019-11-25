@@ -1,13 +1,28 @@
-module.exports = function ({
+module.exports = SourceFetcher;
+
+const OpponentSourceToPlayerSource = {
+    opponentDrawStationCards: 'drawStationCards',
+    opponentActionStationCards: 'actionStationCards',
+    opponentHandSizeStationCards: 'handSizeStationCards',
+    opponentHand: 'hand',
+    opponentCardsInZone: 'cardsInZone'
+};
+
+SourceFetcher.opponentSourceToPlayerSource = opponentSource => OpponentSourceToPlayerSource[opponentSource];
+
+function SourceFetcher({
     playerStateService,
     opponentStateService,
     canThePlayer
 }) {
 
-    //TODO Unsure whether the user of this module should shuffle that cards or this module.
-    // Although it is the case for all current users that they would like to shuffle, and there is the least amount of
-    // duplication by putting it here. But will have to reconsider if another use case shows up.
-
+    //TODO Would be a good idea to consider refactoring to follow the Open-closed the next time we're doing work here.
+    // For example, each "source" could be their own module which encapsulate how they retrieve the cards and also contain
+    // the _single_ mapping from "OpponentSourceToPlayerSource" that relates to it.
+    // The modules could take whatever filter is used as a parameter. Or perhaps the modules only fetches behaviour cards
+    //  and this module applies the same filtering and shuffling to all modules.
+    // It would be even better if it was possible to encapsulate both the _fetching_ from the source as well as applying a "find"
+    //  on the same source (see FindCardController).
     return {
         deck: shuffleOutput(deck),
         discardPile: shuffleOutput(discardPile),
@@ -156,7 +171,7 @@ module.exports = function ({
     function cardFromStationCard(stationCard) {
         return stationCard.card;
     }
-};
+}
 
 function shuffleOutput(method) {
     return (...args) => {

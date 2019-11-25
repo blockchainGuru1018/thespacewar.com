@@ -1,11 +1,5 @@
 const CheatError = require('../CheatError.js');
-
-const opponentSourceToPlayerSource = {
-    opponentDrawStationCards: 'drawStationCards',
-    opponentActionStationCards: 'actionStationCards',
-    opponentHandSizeStationCards: 'handSizeStationCards',
-    opponentHand: 'hand'
-};
+const SourceFetcher = require("../../../shared/match/requirement/SourceFetcher.js");
 
 module.exports = function ({
     playerRequirementUpdaterFactory,
@@ -103,7 +97,7 @@ module.exports = function ({
         const cardCommonIds = [];
         for (const group of cardGroups) {
             for (const cardId of group.cardIds) {
-                const playerSource = opponentSourceToPlayerSource[group.source];
+                const playerSource = SourceFetcher.opponentSourceToPlayerSource(group.source);
                 const cardData = removeCardFromSource(cardId, playerSource, opponentId);
                 cardCommonIds.push(cardData.commonId);
                 opponentStateService.discardCard(cardData);
@@ -124,6 +118,9 @@ module.exports = function ({
         }
         else if (source === 'hand') {
             return playerStateService.removeCardFromHand(cardId);
+        }
+        else if (source === 'cardsInZone') {
+            return playerStateService.removeCardFromHomeZone(cardId);
         }
         else if (sourceIsStationCard(source)) {
             const stationCard = playerStateService.removeStationCard(cardId);
