@@ -53,7 +53,6 @@ function getPriorityInRelationToCardCounts(row, { draw, action, handSize }) {
     if (row === 'handSize') {
         return 1 + stayOneAheadOfAllWhen(draw, { fromCount: 3 });
     }
-    return 0;
 }
 
 function stayOneAheadOf(competitorCount, { fromCount, untilCount }) {
