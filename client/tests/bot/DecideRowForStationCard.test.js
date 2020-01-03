@@ -3,7 +3,7 @@
  */
 const DecideRowForStationCard = require('../../ai/DecideRowForStationCard.js');
 
-// D=draw row, A=action row, H=Hand size row
+// D=draw row, A=action row, H=handSize row
 
 describe('General order of placing down station cards (given no station cards are destroyed, used etc.)', () => {
     test('D=0 A=0 H=0, should decide on draw row', () => {
@@ -22,6 +22,15 @@ describe('General order of placing down station cards (given no station cards ar
             }
         });
         expect(decide()).toBe('action');
+    });
+
+    test('D=1 A=1 H=0, should decide on handSize row', () => {
+        const decide = DecideRowForStationCard({
+            playerStateService: {
+                getStationCards: () => [{ place: 'draw' }, { place: 'action' }]
+            }
+        });
+        expect(decide()).toBe('handSize');
     });
 });
 
