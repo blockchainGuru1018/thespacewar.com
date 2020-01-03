@@ -93,6 +93,19 @@ describe('General order of placing down station cards (given no station cards ar
         });
         expect(decide()).toBe('draw');
     });
+
+    test('9: D=3 A=4 H=1, should decide on handSize row', () => {
+        const decide = DecideRowForStationCard({
+            playerStateService: {
+                getStationCards: () => [
+                    drawCard(), drawCard(), drawCard(),
+                    actionCard(), actionCard(), actionCard(), actionCard(),
+                    handSizeCard()
+                ]
+            }
+        });
+        expect(decide()).toBe('handSize');
+    });
 });
 
 describe('action row', () => {
