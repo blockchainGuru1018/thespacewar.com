@@ -965,7 +965,7 @@ module.exports = function (deps) {
         state.repairerCardId = null;
     }
 
-    function selectForRepair({ state, getters, dispatch }, cardToRepairId) {
+    function selectForRepair({ state }, cardToRepairId) {
         const repairerCardId = state.repairerCardId;
         state.repairerCardId = null;
 
