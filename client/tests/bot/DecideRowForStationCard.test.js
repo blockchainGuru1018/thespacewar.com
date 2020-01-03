@@ -223,15 +223,6 @@ describe('draw row', () => {
 });
 
 describe('hand size', () => {
-    test('D=1 A=1 H=0, should decide on handSize row', () => {
-        const decide = DecideRowForStationCard({
-            playerStateService: {
-                getStationCards: () => [drawCard(), actionCard()]
-            }
-        });
-        expect(decide()).toBe('handSize');
-    });
-
     test('D=2 A=5 H=1, should decide on handSize row', () => {
         const decide = DecideRowForStationCard({
             playerStateService: {
