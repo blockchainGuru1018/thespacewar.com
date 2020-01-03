@@ -1,0 +1,10 @@
+{
+  "MaxInDrawRow": 3,
+  "OrderForDrawRowUntilMinCountReached": 1,
+
+  "MaxInActionRow": 5,
+  "OrderForActionRowUntilMinCountReached": 2,
+
+  "MaxInHandSizeRow": 2,
+  "OrderForHandSizeRowUntilMinCountReached": 3
+}

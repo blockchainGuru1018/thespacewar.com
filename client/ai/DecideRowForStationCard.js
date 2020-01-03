@@ -1,5 +1,8 @@
+import RulesForPlayingStationCards from './RulesForPlayingStationCards.json';
+
 const Rows = () => ['draw', 'action', 'handSize'];
 const TopPriority = 999;
+
 module.exports = function ({
     playerStateService
 }) {
@@ -19,32 +22,32 @@ function SortRowsByOccurrence(stationCards) {
 }
 
 function getPriorityInRelationToCardCounts(row, { draw, action, handSize }) {
-    if (row === 'action') {
-        return basePriority({
-                basePriority: 3,
-                maxCount: 5,
-                minCount: 1,
-                orderUntilMinCount: 2,
-                ownCount: action
-            })
-            + stayOneAheadOf(draw, { fromCount: 2, untilCount: 3 });
-    }
     if (row === 'draw') {
         return basePriority({
                 basePriority: 2,
                 minCount: 1,
-                maxCount: 3,
-                orderUntilMinCount: 1,
+                maxCount: RulesForPlayingStationCards.MaxInDrawRow,
+                orderUntilMinCount: RulesForPlayingStationCards.OrderForDrawRowUntilMinCountReached,
                 ownCount: draw
             })
             + stayOneAheadOf(action, { fromCount: 3, untilCount: 4 });
+    }
+    if (row === 'action') {
+        return basePriority({
+                basePriority: 3,
+                minCount: 1,
+                maxCount: RulesForPlayingStationCards.MaxInActionRow,
+                orderUntilMinCount: RulesForPlayingStationCards.OrderForActionRowUntilMinCountReached,
+                ownCount: action
+            })
+            + stayOneAheadOf(draw, { fromCount: 2, untilCount: 3 });
     }
     if (row === 'handSize') {
         return basePriority({
                 basePriority: 1,
                 minCount: 1,
-                maxCount: 2,
-                orderUntilMinCount: 3,
+                maxCount: RulesForPlayingStationCards.MaxInHandSizeRow,
+                orderUntilMinCount: RulesForPlayingStationCards.OrderForHandSizeRowUntilMinCountReached,
                 ownCount: handSize
             })
             + stayOneAheadOfAllWhen({
