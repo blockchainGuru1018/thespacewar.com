@@ -121,7 +121,7 @@ describe('General order of placing down station cards (given no station cards ar
     });
 });
 
-describe('action row', () => {
+describe('Respects minimum caps', () => {
     test('D=1 A=0 H=1, should decide on action row', () => {
         const decide = DecideRowForStationCard({
             playerStateService: {
@@ -131,6 +131,26 @@ describe('action row', () => {
         expect(decide()).toBe('action');
     });
 
+    test('D=0 A=1 H=1, should decide on draw row', () => {
+        const decide = DecideRowForStationCard({
+            playerStateService: {
+                getStationCards: () => [actionCard(), handSizeCard()]
+            }
+        });
+        expect(decide()).toBe('draw');
+    });
+
+    test('D=0 A=0 H=1, should decide on draw row', () => {
+        const decide = DecideRowForStationCard({
+            playerStateService: {
+                getStationCards: () => [actionCard(), handSizeCard()]
+            }
+        });
+        expect(decide()).toBe('draw');
+    });
+});
+
+describe('action row', () => {
     test('D=1 A=2 H=2, should decide on action row', () => {
         const decide = DecideRowForStationCard({
             playerStateService: {
@@ -159,15 +179,6 @@ describe('action row', () => {
 });
 
 describe('draw row', () => {
-
-    test('D=0 A=1 H=1, should decide on draw row', () => {
-        const decide = DecideRowForStationCard({
-            playerStateService: {
-                getStationCards: () => [actionCard(), handSizeCard()]
-            }
-        });
-        expect(decide()).toBe('draw');
-    });
 
     test('D=1 A=4 H=1, should decide on draw row', () => {
         const decide = DecideRowForStationCard({
