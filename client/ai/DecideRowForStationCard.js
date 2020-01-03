@@ -46,7 +46,7 @@ function getPriorityInRelationToCardCounts(row, { draw, action, handSize }) {
 
     //Priorities
     if (row === 'action') {
-        return 3 + stayAheadOf(draw, 2, 3)
+        return 3 + stayAhead(draw, { fromCount: 2, untilCount: 3 });
     }
     if (row === 'draw') {
         return 2 + (Math.min(2, Math.max(0, action - 2)));
@@ -57,8 +57,8 @@ function getPriorityInRelationToCardCounts(row, { draw, action, handSize }) {
     return 0;
 }
 
-function stayAheadOf(competitorCount, fromCount, toCount) {
-    return (Math.min(toCount - fromCount, Math.max(0, competitorCount - (fromCount - 1))));
+function stayAhead(competitorCount, { fromCount, untilCount }) {
+    return (Math.min(untilCount - fromCount, Math.max(0, competitorCount - (fromCount - 1))));
 }
 
 function stationRowCounts(stationCards) {
