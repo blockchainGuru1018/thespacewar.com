@@ -22,7 +22,7 @@ function getPriorityInRelationToCardCounts(row, { draw, action, handSize }) {
     if (row === 'action') {
         return basePriority({
                 ownCount: action,
-                base: 3,
+                basePriority: 3,
                 min: 1,
                 max: 5,
                 firstInOrder: 2
@@ -32,7 +32,7 @@ function getPriorityInRelationToCardCounts(row, { draw, action, handSize }) {
     if (row === 'draw') {
         return basePriority({
                 ownCount: draw,
-                base: 2,
+                basePriority: 2,
                 min: 1,
                 max: 3,
                 firstInOrder: 1
@@ -42,7 +42,7 @@ function getPriorityInRelationToCardCounts(row, { draw, action, handSize }) {
     if (row === 'handSize') {
         return basePriority({
                 ownCount: handSize,
-                base: 1,
+                basePriority: 1,
                 min: 1,
                 max: 2,
                 firstInOrder: 3
@@ -56,12 +56,12 @@ function getPriorityInRelationToCardCounts(row, { draw, action, handSize }) {
     }
 }
 
-function basePriority({ ownCount, base, min, max, firstInOrder }) {
+function basePriority({ ownCount, basePriority, min, max, firstInOrder }) {
     if (ownCount < min) {
         return TopPriority - firstInOrder + 1;
     }
     if (ownCount === max) return 0;
-    return base;
+    return basePriority;
 }
 
 function stayOneAheadOf(competitorCount, { fromCount, untilCount }) {
