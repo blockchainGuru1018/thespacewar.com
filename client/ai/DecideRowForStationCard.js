@@ -21,31 +21,31 @@ function SortRowsByOccurrence(stationCards) {
 function getPriorityInRelationToCardCounts(row, { draw, action, handSize }) {
     if (row === 'action') {
         return basePriority({
-                ownCount: action,
                 basePriority: 3,
-                min: 1,
-                max: 5,
-                firstInOrder: 2
+                maxCount: 5,
+                minCount: 1,
+                orderUntilMinCount: 2,
+                ownCount: action
             })
             + stayOneAheadOf(draw, { fromCount: 2, untilCount: 3 });
     }
     if (row === 'draw') {
         return basePriority({
-                ownCount: draw,
                 basePriority: 2,
-                min: 1,
-                max: 3,
-                firstInOrder: 1
+                minCount: 1,
+                maxCount: 3,
+                orderUntilMinCount: 1,
+                ownCount: draw
             })
             + stayOneAheadOf(action, { fromCount: 3, untilCount: 4 });
     }
     if (row === 'handSize') {
         return basePriority({
-                ownCount: handSize,
                 basePriority: 1,
-                min: 1,
-                max: 2,
-                firstInOrder: 3
+                minCount: 1,
+                maxCount: 2,
+                orderUntilMinCount: 3,
+                ownCount: handSize
             })
             + stayOneAheadOfAllWhen({
                 competitorCountIs: 3,
@@ -56,11 +56,11 @@ function getPriorityInRelationToCardCounts(row, { draw, action, handSize }) {
     }
 }
 
-function basePriority({ ownCount, basePriority, min, max, firstInOrder }) {
-    if (ownCount < min) {
-        return TopPriority - firstInOrder + 1;
+function basePriority({ ownCount, basePriority, minCount, maxCount, orderUntilMinCount }) {
+    if (ownCount < minCount) {
+        return TopPriority - orderUntilMinCount + 1;
     }
-    if (ownCount === max) return 0;
+    if (ownCount === maxCount) return 0;
     return basePriority;
 }
 
