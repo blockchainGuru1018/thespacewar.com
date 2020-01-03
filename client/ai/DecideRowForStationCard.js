@@ -13,10 +13,8 @@ module.exports = function ({
 
 function SortRowsByOccurrence(stationCards) {
     return (a, b) => {
-        const aCount = stationCards.filter(s => s.place === a).length;
-        const bCount = stationCards.filter(s => s.place === b).length;
         const counts = stationRowCounts(stationCards);
-        return (aCount - getPriorityInRelationToCardCounts(a, counts)) - (bCount - getPriorityInRelationToCardCounts(b, counts));
+        return getPriorityInRelationToCardCounts(b, counts) - getPriorityInRelationToCardCounts(a, counts);
     };
 }
 
@@ -51,8 +49,19 @@ function getPriorityInRelationToCardCounts(row, { draw, action, handSize }) {
         return 0;
     }
 
-    //When action is 3 and draw is 2 bring action up to 4
+    if (action === 3 && draw === 1 && row === 'draw') {
+        return TopPriority;
+    }
+
     if (action === 3 && draw === 2 && row === 'action') {
+        return TopPriority;
+    }
+
+    if(action >= 4 && draw < 3 && row === 'draw') {
+        return TopPriority;
+    }
+
+    if(action >= 4 && handSize === 1 && row === 'handSize') {
         return TopPriority;
     }
 
