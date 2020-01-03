@@ -19,48 +19,60 @@ function SortRowsByOccurrence(stationCards) {
 }
 
 function getPriorityInRelationToCardCounts(row, { draw, action, handSize }) {
-    //Max cap
-    if (row === 'draw' && draw === 3) {
-        return 0;
-    }
-    if (row === 'handSize' && handSize === 2) {
-        return 0;
-    }
-
-    //Min cap
-    if (draw === 0) {
-        if (row === 'draw') return TopPriority;
-        if (row === 'action') return 0;
-        if (row === 'handSize') return 0;
-    }
-    if (action === 0) {
-        if (row === 'draw') return 0;
-        if (row === 'action') return TopPriority;
-        if (row === 'handSize') return 0;
-    }
-    if (handSize === 0) {
-        if (row === 'draw') return 0;
-        if (row === 'action') return 0;
-        if (row === 'handSize') return TopPriority;
-    }
-
     if (row === 'action') {
-        return 3 + stayOneAheadOf(draw, { fromCount: 2, untilCount: 3 });
+        return basePriority({
+                ownCount: action,
+                base: 3,
+                min: 1,
+                max: 5,
+                firstInOrder: 2
+            })
+            + stayOneAheadOf(draw, { fromCount: 2, untilCount: 3 });
     }
     if (row === 'draw') {
-        return 2 + stayOneAheadOf(action, { fromCount: 3, untilCount: 4 });
+        return basePriority({
+                ownCount: draw,
+                base: 2,
+                min: 1,
+                max: 3,
+                firstInOrder: 1
+            })
+            + stayOneAheadOf(action, { fromCount: 3, untilCount: 4 });
     }
     if (row === 'handSize') {
-        return 1 + stayOneAheadOfAllWhen(draw, { fromCount: 3 });
+        return basePriority({
+                ownCount: handSize,
+                base: 1,
+                min: 1,
+                max: 2,
+                firstInOrder: 3
+            })
+            + stayOneAheadOfAllWhen({
+                competitorCountIs: 3,
+                competitorCount: draw,
+                ownCountIs: 1,
+                ownCount: handSize
+            });
     }
+}
+
+function basePriority({ ownCount, base, min, max, firstInOrder }) {
+    if (ownCount < min) {
+        return TopPriority - firstInOrder + 1;
+    }
+    if (ownCount === max) return 0;
+    return base;
 }
 
 function stayOneAheadOf(competitorCount, { fromCount, untilCount }) {
-    return (Math.min(untilCount - fromCount + 1, Math.max(0, competitorCount - (fromCount - 1))));
+    if (competitorCount >= fromCount && competitorCount <= untilCount) {
+        return competitorCount - fromCount + 1;
+    }
+    return 0;
 }
 
-function stayOneAheadOfAllWhen(competitorCount, { fromCount }) {
-    if (competitorCount === fromCount) {
+function stayOneAheadOfAllWhen({ competitorCountIs, competitorCount, ownCountIs, ownCount }) {
+    if (competitorCount === competitorCountIs && ownCountIs === ownCount) {
         return TopPriority;
     }
     return 0;
