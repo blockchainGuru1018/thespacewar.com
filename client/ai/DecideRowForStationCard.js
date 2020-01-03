@@ -21,6 +21,15 @@ function SortRowsByOccurrence(stationCards) {
 }
 
 function getPriorityInRelationToCardCounts(row, { draw, action, handSize }) {
+    //Max cap
+    if (row === 'draw' && draw === 3) {
+        return 0;
+    }
+    if (row === 'handSize' && handSize === 2) {
+        return 0;
+    }
+
+    //Min cap
     if (draw === 0) {
         if (row === 'draw') return TopPriority;
         if (row === 'action') return 0;
@@ -37,17 +46,25 @@ function getPriorityInRelationToCardCounts(row, { draw, action, handSize }) {
         if (row === 'handSize') return TopPriority;
     }
 
-    if (row === 'draw') {
-        if (draw === 2) return 0;
-        if (action > 2) return TopPriority;
+    //Keep all at 1 until action has 3
+    if (action < 3 && row !== 'action') {
+        return 0;
+    }
+
+    //When action is 3 and draw is 2 bring action up to 4
+    if (action === 3 && draw === 2 && row === 'action') {
+        return TopPriority;
+    }
+
+    //Priorities
+    if (row === 'action') {
         return 3;
     }
-    if (row === 'action') {
-        return 6;
+    if (row === 'draw') {
+        return 2;
     }
     if (row === 'handSize') {
-        if (handSize === 2) return 0;
-        return 3;
+        return 1;
     }
     return 0;
 }
