@@ -49,7 +49,6 @@ function getPriorityInRelationToCardCounts(row, { draw, action, handSize }) {
         return 0;
     }
 
-
     //Priorities
     if (row === 'action') {
         return 3 + (Math.min(2, Math.max(0, draw - 1)));
