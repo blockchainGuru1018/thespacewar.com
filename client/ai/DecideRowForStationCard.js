@@ -26,15 +26,15 @@ function getPriorityInRelationToCardCounts(row, { draw, action, handSize }) {
         if (row === 'action') return 0;
         if (row === 'handSize') return 0;
     }
-    if (handSize === 0) {
-        if (row === 'draw') return 0;
-        if (row === 'action') return 0;
-        if (row === 'handSize') return TopPriority;
-    }
     if (action === 0) {
         if (row === 'draw') return 0;
         if (row === 'action') return TopPriority;
         if (row === 'handSize') return 0;
+    }
+    if (handSize === 0) {
+        if (row === 'draw') return 0;
+        if (row === 'action') return 0;
+        if (row === 'handSize') return TopPriority;
     }
 
     if (row === 'draw') {
