@@ -1,0 +1,118 @@
+<template>
+    <portal to="match">
+        <transition name="fade-slow">
+            <div
+                v-if="showEndGameScreen"
+                class="endGameOverlay"
+            >
+                <div
+                    v-if="hasLostGame"
+                    class="defeatText endGameText"
+                >
+                    DEFEAT
+                </div>
+                <div
+                    v-else-if="hasWonGame"
+                    class="victoryText endGameText"
+                >
+                    VICTORY
+                </div>
+                <button
+                    class="endGameButton"
+                    @click="endGame"
+                >
+                    End game
+                </button>
+            </div>
+        </transition>
+    </portal>
+</template>
+
+<script>
+    import Vuex from 'vuex';
+
+    const matchHelpers = Vuex.createNamespacedHelpers('match');
+
+    export default {
+        name: 'EndGameHud',
+        data() {
+            return {
+                showEndGameScreen: false
+            };
+        },
+        computed: {
+            ...matchHelpers.mapGetters([
+                'playerRetreated',
+                'opponentRetreated'
+            ]),
+            gameHasEnded() {
+                return this.hasWonGame || this.hasLostGame;
+            },
+            hasWonGame() {
+                return this.opponentRetreated;
+            },
+            hasLostGame() {
+                return this.playerRetreated;
+            }
+        },
+        watch: {
+            gameHasEnded: {
+                immediate: true,
+                handler() {
+                    if (this.gameHasEnded) {
+                        setTimeout(() => {
+                            this.showEndGameScreen = true;
+                        }, 2200);
+                    }
+                }
+            }
+        }
+    }
+</script>
+
+<style lang="scss" scoped>
+    @import "../miscVariables";
+
+    .endGameOverlay {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background-color: $overlayColor;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 4;
+    }
+
+    .endGameText {
+        font-size: 128px;
+        font-family: sans-serif;
+        font-weight: bold;
+        letter-spacing: .2em;
+    }
+
+    .victoryText {
+        color: #66fa8b;
+    }
+
+    .defeatText {
+        color: #ff3646;
+    }
+
+    .endGameButton {
+        margin-top: 100px;
+        background-color: #ff3646;
+        color: white;
+        font-size: 32px;
+        padding: 8px 15px;
+        box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.2);;
+        border: none;
+
+        &:hover {
+            background-color: #ff6670;
+        }
+    }
+</style>

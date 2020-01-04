@@ -227,33 +227,7 @@
                 </button>
             </div>
         </portal>
-        <portal to="match">
-            <transition name="fade-slow">
-                <div
-                    class="endGameOverlay"
-                    v-if="showEndGameScreen"
-                >
-                    <div
-                        class="defeatText endGameText"
-                        v-if="hasLostGame"
-                    >
-                        DEFEAT
-                    </div>
-                    <div
-                        class="victoryText endGameText"
-                        v-else-if="hasWonGame"
-                    >
-                        VICTORY
-                    </div>
-                    <button
-                        @click="endGame"
-                        class="endGameButton"
-                    >
-                        End game
-                    </button>
-                </div>
-            </transition>
-        </portal>
+        <EndGameHud />
         <portal to="stationDrawRow">
             <span class="stationRowDescription descriptionText">
                 Draw {{ cardsToDrawInDrawPhase }} card{{ cardsToDrawInDrawPhase === 1 ? '' : 's' }} each turn
@@ -318,6 +292,7 @@
 </template>
 <script>
     import NotificationBannerContainer from "./notificationBanner/NotificationBannerContainer.vue";
+    import EndGameHud from "./hud/EndGameHud.vue";
 
     const Vuex = require('vuex');
     const resolveModuleWithPossibleDefault = require('../../client/utils/resolveModuleWithPossibleDefault.js');
@@ -338,6 +313,7 @@
 
     export default {
         components: {
+            EndGameHud,
             NotificationBannerContainer,
             FindCard,
             CounterCard,
@@ -348,8 +324,7 @@
             return {
                 enlargedCardVisible: false,
                 lastStandRemainingSeconds: Math.round(LastStand.LastStandLength / 1000),
-                lastStandUpdateIntervalId: null,
-                showEndGameScreen: false
+                lastStandUpdateIntervalId: null
             };
         },
         computed: {
@@ -608,16 +583,6 @@
                     }, 200);
                 },
                 immediate: true
-            },
-            gameHasEnded: {
-                immediate: true,
-                handler() {
-                    if (this.gameHasEnded) {
-                        setTimeout(() => {
-                            this.showEndGameScreen = true;
-                        }, 2200);
-                    }
-                }
             }
         },
         destroyed() {
@@ -655,8 +620,7 @@
 </script>
 <style scoped lang="scss">
     @import "enlargeCard";
-
-    $overlayColor: rgba(0, 0, 0, .4);
+    @import "miscVariables";
 
     .field-playerHud {
         position: absolute;
@@ -819,49 +783,6 @@
     .match:not(.currentPhase--draw) {
         .playerDrawPileDescription, .opponentDrawPileDescription {
             display: none;
-        }
-    }
-
-    .endGameOverlay {
-        position: fixed;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        background-color: $overlayColor;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        z-index: 4;
-    }
-
-    .endGameText {
-        font-size: 128px;
-        font-family: sans-serif;
-        font-weight: bold;
-        letter-spacing: .2em;
-    }
-
-    .victoryText {
-        color: #66fa8b;
-    }
-
-    .defeatText {
-        color: #ff3646;
-    }
-
-    .endGameButton {
-        margin-top: 100px;
-        background-color: #ff3646;
-        color: white;
-        font-size: 32px;
-        padding: 8px 15px;
-        box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.2);;
-        border: none;
-
-        &:hover {
-            background-color: #ff6670;
         }
     }
 
