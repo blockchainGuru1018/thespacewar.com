@@ -65,6 +65,3 @@ function LogEntry(action, text = '') {
     return { action, text }
 }
 
-//TODO Banner for counter card (as opposed to counter attack)
-//TODO Refactor store to use factory
-//TODO Refactor: Split up PlayerHud.vue
