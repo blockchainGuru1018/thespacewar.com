@@ -28,12 +28,7 @@ export function NotificationBannerStore() {
         }
 
         state.wrapperVisible = true;
-        if (entry.action === 'countered') {
-            state.notificationText = 'Opponent countered your card';
-        }
-        else {
-            state.notificationText = 'Target missed';
-        }
+        state.notificationText = entry.text;
 
         timeoutId = setTimeout(() => {
             state.bannerVisible = true;

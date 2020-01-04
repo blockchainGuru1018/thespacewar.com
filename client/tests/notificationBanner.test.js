@@ -26,14 +26,14 @@ afterEach(() => {
 
 describe('show notification banner when...', () => {
     test('attack was countered', async () => {
-        await triggerActionLogChangeWithEntry(LogEntry('counteredAttackOnCard'));
+        await triggerActionLogChangeWithEntry(LogEntry('counteredAttackOnCard', 'ABC'));
         assert.elementCount('.notificationBanner', 1);
-        assert.elementText('.notificationBanner-header', 'Target missed');
+        assert.elementText('.notificationBanner-header', 'ABC');
     });
     test('played card was countered', async () => {
-        await triggerActionLogChangeWithEntry(LogEntry('countered'));
+        await triggerActionLogChangeWithEntry(LogEntry('countered', 'DEF'));
         assert.elementCount('.notificationBanner', 1);
-        assert.elementText('.notificationBanner-header', 'Opponent countered your card');
+        assert.elementText('.notificationBanner-header', 'DEF');
     });
 });
 test('when NO nothing has changed should NOT show notification', async () => {
@@ -60,8 +60,8 @@ async function triggerActionLogChangeWithEntry(entry) {
     await timeout();
 }
 
-function LogEntry(action) {
-    return { action, text: '' }
+function LogEntry(action, text = '') {
+    return { action, text }
 }
 
 //TODO Banner for counter card (as opposed to counter attack)
