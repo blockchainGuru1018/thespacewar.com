@@ -227,7 +227,7 @@
                 </button>
             </div>
         </portal>
-        <EndGameHud />
+        <EndGameHudContainer />
         <portal to="stationDrawRow">
             <span class="stationRowDescription descriptionText">
                 Draw {{ cardsToDrawInDrawPhase }} card{{ cardsToDrawInDrawPhase === 1 ? '' : 's' }} each turn
@@ -292,7 +292,7 @@
 </template>
 <script>
     import NotificationBannerContainer from "./notificationBanner/NotificationBannerContainer.vue";
-    import EndGameHud from "./hud/EndGameHud.vue";
+    import EndGameHudContainer from "./hud/endGame/EndGameHudContainer.vue";
 
     const Vuex = require('vuex');
     const resolveModuleWithPossibleDefault = require('../../client/utils/resolveModuleWithPossibleDefault.js');
@@ -313,7 +313,7 @@
 
     export default {
         components: {
-            EndGameHud,
+            EndGameHudContainer,
             NotificationBannerContainer,
             FindCard,
             CounterCard,
@@ -442,14 +442,6 @@
             },
             PHASES() {
                 return PHASES;
-            },
-            currentPhaseText() {
-                if (this.phase === 'preparation') {
-                    return 'Prepare for turn';
-                }
-
-                const nameOfCurrentPhase = this.phase.substr(0, 1).toUpperCase() + this.phase.substr(1);
-                return `${nameOfCurrentPhase} phase`;
             },
             lastStandText() {
                 if (this.playerHasControlOfOpponentsTurn && !!this.lastStand.hasStarted()) {
@@ -591,7 +583,6 @@
         methods: {
             ...mapActions([
                 'goToNextPhase',
-                'endGame',
                 'overwork',
                 'perfectPlan',
                 'toggleControlOfTurn'
