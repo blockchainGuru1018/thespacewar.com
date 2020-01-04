@@ -36,6 +36,7 @@ describe('show notification banner when...', () => {
         assert.elementText('.notificationBanner-header', 'DEF');
     });
 });
+
 test('when NO nothing has changed should NOT show notification', async () => {
     const { dispatch, showPage } = controller;
     showPage();
