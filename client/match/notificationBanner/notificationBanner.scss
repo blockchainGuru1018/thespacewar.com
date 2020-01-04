@@ -39,8 +39,8 @@
 .notificationBanner-header {
   color: #fff;
   border: none;
-  font-size: 72px;
-  padding: 18px 40px;
+  font-size: 54px;
+  width: 90vw;
   background: transparent;
   font-weight: bold;
   margin-bottom: 12px;
@@ -48,9 +48,7 @@
   font-style: italic;
   letter-spacing: .01em;
   text-align: center;
-  white-space: nowrap;
   opacity: 1;
-
 }
 
 .notificationBanner-transitionHeader-enter {
