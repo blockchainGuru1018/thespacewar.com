@@ -1,15 +1,16 @@
 const TimeVisible = 3000;
 const ApproximateLengthOfCssLeaveTransition = 1500;
 
-let timeoutId = null;
-
 export function NotificationBannerStore() {
+    let timeoutId = null;
+
     return {
         namespaced: true,
         name: 'notificationBanner',
         state: {
             wrapperVisible: false,
             bannerVisible: false,
+            notificationText: ''
         },
         actions: {
             showForActionLogEntry
@@ -27,6 +28,13 @@ export function NotificationBannerStore() {
         }
 
         state.wrapperVisible = true;
+        if (entry.action === 'countered') {
+            state.notificationText = 'Opponent countered your card';
+        }
+        else {
+            state.notificationText = 'Target missed';
+        }
+
         timeoutId = setTimeout(() => {
             state.bannerVisible = true;
 

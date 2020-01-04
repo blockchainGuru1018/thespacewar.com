@@ -24,12 +24,27 @@ afterEach(() => {
     controller && controller.tearDown();
 });
 
-describe('when get new entry in event log that Target Missed was used', () => {
-    test('should show notification banner', async () => {
+describe('show notification banner when...', () => {
+    test('attack was countered', async () => {
         await triggerActionLogChangeWithEntry(LogEntry('counteredAttackOnCard'));
         assert.elementCount('.notificationBanner', 1);
-        assert.elementText('.notificationBanner-header', 'Opponent used Target Missed');
+        assert.elementText('.notificationBanner-header', 'Target missed');
     });
+    test('played card was countered', async () => {
+        await triggerActionLogChangeWithEntry(LogEntry('countered'));
+        assert.elementCount('.notificationBanner', 1);
+        assert.elementText('.notificationBanner-header', 'Opponent countered your card');
+    });
+});
+test('when NO nothing has changed should NOT show notification', async () => {
+    const { dispatch, showPage } = controller;
+    showPage();
+    dispatch('stateChanged', FakeState({
+        phase: 'attack',
+        actionLogEntries: []
+    }));
+    await timeout();
+    assert.elementCount('.notificationBanner', 0);
 });
 
 async function triggerActionLogChangeWithEntry(entry) {

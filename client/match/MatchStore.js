@@ -1081,6 +1081,7 @@ module.exports = function (deps) {
             dispatch('shakeTheScreen');
         }
         else if (action === 'countered') {
+            dispatch('notificationBanner/showForActionLogEntry', latestEntry, { root: true });
             dispatch('triggerFlashDiscardPileEffect');
         }
         else if (action === 'repairedCard') {

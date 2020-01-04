@@ -13,7 +13,7 @@
                         v-if="visible"
                         class="notificationBanner-header"
                     >
-                        Opponent used Target Missed
+                        {{ notificationText }}
                     </h1>
                 </transition>
             </div>
@@ -24,7 +24,13 @@
 <script>
     export default {
         name: 'NotificationBanner',
-        props: { visible: Boolean }
+        props: {
+            visible: Boolean,
+            notificationText: {
+                type: String,
+                default: ''
+            }
+        }
     }
 </script>
 <style lang="scss">

@@ -3,7 +3,10 @@
         v-if="wrapperVisible"
         to="match"
     >
-        <NotificationBanner :visible="bannerVisible" />
+        <NotificationBanner
+            :visible="bannerVisible"
+            :notificationText="notificationText"
+        />
     </portal>
 </template>
 
@@ -17,7 +20,11 @@
         name: "NotificationBannerContainer",
         components: { NotificationBanner },
         computed: {
-            ...notificationBannerHelpers.mapState(['wrapperVisible', 'bannerVisible'])
+            ...notificationBannerHelpers.mapState([
+                'wrapperVisible',
+                'bannerVisible',
+                'notificationText'
+            ])
         }
     }
 </script>
