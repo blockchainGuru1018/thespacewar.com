@@ -5,7 +5,7 @@
     >
         <NotificationBanner
             :visible="bannerVisible"
-            :notificationText="notificationText"
+            :notificationHtml="notificationHtml"
         />
     </portal>
 </template>
@@ -23,7 +23,7 @@
             ...notificationBannerHelpers.mapState([
                 'wrapperVisible',
                 'bannerVisible',
-                'notificationText'
+                'notificationHtml'
             ])
         }
     }

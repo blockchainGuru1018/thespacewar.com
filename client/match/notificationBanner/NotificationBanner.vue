@@ -12,8 +12,8 @@
                     <h1
                         v-if="visible"
                         class="notificationBanner-header"
+                        v-html="notificationHtml"
                     >
-                        {{ notificationText }}
                     </h1>
                 </transition>
             </div>
@@ -26,7 +26,7 @@
         name: 'NotificationBanner',
         props: {
             visible: Boolean,
-            notificationText: {
+            notificationHtml: {
                 type: String,
                 default: ''
             }

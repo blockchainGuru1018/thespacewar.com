@@ -25,6 +25,8 @@
     </div>
 </template>
 <script>
+    import ActionLogEntry from "./ActionLogEntry.js";
+
     const Vuex = require('vuex');
     const matchHelpers = Vuex.createNamespacedHelpers('match');
     const cardHelpers = Vuex.createNamespacedHelpers('card');
@@ -51,32 +53,13 @@
                 this.expanded = !this.expanded;
             },
             getEntryHtml(entry) {
-                const textWithSubstitutedSensitiveCharacters = entry.text
-                    .split('&').join('_amp_')
-                    .split('s').join('_115_')
-                    .split('S').join('_83_');
-                return encodeHtml(textWithSubstitutedSensitiveCharacters)
-                    .split('_amp_').join('&')
-                    .split('_115_').join('s')
-                    .split('_83_').join('S')
-                    .split(/\*/)
-                    .join('<strong>')
-                    .split(/#/)
-                    .join('</strong>');
+                return ActionLogEntry(entry).html();
             },
             getTitleText(entry) {
-                return entry.text
-                    .split(/\*/).join('')
-                    .split(/#/).join('');
+                return ActionLogEntry(entry).titleText();
             }
         }
     };
-
-    function encodeHtml(html) {
-        return html.replace(/[\u00A0-\u9999<>\&]/gim, function (i) {
-            return '&#' + i.charCodeAt(0) + ';';
-        });
-    }
 </script>
 <style lang="scss">
     @import "../banner/banner";

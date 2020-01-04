@@ -1,3 +1,5 @@
+import ActionLogEntry from "../log/ActionLogEntry.js";
+
 const TimeVisible = 3000;
 const ApproximateLengthOfCssLeaveTransition = 1500;
 
@@ -10,7 +12,7 @@ export function NotificationBannerStore() {
         state: {
             wrapperVisible: false,
             bannerVisible: false,
-            notificationText: ''
+            notificationHtml: ''
         },
         actions: {
             showForActionLogEntry
@@ -28,7 +30,7 @@ export function NotificationBannerStore() {
         }
 
         state.wrapperVisible = true;
-        state.notificationText = entry.text;
+        state.notificationHtml = ActionLogEntry(entry).html();
 
         timeoutId = setTimeout(() => {
             state.bannerVisible = true;
