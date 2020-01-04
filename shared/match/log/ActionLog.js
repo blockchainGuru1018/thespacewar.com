@@ -1,3 +1,4 @@
+const ActionTypes = require('./ActionTypes.js');
 const PerfectPlanIcon = 'played.svg'; //TODO Find an icon specifically for Perfect Plan
 
 const actionToIconUrl = {
@@ -9,7 +10,7 @@ const actionToIconUrl = {
     destroyed: 'target-hit.svg',
     discarded: 'mill.svg',
     countered: 'countered.svg',
-    counteredAttackOnCard: 'countered.svg',
+    [ActionTypes.counteredAttackOnCard]: 'countered.svg',
     expandedStation: 'expand.svg',
     issuedOverwork: 'recycle.svg',
     issuedPerfectPlan: PerfectPlanIcon,
@@ -154,7 +155,7 @@ module.exports = function ({
 
     function opponentCounteredAttackOnCard({ defenderCardId, defenderCardCommonId }) {
         log({
-            action: 'counteredAttackOnCard',
+            action: ActionTypes.counteredAttackOnCard,
             text: `${opponentName()} stopped attack on ${cardInfoText(defenderCardCommonId)}`,
             defenderCardId
         });
@@ -163,7 +164,7 @@ module.exports = function ({
     function opponentCounteredAttackOnStation({ targetStationCardIds }) {
         const count = targetStationCardIds.length;
         log({
-            action: 'counteredAttackOnCard',
+            action: ActionTypes.counteredAttackOnCard,
             text: `${opponentName()} stopped attack on *${count} station ${count === 1 ? 'card' : 'cards'}#`,
             targetStationCardIds
         });

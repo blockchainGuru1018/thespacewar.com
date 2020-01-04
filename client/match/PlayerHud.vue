@@ -313,9 +313,12 @@
         >
             <CounterAttack />
         </portal>
+        <NotificationBannerContainer />
     </div>
 </template>
 <script>
+    import NotificationBannerContainer from "./notificationBanner/NotificationBannerContainer.vue";
+
     const Vuex = require('vuex');
     const resolveModuleWithPossibleDefault = require('../../client/utils/resolveModuleWithPossibleDefault.js');
     const FindCard = resolveModuleWithPossibleDefault(require('./findCard/FindCard.vue'));
@@ -333,7 +336,14 @@
     const { PHASES } = require('./phases.js');
     const FatalError = require('../../shared/card/FatalError.js');
 
-    module.exports = {
+    export default {
+        components: {
+            NotificationBannerContainer,
+            FindCard,
+            CounterCard,
+            CounterAttack,
+            SkipDrawCard
+        },
         data() {
             return {
                 enlargedCardVisible: false,
@@ -610,6 +620,9 @@
                 }
             }
         },
+        destroyed() {
+            if (this.lastStandRemainingSeconds === 0) clearInterval(this.lastStandUpdateIntervalId);
+        },
         methods: {
             ...mapActions([
                 'goToNextPhase',
@@ -634,21 +647,11 @@
                 this.enlargedCardVisible = false;
             }
         },
-        destroyed() {
-            if (this.lastStandRemainingSeconds === 0) clearInterval(this.lastStandUpdateIntervalId);
-        },
-        components: {
-            FindCard,
-            CounterCard,
-            CounterAttack,
-            SkipDrawCard
-        }
     };
 
     function pluralize(word, count) {
         return count === 1 ? word : word + 's';
     }
-
 </script>
 <style scoped lang="scss">
     @import "enlargeCard";

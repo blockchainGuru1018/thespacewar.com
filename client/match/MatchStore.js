@@ -220,8 +220,8 @@ module.exports = function (deps) {
             cancelRepair,
             selectForRepair,
             damageStationCards, //todo rename to "damageStationCardsForRequirement",
-            flashFocusLatestAction,
-            flashFocusLatestOpponentAction,
+            onActionLogChange,
+            onOpponentActionLogChange,
             triggerCardAttackedEffect,
             highlightCards,
             triggerFlashDiscardPileEffect,
@@ -817,19 +817,19 @@ module.exports = function (deps) {
                 if (key === 'actionLogEntries') {
                     if (datum.length !== state.actionLogEntries.length) {
                         setTimeout(() => {
-                            dispatch('flashFocusLatestAction');
+                            dispatch('onActionLogChange');
                         });
                     }
                 }
                 else if (key === 'opponentActionLogEntries') {
                     if (datum.length !== state.opponentActionLogEntries.length) {
                         setTimeout(() => {
-                            dispatch('flashFocusLatestOpponentAction');
+                            dispatch('onOpponentActionLogChange');
                         });
                     }
                 }
                 else if (key === 'currentPlayer' && datum !== state.currentPlayer) {
-                    dispatch('card/cancelCurrentUserInteraction', null, { root: true });
+                    dispatch('card/cancelCurrentUserInteraction', null, { root: true }); //TODO Fix circular dependency on CardStore
                 }
                 else if (key === 'lastStandInfo') {
                     if (datum) {
@@ -1057,7 +1057,7 @@ module.exports = function (deps) {
         return phasesIncludingWaitInOrder.indexOf(b) - phasesIncludingWaitInOrder.indexOf(a);
     }
 
-    function flashFocusLatestAction({ state, dispatch }) {
+    function onActionLogChange({ state, dispatch }) {
         const actionLogEntries = state.actionLogEntries;
         const latestEntry = actionLogEntries[actionLogEntries.length - 1];
 
@@ -1087,11 +1087,12 @@ module.exports = function (deps) {
             dispatch('highlightCards', [latestEntry.repairedCardId]);
         }
         else if (action === 'counteredAttackOnCard') {
+            dispatch('notificationBanner/showForActionLogEntry', latestEntry, { root: true });
             dispatch('highlightCards', [latestEntry.defenderCardId]);
         }
     }
 
-    function flashFocusLatestOpponentAction({ state, dispatch }) {
+    function onOpponentActionLogChange({ state, dispatch }) {
         const actionLogEntries = state.opponentActionLogEntries;
         const latestEntry = actionLogEntries[actionLogEntries.length - 1];
 

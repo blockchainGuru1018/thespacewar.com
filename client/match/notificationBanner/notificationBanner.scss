@@ -1,0 +1,87 @@
+@import "../miscVariables";
+@import "../colors";
+
+.notificationBanner-wrapper {
+  position: absolute;
+  z-index: 1000;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.notificationBanner-overlay {
+  background-color: rgba(0, 0, 0, .88);
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.notificationBanner {
+  position: absolute;
+  z-index: 1001;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.notificationBanner-headerWrapper {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 46%;
+  left: 50%;
+  text-align: center;
+}
+
+.notificationBanner-header {
+  color: #fff;
+  border: none;
+  font-size: 72px;
+  padding: 18px 40px;
+  background: transparent;
+  font-weight: bold;
+  margin-bottom: 12px;
+  font-family: "Space Mono", monospace;
+  font-style: italic;
+  letter-spacing: .01em;
+  text-align: center;
+  white-space: nowrap;
+  opacity: 1;
+
+}
+
+.notificationBanner-transitionHeader-enter {
+  transform: translateX(-100vw);
+}
+
+.notificationBanner-transitionHeader-leave-to {
+  opacity: 0;
+}
+
+.notificationBanner-transitionHeader-enter-active {
+  transition: all 1.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.notificationBanner-transitionHeader-leave-active {
+  transition: all .8s cubic-bezier(0.39, 0.575, 0.565, 1);
+}
+
+.notificationBanner-transitionOverlay-enter {
+  opacity: 0;
+}
+
+.notificationBanner-transitionOverlay-leave-to {
+  opacity: 0;
+}
+
+.notificationBanner-transitionOverlay-enter-active {
+  transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.notificationBanner-transitionOverlay-leave-active {
+  transition: all .8s cubic-bezier(0.39, 0.575, 0.565, 1);
+}
+
