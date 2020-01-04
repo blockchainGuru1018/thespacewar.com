@@ -3,7 +3,7 @@ const FakeCardDataAssembler = require('../../server/test/testUtils/FakeCardDataA
 const Commander = require("../../shared/match/commander/Commander.js");
 const createCard = FakeCardDataAssembler.createCard;
 
-module.exports = function FakeState(options) {
+module.exports = function FakeState(options = {}) {
     const cardsInZone = options.cardsInZone || [];
     options.cardsInZone = cardsInZone.map(c => createCard(c));
     options.cardsInOpponentZone = (options.cardsInOpponentZone || []).map(c => createCard(c));
