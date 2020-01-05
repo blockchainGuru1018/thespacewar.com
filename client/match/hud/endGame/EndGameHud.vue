@@ -80,6 +80,7 @@
         padding: 8px 15px;
         box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.2);;
         border: none;
+        text-decoration: underline;
 
         &:hover {
             background-color: transparent;
