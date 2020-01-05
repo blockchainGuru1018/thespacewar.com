@@ -14,7 +14,8 @@ const STORES = [
     require('./ghost/GhostStore.js'),
     require('./StartGameStore.js'),
     require('./debug/DebugStore.js'),
-    require('./notificationBanner/NotificationBannerStore.js').NotificationBannerStore,
+    require('./notificationBanner/NotificationBannerStore.js').default,
+    require('./infoMode/InfoModeStore.js').default,
 ];
 const LOGGING_ENABLED = false;
 

@@ -148,6 +148,7 @@ function setupRoutes(deps, controllers) {
     app.get('/icon/:iconName', controllers.assets.getIcon);
     app.get('/image/:imageName', controllers.assets.getImage);
     app.get('/sound/:soundName', controllers.assets.getSound);
+    app.get('/libraries/:libraryName', controllers.assets.getLibrary);
 
     app.post('/test-debug', (req, res) => {
         res.json({ valid: validateDebugPassword(req.body.password) });

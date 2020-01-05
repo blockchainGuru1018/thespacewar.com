@@ -5,7 +5,8 @@ module.exports = function (deps) {
         getFont,
         getIcon,
         getImage,
-        getSound
+        getSound,
+        getLibrary
     };
 
     function getFont(req, res) {
@@ -29,6 +30,12 @@ module.exports = function (deps) {
     function getSound(req, res) {
         const imageName = req.params.soundName;
         const filePath = path.join(__dirname, 'sounds', imageName);
+        res.sendFile(filePath);
+    }
+
+    function getLibrary(req, res) {
+        const libraryName = req.params.libraryName;
+        const filePath = path.join(__dirname, 'libraries', libraryName);
         res.sendFile(filePath);
     }
 };

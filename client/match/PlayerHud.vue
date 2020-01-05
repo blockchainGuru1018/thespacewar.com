@@ -227,6 +227,7 @@
                 </button>
             </div>
         </portal>
+        <InfoModeContainer />
         <EndGameHudContainer />
         <portal to="stationDrawRow">
             <span class="stationRowDescription descriptionText">
@@ -293,6 +294,7 @@
 <script>
     import NotificationBannerContainer from "./notificationBanner/NotificationBannerContainer.vue";
     import EndGameHudContainer from "./hud/endGame/EndGameHudContainer.vue";
+    import InfoModeContainer from "./infoMode/InfoModeContainer.vue";
 
     const Vuex = require('vuex');
     const resolveModuleWithPossibleDefault = require('../../client/utils/resolveModuleWithPossibleDefault.js');
@@ -313,6 +315,7 @@
 
     export default {
         components: {
+            InfoModeContainer,
             EndGameHudContainer,
             NotificationBannerContainer,
             FindCard,

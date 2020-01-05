@@ -3,7 +3,7 @@ import ActionLogEntry from "../log/ActionLogEntry.js";
 const TimeVisible = 3000;
 const ApproximateLengthOfCssLeaveTransition = 1500;
 
-export function NotificationBannerStore() {
+export default function NotificationBannerStore() {
     let timeoutId = null;
 
     return {

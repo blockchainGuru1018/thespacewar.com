@@ -2,6 +2,7 @@
     <button
         class="toggleInfoMode"
         title="Soon you will be able to click here to show a tutorial overlay"
+        @click="click"
     >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
             <defs />
@@ -13,7 +14,13 @@
         </svg>
     </button>
 </template>
-
 <script>
-    export default {}
+    export default {
+        name: 'ToggleInfoModeButton',
+        methods: {
+            click() {
+                this.$emit('toggleInfoMode');
+            }
+        }
+    }
 </script>

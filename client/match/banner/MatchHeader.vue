@@ -5,7 +5,7 @@
             :reverse="false"
         />
         <div class="matchHeader-topRightButtons">
-            <ToggleInfoModeButton />
+            <ToggleInfoModeButtonContainer />
             <button
                 class="matchHeader-escapeMenuButton escapeMenuButton"
                 @click="toggleEscapeMenu"
@@ -30,7 +30,7 @@
     </div>
 </template>
 <script>
-    import ToggleInfoModeButton from '../infoMode/ToggleInfoModeButton.vue';
+    import ToggleInfoModeButtonContainer from '../infoMode/ToggleInfoModeButtonContainer.vue';
 
     const Vuex = require('vuex');
     const matchHelpers = Vuex.createNamespacedHelpers('match');
@@ -51,7 +51,7 @@
         components: {
             PlayerBanner,
             ActionLog,
-            ToggleInfoModeButton
+            ToggleInfoModeButtonContainer
         }
     }
 </script>
