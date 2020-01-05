@@ -7,7 +7,8 @@ export default function () {
         },
         actions: {
             toggleExpanded,
-            collapse
+            collapse,
+            expand
         }
     };
 
@@ -17,5 +18,9 @@ export default function () {
 
     function collapse({ state }) {
         state.expanded = false;
+    }
+
+    function expand({ state }) {
+        state.expanded = true;
     }
 };

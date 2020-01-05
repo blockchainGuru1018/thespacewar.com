@@ -18,6 +18,9 @@ export default function ({
         if (visible) {
             collapseActionLog();
         }
+        else {
+            expandActionLog();
+        }
         state.visible = visible;
     }
 
@@ -31,5 +34,9 @@ export default function ({
 
     function collapseActionLog() {
         rootDispatch.actionLog.collapse();
+    }
+
+    function expandActionLog() {
+        rootDispatch.actionLog.expand();
     }
 }

@@ -5,6 +5,7 @@ const FakeState = require('../testUtils/FakeState.js');
 const { createController } = require('../testUtils');
 const {
     assert,
+    refute,
     sinon,
     timeout,
     dom: {
@@ -28,7 +29,6 @@ afterEach(() => {
 
 test('should show toggle info mode button', async () => {
     await renderWithState({});
-
     assert.elementCount('.toggleInfoMode', 1);
 });
 
@@ -42,7 +42,6 @@ test('when toggle info mode should collapse action log', async () => {
     await renderWithState({
         actionLogEntries: [{ action: 'played', text: '' }]
     });
-    await timeout();
 
     await click('.toggleInfoMode');
 
@@ -80,10 +79,20 @@ test('when have progressed in the tutorial and click the toggle twice should sho
 
 test('when go to last slide in tutorial and click anywhere should hide tutorial', async () => {
     await toggleInfoMode();
+
     const amountOfStepsInTutorial = TutorialSteps.InOrder.length;
     await clickTimes('.infoMode', amountOfStepsInTutorial);
 
     assert.elementCount('.infoMode', 0);
+});
+
+test('when finishes tutorial should expand action log', async () => {
+    await toggleInfoMode();
+
+    const amountOfStepsInTutorial = TutorialSteps.InOrder.length;
+    await clickTimes('.infoMode', amountOfStepsInTutorial);
+
+    refute.elementHasClass('.actionLog', 'actionLog--collapsed', 'Action log is NOT expanded');
 });
 
 async function toggleInfoMode() {
