@@ -4,6 +4,7 @@
         :class="classes"
         :style="style"
         @click="$emit('select')"
+        title="Long press over any card to expand it"
     />
 </template>
 <script>
