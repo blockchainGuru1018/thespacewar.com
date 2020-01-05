@@ -1,4 +1,4 @@
-import TutorialSteps from "../match/infoMode/steps/TutorialSteps.js";
+import TutorialSteps from "../match/infoMode/tutorial/TutorialSteps.js";
 
 const getCardImageUrl = require('../utils/getCardImageUrl.js');
 const FakeState = require('../testUtils/FakeState.js');

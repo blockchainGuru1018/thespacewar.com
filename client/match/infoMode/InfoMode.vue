@@ -13,7 +13,7 @@
     </div>
 </template>
 <script>
-    import TutorialSteps from "./steps/TutorialSteps.js";
+    import TutorialSteps from "./tutorial/TutorialSteps.js";
 
     export default {
         name: 'InfoMode',

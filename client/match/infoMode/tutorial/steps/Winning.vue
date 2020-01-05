@@ -16,7 +16,7 @@
     </div>
 </template>
 <script>
-    import LinesMixin from "./LinesMixin.js";
+    import LinesMixin from "../LinesMixin.js";
 
     export default {
         name: 'Winning',
