@@ -58,29 +58,28 @@
 <style lang="scss">
     @import "banner";
 
-    .matchHeader-rightBannerWrapper {
-        display: flex;
-    }
-
     .matchHeader-topRightButtons {
         position: absolute;
         z-index: 3;
         top: 0;
         right: 0;
 
+        height: 50px;
+        margin: $bannerTopMargin $bannerSideMargin 0 0;
+
         display: flex;
         justify-content: space-between;
         align-items: center;
 
         > .matchHeader-escapeMenuButton {
-            margin: 10px 10px 0 0;
             padding: 0;
             width: $bannerHeight;
             height: $bannerHeight;
+            border: 2px solid $bannerBorderColor;
+            box-sizing: border-box;
             font-size: 13px;
             font-family: "Space mono", sans-serif;
             line-height: 102%;
-            border: 2px solid $bannerBorderColor;
             background: $bannerBackgroundColor;
             color: $bannerTextColor;
 
@@ -93,40 +92,6 @@
             &:active {
                 border: 2px solid rgb(40, 40, 40);
                 background: rgb(20, 20, 20);
-            }
-
-            > svg {
-                display: block;
-                width: 100%;
-                height: 100%;
-                padding: 22%;
-                box-sizing: border-box;
-                fill: $bannerTextColor;
-            }
-        }
-
-        > .toggleInfoMode {
-            margin: 10px 5px 0 0;
-            padding: 0;
-            width: $bannerHeight * 1.3;
-            height: $bannerHeight * 1.3;
-            font-size: 13px;
-            font-family: "Space mono", sans-serif;
-            line-height: 102%;
-            color: $bannerTextColor;
-            background: transparent;
-            border: 0;
-
-            &:focus {
-                filter: brightness(125%);
-            }
-
-            &:hover {
-                filter: brightness(135%);
-            }
-
-            &:active, &:focus, &:hover {
-                outline: 0;
             }
 
             > svg {

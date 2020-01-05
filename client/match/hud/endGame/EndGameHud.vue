@@ -74,15 +74,16 @@
 
     .endGameButton {
         margin-top: 100px;
-        background-color: #ff3646;
-        color: white;
-        font-size: 32px;
+        background-color: transparent;
+        color: #666;
+        font-size: 24px;
         padding: 8px 15px;
         box-shadow: 0 1px 6px 1px rgba(0, 0, 0, 0.2);;
         border: none;
 
         &:hover {
-            background-color: #ff6670;
+            background-color: transparent;
+            color: white;
         }
     }
 </style>

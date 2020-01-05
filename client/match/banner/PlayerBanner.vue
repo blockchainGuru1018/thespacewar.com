@@ -164,6 +164,9 @@
 
     .matchHeader-banner {
         position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 3;
         display: flex;
         align-items: center;
         justify-content: flex-start;
@@ -172,9 +175,8 @@
         padding: 5px;
         margin-top: $bannerTopMargin;
         margin-left: $bannerSideMargin;
-        top: 0;
-        left: 0;
-        z-index: 3;
+        height: $bannerHeight;
+        box-sizing: border-box;
 
         &.matchHeader-playerBanner {
             border: 2px solid $bannerPlayerBorderColor;

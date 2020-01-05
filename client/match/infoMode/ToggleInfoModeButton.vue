@@ -24,3 +24,36 @@
         }
     }
 </script>
+<style lang="scss">
+    @import "../banner/banner.scss";
+
+    .toggleInfoMode {
+        padding: 0;
+        margin-right: 2px;
+        width: $bannerHeight;
+        height: $bannerHeight;
+        background: transparent;
+        border: 0;
+
+        &:focus {
+            filter: brightness(125%);
+        }
+
+        &:hover {
+            filter: brightness(135%);
+        }
+
+        &:active, &:focus, &:hover {
+            outline: 0;
+        }
+
+        > svg {
+            display: block;
+            width: 100%;
+            height: 100%;
+            padding: 18%;
+            box-sizing: border-box;
+            fill: $bannerTextColor;
+        }
+    }
+</style>
