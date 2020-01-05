@@ -1,8 +1,8 @@
 <template>
     <div
         v-if="!holdingCard"
-        class="actionLog"
         ref="actionLog"
+        :class="['actionLog', {'actionLog--collapsed': !expanded}]"
         @click="toggleExpanded"
     >
         <div
@@ -30,13 +30,9 @@
     const Vuex = require('vuex');
     const matchHelpers = Vuex.createNamespacedHelpers('match');
     const cardHelpers = Vuex.createNamespacedHelpers('card');
+    const actionLogHelpers = Vuex.createNamespacedHelpers('actionLog');
 
     module.exports = {
-        data() {
-            return {
-                expanded: true
-            }
-        },
         computed: {
             ...matchHelpers.mapGetters([
                 'actionLog'
@@ -44,14 +40,17 @@
             ...cardHelpers.mapState([
                 'holdingCard'
             ]),
+            ...actionLogHelpers.mapState([
+                'expanded'
+            ]),
             entries() {
                 return this.actionLog.queryLatest().slice().reverse();
             }
         },
         methods: {
-            toggleExpanded() {
-                this.expanded = !this.expanded;
-            },
+            ...actionLogHelpers.mapActions([
+                'toggleExpanded'
+            ]),
             getEntryHtml(entry) {
                 return ActionLogEntry(entry).html();
             },

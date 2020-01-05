@@ -27,32 +27,30 @@ afterEach(() => {
 });
 
 test('should show toggle info mode button', async () => {
-    const { dispatch, showPage } = controller;
-    showPage();
-    dispatch('stateChanged', FakeState({}));
-    await timeout();
+    await renderWithState({});
 
     assert.elementCount('.toggleInfoMode', 1);
 });
 
 test('when toggle info mode should show first step in tutorial', async () => {
-    const { dispatch, showPage } = controller;
-    showPage();
-    dispatch('stateChanged', FakeState({}));
-    await timeout();
-
-    await click('.toggleInfoMode');
-
+    await toggleInfoMode();
     assert.elementCount('.infoMode', 1);
     assert.elementCount('[t-id="infoMode-step0"]', 1);
 });
 
-test('when in info mode and click toggle button again should hide tutorial', async () => {
-    const { dispatch, showPage } = controller;
-    showPage();
-    dispatch('stateChanged', FakeState({}));
+test('when toggle info mode should collapse action log', async () => {
+    await renderWithState({
+        actionLogEntries: [{ action: 'played', text: '' }]
+    });
     await timeout();
+
     await click('.toggleInfoMode');
+
+    assert.elementHasClass('.actionLog', 'actionLog--collapsed');
+});
+
+test('when in info mode and click toggle button again should hide tutorial', async () => {
+    await toggleInfoMode();
 
     await click('.toggleInfoMode');
 
@@ -61,11 +59,7 @@ test('when in info mode and click toggle button again should hide tutorial', asy
 });
 
 test('when click anywhere in tutorial should go to the next slide', async () => {
-    const { dispatch, showPage } = controller;
-    showPage();
-    dispatch('stateChanged', FakeState({}));
-    await timeout();
-    await click('.toggleInfoMode');
+    await toggleInfoMode();
 
     await click('.infoMode');
 
@@ -73,12 +67,8 @@ test('when click anywhere in tutorial should go to the next slide', async () => 
     assert.elementCount('[t-id="infoMode-step1"]', 1);
 });
 
-test('when progressed in the tutorial and click the toggle twice should show the tutorial again but at the first step', async () => {
-    const { dispatch, showPage } = controller;
-    showPage();
-    dispatch('stateChanged', FakeState({}));
-    await timeout();
-    await click('.toggleInfoMode');
+test('when have progressed in the tutorial and click the toggle twice should show the tutorial again but at the first step', async () => {
+    await toggleInfoMode();
     await click('.infoMode');
 
     await click('.toggleInfoMode');
@@ -89,17 +79,24 @@ test('when progressed in the tutorial and click the toggle twice should show the
 });
 
 test('when go to last slide in tutorial and click anywhere should hide tutorial', async () => {
-    const { dispatch, showPage } = controller;
-    showPage();
-    dispatch('stateChanged', FakeState({}));
-    await timeout();
-    await click('.toggleInfoMode');
-
+    await toggleInfoMode();
     const amountOfStepsInTutorial = TutorialSteps.InOrder.length;
     await clickTimes('.infoMode', amountOfStepsInTutorial);
 
     assert.elementCount('.infoMode', 0);
 });
+
+async function toggleInfoMode() {
+    await renderWithState({});
+    await click('.toggleInfoMode');
+}
+
+async function renderWithState(state) {
+    const { dispatch, showPage } = controller;
+    showPage();
+    dispatch('stateChanged', FakeState(state));
+    await timeout();
+}
 
 async function clickTimes(selector, times) {
     for (let i = 0; i < times; i++) {
