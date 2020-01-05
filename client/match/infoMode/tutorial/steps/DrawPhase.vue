@@ -8,8 +8,8 @@
             This row in your station determines how many cards you draw in the draw phase.
         </p>
         <p>
-            When you have no more cards left in your deck you will instead take damage to
-            your station.
+            When you have no more cards left in your deck you will take damage to
+            your station instead of drawing cards.
         </p>
     </div>
 </template>
