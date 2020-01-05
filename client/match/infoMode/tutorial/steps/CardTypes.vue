@@ -6,7 +6,7 @@
         </p>
         <p>
             Each type have certain rules,
-            unless the cards description says otherwise.
+            unless the card's description says otherwise.
         </p>
     </div>
 </template>

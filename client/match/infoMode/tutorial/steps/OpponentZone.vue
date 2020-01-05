@@ -3,7 +3,7 @@
         <h2>Opponent zone</h2>
         <div class="infoMode-spacer" />
         <p id="infoMode-opponentZone">
-            Likewise, you must move your cards to the opponents home zone in order to attack their station cards.
+            Likewise, you must move your cards to your opponents home zone to attack their station cards.
         </p>
     </div>
 </template>

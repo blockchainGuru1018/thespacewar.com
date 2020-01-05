@@ -4,12 +4,9 @@
         <p id="infoMode-drawPile">
             This is your draw pile. The number in the top right shows how many cards are left in your deck.
         </p>
-        <p>
-            When you have no more cards left you will start taking damage to your station at the start of each turn.
-        </p>
+        <div class="infoMode-spacer--tiny" />
         <p id="infoMode-discardPile">
-            This is your discard pile. If you have too many cards on your hand at the end of your action phase, you move
-            cards from your hand to here.
+            This is your discard pile. You move a card from your hand to here to discard it.
         </p>
     </div>
 </template>

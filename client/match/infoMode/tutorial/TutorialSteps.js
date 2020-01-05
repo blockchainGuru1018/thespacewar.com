@@ -13,9 +13,11 @@ import CardTypes2 from "./steps/CardTypes2.vue";
 import EventCards from "./steps/EventCards.vue";
 import LastTip from "./steps/LastTip.vue";
 import GameTimer from "./steps/GameTimer.vue";
+import HomeZone0 from "./steps/HomeZone0.vue";
 
 const ComponentsByName = {
     Winning,
+    HomeZone0,
     HomeZone,
     HomeZone2,
     OpponentZone,

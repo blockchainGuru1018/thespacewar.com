@@ -236,7 +236,8 @@
         </portal>
         <portal to="stationActionRow">
             <span class="stationRowDescription descriptionText">
-                Start turn with {{ actionPointsFromStationCards }} action point{{ actionPointsFromStationCards === 1 ? '' : 's' }}
+                Start turn with {{ actionPointsFromStationCards }} action point{{ actionPointsFromStationCards === 1 ?
+                '' : 's' }}
             </span>
         </portal>
         <portal to="stationHandSizeRow">
@@ -308,6 +309,7 @@
     const ghostHelpers = Vuex.createNamespacedHelpers('ghost');
     const requirementHelpers = Vuex.createNamespacedHelpers('requirement');
     const startGameHelpers = Vuex.createNamespacedHelpers('startGame');
+    const infoModeHelpers = Vuex.createNamespacedHelpers('infoMode');
     const MatchMode = require('../../shared/match/MatchMode.js');
     const LastStand = require('../../shared/match/LastStand.js');
     const { PHASES } = require('./phases.js');
@@ -401,6 +403,9 @@
             ...ghostHelpers.mapGetters([
                 'activateEventCardGhostVisible'
             ]),
+            ...infoModeHelpers.mapState({
+                infoModeVisible: 'visible'
+            }),
             startGameButtonContainerVisible() {
                 return this.readyButtonVisible;
             },
@@ -410,6 +415,7 @@
             guideTextContainerVisible() {
                 if (this.choosingStartingPlayer) return false;
                 if (this.activateEventCardGhostVisible) return false;
+                if (this.infoModeVisible) return false;
 
                 return true;
             },

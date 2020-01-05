@@ -8,7 +8,10 @@
             class="infoMode"
             @click="next"
         >
-            <component :is="Steps[step]" :t-id="`infoMode-step${step}`" />
+            <component
+                :is="Steps[step]"
+                :t-id="`infoMode-step${step}`"
+            />
         </div>
     </div>
 </template>
@@ -38,10 +41,12 @@
         },
         methods: {
             next() {
-                this.step += 1;
-                if (this.step >= this.Steps.length) {
+                if (this.step === this.Steps.length - 1) {
                     this.step = 0;
                     this.$emit('hide');
+                }
+                else {
+                    this.step += 1;
                 }
             }
         }
@@ -64,7 +69,7 @@
         bottom: 0;
         left: 0;
         z-index: 1;
-        background: rgba(0, 0, 0, .6);
+        background: rgba(0, 0, 0, .7);
         transition: background 1s;
     }
 

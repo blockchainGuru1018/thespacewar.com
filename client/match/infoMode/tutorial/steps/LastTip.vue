@@ -2,7 +2,7 @@
     <div class="infoMode-step">
         <h2>Last tip!</h2>
         <p>
-            Remember to grow your station in your action phase at every turn! It's life or death.
+            Remember to grow your station in your action phase at every turn. Good luck!
         </p>
     </div>
 </template>

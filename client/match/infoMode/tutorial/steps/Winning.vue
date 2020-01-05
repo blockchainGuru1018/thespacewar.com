@@ -2,16 +2,12 @@
     <div class="infoMode-step">
         <h2>Winning</h2>
         <p id="infoMode-opponentStation">
-            This is your opponents station cards. Attack cards in this station to flip them. If you flip them
-            all,
-            you
-            win.
+            These are your opponents station cards. Attack cards in this station to flip them face-up. If all of them
+            are face-up, you win.
         </p>
+        <div class="infoMode-spacer--tiny" />
         <p id="infoMode-playerStation">
-            If all your cards are flipped, you lose.
-        </p>
-        <p>
-            Cards that are flipped can be played as cards from your hand.
+            These are all your station cards. If all your cards are face-up, you lose.
         </p>
     </div>
 </template>

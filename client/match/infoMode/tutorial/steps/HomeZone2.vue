@@ -2,7 +2,8 @@
     <div class="infoMode-step">
         <h2>Home zone</h2>
         <p id="infoMode-opponentCardsInHomeZone">
-            For your opponent to attack your station cards, they must move their cards to your home zone here:
+            Cards can only attack cards in the same zone. For your opponent to attack your station cards, they must move
+            their cards to the upper side of your home zone.
         </p>
     </div>
 </template>
