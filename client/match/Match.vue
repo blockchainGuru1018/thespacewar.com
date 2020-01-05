@@ -281,7 +281,7 @@
                                 Station cards
                             </div>
                         </div>
-                        <div class="field-stationRow">
+                        <div class="field-stationRow playerStation-drawRow">
                             <portal-target name="stationDrawRow" />
                             <station-card
                                 :is-holding-card="!!holdingCard"
@@ -298,7 +298,7 @@
                                 />
                             </StationCardWrapper>
                         </div>
-                        <div class="field-stationRow">
+                        <div class="field-stationRow playerStation-actionRow">
                             <portal-target name="stationActionRow" />
                             <station-card
                                 :is-holding-card="!!holdingCard"
@@ -315,7 +315,7 @@
                                 />
                             </StationCardWrapper>
                         </div>
-                        <div class="field-stationRow">
+                        <div class="field-stationRow playerStation-handSizeRow">
                             <portal-target name="stationHandSizeRow" />
                             <station-card
                                 v-for="card in playerVisibleHandSizeStationCards"

@@ -1,7 +1,7 @@
 <template>
     <div class="infoMode-wrapper">
         <div
-            class="infoMode-overlay"
+            :class="overlayClasses"
             @click="next"
         />
         <div
@@ -24,7 +24,17 @@
             };
         },
         computed: {
-            Steps: () => TutorialSteps.InOrder
+            Steps: () => TutorialSteps.InOrder,
+            componentForStep() {
+                return this.Steps[this.step];
+            },
+            overlayClasses() {
+                const classes = ['infoMode-overlay'];
+                if (this.componentForStep.extraDark) {
+                    classes.push('infoMode-overlay--darker');
+                }
+                return classes;
+            }
         },
         methods: {
             next() {
@@ -54,7 +64,12 @@
         bottom: 0;
         left: 0;
         z-index: 1;
-        background: rgba(0, 0, 0, .5);
+        background: rgba(0, 0, 0, .6);
+        transition: background 1s;
+    }
+
+    .infoMode-overlay--darker {
+        background: rgba(0, 0, 0, .88);
     }
 
     .infoMode {
@@ -111,5 +126,13 @@
 
     .infoMode-spacer {
         height: 300px;
+    }
+
+    .infoMode-spacer--small {
+        height: 150px;
+    }
+
+    .infoMode-spacer--tiny {
+        height: 50px;
     }
 </style>
