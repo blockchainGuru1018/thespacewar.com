@@ -28,7 +28,8 @@
 
 .opponentDrawPileDescription {
   position: absolute;
-  left: 100%;
+  right: 100%;
+  text-align: right;
   justify-content: flex-end;
   width: 120px;
 }
