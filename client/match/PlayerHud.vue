@@ -65,22 +65,7 @@
         </portal>
         <InfoModeContainer />
         <EndGameHudContainer />
-        <portal to="stationDrawRow">
-            <span class="stationRowDescription descriptionText">
-                Draw {{ cardsToDrawInDrawPhase }} card{{ cardsToDrawInDrawPhase === 1 ? '' : 's' }} each turn
-            </span>
-        </portal>
-        <portal to="stationActionRow">
-            <span class="stationRowDescription descriptionText">
-                Start turn with {{ actionPointsFromStationCards }} action point{{ actionPointsFromStationCards === 1 ?
-                '' : 's' }}
-            </span>
-        </portal>
-        <portal to="stationHandSizeRow">
-            <span class="stationRowDescription descriptionText">
-                Max {{ maxHandSize }} card{{ maxHandSize === 1 ? '' : 's' }} on hand
-            </span>
-        </portal>
+        <StationDescriptions />
         <portal to="playerDrawPile">
             <span
                 v-if="canDrawCards"
@@ -133,6 +118,7 @@
     import EndGameHudContainer from "./hud/endGame/EndGameHudContainer.vue";
     import InfoModeContainer from "./infoMode/InfoModeContainer.vue";
     import GuideText from "./hud/guideText/GuideText.vue";
+    import StationDescriptions from "./hud/StationDescriptions.vue";
 
     const Vuex = require('vuex');
     const resolveModuleWithPossibleDefault = require('../../client/utils/resolveModuleWithPossibleDefault.js');
@@ -148,6 +134,7 @@
 
     export default {
         components: {
+            StationDescriptions,
             GuideText,
             InfoModeContainer,
             EndGameHudContainer,
@@ -172,7 +159,6 @@
             ...mapGetters([
                 'nextPhaseWithAction',
                 'cardsToDrawInDrawPhase',
-                'actionPointsFromStationCards',
                 'maxHandSize',
                 'actionPoints2',
                 'queryEvents',
@@ -320,6 +306,7 @@
 <style scoped lang="scss">
     @import "enlargeCard";
     @import "miscVariables";
+    @import "./hud/guiDescription";
 
     .field-playerHud {
         position: absolute;
@@ -436,52 +423,5 @@
         display: flex;
         justify-content: center;
         align-items: center;
-    }
-
-    .descriptionText {
-        font-family: sans-serif;
-        font-weight: bold;
-        color: rgba(180, 180, 180, 0.5);
-    }
-
-    .stationRowDescription {
-        position: absolute;
-        left: 0;
-        top: 0;
-        z-index: 1;
-        white-space: nowrap;
-        display: flex;
-        text-align: right;
-        justify-content: flex-end;
-        align-items: center;
-    }
-
-    .opponentDrawPileDescription,
-    .playerDrawPileDescription {
-        position: absolute;
-        display: flex;
-        align-items: center;
-        height: 100%;
-        padding: 0 10px;
-        font-size: 20px;
-    }
-
-    .opponentDrawPileDescription {
-        position: absolute;
-        left: 100%;
-        justify-content: flex-end;
-        width: 120px;
-    }
-
-    .playerDrawPileDescription {
-        position: absolute;
-        left: 100%;
-        width: 180px;
-    }
-
-    .match:not(.currentPhase--draw) {
-        .playerDrawPileDescription, .opponentDrawPileDescription {
-            display: none;
-        }
     }
 </style>
