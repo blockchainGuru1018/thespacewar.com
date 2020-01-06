@@ -66,8 +66,7 @@
 
         <InfoModeContainer />
         <EndGameHudContainer />
-        <StationDescriptions />
-        <PileDescriptions />
+        <GuiDescriptions />
 
         <portal
             v-if="enlargedCardVisible"
@@ -105,8 +104,7 @@
     import EndGameHudContainer from "./hud/endGame/EndGameHudContainer.vue";
     import InfoModeContainer from "./infoMode/InfoModeContainer.vue";
     import GuideText from "./hud/guideText/GuideText.vue";
-    import StationDescriptions from "./hud/StationDescriptions.vue";
-    import PileDescriptions from "./hud/PileDescriptions.vue";
+    import GuiDescriptions from "./hud/GuiDescriptions.vue";
 
     const Vuex = require('vuex');
     const resolveModuleWithPossibleDefault = require('../../client/utils/resolveModuleWithPossibleDefault.js');
@@ -122,8 +120,7 @@
 
     export default {
         components: {
-            PileDescriptions,
-            StationDescriptions,
+            GuiDescriptions,
             GuideText,
             InfoModeContainer,
             EndGameHudContainer,
@@ -273,7 +270,6 @@
 <style scoped lang="scss">
     @import "enlargeCard";
     @import "miscVariables";
-    @import "./hud/guiDescription";
 
     .field-playerHud {
         position: absolute;
