@@ -63,25 +63,12 @@
                 </button>
             </div>
         </portal>
+
         <InfoModeContainer />
         <EndGameHudContainer />
         <StationDescriptions />
-        <portal to="playerDrawPile">
-            <span
-                v-if="canDrawCards"
-                class="playerDrawPileDescription descriptionText"
-            >
-                Click to draw
-            </span>
-        </portal>
-        <portal to="opponentDrawPile">
-            <span
-                v-if="canMill"
-                class="opponentDrawPileDescription descriptionText"
-            >
-                Click to mill {{ millCardCount }} cards
-            </span>
-        </portal>
+        <PileDescriptions />
+
         <portal
             v-if="enlargedCardVisible"
             to="match"
@@ -119,6 +106,7 @@
     import InfoModeContainer from "./infoMode/InfoModeContainer.vue";
     import GuideText from "./hud/guideText/GuideText.vue";
     import StationDescriptions from "./hud/StationDescriptions.vue";
+    import PileDescriptions from "./hud/PileDescriptions.vue";
 
     const Vuex = require('vuex');
     const resolveModuleWithPossibleDefault = require('../../client/utils/resolveModuleWithPossibleDefault.js');
@@ -134,6 +122,7 @@
 
     export default {
         components: {
+            PileDescriptions,
             StationDescriptions,
             GuideText,
             InfoModeContainer,
@@ -165,7 +154,6 @@
                 'playerRetreated',
                 'opponentRetreated',
                 'turnControl',
-                'gameConfig',
                 'gameOn',
                 'playerPerfectPlan',
                 'playerRuleService',
@@ -188,8 +176,6 @@
                 'activeActionCardImageUrl'
             ]),
             ...mapPermissionGetters([
-                'canDrawCards',
-                'canMill',
                 'canIssueOverwork',
                 'opponentHasControlOfPlayersTurn'
             ]),
@@ -258,21 +244,6 @@
                         display: 'none'
                     };
                 }
-            },
-            millCardCount() {
-                return this.gameConfig.millCardCount();
-            },
-            drawCardOrMillText() {
-                const count = this.firstRequirementIsDrawCard
-                    ? this.countInFirstRequirement
-                    : this.playerRuleService.countCardsLeftToDrawForDrawPhase();
-                if (this.canMill) {
-                    if (count > 1) {
-                        return `Draw card or Mill opponent (x${count})`;
-                    }
-                    return `Draw card or Mill opponent`;
-                }
-                return `Draw ${count} ${pluralize('card', count)}`;
             }
         },
         methods: {
@@ -298,10 +269,6 @@
             },
         },
     };
-
-    function pluralize(word, count) {
-        return count === 1 ? word : word + 's';
-    }
 </script>
 <style scoped lang="scss">
     @import "enlargeCard";

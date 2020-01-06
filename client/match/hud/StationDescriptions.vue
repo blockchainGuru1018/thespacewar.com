@@ -32,18 +32,22 @@
             ]),
             drawRowText() {
                 const cardsToDrawInDrawPhase = this.cardsToDrawInDrawPhase;
-                return `Draw ${cardsToDrawInDrawPhase} card${cardsToDrawInDrawPhase === 1 ? '' : 's'} each turn`
+                return `Draw ${cardsToDrawInDrawPhase} ${pluralize('card', cardsToDrawInDrawPhase)} each turn`
             },
             actionRowText() {
                 const actionPoints = this.actionPointsFromStationCards;
-                return `Start turn with ${actionPoints} action point${actionPoints === 1 ? '' : 's'}`;
+                return `Start turn with ${actionPoints} action ${pluralize('point', actionPoints)}`;
             },
             handSizeRowText() {
                 const maxHandSize = this.maxHandSize;
-                return `Max ${maxHandSize} card${maxHandSize === 1 ? '' : 's'} on hand`
+                return `Max ${maxHandSize} ${pluralize('card', maxHandSize)} on hand`
             }
         }
     };
+
+    function pluralize(word, count) {
+        return count === 1 ? word : word + 's';
+    }
 </script>
 
 <style lang="scss" scoped>
