@@ -29,7 +29,8 @@ const classes = [
     require('./Avoid.js'),
     require('./TargetMissed.js'),
     require('./TheExterminator.js'),
-    require('./Sabotage.js')
+    require('./Sabotage.js'),
+    require('./Titan.js')
 ];
 
 module.exports = classes;
