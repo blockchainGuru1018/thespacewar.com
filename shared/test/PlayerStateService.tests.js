@@ -17,62 +17,6 @@ const TestHelper = require('./fakeFactories/TestHelper.js');
 const FullForceForwardCommonId = '9';
 
 module.exports = testCase('PlayerStateService', {
-    'cardCanMoveOnTurnWhenPutDown:': {
-        'should return false': function () {
-            const C1A = createCard({ id: 'C1A', type: 'spaceShip' });
-            const card = new BaseCard({ card: C1A });
-            const state = createState({
-                playerStateById: {
-                    'P1A': {
-                        cardsInZone: [C1A]
-                    }
-                }
-            });
-            const service = createServiceForPlayer(state, 'P1A');
-
-            const result = service.cardCanMoveOnTurnWhenPutDown(card);
-
-            refute(result);
-        },
-        'when card is space ship has Full Force Forward in zone should return true': function () {
-            const C1A = createCard({ id: 'C1A', type: 'spaceShip' });
-            const card = new BaseCard({ card: C1A });
-            const state = createState({
-                playerStateById: {
-                    'P1A': {
-                        cardsInZone: [
-                            C1A,
-                            createCard({ id: 'C2A', type: 'duration', commonId: FullForceForwardCommonId })
-                        ]
-                    }
-                }
-            });
-            const service = createServiceForPlayer(state, 'P1A');
-
-            const result = service.cardCanMoveOnTurnWhenPutDown(card);
-
-            assert(result);
-        },
-        'when has Full Force Forward in zone but card is NOT space ship should return false': function () {
-            const C1A = createCard({ id: 'C1A', type: 'missile' });
-            const card = new BaseCard({ card: C1A });
-            const state = createState({
-                playerStateById: {
-                    'P1A': {
-                        cardsInZone: [
-                            C1A,
-                            createCard({ id: 'C2A', type: 'duration', commonId: FullForceForwardCommonId })
-                        ]
-                    }
-                }
-            });
-            const service = createServiceForPlayer(state, 'P1A');
-
-            const result = service.cardCanMoveOnTurnWhenPutDown(card);
-
-            refute(result);
-        }
-    },
     'removeCardFromDeck:': {
         'should remove card from deck': function () {
             const testHelper = TestHelper(createState({

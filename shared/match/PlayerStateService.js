@@ -323,18 +323,6 @@ class PlayerStateService {
         });
     }
 
-    /// These methods do queries on behaviour cards, perhaps these belong in a separate service?
-
-    cardCanMoveOnTurnWhenPutDown(card) {
-        if (card.type === 'spaceShip') {
-            const durationCards = this.getDurationCards().map(c => this.createBehaviourCard(c));
-            return durationCards.some(c => c.allowsFriendlySpaceShipsToMoveTurnWhenPutDown);
-        }
-        return false;
-    }
-
-    ///
-
     isCardInHomeZone(cardId) {
         return this.getPlayerState().cardsInZone.some(c => c.id === cardId);
     }
