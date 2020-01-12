@@ -34,8 +34,8 @@
         "name": "Titan",
         "price": "5",
         "type_card": "blue",
-        "detail": "Normal space ship.",
-        "defense": "8",
+        "detail": "Slow (each turn can either move or attack but not both)",
+        "defense": "9",
         "attack": "3",
         "number_copies": "1"
     },
@@ -82,9 +82,9 @@
     {
         "id": "9",
         "name": "Full Attack",
-        "price": "3",
+        "price": "2",
         "type_card": "violet",
-        "detail": "· +1 attack value of your space ships.\r\n· Your space ships are fast (can move the     first turn they enter play).",
+        "detail": "+1 attack value of your space ships (not missiles or cannons).",
         "defense": "0",
         "attack": "0",
         "number_copies": "2"
@@ -114,7 +114,7 @@
         "name": "Over Capacity",
         "price": "1",
         "type_card": "violet",
-        "detail": "You have no maximum hand size.",
+        "detail": "You have no maximum hand size.\r\nIn your action phase you may look at and take to your hand bottom row station cards.",
         "defense": "0",
         "attack": "0",
         "number_copies": "2"
@@ -144,7 +144,7 @@
         "name": "Target Missed",
         "price": "0",
         "type_card": "orange",
-        "detail": "Play this card directly during enemy attack from space ship (not collision, missile or cannon) to make it fail.",
+        "detail": "Play this card directly during enemy attack from space ship (not collision, missile or cannon) to make the attack fail.",
         "defense": "0",
         "attack": "0",
         "number_copies": "3"
@@ -324,7 +324,7 @@
         "name": "Fatal Error",
         "price": "0",
         "type_card": "orange",
-        "detail": "Destroy any card (on the table including station cards).\r\nThe opponent may draw 2 cards.",
+        "detail": "Destroy a flipped station card [ OR ] destroy any non-station card and the opponent may draw 2 cards.",
         "defense": "0",
         "attack": "0",
         "number_copies": "2"
