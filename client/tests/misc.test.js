@@ -163,7 +163,7 @@ describe('when both players are out of cards', () => {
     });
 });
 
-describe('when has and FullForceForward in play and a space ship with an attack of 1 in play', () => {
+describe('when has FullForceForward in play and a space ship with an attack of 1 in play', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();

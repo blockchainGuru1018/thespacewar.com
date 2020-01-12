@@ -244,7 +244,7 @@
         "name": "The Shade",
         "price": "4",
         "type_card": "blue",
-        "detail": "The Shade can only be attacked if it has been attacking in the most recent turn of the opponent.",
+        "detail": "The Shade can only be attacked if it has been attacking the last turn.",
         "defense": "3",
         "attack": "4",
         "number_copies": "1"

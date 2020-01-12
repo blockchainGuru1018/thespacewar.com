@@ -5,9 +5,6 @@ const {
     assert,
     sinon,
     timeout,
-    dom: {
-        click
-    }
 } = require('../testUtils/bocha-jest/bocha-jest.js');
 
 let controller;

@@ -2,4 +2,8 @@ const { setupFakeLeaderLine } = require('./fakeLeaderLine.js');
 const jsdomDevtoolsFormatter = require('jsdom-devtools-formatter');
 
 jsdomDevtoolsFormatter.install();
-setupFakeLeaderLine();
+
+const isBrowserEnvironment = !!global.window;
+if (isBrowserEnvironment) {
+    setupFakeLeaderLine();
+}
