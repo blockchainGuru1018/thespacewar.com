@@ -1,5 +1,4 @@
-const bocha = require('bocha');
-const testCase = bocha.testCase;
+const bocha = require('../../testUtils/bocha-jest/bocha');
 const assert = bocha.assert;
 const FakeCardDataAssembler = require('../../testUtils/FakeCardDataAssembler.js');
 const createCard = FakeCardDataAssembler.createCard;
@@ -11,7 +10,7 @@ const RemoveStationCardEvent = require('../../../../shared/event/RemoveStationCa
 const MoveStationCardEvent = require('../../../../shared/event/MoveStationCardEvent.js');
 const FullForceForward = require('../../../../shared/card/FullForceForward.js');
 
-module.exports = testCase('ActionPointCalculator', {
+module.exports = {
     'when put card in zone and then put down a station card in action row'() {
         const calculator = ActionPointCalculator({
             cardInfoRepository: FakeCardInfoRepository([
@@ -410,7 +409,7 @@ module.exports = testCase('ActionPointCalculator', {
 
         assert.equals(actionPoints, 2);
     }
-});
+};
 
 function FakeCardInfoRepository(cards) {
     const cardDataAssembler = {

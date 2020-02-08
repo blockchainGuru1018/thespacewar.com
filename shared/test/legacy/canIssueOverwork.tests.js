@@ -1,11 +1,10 @@
 const {
-    testCase,
     assert,
     refute
-} = require('bocha');
+} = require('../testUtils/bocha-jest/bocha');
 const canIssueOverwork = require('../../match/overwork/canIssueOverwork.js');
 
-module.exports = testCase('canIssueOverwork', {
+module.exports = {
     'when has 2 unflipped station cards': function () {
         assert(canIssueOverwork({
             phase: 'action',
@@ -43,4 +42,4 @@ module.exports = testCase('canIssueOverwork', {
             hasRequirements: false
         }));
     }
-});
+};

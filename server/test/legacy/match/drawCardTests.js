@@ -17,7 +17,6 @@ const Commander = require("../../../../shared/match/commander/Commander.js");
 module.exports = {
     'when in draw phase and has 1 card in station draw-row': {
         setUp() {
-            console.log('HERE!');
             this.firstPlayerConnection = FakeConnection2(['drawCards', 'stateChanged']);
             this.secondPlayerConnection = FakeConnection2(['stateChanged']);
             const players = [Player('P1A', this.firstPlayerConnection), Player('P2A', this.secondPlayerConnection)];

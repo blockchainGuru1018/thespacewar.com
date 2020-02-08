@@ -1,15 +1,14 @@
 const {
-    testCase,
     assert,
     refute
-} = require('bocha');
+} = require('../testUtils/bocha-jest/bocha');
 const BaseCard = require('../../card/BaseCard.js');
 const CanCounterCardsWithCostOrLess = require('../../card/mixins/CanCounterCardsWithCostOrLess.js');
 const {
     createCard
 } = require('../testUtils/shared.js');
 
-module.exports = testCase('CanCounterCardsWithCostOrLess', {
+module.exports = {
     'when card can counter target based on cost but target was drawn AFTER card'() {
         const card = createCard(CanCounterCardsWithCostOrLess(0, BaseCard), {
             card: { id: 'C1A' },
@@ -42,4 +41,4 @@ module.exports = testCase('CanCounterCardsWithCostOrLess', {
             assert(card.canCounterCard({ cost: 0 }));
         }
     },
-});
+};

@@ -12,7 +12,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "bocha": "^1.7.1",
     "jest": "^25.1.0",
     "lodash": "^4.17.15"
   }

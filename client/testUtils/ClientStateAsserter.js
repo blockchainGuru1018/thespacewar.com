@@ -2,7 +2,7 @@ const {
     assert,
     refute,
     sinon
-} = require('bocha');
+} = require('./bocha-jest/bocha');
 
 module.exports = StateAsserter;
 

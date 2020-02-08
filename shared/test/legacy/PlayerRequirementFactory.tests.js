@@ -1,7 +1,6 @@
 const {
-    testCase,
     assert,
-} = require('bocha');
+} = require('../testUtils/bocha-jest/bocha');
 const createCard = require('../../../server/test/testUtils/FakeCardDataAssembler.js').createCard;
 const TestHelper = require('../fakeFactories/TestHelper.js');
 const createState = require('../fakeFactories/createState.js');
@@ -9,7 +8,7 @@ const TargetMissed = require('../../card/TargetMissed.js');
 const AttackEvent = require('../../event/AttackEvent.js');
 const TurnControlEvent = require("../../event/TurnControlEvent.js");
 
-module.exports = testCase('PlayerRequirementFactory', {
+module.exports = {
     'can create counterAttack requirement': function () {
         const attackEventTime = Date.now();
         const testHelper = TestHelper(createState({
@@ -50,4 +49,4 @@ module.exports = testCase('PlayerRequirementFactory', {
             defenderCardsData: [{ id: 'C2A' }]
         });
     }
-});
+};

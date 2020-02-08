@@ -1,8 +1,7 @@
 const {
-    testCase,
     refute,
     assert
-} = require('bocha');
+} = require('../testUtils/bocha-jest/bocha');
 const FakeCardDataAssembler = require('../../../server/test/testUtils/FakeCardDataAssembler.js');
 const createCardData = FakeCardDataAssembler.createCard;
 const BaseCard = require('../../card/BaseCard.js');
@@ -14,7 +13,7 @@ const {
     createCard
 } = require('../testUtils/shared.js');
 
-module.exports = testCase('CanThePlayer', {
+module.exports = {
     'when card is of type spaceShip': {
         setUp() {
             this.card = createCard(BaseCard, {
@@ -201,4 +200,4 @@ module.exports = testCase('CanThePlayer', {
             assert(canCounterCard);
         }
     }
-});
+};

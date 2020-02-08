@@ -1,4 +1,4 @@
-const bocha = require('bocha');
+const bocha = require('../testUtils/bocha-jest/bocha');
 const assert = bocha.assert;
 const refute = bocha.refute;
 const Commander = require('../../match/commander/Commander.js');
@@ -7,7 +7,7 @@ const FakeCardDataAssembler = require("../../../server/test/testUtils/FakeCardDa
 const createCard = FakeCardDataAssembler.createCard;
 const TestHelper = require('../fakeFactories/TestHelper.js');
 
-module.exports = bocha.testCase('PlayerRuleService', {
+module.exports = {
     'pass draw phase': {
         'can pass, when is draw phase and player deck is empty'() {
             const testHelper = TestHelper(createState({
@@ -83,4 +83,4 @@ module.exports = bocha.testCase('PlayerRuleService', {
             refute(service.canPass());
         }
     }
-});
+};

@@ -5,7 +5,7 @@ const playerRuleServiceFactory = require("../fakeFactories/playerRuleServiceFact
 
 const {
     defaults
-} = require('bocha');
+} = require('./bocha-jest/bocha');
 
 module.exports = {
     createCard

@@ -1,15 +1,14 @@
 const {
-    testCase,
     assert,
     fakeClock
-} = require('bocha');
+} = require('../testUtils/bocha-jest/bocha');
 const createCard = require('../../../server/test/testUtils/FakeCardDataAssembler.js').createCard;
 const TestHelper = require('../fakeFactories/TestHelper.js');
 const createState = require('../fakeFactories/createState.js');
 const AttackEvent = require('../../event/AttackEvent.js');
 const GameConfig = require("../../match/GameConfig.js");
 
-module.exports = testCase('QueryAttacks', {
+module.exports = {
     tearDown() {
         this.clock && this.clock.restore();
     },
@@ -261,7 +260,7 @@ module.exports = testCase('QueryAttacks', {
             assert.equals(this.attackEvents.length, 0);
         }
     }
-});
+};
 
 function Attack(attackerCardId, defenderCardId, isoTimestamp) {
     return AttackEvent.forTest({

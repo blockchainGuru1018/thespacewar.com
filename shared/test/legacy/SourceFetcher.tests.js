@@ -1,12 +1,11 @@
 const {
-    testCase,
     assert,
-} = require('bocha');
+} = require('../testUtils/bocha-jest/bocha');
 const createCard = require('../../../server/test/testUtils/FakeCardDataAssembler.js').createCard;
 const TestHelper = require('../fakeFactories/TestHelper.js');
 const createState = require('../fakeFactories/createState.js');
 
-module.exports = testCase('SourceFetcher', {
+module.exports = {
     'opponentAny': {
         'asd'() {
             const testHelper = TestHelper(createState({
@@ -54,4 +53,4 @@ module.exports = testCase('SourceFetcher', {
         assert.equals(cards.length, 1);
         assert.match(cards[0], { id: 'C1A' });
     }
-});
+};

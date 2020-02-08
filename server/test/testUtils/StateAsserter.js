@@ -2,7 +2,7 @@ const {
     assert,
     refute,
     sinon
-} = require('bocha');
+} = require('./bocha-jest/bocha');
 const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
 
 module.exports = StateAsserter;

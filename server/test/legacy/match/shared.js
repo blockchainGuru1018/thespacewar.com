@@ -1,11 +1,10 @@
 const {
-    testCase,
     stub,
     sinon,
     assert,
     refute,
     defaults
-} = require('bocha');
+} = require('../../testUtils/bocha-jest/bocha');
 const createState = require('../../../../shared/test/fakeFactories/createState.js');
 const FakeDeck = require('../../testUtils/FakeDeck.js');
 const FakeDeckFactory = require('../../testUtils/FakeDeckFactory.js');
@@ -20,7 +19,6 @@ const playerStateFactory = require("../../../../shared/match/playerStateFactory.
 
 module.exports = {
     bocha: {
-        testCase,
         stub,
         sinon,
         assert,

@@ -1,14 +1,13 @@
 const {
-    testCase,
     refute,
     assert,
     sinon,
     stub
-} = require('bocha');
+} = require('../testUtils/bocha-jest/bocha');
 const TestHelper = require('../fakeFactories/TestHelper.js');
 const createState = require('../fakeFactories/createState.js');
 
-module.exports = testCase('AddRequirementFromSpec', {
+module.exports = {
     'spec with property "ifAddedAddAlso" and requirement is successfully added': {
         setUp() {
             const testHelper = TestHelper(createState({}));
@@ -89,4 +88,4 @@ module.exports = testCase('AddRequirementFromSpec', {
             refute.called(this.playerRequirementService.addEmptyCommonWaitingRequirement);
         }
     }
-});
+};

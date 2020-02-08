@@ -1,11 +1,11 @@
-const bocha = require('bocha');
+const bocha = require('../testUtils/bocha-jest/bocha');
 const assert = bocha.assert;
 const createState = require('../fakeFactories/createState.js');
 const FakeCardDataAssembler = require("../../../server/test/testUtils/FakeCardDataAssembler.js");//TODO Move to shared
 const createCard = FakeCardDataAssembler.createCard;
 const TestHelper = require('../fakeFactories/TestHelper.js');
 
-module.exports = bocha.testCase('PlayerRequirementService', {
+module.exports = {
     'when player has 0 cards on hand and adds a discard card requirement it should NOT be added': function () {
         const testHelper = TestHelper(createState({
             playerStateById: {
@@ -129,7 +129,7 @@ module.exports = bocha.testCase('PlayerRequirementService', {
             });
         }
     }
-});
+};
 
 function assertRequirementsEquals(equalsThis, playerId, testHelper) {
     const queryPlayerRequirements = testHelper.queryPlayerRequirements(playerId);

@@ -1,22 +1,18 @@
 const {
-    testCase,
     assert,
-    refute,
-    stub
-} = require('bocha');
+} = require('../testUtils/bocha-jest/bocha');
 const createState = require('../fakeFactories/createState.js');
 const FakeCardDataAssembler = require("../../../server/test/testUtils/FakeCardDataAssembler.js");//TODO Move to shared
 const createCard = FakeCardDataAssembler.createCard;
 const CardFactory = require('../../card/CardFactory.js');
 const PlayerStateService = require('../../match/PlayerStateService.js');
-const BaseCard = require('../../card/BaseCard.js');
 const MatchService = require('../../match/MatchService.js');
 const PlayerServiceProvider = require('../../match/PlayerServiceProvider.js');
 const TestHelper = require('../fakeFactories/TestHelper.js');
 
 const FullForceForwardCommonId = '9';
 
-module.exports = testCase('PlayerStateService', {
+module.exports = {
     'removeCardFromDeck:': {
         'should remove card from deck': function () {
             const testHelper = TestHelper(createState({
@@ -86,7 +82,7 @@ module.exports = testCase('PlayerStateService', {
             assert(removedCard === null, 'Expected null got: ' + removedCard);
         }
     }
-});
+};
 
 function createFullForceForward(id) {
     return createCard({ id, type: 'duration', commonId: FullForceForwardCommonId });

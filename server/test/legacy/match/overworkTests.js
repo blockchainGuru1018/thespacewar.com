@@ -1,6 +1,6 @@
 const {
     assert
-} = require('bocha');
+} = require('../../testUtils/bocha-jest/bocha');
 const {
     Player,
     createMatch,

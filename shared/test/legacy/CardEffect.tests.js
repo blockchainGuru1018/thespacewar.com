@@ -1,10 +1,9 @@
 const {
-    testCase,
     assert
-} = require('bocha');
+} = require('../testUtils/bocha-jest/bocha');
 const CardEffect = require('../../match/CardEffect.js');
 
-module.exports = testCase('CardEffect', {
+module.exports = {
     'can move on turn put down:': {
         'when has duration card with "allowsFriendlySpaceShipsToMoveTurnWhenPutDown"'() {
             const cardEffect = CardEffect({
@@ -146,4 +145,4 @@ module.exports = testCase('CardEffect', {
             assert.equals(cardEffect.attackBoostForCardType('missile'), 0);
         }
     }
-});
+};

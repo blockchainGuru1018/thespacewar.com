@@ -1,13 +1,12 @@
 const {
-    testCase,
     refute,
     assert
-} = require('bocha');
+} = require('../testUtils/bocha-jest/bocha');
 const TestHelper = require('../fakeFactories/TestHelper.js');
 const createState = require('../fakeFactories/createState.js');
 const DestinyDecided = require("../../card/DestinyDecided.js");
 
-module.exports = testCase('Turn control', {
+module.exports = {
     'can toggle turn control': {
         'when player phase is "wait" and opponent is in action phase of first turn'() {
             const testHelper = TestHelper(createState({
@@ -144,4 +143,4 @@ module.exports = testCase('Turn control', {
             assert(turnControl.opponentHasControl());
         }
     }
-});
+};

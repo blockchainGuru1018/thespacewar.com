@@ -1,9 +1,8 @@
 const {
-    testCase,
     assert,
     defaults,
     refute
-} = require('bocha');
+} = require('../testUtils/bocha-jest/bocha');
 const MoveCardEvent = require('../../event/MoveCardEvent.js');
 const BaseCard = require('../../card/BaseCard.js');
 const Slow = require('../../card/mixins/Slow.js');
@@ -23,7 +22,7 @@ const {
     createCard
 } = require('../testUtils/shared.js');
 
-module.exports = testCase('Cards', {
+module.exports = {
     'misc:': {
         'when card has 1 attack but has attack boost of 1': {
             async setUp() {
@@ -904,7 +903,7 @@ module.exports = testCase('Cards', {
             assert(card.canBePlayed());
         }
     }
-});
+};
 
 function catchError(callback) {
     try {

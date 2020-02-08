@@ -1,6 +1,5 @@
 const {
     bocha: {
-        testCase,
         sinon,
         assert,
     },
@@ -12,7 +11,7 @@ const {
 const StateAsserter = require('../../testUtils/StateAsserter.js');
 const MatchMode = require("../../../../shared/match/MatchMode.js");
 
-module.exports = testCase('Match', {
+module.exports = {
     'draw card:': require('./drawCardTests.js'),
     'pass draw phase:': require('./passDrawPhaseTests.js'),
     'putDownCard:': require('./putDownCardTests.js'),
@@ -90,4 +89,4 @@ module.exports = testCase('Match', {
             this.firstPlayerAsserter.gameHasNotEnded();
         }
     }
-});
+};

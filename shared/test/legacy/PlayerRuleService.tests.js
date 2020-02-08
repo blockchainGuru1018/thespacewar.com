@@ -1,8 +1,7 @@
-const bocha = require('bocha');
+const bocha = require('../testUtils/bocha-jest/bocha');
 const assert = bocha.assert;
 const refute = bocha.refute;
 const defaults = bocha.defaults;
-const Commander = require('../../match/commander/Commander.js');
 const createState = require('../fakeFactories/createState.js');
 const FakeCardDataAssembler = require("../../../server/test/testUtils/FakeCardDataAssembler.js");//TODO Move to shared
 const createCard = FakeCardDataAssembler.createCard;
@@ -17,7 +16,7 @@ const GameConfig = require('../../match/GameConfig.js');
 const DestinyDecided = require("../../card/DestinyDecided.js");
 const fakePlayerServiceFactory = require("../fakeFactories/fakePlayerServiceFactory.js");
 
-module.exports = bocha.testCase('PlayerRuleService', {
+module.exports = {
     'draw cards:': {
         'when deck is empty and opponent deck is not empty can draw cards'() {
             const testHelper = TestHelper(createState({
@@ -164,7 +163,7 @@ module.exports = bocha.testCase('PlayerRuleService', {
             assert.equals(playerRuleService.canPutDownEventCards(), false);
         }
     }
-});
+};
 
 function createMatchService(stubs = {}) {
     return {

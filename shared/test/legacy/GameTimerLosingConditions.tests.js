@@ -1,12 +1,11 @@
 const {
-    testCase,
     assert,
     refute
-} = require('bocha');
+} = require('../testUtils/bocha-jest/bocha');
 const TestHelper = require('../fakeFactories/TestHelper.js');
 const createState = require('../fakeFactories/createState.js');
 
-module.exports = testCase('Game timer losing conditions', {
+module.exports = {
     'when game timer has ended and ends turn for player': {
         setUp() {
             this.testHelper = TestHelper(createState({
@@ -93,7 +92,7 @@ module.exports = testCase('Game timer losing conditions', {
             refute(this.testHelper.matchService().getRetreatedPlayerId() === 'P1A');
         }
     }
-});
+};
 
 function FakeGameTimer(stubs) {
     return {
