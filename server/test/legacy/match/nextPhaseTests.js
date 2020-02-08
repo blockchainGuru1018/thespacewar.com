@@ -12,10 +12,10 @@ const {
     catchError,
     createState
 } = require('./shared.js');
-const { COMMON_PHASE_ORDER } = require('../../../shared/phases.js');
-const FakeDeck = require('../testUtils/FakeDeck.js');
-const DisturbingSensor = require('../../../shared/card/DisturbingSensor.js');
-const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
+const { COMMON_PHASE_ORDER } = require('../../../../shared/phases.js');
+const FakeDeck = require('../../testUtils/FakeDeck.js');
+const DisturbingSensor = require('../../../../shared/card/DisturbingSensor.js');
+const PutDownCardEvent = require('../../../../shared/PutDownCardEvent.js');
 const GoodKarmaCommonId = '11';
 const NeutralizationCommonId = '12';
 

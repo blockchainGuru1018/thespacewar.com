@@ -5,8 +5,8 @@ const {
     defaults,
     stub
 } = require('bocha');
-const MatchRepository = require('../../match/MatchRepository.js');
-const User = require("../../../shared/user/User.js");
+const MatchRepository = require('../../../match/MatchRepository.js');
+const User = require("../../../../shared/user/User.js");
 
 let keysBefore = [];
 

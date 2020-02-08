@@ -9,7 +9,7 @@ const {
     catchError,
     createState,
 } = require('./shared.js');
-const StateAsserter = require('../testUtils/StateAsserter.js');
+const StateAsserter = require('../../testUtils/StateAsserter.js');
 
 module.exports = {
     async setUp() {

@@ -10,9 +10,9 @@ const {
     FakeConnection2,
     createState,
 } = require('./shared.js');
-const FatalError = require('../../../shared/card/FatalError.js');
-const GameConfig = require('../../../shared/match/GameConfig.js');
-const Commander = require("../../../shared/match/commander/Commander.js");
+const FatalError = require('../../../../shared/card/FatalError.js');
+const GameConfig = require('../../../../shared/match/GameConfig.js');
+const Commander = require("../../../../shared/match/commander/Commander.js");
 
 module.exports = {
     'when in draw phase and has 1 card in station draw-row': {

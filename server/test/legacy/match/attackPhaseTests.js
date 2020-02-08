@@ -12,12 +12,12 @@ const {
     catchError,
     createState,
 } = require('./shared.js');
-const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js').forTest;
-const MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
+const PutDownCardEvent = require('../../../../shared/PutDownCardEvent.js').forTest;
+const MoveCardEvent = require('../../../../shared/event/MoveCardEvent.js');
 const PursuiterCommonId = '19';
 const EnergyShieldCommonId = '21';
-const SmallRepairShip = require('../../../shared/card/SmallRepairShop.js');
-const StateAsserter = require('../testUtils/StateAsserter.js');
+const SmallRepairShip = require('../../../../shared/card/SmallRepairShop.js');
+const StateAsserter = require('../../testUtils/StateAsserter.js');
 
 module.exports = {
     'when first player is in attack phase and moves card': {

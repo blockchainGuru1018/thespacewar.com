@@ -9,8 +9,8 @@ const {
     createState,
     FakeConnection2,
 } = require('./shared.js');
-const StateAsserter = require('../testUtils/StateAsserter.js');
-const MatchMode = require("../../../shared/match/MatchMode.js");
+const StateAsserter = require('../../testUtils/StateAsserter.js');
+const MatchMode = require("../../../../shared/match/MatchMode.js");
 
 module.exports = testCase('Match', {
     'draw card:': require('./drawCardTests.js'),

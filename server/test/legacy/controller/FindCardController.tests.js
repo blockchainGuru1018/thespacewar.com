@@ -6,8 +6,8 @@ const {
     sinon,
     defaults
 } = require('bocha');
-const FindCardController = require('../../match/controller/FindCardController.js');
-const fakePlayerStateServiceFactory = require('../../../shared/test/fakeFactories/playerStateServiceFactory.js');
+const FindCardController = require('../../../match/controller/FindCardController.js');
+const fakePlayerStateServiceFactory = require('../../../../shared/test/fakeFactories/playerStateServiceFactory.js');
 
 const PlayerId = 'P1A';
 const OpponentId = 'P2A';

@@ -8,9 +8,9 @@ const {
     createState,
     catchError,
 } = require('./shared.js');
-const StateAsserter = require('../testUtils/StateAsserter.js');
-const GameConfig = require('../../../shared/match/GameConfig.js');
-const Commander = require("../../../shared/match/commander/Commander.js");
+const StateAsserter = require('../../testUtils/StateAsserter.js');
+const GameConfig = require('../../../../shared/match/GameConfig.js');
+const Commander = require("../../../../shared/match/commander/Commander.js");
 
 module.exports = {
     'overwork': {

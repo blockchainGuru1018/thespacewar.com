@@ -12,15 +12,15 @@ const {
     catchError,
     createState,
 } = require('./shared.js');
-const StateAsserter = require('../testUtils/StateAsserter.js');
-const Luck = require('../../../shared/card/Luck.js');
-const FatalError = require('../../../shared/card/FatalError.js');
-const TargetMissed = require('../../../shared/card/TargetMissed.js');
-const MoveCardEvent = require("../../../shared/event/MoveCardEvent.js");
-const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
-const DiscardCardEvent = require('../../../shared/event/DiscardCardEvent.js');
-const MissilesLaunched = require("../../../shared/card/MissilesLaunched.js");
-const OverCapacity = require('../../../shared/card/OverCapacity.js');
+const StateAsserter = require('../../testUtils/StateAsserter.js');
+const Luck = require('../../../../shared/card/Luck.js');
+const FatalError = require('../../../../shared/card/FatalError.js');
+const TargetMissed = require('../../../../shared/card/TargetMissed.js');
+const MoveCardEvent = require("../../../../shared/event/MoveCardEvent.js");
+const PutDownCardEvent = require('../../../../shared/PutDownCardEvent.js');
+const DiscardCardEvent = require('../../../../shared/event/DiscardCardEvent.js');
+const MissilesLaunched = require("../../../../shared/card/MissilesLaunched.js");
+const OverCapacity = require('../../../../shared/card/OverCapacity.js');
 
 module.exports = {
     async setUp() {

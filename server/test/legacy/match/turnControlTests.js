@@ -12,10 +12,10 @@ const {
     catchError,
     createState,
 } = require('./shared.js');
-const TargetMissed = require('../../../shared/card/TargetMissed.js');
-const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
-const MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
-const StateAsserter = require('../testUtils/StateAsserter.js');
+const TargetMissed = require('../../../../shared/card/TargetMissed.js');
+const PutDownCardEvent = require('../../../../shared/PutDownCardEvent.js');
+const MoveCardEvent = require('../../../../shared/event/MoveCardEvent.js');
+const StateAsserter = require('../../testUtils/StateAsserter.js');
 
 module.exports = {
     'when player has taken control of the turn and put down a card costing 0': {

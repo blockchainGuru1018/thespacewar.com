@@ -1,15 +1,15 @@
 const bocha = require('bocha');
 const testCase = bocha.testCase;
 const assert = bocha.assert;
-const FakeCardDataAssembler = require('../testUtils/FakeCardDataAssembler.js');
+const FakeCardDataAssembler = require('../../testUtils/FakeCardDataAssembler.js');
 const createCard = FakeCardDataAssembler.createCard;
-const CardInfoRepository = require('../../../shared/CardInfoRepository.js');
-const ActionPointCalculator = require('../../../shared/match/ActionPointsCalculator.js');
-const DiscardCardEvent = require('../../../shared/event/DiscardCardEvent.js');
-const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
-const RemoveStationCardEvent = require('../../../shared/event/RemoveStationCardEvent.js');
-const MoveStationCardEvent = require('../../../shared/event/MoveStationCardEvent.js');
-const FullForceForward = require('../../../shared/card/FullForceForward.js');
+const CardInfoRepository = require('../../../../shared/CardInfoRepository.js');
+const ActionPointCalculator = require('../../../../shared/match/ActionPointsCalculator.js');
+const DiscardCardEvent = require('../../../../shared/event/DiscardCardEvent.js');
+const PutDownCardEvent = require('../../../../shared/PutDownCardEvent.js');
+const RemoveStationCardEvent = require('../../../../shared/event/RemoveStationCardEvent.js');
+const MoveStationCardEvent = require('../../../../shared/event/MoveStationCardEvent.js');
+const FullForceForward = require('../../../../shared/card/FullForceForward.js');
 
 module.exports = testCase('ActionPointCalculator', {
     'when put card in zone and then put down a station card in action row'() {

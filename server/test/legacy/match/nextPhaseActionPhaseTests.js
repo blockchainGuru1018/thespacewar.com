@@ -11,12 +11,12 @@ const {
     catchError,
     createState,
 } = require('./shared.js');
-const Commander = require('../../../shared/match/commander/Commander.js');
-const GoodKarma = require('../../../shared/card/GoodKarma.js');
-const FakeDeck = require('../testUtils/FakeDeck.js');
+const Commander = require('../../../../shared/match/commander/Commander.js');
+const GoodKarma = require('../../../../shared/card/GoodKarma.js');
+const FakeDeck = require('../../testUtils/FakeDeck.js');
 const EnergyShieldId = '21';
 const GoodKarmaCommonId = '11';
-const { COMMON_PHASE_ORDER } = require('../../../shared/phases.js');
+const { COMMON_PHASE_ORDER } = require('../../../../shared/phases.js');
 const LastPhase = COMMON_PHASE_ORDER[COMMON_PHASE_ORDER.length - 1];
 
 module.exports = {

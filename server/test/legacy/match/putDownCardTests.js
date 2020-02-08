@@ -13,10 +13,10 @@ const {
     createState,
     FakeDeck
 } = require('./shared.js');
-const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
-const MissilesLaunched = require('../../../shared/card/MissilesLaunched.js');
-const Sabotage = require('../../../shared/card/Sabotage.js');
-const StateAsserter = require('../testUtils/StateAsserter.js');
+const PutDownCardEvent = require('../../../../shared/PutDownCardEvent.js');
+const MissilesLaunched = require('../../../../shared/card/MissilesLaunched.js');
+const Sabotage = require('../../../../shared/card/Sabotage.js');
+const StateAsserter = require('../../testUtils/StateAsserter.js');
 const GrandOpportunityCommonId = '20';
 const ExcellentWorkCommonId = '14';
 const SupernovaCommonId = '15';

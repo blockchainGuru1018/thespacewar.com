@@ -6,17 +6,17 @@ const {
     refute,
     defaults
 } = require('bocha');
-const createState = require('../../../shared/test/fakeFactories/createState.js');
-const FakeDeck = require('../testUtils/FakeDeck.js');
-const FakeDeckFactory = require('../testUtils/FakeDeckFactory.js');
-const FakeCardDataAssembler = require('../testUtils/FakeCardDataAssembler.js');
+const createState = require('../../../../shared/test/fakeFactories/createState.js');
+const FakeDeck = require('../../testUtils/FakeDeck.js');
+const FakeDeckFactory = require('../../testUtils/FakeDeckFactory.js');
+const FakeCardDataAssembler = require('../../testUtils/FakeCardDataAssembler.js');
 const createCard = FakeCardDataAssembler.createCard;
 const createDeckFromCards = FakeDeckFactory.createDeckFromCards;
-const CardDataAssembler = require('../../../shared/CardDataAssembler.js');
-const CardInfoRepository = require('../../../shared/CardInfoRepository.js');
-const GameConfig = require('../../../shared/match/GameConfig.js');
-const Match = require('../../match/Match.js');
-const playerStateFactory = require("../../../shared/match/playerStateFactory.js");
+const CardDataAssembler = require('../../../../shared');
+const CardInfoRepository = require('../../../../shared/CardInfoRepository.js');
+const GameConfig = require('../../../../shared/match/GameConfig.js');
+const Match = require('../../../match/Match.js');
+const playerStateFactory = require("../../../../shared/match/playerStateFactory.js");
 
 module.exports = {
     bocha: {

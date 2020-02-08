@@ -2,7 +2,7 @@ const {
     testCase,
     assert
 } = require('bocha');
-const Deck = require('../../deck/Deck.js');
+const Deck = require('../../../deck/Deck.js');
 
 test('ABC', () => expect(true).toBe(true));
 // module.exports = testCase('Deck', {

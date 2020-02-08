@@ -12,8 +12,8 @@ const {
     catchError,
     createState,
 } = require('./shared.js');
-const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
-const MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
+const PutDownCardEvent = require('../../../../shared/PutDownCardEvent.js');
+const MoveCardEvent = require('../../../../shared/event/MoveCardEvent.js');
 
 module.exports = {
     'when try to move duration card should throw error': function () {

@@ -8,8 +8,8 @@ const {
     catchError,
     createState,
 } = require('./shared.js');
-const StateAsserter = require('../testUtils/StateAsserter.js');
-const Commander = require("../../../shared/match/commander/Commander.js");
+const StateAsserter = require('../../testUtils/StateAsserter.js');
+const Commander = require("../../../../shared/match/commander/Commander.js");
 
 module.exports = {
     async setUp() {
