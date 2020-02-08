@@ -14,6 +14,7 @@
   },
   "devDependencies": {
     "bocha": "^1.6.9",
+    "jest": "^25.1.0",
     "lodash": "^4.17.15"
   }
 }
