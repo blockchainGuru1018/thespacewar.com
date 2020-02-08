@@ -4,5 +4,6 @@ module.exports = {
         '<rootDir>/server/jest.config.js',
         '<rootDir>/shared/jest.config.js'
     ],
-    maxConcurrency: 12,
+    maxConcurrency: 24,
+    maxWorkers: 12
 };
