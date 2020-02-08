@@ -12,7 +12,7 @@ const createState = require('../fakeFactories/createState.js');
 
 const {
     createCard
-} = require('../shared.js');
+} = require('../testUtils/shared.js');
 
 module.exports = testCase('CanThePlayer', {
     'when card is of type spaceShip': {

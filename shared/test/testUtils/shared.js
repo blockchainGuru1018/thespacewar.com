@@ -1,7 +1,7 @@
-const canThePlayerFactory = require("./fakeFactories/canThePlayerFactory");
-const queryEventsFactory = require("./fakeFactories/queryEventsFactory");
-const playerStateServiceFactory = require("./fakeFactories/playerStateServiceFactory");
-const playerRuleServiceFactory = require("./fakeFactories/playerRuleServiceFactory.js");
+const canThePlayerFactory = require("../fakeFactories/canThePlayerFactory.js");
+const queryEventsFactory = require("../fakeFactories/queryEventsFactory.js");
+const playerStateServiceFactory = require("../fakeFactories/playerStateServiceFactory.js");
+const playerRuleServiceFactory = require("../fakeFactories/playerRuleServiceFactory.js");
 
 const {
     defaults

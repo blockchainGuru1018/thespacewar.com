@@ -7,7 +7,7 @@ const BaseCard = require('../../card/BaseCard.js');
 const CanCounterCardsWithCostOrLess = require('../../card/mixins/CanCounterCardsWithCostOrLess.js');
 const {
     createCard
-} = require('../shared.js');
+} = require('../testUtils/shared.js');
 
 module.exports = testCase('CanCounterCardsWithCostOrLess', {
     'when card can counter target based on cost but target was drawn AFTER card'() {

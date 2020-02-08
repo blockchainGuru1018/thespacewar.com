@@ -21,7 +21,7 @@ const playerRuleServiceFactory = require('../fakeFactories/playerRuleServiceFact
 const queryEventsFactory = require('../fakeFactories/queryEventsFactory.js');
 const {
     createCard
-} = require('../shared.js');
+} = require('../testUtils/shared.js');
 
 module.exports = testCase('Cards', {
     'misc:': {
