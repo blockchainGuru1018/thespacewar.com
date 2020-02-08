@@ -4,24 +4,24 @@ const {
     defaults,
     refute
 } = require('bocha');
-const MoveCardEvent = require('../event/MoveCardEvent.js');
-const BaseCard = require('../card/BaseCard.js');
-const Slow = require('../card/mixins/Slow.js');
-const SmallRepairShop = require('../card/SmallRepairShop.js');
-const FastMissile = require('../card/FastMissile.js');
-const NuclearMissile = require('../card/NuclearMissile.js');
-const EmpMissile = require('../card/EmpMissile.js');
-const EnergyShield = require('../card/EnergyShield.js');
-const Pursuiter = require('../card/Pursuiter.js');
-const CanBePutDownAnyTime = require('../card/mixins/CanBePutDownAnyTime.js');
-const CanCounterCardsWithCostOrLess = require('../card/mixins/CanCounterCardsWithCostOrLess.js');
-const canThePlayerFactory = require('./fakeFactories/canThePlayerFactory.js');
-const playerStateServiceFactory = require('./fakeFactories/playerStateServiceFactory.js');
-const playerRuleServiceFactory = require('./fakeFactories/playerRuleServiceFactory.js');
-const queryEventsFactory = require('./fakeFactories/queryEventsFactory.js');
+const MoveCardEvent = require('../../event/MoveCardEvent.js');
+const BaseCard = require('../../card/BaseCard.js');
+const Slow = require('../../card/mixins/Slow.js');
+const SmallRepairShop = require('../../card/SmallRepairShop.js');
+const FastMissile = require('../../card/FastMissile.js');
+const NuclearMissile = require('../../card/NuclearMissile.js');
+const EmpMissile = require('../../card/EmpMissile.js');
+const EnergyShield = require('../../card/EnergyShield.js');
+const Pursuiter = require('../../card/Pursuiter.js');
+const CanBePutDownAnyTime = require('../../card/mixins/CanBePutDownAnyTime.js');
+const CanCounterCardsWithCostOrLess = require('../../card/mixins/CanCounterCardsWithCostOrLess.js');
+const canThePlayerFactory = require('../fakeFactories/canThePlayerFactory.js');
+const playerStateServiceFactory = require('../fakeFactories/playerStateServiceFactory.js');
+const playerRuleServiceFactory = require('../fakeFactories/playerRuleServiceFactory.js');
+const queryEventsFactory = require('../fakeFactories/queryEventsFactory.js');
 const {
     createCard
-} = require('./shared.js');
+} = require('../shared.js');
 
 module.exports = testCase('Cards', {
     'misc:': {

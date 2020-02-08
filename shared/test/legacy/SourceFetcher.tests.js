@@ -2,9 +2,9 @@ const {
     testCase,
     assert,
 } = require('bocha');
-const createCard = require('../../server/test/testUtils/FakeCardDataAssembler.js').createCard;
-const TestHelper = require('./fakeFactories/TestHelper.js');
-const createState = require('./fakeFactories/createState.js');
+const createCard = require('../../../server/test/testUtils/FakeCardDataAssembler.js').createCard;
+const TestHelper = require('../fakeFactories/TestHelper.js');
+const createState = require('../fakeFactories/createState.js');
 
 module.exports = testCase('SourceFetcher', {
     'opponentAny': {

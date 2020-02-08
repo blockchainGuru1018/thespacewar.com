@@ -3,8 +3,8 @@ const {
     assert,
     refute
 } = require('bocha');
-const TestHelper = require('./fakeFactories/TestHelper.js');
-const createState = require('./fakeFactories/createState.js');
+const TestHelper = require('../fakeFactories/TestHelper.js');
+const createState = require('../fakeFactories/createState.js');
 
 module.exports = testCase('Game timer losing conditions', {
     'when game timer has ended and ends turn for player': {

@@ -3,9 +3,9 @@ const {
     refute,
     assert
 } = require('bocha');
-const TestHelper = require('./fakeFactories/TestHelper.js');
-const createState = require('./fakeFactories/createState.js');
-const DestinyDecided = require("../card/DestinyDecided.js");
+const TestHelper = require('../fakeFactories/TestHelper.js');
+const createState = require('../fakeFactories/createState.js');
+const DestinyDecided = require("../../card/DestinyDecided.js");
 
 module.exports = testCase('Turn control', {
     'can toggle turn control': {

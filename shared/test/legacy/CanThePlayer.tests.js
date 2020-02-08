@@ -3,16 +3,16 @@ const {
     refute,
     assert
 } = require('bocha');
-const FakeCardDataAssembler = require('../../server/test/testUtils/FakeCardDataAssembler.js');
+const FakeCardDataAssembler = require('../../../server/test/testUtils/FakeCardDataAssembler.js');
 const createCardData = FakeCardDataAssembler.createCard;
-const BaseCard = require('../card/BaseCard.js');
-const CanThePlayer = require('../match/CanThePlayer.js');
-const TestHelper = require('./fakeFactories/TestHelper.js');
-const createState = require('./fakeFactories/createState.js');
+const BaseCard = require('../../card/BaseCard.js');
+const CanThePlayer = require('../../match/CanThePlayer.js');
+const TestHelper = require('../fakeFactories/TestHelper.js');
+const createState = require('../fakeFactories/createState.js');
 
 const {
     createCard
-} = require('./shared.js');
+} = require('../shared.js');
 
 module.exports = testCase('CanThePlayer', {
     'when card is of type spaceShip': {

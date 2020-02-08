@@ -3,7 +3,7 @@ const {
     assert,
     refute
 } = require('bocha');
-const canIssueOverwork = require('../match/overwork/canIssueOverwork.js');
+const canIssueOverwork = require('../../match/overwork/canIssueOverwork.js');
 
 module.exports = testCase('canIssueOverwork', {
     'when has 2 unflipped station cards': function () {

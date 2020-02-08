@@ -3,11 +3,11 @@ const {
     assert,
     refute
 } = require('bocha');
-const BaseCard = require('../card/BaseCard.js');
-const CanCounterCardsWithCostOrLess = require('../card/mixins/CanCounterCardsWithCostOrLess.js');
+const BaseCard = require('../../card/BaseCard.js');
+const CanCounterCardsWithCostOrLess = require('../../card/mixins/CanCounterCardsWithCostOrLess.js');
 const {
     createCard
-} = require('./shared.js');
+} = require('../shared.js');
 
 module.exports = testCase('CanCounterCardsWithCostOrLess', {
     'when card can counter target based on cost but target was drawn AFTER card'() {

@@ -3,11 +3,11 @@ const {
     assert,
     fakeClock
 } = require('bocha');
-const createCard = require('../../server/test/testUtils/FakeCardDataAssembler.js').createCard;
-const TestHelper = require('./fakeFactories/TestHelper.js');
-const createState = require('./fakeFactories/createState.js');
-const AttackEvent = require('../event/AttackEvent.js');
-const GameConfig = require("../match/GameConfig");
+const createCard = require('../../../server/test/testUtils/FakeCardDataAssembler.js').createCard;
+const TestHelper = require('../fakeFactories/TestHelper.js');
+const createState = require('../fakeFactories/createState.js');
+const AttackEvent = require('../../event/AttackEvent.js');
+const GameConfig = require("../../match/GameConfig.js");
 
 module.exports = testCase('QueryAttacks', {
     tearDown() {

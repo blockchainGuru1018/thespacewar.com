@@ -2,7 +2,7 @@ const {
     testCase,
     assert
 } = require('bocha');
-const CardEffect = require('../match/CardEffect.js');
+const CardEffect = require('../../match/CardEffect.js');
 
 module.exports = testCase('CardEffect', {
     'can move on turn put down:': {

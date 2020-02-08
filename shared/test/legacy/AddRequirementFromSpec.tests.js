@@ -5,8 +5,8 @@ const {
     sinon,
     stub
 } = require('bocha');
-const TestHelper = require('./fakeFactories/TestHelper.js');
-const createState = require('./fakeFactories/createState.js');
+const TestHelper = require('../fakeFactories/TestHelper.js');
+const createState = require('../fakeFactories/createState.js');
 
 module.exports = testCase('AddRequirementFromSpec', {
     'spec with property "ifAddedAddAlso" and requirement is successfully added': {

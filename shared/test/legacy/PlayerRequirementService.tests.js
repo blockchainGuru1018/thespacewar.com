@@ -1,9 +1,9 @@
 const bocha = require('bocha');
 const assert = bocha.assert;
-const createState = require('./fakeFactories/createState.js');
-const FakeCardDataAssembler = require("../../server/test/testUtils/FakeCardDataAssembler.js");//TODO Move to shared
+const createState = require('../fakeFactories/createState.js');
+const FakeCardDataAssembler = require("../../../server/test/testUtils/FakeCardDataAssembler.js");//TODO Move to shared
 const createCard = FakeCardDataAssembler.createCard;
-const TestHelper = require('./fakeFactories/TestHelper.js');
+const TestHelper = require('../fakeFactories/TestHelper.js');
 
 module.exports = bocha.testCase('PlayerRequirementService', {
     'when player has 0 cards on hand and adds a discard card requirement it should NOT be added': function () {

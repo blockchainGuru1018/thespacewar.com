@@ -1,11 +1,11 @@
 const bocha = require('bocha');
 const assert = bocha.assert;
 const refute = bocha.refute;
-const Commander = require('../match/commander/Commander.js');
-const createState = require('./fakeFactories/createState.js');
-const FakeCardDataAssembler = require("../../server/test/testUtils/FakeCardDataAssembler.js");//TODO Move to shared
+const Commander = require('../../match/commander/Commander.js');
+const createState = require('../fakeFactories/createState.js');
+const FakeCardDataAssembler = require("../../../server/test/testUtils/FakeCardDataAssembler.js");//TODO Move to shared
 const createCard = FakeCardDataAssembler.createCard;
-const TestHelper = require('./fakeFactories/TestHelper.js');
+const TestHelper = require('../fakeFactories/TestHelper.js');
 
 module.exports = bocha.testCase('PlayerRuleService', {
     'pass draw phase': {
