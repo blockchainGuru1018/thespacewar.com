@@ -1,0 +1,26 @@
+{
+  "name": "thespacewaronline",
+  "version": "1.0.0",
+  "description": "Not open source.",
+  "main": "jest.config.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TodaysWeb/TheSpaceWarOnline.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TodaysWeb/TheSpaceWarOnline/issues"
+  },
+  "homepage": "https://github.com/TodaysWeb/TheSpaceWarOnline#readme",
+  "devDependencies": {
+    "@babel/preset-env": "^7.8.4",
+    "jest": "^25.1.0"
+  }
+}

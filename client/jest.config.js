@@ -1,7 +1,6 @@
-// For a detailed explanation regarding each configuration property, visit:
-// https://jestjs.io/docs/en/configuration.html
-
 module.exports = {
+    "displayName": "client",
+
     // Automatically clear mock calls and instances between every test
     clearMocks: true,
 
@@ -13,8 +12,6 @@ module.exports = {
 
     // An array of file extensions your modules use
     moduleFileExtensions: ['js', 'json', 'vue'],
-
-    projects: ['<rootDir>/../'],
 
     setupFilesAfterEnv: ['<rootDir>/testUtils/setupTests.js'],
 
