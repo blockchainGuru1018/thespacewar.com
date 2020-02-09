@@ -1176,36 +1176,6 @@ module.exports = {
         }
     },
     'Fatal Error:': {
-        'when put down Fatal Error': {
-            setUp() {
-                this.secondPlayerConnection = FakeConnection2(['stateChanged']);
-                const players = [Player('P1A'), Player('P2A', this.secondPlayerConnection)];
-                this.match = createMatch({ players });
-                this.match.restoreFromState(createState({
-                    playerStateById: {
-                        'P1A': {
-                            phase: 'action',
-                            cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: FatalErrorCommonId })]
-                        },
-                        'P2A': {
-                            cardsInOpponentZone: [createCard({ id: 'C2A' })],
-                            cardsInDeck: [
-                                createCard({ id: 'C3A' }),
-                                createCard({ id: 'C4A' })
-                            ]
-                        }
-                    }
-                }));
-
-                this.match.putDownCard('P1A', { location: 'zone', cardId: 'C1A', choice: 'C2A' });
-            },
-            'should emit draw card requirement to second player'() {
-                assert.calledOnce(this.secondPlayerConnection.stateChanged);
-                assert.calledWith(this.secondPlayerConnection.stateChanged, sinon.match({
-                    requirements: [sinon.match({ type: 'drawCard', count: 2 })]
-                }));
-            }
-        },
         'when move Fatal Error from station card to zone': {
             setUp() {
                 this.secondPlayerConnection = FakeConnection2(['stateChanged']);
@@ -1269,7 +1239,7 @@ module.exports = {
                 }));
             }
         },
-        'when put down Fatal Error with choice matching opponent station card': {
+        'when put down Fatal Error with choice matching opponent flipped station card': {
             setUp() {
                 this.secondPlayerConnection = FakeConnection2(['stateChanged']);
                 const players = [Player('P1A'), Player('P2A', this.secondPlayerConnection)]
@@ -1281,7 +1251,7 @@ module.exports = {
                             cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: FatalErrorCommonId })]
                         },
                         'P2A': {
-                            stationCards: [{ card: createCard({ id: 'C2A' }), place: 'draw' }]
+                            stationCards: [{ flipped: true, card: createCard({ id: 'C2A' }), place: 'draw' }]
                         }
                     }
                 }));
@@ -1313,15 +1283,15 @@ module.exports = {
                     }
                 }));
 
-                const data = { location: 'zone', cardId: 'C1A', choice: null };
-                this.error = catchError(() => this.match.putDownCard('P1A', data));
+                this.error = catchError(() => this.match.putDownCard('P1A', {
+                    location: 'zone',
+                    cardId: 'C1A',
+                    choice: null
+                }));
             },
-            'should NOT throw error'() {
-                refute(this.error);
-            },
-            'should emit card was NOT moved to discard pile for second player'() {
-                assert.calledOnce(this.secondPlayerConnection.stateChanged);
-                refute.defined(this.secondPlayerConnection.stateChanged.lastCall.args[0].discardedCards);
+            'should throw error'() {
+                assert(this.error);
+                assert.equals(this.error.message, 'Cannot put down card');
             }
         }
     },

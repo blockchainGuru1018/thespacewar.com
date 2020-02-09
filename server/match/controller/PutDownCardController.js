@@ -18,7 +18,11 @@ function PutDownCardController(deps) {
     } = deps;
 
     const cardApplier = CardApplier({ playerServiceProvider, playerServiceFactory, matchService });
-    const cardCanBePlayedChecker = CardCanBePlayedChecker({ playerServiceProvider, playerServiceFactory, matchService });
+    const cardCanBePlayedChecker = CardCanBePlayedChecker({
+        playerServiceProvider,
+        playerServiceFactory,
+        matchService
+    });
 
     return {
         onPutDownCard,

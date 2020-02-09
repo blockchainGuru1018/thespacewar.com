@@ -14,6 +14,8 @@ function PutDownFatalError({
     };
 
     function canBePlayed(playerId, cardData, { choice: targetCardId } = {}) {
+        if (!targetCardId) return false;
+
         const opponentId = matchService.getOpponentId(playerId);
         const targetCardData = playerServiceFactory.playerStateService(opponentId).findCardFromZonesOrStation(targetCardId);
         const target = playerServiceFactory.cardFactory().createCardForPlayer(targetCardData, opponentId);

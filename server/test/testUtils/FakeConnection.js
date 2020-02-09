@@ -1,9 +1,9 @@
 const { stub } = require('./bocha-jest/bocha-jest.js');
 
-module.exports = function FakeConnection(namesOfActionsToStub = []) {
+module.exports = function FakeConnection(namesOfActionsToStub = [], stubFn = stub) {
     const stubMap = {};
     for (const name of namesOfActionsToStub) {
-        stubMap[name] = stub();
+        stubMap[name] = stubFn();
     }
     const listenersByActionName = {};
 
