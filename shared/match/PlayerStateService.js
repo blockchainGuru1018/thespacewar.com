@@ -189,12 +189,12 @@ class PlayerStateService {
         const matchingCardsInZone = this.getCardsInZone().map(c => this.createBehaviourCard(c)).filter(matcher);
         const matchingCardsInOpponentZone = this.getCardsInOpponentZone().map(c => this.createBehaviourCard(c)).filter(matcher);
         const matchingDiscardedCards = this.getDiscardedCards().map(c => this.createBehaviourCard(c)).filter(matcher);
-        const matchingStationCards = this.getStationCards().filter(s => !!s.card).map(s => s.card).map(c => this.createBehaviourCard(c)).filter(matcher);
+        const matchingStationCards = this.getStationCards().filter(s => !!s.card).map(s => this._cardDataFromStationCard(s)).map(c => this.createBehaviourCard(c)).filter(matcher);
         return [...matchingCardsInZone, ...matchingCardsInOpponentZone, ...matchingDiscardedCards, ...matchingStationCards];
     }
 
     getMatchingBehaviourCardsFromZoneOrStation(matcher) {
-        const matchingStationCards = this.getStationCards().filter(s => !!s.card).map(s => s.card).map(c => this.createBehaviourCard(c)).filter(matcher);
+        const matchingStationCards = this.getStationCards().filter(s => !!s.card).map(s => this._cardDataFromStationCard(s)).map(c => this.createBehaviourCard(c)).filter(matcher);
         return [...matchingStationCards, ...this.getMatchingBehaviourCards(matcher)];
     }
 
@@ -375,13 +375,28 @@ class PlayerStateService {
         if (cardInOpponentZone) return cardInOpponentZone;
 
         const cardInStation = playerState.stationCards.find(s => getStationCardId(s) === cardId);
-        if (cardInStation) return cardInStation.card;
+        if (cardInStation) return this._cardDataFromStationCard(cardInStation);
 
         const cardOnHand = playerState.cardsOnHand.find(c => c.id === cardId);
         if (cardOnHand) return cardOnHand;
 
         const discardedCard = playerState.discardedCards.find(c => c.id === cardId);
         if (discardedCard) return discardedCard;
+
+        return null;
+    }
+
+    findCardFromZonesOrStation(cardId) {
+        const playerState = this.getPlayerState();
+
+        const cardInZone = playerState.cardsInZone.find(c => c.id === cardId);
+        if (cardInZone) return cardInZone;
+
+        const cardInOpponentZone = playerState.cardsInOpponentZone.find(c => c.id === cardId);
+        if (cardInOpponentZone) return cardInOpponentZone;
+
+        const cardInStation = playerState.stationCards.find(s => getStationCardId(s) === cardId);
+        if (cardInStation) return this._cardDataFromStationCard(cardInStation);
 
         return null;
     }
@@ -405,7 +420,7 @@ class PlayerStateService {
         const playerState = this.getPlayerState();
 
         const cardInStation = playerState.stationCards.find(s => getStationCardId(s) === cardId);
-        if (cardInStation) return cardInStation.card;
+        if (cardInStation) return this._cardDataFromStationCard(cardInStation);
 
         const cardOnHand = playerState.cardsOnHand.find(c => c.id === cardId);
         if (cardOnHand) return cardOnHand;
@@ -679,7 +694,7 @@ class PlayerStateService {
     removeCardFromStationOrZones(cardId) {
         if (this.findStationCard(cardId)) {
             const removedStationCard = this.removeStationCard(cardId);
-            return removedStationCard.card;
+            return this._cardDataFromStationCard(removedStationCard);
         }
         else if (this.findCard(cardId)) {
             return this.removeCard(cardId);
@@ -690,7 +705,7 @@ class PlayerStateService {
     removeCardFromStationOrHand(cardId) {
         if (this.findStationCard(cardId)) {
             const removedStationCard = this.removeStationCard(cardId);
-            return removedStationCard.card;
+            return this._cardDataFromStationCard(removedStationCard);
         }
         else if (this.findCardFromHand(cardId)) {
             return this.removeCardFromHand(cardId);
@@ -701,7 +716,7 @@ class PlayerStateService {
     removeCardFromStationHandOrHomeZone(cardId) {
         if (this.findStationCard(cardId)) {
             const removedStationCard = this.removeStationCard(cardId);
-            return removedStationCard.card;
+            return this._cardDataFromStationCard(removedStationCard);
         }
         else if (this.findCardFromHand(cardId)) {
             return this.removeCardFromHand(cardId);
@@ -894,6 +909,13 @@ class PlayerStateService {
             return this._cardFactory();
         }
         return this._cardFactory;
+    }
+
+    _cardDataFromStationCard(stationCard) {
+        return {
+            ...stationCard.card,
+            flipped: stationCard.flipped,
+        };
     }
 }
 

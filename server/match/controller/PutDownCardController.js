@@ -1,5 +1,6 @@
 const CheatError = require('../CheatError.js');
 const CardApplier = require('../card/CardApplier.js');
+const CardCanBePlayedChecker = require('../card/CardCanBePlayedChecker.js');
 const PlayerServiceProvider = require('../../../shared/match/PlayerServiceProvider.js');
 const ExcellentWork = require('../../../shared/card/ExcellentWork.js');
 
@@ -17,6 +18,7 @@ function PutDownCardController(deps) {
     } = deps;
 
     const cardApplier = CardApplier({ playerServiceProvider, playerServiceFactory, matchService });
+    const cardCanBePlayedChecker = CardCanBePlayedChecker({ playerServiceProvider, playerServiceFactory, matchService });
 
     return {
         onPutDownCard,
@@ -29,7 +31,7 @@ function PutDownCardController(deps) {
         const cardData = playerStateService.findCardFromAnySource(cardId);
         if (!cardData) throw new CheatError(`Cannot find card`);
 
-        checkIfCanPutDownCard({ playerId, location, cardData });
+        checkIfCanPutDownCard({ playerId, location, cardData, choice });
 
         stateMemento.saveStateForCardId(cardId);
 
@@ -98,7 +100,7 @@ function PutDownCardController(deps) {
         playerRequirementUpdater.resolve();
     }
 
-    function checkIfCanPutDownCard({ playerId, location, cardData }) {
+    function checkIfCanPutDownCard({ playerId, location, cardData, choice }) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         const ruleService = playerServiceProvider.byTypeAndId(PlayerServiceProvider.TYPE.rule, playerId);
 
@@ -122,6 +124,12 @@ function PutDownCardController(deps) {
             const canAffordCard = playerActionPoints >= cardData.cost;
             if (!canAffordCard) {
                 throw new CheatError('Cannot afford card');
+            }
+
+            if (cardCanBePlayedChecker.hasCheckerForCard(cardData)) {
+                if (!cardCanBePlayedChecker.canBePlayed(playerId, cardData, { choice })) {
+                    throw new CheatError('Cannot put down card');
+                }
             }
         }
         else if (location.startsWith('station')) {

@@ -9,8 +9,18 @@ function PutDownFatalError({
 }) {
 
     return {
+        canBePlayed,
         forPlayer
     };
+
+    function canBePlayed(playerId, cardData, { choice: targetCardId } = {}) {
+        const opponentId = matchService.getOpponentId(playerId);
+        const targetCardData = playerServiceFactory.playerStateService(opponentId).findCardFromZonesOrStation(targetCardId);
+        const target = playerServiceFactory.cardFactory().createCardForPlayer(targetCardData, opponentId);
+        const fatalError = playerServiceFactory.cardFactory().createCardForPlayer(cardData, playerId);
+
+        return fatalError.actionWhenPutDownInHomeZone.validTarget(target);
+    }
 
     function forPlayer(playerId, cardData, { choice: targetCardId } = {}) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
