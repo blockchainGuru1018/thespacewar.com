@@ -62,7 +62,7 @@ describe('Fatal Error:', () => {
                 opponentCardsInZone: [{ id: 'C5A' }],
                 opponentCardsInPlayerZone: [{ id: 'C6A' }],
                 opponentStationCards: [
-                    { place: 'draw', id: 'C7A' },
+                    { place: 'draw', id: 'C7A', flipped: false },
                     { place: 'draw', id: 'C8A', flipped: true, card: createCard({ id: 'C8A' }) }
                 ]
             }));
@@ -89,8 +89,11 @@ describe('Fatal Error:', () => {
         test('should be able to select opponent card in opponent zone', () => {
             assert.elementCount('.opponentCardsInZone .selectable', 1);
         });
-        test('should be able to select BOTH opponents station cards', () => {
-            assert.elementCount('.field-opponent .stationCard .selectable', 2);
+        test('should NOT be able to select opponents unflipped station card', () => {
+            assert.elementCount('.field-opponent .stationCard:not(.stationCard--flipped) .selectable', 0);
+        });
+        test('should be able to select opponents flipped station card', () => {
+            assert.elementCount('.field-opponent .stationCard--flipped .selectable', 1);
         });
         test('should NOT be able to select first player card in home zone', () => {
             assert.elementCount('.playerCardsInZone .card:eq(0) .selectable', 0);

@@ -288,6 +288,10 @@ class BaseCard {
             && !this._wouldOverstepMaxInPlayLimit();
     }
 
+    isOpponentCard(otherPlayerId) {
+        return this.playerId !== otherPlayerId;
+    }
+
     _canGenerallyPlayCardsOrCanAlwaysPlayCard() {
         return this._playerRuleService.canPutDownCardsInHomeZone() || this.canBePutDownAnyTime();
     }

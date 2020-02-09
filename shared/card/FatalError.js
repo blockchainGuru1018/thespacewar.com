@@ -1,5 +1,6 @@
 const info = require('./info/38.config.js');
 const BaseCard = require('./BaseCard.js');
+const FatalErrorDestroyCardAction = require('./fatalError/FatalErrorDestroyCardAction.js');
 
 module.exports = class FatalError extends BaseCard {
     constructor(deps) {
@@ -15,11 +16,6 @@ module.exports = class FatalError extends BaseCard {
     }
 
     get actionWhenPutDownInHomeZone() {
-        return {
-            showCardImage: true,
-            showTransientCardInHomeZone: true,
-            name: 'destroyAnyCard',
-            text: 'Select any card to destroy'
-        }
+        return new FatalErrorDestroyCardAction({ playerId: this.playerId });
     }
 };
