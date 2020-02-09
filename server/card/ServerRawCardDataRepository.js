@@ -9,7 +9,7 @@ module.exports = function () {
 
 async function getCardData() {
     const url = 'https://admin.thespacewar.com/services/api/cards';
-    console.log('Getting fresh cards JSON from:', url);
+    console.info('Getting fresh cards JSON from:', url);
 
     const response = await axios.get(url);
     return response.data;

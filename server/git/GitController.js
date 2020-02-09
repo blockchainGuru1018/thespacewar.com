@@ -14,9 +14,9 @@ module.exports = function (deps) {
     async function onPush(req, res) {
         await wait(TIME_TO_PULL_GIT);
 
-        console.log('GitController: closing server');
+        console.info('GitController: closing server');
         await closeServer();
-        console.log('GitController: running start server script');
+        console.info('GitController: running start server script');
         serverStarter.installNpmPackages();
         serverStarter.startServer();
 

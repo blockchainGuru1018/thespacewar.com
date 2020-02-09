@@ -381,9 +381,19 @@ module.exports = function (deps) {
                 action: card.actionWhenPutDownInHomeZone,
                 useTransientCard: true,
                 checkIfCanBeSelectedForAction: (actionCard, { cardData, isOpponentCard }) => {
+                    //Avoid would always be used to counter when TheDarkDestroyer was played and used to destroy Avoid,
+                    // instead of implementing a way for the player to activate avoid we choose to make it impossible to select
+                    // Avoid as card to destroy when playing TheDarkDestroyer
                     if (actionCard.commonId === TheDarkDestroyer.CommonId && cardData.commonId === Avoid.CommonId) return false;
 
-                    return isOpponentCard;
+                    //Has not implemented an "Action" for TheDarkDestroyer as I have for Fatal Error
+                    if (actionCard.commonId === TheDarkDestroyer.CommonId) {
+                        return isOpponentCard;
+                    }
+                    else {
+                        const opponentCard = rootGetters['match/createCard'](cardData, { isOpponent: isOpponentCard });
+                        return card.actionWhenPutDownInHomeZone.validTarget(opponentCard);
+                    }
                 },
                 onFinish: targetCardIds => dispatch('putDownCard', { location, cardData, choice: targetCardIds[0] })
             });

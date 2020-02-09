@@ -54,9 +54,9 @@ function startServer(config) {
 
         await run({ config, closeServer, exitProcess });
 
-        console.log(` - 2/2 Setting up server at port ${port}`)
+        console.info(` - 2/2 Setting up server at port ${port}`)
         server.listen(port, () => {
-            console.log(` - 2/2 SUCCESS, running on port ${port}\n`)
+            console.info(` - 2/2 SUCCESS, running on port ${port}\n`)
             resolve();
         });
     });
@@ -81,9 +81,9 @@ async function restartServer() {
 async function run({ config, closeServer, exitProcess }) {
     const rawCardDataRepository = ServerRawCardDataRepository();
 
-    console.log(' - 1/2 Fetching fresh game data');
+    console.info(' - 1/2 Fetching fresh game data');
     await rawCardDataRepository.init();
-    console.log(' - 1/2 SUCCESS');
+    console.info(' - 1/2 SUCCESS');
 
     //1st level dependencies
     const deps = {

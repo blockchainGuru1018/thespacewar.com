@@ -16,9 +16,9 @@ window.cheat = function (type, data) {
 async function outputMasterLogToConsole() {
     this.log = 'LOADING LOG';
     const { text } = await ajax.jsonPost('/master-log', { password: localGameDataFacade.DebugPassword.get() });
-    console.log('\n\n --- MASTER LOG --- ');
-    console.log(text);
-    console.log(' --- END OF LOG --- \n\n');
+    console.info('\n\n --- MASTER LOG --- ');
+    console.info(text);
+    console.info(' --- END OF LOG --- \n\n');
 }
 
 async function addCardsInDeckAsFindCardRequirement() {
@@ -33,13 +33,13 @@ async function addCardsInDeckAsFindCardRequirement() {
         ]
     });
 
-    console.log('CHEAT RESULT', result);
+    console.info('CHEAT RESULT', result);
 }
 
 async function sendCheatAndLogResult(type, data) {
     const result = await sendCheat(type, data);
     if (result) {
-        console.log('CHEAT RESULT', result);
+        console.info('CHEAT RESULT', result);
     }
 }
 

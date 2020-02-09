@@ -13,19 +13,19 @@ module.exports = {
 function installNpmPackages() {
     const clientPath = path.join(__dirname, '..', 'client');
     const serverPath = path.join(__dirname, '..', 'server');
-    console.log(' (1/2) - Installing dependencies');
+    console.info(' (1/2) - Installing dependencies');
     child_process.execSync(`cd ${clientPath} && npm install && cd ${serverPath} && npm install`);
 }
 
 function startServer() {
     const startServerFileName = PRODUCTION ? 'startInProduction.js' : 'startInDevelopment.js';
     const serverFilePath = path.join(__dirname, '..', 'scripts', startServerFileName);
-    console.log(' (2/2) - Starting server using ' + (USING_PM2 ? 'pm2' : 'node'));
+    console.info(' (2/2) - Starting server using ' + (USING_PM2 ? 'pm2' : 'node'));
     if (USING_PM2) {
         spawnIndependently('pm2', ['start', serverFilePath]);
     }
     else {
         spawnIndependently('node', [serverFilePath]);
     }
-    console.log(' Done - Server instance is now running in the background')
+    console.info(' Done - Server instance is now running in the background')
 }

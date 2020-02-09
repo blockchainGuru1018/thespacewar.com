@@ -97,8 +97,8 @@ window.readMasterLog = () => {
     (async () => {
         const password = localGameDataFacade.DebugPassword.get();
         const { text } = await ajax.jsonPost('/master-log', { password: password });
-        console.log('-----------');
-        console.log(text);
-        console.log('-----------');
+        console.info('-----------');
+        console.info(text);
+        console.info('-----------');
     })();
 };

@@ -22,7 +22,7 @@ module.exports = function (deps) { //TODO Rename MatchConnectionController or so
     }
 
     function emit(action, value) {
-        console.log(`\n[${new Date().toISOString()}] MatchController.emit(${action}, ${JSON.stringify(value, null, 4)})`);
+        console.info(`\n[${new Date().toISOString()}] MatchController.emit(${action}, ${JSON.stringify(value, null, 4)})`);
         const data = {
             matchId,
             playerId: ownUserId,
@@ -43,7 +43,7 @@ module.exports = function (deps) { //TODO Rename MatchConnectionController or so
     }
 
     function onSocketMatchEvent(data) {
-        console.log('Got match event on client', data);
+        console.info('Got match event on client', data);
 
         const isMatchEvent = data.matchId === matchId;
         const shouldReactToPlayerEvent = data.playerId === ownUserId;

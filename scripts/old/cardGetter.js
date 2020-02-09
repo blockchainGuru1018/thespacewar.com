@@ -9,19 +9,19 @@ const cardErrorLog = [];
     const imageUrls = cardJson.map(card => card.image_card);
 
     const cardInfos = imageUrls.map(url => toCardInfo(url));
-    console.log('\t\t\t')
-    console.log(' - DOWNLOADING')
+    console.info('\t\t\t')
+    console.info(' - DOWNLOADING')
     for (const card of cardInfos) {
         await downloadCard(card);
     }
-    console.log(' - DONE')
+    console.info(' - DONE')
     if (cardErrorLog.length) {
-        console.log(' ---- Could not download the following cards --- ');
+        console.info(' ---- Could not download the following cards --- ');
         for (const entry of cardErrorLog) {
-            console.log(entry.cardInfo.name);
+            console.info(entry.cardInfo.name);
         }
     }
-    console.log('\t\t\t')
+    console.info('\t\t\t')
 }());
 
 function toCardInfo(url) {
@@ -36,7 +36,7 @@ function toCardInfo(url) {
 async function downloadCard(cardInfo) {
     try {
         await downloadImage(cardInfo.url, cardInfo.path);
-        console.log(' -- downloaded card: ' + cardInfo.name)
+        console.info(' -- downloaded card: ' + cardInfo.name)
     }
     catch (error) {
         console.error(' -- FAILED to download card: ' + cardInfo.name + ', at url: ' + cardInfo.url);

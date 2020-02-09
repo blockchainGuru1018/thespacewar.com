@@ -70,7 +70,7 @@
                     await document.documentElement.requestFullscreen();
                 }
                 catch (error) {
-                    console.log('Got error when requested fullscreen:', error);
+                    console.error('Got error when requested fullscreen:', error);
                 }
             },
         },

@@ -36,7 +36,7 @@ module.exports = function ({ pageDependencies }) {
 
         let a = performance.now();
         await rawCardDataRepository.init();
-        console.log('raw data load:', performance.now() - a);
+        console.info('raw data load:', performance.now() - a);
 
         let b = performance.now();
         if (isAlreadyLoggedIn()) {
@@ -52,21 +52,21 @@ module.exports = function ({ pageDependencies }) {
                 dispatch('user/storeOwnUser', null, { root: true });
             }
         }
-        console.log('login:', performance.now() - b);
+        console.info('login:', performance.now() - b);
 
         let c = performance.now();
         if (rootGetters['login/checkIfHasPreviousSession']()) {
             await dispatch('login/restoreFromPreviousSession', null, { root: true });
         }
-        console.log('restore match:', performance.now() - c);
+        console.info('restore match:', performance.now() - c);
 
-        console.log(' - loading images - ');
+        console.info(' - loading images - ');
         await loadAllImages();
-        console.log(' - FINISHED - ');
+        console.info(' - FINISHED - ');
 
         state.loaded = true;
 
-        console.log('total:', performance.now() - d)
+        console.info('total:', performance.now() - d)
     }
 
     function initFakeLoadingProgress({ state, getters }) {
