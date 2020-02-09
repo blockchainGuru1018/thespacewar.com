@@ -61,28 +61,28 @@ module.exports = function (deps) {
             moveCardToZoneAsTransient,
             removeTransientCard,
 
-            // Card choices todo move to store?
+            // Card choices todo move to it's own separate store?
             showChoiceDialog,
             choiceDialogApplyChoice,
             _applyChoicePutDownAsExtraStationCard,
             choiceDialogCancel,
             _hideChoiceDialog,
 
-            // Card action todo move to store?
+            // Card action todo move to it's own separate store?
             showPutDownCardAction,
             selectGhostForActiveAction,
             showCardAction,
             selectCardForActiveAction,
             cancelCardAction,
 
-            // Sacrifice todo move to store?
+            // Sacrifice todo move to it's own separate store?
             startSacrifice,
             _completeSacrifice,
 
-            // Trigger dormant effect todo move to store?
+            // Trigger dormant effect todo move to it's own separate store?
             triggerDormantEffect,
 
-            // PutDownCard todo move to store?
+            // PutDownCard todo move to it's own separate store?
             putDownCardOrShowChoiceOrAction,
             putDownCardAsExtraStationCard,
             putDownCard,
