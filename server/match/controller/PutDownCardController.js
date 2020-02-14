@@ -41,10 +41,10 @@ function PutDownCardController(deps) {
 
         removeCardFromCurrentLocation({ playerId, location, cardData });
         if (location.startsWith('station')) {
-            putDownStationCardAtNewLocation({ playerId, location, cardData, choice });
+            putDownStationCard({ playerId, location, cardData, choice });
         }
         else {
-            putDownCardInZoneAtNewLocation({ playerId, cardData, choice });
+            putDownCardInZone({ playerId, cardData, choice });
         }
     }
 
@@ -158,7 +158,7 @@ function PutDownCardController(deps) {
         }
     }
 
-    function putDownCardInZoneAtNewLocation({ playerId, cardData, choice }) {
+    function putDownCardInZone({ playerId, cardData, choice }) {
         const opponentActionLog = playerServiceFactory.actionLog(matchService.getOpponentId(playerId));
         opponentActionLog.opponentPlayedCards({ cardIds: [cardData.id], cardCommonIds: [cardData.commonId] });
 
@@ -174,7 +174,7 @@ function PutDownCardController(deps) {
         }
     }
 
-    function putDownStationCardAtNewLocation({ playerId, location, cardData, choice }) {
+    function putDownStationCard({ playerId, location, cardData, choice }) {
         if (cardData.commonId === ExcellentWork.CommonId) { // WORKAROUND: This is just lazy. Should be a more general approach perhaps.
             const opponentActionLog = playerServiceFactory.actionLog(matchService.getOpponentId(playerId));
             opponentActionLog.opponentPlayedCards({ cardIds: [cardData.id], cardCommonIds: [cardData.commonId] });
@@ -183,10 +183,6 @@ function PutDownCardController(deps) {
         const opponentActionLog = playerServiceFactory.actionLog(matchService.getOpponentId(playerId));
         opponentActionLog.opponentExpandedStation();
 
-        putDownStationCard({ playerId, cardData, location, choice });
-    }
-
-    function putDownStationCard({ playerId, cardData, location, choice }) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         playerStateService.addStationCard(cardData, location, { putDownAsExtraStationCard: choice === 'putDownAsExtraStationCard' });
     }
