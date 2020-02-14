@@ -40,7 +40,12 @@ function PutDownCardController(deps) {
         stateMemento.saveStateForCardId(cardId);
 
         removeCardFromCurrentLocation({ playerId, location, cardData });
-        putDownCardAtNewLocation({ playerId, location, cardData, choice });
+        if (location.startsWith('station')) {
+            putDownStationCardAtNewLocation({ playerId, location, cardData, choice });
+        }
+        else {
+            putDownCardInZoneAtNewLocation({ playerId, cardData, choice });
+        }
     }
 
     function cancelCounterCard(playerId, { cardId }) {
@@ -153,46 +158,32 @@ function PutDownCardController(deps) {
         }
     }
 
-    function putDownCardAtNewLocation({ playerId, location, cardData, choice }) {
-        if (location.startsWith('station')) {
-            if (cardData.commonId === ExcellentWork.CommonId) { // WORKAROUND: This is just lazy. Should be a more general approach perhaps.
-                const opponentActionLog = playerServiceFactory.actionLog(matchService.getOpponentId(playerId));
-                opponentActionLog.opponentPlayedCards({ cardIds: [cardData.id], cardCommonIds: [cardData.commonId] });
-            }
+    function putDownCardInZoneAtNewLocation({ playerId, cardData, choice }) {
+        const opponentActionLog = playerServiceFactory.actionLog(matchService.getOpponentId(playerId));
+        opponentActionLog.opponentPlayedCards({ cardIds: [cardData.id], cardCommonIds: [cardData.commonId] });
 
-            const opponentActionLog = playerServiceFactory.actionLog(matchService.getOpponentId(playerId));
-            opponentActionLog.opponentExpandedStation();
+        cardApplier.putDownCard(playerId, cardData, { choice });
 
-            putDownStationCard({ playerId, cardData, location, choice });
+        const addRequirementFromSpec = playerServiceFactory.addRequirementFromSpec(playerId);
+        addRequirementFromSpec.forCardPutDownInHomeZone(cardData);
+
+        const turnControl = playerServiceFactory.turnControl(playerId);
+        if (turnControl.playerHasControlOfOpponentsTurn()) {
+            turnControl.releaseControlOfOpponentsTurn();
+            matchComService.emitCurrentStateToPlayers();
         }
-        else {
+    }
+
+    function putDownStationCardAtNewLocation({ playerId, location, cardData, choice }) {
+        if (cardData.commonId === ExcellentWork.CommonId) { // WORKAROUND: This is just lazy. Should be a more general approach perhaps.
             const opponentActionLog = playerServiceFactory.actionLog(matchService.getOpponentId(playerId));
             opponentActionLog.opponentPlayedCards({ cardIds: [cardData.id], cardCommonIds: [cardData.commonId] });
-
-            if (cardApplier.hasCommandForCard(cardData)) {
-                cardApplier.putDownCard(playerId, cardData, { choice });
-            }
-            else {
-                if (location === 'zone' && cardData.type === 'event') {
-                    const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-                    playerStateService.putDownEventCardInZone(cardData);
-                }
-                else if (location === 'zone') {
-                    putDownCardInZone({ playerId, cardData });
-                }
-            }
-
-            if (location === 'zone') {
-                const addRequirementFromSpec = playerServiceFactory.addRequirementFromSpec(playerId);
-                addRequirementFromSpec.forCardPutDownInHomeZone(cardData);
-            }
-
-            const turnControl = playerServiceFactory.turnControl(playerId);
-            if (turnControl.playerHasControlOfOpponentsTurn()) {
-                turnControl.releaseControlOfOpponentsTurn();
-                matchComService.emitCurrentStateToPlayers();
-            }
         }
+
+        const opponentActionLog = playerServiceFactory.actionLog(matchService.getOpponentId(playerId));
+        opponentActionLog.opponentExpandedStation();
+
+        putDownStationCard({ playerId, cardData, location, choice });
     }
 
     function putDownStationCard({ playerId, cardData, location, choice }) {
@@ -218,11 +209,6 @@ function PutDownCardController(deps) {
 
         playerStateService.removeStationCard(cardId);
         return stationCard;
-    }
-
-    function putDownCardInZone({ playerId, cardData }) {
-        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        playerStateService.putDownCardInZone(cardData);
     }
 }
 

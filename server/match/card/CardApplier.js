@@ -1,4 +1,6 @@
-const PutDownNotImplementedEventCard = require('./putDown/PutDownNotImplementedEventCard.js');
+const PutDownEventCard = require('./putDown/PutDownEventCard.js');
+const PutDownCardInZone = require('./putDown/PutDownCardInZone.js');
+
 const Commands = [
     require('./putDown/PutDownSupernova.js'),
     require('./putDown/PutDownExcellentWork.js'),
@@ -11,7 +13,9 @@ const Commands = [
 
 module.exports = function CardApplier(deps) {
 
-    const putDownNotImplementedEventCard = PutDownNotImplementedEventCard(deps);
+    const putDownNotImplementedEventCard = PutDownEventCard(deps);
+    const putDownCardInZone = PutDownCardInZone(deps);
+
     const commandsByCommonId = {};
 
     for (const Command of Commands) {
@@ -33,7 +37,12 @@ module.exports = function CardApplier(deps) {
             command.forPlayer(playerId, cardData, { choice });
         }
         else {
-            putDownNotImplementedEventCard.forPlayer(playerId, cardData);
+            if (cardData.type === 'event') {
+                putDownNotImplementedEventCard.forPlayer(playerId, cardData);
+            }
+            else {
+                putDownCardInZone.forPlayer(playerId, cardData);
+            }
         }
     }
 

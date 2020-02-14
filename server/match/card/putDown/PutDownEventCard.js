@@ -1,4 +1,4 @@
-function PutDownNotImplementedEventCard({
+function PutDownEventCard({
     playerServiceProvider,
 }) {
 
@@ -12,4 +12,4 @@ function PutDownNotImplementedEventCard({
     }
 }
 
-module.exports = PutDownNotImplementedEventCard;
+module.exports = PutDownEventCard;
