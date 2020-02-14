@@ -3,7 +3,8 @@ const RequirementConditions = require('./requirement/RequirementConditions.js');
 const TargetIsFlippedStationCard = require('./requirement/conditions/TargetIsFlippedStationCard.js');
 
 module.exports = function ({
-    playerServiceFactory
+    playerServiceFactory,
+    playerCardServicesFactory
 }) {
 
     const objectsByNameAndPlayerId = {};
@@ -26,8 +27,10 @@ module.exports = function ({
     }
 
     function requirementConditions(playerId) {
+        const opponentCardFactory = playerCardServicesFactory.playerCardFactory(playerServiceFactory.opponentId(playerId));
         return RequirementConditions({
             requirementConditionsByType: api.requirementConditionsByType(playerId),
+            opponentCardFactory: opponentCardFactory,
         });
     }
 
@@ -40,7 +43,7 @@ module.exports = function ({
     }
 
     function targetIsFlippedStationCard(playerId) {
-        return TargetIsFlippedStationCard({});
+        return TargetIsFlippedStationCard();
     }
 
     function cached(constructor) {

@@ -1,6 +1,8 @@
 module.exports = function TargetIsFlippedStationCard() {
+
     return {
         is,
+        targetIsOpponentCard: () => true,
         check
     };
 
@@ -8,7 +10,7 @@ module.exports = function TargetIsFlippedStationCard() {
         return name === 'targetIsFlippedStationCard';
     }
 
-    function check({ card, specForPlayer, target }) {
-        return true;
+    function check({ card, specForPlayer, targetOpponentCard }) {
+        return targetOpponentCard.isFlippedStationCard();
     }
 };

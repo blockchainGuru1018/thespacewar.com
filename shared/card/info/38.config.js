@@ -4,7 +4,7 @@ module.exports = {
     CommonId,
     requirementSpecsWhenPutDownInHomeZone: {
         forOpponent: [{
-            onlyWhen: 'targetIsFlippedStationCard',
+            onlyWhenNot: ['targetIsFlippedStationCard'],
             type: 'drawCard',
             count: 2,
             cardCommonId: CommonId

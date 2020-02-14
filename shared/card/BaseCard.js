@@ -248,6 +248,10 @@ class BaseCard {
             || this._playerStateService.isCardInHomeZone(this.id);
     }
 
+    isFlippedStationCard() {
+        return this.isStationCard() && this.isFlipped();
+    }
+
     isStationCard() {
         return this._playerStateService.isCardStationCard(this.id);
     }

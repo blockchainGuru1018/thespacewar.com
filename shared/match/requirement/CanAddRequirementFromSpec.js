@@ -28,14 +28,39 @@ module.exports = function ({
     }
 
     function forCardWithSpecAndTarget(card, spec, target) {
-        return spec.forOpponent.every(LivesUpToOnlyWhenCondition(card, target))
-            && spec.forPlayer.every(LivesUpToOnlyWhenCondition(card, target));
+        return spec.forOpponent.every(meetsAll([
+                LivesUpToOnlyWhenCondition(card, target),
+                LivesUpToOnlyWhenNotCondition(card, target)
+            ]))
+            && spec.forPlayer.every(meetsAll([
+                LivesUpToOnlyWhenCondition(card, target),
+                LivesUpToOnlyWhenNotCondition(card, target)
+            ]));
+    }
+
+    function meetsAll(fns) {
+        return data => fns.every(fn => fn(data));
     }
 
     function LivesUpToOnlyWhenCondition(card, choice) {
         return specForPlayer => {
             if (specForPlayer.onlyWhen) {
                 return requirementConditions.onlyWhen(specForPlayer.onlyWhen, { card, specForPlayer, target: choice });
+            }
+            else {
+                return true;
+            }
+        };
+    }
+
+    function LivesUpToOnlyWhenNotCondition(card, choice) {
+        return specForPlayer => {
+            if (specForPlayer.onlyWhenNot) {
+                return requirementConditions.onlyWhenNot(specForPlayer.onlyWhenNot, {
+                    card,
+                    specForPlayer,
+                    target: choice
+                });
             }
             else {
                 return true;
