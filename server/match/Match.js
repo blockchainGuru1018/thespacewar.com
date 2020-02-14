@@ -68,6 +68,7 @@ module.exports = function ({
 
     const gameServiceFactory = serviceFactoryFactory.gameServiceFactory();
     const playerServiceFactory = serviceFactoryFactory.playerServiceFactory();
+    const playerRequirementServicesFactory = serviceFactoryFactory.playerRequirementServicesFactory();
     const CardFacade = serviceFactoryFactory.cardFacadeContext();
 
     const matchService = playerServiceFactory.matchService();
@@ -87,7 +88,8 @@ module.exports = function ({
     const playerRequirementUpdaterFactory = new PlayerRequirementUpdaterFactory({
         playerServiceProvider,
         matchService,
-        playerServiceFactory
+        playerServiceFactory,
+        playerRequirementServicesFactory
     });
     const playerOverworkFactory = PlayerOverworkFactory({ playerServiceFactory });
 
@@ -106,6 +108,7 @@ module.exports = function ({
         stateSerializer,
         CardFacade,
         playerServiceFactory,
+        playerRequirementServicesFactory,
         stateMemento: gameServiceFactory.stateMemento(),
         gameConfig
     };

@@ -10,7 +10,7 @@ module.exports = class CardFactory {
     constructor({
         matchService,
         playerServiceProvider,
-        playerServiceFactory
+        playerServiceFactory,
     }) {
         this._matchService = matchService;
         this._playerServiceProvider = playerServiceProvider;

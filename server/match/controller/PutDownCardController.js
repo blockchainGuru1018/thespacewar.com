@@ -14,6 +14,7 @@ function PutDownCardController(deps) {
         stateMemento,
         playerRequirementUpdaterFactory,
         playerServiceFactory,
+        playerRequirementServicesFactory,
         CardFacade
     } = deps;
 
@@ -164,8 +165,11 @@ function PutDownCardController(deps) {
 
         cardApplier.putDownCard(playerId, cardData, { choice });
 
-        const addRequirementFromSpec = playerServiceFactory.addRequirementFromSpec(playerId);
-        addRequirementFromSpec.forCardPutDownInHomeZone(cardData);
+        const canAddRequirementFromSpec = playerRequirementServicesFactory.canAddRequirementFromSpec(playerId);
+        if (canAddRequirementFromSpec.forCardPutDownInHomeZoneWithChoice(cardData, choice)) {
+            const addRequirementFromSpec = playerServiceFactory.addRequirementFromSpec(playerId);
+            addRequirementFromSpec.forCardPutDownInHomeZone(cardData);
+        }
 
         const turnControl = playerServiceFactory.turnControl(playerId);
         if (turnControl.playerHasControlOfOpponentsTurn()) {

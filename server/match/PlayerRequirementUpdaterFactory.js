@@ -5,7 +5,7 @@ class PlayerRequirementUpdaterFactory {
     constructor({
         playerServiceProvider,
         matchService,
-        playerServiceFactory
+        playerServiceFactory,
     }) {
         this._playerServiceProvider = playerServiceProvider;
         this._matchService = matchService;

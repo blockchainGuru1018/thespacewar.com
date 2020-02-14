@@ -1,5 +1,6 @@
 const GameServiceFactory = require('./GameServiceFactory.js');
 const PlayerServiceFactory = require('./PlayerServiceFactory.js');
+const PlayerRequirementServicesFactory = require('./PlayerRequirementServicesFactory.js');
 const ActionPointsCalculator = require('./ActionPointsCalculator.js');
 const CardFacadeContext = require('./card/CardFacadeContext.js');
 
@@ -20,6 +21,7 @@ module.exports = function ({
         _cache: objectsByNameAndPlayerId,
         gameServiceFactory: cached(gameServiceFactory),
         playerServiceFactory: cached(playerServiceFactory),
+        playerRequirementServicesFactory: cached(playerRequirementServicesFactory),
         cardFacadeContext: cached(cardFacadeContext),
     };
 
@@ -45,6 +47,12 @@ module.exports = function ({
             userRepository: {
                 getById: id => players.find(p => p.id === id)
             }
+        });
+    }
+
+    function playerRequirementServicesFactory() {
+        return PlayerRequirementServicesFactory({
+            playerServiceFactory: api.playerServiceFactory()
         });
     }
 
