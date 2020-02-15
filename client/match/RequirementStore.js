@@ -24,6 +24,7 @@ module.exports = function ({
             selectedCardsCount,
             cardsLeftToSelect,
             requirementCardImageUrl,
+            requirementIsCancelable,
             _firstCardIdThatCanLookAtHandSizeStationRow
         },
         actions: {
@@ -97,6 +98,10 @@ module.exports = function ({
         const firstRequirement = getters.firstRequirement;
         if (!firstRequirement || !firstRequirement.cardCommonId) return '';
         return cardInfoRepository.getImageUrl(firstRequirement.cardCommonId);
+    }
+
+    function requirementIsCancelable(state, getters) {
+        return getters.firstRequirement.cancelable;
     }
 
     function _firstCardIdThatCanLookAtHandSizeStationRow(state, getters, rootState, rootGetters) {

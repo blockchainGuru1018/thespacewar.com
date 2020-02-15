@@ -81,12 +81,7 @@ describe('with cards from 2 sources', () => {
 });
 
 test('when select a card and requirement is of count 1 should emit selectCard', async () => {
-    await setupWithRequirement({
-        type: 'findCard',
-        count: 1,
-        cardGroups: [{ source: 'deck', cards: [createCard({ id: 'C1A' })] }],
-        cardCommonId: '17'
-    });
+    await setupWithRequirement(countOneAndOneCardRequirement());
 
     await click('.findCard-card:eq(0)');
 
@@ -198,6 +193,12 @@ test('when requirement is cancelable and cancels requirement should emit cancelR
     assert.calledOnceWith(matchController.emit, 'cancelRequirement');
 });
 
+test('when requirement is NOT cancelable should NOT show cancel button', async () => {
+    await setupWithRequirement(countOneAndOneCardRequirement());
+
+    assert.elementCount('.findCard-cancel', 0);
+});
+
 function cancelableRequirement() {
     return {
         type: 'findCard',
@@ -250,5 +251,14 @@ function requirementWithTwoSourcesAndCommonId(commonId) {
             { source: 'discardPile', cards: [createCard({ id: 'C2A' }), createCard({ id: 'C3A' })] }
         ],
         cardCommonId: commonId
+    };
+}
+
+function countOneAndOneCardRequirement() {
+    return {
+        type: 'findCard',
+        count: 1,
+        cardGroups: [{ source: 'deck', cards: [createCard({ id: 'C1A' })] }],
+        cardCommonId: '17'
     };
 }

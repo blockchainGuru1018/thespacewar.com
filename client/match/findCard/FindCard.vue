@@ -3,6 +3,7 @@
         <DimOverlay>
             <template v-if="featureOn" slot="topRightButtons">
                 <button
+                    v-if="requirementIsCancelable"
                     class="findCard-cancel darkButton--onlyLook"
                     @click="cancelClick"
                 >
@@ -105,6 +106,9 @@
             ]),
             ...matchHelpers.mapGetters([
                 'actionPoints2'
+            ]),
+            ...requirementHelpers.mapGetters([
+                'requirementIsCancelable'
             ]),
             cardsToSelect() {
                 return this.requirement.count - this.selectedCardInfos.length;
