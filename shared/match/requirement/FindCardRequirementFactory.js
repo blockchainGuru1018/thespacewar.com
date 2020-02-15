@@ -18,7 +18,8 @@ function FindCardRequirementFactory({
             count: requirementSpec.count,
             target: requirementSpec.target,
             common: requirementSpec.common,
-            waiting: requirementSpec.count === 0 && requirementSpec.common
+            waiting: requirementSpec.count === 0 && requirementSpec.common,
+            cancelable: requirementSpec.cancelable
         };
         if (requirementSpec.dormantEffect) {
             requirement.usedDormantEffect = {

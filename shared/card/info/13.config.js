@@ -8,7 +8,8 @@ module.exports = {
                 sources: [
                     'handSizeStationCards'
                 ],
-                target: 'hand'
+                target: 'hand',
+                cancelable: true
             }
         ]
     }

@@ -693,7 +693,7 @@ eval("\n\nconst CommonId = '12';\nmodule.exports = {\n  CommonId,\n  dormantEffe
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nmodule.exports = {\n  requirementSpecsWhenLookAtHandSizeStationRow: {\n    forOpponent: [],\n    forPlayer: [{\n      type: 'findCard',\n      count: 1,\n      sources: ['handSizeStationCards'],\n      target: 'hand'\n    }]\n  }\n};\n\n//# sourceURL=webpack:///../shared/card/info/13.config.js?");
+eval("\n\nmodule.exports = {\n  requirementSpecsWhenLookAtHandSizeStationRow: {\n    forOpponent: [],\n    forPlayer: [{\n      type: 'findCard',\n      count: 1,\n      sources: ['handSizeStationCards'],\n      target: 'hand',\n      cancelable: true\n    }]\n  }\n};\n\n//# sourceURL=webpack:///../shared/card/info/13.config.js?");
 
 /***/ }),
 
@@ -1638,7 +1638,7 @@ eval("\n\nCounterCardRequirementFactory.type = 'counterCard';\n\nfunction Counte
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nFindCardRequirementFactory.type = 'findCard';\n\nfunction FindCardRequirementFactory({\n  sourceFetcher,\n  requirementSpec,\n  card\n}) {\n  return {\n    create\n  };\n\n  function create() {\n    const requirement = {\n      type: requirementSpec.type,\n      cardGroups: cardGroupsFromSpec(requirementSpec),\n      cardCommonId: card.commonId,\n      count: requirementSpec.count,\n      target: requirementSpec.target,\n      common: requirementSpec.common,\n      waiting: requirementSpec.count === 0 && requirementSpec.common\n    };\n\n    if (requirementSpec.dormantEffect) {\n      requirement.usedDormantEffect = {\n        cardId: card.id,\n        destroyCard: requirementSpec.dormantEffect.destroyTriggerCard\n      };\n    }\n\n    return requirement;\n  }\n\n  function cardGroupsFromSpec(spec) {\n    if (spec.count > 0) {\n      return requirementSpec.sources.map(cardGroupFromSource);\n    } else {\n      return [];\n    }\n  }\n\n  function cardGroupFromSource(source) {\n    return {\n      source,\n      cards: sourceFetcher[source](requirementSpec.filter)\n    };\n  }\n}\n\nmodule.exports = FindCardRequirementFactory;\n\n//# sourceURL=webpack:///../shared/match/requirement/FindCardRequirementFactory.js?");
+eval("\n\nFindCardRequirementFactory.type = 'findCard';\n\nfunction FindCardRequirementFactory({\n  sourceFetcher,\n  requirementSpec,\n  card\n}) {\n  return {\n    create\n  };\n\n  function create() {\n    const requirement = {\n      type: requirementSpec.type,\n      cardGroups: cardGroupsFromSpec(requirementSpec),\n      cardCommonId: card.commonId,\n      count: requirementSpec.count,\n      target: requirementSpec.target,\n      common: requirementSpec.common,\n      waiting: requirementSpec.count === 0 && requirementSpec.common,\n      cancelable: requirementSpec.cancelable\n    };\n\n    if (requirementSpec.dormantEffect) {\n      requirement.usedDormantEffect = {\n        cardId: card.id,\n        destroyCard: requirementSpec.dormantEffect.destroyTriggerCard\n      };\n    }\n\n    return requirement;\n  }\n\n  function cardGroupsFromSpec(spec) {\n    if (spec.count > 0) {\n      return requirementSpec.sources.map(cardGroupFromSource);\n    } else {\n      return [];\n    }\n  }\n\n  function cardGroupFromSource(source) {\n    return {\n      source,\n      cards: sourceFetcher[source](requirementSpec.filter)\n    };\n  }\n}\n\nmodule.exports = FindCardRequirementFactory;\n\n//# sourceURL=webpack:///../shared/match/requirement/FindCardRequirementFactory.js?");
 
 /***/ }),
 
