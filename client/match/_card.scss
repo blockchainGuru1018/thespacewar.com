@@ -1,5 +1,6 @@
 @import "miscVariables";
 @import "cardVariables";
+@import "colors";
 
 $durationCardsMarginToOtherCards: 35px;
 
@@ -78,7 +79,7 @@ $durationCardsMarginToOtherCards: 35px;
 .card-ghost {
   width: $cardGhostWidth;
   height: $cardGhostHeight;
-  border: 4px solid #8ae68a;
+  border: 4px solid $homeZoneCardGhost-borderColor;
   background: transparent;
   z-index: $cardGhostZIndex;
   position: relative;
@@ -89,7 +90,7 @@ $durationCardsMarginToOtherCards: 35px;
   }
 
   &--hoveredOver, &:hover {
-    background: rgba(138, 230, 138, .2);
+    background: $homeZoneCardGhost-hoverBackgroundColor;
   }
 }
 
@@ -199,6 +200,7 @@ $durationCardsMarginToOtherCards: 35px;
 
 .attackable,
 .movable,
+.actionOverlay--normal,
 .selectable,
 .selectForRepair {
   color: white;
@@ -227,7 +229,11 @@ $durationCardsMarginToOtherCards: 35px;
 }
 
 .movable {
-  background-color: rgba(0, 0, 0, .2);
+  background-color: rgba(0, 0, 0, .4);
+}
+
+.actionOverlay--normal {
+  background-color: rgba(0, 0, 0, .4);
 }
 
 .card.card-faceDown.selected--danger {

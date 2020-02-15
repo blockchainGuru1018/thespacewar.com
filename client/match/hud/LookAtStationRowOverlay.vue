@@ -1,10 +1,14 @@
 <template>
     <div v-if="featureOn">
-        <portal to="stationHandSizeRow">
+        <portal
+            to="stationCard-actionOverlays--handSizeRow"
+            target-class="actionOverlay--normal"
+        >
             <div
                 v-if="lookAtHandSizeStationRowOverlayVisible"
                 @click="lookAtHandSizeStationRow"
                 class="lookAtStationRowOverlay"
+                title="Look at all cards in station row"
             >
                 Look at
             </div>
@@ -42,14 +46,12 @@
     };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
     .lookAtStationRowOverlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 1;
+        display: flex;
         width: 100%;
         height: 100%;
-        background: rgba(100, 255, 100, .25);
+        justify-content: center;
+        align-items: center;
     }
 </style>

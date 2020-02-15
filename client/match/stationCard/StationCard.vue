@@ -12,6 +12,8 @@
                 class="actionOverlays"
                 v-if="!isHoldingCard"
             >
+                <portal-target :name="`stationCard-actionOverlays--${stationRow}Row`" />
+
                 <div
                     @click.stop="putDownCardOrShowChoiceOrAction({ location: 'zone', cardData: stationCard.card })"
                     class="movable moveToZone"
@@ -19,6 +21,7 @@
                 >
                     Play card
                 </div>
+
                 <div
                     v-if="canMoveCardToOtherStationRow"
                     @click.stop="startMovingStationCard({stationCard})"
@@ -73,7 +76,8 @@
         props: [
             'stationCard',
             'isOpponentStationCard',
-            'isHoldingCard'
+            'isHoldingCard',
+            'stationRow',
         ],
         computed: {
             ...mapState([
@@ -101,6 +105,9 @@
                 'checkIfCanBeSelectedForAction',
                 'selectedCardIdsForAction'
             ]),
+            cardId() {
+                return this.stationCard.id;
+            },
             classes() {
                 const classes = ['stationCard', 'card'];
                 if (this.selectedWithDanger) {
@@ -139,7 +146,7 @@
                 if (this.isOpponentStationCard) return false;
 
                 return this.moveStationCard.canMove({
-                    cardId: this.stationCard.id,
+                    cardId: this.cardId,
                     location: `station-${this.stationCard.place}`
                 });
             },

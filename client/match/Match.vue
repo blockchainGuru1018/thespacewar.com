@@ -284,10 +284,11 @@
                         <div class="field-stationRow playerStation-drawRow">
                             <portal-target name="stationDrawRow" />
                             <station-card
-                                :is-holding-card="!!holdingCard"
-                                :key="card.id"
-                                :station-card="card"
                                 v-for="card in playerVisibleDrawStationCards"
+                                :key="card.id"
+                                :is-holding-card="!!holdingCard"
+                                :station-card="card"
+                                stationRow="draw"
                             />
                             <StationCardWrapper :transparent="!drawStationCardGhostVisible">
                                 <CardGhost
@@ -301,10 +302,11 @@
                         <div class="field-stationRow playerStation-actionRow">
                             <portal-target name="stationActionRow" />
                             <station-card
-                                :is-holding-card="!!holdingCard"
-                                :key="card.id"
-                                :station-card="card"
                                 v-for="card in playerVisibleActionStationCards"
+                                :key="card.id"
+                                :is-holding-card="!!holdingCard"
+                                :station-card="card"
+                                stationRow="action"
                             />
                             <StationCardWrapper :transparent="!actionStationCardGhostVisible">
                                 <CardGhost
@@ -322,6 +324,7 @@
                                 :key="card.id"
                                 :is-holding-card="!!holdingCard"
                                 :station-card="card"
+                                stationRow="handSize"
                             />
                             <StationCardWrapper :transparent="!handSizeStationCardGhostVisible">
                                 <CardGhost
