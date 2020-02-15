@@ -18,7 +18,8 @@ test('when has Over Capacity in play should see "look at" overlay for hand size 
         phase: 'action',
         currentPlayer: 'P1A',
         cardsInZone: [{ commonId: OverCapacity.CommonId, id: 'C1A' }],
-        events: [PutDownCardEvent.forTest({ cardId: 'C1A' })]
+        events: [PutDownCardEvent.forTest({ cardId: 'C1A' })],
+        stationCards: [unflippedStationCard('S1A', 'handSize')]
     }));
     await timeout();
 
@@ -39,7 +40,8 @@ test('when click "look at" overlay should issue lookAt requirement for FIRST mat
         events: [
             PutDownCardEvent.forTest({ cardId: 'C1A' }),
             PutDownCardEvent.forTest({ cardId: 'C2A' }),
-        ]
+        ],
+        stationCards: [unflippedStationCard('S1A', 'handSize')]
     }));
     await timeout();
 
@@ -47,3 +49,7 @@ test('when click "look at" overlay should issue lookAt requirement for FIRST mat
 
     expect(emitStub).toBeCalledWith('lookAtStationRow', { stationRow: 'handSize', cardId: 'C1A' });
 });
+
+function unflippedStationCard(id, place = 'draw') {
+    return { id, place };
+}

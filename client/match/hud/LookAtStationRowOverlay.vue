@@ -17,8 +17,6 @@
 </template>
 
 <script>
-    import featureToggles from "../../utils/featureToggles.js";
-
     const Vuex = require('vuex');
     const matchHelpers = Vuex.createNamespacedHelpers('match');
     const requirementHelpers = Vuex.createNamespacedHelpers('requirement');
