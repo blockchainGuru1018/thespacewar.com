@@ -191,7 +191,15 @@ test('when has NO cards to select and click "Done" should emit action with no ca
 });
 
 test('when requirement is cancelable and cancels requirement should emit cancelRequirement', async () => {
-    await setupWithRequirement({
+    await setupWithRequirement(cancelableRequirement());
+
+    await click('.findCard-cancel');
+
+    assert.calledOnceWith(matchController.emit, 'cancelRequirement');
+});
+
+function cancelableRequirement() {
+    return {
         type: 'findCard',
         count: 1,
         cardGroups: [{
@@ -202,12 +210,8 @@ test('when requirement is cancelable and cancels requirement should emit cancelR
         }],
         cardCommonId: '17',
         cancelable: true,
-    });
-
-    await click('.findCard-cancel');
-
-    assert.calledOnceWith(matchController.emit, 'cancelRequirement');
-});
+    };
+}
 
 async function setupWithRequirement(requirement) {
     const { dispatch, showPage } = setUpController();
