@@ -11,8 +11,6 @@ const {
     }
 } = require('../testUtils/bocha-jest/bocha-jest.js');
 
-jest.mock('../utils/featureToggles.js', () => ({ isEnabled: name => name === 'lookAtStationRow' }));
-
 test('when has Over Capacity in play should see "look at" overlay for hand size (bottom) row', async () => {
     const { dispatch, showPage } = setupTest();
     showPage();

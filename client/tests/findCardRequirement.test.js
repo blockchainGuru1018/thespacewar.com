@@ -18,8 +18,6 @@ const {
 let controller;
 let matchController;
 
-jest.mock('../utils/featureToggles.js', () => ({ isEnabled: name => name === 'lookAtStationRow' }));
-
 function setUpController(optionsAndPageDeps = {}) { //Has side effects to afford a convenient tear down
     matchController = FakeMatchController();
     controller = createController({ matchController, ...optionsAndPageDeps });

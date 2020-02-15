@@ -1,7 +1,7 @@
 <template>
     <div class="findCard-wrapper">
         <DimOverlay>
-            <template v-if="featureOn" slot="topRightButtons">
+            <template slot="topRightButtons">
                 <button
                     v-if="requirementIsCancelable"
                     class="findCard-cancel darkButton--onlyLook"
@@ -91,11 +91,6 @@
     };
 
     module.exports = {
-        data() {
-            return {
-                featureOn: featureToggles.isEnabled('lookAtStationRow')
-            };
-        },
         computed: {
             ...findCardHelpers.mapState([
                 'selectedCardInfos'

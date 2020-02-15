@@ -1,5 +1,5 @@
 <template>
-    <div v-if="featureOn">
+    <div>
         <portal
             to="stationCard-actionOverlays--handSizeRow"
             target-class="actionOverlay--normal"
@@ -25,11 +25,6 @@
 
     export default {
         name: 'LookAtStationRowOverlay',
-        data() {
-            return {
-                featureOn: featureToggles.isEnabled('lookAtStationRow')
-            };
-        },
         computed: {
             ...matchHelpers.mapGetters([
                 'lookAtStationRow',
