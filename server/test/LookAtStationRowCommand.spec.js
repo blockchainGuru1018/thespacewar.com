@@ -1,6 +1,6 @@
 const Command = require('../match/command/LookAtStationRowCommand.js');
 
-test('get card and trigger effect', () => {
+test('when can look at station row should perform action', () => {
     const doIt = jest.fn();
     const card = {};
     const command = createCommand({
