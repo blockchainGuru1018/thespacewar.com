@@ -1,17 +1,29 @@
 module.exports = function LookAtStationRow({
     playerPhase,
     cardsThatCanLookAtHandSizeStationRow,
+    cardCanLookAtHandSizeStationRow,
     addRequirementFromSpec,
     canAddRequirementFromSpec
 }) {
 
     return {
         canDoIt,
+        cardCanDoIt,
         doIt
     };
 
     function canDoIt() {
-        return playerPhase.isAction() && cardsThatCanLookAtHandSizeStationRow().length > 0;
+        return canGenerallyLookAtStationRowNow()
+            && cardsThatCanLookAtHandSizeStationRow().length > 0;
+    }
+
+    function cardCanDoIt(cardId) {
+        return canGenerallyLookAtStationRowNow()
+            && cardCanLookAtHandSizeStationRow(cardId);
+    }
+
+    function canGenerallyLookAtStationRowNow() {
+        return playerPhase.isAction();
     }
 
     function doIt(card, stationRow) {

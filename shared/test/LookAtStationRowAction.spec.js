@@ -1,7 +1,7 @@
 const LookAtStationRow = require('../match/card/actions/LookAtStationRow.js');
 
 describe('can only look at handSize station row cards in action phase and has a card with that ability', () => {
-    test('there is card with capability and is action phase', () => {
+    test('card has capability and it is action phase', () => {
         const card = {};
         const action = LookAtStationRow({
             playerPhase: {
@@ -29,6 +29,36 @@ describe('can only look at handSize station row cards in action phase and has a 
             cardsThatCanLookAtHandSizeStationRow: () => []
         });
         expect(action.canDoIt()).toBe(false);
+    });
+});
+
+describe('when asking if specific card can do it...', () => {
+    test('card has capability and it is action phase', () => {
+        const action = LookAtStationRow({
+            playerPhase: {
+                isAction: () => true
+            },
+            cardCanLookAtHandSizeStationRow: cardId => cardId === 'C1A'
+        });
+        expect(action.cardCanDoIt('C1A')).toBe(true);
+    });
+    test('card has capability and it is NOT action phase', () => {
+        const action = LookAtStationRow({
+            playerPhase: {
+                isAction: () => false
+            },
+            cardCanLookAtHandSizeStationRow: cardId => cardId === 'C1A'
+        });
+        expect(action.cardCanDoIt('C1A')).toBe(false);
+    });
+    test('it is action phase but card does NOT have capability', () => {
+        const action = LookAtStationRow({
+            playerPhase: {
+                isAction: () => true
+            },
+            cardCanLookAtHandSizeStationRow: () => false
+        });
+        expect(action.cardCanDoIt('C1A')).toBe(false);
     });
 });
 

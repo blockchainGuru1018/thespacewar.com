@@ -29,9 +29,4 @@ module.exports = class OverCapacity extends BaseCard {
     canLookAtHandSizeStationRow() {
         return this._playerPhase.isAction();
     }
-
-    lookAtHandSizeStationRow() {
-        const spec = Info.requirementSpecsWhenLookAtHandSizeStationRow;
-        this._addRequirementFromSpec.forCardAndSpec(this, spec);
-    }
 };
