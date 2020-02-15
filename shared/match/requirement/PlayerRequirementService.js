@@ -1,5 +1,3 @@
-const _canMill = require('../mill/canMill.js');
-const Commander = require('../commander/Commander.js');
 const findMatchingRequirement = require('./findMatchingRequirements.js');
 
 //TODO Separate querying for requirements and adding requirements
