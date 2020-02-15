@@ -44,7 +44,7 @@ test('when can NOT perform action, should not perform it and throw error', () =>
         })
     });
 
-    const error = catchError(() => command({ cardId: 'C2A' }));
+    const error = catchError(() => command({ cardId: 'C2A', stationRow: 'handSize' }));
 
     expect(error).toBeDefined();
     expect(error.message).toBe('Cannot look at station row');
@@ -54,6 +54,7 @@ test('when can NOT perform action, should not perform it and throw error', () =>
 function createCommand(options = {}) {
     return Command({
         lookAtStationRow: lookAtStationRow(),
+        playerCardFactory: { fromId: () => ({}) },
         ...options
     });
 }

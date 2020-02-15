@@ -72,6 +72,7 @@ module.exports = function ({
 
     const gameServiceFactory = serviceFactoryFactory.gameServiceFactory();
     const playerServiceFactory = serviceFactoryFactory.playerServiceFactory();
+    const playerCardServicesFactory = serviceFactoryFactory.playerCardServicesFactory();
     const playerRequirementServicesFactory = serviceFactoryFactory.playerRequirementServicesFactory();
     const CardFacade = serviceFactoryFactory.cardFacadeContext();
 
@@ -113,6 +114,7 @@ module.exports = function ({
         CardFacade,
         playerServiceFactory,
         playerRequirementServicesFactory,
+        playerCardServicesFactory,
         stateMemento: gameServiceFactory.stateMemento(),
         gameConfig
     };
@@ -296,10 +298,12 @@ function PlayerCommand(Command, deps) {
     return (playerId, ...args) => {
         const playerServiceFactory = deps.playerServiceFactory;
         const playerRequirementServicesFactory = deps.playerRequirementServicesFactory;
+        const playerCardServicesFactory = deps.playerCardServicesFactory;
         const command = Command({
             playerStateService: playerServiceFactory.playerStateService(playerId),
             canThePlayer: playerServiceFactory.canThePlayer(playerId),
-            lookAtStationRow: lookAtStationRow(playerId)
+            lookAtStationRow: lookAtStationRow(playerId),
+            playerCardFactory: playerCardServicesFactory.playerCardFactory(playerId),
         });
         return command(...args);
 

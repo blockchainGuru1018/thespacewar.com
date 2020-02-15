@@ -5,7 +5,7 @@ module.exports = function LookAtStationRowCommand({
     playerCardFactory
 }) {
     return ({ cardId, stationRow }) => {
-        if (validStationRow(stationRow)) {
+        if (!validStationRow(stationRow)) {
             throw new CheatError('Can currently only look at handSize station row');
         }
         if (!lookAtStationRow.cardCanDoIt(cardId)) {
