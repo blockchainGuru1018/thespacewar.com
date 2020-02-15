@@ -54,7 +54,7 @@ module.exports = function (deps) {
             canSelectMoreCardsForAction,
 
             // Move station card
-            movingStationCard
+            movingStationCard,
         },
         actions: {
             // Utils/Transient cards

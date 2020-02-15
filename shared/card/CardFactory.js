@@ -47,6 +47,7 @@ module.exports = class CardFactory {
                 playerStateService,
                 canThePlayer
             }),
+            playerPhase: this._playerServiceFactory.playerPhase(playerId),
             addRequirementFromSpec: this._playerServiceFactory.addRequirementFromSpec(playerId),
             alternativeConditions
         });

@@ -11,6 +11,7 @@ const StartGameController = require('./controller/StartGameController.js');
 const OverworkController = require('./controller/OverworkController.js');
 const PerfectPlanController = require('./controller/PerfectPlanController.js');
 const TriggerDormantEffect = require('./command/TriggerDormantEffect.js');
+const LookAtStationRow = require('./command/LookAtStationRow.js');
 const CheatController = require('./controller/CheatController.js');
 const MatchComService = require('./service/MatchComService.js');
 const PlayerRequirementUpdaterFactory = require('./PlayerRequirementUpdaterFactory.js');
@@ -18,6 +19,7 @@ const StateChangeListener = require('../../shared/match/StateChangeListener.js')
 const PlayerServiceProvider = require('../../shared/match/PlayerServiceProvider.js');
 const PlayerOverworkFactory = require('../../shared/match/overwork/PlayerOverworkFactory.js');
 const ServiceFactoryFactory = require('../../shared/match/ServiceFactoryFactory.js');
+const CardsThatCanLookAtHandSizeStationRow = require('../../shared/match/card/query/CardsThatCanLookAtHandSizeStationRow.js');
 const MatchMode = require('../../shared/match/MatchMode.js');
 const { PHASES } = require('../../shared/phases.js');
 
@@ -170,6 +172,7 @@ module.exports = function ({
         overwork: overworkController.overwork,
         perfectPlan: perfectPlanController.perfectPlan,
         triggerDormantEffect: PlayerCommand(TriggerDormantEffect, controllerDeps),
+        lookAtStationRow: PlayerCommand(LookAtStationRow, controllerDeps),
         endLastStand,
         repairCard,
         retreat,
@@ -289,10 +292,13 @@ function CheatError(reason) {
 
 function PlayerCommand(Command, deps) {
     return (playerId, ...args) => {
-        const playerServiceProvider = deps.playerServiceProvider;
+        const playerServiceFactory = deps.playerServiceFactory;
         const command = Command({
-            playerStateService: playerServiceProvider.byTypeAndId(ServiceTypes.state, playerId),
-            canThePlayer: playerServiceProvider.byTypeAndId(ServiceTypes.canThePlayer, playerId)
+            playerStateService: playerServiceFactory.playerStateService(playerId),
+            canThePlayer: playerServiceFactory.canThePlayer(playerId),
+            cardsThatCanLookAtHandSizeStationRow: CardsThatCanLookAtHandSizeStationRow({
+                playerStateService: playerServiceFactory.playerStateService(playerId),
+            })
         });
         return command(...args);
     };

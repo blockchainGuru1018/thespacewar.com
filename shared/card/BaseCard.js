@@ -14,6 +14,8 @@ class BaseCard {
         playerRuleService,
         turnControl,
         cardEffect,
+        playerPhase,
+        addRequirementFromSpec,
         alternativeConditions = {}
     }) {
         this.playerId = playerId;
@@ -27,6 +29,8 @@ class BaseCard {
         this._playerRuleService = playerRuleService;
         this._turnControl = turnControl;
         this._cardEffect = cardEffect;
+        this._playerPhase = playerPhase;
+        this._addRequirementFromSpec = addRequirementFromSpec;
         this._alternativeConditions = alternativeConditions;
     }
 

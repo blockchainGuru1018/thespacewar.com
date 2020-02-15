@@ -23,10 +23,12 @@ module.exports = function ({
             countInFirstRequirement,
             selectedCardsCount,
             cardsLeftToSelect,
-            requirementCardImageUrl
+            requirementCardImageUrl,
+            _firstCardIdThatCanLookAtHandSizeStationRow
         },
         actions: {
-            selectStationCardForRequirement
+            selectStationCardForRequirement,
+            lookAtHandSizeStationRow
         }
     };
 
@@ -96,6 +98,10 @@ module.exports = function ({
         return cardInfoRepository.getImageUrl(firstRequirement.cardCommonId);
     }
 
+    function _firstCardIdThatCanLookAtHandSizeStationRow(state, getters, rootState, rootGetters) {
+        return rootGetters['match/cardsThatCanLookAtHandSizeStationRow'][0].id;
+    }
+
     function selectStationCardForRequirement({ state, getters }, stationCard) {
         state.selectedStationCardIdsForRequirement.push(stationCard.id);
         if (getters.cardsLeftToSelect === 0) {
@@ -104,5 +110,10 @@ module.exports = function ({
 
             rootStore.dispatch('match/damageStationCards', targetIds);
         }
+    }
+
+    function lookAtHandSizeStationRow({ getters }) {
+        const cardId = getters['_firstCardIdThatCanLookAtHandSizeStationRow'];
+        matchController.emit('lookAtStationRow', { stationRow: 'handSize', cardId });
     }
 };

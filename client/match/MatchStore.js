@@ -31,6 +31,7 @@ const PlayerCardInPlay = require('./card/PlayerCardInPlay.js');
 const LastStand = require('../../shared/match/LastStand.js');
 const ClientStateChanger = require('../state/ClientStateChanger.js');
 const CountCardsLeftToDrawForDrawPhase = require('../../shared/match/rules/CountCardsLeftToDrawForDrawPhase.js');
+const CardsThatCanLookAtHandSizeStationRow = require('../../shared/match/card/query/CardsThatCanLookAtHandSizeStationRow.js');
 const MoreCardsCanBeDrawnForDrawPhase = require('../../shared/match/rules/MoreCardsCanBeDrawnForDrawPhase.js');
 
 const {
@@ -154,6 +155,7 @@ module.exports = function (deps) {
             opponentRuleService,
             calculateMoreCardsCanBeDrawnForDrawPhase,
             calculateCountCardsLeftToDrawForDrawPhase,
+            cardsThatCanLookAtHandSizeStationRow,
             getCanThePlayer,
             canThePlayer,
             canTheOpponent,
@@ -380,7 +382,8 @@ module.exports = function (deps) {
             playerServiceProvider: getters.playerServiceProvider,
             playerServiceFactory: {
                 addRequirementFromSpec: () => ClientLimitNotice,
-                turnControl: () => getters.turnControl
+                turnControl: () => getters.turnControl,
+                playerPhase: () => getters.playerPhase
             }
         });
     }
@@ -494,6 +497,13 @@ module.exports = function (deps) {
             queryEvents: getters.queryEvents,
             playerStateService: getters.playerStateService
         });
+    }
+
+    function cardsThatCanLookAtHandSizeStationRow(state, getters) {
+        const getCards = CardsThatCanLookAtHandSizeStationRow({
+            playerStateService: getters.playerStateService
+        });
+        return getCards();
     }
 
     function getCanThePlayer(state, getters) {

@@ -1,3 +1,4 @@
+const Info = require('./info/13.config.js');
 const BaseCard = require('./BaseCard.js');
 
 module.exports = class OverCapacity extends BaseCard {
@@ -9,7 +10,28 @@ module.exports = class OverCapacity extends BaseCard {
         return '13';
     }
 
+    static get Info() {
+        return Info;
+    }
+
+    get info() {
+        return Info;
+    }
+
     get grantsUnlimitedHandSize() {
         return true;
+    }
+
+    get grantsAbilityToLookAtHandSizeStationRow() {
+        return true;
+    }
+
+    canLookAtHandSizeStationRow() {
+        return this._playerPhase.isAction();
+    }
+
+    lookAtHandSizeStationRow() {
+        const spec = Info.requirementSpecsWhenLookAtHandSizeStationRow;
+        this._addRequirementFromSpec.forCardAndSpec(this, spec);
     }
 };

@@ -67,6 +67,7 @@
         <InfoModeContainer />
         <EndGameHudContainer />
         <GuiDescriptions />
+        <LookAtStationRowOverlay />
 
         <portal
             v-if="enlargedCardVisible"
@@ -105,6 +106,7 @@
     import InfoModeContainer from "./infoMode/InfoModeContainer.vue";
     import GuideText from "./hud/guideText/GuideText.vue";
     import GuiDescriptions from "./hud/GuiDescriptions.vue";
+    import LookAtStationRowOverlay from './hud/LookAtStationRowOverlay.vue';
 
     const Vuex = require('vuex');
     const resolveModuleWithPossibleDefault = require('../../client/utils/resolveModuleWithPossibleDefault.js');
@@ -128,6 +130,7 @@
             FindCard,
             CounterCard,
             CounterAttack,
+            LookAtStationRowOverlay,
         },
         data() {
             return {
