@@ -5,17 +5,13 @@ const {
 } = require('./testUtils/bocha-jest/bocha-jest.js');
 const FakeCardDataAssembler = require('./testUtils/FakeCardDataAssembler.js');
 const createCard = FakeCardDataAssembler.createCard;
-const createMatch = require('./testUtils/createMatch.js');
-const Player = require('./testUtils/Player.js');
-const FakeConnection = require('./testUtils/FakeConnection.js');
-const createState = require('./testUtils/createState.js');
-const StateAsserter = require('./testUtils/StateAsserter.js');
 const FatalError = require('../../shared/card/FatalError.js');
+const setupIntegrationTest = require('./testUtils/setupIntegrationTest.js');
 
 const FatalErrorCommonId = FatalError.CommonId;
 
 test('when put down fatal error and choice as an opponent unflipped station card should throw error', () => {
-    const { match } = setup({
+    const { match } = setupIntegrationTest({
         playerStateById: {
             turn: 1,
             'P1A': {
@@ -38,7 +34,7 @@ test('when put down fatal error and choice as an opponent unflipped station card
 });
 
 test('when put down fatal error and choice is a FLIPPED station card should NOT throw error', () => {
-    const { match } = setup({
+    const { match } = setupIntegrationTest({
         playerStateById: {
             turn: 1,
             'P1A': {
@@ -63,7 +59,7 @@ test('when put down Fatal Error should emit draw card requirement to second play
     const {
         secondPlayerConnection,
         match
-    } = setup({
+    } = setupIntegrationTest({
         playerStateById: {
             'P1A': {
                 phase: 'action',
@@ -91,7 +87,7 @@ test('when put down Fatal Error for flipped station card should NOT emit draw ca
     const {
         secondPlayerConnection,
         match
-    } = setup({
+    } = setupIntegrationTest({
         playerStateById: {
             turn: 1,
             'P1A': {
@@ -114,25 +110,6 @@ test('when put down Fatal Error for flipped station card should NOT emit draw ca
         requirements: [sinon.match({ type: 'drawCard', count: 2 })]
     }));
 });
-
-function setup(state, { playerId = 'P1A', opponentId = 'P2A' } = {}) {
-    const firstPlayerConnection = FakeConnection(['stateChanged']);
-    const secondPlayerConnection = FakeConnection(['stateChanged']);
-    const players = [Player(playerId, firstPlayerConnection), Player(opponentId, secondPlayerConnection)];
-    const match = createMatch({ players });
-    const firstPlayerAsserter = StateAsserter(match, firstPlayerConnection, playerId);
-    const secondPlayerAsserter = StateAsserter(match, secondPlayerConnection, opponentId);
-
-    match.restoreFromState(createState(state));
-
-    return {
-        match,
-        firstPlayerConnection,
-        secondPlayerConnection,
-        firstPlayerAsserter,
-        secondPlayerAsserter
-    };
-}
 
 function catchError(callback) {
     try {

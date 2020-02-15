@@ -1,0 +1,10 @@
+
+Integrations tests:
+    These are tests that instantiate everything below Match.js. They simulate the real thing as much as possible.
+    They are however still very fast, but somewhat cumbersome to write as you have to know alot to set them up correctly.
+
+    Tend to follow these guidelines:
+    - Use setupIntegrationTest for new integration tests
+    - Use StateAsserter (firstPlayerAsserter, secondPlayerAsserter) instead of asserts on stateChanged directly.
+    - Move away from Bocha, use Jest features when possible.
+    - Sinon is okay however, they have better matchers than Jest.
