@@ -305,7 +305,6 @@ function PlayerCommand(Command, deps) {
 
         function lookAtStationRow(playerId) {
             return LookAtStationRow({
-                playerPhase: playerServiceFactory.playerPhase(playerId),
                 cardsThatCanLookAtHandSizeStationRow: CardsThatCanLookAtHandSizeStationRow({
                     playerStateService: playerServiceFactory.playerStateService(playerId),
                 }),

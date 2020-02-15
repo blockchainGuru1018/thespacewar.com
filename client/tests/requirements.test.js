@@ -25,6 +25,7 @@ function setUpController(optionsAndPageDeps = {}) { //Has side effects to afford
 
     return controller;
 }
+
 beforeEach(() => {
     getCardImageUrl.byCommonId = commonId => `/${commonId}`
 });

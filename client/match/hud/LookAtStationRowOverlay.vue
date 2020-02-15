@@ -28,10 +28,10 @@
         },
         computed: {
             ...matchHelpers.mapGetters([
-                'cardsThatCanLookAtHandSizeStationRow',
+                'lookAtStationRow',
             ]),
             lookAtHandSizeStationRowOverlayVisible() {
-                return this.cardsThatCanLookAtHandSizeStationRow.length;
+                return this.lookAtStationRow.canDoIt();
             }
         },
         methods: {

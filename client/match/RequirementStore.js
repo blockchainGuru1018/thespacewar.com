@@ -99,7 +99,9 @@ module.exports = function ({
     }
 
     function _firstCardIdThatCanLookAtHandSizeStationRow(state, getters, rootState, rootGetters) {
-        return rootGetters['match/cardsThatCanLookAtHandSizeStationRow'][0].id;
+        const cards = rootGetters['match/cardsThatCanLookAtHandSizeStationRow']();
+        const firstCard = cards[0];
+        return firstCard.id;
     }
 
     function selectStationCardForRequirement({ state, getters }, stationCard) {

@@ -1,31 +1,15 @@
 const LookAtStationRow = require('../match/card/actions/LookAtStationRow.js');
 
-describe('can only look at handSize station row cards in action phase and has a card with that ability', () => {
-    test('card has capability and it is action phase', () => {
+describe('can only look at handSize station row cards when a card has that ability', () => {
+    test('a card has ability', () => {
         const card = {};
         const action = LookAtStationRow({
-            playerPhase: {
-                isAction: () => true
-            },
             cardsThatCanLookAtHandSizeStationRow: () => [card]
         });
         expect(action.canDoIt()).toBe(true);
     });
-    test('has card with ability, but is NOT action phase', () => {
-        const card = {};
+    test('NO card has ability', () => {
         const action = LookAtStationRow({
-            playerPhase: {
-                isAction: () => false
-            },
-            cardsThatCanLookAtHandSizeStationRow: () => [card]
-        });
-        expect(action.canDoIt()).toBe(false);
-    });
-    test('is action phase, but does NOT have card with ability', () => {
-        const action = LookAtStationRow({
-            playerPhase: {
-                isAction: () => true
-            },
             cardsThatCanLookAtHandSizeStationRow: () => []
         });
         expect(action.canDoIt()).toBe(false);
@@ -33,29 +17,14 @@ describe('can only look at handSize station row cards in action phase and has a 
 });
 
 describe('when asking if specific card can do it...', () => {
-    test('card has capability and it is action phase', () => {
+    test('card has ability', () => {
         const action = LookAtStationRow({
-            playerPhase: {
-                isAction: () => true
-            },
             cardCanLookAtHandSizeStationRow: cardId => cardId === 'C1A'
         });
         expect(action.cardCanDoIt('C1A')).toBe(true);
     });
-    test('card has capability and it is NOT action phase', () => {
+    test('card does NOT have ability', () => {
         const action = LookAtStationRow({
-            playerPhase: {
-                isAction: () => false
-            },
-            cardCanLookAtHandSizeStationRow: cardId => cardId === 'C1A'
-        });
-        expect(action.cardCanDoIt('C1A')).toBe(false);
-    });
-    test('it is action phase but card does NOT have capability', () => {
-        const action = LookAtStationRow({
-            playerPhase: {
-                isAction: () => true
-            },
             cardCanLookAtHandSizeStationRow: () => false
         });
         expect(action.cardCanDoIt('C1A')).toBe(false);
