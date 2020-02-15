@@ -1,43 +1,70 @@
 const Command = require('../match/command/LookAtStationRowCommand.js');
 
 test('get card and trigger effect', () => {
-    const lookAtStationRow = {
-        doIt: jest.fn(),
-        cardCanDoIt: cardId => cardId === 'C2A',
-    };
-    const command = Command({
-        lookAtStationRow
+    const doIt = jest.fn();
+    const card = {};
+    const command = createCommand({
+        lookAtStationRow: lookAtStationRow({
+            doIt,
+            cardCanDoIt: cardId => cardId === 'C2A',
+        }),
+        playerCardFactory: {
+            fromId: cardId => cardId === 'C2A' ? card : null
+        }
     });
 
-    command({ cardId: 'C2A' });
+    command({ cardId: 'C2A', stationRow: 'handSize' });
 
-    expect(lookAtStationRow.doIt).toBeCalled();
+    expect(doIt).toBeCalledWith(card, 'handSize');
 });
 
-test('when can NOT perform action, should not perform it', () => {
-    const lookAtStationRow = {
-        cardCanDoIt: () => false,
-        doIt: jest.fn()
+test('when station row is NOT handSize should throw error', () => {
+    const doIt = jest.fn();
+    const playerCardFactory = {
+        fromId: () => ({})
     };
-    const command = Command({ lookAtStationRow });
+    const command = createCommand({
+        lookAtStationRow: lookAtStationRow({ doIt }),
+        playerCardFactory
+    });
 
-    catchError(() => command({ cardId: 'C2A' }));
+    const error = catchError(() => command({ cardId: 'C2A', stationRow: 'action' }));
 
-    expect(lookAtStationRow.doIt).not.toBeCalled();
+    expect(error).toBeDefined();
+    expect(error.message).toBe('Can currently only look at handSize station row');
+    expect(doIt).not.toBeCalled();
 });
 
-test('when can NOT perform action, should throw an error!', () => {
-    const lookAtStationRow = {
-        cardCanDoIt: () => false,
-        doIt: jest.fn()
-    };
-    const command = Command({ lookAtStationRow });
+test('when can NOT perform action, should not perform it and throw error', () => {
+    const doIt = jest.fn();
+    const command = createCommand({
+        lookAtStationRow: lookAtStationRow({
+            doIt,
+            cardCanDoIt: () => false
+        })
+    });
 
     const error = catchError(() => command({ cardId: 'C2A' }));
 
     expect(error).toBeDefined();
     expect(error.message).toBe('Cannot look at station row');
+    expect(doIt).not.toBeCalled();
 });
+
+function createCommand(options = {}) {
+    return Command({
+        lookAtStationRow: lookAtStationRow(),
+        ...options
+    });
+}
+
+function lookAtStationRow(options = {}) {
+    return {
+        cardCanDoIt: () => true,
+        doIt: () => {},
+        ...options
+    };
+}
 
 function catchError(callback) {
     try {
