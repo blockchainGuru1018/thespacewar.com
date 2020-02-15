@@ -27,7 +27,7 @@ module.exports = function ({
         return forCardWithSpecAndTarget(card, spec, choice);
     }
 
-    function forCardWithSpecAndTarget(card, spec, target) {
+    function forCardWithSpecAndTarget(card, spec, target = null) {
         return spec.forOpponent.every(meetsAll([
                 LivesUpToOnlyWhenCondition(card, target),
                 LivesUpToOnlyWhenNotCondition(card, target)
