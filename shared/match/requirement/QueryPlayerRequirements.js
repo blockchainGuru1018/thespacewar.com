@@ -1,5 +1,6 @@
 const _canMill = require('../mill/canMill.js');
 const Commander = require('../commander/Commander.js');
+const findMatchingRequirement = require('./findMatchingRequirements.js');
 
 function QueryPlayerRequirements({
     playerStateService,
@@ -77,15 +78,6 @@ function QueryPlayerRequirements({
             playerHasTheMiller: playerCommanders.has(Commander.TheMiller),
             moreCardsCanBeDrawnForDrawPhase: moreCardsCanBeDrawnForDrawPhase()
         })
-    }
-
-    function findMatchingRequirement(requirements, { type, common = null, waiting = null, cancelable = null }) {
-        return requirements.find(r => {
-            return (type === null || r.type === type)
-                && (common === null || r.common === common)
-                && (waiting === null || r.waiting === waiting)
-                && (cancelable === null || r.cancelable === cancelable);
-        });
     }
 }
 

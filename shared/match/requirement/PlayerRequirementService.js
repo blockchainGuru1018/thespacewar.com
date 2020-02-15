@@ -1,5 +1,6 @@
 const _canMill = require('../mill/canMill.js');
 const Commander = require('../commander/Commander.js');
+const findMatchingRequirement = require('./findMatchingRequirements.js');
 
 //TODO Separate querying for requirements and adding requirements
 // A lot more information is required to add a requirement than to query once that are added.
@@ -242,14 +243,6 @@ function PlayerRequirementService({
                 const reverseIndexOfRequirement = requirements.indexOf(requirement);
                 playerState.requirements.splice(reverseIndexOfRequirement, 1);
             });
-    }
-
-    function findMatchingRequirement(requirements, { type, common = null, waiting = null }) {
-        return requirements.find(r => {
-            return r.type === type
-                && (common === null || r.common === common)
-                && (waiting === null || r.waiting === waiting);
-        });
     }
 }
 
