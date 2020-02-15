@@ -12,6 +12,7 @@ const OverworkController = require('./controller/OverworkController.js');
 const PerfectPlanController = require('./controller/PerfectPlanController.js');
 const TriggerDormantEffect = require('./command/TriggerDormantEffect.js');
 const LookAtStationRowCommand = require('./command/LookAtStationRowCommand.js');
+const CancelRequirementCommand = require('./command/CancelRequirementCommand.js');
 const CheatController = require('./controller/CheatController.js');
 const MatchComService = require('./service/MatchComService.js');
 const PlayerRequirementUpdaterFactory = require('./PlayerRequirementUpdaterFactory.js');
@@ -22,6 +23,7 @@ const ServiceFactoryFactory = require('../../shared/match/ServiceFactoryFactory.
 const LookAtStationRow = require('../../shared/match/card/actions/LookAtStationRow.js');
 const CardsThatCanLookAtHandSizeStationRow = require('../../shared/match/card/query/CardsThatCanLookAtHandSizeStationRow.js');
 const CardCanLookAtHandSizeStationRow = require('../../shared/match/card/query/CardCanLookAtHandSizeStationRow.js');
+const CreatePlayerRequirementUpdater = require('../../shared/match/requirement/CreatePlayerRequirementUpdater.js');
 const MatchMode = require('../../shared/match/MatchMode.js');
 const { PHASES } = require('../../shared/phases.js');
 
@@ -173,6 +175,7 @@ module.exports = function ({
         sacrifice: attackController.onSacrifice,
         damageStationCards: attackController.onDamageStationCard,
         selectCardForFindCardRequirement: findCardController.onSelectCard,
+        cancelRequirement: PlayerCommand(CancelRequirementCommand, controllerDeps),
         overwork: overworkController.overwork,
         perfectPlan: perfectPlanController.perfectPlan,
         triggerDormantEffect: PlayerCommand(TriggerDormantEffect, controllerDeps),
@@ -304,6 +307,13 @@ function PlayerCommand(Command, deps) {
             canThePlayer: playerServiceFactory.canThePlayer(playerId),
             lookAtStationRow: lookAtStationRow(playerId),
             playerCardFactory: playerCardServicesFactory.playerCardFactory(playerId),
+            createPlayerRequirementUpdater: CreatePlayerRequirementUpdater({
+                playerStateService: playerServiceFactory.playerStateService(playerId),
+                playerRequirementService: playerServiceFactory.playerRequirementService(playerId),
+                opponentRequirementService: playerServiceFactory.playerRequirementService(playerServiceFactory.opponentId(playerId)),
+                addRequirementFromSpec: playerServiceFactory.addRequirementFromSpec(playerId),
+                cardFactory: playerServiceFactory.cardFactory()
+            })
         });
         return command(...args);
 

@@ -1,4 +1,4 @@
-class PlayerRequirementUpdater { //TODO Rename PlayerRequirements
+class PlayerRequirementUpdater {
 
     constructor({
         cardFactory,
@@ -13,6 +13,10 @@ class PlayerRequirementUpdater { //TODO Rename PlayerRequirements
         this._opponentRequirementService = opponentRequirementService;
         this._addRequirementFromSpec = addRequirementFromSpec;
         this._cardFactory = cardFactory;
+    }
+
+    exists() {
+        return !!this._get();
     }
 
     canProgressRequirementByCount(count) {
@@ -55,7 +59,7 @@ class PlayerRequirementUpdater { //TODO Rename PlayerRequirements
     resolve() {
         const requirement = this._get();
 
-        this._playerRequirementService.removeFirstMatchingRequirement(this._requirementMatchCondition);
+        this._playerRequirementService.removeFirstMatchingRequirement(this._getMatchCondition());
 
         if (requirement.whenResolvedAddAlso) {
             for (const spec of requirement.whenResolvedAddAlso) {
@@ -67,7 +71,7 @@ class PlayerRequirementUpdater { //TODO Rename PlayerRequirements
 
     _opponentHasMatchingAndWaitingRequirement() {
         const opponentWaitingRequirement = this._opponentRequirementService.getFirstMatchingRequirement({
-            ...this._requirementMatchCondition,
+            ...this._getMatchCondition(),
             waiting: true
         });
         return !!opponentWaitingRequirement;
@@ -75,20 +79,27 @@ class PlayerRequirementUpdater { //TODO Rename PlayerRequirements
 
     _removeOpponentMatchingAndWaitingRequirement() {
         this._opponentRequirementService.removeFirstMatchingRequirement({
-            ...this._requirementMatchCondition,
+            ...this._getMatchCondition(),
             common: true,
             waiting: true
         });
     }
 
     _get() {
-        return this._playerRequirementService.getFirstMatchingRequirement(this._requirementMatchCondition);
+        return this._playerRequirementService.getFirstMatchingRequirement(this._getMatchCondition());
     }
 
     _update(updateFn) {
-        this._playerRequirementService.updateFirstMatchingRequirement(this._requirementMatchCondition, updateFn);
+        this._playerRequirementService.updateFirstMatchingRequirement(this._getMatchCondition(), updateFn);
     }
 
+    _getMatchCondition() {
+        const condition = { ...this._requirementMatchCondition };
+        if (!condition.type) {
+            condition.type = null;
+        }
+        return condition;
+    }
 }
 
 module.exports = PlayerRequirementUpdater;

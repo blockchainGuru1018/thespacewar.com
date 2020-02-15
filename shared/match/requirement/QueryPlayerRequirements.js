@@ -33,12 +33,12 @@ function QueryPlayerRequirements({
         return all().some(r => r.waiting);
     }
 
-    function getFirstMatchingRequirement({ type, common = null, waiting = null }) {
+    function getFirstMatchingRequirement(matchingCondition) {
         const requirements = playerStateService
             .getPlayerState()
             .requirements
             .slice();
-        return findMatchingRequirement(requirements, { type, common, waiting });
+        return findMatchingRequirement(requirements, matchingCondition);
     }
 
     function firstRequirementIsOfType(type) {
@@ -79,11 +79,12 @@ function QueryPlayerRequirements({
         })
     }
 
-    function findMatchingRequirement(requirements, { type, common = null, waiting = null }) {
+    function findMatchingRequirement(requirements, { type, common = null, waiting = null, cancelable = null }) {
         return requirements.find(r => {
-            return r.type === type
+            return (type === null || r.type === type)
                 && (common === null || r.common === common)
-                && (waiting === null || r.waiting === waiting);
+                && (waiting === null || r.waiting === waiting)
+                && (cancelable === null || r.cancelable === cancelable);
         });
     }
 }
