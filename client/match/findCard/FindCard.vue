@@ -1,60 +1,72 @@
 <template>
     <div class="findCard-wrapper">
         <DimOverlay>
-            <div class="findCard">
-                <div class="findCard-header">
-                    <div class="findCard-requirementCard">
-                        <img :src="getCardImageUrl({commonId: requirement.cardCommonId})" />
-                    </div>
-                    <div class="findCard-headerText">
-                        {{ findCardHeaderText }}
-                    </div>
-                </div>
-                <div class="findCard-subHeader">
-                    <div class="findCard-subHeaderText" v-if="requirement.target === 'hand'">
-                        {{ subHeaderText }}
-                    </div>
-                </div>
-                <div
-                    class="findCard-groups"
-                    v-if="requirement"
+            <template v-if="featureOn" slot="topRightButtons">
+                <button
+                    class="findCard-cancel darkButton--onlyLook"
+                    @click="cancelClick"
                 >
-                    <div
-                        :key="group.source"
-                        class="findCard-group"
-                        v-for="group in filteredRequirement.cardGroups"
-                    >
-                        <div class="findCard-groupHeader">
-                            {{ getCardGroupTitle(group) }}
+                    Cancel
+                </button>
+            </template>
+            <template>
+                <div class="findCard">
+                    <div class="findCard-header">
+                        <div class="findCard-requirementCard">
+                            <img :src="getCardImageUrl({commonId: requirement.cardCommonId})" />
                         </div>
-                        <div class="findCard-groupCards">
-                            <div
-                                :key="card.id"
-                                @click="cardClick(card, group)"
-                                class="findCard-card"
-                                v-for="card in group.cards"
-                            >
-                                <img :src="getCardImageUrl(card)" />
+                        <div class="findCard-headerText">
+                            {{ findCardHeaderText }}
+                        </div>
+                    </div>
+                    <div class="findCard-subHeader">
+                        <div class="findCard-subHeaderText" v-if="requirement.target === 'hand'">
+                            {{ subHeaderText }}
+                        </div>
+                    </div>
+                    <div
+                        class="findCard-groups"
+                        v-if="requirement"
+                    >
+                        <div
+                            :key="group.source"
+                            class="findCard-group"
+                            v-for="group in filteredRequirement.cardGroups"
+                        >
+                            <div class="findCard-groupHeader">
+                                {{ getCardGroupTitle(group) }}
+                            </div>
+                            <div class="findCard-groupCards">
+                                <div
+                                    :key="card.id"
+                                    @click="cardClick(card, group)"
+                                    class="findCard-card"
+                                    v-for="card in group.cards"
+                                >
+                                    <img :src="getCardImageUrl(card)" />
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div
-                    class="findCard-doneWrapper"
-                    v-if="cardsAvailableToSelect === 0"
-                >
-                    <button
-                        @click="doneClick"
-                        class="findCard-done darkButton"
+                    <div
+                        class="findCard-doneWrapper"
+                        v-if="cardsAvailableToSelect === 0"
                     >
-                        Done
-                    </button>
+                        <button
+                            @click="doneClick"
+                            class="findCard-done darkButton"
+                        >
+                            Done
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </template>
         </DimOverlay>
     </div>
 </template>
 <script>
+    import featureToggles from "../../utils/featureToggles.js";
+
     const Vuex = require('vuex');
     const getCardImageUrl = require('../../utils/getCardImageUrl');
     const findCardHelpers = Vuex.createNamespacedHelpers('findCard');
@@ -63,6 +75,7 @@
     const DimOverlay = resolveModuleWithPossibleDefault(require('../overlay/DimOverlay.vue'));
     const Sabotage = require('../../../shared/card/Sabotage.js');
     const MissilesLaunched = require('../../../shared/card/MissilesLaunched.js');
+    const requirementHelpers = Vuex.createNamespacedHelpers('requirement');
 
     const nameBySource = { //TODO Do something clever with a the, future, new Source classes
         'deck': 'Deck',
@@ -77,6 +90,11 @@
     };
 
     module.exports = {
+        data() {
+            return {
+                featureOn: featureToggles.isEnabled('lookAtStationRow')
+            };
+        },
         computed: {
             ...findCardHelpers.mapState([
                 'selectedCardInfos'
@@ -117,6 +135,9 @@
                 'selectCard',
                 'done'
             ]),
+            ...requirementHelpers.mapActions([
+                'cancelRequirement'
+            ]),
             getCardImageUrl(card) {
                 return getCardImageUrl.byCommonId(card.commonId);
             },
@@ -125,6 +146,9 @@
             },
             doneClick() {
                 this.done();
+            },
+            cancelClick() {
+                this.cancelRequirement();
             },
             getCardGroupTitle(group) {
                 return nameBySource[group.source];

@@ -19,17 +19,24 @@
   pointer-events: none;
 }
 
-.dimOverlay-toggleOverlay {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 14px;
-  padding: 10px 20px;
-  z-index: 5;
-}
-
 .dimOverlay-toggleOverlay:hover {
   background-color: #51c870;
   color: white;
   outline: 0;
+}
+
+.dimOverlay-topRightButtons {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  > button {
+    font-size: 14px;
+    padding: 10px 20px;
+    margin: 0 5px;
+  }
 }

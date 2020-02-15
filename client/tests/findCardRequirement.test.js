@@ -18,6 +18,8 @@ const {
 let controller;
 let matchController;
 
+jest.mock('../utils/featureToggles.js', () => ({ isEnabled: name => name === 'lookAtStationRow' }));
+
 function setUpController(optionsAndPageDeps = {}) { //Has side effects to afford a convenient tear down
     matchController = FakeMatchController();
     controller = createController({ matchController, ...optionsAndPageDeps });
@@ -238,5 +240,36 @@ describe('when has NO cards to select and click "Done""', () => {
         assert.calledWith(matchController.emit, 'selectCardForFindCardRequirement', {
             cardGroups: []
         });
+    });
+});
+
+describe('when requirement is cancelable and cancels requirement', () => {
+    beforeEach(async () => {
+        const { dispatch, showPage } = setUpController();
+        showPage();
+        dispatch('stateChanged', FakeState({
+            turn: 1,
+            currentPlayer: 'P1A',
+            phase: 'action',
+            requirements: [{
+                type: 'findCard',
+                count: 1,
+                cardGroups: [{
+                    source: 'deck',
+                    cards: [
+                        createCard({ id: 'C1A' }),
+                    ]
+                }],
+                cardCommonId: '17',
+                cancelable: true,
+            }]
+        }));
+        await timeout();
+
+        await click('.findCard-cancel');
+    });
+
+    test('should emit cancelRequirement', () => {
+        assert.calledOnceWith(matchController.emit, 'cancelRequirement');
     });
 });

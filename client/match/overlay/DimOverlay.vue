@@ -3,9 +3,12 @@
         <div class="dimOverlay-content">
             <slot />
         </div>
-        <button @click="toggleOverlay" class="dimOverlay-toggleOverlay darkButton--onlyLook">
-            Toggle overlay
-        </button>
+        <div class="dimOverlay-topRightButtons">
+            <slot name="topRightButtons"></slot>
+            <button @click="toggleOverlay" class="dimOverlay-toggleOverlay darkButton--onlyLook">
+                Toggle overlay
+            </button>
+        </div>
     </div>
 </template>
 <script>

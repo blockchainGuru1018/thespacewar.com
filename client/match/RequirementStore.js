@@ -28,7 +28,8 @@ module.exports = function ({
         },
         actions: {
             selectStationCardForRequirement,
-            lookAtHandSizeStationRow
+            lookAtHandSizeStationRow,
+            cancelRequirement
         }
     };
 
@@ -117,5 +118,9 @@ module.exports = function ({
     function lookAtHandSizeStationRow({ getters }) {
         const cardId = getters['_firstCardIdThatCanLookAtHandSizeStationRow'];
         matchController.emit('lookAtStationRow', { stationRow: 'handSize', cardId });
+    }
+
+    function cancelRequirement({}) {
+        matchController.emit('cancelRequirement');
     }
 };
