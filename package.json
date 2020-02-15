@@ -7,7 +7,10 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/jest",
+    "dev:test": "./node_modules/.bin/jest --watch",
+    "dev:client": "cd ./client && ./node_modules/.bin/webpack --watch",
+    "dev:server": "node ./scripts/startInDevelopment.js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +24,12 @@
   "homepage": "https://github.com/TodaysWeb/TheSpaceWarOnline#readme",
   "devDependencies": {
     "@babel/preset-env": "^7.8.4",
+    "husky": "^4.2.3",
     "jest": "^25.1.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "npm test"
+    }
   }
 }
