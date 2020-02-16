@@ -18,6 +18,7 @@ test('when has 1 cancelable requirement and cancels requirement', () => {
 
     match.cancelRequirement('P1A');
 
+    expect(true).toBe(false);
     firstPlayerAsserter.refuteHasRequirement({ type: 'findCard' });
 });
 
