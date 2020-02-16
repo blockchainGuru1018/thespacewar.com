@@ -22,19 +22,17 @@ The server is pulling from this repo each minute.
 
 __________________________
 
-Development:
+#Development
 
-* Node must be installed on the machine to run development tools
+* Node must be installed on the machine to run development tools 
 
-All relevant scripts are available in the roots package.json.
+* All relevant scripts are available in the roots package.json.
 
-Run relevant tests for you current commit in watch mode:
-npm run dev:test
+* Run relevant tests for you current commit in watch mode: *npm run dev:test*
 
-Run webpack in watch mode for client code:
-npm run dev:client
+* Run webpack in watch mode for client code: *npm run dev:client*
 
-Start server in development mode:
-npm run dev:server
+* Start server in development mode: *npm run dev:server*
 
-There is a pre-push hook that will make sure all tests are passing.
+There is a pre-commit hook that will make sure all relevant tests are pass.
+There is also a pre-push hook that will make sure _all_ tests are passing.
