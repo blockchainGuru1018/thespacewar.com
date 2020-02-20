@@ -22,9 +22,20 @@ The server is pulling from this repo each minute.
 
 __________________________
 
-#Development
-
+#Setup for development
 * Node must be installed on the machine to run development tools 
+
+1. Clone the repository anywhere
+1. Install webpack globally with "npm install webpack -g"
+1. Install webpack-cli globally with "npm install webpack-cli -g"
+1. Run npm install in the root directory
+1. Run npm install in the /client directory
+1. Run npm install in the /server directory
+1. Run npm install in the /shared directory
+1. In /client directory run "webpack" (you have now built the client code)
+1. In /scripts run "node ./startInDevelopment.js" (you are now running the server on localhost:8080)
+
+#Development
 
 * All relevant scripts are available in the roots package.json.
 
