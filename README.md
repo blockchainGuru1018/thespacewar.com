@@ -104,3 +104,51 @@ Some things will have to happen until then. There is a task for this in the back
 Also note that it might be preferable to build the artifacts on a separate CI server in the future.
 We should not get carried away though, maybe wait until we feel more pain with the current setup.
 Probably if more developers join we will experience some "works on my machine"-syndrome, that would be our cue.
+
+
+#Testing 
+
+Testing is very important to keeping a complex application like this alive. 
+When I have, during small periods of time, not written tests here, the codebase has gotten considerable harder
+to work with. So please, write the tests. It will make your life easier, even in the short term.
+
+I started writing the tests with a library called Bocha, a niche library based on Mocha.
+Now I'm using Jest. Bocha is still used in the client code for asserting on the DOM.
+
+/client 
+-
+The GUI is tested mostly through integration tests. 
+We avoid testing business logic here, instead focuses on interactions and messages sent to the server from certain actions.
+
+- Avoid testing static content HTML.
+- Do test paths that go from an action to sending a message to the server, these are important.
+- Do test branching logic.
+- When something feels like you've already written it on the backend, try to move this common code to /shared and test it there instead.
+- The test suite follows a classicist approach and uses only a few mocks, like the communication with the server.
+The reset is set up with real objects and with real data. Advantages are tests that don't break while refactoring and test-names that
+are closely related to a known requirement. A major disadvantage is that to setup a test you need a deep understanding of the state that makes up the game.
+
+/server
+-
+Some parts of the server has very few tests, those parts are mostly the fringe. Like setting up routes etc.
+
+Otherwise the code has been developed with Outside-in TDD. You will notice that there are a lot of tests on the 
+`Match.js` file. This were mostly the "Outside". So again, these tests are classicist and use very few mocks. The same pros/cons apply
+as for the tests on the client code.
+
+Over time however I realized that I was feeling these tests were not small enough and so I have also driven some tests
+directly on smaller classes instead of through the Match.js interface.
+
+Over time I also realized a lot of the logic between the server and client was the same, and this has been
+refactored into classes that you can find in the `/shared` folder.
+
+/shared
+- 
+This folder contains all the "domain" logic. These are shared between the client and the server.
+
+Tests here are mostly directly towards some specific class and are more mockist than classicist.
+
+Remember
+-
+Be a good citizen, write the tests! Preferably before the code. When you write the tests TDD-style,
+you get better tests, better code, and it's more fun!
