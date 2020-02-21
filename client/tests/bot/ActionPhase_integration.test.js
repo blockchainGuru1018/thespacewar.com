@@ -6,6 +6,7 @@ const createCard = FakeCardDataAssembler.createCard;
 const { PHASES } = require('../../../shared/phases.js');
 const { setupFromState, BotId, PlayerId } = require('./botTestHelpers.js');
 const { unflippedStationCard } = require('../../testUtils/factories.js');
+const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
 
 test('playing a card', async () => {
     const { matchController } = await setupFromState({
@@ -59,5 +60,53 @@ test('when has card too expensive to play, should place as station card', async 
         ]
     });
 
-    expect(matchController.emit).toBeCalledWith('putDownCard', { cardId: 'C1A', location: expect.any(String) });
+    const location = expect.stringContaining('station-');
+    expect(matchController.emit).toBeCalledWith('putDownCard', { cardId: 'C1A', location });
 });
+
+test('when has already played station card, has 2 action point and has a space ship that cost 3, should NOT play that card', async () => {
+    const { matchController } = await setupFromState({
+        turn: 1,
+        phase: 'action',
+        cardsOnHand: [
+            createCard({ id: 'C1A', type: 'spaceShip', cost: 3 })
+        ],
+        stationCards: [
+            stationCard('S1A', 'action')
+        ],
+        events: [
+            PutDownCardEvent.forTest({
+                turn: 1,
+                cardId: 'S1A',
+                location: 'station-action',
+            })
+        ]
+    });
+
+    expect(matchController.emit).not.toBeCalledWith('putDownCard', { cardId: 'C1A', location: expect.any(String) });
+});
+
+test('when has 2 action point and has a space ship that cost 2, should play that card', async () => {
+    const commonId = '1';
+    const fakeRawCardData = [{ id: commonId, price: '2' }];
+    const { matchController } = await setupFromState({
+        turn: 1,
+        phase: 'action',
+        cardsOnHand: [
+            createCard({ id: 'C1A', type: 'spaceShip', commonId })
+        ],
+        stationCards: [
+            stationCard('S1A', 'action')
+        ]
+    }, fakeRawCardData);
+
+    expect(matchController.emit).toBeCalledWith('putDownCard', { cardId: 'C1A', location: 'zone' });
+});
+
+function stationCard(cardId, stationRow) {
+    return {
+        flipped: false,
+        id: cardId,
+        place: stationRow
+    };
+}

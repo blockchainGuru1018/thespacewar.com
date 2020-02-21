@@ -1,5 +1,7 @@
 const GoodKarma = require("../../../shared/card/GoodKarma.js");
 
+module.exports = PlayerCardCapability;
+
 const PlayableTypes = [
     'spaceShip',
     'defense',
@@ -10,7 +12,7 @@ const PlayableCards = [
     GoodKarma.CommonId
 ];
 
-module.exports = function PlayerCardCapability({
+function PlayerCardCapability({
     playerStateService,
     matchController,
     playableTypes = PlayableTypes,
@@ -63,4 +65,4 @@ module.exports = function PlayerCardCapability({
             || playableCards.includes(card.commonId)
             || cardPlayers.some(player => player.forCard(card));
     }
-};
+}

@@ -34,6 +34,7 @@ const CountCardsLeftToDrawForDrawPhase = require('../../shared/match/rules/Count
 const CardsThatCanLookAtHandSizeStationRow = require('../../shared/match/card/query/CardsThatCanLookAtHandSizeStationRow.js');
 const MoreCardsCanBeDrawnForDrawPhase = require('../../shared/match/rules/MoreCardsCanBeDrawnForDrawPhase.js');
 const LookAtStationRow = require('../../shared/match/card/actions/LookAtStationRow.js');
+const PlayerActionPointsCalculator = require('../../shared/match/PlayerActionPointsCalculator.js');
 
 const {
     COMMON_PHASE_ORDER,
@@ -172,10 +173,12 @@ module.exports = function (deps) {
             opponentClock,
             playerStateService,
             opponentStateService,
+            playerEventRepository,
             queryEvents,
             queryOpponentEvents,
             actionLog,
             opponentActionLog,
+            playerActionPointsCalculator,
             eventFactory,
             matchService,
             opponentRetreated,
@@ -532,7 +535,8 @@ module.exports = function (deps) {
             gameConfig: getters.gameConfig,
             playerPhase: getters.playerPhase,
             playerCommanders: getters.playerCommanders,
-            lastStand: getters.lastStand
+            lastStand: getters.lastStand,
+            playerActionPointsCalculator: getters.playerActionPointsCalculator
         });
     }
 
@@ -655,6 +659,12 @@ module.exports = function (deps) {
         });
     }
 
+    function playerEventRepository(state, getters) {
+        return {
+            getAll: () => state.events
+        };
+    }
+
     function queryEvents(state, getters) {
         const eventRepository = {
             getAll: () => state.events
@@ -688,6 +698,16 @@ module.exports = function (deps) {
         return ActionLog({
             playerStateService: getters.opponentStateService,
             cardInfoRepository
+        });
+    }
+
+    function playerActionPointsCalculator(state, getters) {
+        return PlayerActionPointsCalculator({
+            actionPointsCalculator,
+            playerPhase: getters.playerPhase,
+            eventRepository: getters.playerEventRepository,
+            playerStateService: getters.playerStateService,
+            matchService: getters.matchService
         });
     }
 

@@ -35,6 +35,7 @@ const PlayerDrawPhase = require('./PlayerDrawPhase.js');
 const CountCardsLeftToDrawForDrawPhase = require('./rules/CountCardsLeftToDrawForDrawPhase.js');
 const MoreCardsCanBeDrawnForDrawPhase = require('./rules/MoreCardsCanBeDrawnForDrawPhase.js');
 const QueryPlayerRequirements = require('./requirement/QueryPlayerRequirements.js');
+const PlayerActionPointsCalculator = require('./PlayerActionPointsCalculator.js');
 const ServiceTypes = PlayerServiceProvider.TYPE;
 
 module.exports = function ({
@@ -91,6 +92,7 @@ module.exports = function ({
         queryEvents: cached(queryEvents),
         sacrificeCard: cached(sacrificeCard),
         actionLog: cached(actionLog),
+        playerActionPointsCalculator: cached(playerActionPointsCalculator),
         actionPointsCalculator: () => actionPointsCalculator
     };
 
@@ -353,6 +355,7 @@ module.exports = function ({
             turnControl: api.turnControl(playerId),
             playerPhase: api.playerPhase(playerId),
             lastStand: gameServiceFactory.lastStand(),
+            playerActionPointsCalculator: api.playerActionPointsCalculator(playerId),
             gameConfig
         });
     }
@@ -397,6 +400,16 @@ module.exports = function ({
             playerStateService: api.playerStateService(playerId),
             cardInfoRepository: gameServiceFactory.cardInfoRepository(),
             userRepository
+        });
+    }
+
+    function playerActionPointsCalculator(playerId) {
+        return PlayerActionPointsCalculator({
+            actionPointsCalculator: gameServiceFactory.actionPointsCalculator(),
+            playerPhase: api.playerPhase(playerId),
+            eventRepository: api.eventRepository(playerId),
+            playerStateService: api.playerStateService(playerId),
+            matchService: gameServiceFactory.matchService(),
         });
     }
 

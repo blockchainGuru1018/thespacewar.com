@@ -7,7 +7,7 @@ const GoodKarma = require("../../../../shared/card/GoodKarma.js");
 test('when has event card and defense card and only defense card is a playableType, can play card', () => {
     const capability = createCapability({
         playerStateService: {
-            getMatchingPlayableBehaviourCards: Matcher([{ type: 'event' }, { type: 'defense' }]),
+            getMatchingPlayableBehaviourCards: MatcherAgainstCards([{ type: 'event' }, { type: 'defense' }]),
         },
         playableTypes: ['defense']
     });
@@ -18,7 +18,11 @@ test('when has event card and defense card and only defense card is a playableTy
 test('when has playable card but rule says NO, can NOT play card', () => {
     const capability = createCapability({
         playerStateService: {
-            getMatchingPlayableBehaviourCards: Matcher([{ id: 'C1A', type: 'duration', commonId: GoodKarma.CommonId }])
+            getMatchingPlayableBehaviourCards: MatcherAgainstCards([{
+                id: 'C1A',
+                type: 'duration',
+                commonId: GoodKarma.CommonId
+            }])
         },
         playableTypes: [],
         playableCards: [GoodKarma.CommonId],
@@ -32,7 +36,7 @@ test('when has spaceShip and defense card and both are a playableType, should pl
     const matchController = { emit: jest.fn() };
     const capability = createCapability({
         playerStateService: {
-            getMatchingPlayableBehaviourCards: Matcher([
+            getMatchingPlayableBehaviourCards: MatcherAgainstCards([
                 { id: 'C1A', type: 'spaceShip', cost: 2 },
                 { id: 'C2A', type: 'defense', cost: 1 }
             ])
@@ -50,7 +54,7 @@ test('when has playable duration card, should play card', () => {
     const matchController = { emit: jest.fn() };
     const capability = createCapability({
         playerStateService: {
-            getMatchingPlayableBehaviourCards: Matcher([
+            getMatchingPlayableBehaviourCards: MatcherAgainstCards([
                 { id: 'C1A', type: 'duration', commonId: 'C1B', cost: 2 },
             ])
         },
@@ -86,7 +90,7 @@ test('when has playable card type, should play card', () => {
     const cardPlayer = { forCard: ({ commonId }) => commonId === 'C1B', play: jest.fn() };
     const capability = createCapability({
         playerStateService: {
-            getMatchingPlayableBehaviourCards: Matcher([
+            getMatchingPlayableBehaviourCards: MatcherAgainstCards([
                 { id: 'C1A', type: 'event', commonId: 'C1B', cost: 2 },
             ])
         },
@@ -111,6 +115,6 @@ function createCapability(stubs) {
     })
 }
 
-function Matcher(cards) {
+function MatcherAgainstCards(cards) {
     return matcher => cards.filter(matcher);
 }

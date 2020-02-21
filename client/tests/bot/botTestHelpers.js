@@ -40,14 +40,14 @@ async function setupFromStateWithStubs(fakeClientState = {}, stubs = {}) {
     return { matchController };
 }
 
-async function setupFromState(fakeClientState = {}) {
+async function setupFromState(fakeClientState = {}, fakeRawCardData = []) {
     const clientState = await setupClientState(fakeClientState);
     const matchController = createMatchController();
     const botSpawner = BotSpawner({
         opponentUserId: PlayerId,
         matchController,
         clientState,
-        rawCardDataRepository: FakeRawCardDataRepository(),
+        rawCardDataRepository: FakeRawCardDataRepository(fakeRawCardData),
         userRepository: createFakeUserRepositoryToSpawnBot(clientState),
         gameConfig: GameConfig()
     });

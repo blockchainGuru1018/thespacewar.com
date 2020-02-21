@@ -19,7 +19,8 @@ class CanThePlayer {
         turnControl,
         gameConfig,
         playerPhase,
-        lastStand
+        lastStand,
+        playerActionPointsCalculator
     } = {}) {
         this._matchService = matchService;
         this._queryEvents = queryEvents;
@@ -29,6 +30,7 @@ class CanThePlayer {
         this._gameConfig = gameConfig;
         this._playerPhase = playerPhase;
         this._lastStand = lastStand;
+        this._playerActionPointsCalculator = playerActionPointsCalculator;
     }
 
     triggerCardsDormantEffect(card) {
@@ -119,7 +121,7 @@ class CanThePlayer {
     }
 
     affordCard(card) {
-        return this._playerStateService.getActionPointsForPlayer() >= card.cost;
+        return this._playerActionPointsCalculator.calculate() >= card.cost;
     }
 
     _isLastStand() {
