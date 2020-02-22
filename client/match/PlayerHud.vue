@@ -10,7 +10,7 @@
             >
                 <button
                     v-if="readyButtonVisible"
-                    class="readyButton playerHud-phaseText nextPhaseButton"
+                    class="readyButton playerHud-phaseText nextPhaseButton nextPhaseButton-inTheCenter"
                     @click="readyClick"
                 >
                     Ready
@@ -23,14 +23,14 @@
                 <template v-if="canGoToNextTurn">
                     <button
                         v-if="nextPhaseButtonText"
-                        class="playerHud-phaseText nextPhaseButton"
+                        class="playerHud-phaseText nextPhaseButton nextPhaseButton-onTheLeft"
                         @click="nextPhaseClick"
                     >
                         {{ nextPhaseButtonText }}
                     </button>
                     <button
                         v-else-if="endTurnButtonVisible"
-                        class="playerHud-phaseText nextPhaseButton nextPhaseButton-endTurn"
+                        class="playerHud-phaseText nextPhaseButton nextPhaseButton-endTurn nextPhaseButton-onTheLeft"
                         @click="nextPhaseClick"
                     >
                         End turn
@@ -331,8 +331,17 @@
         min-width: 15%;
     }
 
-    .nextPhaseButton {
+    .nextPhaseButton-onTheLeft {
+        min-width: 70%;
+        flex: 1 0 auto;
+    }
+
+    .nextPhaseButton-inTheCenter {
         width: 70%;
+        flex: 0 0 auto;
+    }
+
+    .nextPhaseButton {
         display: flex;
         justify-content: center;
         align-items: center;
