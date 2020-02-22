@@ -55,7 +55,7 @@ describe('In Draw phase', () => {
         expect(matchController.emit).not.toBeCalledWith('drawCard');
     });
 
-    test('When cannot draw card should proceed to next phase', async () => {
+    test('When has already drawn enough cards should proceed to next phase', async () => {
         const { matchController } = await setupFromState({
             turn: 1,
             phase: 'draw',
@@ -68,6 +68,18 @@ describe('In Draw phase', () => {
             events: [
                 DrawCardEvent({ turn: 1 })
             ]
+        });
+
+        expect(matchController.emit).toBeCalledWith('nextPhase', { currentPhase: PHASES.draw });
+    });
+
+    test('When deck is empty should proceed to next phase', async () => {
+        const { matchController } = await setupFromState({
+            phase: 'draw',
+            stationCards: [
+                unflippedStationCard('S1A', 'draw')
+            ],
+            playerCardsInDeckCount: 0,
         });
 
         expect(matchController.emit).toBeCalledWith('nextPhase', { currentPhase: PHASES.draw });

@@ -86,8 +86,8 @@ module.exports = function ({
 
     function drawPhaseDecider() {
         return DrawPhaseDecider({
-            playerRuleService: playerServiceFactory.playerRuleService(BotId),
-            matchController
+            matchController,
+            playerDrawPhase: playerServiceFactory.playerDrawPhase(BotId)
         });
     }
 

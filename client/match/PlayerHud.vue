@@ -147,7 +147,6 @@
             ]),
             ...mapGetters([
                 'nextPhaseWithAction',
-                'cardsToDrawInDrawPhase',
                 'maxHandSize',
                 'actionPoints2',
                 'queryEvents',
@@ -157,6 +156,7 @@
                 'gameOn',
                 'playerPerfectPlan',
                 'playerRuleService',
+                'playerDrawPhase'
             ]),
             ...requirementHelpers.mapGetters([
                 'waitingForOtherPlayerToFinishRequirements',
@@ -212,11 +212,16 @@
                 if (this.phase === PHASES.preparation) {
                     return `Go to ${(this.nextPhaseWithAction)} phase`;
                 }
-                const cardDrawsOnTurn = this.queryEvents.getCardDrawsOnTurn(this.turn);
-                const hasDrawnEnoughCards = cardDrawsOnTurn.length === this.cardsToDrawInDrawPhase;
-                if (this.phase === PHASES.draw && !hasDrawnEnoughCards) return '';
+                if (this.phase === PHASES.draw) {
+                    if (!this.canPassDrawPhase) {
+                        return '';
+                    }
+                }
 
                 return `Go to ${(this.nextPhaseWithAction)} phase`;
+            },
+            canPassDrawPhase() {
+                return this.playerDrawPhase.canPass();
             },
             inDiscardPhaseAndMustDiscardCard() {
                 return this.phase === PHASES.discard && this.playerCardsOnHand.length > this.maxHandSize;

@@ -24,7 +24,8 @@ module.exports = function (clientState) {
                     ...clientState.playerStation.actionCards,
                     ...clientState.playerStation.handSizeCards
                 ],
-                requirements: clientState.requirements
+                requirements: clientState.requirements,
+                cardsInDeck: new Array(clientState.playerCardsInDeckCount).fill({})
             },
             [clientState.opponentUser.id]: {
                 clock: clientState.opponentClock,

@@ -36,6 +36,7 @@ const CountCardsLeftToDrawForDrawPhase = require('./rules/CountCardsLeftToDrawFo
 const MoreCardsCanBeDrawnForDrawPhase = require('./rules/MoreCardsCanBeDrawnForDrawPhase.js');
 const QueryPlayerRequirements = require('./requirement/QueryPlayerRequirements.js');
 const PlayerActionPointsCalculator = require('./PlayerActionPointsCalculator.js');
+const PlayerDeck = require('./PlayerDeck.js');
 const ServiceTypes = PlayerServiceProvider.TYPE;
 
 module.exports = function ({
@@ -75,6 +76,7 @@ module.exports = function ({
         startGame: cached(startGame),
         playerGameTimer: cached(playerGameTimer),
         clock: cached(clock),
+        playerDeck: cached(playerDeck),
         playerStateService: cached(playerStateService),
         addRequirementFromSpec: cached(addRequirementFromSpec),
         playerRequirementService: cached(playerRequirementService),
@@ -199,8 +201,9 @@ module.exports = function ({
     function playerDrawPhase(playerId) {
         return PlayerDrawPhase({
             miller: api.miller(playerId),
-            playerPhase: api.playerPhase(playerId),
-            playerStateService: api.playerStateService(playerId)
+            moreCardsCanBeDrawnForDrawPhase: api.moreCardsCanBeDrawnForDrawPhase(playerId),
+            playerDeck: api.playerDeck(playerId),
+            playerPhase: api.playerPhase(playerId)
         });
     }
 
@@ -452,6 +455,12 @@ module.exports = function ({
 
     function clock(playerId) {
         return Clock({
+            playerStateService: api.playerStateService(playerId)
+        });
+    }
+
+    function playerDeck(playerId) {
+        return PlayerDeck({
             playerStateService: api.playerStateService(playerId)
         });
     }

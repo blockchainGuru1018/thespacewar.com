@@ -2,7 +2,7 @@ const { PHASES } = require('../../shared/phases.js');
 
 module.exports = function ({
     matchController,
-    playerRuleService
+    playerDrawPhase
 }) {
 
     return {
@@ -10,7 +10,7 @@ module.exports = function ({
     };
 
     function decide() {
-        if (playerRuleService.moreCardsCanBeDrawnForDrawPhase()) {
+        if (playerDrawPhase.moreCardsCanBeDrawn()) {
             matchController.emit('drawCard');
         }
         else {

@@ -35,6 +35,7 @@ const CardsThatCanLookAtHandSizeStationRow = require('../../shared/match/card/qu
 const MoreCardsCanBeDrawnForDrawPhase = require('../../shared/match/rules/MoreCardsCanBeDrawnForDrawPhase.js');
 const LookAtStationRow = require('../../shared/match/card/actions/LookAtStationRow.js');
 const PlayerActionPointsCalculator = require('../../shared/match/PlayerActionPointsCalculator.js');
+const ClientPlayerDeck = require('../card/ClientPlayerDeck.js');
 
 const {
     COMMON_PHASE_ORDER,
@@ -171,6 +172,7 @@ module.exports = function (deps) {
             opponentRequirementService,
             playerClock,
             opponentClock,
+            playerDeck,
             playerStateService,
             opponentStateService,
             playerEventRepository,
@@ -405,8 +407,9 @@ module.exports = function (deps) {
 
     function playerDrawPhase(state, getters) {
         return PlayerDrawPhase({
-            playerStateService: getters.playerStateService,
             miller: getters.miller,
+            moreCardsCanBeDrawnForDrawPhase: getters.calculateMoreCardsCanBeDrawnForDrawPhase,
+            playerDeck: getters.playerDeck,
             playerPhase: getters.playerPhase
         });
     }
@@ -622,6 +625,10 @@ module.exports = function (deps) {
         });
     }
 
+    function playerDeck(state) {
+        return ClientPlayerDeck(state.playerCardsInDeckCount);
+    }
+
     function playerStateService(state, getters) {
         const updateStore = (clientState) => {
             let changedProperties = Object.keys(clientState);
@@ -639,6 +646,9 @@ module.exports = function (deps) {
             gameConfig: getters.gameConfig,
             deckIsEmpty: () => {
                 return state.playerCardsInDeckCount <= 0
+            },
+            deckFactory: {
+                create: cards => ClientPlayerDeck(cards.length)
             }
         });
     }
