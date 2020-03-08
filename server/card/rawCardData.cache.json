@@ -324,7 +324,7 @@
         "name": "Fatal Error",
         "price": "0",
         "type_card": "orange",
-        "detail": "Destroy a flipped station card [ OR ] destroy any non-station card and the opponent may draw 2 cards.",
+        "detail": "Destroy a flipped station card [ OR ] destroy any non-station card, opponent receives extra action points of the card in the next turn.",
         "defense": "0",
         "attack": "0",
         "number_copies": "2"
