@@ -226,3 +226,13 @@
         }
     };
 </script>
+<style scoped lang="scss">
+    @import "./effectsCards/_animate.scss";
+
+    .cardHoverActivator {
+        cursor: pointer;
+    }
+    .cardHoverBlowUp {
+        cursor: grabbing;
+    }
+</style>
