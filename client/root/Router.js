@@ -16,7 +16,7 @@ module.exports = function (deps) {
             currentPage.hide();
         }
 
-        const pageConstructor = pagesByName[pageName]
+        const pageConstructor = pagesByName[pageName];
         const page = pageConstructor(pageDependencies);
         currentPage = page;
         page.show(pageArguments);

@@ -53,13 +53,13 @@
                         <div class="opponentCardsInZone field-opponentZoneRow field-zone field-section">
                             <template v-for="n in opponentCardsInZone.length">
                                 <zone-card
+                                    v-if="n <= opponentCardsInZone.length"
+                                    :key="sortedOpponentCardsInZone[n - 1].id"
                                     :card="sortedOpponentCardsInZone[n - 1]"
                                     :class="['card--turnedAround', {'card-lastDurationCard': lastSortedOpponentDurationCardIndex === (n - 1)}]"
-                                    :key="sortedOpponentCardsInZone[n - 1].id"
                                     :owner-id="opponentUser.id"
                                     :zone-opponent-row="playerCardsInOpponentZone"
                                     :zone-player-row="opponentCardsInZone"
-                                    v-if="n <= opponentCardsInZone.length"
                                 />
                             </template>
                             <div
@@ -70,12 +70,12 @@
                         <div class="playerCardsInOpponentZone field-opponentZoneRow field-zone field-section">
                             <template v-for="n in playerCardsInOpponentZone.length">
                                 <zone-card
-                                    :card="playerCardsInOpponentZone[n - 1]"
+                                    v-if="n <= playerCardsInOpponentZone.length"
                                     :key="playerCardsInOpponentZone[n - 1].id"
+                                    :card="playerCardsInOpponentZone[n - 1]"
                                     :owner-id="ownUser.id"
                                     :zone-opponent-row="opponentCardsInZone"
                                     :zone-player-row="playerCardsInOpponentZone"
-                                    v-if="n <= playerCardsInOpponentZone.length"
                                 />
                             </template>
                             <div

@@ -562,8 +562,14 @@
         background-color: rgba(0, 1, 51, .5);
     }
 
-    .readyToAttack, .attackable, .sacrifice {
+    .readyToAttack,
+    .attackable,
+    .sacrifice {
         background-color: rgba(255, 100, 100, .5);
+    }
+
+    .attackable {
+        cursor: crosshair;
     }
 
     .selectForRepair, .triggerDormantEffect {
