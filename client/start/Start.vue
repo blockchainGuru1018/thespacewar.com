@@ -27,6 +27,8 @@
     </div>
 </template>
 <script>
+    import featureToggles from "../utils/featureToggles";
+
     const Vuex = require('vuex');
     const loadingHelpers = Vuex.createNamespacedHelpers('loading');
     const userHelpers = Vuex.createNamespacedHelpers('user');
@@ -67,9 +69,12 @@
         methods: {
             async requestFullScreen() {
                 try {
-                    await document.documentElement.requestFullscreen();
+                    if(!featureToggles.isEnabled('disabled-fullscreen')) {
+                        await document.documentElement.requestFullscreen();
+                    }
                 }
                 catch (error) {
+                    // eslint-disable-next-line no-console
                     console.error('Got error when requested fullscreen:', error);
                 }
             },
