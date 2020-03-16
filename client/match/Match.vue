@@ -2,6 +2,7 @@
     <div :class="['match-wrapper', {shake: shake}]" ref="match-wrapper">
         <div class="match-overlay" />
         <div class="match-backgroundWrapper">
+<!--            <ParticlesJS></ParticlesJS>-->
             <img
                 class="match-background"
                 src="https://images.thespacewar.com/game-background.jpg"
@@ -386,6 +387,7 @@
     </div>
 </template>
 <script>
+    import ParticlesJS from "./AnimationEffect/ParticlesJS.vue";
     const Vuex = require('vuex');
     const getCardImageUrl = require("../utils/getCardImageUrl.js");
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
@@ -819,12 +821,16 @@
             PlayerCommanderCards,
             OpponentCommanderCards,
             OpponentPreGameOverlay,
-            StationCardWrapper
+            StationCardWrapper,
+            "ParticlesJS": ParticlesJS
         },
         directives: {
             longpress
         }
     };
+    export default {
+        components: {ParticlesJS}
+    }
 </script>
 <style lang="scss">
     @import "index";
