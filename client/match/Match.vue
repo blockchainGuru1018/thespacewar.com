@@ -387,7 +387,6 @@
     </div>
 </template>
 <script>
-    import ParticlesJS from "./AnimationEffect/ParticlesJS.vue";
     const Vuex = require('vuex');
     const getCardImageUrl = require("../utils/getCardImageUrl.js");
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
@@ -822,15 +821,11 @@
             OpponentCommanderCards,
             OpponentPreGameOverlay,
             StationCardWrapper,
-            "ParticlesJS": ParticlesJS
         },
         directives: {
             longpress
         }
     };
-    export default {
-        components: {ParticlesJS}
-    }
 </script>
 <style lang="scss">
     @import "index";

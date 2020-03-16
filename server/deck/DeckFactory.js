@@ -1,4 +1,5 @@
 const Deck = require('./Deck.js');
+const FakeTheSwarmDeck = require('./FakeTheSwarmDeck.js');
 
 module.exports = function (deps) {
 
@@ -13,10 +14,19 @@ module.exports = function (deps) {
         return Deck(cards);
     }
 
-    function createCardsForDeck() {
-        const deck = cardDataAssembler.createAll();
+    function createCardsForDeck(useTheSwarmDeck = false) {
+        const deck = createDeck(useTheSwarmDeck);
         shuffle(deck);
         return deck;
+    }
+
+    function createDeck(useTheSwarmDeck) {
+        if (useTheSwarmDeck) {
+            return FakeTheSwarmDeck();
+        }
+        else {
+            return cardDataAssembler.createAll();
+        }
     }
 };
 

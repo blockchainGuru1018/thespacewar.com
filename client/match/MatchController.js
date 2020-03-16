@@ -1,3 +1,5 @@
+import featureToggles from "../utils/featureToggles.js";
+
 const ajax = require('../utils/ajax.js');
 
 module.exports = function (deps) { //TODO Rename MatchConnectionController or something better
@@ -16,7 +18,7 @@ module.exports = function (deps) { //TODO Rename MatchConnectionController or so
 
     function start() {
         socket.on('match', onSocketMatchEvent);
-        emit('start');
+        emit('start', { useTheSwarmDeck: shouldUseTheSwarmDeck() });
 
         document.addEventListener('visibilitychange', onVisibilityChange);
     }
@@ -57,5 +59,9 @@ module.exports = function (deps) { //TODO Rename MatchConnectionController or so
         if (!document.hidden) {
             emit('refresh');
         }
+    }
+
+    function shouldUseTheSwarmDeck() {
+        return featureToggles.isEnabled('useTheSwarmDeck');
     }
 };

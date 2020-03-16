@@ -14,7 +14,7 @@ function StartGameController({
         repairPotentiallyInconsistentState //TODO Move this to its own class
     };
 
-    function start(playerId) {
+    function start(playerId, { useTheSwarmDeck = false } = {}) {
         const playerIds = matchService.getPlayerIds();
 
         if (matchService.allPlayersConnected()) {
@@ -24,7 +24,7 @@ function StartGameController({
         else {
             matchService.connectPlayer(playerId);
             if (matchService.allPlayersConnected()) {
-                resetPlayers(playerIds);
+                resetPlayers(playerIds, useTheSwarmDeck);
 
                 const playerGameTimer = playerServiceFactory.playerGameTimer(playerId);
                 playerGameTimer.resetAll();
@@ -61,10 +61,10 @@ function StartGameController({
         }
     }
 
-    function resetPlayers(playerIds) {
+    function resetPlayers(playerIds, useTheSwarmDeck) {
         for (const playerId of playerIds) {
             const playerStateService = playerServiceFactory.playerStateService(playerId);
-            playerStateService.reset();
+            playerStateService.reset(useTheSwarmDeck);
         }
     }
 
