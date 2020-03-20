@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "sinon": "^9.0.1",
     "jest": "^25.1.0",
     "lodash": "^4.17.15"
   }

@@ -1,5 +1,17 @@
 module.exports = () => [
     {
+        id: '13',
+        commonId: '83',
+        color: 'red',
+        type: 'missile',
+        name: 'Alien Missile',
+        description: 'Slow (each turn can either move or attack but not both)',
+        cost: 1,
+        attack: 5,
+        defense: 1,
+        paralyzed: false
+    },
+        {
         id: '1',
         commonId: '6',
         color: 'red',

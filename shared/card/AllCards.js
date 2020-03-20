@@ -30,7 +30,8 @@ const classes = [
     require('./TargetMissed.js'),
     require('./TheExterminator.js'),
     require('./Sabotage.js'),
-    require('./Titan.js')
+    require('./Titan.js'),
+    require('./AlienMissile'),
 ];
 
 module.exports = classes;

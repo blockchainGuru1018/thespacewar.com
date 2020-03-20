@@ -1,4 +1,4 @@
-import FatalErrorDestroyCardAction from '../card/fatalError/FatalErrorDestroyCardAction.js';
+const FatalErrorDestroyCardAction = require('../card/fatalError/FatalErrorDestroyCardAction.js');
 
 test('Cannot select unflipped station cards for action when put down in home zone', () => {
     const fatalErrorAction = createAction();
