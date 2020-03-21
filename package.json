@@ -9,9 +9,10 @@
   "scripts": {
     "test": "./node_modules/.bin/jest",
     "dev:test": "./node_modules/.bin/jest --watch",
-    "dev:client": "cd ./client && ./node_modules/.bin/webpack --watch",
+    "dev:client": "cd ./client && webpack --watch",
     "dev:server": "node ./scripts/startInDevelopment.js",
-    "pre-commit": "jest --changedSince=HEAD"
+    "pre-commit": "jest --changedSince=HEAD",
+    "build": "env PORT=8000 && npm run dev:server"
   },
   "repository": {
     "type": "git",
@@ -33,5 +34,8 @@
       "pre-commit": "npm run pre-commit",
       "pre-push": "npm test"
     }
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0"
   }
 }

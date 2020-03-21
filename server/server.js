@@ -1,3 +1,4 @@
+require('dotenv').config();
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -19,8 +20,9 @@ const GameConfig = require('../shared/match/GameConfig.js');
 const HandleConnection = require('./connections/HandleConnection.js');
 const Logger = require('./utils/Logger.js');
 const http = require('http');
-const { port } = require('./settings.json');
-const { DebugPassword } = require('./semi-secret.js');
+const {port} = require('./settings.json');
+const {DebugPassword} = require('./semi-secret.js');
+
 
 let inDevelopment;
 let app;
@@ -29,7 +31,8 @@ let socketMaster;
 
 const logger = new Logger();
 
-let restartListener = () => {};
+let restartListener = () => {
+};
 
 module.exports = {
     onRestart,
@@ -42,6 +45,14 @@ function onRestart(listener) {
     restartListener = listener;
 }
 
+function getPort() {
+    if (typeof process.env.PORT === "undefined") {
+        return port;
+    }
+
+    return process.env.PORT;
+}
+
 function startServer(config) {
     inDevelopment = config.inDevelopment;
 
@@ -52,11 +63,11 @@ function startServer(config) {
         server = http.createServer(app);
         socketMaster = SocketIO(server);
 
-        await run({ config, closeServer, exitProcess });
+        await run({config, closeServer, exitProcess});
 
-        console.info(` - 2/2 Setting up server at port ${port}`)
-        server.listen(port, () => {
-            console.info(` - 2/2 SUCCESS, running on port ${port}\n`)
+        console.info(` - 2/2 Setting up server at port ${getPort()}`);
+        server.listen(getPort(), () => {
+            console.info(` - 2/2 SUCCESS, running on port ${getPort()}\n`);
             resolve();
         });
     });
@@ -78,7 +89,7 @@ async function restartServer() {
     restartListener();
 }
 
-async function run({ config, closeServer, exitProcess }) {
+async function run({config, closeServer, exitProcess}) {
     const rawCardDataRepository = ServerRawCardDataRepository();
 
     console.info(' - 1/2 Fetching fresh game data');
@@ -90,8 +101,8 @@ async function run({ config, closeServer, exitProcess }) {
         logger,
         rawCardDataRepository,
         gameConfig: GameConfig.fromConfig(config.gameConfig),
-        userRepository: UserRepository({ socketMaster }),
-        socketRepository: SocketRepository({ socketMaster })
+        userRepository: UserRepository({socketMaster}),
+        socketRepository: SocketRepository({socketMaster})
     };
 
     //2nd level dependencies
@@ -106,7 +117,7 @@ async function run({ config, closeServer, exitProcess }) {
         user: UserController(deps),
         match: MatchController(deps),
         card: CardController(deps),
-        git: GitController({ closeServer, exitProcess }),
+        git: GitController({closeServer, exitProcess}),
         assets: AssetsController(deps),
         cheat: CheatController(deps)
     };
@@ -151,7 +162,7 @@ function setupRoutes(deps, controllers) {
     app.get('/libraries/:libraryName', controllers.assets.getLibrary);
 
     app.post('/test-debug', (req, res) => {
-        res.json({ valid: validateDebugPassword(req.body.password) });
+        res.json({valid: validateDebugPassword(req.body.password)});
         lastCheckTime = Date.now();
     });
     app.post('/cheat', controllers.cheat.cheat);
@@ -162,19 +173,17 @@ function setupRoutes(deps, controllers) {
             setTimeout(() => {
                 res.redirect('/');
             }, 3000);
-        }
-        else {
-            res.json({ text: 'Invalid password' });
+        } else {
+            res.json({text: 'Invalid password'});
         }
     });
 
     app.post('/master-log', (req, res) => {
         if (validateDebugPassword(req.body.password)) {
             const masterLog = deps.logger.readMasterLog();
-            res.json({ text: masterLog });
-        }
-        else {
-            res.json({ text: `Invalid password` });
+            res.json({text: masterLog});
+        } else {
+            res.json({text: `Invalid password`});
         }
     });
 
@@ -182,8 +191,7 @@ function setupRoutes(deps, controllers) {
         const timeSinceLastCheck = Date.now() - lastCheckTime;
         if (timeSinceLastCheck < 3 * 1000) {
             return false;
-        }
-        else {
+        } else {
             return password === DebugPassword;
         }
     }
@@ -191,6 +199,6 @@ function setupRoutes(deps, controllers) {
 
 function setupSocketConnectionHandler(deps, controllers) {
     socketMaster.on('connection', async connection => {
-        HandleConnection({ ...deps, controllers, connection });
+        HandleConnection({...deps, controllers, connection});
     });
 }
