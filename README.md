@@ -105,6 +105,8 @@ Also note that it might be preferable to build the artifacts on a separate CI se
 We should not get carried away though, maybe wait until we feel more pain with the current setup.
 Probably if more developers join we will experience some "works on my machine"-syndrome, that would be our cue.
 
+Note: The package.json on the root level of the project is for development dependencies.
+Modules added there will not be installed in production and should not be referred to in code.
 
 #Testing 
 
