@@ -225,7 +225,7 @@ eval("\n\nfunction PutDownCardEvent({\n  turn,\n  location,\n  cardId,\n  cardCo
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nconst BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nconst CanMoveFirstTurn = __webpack_require__(/*! ./mixins/CanMoveFirstTurn */ \"../shared/card/mixins/CanMoveFirstTurn.js\");\n\nmodule.exports = class AcidProjectile extends CanMoveFirstTurn(BaseCard) {\n  constructor(deps) {\n    super(deps);\n  }\n\n  static get CommonId() {\n    return '84';\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/AcidProjectile.js?");
+eval("\n\nconst info = __webpack_require__(/*! ./info/84.config.js */ \"../shared/card/info/84.config.js\");\n\nconst BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nconst CanMoveFirstTurn = __webpack_require__(/*! ./mixins/CanMoveFirstTurn */ \"../shared/card/mixins/CanMoveFirstTurn.js\");\n\nmodule.exports = class AcidProjectile extends CanMoveFirstTurn(BaseCard) {\n  constructor(deps) {\n    super(deps);\n  }\n\n  static get Info() {\n    return info;\n  }\n\n  static get CommonId() {\n    return info.CommonId;\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/AcidProjectile.js?");
 
 /***/ }),
 
@@ -848,6 +848,18 @@ eval("\n\nconst CommonId = '66';\nmodule.exports = {\n  CommonId,\n  requirement
 
 "use strict";
 eval("\n\nconst CommonId = '67';\nmodule.exports = {\n  CommonId,\n  requirementSpecsWhenPutDownInHomeZone: {\n    opponentIsFirst: true,\n    forOpponent: [{\n      type: 'drawCard',\n      count: 1,\n      cardCommonId: CommonId,\n      common: true,\n      ifAddedAddAlso: [{\n        forOpponent: [],\n        forPlayer: [{\n          type: 'drawCard',\n          count: 0,\n          common: true,\n          waiting: true\n        }]\n      }],\n      whenResolvedAddAlso: [{\n        forOpponent: [{\n          type: 'findCard',\n          count: 1,\n          common: true,\n          sources: ['opponentHand', \"opponentDrawStationCards\", \"opponentActionStationCards\", \"opponentHandSizeStationCards\"],\n          filter: {\n            onlyFlippedStationCards: true\n          },\n          target: 'opponentDiscardPile'\n        }],\n        forPlayer: [{\n          type: 'findCard',\n          count: 0,\n          waiting: true,\n          common: true\n        }]\n      }]\n    }],\n    forPlayer: []\n  }\n};\n\n//# sourceURL=webpack:///../shared/card/info/67.config.js?");
+
+/***/ }),
+
+/***/ "../shared/card/info/84.config.js":
+/*!****************************************!*\
+  !*** ../shared/card/info/84.config.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\nconst CommonId = '84';\nmodule.exports = {\n  CommonId,\n  requirementSpecsWhenPutDownInHomeZone: {\n    forOpponent: [],\n    forPlayer: [{\n      type: 'drawCard',\n      count: 1,\n      cardCommonId: CommonId\n    }]\n  }\n};\n\n//# sourceURL=webpack:///../shared/card/info/84.config.js?");
 
 /***/ }),
 

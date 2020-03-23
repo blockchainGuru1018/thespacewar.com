@@ -1,3 +1,4 @@
+const info = require('./info/84.config.js');
 const BaseCard = require('./BaseCard.js');
 
 const CanMoveFirstTurn = require('./mixins/CanMoveFirstTurn');
@@ -7,8 +8,13 @@ module.exports = class AcidProjectile extends CanMoveFirstTurn(BaseCard) {
         super(deps);
     }
 
-    static get CommonId() {
-        return '84';
+    static get Info() {
+        return info;
     }
+
+    static get CommonId() {
+        return info.CommonId;
+    }
+
 
 };

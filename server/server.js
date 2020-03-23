@@ -44,9 +44,8 @@ module.exports = {
 function onRestart(listener) {
     restartListener = listener;
 }
-
 function getPort() {
-    if (typeof process.env.PORT === "undefined") {
+    if (typeof process.env.PORT == "undefined") {
         return port;
     }
 
