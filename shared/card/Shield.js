@@ -1,6 +1,7 @@
 const BaseCard = require('./BaseCard.js');
+const StopsStationAttack = require('./mixins/StopsStationAttack.js');
 
-module.exports = class Shield extends BaseCard {
+module.exports = class Shield extends StopsStationAttack(BaseCard) {
 
     constructor(deps) {
         super(deps);
@@ -8,9 +9,5 @@ module.exports = class Shield extends BaseCard {
 
     static get CommonId() {
         return '81';
-    }
-
-    stopsStationAttack() {
-        return true;
     }
 };

@@ -1,6 +1,7 @@
 const BaseCard = require('./BaseCard.js');
+const StopsStationAttack = require('./mixins/StopsStationAttack.js');
 
-module.exports = class EnergyShield extends BaseCard {
+module.exports = class EnergyShield extends StopsStationAttack(BaseCard) {
 
     constructor(deps) {
         super(deps);
@@ -8,10 +9,6 @@ module.exports = class EnergyShield extends BaseCard {
 
     static get CommonId() {
         return '21';
-    }
-
-    stopsStationAttack() {
-        return true;
     }
 
     canOnlyHaveOneInHomeZone() {
