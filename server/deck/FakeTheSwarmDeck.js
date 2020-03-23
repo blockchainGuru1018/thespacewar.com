@@ -12,6 +12,18 @@ module.exports = () => [
         paralyzed: false
     },
     {
+        id: '16',
+        commonId: '84',
+        color: 'red',
+        type: 'missile',
+        name: 'Acid Projectile',
+        description: 'Fast (can move the first turn). If played from hand: you may draw a card.',
+        cost: 1,
+        attack: 1,
+        defense: 1,
+        paralyzed: false
+    },
+    {
         id: '14',
         commonId: '81',
         color: 'green',

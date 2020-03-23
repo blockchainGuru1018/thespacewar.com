@@ -33,6 +33,7 @@ const classes = [
     require('./Titan.js'),
     require('./AlienMissile.js'),
     require('./Shield.js'),
+    require('./AcidProjectile'),
 ];
 
 module.exports = classes;
