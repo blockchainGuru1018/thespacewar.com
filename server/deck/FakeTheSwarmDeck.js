@@ -11,7 +11,31 @@ module.exports = () => [
         defense: 1,
         paralyzed: false
     },
-        {
+    {
+        id: '14',
+        commonId: '81',
+        color: 'green',
+        type: 'defense',
+        name: 'Shield',
+        description: 'Protects base station. (You can have several Shield in play at the same time.)',
+        cost: 1,
+        attack: 0,
+        defense: 3,
+        paralyzed: false
+    },
+    {
+        id: '15',
+        commonId: '81',
+        color: 'green',
+        type: 'defense',
+        name: 'Shield',
+        description: 'Protects base station. (You can have several Shield in play at the same time.)',
+        cost: 1,
+        attack: 0,
+        defense: 3,
+        paralyzed: false
+    },
+    {
         id: '1',
         commonId: '6',
         color: 'red',
@@ -19,8 +43,8 @@ module.exports = () => [
         name: 'HELLO',
         description: 'I dunno',
         cost: 1,
-        attack: 99,
-        defense: 99,
+        attack: 1,
+        defense: 1,
         paralyzed: false
     },
     {
@@ -31,8 +55,8 @@ module.exports = () => [
         name: 'HELLO',
         description: 'I dunno',
         cost: 1,
-        attack: 99,
-        defense: 99,
+        attack: 1,
+        defense: 1,
         paralyzed: false
     },
     {
@@ -43,8 +67,8 @@ module.exports = () => [
         name: 'HELLO',
         description: 'I dunno',
         cost: 1,
-        attack: 99,
-        defense: 99,
+        attack: 1,
+        defense: 1,
         paralyzed: false
     },
     {
@@ -55,8 +79,8 @@ module.exports = () => [
         name: 'HELLO',
         description: 'I dunno',
         cost: 1,
-        attack: 99,
-        defense: 99,
+        attack: 1,
+        defense: 1,
         paralyzed: false
     },
     {
@@ -67,8 +91,8 @@ module.exports = () => [
         name: 'HELLO',
         description: 'I dunno',
         cost: 1,
-        attack: 99,
-        defense: 99,
+        attack: 1,
+        defense: 1,
         paralyzed: false
     },
     {
@@ -79,8 +103,8 @@ module.exports = () => [
         name: 'HELLO',
         description: 'I dunno',
         cost: 1,
-        attack: 99,
-        defense: 99,
+        attack: 1,
+        defense: 1,
         paralyzed: false
     },
     {
@@ -91,8 +115,8 @@ module.exports = () => [
         name: 'HELLO',
         description: 'I dunno',
         cost: 1,
-        attack: 99,
-        defense: 99,
+        attack: 1,
+        defense: 1,
         paralyzed: false
     },
     {
@@ -103,8 +127,8 @@ module.exports = () => [
         name: 'HELLO',
         description: 'I dunno',
         cost: 1,
-        attack: 99,
-        defense: 99,
+        attack: 1,
+        defense: 1,
         paralyzed: false
     },
     {
@@ -115,8 +139,8 @@ module.exports = () => [
         name: 'HELLO',
         description: 'I dunno',
         cost: 1,
-        attack: 99,
-        defense: 99,
+        attack: 1,
+        defense: 1,
         paralyzed: false
     },
     {
@@ -127,8 +151,8 @@ module.exports = () => [
         name: 'HELLO',
         description: 'I dunno',
         cost: 1,
-        attack: 99,
-        defense: 99,
+        attack: 1,
+        defense: 1,
         paralyzed: false
     },
     {
@@ -139,8 +163,8 @@ module.exports = () => [
         name: 'HELLO',
         description: 'I dunno',
         cost: 1,
-        attack: 99,
-        defense: 99,
+        attack: 1,
+        defense: 1,
         paralyzed: false
     },
     {
@@ -151,8 +175,8 @@ module.exports = () => [
         name: 'HELLO',
         description: 'I dunno',
         cost: 1,
-        attack: 99,
-        defense: 99,
+        attack: 1,
+        defense: 1,
         paralyzed: false
     }
 ];

@@ -31,7 +31,8 @@ const classes = [
     require('./TheExterminator.js'),
     require('./Sabotage.js'),
     require('./Titan.js'),
-    require('./AlienMissile'),
+    require('./AlienMissile.js'),
+    require('./Shield.js'),
 ];
 
 module.exports = classes;
