@@ -12,7 +12,8 @@
     "dev:client": "cd ./client && webpack --watch",
     "dev:server": "node ./scripts/startInDevelopment.js",
     "pre-commit": "jest --changedSince=HEAD",
-    "build": "env PORT=9000 && npm run dev:server"
+    "client": "npm run dev:client",
+    "server": "npm run dev:server"
   },
   "repository": {
     "type": "git",

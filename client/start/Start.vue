@@ -3,7 +3,7 @@
         <div class="loading-backdropLetterBoxWrapper">
             <div class="background" />
         </div>
-        <FullScreen></FullScreen>
+        <ToggleSwarmDeckButton/>
         <div
             v-if="!loadingDone"
             class="loading-bar"
@@ -29,6 +29,7 @@
 </template>
 <script>
     import featureToggles from "../utils/featureToggles";
+    import ToggleSwarmDeckButton from "./ToggleSwarmDeckButton.vue";
     const Vuex = require('vuex');
     const loadingHelpers = Vuex.createNamespacedHelpers('loading');
     const userHelpers = Vuex.createNamespacedHelpers('user');
@@ -36,7 +37,6 @@
     const resolveModuleWithPossibleDefault = require('../utils/resolveModuleWithPossibleDefault.js');
     const Lobby = resolveModuleWithPossibleDefault(require('../lobby/Lobby.vue'));
     const Login = resolveModuleWithPossibleDefault(require('../login/Login.vue'));
-    import FullScreen from "./FullScreen.vue";
     const EnterAccessKey = resolveModuleWithPossibleDefault(require('../login/EnterAccessKey.vue'));
 
     module.exports = {
@@ -90,7 +90,7 @@
             Lobby,
             Login,
             EnterAccessKey,
-            FullScreen
+            ToggleSwarmDeckButton,
         }
     };
 </script>
