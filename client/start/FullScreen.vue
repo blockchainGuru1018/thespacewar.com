@@ -58,9 +58,9 @@
                  */
                 document.addEventListener('fullscreenchange', (event) => {
                     if (document.fullscreenElement) {
-                        console.log('Entered Fullscreen');
+                        this.showButton = 'reduce';
                     } else {
-                        console.log('Exit Fullscreen');
+                        this.showButton = 'expand';
                     }
                 })
             }
@@ -71,6 +71,7 @@
 
 <style scoped lang="scss">
     @import "../client/match/banner/_banner.scss";
+
     .container-fullscreen {
         width: $bannerHeight;
         height: $bannerHeight;
