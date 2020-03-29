@@ -1,4 +1,5 @@
 <template>
+
     <button
         class="toggleInfoMode"
         title="Soon you will be able to click here to show a tutorial overlay"
@@ -32,8 +33,9 @@
         margin-right: 2px;
         width: $bannerHeight;
         height: $bannerHeight;
-        background: transparent;
-        border: 0;
+        background: $bannerBackgroundColor;
+        color: $bannerTextColor;
+        border: $borderButtonDefault;
 
         &:focus {
             filter: brightness(125%);
@@ -41,6 +43,9 @@
 
         &:hover {
             filter: brightness(135%);
+            outline: 1px solid $bannerOutlineFocusColor;
+            border: 2px solid $bannerBorderFocusColor;
+            background: $bannerBackgroundFocusColor;
         }
 
         &:active, &:focus, &:hover {

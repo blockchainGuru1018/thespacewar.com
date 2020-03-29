@@ -17,6 +17,7 @@
                         d="M37 24.8c-6.7 0-12.2 5.5-12.2 12.2S30.3 49.2 37 49.2 49.2 43.7 49.2 37 43.7 24.8 37 24.8zm0 20.4c-4.5 0-8.2-3.7-8.2-8.2s3.7-8.2 8.2-8.2 8.2 3.7 8.2 8.2-3.7 8.2-8.2 8.2z" />
                 </svg>
             </button>
+            <FullScreen/>
         </div>
         <ActionLog />
         <PlayerBanner
@@ -31,7 +32,7 @@
 </template>
 <script>
     import ToggleInfoModeButtonContainer from '../infoMode/ToggleInfoModeButtonContainer.vue';
-
+    import FullScreen from "../../start/FullScreen.vue";
     const Vuex = require('vuex');
     const matchHelpers = Vuex.createNamespacedHelpers('match');
     const escapeMenuHelpers = Vuex.createNamespacedHelpers('escapeMenu');
@@ -51,7 +52,8 @@
         components: {
             PlayerBanner,
             ActionLog,
-            ToggleInfoModeButtonContainer
+            ToggleInfoModeButtonContainer,
+            FullScreen
         }
     }
 </script>
@@ -73,6 +75,7 @@
 
         > .matchHeader-escapeMenuButton {
             padding: 0;
+            margin-right: 2px;
             width: $bannerHeight;
             height: $bannerHeight;
             border: 2px solid $bannerBorderColor;
