@@ -65,18 +65,18 @@
             color: #fff;
             font-size: 13px;
             text-transform: uppercase;
-            padding: 10px 0;
+            padding: 5px 0;
             margin-right: 4px;
         }
 
         .btn {
-            width: 70px;
+            width: 60px;
             background-color: #00000047;
             border: none;
-            padding: 6px;
+            padding: 0;
             margin: 0;
             display: block;
-            border-radius: 5px;
+            border-radius: 20px;
             cursor: pointer;
 
             &.btn-toggle {
