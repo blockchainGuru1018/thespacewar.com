@@ -191,4 +191,16 @@ module.exports = () => [
         defense: 0,
         paralyzed: false
     },
+    {
+        id: '17',
+        commonId: '91',
+        color: 'violet',
+        type: 'duration',
+        name: 'Disturbing Signals',
+        description: 'Enemy missiles can\'t move or attack.',
+        cost: 1,
+        attack: 0,
+        defense: 0,
+        paralyzed: false
+    },
 ];

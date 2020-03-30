@@ -1,20 +1,13 @@
 const BaseCard = require('./BaseCard.js');
-
-module.exports = class DisturbingSensor extends BaseCard {
+const PreventsOpponentMissilesFromAttacking = require('./mixins/PreventsOpponentMissilesFromAttacking.js');
+const PreventsOpponentMissilesFromMoving = require('./mixins/PreventsOpponentMissilesFromMoving.js');
+module.exports = class DisturbingSensor extends PreventsOpponentMissilesFromAttacking(PreventsOpponentMissilesFromMoving(BaseCard)) {
     constructor(deps) {
         super(deps);
     }
 
     static get CommonId() {
         return '37';
-    }
-
-    get preventsOpponentMissilesFromMoving() {
-        return true;
-    }
-
-    get preventsOpponentMissilesFromAttacking() {
-        return true;
     }
 
     canAttack() {
