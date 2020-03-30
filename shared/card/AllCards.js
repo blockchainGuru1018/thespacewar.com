@@ -34,6 +34,7 @@ const classes = [
     require('./AlienMissile.js'),
     require('./Shield.js'),
     require('./AcidProjectile'),
+    require('./ExtraDraw.js'),
 ];
 
 module.exports = classes;
