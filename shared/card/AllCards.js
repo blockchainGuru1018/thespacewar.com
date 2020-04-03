@@ -36,6 +36,7 @@ const classes = [
     require('./AcidProjectile'),
     require('./ExtraDraw.js'),
     require('./DisturbingSignals.js'),
+    require('./Fast.js'),
 ];
 
 module.exports = classes;

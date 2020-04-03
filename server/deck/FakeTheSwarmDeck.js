@@ -203,4 +203,16 @@ module.exports = () => [
         defense: 0,
         paralyzed: false
     },
+    {
+        id: '18',
+        commonId: '95',
+        color: 'violet',
+        type: 'duration',
+        name: 'Fast',
+        description: 'Your space ships are fast (they can move the first turn they enter play).',
+        cost: 1,
+        attack: 0,
+        defense: 0,
+        paralyzed: false
+    }
 ];
