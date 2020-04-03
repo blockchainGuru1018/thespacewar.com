@@ -1,4 +1,4 @@
-const FakeCardDataAssembler = require('./testUtils/FakeCardDataAssembler.js');
+const FakeCardDataAssembler = require('../../shared/test/testUtils/FakeCardDataAssembler.js');
 const createCard = FakeCardDataAssembler.createCard;
 const setupIntegrationTest = require('./testUtils/setupIntegrationTest.js');
 

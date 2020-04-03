@@ -1,20 +1,17 @@
 const Deck = require('../../deck/Deck.js');
+const FakeCardDataAssembler = require('../../../shared/test/testUtils/FakeCardDataAssembler.js');
 
 module.exports = FakeDeck;
 
 FakeDeck.fromCards = cards => {
     return FakeDeck({
-        cardDataAssembler: {
-            createAll: () => [...cards]
-        }
+        cardDataAssembler: FakeCardDataAssembler({ createAll: () => [...cards] })
     });
 };
 
 FakeDeck.realDeckFromCards = cards => {
     return Deck({
-        cardDataAssembler: {
-            createAll: () => [...cards]
-        }
+        cardDataAssembler: FakeCardDataAssembler({ createAll: () => [...cards] })
     });
 };
 

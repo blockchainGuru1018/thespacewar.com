@@ -15,6 +15,8 @@ FakeCardDataAssembler.fromCards = cards => {
 
 function FakeCardDataAssembler({ createAll }) {
     return {
-        createAll
+        createLibrary: createAll,
+        createRegularDeck: createAll,
+        createSwarmDeck: createAll
     }
 }

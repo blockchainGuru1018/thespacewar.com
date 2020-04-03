@@ -1,4 +1,4 @@
-const FakeCardDataAssembler = require('../../server/test/testUtils/FakeCardDataAssembler.js');
+const FakeCardDataAssembler = require('../../shared/test/testUtils/FakeCardDataAssembler.js');
 const createCard = FakeCardDataAssembler.createCard;
 const getCardImageUrl = require('../utils/getCardImageUrl.js');
 const FakeState = require('../testUtils/FakeState.js');
@@ -288,8 +288,8 @@ describe('when has excellent work as flipped station card and move it to zone', 
 // });
 
 function FakeCardInfoRepository(cards) {
-    let cardDataAssembler = {
+    let cardDataAssembler = FakeCardDataAssembler({
         createAll: () => cards.map(c => createCard(c))
-    };
+    });
     return CardInfoRepository({ cardDataAssembler });
 }

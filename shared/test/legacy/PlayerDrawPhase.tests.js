@@ -3,7 +3,7 @@ const assert = bocha.assert;
 const refute = bocha.refute;
 const Commander = require('../../match/commander/Commander.js');
 const createState = require('../fakeFactories/createState.js');
-const FakeCardDataAssembler = require("../../../server/test/testUtils/FakeCardDataAssembler.js");//TODO Move to shared
+const FakeCardDataAssembler = require("../testUtils/FakeCardDataAssembler.js");//TODO Move to shared
 const createCard = FakeCardDataAssembler.createCard;
 const TestHelper = require('../fakeFactories/TestHelper.js');
 

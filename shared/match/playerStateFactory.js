@@ -1,4 +1,4 @@
-const FakeCardDataAssembler = require('../../server/test/testUtils/FakeCardDataAssembler.js');
+const FakeCardDataAssembler = require('../test/testUtils/FakeCardDataAssembler.js');
 
 module.exports = {
     empty

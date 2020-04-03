@@ -2,7 +2,7 @@ const {
     assert,
 } = require('../testUtils/bocha-jest/bocha');
 const createState = require('../fakeFactories/createState.js');
-const FakeCardDataAssembler = require("../../../server/test/testUtils/FakeCardDataAssembler.js");//TODO Move to shared
+const FakeCardDataAssembler = require("../testUtils/FakeCardDataAssembler.js");
 const createCard = FakeCardDataAssembler.createCard;
 const CardFactory = require('../../card/CardFactory.js');
 const PlayerStateService = require('../../match/PlayerStateService.js');

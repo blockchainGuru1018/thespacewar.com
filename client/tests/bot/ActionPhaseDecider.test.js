@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-const { createCard } = require('../../../server/test/testUtils/FakeCardDataAssembler.js');
+const { createCard } = require('../../../shared/test/testUtils/FakeCardDataAssembler.js');
 const { createMatchController, BotId, PlayerId } = require('./botTestHelpers.js');
 const fakePlayerStateServiceFactory = require('../../../shared/test/fakeFactories/playerStateServiceFactory.js');
 const FakeMatchController = require('../../testUtils/FakeMatchController.js');

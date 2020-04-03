@@ -2,7 +2,7 @@ const {
     refute,
     assert
 } = require('../testUtils/bocha-jest/bocha');
-const FakeCardDataAssembler = require('../../../server/test/testUtils/FakeCardDataAssembler.js');
+const FakeCardDataAssembler = require('../testUtils/FakeCardDataAssembler.js');
 const createCardData = FakeCardDataAssembler.createCard;
 const BaseCard = require('../../card/BaseCard.js');
 const CanThePlayer = require('../../match/CanThePlayer.js');

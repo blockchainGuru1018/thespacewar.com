@@ -1,7 +1,7 @@
 const bocha = require('../testUtils/bocha-jest/bocha');
 const assert = bocha.assert;
 const createState = require('../fakeFactories/createState.js');
-const FakeCardDataAssembler = require("../../../server/test/testUtils/FakeCardDataAssembler.js");//TODO Move to shared
+const FakeCardDataAssembler = require("../testUtils/FakeCardDataAssembler.js");
 const createCard = FakeCardDataAssembler.createCard;
 const TestHelper = require('../fakeFactories/TestHelper.js');
 

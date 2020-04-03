@@ -1,6 +1,6 @@
 const bocha = require('../../testUtils/bocha-jest/bocha');
 const assert = bocha.assert;
-const FakeCardDataAssembler = require('../../testUtils/FakeCardDataAssembler.js');
+const FakeCardDataAssembler = require('../../../../shared/test/testUtils/FakeCardDataAssembler.js');
 const createCard = FakeCardDataAssembler.createCard;
 const CardInfoRepository = require('../../../../shared/CardInfoRepository.js');
 const ActionPointCalculator = require('../../../../shared/match/ActionPointsCalculator.js');
@@ -412,9 +412,9 @@ module.exports = {
 };
 
 function FakeCardInfoRepository(cards) {
-    const cardDataAssembler = {
+    const cardDataAssembler = FakeCardDataAssembler({
         createAll: () => cards.map(c => createCard(c))
-    };
+    });
     return CardInfoRepository({ cardDataAssembler });
 }
 

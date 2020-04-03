@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-const FakeCardDataAssembler = require('../../../server/test/testUtils/FakeCardDataAssembler.js');
+const FakeCardDataAssembler = require('../../../shared/test/testUtils/FakeCardDataAssembler.js');
 const createCard = FakeCardDataAssembler.createCard;
 const MatchMode = require('../../../shared/match/MatchMode.js');
 const Commander = require('../../../shared/match/commander/Commander.js');

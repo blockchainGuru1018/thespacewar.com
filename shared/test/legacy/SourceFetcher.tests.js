@@ -1,7 +1,7 @@
 const {
     assert,
 } = require('../testUtils/bocha-jest/bocha');
-const createCard = require('../../../server/test/testUtils/FakeCardDataAssembler.js').createCard;
+const createCard = require('../testUtils/FakeCardDataAssembler.js').createCard;
 const TestHelper = require('../fakeFactories/TestHelper.js');
 const createState = require('../fakeFactories/createState.js');
 

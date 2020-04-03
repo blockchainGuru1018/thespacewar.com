@@ -1,5 +1,5 @@
 const defaults = require('lodash/defaults');
-const FakeCardDataAssembler = require('../../server/test/testUtils/FakeCardDataAssembler.js');
+const FakeCardDataAssembler = require('../../shared/test/testUtils/FakeCardDataAssembler.js');
 const Commander = require("../../shared/match/commander/Commander.js");
 const createCard = FakeCardDataAssembler.createCard;
 
