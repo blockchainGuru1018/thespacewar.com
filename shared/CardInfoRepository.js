@@ -45,7 +45,7 @@ module.exports = function ({
 
     function getCards() {
         if (!cards) {
-            cards = cardDataAssembler.createAll();
+            cards = cardDataAssembler.createLibrary();
         }
 
         return cards;

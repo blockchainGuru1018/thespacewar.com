@@ -22,7 +22,7 @@ function FakeDeck(deps) {
 
     const cardDataAssembler = deps.cardDataAssembler;
 
-    const cards = cardDataAssembler.createAll();
+    const cards = cardDataAssembler.createRegularDeck();
 
     return {
         draw,

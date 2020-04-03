@@ -7,7 +7,8 @@
         "detail": "Slow (each turn can either move or attack but not both)",
         "defense": "7",
         "attack": "5",
-        "number_copies": "1"
+        "number_copies": "1",
+        "author": "Luca Oleastri"
     },
     {
         "id": "2",
@@ -17,7 +18,8 @@
         "detail": "Destroy any card when this enters play.\r\nSlow (each turn can either move or attack but not both).",
         "defense": "10",
         "attack": "7",
-        "number_copies": "1"
+        "number_copies": "1",
+        "author": "Luca Oleastri"
     },
     {
         "id": "3",
@@ -27,7 +29,8 @@
         "detail": "Normal space ship.",
         "defense": "3",
         "attack": "5",
-        "number_copies": "1"
+        "number_copies": "1",
+        "author": "Luca Oleastri"
     },
     {
         "id": "4",
@@ -37,7 +40,8 @@
         "detail": "Slow (each turn can either move or attack but not both)",
         "defense": "9",
         "attack": "3",
-        "number_copies": "1"
+        "number_copies": "1",
+        "author": "Luca Oleastri"
     },
     {
         "id": "5",
@@ -47,7 +51,8 @@
         "detail": "Normal missile.",
         "defense": "2",
         "attack": "4",
-        "number_copies": "2"
+        "number_copies": "2",
+        "author": "Gabriel Stiernström"
     },
     {
         "id": "6",
@@ -57,7 +62,8 @@
         "detail": "Fast (can move the first turn).",
         "defense": "1",
         "attack": "2",
-        "number_copies": "1"
+        "number_copies": "1",
+        "author": "Gabriel Stiernström"
     },
     {
         "id": "7",
@@ -67,7 +73,8 @@
         "detail": "Destroys Energy Shield or paralyzes space ship (turn the card and it cannot do anything until repaired).",
         "defense": "2",
         "attack": "0",
-        "number_copies": "2"
+        "number_copies": "2",
+        "author": "Gabriel Stiernström"
     },
     {
         "id": "8",
@@ -77,7 +84,8 @@
         "detail": "Slow (each turn can either move or attack but not both)",
         "defense": "3",
         "attack": "10",
-        "number_copies": "1"
+        "number_copies": "1",
+        "author": "Gabriel Stiernström"
     },
     {
         "id": "9",
@@ -87,7 +95,8 @@
         "detail": "+1 attack value of your space ships (not missiles or cannons).",
         "defense": "0",
         "attack": "0",
-        "number_copies": "2"
+        "number_copies": "2",
+        "author": "Luca Oleastri"
     },
     {
         "id": "11",
@@ -97,7 +106,8 @@
         "detail": "Draw 3 extra cards in your draw phase, then after your draw phase discard 1 card from your hand.",
         "defense": "0",
         "attack": "0",
-        "number_copies": "2"
+        "number_copies": "2",
+        "author": "Luca Oleastri"
     },
     {
         "id": "12",
@@ -107,7 +117,8 @@
         "detail": "No other duration card has any effect.\r\nRemove from play to destroy another duration card.",
         "defense": "0",
         "attack": "0",
-        "number_copies": "2"
+        "number_copies": "2",
+        "author": "Baranov_Evgenii"
     },
     {
         "id": "13",
@@ -117,7 +128,8 @@
         "detail": "You have no maximum hand size.\r\nIn your action phase you may look at and take to your hand bottom row station cards.",
         "defense": "0",
         "attack": "0",
-        "number_copies": "2"
+        "number_copies": "2",
+        "author": "Luca Oleastri"
     },
     {
         "id": "14",
@@ -127,7 +139,8 @@
         "detail": "Put down this card as an extra station card.\r\n[ OR ] Draw 3 cards.",
         "defense": "0",
         "attack": "0",
-        "number_copies": "3"
+        "number_copies": "3",
+        "author": "Luca Oleastri"
     },
     {
         "id": "15",
@@ -137,7 +150,8 @@
         "detail": "All cards except station cards are destroyed. Each player receives 3 station damage.",
         "defense": "0",
         "attack": "0",
-        "number_copies": "1"
+        "number_copies": "1",
+        "author": "I_g0rZh"
     },
     {
         "id": "16",
@@ -147,7 +161,8 @@
         "detail": "Play this card directly during enemy attack from space ship (not collision, missile or cannon) to make the attack fail.",
         "defense": "0",
         "attack": "0",
-        "number_copies": "3"
+        "number_copies": "3",
+        "author": "Luca Oleastri"
     },
     {
         "id": "17",
@@ -157,7 +172,8 @@
         "detail": "Find 2 missile cards (red cards) from your draw or discard pile and play them without cost. Shuffle the draw pile if searched.",
         "defense": "0",
         "attack": "0",
-        "number_copies": "1"
+        "number_copies": "1",
+        "author": "Gabriel Stiernström"
     },
     {
         "id": "18",
@@ -167,7 +183,8 @@
         "detail": "Search for a card from the draw pile, discard pile or station cards and put it into your hand. Shuffle the draw pile if searched.",
         "defense": "0",
         "attack": "0",
-        "number_copies": "2"
+        "number_copies": "2",
+        "author": "jamesteohart"
     },
     {
         "id": "19",
@@ -177,7 +194,8 @@
         "detail": "Can after first turn be sacrificed instead of attacking to deal 4 damage to target in same zone (collision).",
         "defense": "1",
         "attack": "2",
-        "number_copies": "2"
+        "number_copies": "2",
+        "author": "Luca Oleastri"
     },
     {
         "id": "20",
@@ -187,7 +205,8 @@
         "detail": "Draw 5 cards and then discard 1 card from your hand.",
         "defense": "0",
         "attack": "0",
-        "number_copies": "1"
+        "number_copies": "1",
+        "author": "Luca Oleastri"
     },
     {
         "id": "21",
@@ -197,7 +216,8 @@
         "detail": "Protects base station. (You can only have one Energy Shield in play at the same time.)",
         "defense": "5",
         "attack": "0",
-        "number_copies": "3"
+        "number_copies": "3",
+        "author": "I_g0rZh"
     },
     {
         "id": "22",
@@ -207,7 +227,8 @@
         "detail": "Normal cannon.\r\n(Defense cards cannot move)",
         "defense": "1",
         "attack": "4",
-        "number_copies": "1"
+        "number_copies": "1",
+        "author": "Gabriel Stiernström"
     },
     {
         "id": "24",
@@ -217,7 +238,8 @@
         "detail": "Can attack 2 times per turn.",
         "defense": "2",
         "attack": "1",
-        "number_copies": "1"
+        "number_copies": "1",
+        "author": "Luca Oleastri"
     },
     {
         "id": "25",
@@ -227,7 +249,8 @@
         "detail": "Normal space ship.",
         "defense": "3",
         "attack": "2",
-        "number_copies": "1"
+        "number_copies": "1",
+        "author": "Luca Oleastri"
     },
     {
         "id": "26",
@@ -237,7 +260,8 @@
         "detail": "Normal space ship.",
         "defense": "2",
         "attack": "3",
-        "number_copies": "1"
+        "number_copies": "1",
+        "author": "Luca Oleastri"
     },
     {
         "id": "27",
@@ -247,7 +271,8 @@
         "detail": "The Shade can only be attacked if it has been attacking the last turn.",
         "defense": "3",
         "attack": "4",
-        "number_copies": "1"
+        "number_copies": "1",
+        "author": "Luca Oleastri"
     },
     {
         "id": "28",
@@ -257,7 +282,8 @@
         "detail": "Fast (can move the first turn).",
         "defense": "2",
         "attack": "3",
-        "number_copies": "1"
+        "number_copies": "1",
+        "author": "Luca Oleastri"
     },
     {
         "id": "29",
@@ -267,7 +293,8 @@
         "detail": "Can instead of doing attack repair 1 station damage or 3 other damage.\r\nFast (can move the first turn).",
         "defense": "3",
         "attack": "1",
-        "number_copies": "1"
+        "number_copies": "1",
+        "author": "Luca Oleastri"
     },
     {
         "id": "30",
@@ -277,7 +304,8 @@
         "detail": "Can instead of doing attack repair 1 station damage or 5 other damage.",
         "defense": "5",
         "attack": "1",
-        "number_copies": "1"
+        "number_copies": "1",
+        "author": "Luca Oleastri"
     },
     {
         "id": "31",
@@ -287,7 +315,8 @@
         "detail": "Counter target card costing 2 or less.\r\n[ OR ] Draw 2 cards.",
         "defense": "0",
         "attack": "0",
-        "number_copies": "4"
+        "number_copies": "4",
+        "author": "dvargg"
     },
     {
         "id": "32",
@@ -297,7 +326,8 @@
         "detail": "Normal space ship.",
         "defense": "4",
         "attack": "2",
-        "number_copies": "2"
+        "number_copies": "2",
+        "author": "Luca Oleastri"
     },
     {
         "id": "34",
@@ -307,7 +337,8 @@
         "detail": "Discard this card from table to counter card being played.",
         "defense": "0",
         "attack": "0",
-        "number_copies": "2"
+        "number_copies": "2",
+        "author": "slena"
     },
     {
         "id": "37",
@@ -317,7 +348,8 @@
         "detail": "· Enemy missiles can't move or attack.\r\n· If opponent after draw phase has more   than 1 card in hand, he or she           discards a card.",
         "defense": "3",
         "attack": "0",
-        "number_copies": "1"
+        "number_copies": "1",
+        "author": "Luca Oleastri"
     },
     {
         "id": "38",
@@ -327,7 +359,8 @@
         "detail": "Destroy a flipped station card [ OR ] destroy any non-station card, opponent receives extra action points of the card in the next turn.",
         "defense": "0",
         "attack": "0",
-        "number_copies": "2"
+        "number_copies": "2",
+        "author": "ragnarok"
     },
     {
         "id": "39",
@@ -337,7 +370,8 @@
         "detail": "Long distance shooter.\r\n(Can after the first turn shoot targets in enemy zone from home zone)",
         "defense": "4",
         "attack": "2",
-        "number_copies": "1"
+        "number_copies": "1",
+        "author": "Luca Oleastri"
     },
     {
         "id": "42",
@@ -347,7 +381,8 @@
         "detail": "Draw 3 cards and the opponent draws 2 cards. [ OR ] Discard 1 card and the opponent discards 2 cards.",
         "defense": "0",
         "attack": "0",
-        "number_copies": "2"
+        "number_copies": "2",
+        "author": "vitaliy_sokol"
     },
     {
         "id": "56",
@@ -357,7 +392,8 @@
         "detail": "Normal space ship.",
         "defense": "6",
         "attack": "2",
-        "number_copies": "1"
+        "number_copies": "1",
+        "author": "Luca Oleastri"
     },
     {
         "id": "64",
@@ -367,7 +403,8 @@
         "detail": "You cannot play any card. The opponent can only play 1 card during their turn and this card cannot be an event (orange) card. ",
         "defense": "0",
         "attack": "0",
-        "number_copies": "1"
+        "number_copies": "1",
+        "author": "sdecoret"
     },
     {
         "id": "67",
@@ -377,6 +414,7 @@
         "detail": "Opponent draws 1 card. See the cards from the opponents hand and then discard 1 card from hand or flipped station card.",
         "defense": "0",
         "attack": "0",
-        "number_copies": "2"
+        "number_copies": "2",
+        "author": "Luca Oleastri"
     }
 ]

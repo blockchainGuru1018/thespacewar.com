@@ -84,7 +84,7 @@ module.exports = function ({ pageDependencies }) {
     }
 
     async function loadAllImages() {
-        const sources = cardDataAssembler.createAll().map(cardData => getCardImageUrl.byCommonId(cardData.commonId));
+        const sources = cardDataAssembler.createLibrary().map(cardData => getCardImageUrl.byCommonId(cardData.commonId));
         await Promise.all(sources.map(loadImage));
     }
 

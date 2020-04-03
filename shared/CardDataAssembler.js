@@ -5,18 +5,32 @@ const CARD_COLOR_TO_TYPE = {
     'red': 'missile',
     'green': 'defense'
 };
+const FakeTheSwarmDeck = require('./FakeTheSwarmDeck.js');
 
-module.exports = function ({
-    rawCardDataRepository
+module.exports = function CardDataAssembler({
+    rawCardDataRepository,
 }) {
 
     return {
-        createAll,
+        createLibrary,
+        createSwarmDeck,
+        createRegularDeck,
         createOneOfEach,
         createFromCommonId
     };
 
-    function createAll() {
+    function createLibrary() {
+        return [
+            ...rawCardDataRepository.get().map(CardData),
+            ...FakeTheSwarmDeck()
+        ];
+    }
+
+    function createSwarmDeck() {
+        return FakeTheSwarmDeck();
+    }
+
+    function createRegularDeck() {
         const rawCardData = rawCardDataRepository.get();
         const cards = [];
         for (const cardJson of rawCardData) {
