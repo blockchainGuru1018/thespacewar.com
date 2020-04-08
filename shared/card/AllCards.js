@@ -37,6 +37,7 @@ const classes = [
     require('./ExtraDraw.js'),
     require('./DisturbingSignals.js'),
     require('./Fast.js'),
+    require('./Drone.js'),
 ];
 
 module.exports = classes;

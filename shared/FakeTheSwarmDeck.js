@@ -214,5 +214,17 @@ module.exports = () => [
         attack: 0,
         defense: 0,
         paralyzed: false
-    }
+    },
+    {
+        id: '19',
+        commonId: '78',
+        color: 'blue',
+        type: 'space-ship',
+        name: 'Drone',
+        description: 'If played from hand: you may draw a card.',
+        cost: 1,
+        attack: 1,
+        defense: 1,
+        paralyzed: false
+    },
 ];
