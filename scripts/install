@@ -1,0 +1,12 @@
+#!/bin/bash
+npm install webpack -g &&
+  npm install webpack-cli -g &&
+  cd .. &&
+  npm install &&
+  (cd ./client && npm install) &&
+  (cd ./server && npm install) &&
+  (cd ./shared && npm install) &&
+  (cd ./client/testUtils/bocha-jest/bocha && npm install) &&
+  (cd ./server/test/testUtils/bocha-jest/bocha && npm install) &&
+  (cd ./shared/test/testUtils/bocha-jest/bocha && npm install) &&
+  (cd ./client && webpack)

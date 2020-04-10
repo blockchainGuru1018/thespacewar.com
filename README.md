@@ -32,8 +32,10 @@ __________________________
 1. Run `npm install` in the /client directory
 1. Run `npm install` in the /server directory
 1. Run `npm install` in the /shared directory
+1. Run `npm install` in /client/testUtils/bocha-jest/bocha directory
+1. Run `npm install` in /server/testUtils/bocha-jest/bocha directory
+1. Run `npm install` in /shared/testUtils/bocha-jest/bocha directory
 1. In /client directory run `webpack` (you have now built the client code)
-1. In /scripts run `node ./startInDevelopment.js` (you are now running the server on localhost:8080)
 
 #Development
 
@@ -127,7 +129,7 @@ We avoid testing business logic here, instead focuses on interactions and messag
 - Do test branching logic.
 - When something feels like you've already written it on the backend, try to move this common code to /shared and test it there instead.
 - The test suite follows a classicist approach and uses only a few mocks, like the communication with the server.
-The reset is set up with real objects and with real data. Advantages are tests that don't break while refactoring and test-names that
+Tests are set up with real objects and with real data. Advantages are tests that don't break while refactoring and test-names that
 are closely related to a known requirement. A major disadvantage is that to setup a test you need a deep understanding of the state that makes up the game.
 
 /server
