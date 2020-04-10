@@ -25,7 +25,11 @@ __________________________
 #Setup for development
 * Node must be installed on the machine to run development tools 
 
-1. Clone the repository anywhere
+* Clone the repository anywhere and follow steps above FROM the root of the repository:
+
+1. Run the install script in the /scripts directory
+
+If the install scripts does not work, follow these steps to install everything manually:
 1. Install webpack globally with `npm install webpack -g`
 1. Install webpack-cli globally with `npm install webpack-cli -g`
 1. Run `npm install` in the root directory
