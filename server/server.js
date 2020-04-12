@@ -23,6 +23,7 @@ const http = require('http');
 const {port} = require('./settings.json');
 const {DebugPassword} = require('./semi-secret.js');
 const morgan = require('morgan');
+const config = require('../config');
 const cookieParser = require('cookie-parser');
 let inDevelopment;
 let app;
@@ -44,6 +45,7 @@ module.exports = {
 function onRestart(listener) {
     restartListener = listener;
 }
+
 function getPort() {
     if (typeof process.env.PORT == "undefined") {
         return port;
@@ -161,6 +163,10 @@ function setupRoutes(deps, controllers) {
     app.get('/image/:imageName', controllers.assets.getImage);
     app.get('/sound/:soundName', controllers.assets.getSound);
     app.get('/libraries/:libraryName', controllers.assets.getLibrary);
+    app.get('/config/environment', (request, response) => {
+        response.setHeader('Content-Type', 'application/json');
+        response.end(JSON.stringify(config));
+    });
 
     app.post('/test-debug', (req, res) => {
         res.json({valid: validateDebugPassword(req.body.password)});
