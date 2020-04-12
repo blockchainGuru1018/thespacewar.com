@@ -22,8 +22,8 @@ const Logger = require('./utils/Logger.js');
 const http = require('http');
 const {port} = require('./settings.json');
 const {DebugPassword} = require('./semi-secret.js');
-
-
+const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
 let inDevelopment;
 let app;
 let server;
@@ -57,6 +57,8 @@ function startServer(config) {
 
     return new Promise(async resolve => {
         app = express();
+        app.use(morgan('dev'));
+        app.use(cookieParser('Xjf&f$gkJhyS9)?/1!FD'));
         app.use(bodyParser.json());
 
         server = http.createServer(app);
