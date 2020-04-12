@@ -41,12 +41,13 @@ module.exports = function ({ getCardData, cache = DummyCache() }) {
 
     async function updateCacheIfChanged() {
         const cardData = await getCardData();
-        if(!isValidCardData(cardData)) {
+        if (!isValidCardData(cardData)) {
             throw new Error('Either the service may be down or the new card format is invalid JSON')
         }
 
         if (newDataIsDifferentFromCurrent(cardData)) {
-            const newCacheData = createCacheData(createCacheData(cardData))
+            const newCacheData = createCacheData(cardData);
+            cacheData = newCacheData;
             const cacheDataJson = JSON.stringify(newCacheData, null, 4);
             await cache.setItem('rawCardData', cacheDataJson);
         }
@@ -54,19 +55,22 @@ module.exports = function ({ getCardData, cache = DummyCache() }) {
 
     function isValidCardData(data) {
         try {
-            JSON.parse(data);
+            if (typeof data === 'object') {
+                JSON.stringify(data);
+            } else {
+                JSON.parse(data);
+            }
             return true;
-        }
-        catch(error) {
+        } catch (error) {
             return false;
         }
     }
 
-    function newDataIsDifferentFromCurrent(data) {
+    function newDataIsDifferentFromCurrent(cardData) {
         if (!cacheData) return true;
 
         const cacheDataJson = JSON.stringify(cacheData.data, null, 4);
-        const freshDataJson = JSON.stringify(data, null, 4);
+        const freshDataJson = JSON.stringify(cardData, null, 4);
         return cacheDataJson !== freshDataJson;
     }
 
