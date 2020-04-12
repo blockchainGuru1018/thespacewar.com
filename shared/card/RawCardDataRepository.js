@@ -18,7 +18,7 @@ module.exports = function ({ getCardData, cache = DummyCache() }) {
                 await updateCacheIfChanged();
             }
             catch (err) {
-                console.error('Failed updating cache, using the current cache instead.');
+                console.error('Failed updating cache, using the current cache instead. This was the reason it failed:\n\t"' + err.message + '"');
             }
         }
     }
@@ -40,12 +40,25 @@ module.exports = function ({ getCardData, cache = DummyCache() }) {
     }
 
     async function updateCacheIfChanged() {
-        const data = await getCardData();
+        const cardData = await getCardData();
+        if(!isValidCardData(cardData)) {
+            throw new Error('Either the service may be down or the new card format is invalid JSON')
+        }
 
-        if (newDataIsDifferentFromCurrent(data)) {
-            saveNewCacheData(data);
-            const cacheDataJson = JSON.stringify(cacheData.data, null, 4);
+        if (newDataIsDifferentFromCurrent(cardData)) {
+            const newCacheData = createCacheData(createCacheData(cardData))
+            const cacheDataJson = JSON.stringify(newCacheData, null, 4);
             await cache.setItem('rawCardData', cacheDataJson);
+        }
+    }
+
+    function isValidCardData(data) {
+        try {
+            JSON.parse(data);
+            return true;
+        }
+        catch(error) {
+            return false;
         }
     }
 
@@ -57,11 +70,11 @@ module.exports = function ({ getCardData, cache = DummyCache() }) {
         return cacheDataJson !== freshDataJson;
     }
 
-    function saveNewCacheData(newData) {
-        if (!cacheData) cacheData = {};
-
-        cacheData.data = newData;
-        cacheData.saveTime = Date.now();
+    function createCacheData(cardData) {
+        return {
+            data: cardData,
+            saveTime: Date.now()
+        };
     }
 
     async function getCacheOrNull() {
