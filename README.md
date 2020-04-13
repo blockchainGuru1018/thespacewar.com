@@ -159,10 +159,10 @@ Tests here are mostly directly towards some specific class and are more mockist 
 
 API Endpoints of the cards
 -
-https://admin.thespacewar.com/services/api/cards?deck=all (all cards)
-https://admin.thespacewar.com/services/api/cards?deck=1 (Core deck)
-https://admin.thespacewar.com/services/api/cards?deck=2 (The Swarm deck)
-https://admin.thespacewar.com/services/api/cards?deck=3 (United Stars deck)
+* https://admin.thespacewar.com/services/api/cards?deck=all (all cards)
+* https://admin.thespacewar.com/services/api/cards?deck=1 (Core deck)
+* https://admin.thespacewar.com/services/api/cards?deck=2 (The Swarm deck)
+* https://admin.thespacewar.com/services/api/cards?deck=3 (United Stars deck)
 
 Remember
 -
