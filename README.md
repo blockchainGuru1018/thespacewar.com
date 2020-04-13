@@ -22,7 +22,8 @@ The server is pulling from this repo each minute.
 
 __________________________
 
-#Setup for development
+Setup for development
+-
 * Node must be installed on the machine to run development tools 
 
 * Clone the repository anywhere and follow steps above FROM the root of the repository:
@@ -41,8 +42,8 @@ If the install scripts does not work, follow these steps to install everything m
 1. Run `npm install` in /shared/testUtils/bocha-jest/bocha directory
 1. In /client directory run `webpack` (you have now built the client code)
 
-#Development
-
+Development
+-
 * All relevant scripts are available in the roots package.json.
 
 * Run relevant tests for you current commit in watch mode: `npm run dev:test`
@@ -55,8 +56,8 @@ There is a pre-commit hook that will make sure all relevant tests are pass.
 There is also a pre-push hook that will make sure **all** tests are passing.
 
 
-#Using feature toggles
-
+Using feature toggles
+-
 Import featureToggles.js and use the method "isEnabled" to determine if a toggle is on. 
 
 All toggles are off by default. 
@@ -97,8 +98,8 @@ Key: `"ft-new-header"`
 Value: `"true"`
 
 
-#To deploy new code
-
+To deploy new code
+-
 _We are including the build artifacts in version control. They are built on your machine, not on a separate server._
 1. Make sure to build the client code locally if you are not running webpack in watch mode.
 1. Make sure to include the index.js bundle when commiting and then push it.
@@ -114,8 +115,8 @@ Probably if more developers join we will experience some "works on my machine"-s
 Note: The package.json on the root level of the project is for development dependencies.
 Modules added there will not be installed in production and should not be referred to in code.
 
-#Testing 
-
+Testing 
+-
 Testing is very important to keeping a complex application like this alive. 
 When I have, during small periods of time, not written tests here, the codebase has gotten considerable harder
 to work with. So please, write the tests. It will make your life easier, even in the short term.
@@ -155,6 +156,13 @@ refactored into classes that you can find in the `/shared` folder.
 This folder contains all the "domain" logic. These are shared between the client and the server.
 
 Tests here are mostly directly towards some specific class and are more mockist than classicist.
+
+API Endpoints of the cards
+-
+https://admin.thespacewar.com/services/api/cards?deck=all (all cards)
+https://admin.thespacewar.com/services/api/cards?deck=1 (Core deck)
+https://admin.thespacewar.com/services/api/cards?deck=2 (The Swarm deck)
+https://admin.thespacewar.com/services/api/cards?deck=3 (United Stars deck)
 
 Remember
 -
