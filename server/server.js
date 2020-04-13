@@ -15,6 +15,7 @@ const CardController = require('./card/CardController.js');
 const CheatController = require('./cheat/CheatController.js');
 const GitController = require('./git/GitController.js');
 const AssetsController = require('./assets/AssetsController.js');
+const AuthController = require('./auth/AuthController.js');
 const ServerRawCardDataRepository = require('./card/ServerRawCardDataRepository.js');
 const GameConfig = require('../shared/match/GameConfig.js');
 const HandleConnection = require('./connections/HandleConnection.js');
@@ -122,7 +123,8 @@ async function run({config, closeServer, exitProcess}) {
         card: CardController(deps),
         git: GitController({closeServer, exitProcess}),
         assets: AssetsController(deps),
-        cheat: CheatController(deps)
+        cheat: CheatController(deps),
+        auth: AuthController(deps),
     };
     deps.controllers = controllers;
     const mappedControllers = wrapControllersWithRejectionProtection(controllers);
@@ -163,10 +165,11 @@ function setupRoutes(deps, controllers) {
     app.get('/image/:imageName', controllers.assets.getImage);
     app.get('/sound/:soundName', controllers.assets.getSound);
     app.get('/libraries/:libraryName', controllers.assets.getLibrary);
-    app.get('/config/environment', (request, response) => {
+    app.get('/config', (request, response) => {
         response.setHeader('Content-Type', 'application/json');
         response.end(JSON.stringify(config));
     });
+    app.get('/is-logged-in', controllers.auth.getAuthLoggedIn);
 
     app.post('/test-debug', (req, res) => {
         res.json({valid: validateDebugPassword(req.body.password)});

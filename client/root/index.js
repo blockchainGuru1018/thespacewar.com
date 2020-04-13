@@ -5,6 +5,7 @@ const vClickOutside = require('v-click-outside');
 const Router = require('./Router.js');
 const RootStore = require('./RootStore.js');
 const UserRepository = require('../users/UserRepository.js');
+const ConfigRepository = require('../config/ConfigRepository.js');
 const StartPage = require('../start/StartPage.js');
 const LoadingStore = require('../loading/LoadingStore.js');
 const LoginStore = require('../login/LoginStore.js');
@@ -16,6 +17,7 @@ const ClientRawCardDataRepository = require('../card/ClientRawCardDataRepository
 const CardDataAssembler = require('../../shared');
 const CardInfoRepository = require('../../shared/CardInfoRepository.js');
 const UserStore = require('../users/UserStore.js');
+const ConfigStore = require('../config/ConfigStore');
 const AudioStore = require('../match/audio/AudioStore.js');
 const BotUpdateListener = require('../ai/BotUpdateListener.js');
 const localGameDataFacade = require('../utils/localGameDataFacade.js');
@@ -48,10 +50,12 @@ function bootstrap() {
     });
 
     // 2nd order dependencies
+    const configRepository = ConfigRepository({socket});
     const userRepository = UserRepository({ socket });
     const cardDataAssembler = CardDataAssembler({ rawCardDataRepository });
     Object.assign(pageDependencies, {
         cardDataAssembler,
+        configRepository,
         userRepository
     });
 
@@ -71,6 +75,7 @@ function bootstrap() {
         rawCardDataRepository
     });
     const stores = [
+        ConfigStore({ rootStore, configRepository }),
         LoadingStore({ rootStore, pageDependencies }),
         LoginStore({ route: router.route, rootStore, userRepository, botUpdateListener }),
         LobbyStore({ route: router.route, rootStore, userRepository, matchRepository, botUpdateListener }),

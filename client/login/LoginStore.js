@@ -28,7 +28,11 @@ module.exports = function ({
         }
     };
 
-    function init({ state, dispatch }) {
+    async function init({ state, dispatch }) {
+        const config = await ajax.get('/config');
+        if (!config.USE_ACCESS_KEY) {
+            localStorage.setItem('access-key', '"testing123"')
+        }
         const storedAccessKey = localGameDataFacade.AccessKey.get();
         if (storedAccessKey) {
             state.hasAccess = true;
