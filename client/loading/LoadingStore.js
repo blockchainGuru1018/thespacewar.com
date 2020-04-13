@@ -29,16 +29,11 @@ module.exports = function ({ pageDependencies }) {
     }
 
     async function load({ state, rootGetters, dispatch }) {
-        let d = performance.now();
-
         dispatch('initFakeLoadingProgress');
         state.loaded = false;
 
-        let a = performance.now();
         await rawCardDataRepository.init();
-        console.info('raw data load:', performance.now() - a);
 
-        let b = performance.now();
         if (isAlreadyLoggedIn()) {
             const ownUser = localGameDataFacade.getOwnUser();
 
@@ -52,21 +47,13 @@ module.exports = function ({ pageDependencies }) {
                 dispatch('user/storeOwnUser', null, { root: true });
             }
         }
-        console.info('login:', performance.now() - b);
 
-        let c = performance.now();
         if (rootGetters['login/checkIfHasPreviousSession']()) {
             await dispatch('login/restoreFromPreviousSession', null, { root: true });
         }
-        console.info('restore match:', performance.now() - c);
-
-        console.info(' - loading images - ');
         await loadAllImages();
-        console.info(' - FINISHED - ');
 
         state.loaded = true;
-
-        console.info('total:', performance.now() - d)
     }
 
     function initFakeLoadingProgress({ state, getters }) {
