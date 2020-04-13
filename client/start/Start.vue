@@ -17,13 +17,13 @@
             v-if="!!ownUser && loadingDone"
             :class="viewClasses"
         />
-        <Login
-            v-else-if="hasAccess"
-            :class="viewClasses"
-        />
         <EnterAccessKey
             :class="viewClasses"
+            v-else-if="needAccessKey"
+        />
+        <Login
             v-else
+            :class="viewClasses"
         />
     </div>
 </template>
@@ -34,6 +34,7 @@
     const loadingHelpers = Vuex.createNamespacedHelpers('loading');
     const userHelpers = Vuex.createNamespacedHelpers('user');
     const loginHelpers = Vuex.createNamespacedHelpers('login');
+    const configHelpers = Vuex.createNamespacedHelpers('config');
     const resolveModuleWithPossibleDefault = require('../utils/resolveModuleWithPossibleDefault.js');
     const Lobby = resolveModuleWithPossibleDefault(require('../lobby/Lobby.vue'));
     const Login = resolveModuleWithPossibleDefault(require('../login/Login.vue'));
@@ -53,6 +54,9 @@
             ...loginHelpers.mapState([
                 'hasAccess'
             ]),
+            ...configHelpers.mapState([
+               'useAccessKey'
+            ]),
             progressStyle() {
                 const progress = Math.max(0, Math.min(100, this.progress));
                 return {
@@ -65,6 +69,10 @@
                     classes.push('view-wrapper--visible');
                 }
                 return classes;
+            },
+            needAccessKey() {
+                return !this.hasAccess
+                    && this.useAccessKey;
             }
         },
         methods: {

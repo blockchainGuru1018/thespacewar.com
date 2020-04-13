@@ -4,7 +4,7 @@ module.exports = function ({configRepository}) {
         namespaced: true,
         name: 'config',
         state: {
-            config: {}
+            useAccessKey: true
         },
         actions: {
             init
@@ -17,6 +17,7 @@ module.exports = function ({configRepository}) {
      * @description add default access-key for testing
      */
     async function init({state}) {
-        state.config = await configRepository.getConfiguration();
+        const config = await configRepository.getConfiguration();
+        state.useAccessKey = config.USE_ACCESS_KEY;
     }
 };

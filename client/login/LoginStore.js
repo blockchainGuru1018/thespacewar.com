@@ -18,7 +18,7 @@ module.exports = function ({
             hasAccess: false
         },
         getters: {
-            checkIfHasPreviousSession
+            checkIfHasPreviousSession,
         },
         actions: {
             init,
@@ -29,10 +29,6 @@ module.exports = function ({
     };
 
     async function init({ state, dispatch }) {
-        const config = await ajax.get('/config');
-        if (!config.USE_ACCESS_KEY) {
-            localStorage.setItem('access-key', '"testing123"')
-        }
         const storedAccessKey = localGameDataFacade.AccessKey.get();
         if (storedAccessKey) {
             state.hasAccess = true;
