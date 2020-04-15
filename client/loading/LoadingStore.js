@@ -1,5 +1,6 @@
 const localGameDataFacade = require("../utils/localGameDataFacade")
 const getCardImageUrl = require('../utils/getCardImageUrl.js');
+const ajax = require('../utils/ajax.js');
 
 module.exports = function ({ pageDependencies }) {
 
@@ -20,7 +21,8 @@ module.exports = function ({ pageDependencies }) {
         },
         actions: {
             load,
-            initFakeLoadingProgress
+            initFakeLoadingProgress,
+            _resetLocallyStoredUserData
         }
     };
 
@@ -34,26 +36,41 @@ module.exports = function ({ pageDependencies }) {
 
         await rawCardDataRepository.init();
 
-        if (isAlreadyLoggedIn()) {
+        const loggedInToHome = await isLoggedInToHome();
+        if(!loggedInToHome) {
+            // Show the NEW Login page
+        } else if (isLoggedInToGame() && await existsOnServer()) {
             const ownUser = localGameDataFacade.getOwnUser();
-
-            const allUsers = await userRepository.getAll();
-            const existsOnServer = allUsers.some(u => u.id === ownUser.id);
-            if (existsOnServer) {
-                dispatch('user/storeOwnUser', ownUser, { root: true });
+            dispatch('user/storeOwnUser', ownUser, {root: true});
+            if (rootGetters['login/checkIfHasPreviousSession']()) {
+                await dispatch('login/restoreFromPreviousSession', null, {root: true});
+                // Show match
             }
             else {
-                localGameDataFacade.removeAll();
-                dispatch('user/storeOwnUser', null, { root: true });
+                // Show lobby
             }
+        } else {
+            dispatch('_resetLocallyStoredUserData');
+
+            await ajax.jsonPost('/login');
+
+            // Show lobby view
         }
 
-        if (rootGetters['login/checkIfHasPreviousSession']()) {
-            await dispatch('login/restoreFromPreviousSession', null, { root: true });
-        }
         await loadAllImages();
 
         state.loaded = true;
+    }
+
+    async function existsOnServer(){
+        const ownUser = localGameDataFacade.getOwnUser();
+        const allUsers = await userRepository.getAll();
+        return allUsers.some(u => u.id === ownUser.id);
+    }
+
+    function _resetLocallyStoredUserData({dispatch}) {
+        localGameDataFacade.removeAll();
+        dispatch('user/storeOwnUser', null, {root: true});
     }
 
     function initFakeLoadingProgress({ state, getters }) {
@@ -66,8 +83,13 @@ module.exports = function ({ pageDependencies }) {
         }, 10);
     }
 
-    function isAlreadyLoggedIn() {
+    function isLoggedInToGame() {
         return !!localGameDataFacade.getOwnUser();
+    }
+
+    async function isLoggedInToHome() {
+        const {isLoggedIn} = await ajax.get('/is-logged-in-to-home');
+        return isLoggedIn;
     }
 
     async function loadAllImages() {

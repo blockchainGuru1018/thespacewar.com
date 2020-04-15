@@ -1,5 +1,5 @@
-const UserAuth = require("../../shared/user/UserAuth.js");
-const CookieManager = require('../utils/CookieManager.js');
+const CookieVerifier = require('../utils/CookieVerifier.js');
+
 module.exports = function ({}) {
 
     return {
@@ -7,7 +7,11 @@ module.exports = function ({}) {
     };
 
     async function getAuthLoggedIn(req, res) {
-        return res.send(req.body.cookies);
+        console.log('REQ HEADERS', req.headers);
 
+        const cookie = req.cookies.loggedin;
+        const cookieVerifier = new CookieVerifier(cookie);
+
+        res.json({isLoggedIn: cookieVerifier.isLoggedIn()});
     }
 };
