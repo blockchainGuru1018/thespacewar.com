@@ -61,7 +61,7 @@ function startServer(config) {
     return new Promise(async resolve => {
         app = express();
         app.use(morgan('dev'));
-        app.use(cookieParser('Xjf&f$gkJhyS9)?/1!FD'));
+        app.use(cookieParser());
         app.use(bodyParser.json());
 
         server = http.createServer(app);
@@ -169,7 +169,7 @@ function setupRoutes(deps, controllers) {
         response.setHeader('Content-Type', 'application/json');
         response.end(JSON.stringify(config));
     });
-    app.get('/is-logged-in', controllers.auth.getAuthLoggedIn);
+    app.get('/is-logged-in-to-home', controllers.auth.getAuthLoggedIn);
 
     app.post('/test-debug', (req, res) => {
         res.json({valid: validateDebugPassword(req.body.password)});

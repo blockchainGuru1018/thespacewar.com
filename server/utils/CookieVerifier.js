@@ -1,6 +1,6 @@
 const md5 = require('md5');
 
-class CookieManager {
+class CookieVerifier {
     hash = 'dgRdfkWMfGWJdE¤53d8P63h';
     sessionData = {};
 
@@ -25,4 +25,4 @@ class CookieManager {
     }
 }
 
-module.exports = CookieManager;
+module.exports = CookieVerifier;
