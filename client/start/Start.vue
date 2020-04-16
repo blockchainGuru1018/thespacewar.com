@@ -3,7 +3,7 @@
         <div class="loading-backdropLetterBoxWrapper">
             <div class="background" />
         </div>
-        <ToggleSwarmDeckButton/>
+        <ToggleSwarmDeckButton :class="showSwarmDeckButton"/>
         <div
             v-if="!loadingDone"
             class="loading-bar"
@@ -21,15 +21,12 @@
             :class="viewClasses"
             v-else-if="needAccessKey"
         />
-        <Login
-            v-else
-            :class="viewClasses"
-        />
+        <Login v-else :class="viewClasses"/>
+        <!--<StartGameOption :class="viewClasses" v-else/>-->
     </div>
 </template>
 <script>
     import featureToggles from "../utils/featureToggles";
-    import ToggleSwarmDeckButton from "./ToggleSwarmDeckButton.vue";
     const Vuex = require('vuex');
     const loadingHelpers = Vuex.createNamespacedHelpers('loading');
     const userHelpers = Vuex.createNamespacedHelpers('user');
@@ -38,6 +35,8 @@
     const resolveModuleWithPossibleDefault = require('../utils/resolveModuleWithPossibleDefault.js');
     const Lobby = resolveModuleWithPossibleDefault(require('../lobby/Lobby.vue'));
     const Login = resolveModuleWithPossibleDefault(require('../login/Login.vue'));
+    import ToggleSwarmDeckButton from "./ToggleSwarmDeckButton.vue";
+    const StartGameOption =  resolveModuleWithPossibleDefault(require("../login/StartGameOption.vue"));
     const EnterAccessKey = resolveModuleWithPossibleDefault(require('../login/EnterAccessKey.vue'));
 
     module.exports = {
@@ -62,6 +61,14 @@
                 return {
                     width: `${progress}%`
                 }
+            },
+            showSwarmDeckButton() {
+                const classes = ['wrapper-hide'];
+                if (this.loadingDone) {
+                    classes.push('view-wrapper--visible')
+                }
+
+                return classes;
             },
             viewClasses() {
                 const classes = ['view-wrapper'];
@@ -99,6 +106,7 @@
             Login,
             EnterAccessKey,
             ToggleSwarmDeckButton,
+            StartGameOption
         }
     };
 </script>
@@ -142,6 +150,12 @@
     .loading-barProgress {
         background-color: rgba(255, 255, 255, .8);
         height: 100%;
+    }
+
+    .wrapper-hide {
+        opacity: 0;
+        z-index: 1;
+        transition: opacity 1s ease;
     }
 
     .view-wrapper {

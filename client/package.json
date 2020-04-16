@@ -7,6 +7,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "fakerator": "^0.3.1",
     "particles.js": "^2.0.0",
     "portal-vue": "^1.5.0",
     "v-click-outside": "^2.0.2",
