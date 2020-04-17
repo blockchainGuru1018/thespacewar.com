@@ -7,8 +7,6 @@ module.exports = function ({}) {
     };
 
     async function getAuthLoggedIn(req, res) {
-        console.log('REQ HEADERS', req.headers);
-
         const cookie = req.cookies.loggedin;
         const cookieVerifier = new CookieVerifier(cookie);
 

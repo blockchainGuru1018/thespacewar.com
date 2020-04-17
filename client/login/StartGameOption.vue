@@ -1,7 +1,7 @@
 <template>
     <div class="game-option">
         <div class="btn btn-login">
-            <a href="https://thespacewar.com/login">Login</a>
+            <a :href="loginUrl">Login</a>
         </div>
         <div class="btn btn-register">
             <a href="https://thespacewar.com/register">Register</a>
@@ -15,7 +15,7 @@
     const Vuex = require('vuex');
     const loginHelpers = Vuex.createNamespacedHelpers('login');
     const User = require('../../shared/user/User.js');
-    const {uniqueNamesGenerator, adjectives, colors, animals, names} = require('unique-names-generator');
+    const {uniqueNamesGenerator, adjectives, colors, names} = require('unique-names-generator');
 
     export default {
         name: "StartGameOption",
@@ -30,6 +30,14 @@
             },
             usernameMaxLength() {
                 return User.MaxNameLength;
+            },
+            loginUrl() {
+                if(runningInLocalDevelopmentEnvironment()) {
+                    return 'http://localhost:8081/fake-login';
+                }
+                else {
+                    return 'https://thespacewar.com/login';
+                }
             }
         },
         methods: {
@@ -47,6 +55,10 @@
                 });
             }
         }
+    }
+
+    function runningInLocalDevelopmentEnvironment() {
+        return window.location.hostname === 'localhost';
     }
 </script>
 

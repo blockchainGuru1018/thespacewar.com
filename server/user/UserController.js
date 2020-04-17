@@ -1,5 +1,5 @@
 const User = require("../../shared/user/User.js");
-const CookieVerifier = require('../utils/CookieVerifier.js');
+const LoginCookie = require('../../serviceShared/LoginCookie.js');
 
 module.exports = function ({
     userRepository,
@@ -15,14 +15,14 @@ module.exports = function ({
     async function login(req, res) {
         if (req.body.accessKey !== gameConfig.accessKey()) new Error('Wrong key');
 
-        //Verify cookie
-        const cookieVerifier = new CookieVerifier(req.headers.cookie.loggedin);
-        if(!cookieVerifier.isLoggedIn()) {
+        const rawCookie = req.cookies.loggedin;
+        const loginCookie = LoginCookie.loginCookieFromRawCookieStringOrNull(rawCookie);
+        if(!loginCookie.verify()) {
             throw new Error('Unauthorized cookie');
         }
 
-        const name = cookie.trim().slice(0, User.MaxNameLength);
-        const user = await userRepository.addUserAndClearOldUsers(name, req.body.secret, cookie);
+        const name = loginCookie.username.slice(0, User.MaxNameLength);
+        const user = await userRepository.addUserAndClearOldUsers(name, req.body.secret, rawCookie);
         res.json(user);
     }
 

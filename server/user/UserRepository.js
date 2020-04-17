@@ -5,6 +5,7 @@ module.exports = function (deps) {
     const socketMaster = deps.socketMaster;
 
     const secretToUserId = new Map();
+    const rawCookieToUserId = new Map();
     const usersById = new Map();
 
     return {
@@ -24,13 +25,14 @@ module.exports = function (deps) {
         return getUserData(id);
     }
 
-    function addUserAndClearOldUsers(name, secret) {
+    function addUserAndClearOldUsers(name, secret, rawCookie) {
         clearOldUsers();
 
         const user = createUser(name);
         storeUserData(user);
 
         secretToUserId.set(secret, user.id);
+        rawCookieToUserId.set(rawCookie, user.id);
 
         emitUserChange();
 

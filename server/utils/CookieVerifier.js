@@ -6,7 +6,9 @@ class CookieVerifier {
     }
 
     isLoggedIn() {
-        return new LoginCookie(this.sessionCookie).verify();
+        const loginCookie = LoginCookie.loginCookieFromRawCookieStringOrNull(this.sessionCookie);
+
+        return loginCookie.verify();
     }
 }
 

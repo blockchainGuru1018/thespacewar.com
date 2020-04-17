@@ -1,5 +1,13 @@
 const md5 = require('md5');
 
+function loginCookieFromRawCookieStringOrNull(rawCookieStringOrNull) {
+    if (rawCookieStringOrNull) {
+        return new LoginCookie(rawCookieStringOrNull);
+    } else {
+        return new InvalidCookie();
+    }
+}
+
 class LoginCookie {
     _salt = 'dgRdfkWMfGWJdE¤53d8P63h';
 
@@ -22,4 +30,20 @@ class LoginCookie {
     }
 }
 
-module.exports = LoginCookie;
+class InvalidCookie extends LoginCookie {
+    constructor() {
+        super('0:no_name:no_country:0:no_hash');
+    }
+
+    hash() {
+        throw new Error('Trying to retrieve hash from invalid cookie');
+    }
+
+    verify() {
+        return false;
+    }
+}
+
+module.exports = {
+    loginCookieFromRawCookieStringOrNull
+};
