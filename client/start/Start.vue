@@ -21,8 +21,8 @@
             :class="viewClasses"
             v-else-if="needAccessKey"
         />
-        <Login v-else :class="viewClasses"/>
-        <!--<StartGameOption :class="viewClasses" v-else/>-->
+        <!--<Login v-else :class="viewClasses"/>-->
+        <StartGameOption :class="viewClasses" v-else/>
     </div>
 </template>
 <script>
