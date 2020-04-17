@@ -7,7 +7,9 @@
             <a href="https://thespacewar.com/register">Register</a>
         </div>
         <hr>
-        <button class="btn btn-guest" v-on:click="enterAsGuest">Guest</button>
+        <button class="btn btn-guest" v-on:click="enterAsGuest">
+            Guest
+        </button>
     </div>
 </template>
 
