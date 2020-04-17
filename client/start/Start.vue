@@ -3,7 +3,7 @@
         <div class="loading-backdropLetterBoxWrapper">
             <div class="background" />
         </div>
-        <ToggleSwarmDeckButton :class="showSwarmDeckButton"/>
+        <ToggleSwarmDeckButton :class="showSwarmDeckButton" />
         <div
             v-if="!loadingDone"
             class="loading-bar"
@@ -13,16 +13,21 @@
                 class="loading-barProgress"
             />
         </div>
-        <Lobby
-            v-if="!!ownUser && loadingDone"
-            :class="viewClasses"
-        />
-        <EnterAccessKey
-            :class="viewClasses"
-            v-else-if="needAccessKey"
-        />
-        <!--<Login v-else :class="viewClasses"/>-->
-        <StartGameOption :class="viewClasses" v-else/>
+        <template v-else>
+            <Lobby
+                v-if="!!ownUser"
+                :class="viewClasses"
+            />
+            <EnterAccessKey
+                v-else-if="needAccessKey"
+                :class="viewClasses"
+            />
+            <!--<Login v-else :class="viewClasses"/>-->
+            <StartGameOption
+                v-else
+                :class="viewClasses"
+            />
+        </template>
     </div>
 </template>
 <script>
