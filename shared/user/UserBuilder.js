@@ -24,6 +24,7 @@ class UserBuilder {
 
     asGuest() {
         this._isGuest = true;
+        return this;
     }
 
     build() {
