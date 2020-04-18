@@ -11,7 +11,7 @@ app.get('/fake-login', (req, res) => {
     const cookieString = new LoginCookieString()
         .id('august-id')
         .username('august-name')
-        .country('sweden')
+        .country('se')
         .rating('10')
         .generateHash()
         .create();

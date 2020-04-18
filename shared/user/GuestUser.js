@@ -1,6 +1,6 @@
 const User = require('./User.js');
 
-class GuestUser extends User{
+class GuestUser extends User {
     constructor({
         name,
         id

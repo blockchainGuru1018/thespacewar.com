@@ -27,20 +27,17 @@ module.exports = function (deps) {
         return getUserData(id);
     }
 
-    function addUserAndClearOldUsers(name, secret, rawCookie) {
+    function addUserAndClearOldUsers(user, secret, rawCookie) {
         clearOldUsers();
 
-        const user = createUser(name);
         addUser(user, secret);
         rawCookieToUserId.set(rawCookie, user.id);
 
         return user;
     }
 
-    function addGuestUser(name, secret) {
-        const user = createGuestUser(name);
+    function addGuestUser(user, secret) {
         addUser(user, secret);
-
         return user;
     }
 
@@ -73,16 +70,6 @@ module.exports = function (deps) {
         return userId === userIdFromSecret(secret);
     }
 
-    function createUser(name) {
-        const id = createId();
-        return User.fromData({ name, id });
-    }
-
-    function createGuestUser(name) {
-        const id = createId();
-        return GuestUser.fromData({ name, id });
-    }
-
     function storeUserData(user) {
         usersById.set(user.id, user.toData());
     }
@@ -96,10 +83,6 @@ module.exports = function (deps) {
         if (!userData) return null;
 
         return User.fromData(userData);
-    }
-
-    function createId() {
-        return Math.round((Math.random() * 1000000)).toString().padStart(7, '0');
     }
 
     function emitUserChange() {

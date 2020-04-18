@@ -1,7 +1,8 @@
 class User {
 
-    constructor({ name, id, created = Date.now(), inMatch = false, isConnected = false }) {
+    constructor({ name, country = 'se', id, created = Date.now(), inMatch = false, isConnected = false }) {
         this.name = name;
+        this.country = country;
         this.id = id;
         this.inMatch = inMatch;
         this.isConnected = isConnected;
@@ -19,6 +20,7 @@ class User {
     toData() {
         return {
             name: this.name,
+            country: this.country,
             id: this.id,
             inMatch: this.inMatch,
             isConnected: this.isConnected,

@@ -39,6 +39,7 @@
                             <span class="user-name">
                                 {{ user.name }}
                             </span>
+                            <Flag :country="user.country" />
                         </div>
                     </template>
 
@@ -51,8 +52,10 @@
     </div>
 </template>
 <script>
+    import Flag from './Flag.vue';
+
     const Vuex = require('vuex');
-    const { mapActions } = Vuex.createNamespacedHelpers('lobby');
+    const {mapActions} = Vuex.createNamespacedHelpers('lobby');
     const userHelpers = Vuex.createNamespacedHelpers('user');
     const lobbyHelpers = Vuex.createNamespacedHelpers('lobby');
 
@@ -87,7 +90,8 @@
             userClick(user) {
                 this.startGameWithUser(user);
             }
-        }
+        },
+        components: {Flag}
     };
 </script>
 <style scoped lang="scss">

@@ -1,3 +1,4 @@
+const UserBuilder = require('../../shared/user/UserBuilder.js');
 const User = require("../../shared/user/User.js");
 const LoginCookie = require('../../serviceShared/LoginCookie.js');
 
@@ -40,18 +41,23 @@ module.exports = function ({
     }
 
     async function setupLoggedInUser(req) {
+        const user = new UserBuilder()
+            .name(validUsernameFromCookie(req))
+            .country(countryFromLoginCookie(req))
+            .build();
         return userRepository.addUserAndClearOldUsers(
-            validUsernameFromCookie(req),
+            user,
             req.body.secret,
             retrieveRawCookie(req)
         );
     }
 
     async function setupGuestUser(req) {
-        return userRepository.addGuestUser(
-            validGuestUsername(req),
-            req.body.secret
-        );
+        const user = new UserBuilder()
+            .name(validGuestUsername(req))
+            .asGuest()
+            .build();
+        return userRepository.addGuestUser(user, req.body.secret);
     }
 
     function validGuestUsername(req) {
@@ -67,9 +73,15 @@ module.exports = function ({
     }
 
     function nameFromLoginCookie(req) {
-        return LoginCookie
-            .loginCookieFromRawCookieStringOrNull(retrieveRawCookie(req))
-            .username;
+        return loginCookieFromRequest(req).username;
+    }
+
+    function countryFromLoginCookie(req) {
+        return loginCookieFromRequest(req).country;
+    }
+
+    function loginCookieFromRequest(req) {
+        return LoginCookie.loginCookieFromRawCookieStringOrNull(retrieveRawCookie(req));
     }
 
     function retrieveRawCookie(req) {
