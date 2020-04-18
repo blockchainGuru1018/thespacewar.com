@@ -1,4 +1,5 @@
 const User = require("../../shared/user/User.js");
+const GuestUser = require("../../shared/user/GuestUser.js");
 
 module.exports = function (deps) {
 
@@ -13,6 +14,7 @@ module.exports = function (deps) {
         getById,//TODO Rename to getUserDataById
         getUser,
         addUserAndClearOldUsers,
+        addGuestUser,
         updateUser,
         authorizeWithSecret
     };
@@ -29,14 +31,23 @@ module.exports = function (deps) {
         clearOldUsers();
 
         const user = createUser(name);
-        storeUserData(user);
-
-        secretToUserId.set(secret, user.id);
+        addUser(user, secret);
         rawCookieToUserId.set(rawCookie, user.id);
 
-        emitUserChange();
+        return user;
+    }
+
+    function addGuestUser(name, secret) {
+        const user = createGuestUser(name);
+        addUser(user, secret);
 
         return user;
+    }
+
+    function addUser(user, secret) {
+        storeUserData(user);
+        secretToUserId.set(secret, user.id);
+        emitUserChange();
     }
 
     function updateUser(userId, mutator) {
@@ -65,6 +76,11 @@ module.exports = function (deps) {
     function createUser(name) {
         const id = createId();
         return User.fromData({ name, id });
+    }
+
+    function createGuestUser(name) {
+        const id = createId();
+        return GuestUser.fromData({ name, id });
     }
 
     function storeUserData(user) {

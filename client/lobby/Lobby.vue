@@ -21,11 +21,21 @@
                             Mr.Roboto
                         </span>
                     </div>
-                    <div v-if="availableUsers.length === 0" class="users-noUsersAvailable">
+                    <div
+                        v-if="availableUsers.length === 0"
+                        class="users-noUsersAvailable"
+                    >
                         None available
                     </div>
                     <template v-else>
-                        <div v-for="user in availableUsers" :key="user.id" tabindex="0" class="user" @click="userClick(user)" @keydown.enter="userClick(user)">
+                        <div
+                            v-for="user in availableUsers"
+                            :key="user.id"
+                            tabindex="0"
+                            class="user"
+                            @click="userClick(user)"
+                            @keydown.enter="userClick(user)"
+                        >
                             <span class="user-name">
                                 {{ user.name }}
                             </span>
@@ -64,7 +74,9 @@
                 return this.otherUsers.filter(u => u.inMatch).length;
             },
             availableUsers() {
-                return this.otherUsers.filter(u => !u.inMatch);
+                return this.otherUsers
+                    .filter(u => u.allowedInLobby)
+                    .filter(u => !u.inMatch);
             }
         },
         methods: {

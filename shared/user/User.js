@@ -22,7 +22,8 @@ class User {
             id: this.id,
             inMatch: this.inMatch,
             isConnected: this.isConnected,
-            created: this.created
+            created: this.created,
+            allowedInLobby: this.allowedInLobby(),
         };
     }
 
@@ -45,6 +46,10 @@ class User {
     timeAlive() {
         return Date.now() - this.created;
     }
+
+    allowedInLobby() {
+        return true;
+    }
 }
 
-module.exports = User;
+module.exports = User

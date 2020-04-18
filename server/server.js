@@ -149,6 +149,7 @@ function setupRoutes(deps, controllers) {
         res.sendFile(path.join(__dirname, 'client-dist', 'index.js'));
     });
     app.post('/login', controllers.user.login);
+    app.post('/guest-login', controllers.user.guestLogin);
     app.post('/test-access-key', controllers.user.testAccessKey);
     app.get('/user', controllers.user.getAll);
     app.post('/match', controllers.match.create); //TODO Have playerId be part of uri so that the route is authenticated

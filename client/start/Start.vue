@@ -15,7 +15,7 @@
         </div>
         <template v-else>
             <Lobby
-                v-if="!!ownUser"
+                v-if="allowedInLobby"
                 :class="viewClasses"
             />
             <EnterAccessKey
@@ -52,14 +52,14 @@
             ...loadingHelpers.mapGetters([
                 'loadingDone'
             ]),
-            ...userHelpers.mapState([
-                'ownUser'
-            ]),
             ...loginHelpers.mapState([
                 'hasAccess'
             ]),
             ...configHelpers.mapState([
                'useAccessKey'
+            ]),
+            ...userHelpers.mapGetters([
+                'allowedInLobby'
             ]),
             progressStyle() {
                 const progress = Math.max(0, Math.min(100, this.progress));

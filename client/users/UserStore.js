@@ -9,11 +9,18 @@ module.exports = function ({
             ownUser: userRepository.getOwnUser(),
             users: []
         },
+        getters: {
+            allowedInLobby
+        },
         actions: {
             init,
             storeOwnUser
         }
     };
+
+    function allowedInLobby(state) {
+        return state.ownUser && state.ownUser.allowedInLobby;
+    }
 
     async function init({ state }) {
         userRepository.onUsersChanged(users => {

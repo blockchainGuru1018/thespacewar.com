@@ -1,8 +1,6 @@
 const localGameDataFacade = require("../utils/localGameDataFacade.js");
 const createBotUser = require('../../shared/user/createBotUser.js');
 
-const BotId = 'BOT';
-
 module.exports = function ({
     matchRepository,
     userRepository,

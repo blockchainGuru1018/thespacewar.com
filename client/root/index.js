@@ -10,6 +10,7 @@ const StartPage = require('../start/StartPage.js');
 const LoadingStore = require('../loading/LoadingStore.js');
 const LoginStore = require('../login/LoginStore.js');
 const LobbyStore = require('../lobby/LobbyStore.js');
+const GuestStore = require('../guest/GuestStore.js').default;
 const MatchPage = require('../match/MatchPage.js');
 const MatchRepository = require('../match/MatchRepository.js');
 const MatchControllerFactory = require('../match/MatchControllerFactory.js');
@@ -79,6 +80,7 @@ function bootstrap() {
         LoadingStore({ rootStore, pageDependencies }),
         LoginStore({ route: router.route, rootStore, userRepository, botUpdateListener }),
         LobbyStore({ route: router.route, rootStore, userRepository, matchRepository, botUpdateListener }),
+        GuestStore(),
         UserStore({ rootStore, userRepository }),
         AudioStore()
     ];

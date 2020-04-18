@@ -8,17 +8,28 @@
         </div>
         <hr>
         <button
+            v-if="playAsGuestOn"
             class="btn btn-guest"
-            @click="enterAsGuest"
+            @click="playAgainstAi"
         >
-            Guest
+            Play against AI
+        </button>
+        <button
+            v-else
+            class="btn btn-guest"
+            :disabled="true"
+        >
+            Play against AI (coming soon)
         </button>
     </div>
 </template>
 
 <script>
+    import featureToggles from "../utils/featureToggles";
+
     const Vuex = require('vuex');
     const loginHelpers = Vuex.createNamespacedHelpers('login');
+    const guestHelpers = Vuex.createNamespacedHelpers('guest');
     const User = require('../../shared/user/User.js');
     const {uniqueNamesGenerator, adjectives, colors, names} = require('unique-names-generator');
 
@@ -37,22 +48,24 @@
                 return User.MaxNameLength;
             },
             loginUrl() {
-                if(runningInLocalDevelopmentEnvironment()) {
+                if (runningInLocalDevelopmentEnvironment()) {
                     return 'http://localhost:8081/fake-login';
-                }
-                else {
+                } else {
                     return 'https://thespacewar.com/login';
                 }
+            },
+            playAsGuestOn() {
+                return true;
+                //return featureToggles.isEnabled('playAsGuest');
             }
         },
         methods: {
             ...loginHelpers.mapActions([
                 'login'
             ]),
-            enterAsGuest() {
-                this.username = this.genericUsername();
-                this.login(this.username)
-            },
+            ...guestHelpers.mapActions([
+                'playAgainstAi'
+            ]),
             genericUsername() {
                 return uniqueNamesGenerator({
                     dictionaries: [adjectives, colors, names], // colors can be omitted here as not used
@@ -77,6 +90,7 @@
     .game-option {
         position: relative;
         z-index: 2;
+        text-align: center;
 
         hr {
             border-bottom: 3px solid #fff;
@@ -104,18 +118,22 @@
             }
 
             &.btn-guest {
-                cursor: pointer;
                 clear: both;
                 background-color: #0b0b0ba6;
                 border: 0;
                 width: 100%;
                 margin: 0;
-                padding: 3px 0;
+                padding: 3px 6px;
                 display: block;
 
-                &:hover {
+                &:hover:not(:disabled) {
                     color: #dfdfdf;
                     background-color: #222422;
+                    cursor: pointer;
+                }
+
+                &:disabled {
+                    color: #999;
                 }
             }
         }
