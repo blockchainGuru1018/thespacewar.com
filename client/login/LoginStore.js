@@ -44,7 +44,7 @@ module.exports = function ({
     }
 
     async function login({dispatch}) {
-        const ownUser = await ajax.jsonPost('/login');
+        const ownUser = await ajax.jsonPostEmptyWithSecret('/login');
         localGameDataFacade.setOwnUser(ownUser);
         dispatch('user/storeOwnUser', ownUser, {root: true});
     }

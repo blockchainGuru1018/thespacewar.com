@@ -29,7 +29,11 @@ class MatchService {
     }
 
     setCurrentPlayer(playerId) {
-        return this._state.currentPlayer = playerId;
+        this.update(state => {
+            state.currentPlayer = playerId;
+        });
+
+        return playerId;
     }
 
     getPlayerOrder() {

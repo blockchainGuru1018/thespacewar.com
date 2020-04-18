@@ -37,9 +37,7 @@ module.exports = class TurnControl {
         this._playerStateService.storeEvent(TakeControlEvent.takeControlOfOpponentsTurn());
 
         const playerId = this._playerId();
-        this._matchService.update(state => {
-            state.currentPlayer = playerId;
-        });
+        this._matchService.setCurrentPlayer(playerId);
 
         this._opponentActionLog.opponentTookControlOfTurn();
     }
@@ -48,9 +46,7 @@ module.exports = class TurnControl {
         this._playerStateService.storeEvent(TakeControlEvent.releaseControlOfOpponentsTurn());
 
         const opponentId = this._opponentId();
-        this._matchService.update(state => {
-            state.currentPlayer = opponentId;
-        });
+        this._matchService.setCurrentPlayer(opponentId);
         if (this._playerGameTimer.hasEnded()) {
             this._matchService.playerRetreat(this._playerId());
         }
