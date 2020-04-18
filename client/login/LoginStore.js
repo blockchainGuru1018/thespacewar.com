@@ -26,7 +26,7 @@ module.exports = function ({
             login,
             loginAsGuest,
             testAccessKey,
-            restoreFromPreviousSession,
+            restoreMatchFromPreviousSession,
             authenticateUserSession,
             _resetLocallyStoredUserData,
             _restorePreviousSession,
@@ -53,19 +53,30 @@ module.exports = function ({
         const newRandomName = `Guest${Math.round(Math.random() * 9999)}`;
         const ownUser = await ajax.jsonPost('/guest-login', {name: newRandomName});
         localGameDataFacade.setOwnUser(ownUser);
+        localGameDataFacade.activateGuestMode();
         dispatch('user/storeOwnUser', ownUser, {root: true});
     }
 
-    async function authenticateUserSession({dispatch, getters, rootGetters}) {
-        const loggedInToHome = await isLoggedInToHome();
+    async function authenticateUserSession({dispatch, getters}) {
+        const [
+            loggedInToHome,
+            loggedInToGame
+            ] = await Promise.all([
+            isLoggedInToHome(),
+            isLoggedInToGame()
+        ]);
+
         if (!loggedInToHome) {
-            const checkIfLoggedInAsGuest = rootGetters['login/checkIfLoggedInAsGuest']
-            const isLoggedInAsGuest = await checkIfLoggedInAsGuest();
+            const isLoggedInAsGuest = !!loggedInToGame;
             if (!isLoggedInAsGuest) {
                 dispatch('_resetLocallyStoredUserData');
             }
-        } else if (await isLoggedInToGame()) {
-            if (getters['checkIfHasPreviousSession']) {
+        } else if (loggedInToGame) {
+            if(localGameDataFacade.guestModeOn()) {
+                dispatch('_resetLocallyStoredUserData');
+                await dispatch('login');
+            }
+            else if (getters['checkIfHasPreviousSession']) {
                 dispatch('_restorePreviousSession');
             }
         } else {
@@ -91,7 +102,7 @@ module.exports = function ({
 
     async function _restorePreviousSession({dispatch}) {
         dispatch('_loadOwnUser');
-        await dispatch('login/restoreFromPreviousSession', null, {root: true});
+        await dispatch('login/restoreMatchFromPreviousSession', null, {root: true});
     }
 
     function _loadOwnUser({dispatch}) {
@@ -147,7 +158,7 @@ module.exports = function ({
         return !loggedInHome && loggedInGame;
     }
 
-    async function restoreFromPreviousSession() {
+    async function restoreMatchFromPreviousSession() {
         const matchData = localGameDataFacade.getOngoingMatch();
         if (matchData) {
             const {id: matchId, playerIds} = matchData;

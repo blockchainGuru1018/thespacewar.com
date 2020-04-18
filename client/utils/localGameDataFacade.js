@@ -4,6 +4,7 @@ const Keys = {
     AudioSettings: 'audio-settings',
     DebugPassword: 'debug-password',
     AccessKey: 'access-key',
+    GuestMode: 'guest-mode',
 };
 
 const DoNotRemoveKeysWhenRemoveAll = [
@@ -23,6 +24,10 @@ function Facade() {
         getOngoingMatch: Getter(Keys.OngoingMatch),
         setOngoingMatch: Setter(Keys.OngoingMatch),
         removeOngoingMatch: Remover(Keys.OngoingMatch),
+
+        guestModeOn: Getter(Keys.GuestMode),
+        activateGuestMode: () => Setter(Keys.GuestMode)(true),
+        clearGuestMode: () => Remover(Keys.GuestMode)(),
 
         removeAll
     };
