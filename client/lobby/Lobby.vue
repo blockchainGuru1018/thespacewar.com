@@ -40,6 +40,9 @@
                                 {{ user.name }}
                             </span>
                             <Flag :country="user.country" />
+                            <span class="user-rating">
+                                {{ user.rating }}
+                            </span>
                         </div>
                     </template>
 
@@ -148,6 +151,11 @@
             background: rgba(0, 0, 0, .7);
             cursor: pointer;
         }
+    }
+
+    .user-rating {
+        margin-left: auto;
+        color: #777;
     }
 
     .user--inMatch {
