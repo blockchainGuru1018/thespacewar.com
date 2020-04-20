@@ -66,20 +66,20 @@ module.exports = function ({
             isLoggedInToGame()
         ]);
 
-        if (!loggedInToHome) {
+        if (!loggedInToHome) { // NOT logged in to PHP server
             const isLoggedInAsGuest = !!loggedInToGame;
-            if (!isLoggedInAsGuest) {
+            if (!isLoggedInAsGuest) { // TODO Is this needed?
                 dispatch('_resetLocallyStoredUserData');
             }
-        } else if (loggedInToGame) {
-            if(localGameDataFacade.guestModeOn()) {
+        } else if (loggedInToGame) { // User is logged in to the PHP server AND the Node server
+            if(localGameDataFacade.guestModeOn()) { // When the user has logged in as GUEST, and THEN wants to login as a REAL USER, we need to REMOVE THE GUEST DATA.
                 dispatch('_resetLocallyStoredUserData');
                 await dispatch('login');
             }
-            else if (getters['checkIfHasPreviousSession']) {
+            else if (getters['checkIfHasPreviousSession']) { // If the user is already in a match, we need to resume that match
                 dispatch('_restorePreviousSession');
             }
-        } else {
+        } else { // The user is logged in to the PHP server, but is NOT logged in to the Node server, need to login as a NEW USER (new user in Node server, NOT new user in PHP server).
             dispatch('_reinitializeUserSession');
         }
     }
