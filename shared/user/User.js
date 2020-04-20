@@ -1,6 +1,7 @@
 class User {
 
-    constructor({ name, country = 'se', id, created = Date.now(), inMatch = false, isConnected = false }) {
+    constructor({name, country = 'se', rating = 0, id, created = Date.now(), inMatch = false, isConnected = false}) {
+        this.rating = rating;
         this.name = name;
         this.country = country;
         this.id = id;
@@ -21,6 +22,7 @@ class User {
         return {
             name: this.name,
             country: this.country,
+            rating: this.rating,
             id: this.id,
             inMatch: this.inMatch,
             isConnected: this.isConnected,

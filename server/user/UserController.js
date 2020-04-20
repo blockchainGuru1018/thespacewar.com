@@ -44,6 +44,7 @@ module.exports = function ({
         const user = new UserBuilder()
             .name(validUsernameFromCookie(req))
             .country(countryFromLoginCookie(req))
+            .rating(ratingFromLoginCookie(req))
             .build();
         return userRepository.addUserAndClearOldUsers(
             user,
@@ -78,6 +79,10 @@ module.exports = function ({
 
     function countryFromLoginCookie(req) {
         return loginCookieFromRequest(req).country;
+    }
+
+    function ratingFromLoginCookie(req) {
+        return loginCookieFromRequest(req).rating;
     }
 
     function loginCookieFromRequest(req) {
