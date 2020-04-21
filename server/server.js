@@ -63,6 +63,7 @@ function startServer(config) {
         app.use(morgan('dev'));
         app.use(cookieParser());
         app.use(bodyParser.json());
+        app.use(bodyParser.urlencoded({extended: true}));
 
         server = http.createServer(app);
         socketMaster = SocketIO(server);
@@ -150,6 +151,7 @@ function setupRoutes(deps, controllers) {
     });
     app.post('/login', controllers.user.login);
     app.post('/guest-login', controllers.user.guestLogin);
+    app.post('/log-game', controllers.user.sendLogGame);
     app.post('/test-access-key', controllers.user.testAccessKey);
     app.get('/user', controllers.user.getAll);
     app.post('/match', controllers.match.create); //TODO Have playerId be part of uri so that the route is authenticated

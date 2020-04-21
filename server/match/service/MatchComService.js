@@ -6,15 +6,15 @@ const prepareOpponentState = require('./prepareOpponentState.js');
 class MatchComService {
 
     constructor({
-        matchId,
-        players,
-        logger,
-        matchService,
-        playerServiceProvider,
-        playerServiceFactory,
-        gameServiceFactory,
-        stateChangeListener
-    }) {
+                    matchId,
+                    players,
+                    logger,
+                    matchService,
+                    playerServiceProvider,
+                    playerServiceFactory,
+                    gameServiceFactory,
+                    stateChangeListener
+                }) {
         this._matchId = matchId;
         this._players = players;
         this._logger = logger;
@@ -163,27 +163,27 @@ class MatchComService {
 
         const [firstPlayerId, secondPlayerId] = this._matchService.getPlayerOrder();
 
+        console.log('FIRST ID: ', firstPlayerId, 'SECOND ID: ', secondPlayerId);
         const firstPlayerStateService = this._playerServiceProvider.getStateServiceById(firstPlayerId);
         const allFirstPlayerStationCardsAreDamaged = firstPlayerStateService.getUnflippedStationCardsCount() === 0;
 
         const secondPlayerStateService = this._playerServiceProvider.getStateServiceById(secondPlayerId);
         const allSecondPlayerStationCardsAreDamaged = secondPlayerStateService.getUnflippedStationCardsCount() === 0;
 
+
         if (!allFirstPlayerStationCardsAreDamaged && !allSecondPlayerStationCardsAreDamaged) return;
 
         const lastStand = this._gameServiceFactory.lastStand();
+        console.log('Las Stand Start: ', lastStand.canStart(), 'Remaining Second: ', lastStand.remainingSeconds(), 'hasStarted: ', lastStand.hasStarted(), 'Has End: ', lastStand.hasEnded());
         if (this._playerHasLost(firstPlayerId)) {
             this._matchService.playerRetreat(firstPlayerId);
-        }
-        else if (this._playerHasLost(secondPlayerId)) {
+        } else if (this._playerHasLost(secondPlayerId)) {
             this._matchService.playerRetreat(secondPlayerId);
-        }
-        else if (lastStand.canStart()) {
+        } else if (lastStand.canStart()) {
             if (allSecondPlayerStationCardsAreDamaged && this._playerCanAvoidStationCardAttack(secondPlayerId)) {
                 const secondPlayerLastStand = this._playerServiceFactory.playerLastStand(secondPlayerId);
                 secondPlayerLastStand.start();
-            }
-            else if (allFirstPlayerStationCardsAreDamaged && this._playerCanAvoidStationCardAttack(firstPlayerId)) {
+            } else if (allFirstPlayerStationCardsAreDamaged && this._playerCanAvoidStationCardAttack(firstPlayerId)) {
                 const firstPlayerLastStand = this._playerServiceFactory.playerLastStand(firstPlayerId);
                 firstPlayerLastStand.start();
             }
@@ -206,8 +206,8 @@ class MatchComService {
             return card.canCounterCardsBeingPlayed
                 || card.canCounterAttacks;
         });
-        const isCurrentlyUsingCounter = queryPlayerRequirements.getFirstMatchingRequirement({ type: 'counterCard' })
-            || queryPlayerRequirements.getFirstMatchingRequirement({ type: 'counterAttack' });
+        const isCurrentlyUsingCounter = queryPlayerRequirements.getFirstMatchingRequirement({type: 'counterCard'})
+            || queryPlayerRequirements.getFirstMatchingRequirement({type: 'counterAttack'});
         return cardsCanBeUsedToCounter.length > 0
             || isCurrentlyUsingCounter;
     }
@@ -219,8 +219,7 @@ class MatchComService {
             if (snapshot) {
                 this._setSnapshotDirtyForClockKey(snapshot);
             }
-        }
-        else if (!this._matchService.allPlayersReady()) {
+        } else if (!this._matchService.allPlayersReady()) {
             this._computeGameTimerStateForBeforeAllPlayersAreReady();
 
             if (snapshot) {
@@ -259,8 +258,7 @@ class MatchComService {
         if (firstPlayerTurnControl.playerHasControl()) {
             const firstPlayerGameTimer = this._playerServiceFactory.playerGameTimer(firstPlayerId);
             firstPlayerGameTimer.switchTo();
-        }
-        else {
+        } else {
             const secondPlayerGameTimer = this._playerServiceFactory.playerGameTimer(secondPlayerId);
             secondPlayerGameTimer.switchTo();
         }

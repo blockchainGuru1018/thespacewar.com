@@ -1,3 +1,5 @@
+let LogGame = require("../../serviceShared/LogGameCookie.js");
+const axios = require('axios');
 const UserBuilder = require('../../shared/user/UserBuilder.js');
 const User = require("../../shared/user/User.js");
 const LoginCookie = require('../../serviceShared/LoginCookie.js');
@@ -10,6 +12,7 @@ module.exports = function ({
     return {
         login,
         guestLogin,
+        sendLogGame,
         testAccessKey,
         getAll
     };
@@ -27,6 +30,13 @@ module.exports = function ({
 
         const guestUser = await setupGuestUser(req);
         res.json(guestUser.toData());
+    }
+
+    async function sendLogGame(req, res) {
+        /*user_won, user_lost, length, hash*/
+        let logGameCookie = await new LogGame.logGame(req.body.user_won, req.body.user_lost, req.body.length);
+        let response = await axios.post('https://thespacewar.com/log-game', logGameCookie.buildPostData());
+        res.json(JSON.stringify(response))
     }
 
     function verifyAccessKey(req) {
