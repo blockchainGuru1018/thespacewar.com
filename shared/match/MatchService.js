@@ -171,8 +171,7 @@ class MatchService {
     getPlayerIds() {
         return [...this._state.playerOrder];
     }
-
-    calculateLengthTime() {
+    gameLengthSeconds() {
         let currentTime = Date.now();
 
         return (currentTime - this._state.gameStartTime) / 1000;
