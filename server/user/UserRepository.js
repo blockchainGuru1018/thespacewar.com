@@ -1,5 +1,5 @@
+const LoginCookie = require("../../serviceShared/LoginCookie.js");
 const User = require("../../shared/user/User.js");
-const GuestUser = require("../../shared/user/GuestUser.js");
 
 module.exports = function (deps) {
 
@@ -16,7 +16,8 @@ module.exports = function (deps) {
         addUserAndClearOldUsers,
         addGuestUser,
         updateUser,
-        authorizeWithSecret
+        authorizeWithSecret,
+        getUserCookieId,
     };
 
     async function getAll() {
@@ -68,6 +69,12 @@ module.exports = function (deps) {
 
     function authorizeWithSecret(userId, secret) {
         return userId === userIdFromSecret(secret);
+    }
+
+    function getUserCookieId(userId) {
+        const rawCookie = rawCookieToUserId.get(userId);
+        const loginCookie = LoginCookie.loginCookieFromRawCookieStringOrNull(rawCookie);
+        return loginCookie.id;
     }
 
     function storeUserData(user) {
