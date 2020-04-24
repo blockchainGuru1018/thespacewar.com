@@ -160,9 +160,7 @@ function createMatch(deps = {}, testCardData = []) {
                 console.log(...args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 4) : a))
             }
         },
-        registerLogGame() {
-            //Nothing
-        }
+        registerLogGame: () => Promise.resolve()
     });
     return Match(deps);
 }

@@ -136,10 +136,10 @@ class MatchComService {
         return this._players.find(p => p.id === playerId);
     }
 
-    async _onSnapshot(snapshot) {
+    _onSnapshot(snapshot) {
         if (this._emittedAllState) return;
 
-        await this._gameEndedCheck();
+        this._gameEndedCheck();
         this._computeGameTimerState(snapshot);
 
         for (const player of this.getPlayers()) {
@@ -160,7 +160,7 @@ class MatchComService {
         }
     }
 
-    async _gameEndedCheck() {
+    _gameEndedCheck() {
         if (!this._matchService.isGameOn()) return;
 
         const [firstPlayerId, secondPlayerId] = this._matchService.getPlayerOrder();
@@ -178,13 +178,14 @@ class MatchComService {
         if (this._playerHasLost(firstPlayerId)) {
             this._matchService.playerRetreat(firstPlayerId);
             if (secondPlayerId !== 'BOT' || firstPlayerId !== 'BOT') {
-                // time = ? seconds
-                await this._registerLogGame(secondPlayerId, firstPlayerId, this._matchService.gameLengthSeconds());
+                this._registerLogGame(secondPlayerId, firstPlayerId, this._matchService.gameLengthSeconds())
+                    .catch(error => {this._logError(error);});
             }
         } else if (this._playerHasLost(secondPlayerId)) {
             this._matchService.playerRetreat(secondPlayerId);
             if (secondPlayerId !== 'BOT' || firstPlayerId !== 'BOT') {
-               await this._registerLogGame(firstPlayerId, secondPlayerId, this._matchService.gameLengthSeconds());
+               this._registerLogGame(firstPlayerId, secondPlayerId, this._matchService.gameLengthSeconds())
+                   .catch(error => {this._logError(error);});
             }
         } else if (lastStand.canStart()) {
             if (allSecondPlayerStationCardsAreDamaged && this._playerCanAvoidStationCardAttack(secondPlayerId)) {
@@ -195,6 +196,13 @@ class MatchComService {
                 firstPlayerLastStand.start();
             }
         }
+    }
+
+    _logError(error) {
+        const rawErrorMessage = JSON.stringify(error, null, 4);
+        const dataString = JSON.stringify(data, null, 4);
+        const errorMessage = `(${new Date().toISOString()}) Error in action to match: ${error.message} - DATA: ${dataString} - RAW ERROR: ${rawErrorMessage}`
+        this._logger.log(errorMessage, 'error');
     }
 
     _playerHasLost(playerId) {
