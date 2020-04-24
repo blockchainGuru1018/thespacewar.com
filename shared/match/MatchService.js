@@ -4,9 +4,10 @@ const EndMatchDelay = 15 * 1000;
 class MatchService {
 
     constructor({
-        gameConfig,
-        endMatch = () => {}
-    } = {}) {
+                    gameConfig,
+                    endMatch = () => {
+                    }
+                } = {}) {
         this._state = {};
         this._gameConfig = gameConfig;
         this.endMatch = endMatch;
@@ -169,6 +170,12 @@ class MatchService {
 
     getPlayerIds() {
         return [...this._state.playerOrder];
+    }
+
+    calculateLengthTime() {
+        let currentTime = Date.now();
+
+        return (currentTime - this._state.gameStartTime) / 1000;
     }
 }
 

@@ -178,12 +178,13 @@ class MatchComService {
         if (this._playerHasLost(firstPlayerId)) {
             this._matchService.playerRetreat(firstPlayerId);
             if (secondPlayerId !== 'BOT' || firstPlayerId !== 'BOT') {
-                registerLogGame(secondPlayerId, firstPlayerId, 400).then(r => console.log('Response log: ', r))
+                // time = ? seconds
+                registerLogGame(secondPlayerId, firstPlayerId, this._matchService.calculateLengthTime()).then(r => console.log('Response log: ', r))
             }
         } else if (this._playerHasLost(secondPlayerId)) {
             this._matchService.playerRetreat(secondPlayerId);
             if (secondPlayerId !== 'BOT' || firstPlayerId !== 'BOT') {
-                registerLogGame(firstPlayerId, secondPlayerId, 400).then(r => console.log('Response log: ', r))
+                registerLogGame(firstPlayerId, secondPlayerId, this._matchService.calculateLengthTime()).then(r => console.log('Response log: ', r))
             }
         } else if (lastStand.canStart()) {
             if (allSecondPlayerStationCardsAreDamaged && this._playerCanAvoidStationCardAttack(secondPlayerId)) {
