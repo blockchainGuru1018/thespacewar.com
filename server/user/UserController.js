@@ -3,7 +3,6 @@ const axios = require('axios');
 const UserBuilder = require('../../shared/user/UserBuilder.js');
 const User = require("../../shared/user/User.js");
 const LoginCookie = require('../../serviceShared/LoginCookie.js');
-
 module.exports = function ({
     userRepository,
     gameConfig
@@ -33,10 +32,19 @@ module.exports = function ({
     }
 
     async function sendLogGame(req, res) {
-        /*user_won, user_lost, length, hash*/
-        let logGameCookie = await new LogGame.logGame(req.body.user_won, req.body.user_lost, req.body.length);
-        let response = await axios.post('https://thespacewar.com/log-game', logGameCookie.buildPostData());
-        res.json(JSON.stringify(response))
+        let logGame = await new LogGame.logGame(req.body.user_won, req.body.user_lost, req.body.length);
+        const config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        };
+        axios.post('https://thespacewar.com/log-game', logGame.postData(), config).then(response => {
+            res.send(response.data)
+        }).then(error => {
+            res.send(error.statusText)
+        }).catch(error => {
+            res.send(error.todo);
+        });
     }
 
     function verifyAccessKey(req) {

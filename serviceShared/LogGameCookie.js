@@ -1,8 +1,7 @@
-const LoginCookie = require("./LoginCookie.js");
-
-let md5 = require('md5');
-
+const md5 = require('md5');
+const qs = require('querystring');
 class LogGameCookie {
+    _salt = 'dPef39f¤ef#!Dce3';
     constructor(user_won, user_lost, length) {
         console.log(user_won);
 
@@ -11,21 +10,18 @@ class LogGameCookie {
         this.length = length;
 
     }
-    getSalt() {
-        return LoginCookie.loginCookieFromRawCookieStringOrNull(null)._salt
-    }
 
     hash() {
-        return md5(`${this.user_won}${this.user_lost}${this.length}${this.getSalt()}`)
+        return md5(`${this.user_won}${this.user_lost}${this.length}${this._salt}`)
     }
 
-    buildPostData() {
-        return {
+    postData() {
+        return qs.stringify({
             user_won: this.user_won,
             user_lost: this.user_lost,
             length: this.length,
-            hash: this.hash(),
-        };
+            hash: this.hash()
+        });
     }
 }
 

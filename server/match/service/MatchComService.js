@@ -1,3 +1,5 @@
+let registerLogGame = require('./RegisterLog.js');
+
 const LOG_ALL_EMITS = false;
 
 const preparePlayerState = require('./preparePlayerState.js');
@@ -163,7 +165,6 @@ class MatchComService {
 
         const [firstPlayerId, secondPlayerId] = this._matchService.getPlayerOrder();
 
-        console.log('FIRST ID: ', firstPlayerId, 'SECOND ID: ', secondPlayerId);
         const firstPlayerStateService = this._playerServiceProvider.getStateServiceById(firstPlayerId);
         const allFirstPlayerStationCardsAreDamaged = firstPlayerStateService.getUnflippedStationCardsCount() === 0;
 
@@ -174,11 +175,16 @@ class MatchComService {
         if (!allFirstPlayerStationCardsAreDamaged && !allSecondPlayerStationCardsAreDamaged) return;
 
         const lastStand = this._gameServiceFactory.lastStand();
-        console.log('Las Stand Start: ', lastStand.canStart(), 'Remaining Second: ', lastStand.remainingSeconds(), 'hasStarted: ', lastStand.hasStarted(), 'Has End: ', lastStand.hasEnded());
         if (this._playerHasLost(firstPlayerId)) {
             this._matchService.playerRetreat(firstPlayerId);
+            if (secondPlayerId !== 'BOT' || firstPlayerId !== 'BOT') {
+                registerLogGame(secondPlayerId, firstPlayerId, 400).then(r => console.log('Response log: ', r))
+            }
         } else if (this._playerHasLost(secondPlayerId)) {
             this._matchService.playerRetreat(secondPlayerId);
+            if (secondPlayerId !== 'BOT' || firstPlayerId !== 'BOT') {
+                registerLogGame(firstPlayerId, secondPlayerId, 400).then(r => console.log('Response log: ', r))
+            }
         } else if (lastStand.canStart()) {
             if (allSecondPlayerStationCardsAreDamaged && this._playerCanAvoidStationCardAttack(secondPlayerId)) {
                 const secondPlayerLastStand = this._playerServiceFactory.playerLastStand(secondPlayerId);
