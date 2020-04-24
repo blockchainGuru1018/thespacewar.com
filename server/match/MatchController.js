@@ -47,7 +47,7 @@ module.exports = function (deps) {
         const match = await matchRepository.getById(matchId);
         if (match) {
             logger.log(matchActionLogMessage(data), 'match');
-            match[data.action](userId, data.value);
+            await match[data.action](userId, data.value);
         }
         else {
             sendMatchIsDeadMessageToUserSocketConnection({ userId, matchId });

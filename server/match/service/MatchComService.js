@@ -1,5 +1,3 @@
-let registerLogGame = require('./RegisterLog.js');
-
 const LOG_ALL_EMITS = false;
 
 const preparePlayerState = require('./preparePlayerState.js');
@@ -15,7 +13,8 @@ class MatchComService {
                     playerServiceProvider,
                     playerServiceFactory,
                     gameServiceFactory,
-                    stateChangeListener
+                    stateChangeListener,
+                    registerLogGame
                 }) {
         this._matchId = matchId;
         this._players = players;
@@ -25,6 +24,7 @@ class MatchComService {
         this._playerServiceFactory = playerServiceFactory;
         this._gameServiceFactory = gameServiceFactory;
         this._emittedAllState = false;
+        this._registerLogGame = registerLogGame;
 
         stateChangeListener.listenForSnapshots(this._onSnapshot.bind(this));
     }
@@ -136,10 +136,10 @@ class MatchComService {
         return this._players.find(p => p.id === playerId);
     }
 
-    _onSnapshot(snapshot) {
+    async _onSnapshot(snapshot) {
         if (this._emittedAllState) return;
 
-        this._gameEndedCheck();
+        await this._gameEndedCheck();
         this._computeGameTimerState(snapshot);
 
         for (const player of this.getPlayers()) {
@@ -160,7 +160,7 @@ class MatchComService {
         }
     }
 
-    _gameEndedCheck() {
+    async _gameEndedCheck() {
         if (!this._matchService.isGameOn()) return;
 
         const [firstPlayerId, secondPlayerId] = this._matchService.getPlayerOrder();
@@ -179,12 +179,12 @@ class MatchComService {
             this._matchService.playerRetreat(firstPlayerId);
             if (secondPlayerId !== 'BOT' || firstPlayerId !== 'BOT') {
                 // time = ? seconds
-                registerLogGame(secondPlayerId, firstPlayerId, this._matchService.gameLengthSeconds()).then(r => console.log('Response log: ', r))
+                await this._registerLogGame(secondPlayerId, firstPlayerId, this._matchService.gameLengthSeconds());
             }
         } else if (this._playerHasLost(secondPlayerId)) {
             this._matchService.playerRetreat(secondPlayerId);
             if (secondPlayerId !== 'BOT' || firstPlayerId !== 'BOT') {
-                registerLogGame(firstPlayerId, secondPlayerId, this._matchService.gameLengthSeconds()).then(r => console.log('Response log: ', r))
+               await this._registerLogGame(firstPlayerId, secondPlayerId, this._matchService.gameLengthSeconds());
             }
         } else if (lastStand.canStart()) {
             if (allSecondPlayerStationCardsAreDamaged && this._playerCanAvoidStationCardAttack(secondPlayerId)) {

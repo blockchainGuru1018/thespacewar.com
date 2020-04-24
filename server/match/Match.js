@@ -1,3 +1,4 @@
+const _registerLogGame = require('./service/RegisterLog');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
 const FindCardController = require('./controller/FindCardController.js');
 const DrawCardController = require('./controller/DrawCardController.js');
@@ -37,7 +38,8 @@ module.exports = function ({
     rawCardDataRepository,
     endMatch,
     gameConfig,
-    actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository })
+    actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository }),
+    registerLogGame = _registerLogGame
 }) {
 
     const playerIds = players.map(p => p.id);
@@ -89,7 +91,8 @@ module.exports = function ({
         playerServiceProvider,
         playerServiceFactory,
         gameServiceFactory,
-        stateChangeListener
+        stateChangeListener,
+        registerLogGame
     });
 
     const playerRequirementUpdaterFactory = new PlayerRequirementUpdaterFactory({
@@ -262,7 +265,7 @@ function wrapApi({ api, matchComService, stateChangeListener }) {
     const wrappedApi = {};
     for (const name of Object.keys(api)) {
         if (typeof api[name] === 'function') {
-            wrappedApi[name] = (...args) => {
+            wrappedApi[name] = async (...args) => {
 
                 //WARNING: For some reason "callEnded" was not always setting its flag to false before the next call runs ".snapshot".
                 // So this was added and it fixed the bug. But it would be nice to know _why_ in the future!
@@ -272,7 +275,7 @@ function wrapApi({ api, matchComService, stateChangeListener }) {
                 let result;
                 try {
                     result = api[name](...args);
-                    stateChangeListener.snapshot();
+                    await stateChangeListener.snapshot();
                 }
                 finally {
                     //WARNING: See related warning about ".callStarted". If it no longer exists, delete this warning.

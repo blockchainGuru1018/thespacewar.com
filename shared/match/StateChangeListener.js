@@ -25,7 +25,7 @@ class StateChangeListener {
         this._snapshotListeners.push(listener);
     }
 
-    snapshot() {
+    async snapshot() {
         const snapshot = { changedKeysByPlayerId: {} };
         const playerIds = Object.keys(this._snapshotData.changedKeysByPlayerId);
         for (const playerId of playerIds) {
@@ -33,7 +33,7 @@ class StateChangeListener {
         }
 
         for (const listener of this._snapshotListeners) {
-            listener(snapshot);
+            await listener(snapshot);
         }
 
         this._resetSnapshotData();

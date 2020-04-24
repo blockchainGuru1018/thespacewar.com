@@ -159,6 +159,9 @@ function createMatch(deps = {}, testCardData = []) {
             log: (...args) => {
                 console.log(...args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 4) : a))
             }
+        },
+        registerLogGame() {
+            //Nothing
         }
     });
     return Match(deps);
