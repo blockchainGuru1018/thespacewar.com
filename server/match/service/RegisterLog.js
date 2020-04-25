@@ -7,7 +7,7 @@ async function registerLogGame(user_won, user_lost, length) {
             'Content-Type': 'application/x-www-form-urlencoded'
         }
     };
-    return await axios.post('/log-game', qs.stringify({
+    return await axios.post('https://thespacewar.com/log-game', qs.stringify({
         user_won: user_won,
         user_lost: user_lost,
         length: length
