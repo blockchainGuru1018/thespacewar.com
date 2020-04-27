@@ -229,8 +229,19 @@ module.exports = function ({
     }
 
     function retreat(playerId) {
+        registerLogGame(matchService.getOpponentId(playerId), playerId, matchService.gameLengthSeconds())
+            .catch(error => {
+                logError(error);
+            });
         matchService.playerRetreat(playerId);
         matchComService.emitCurrentStateToPlayers();
+    }
+
+    function logError(error) {
+        const rawErrorMessage = JSON.stringify(error, null, 4);
+        const dataString = JSON.stringify(data, null, 4);
+        const errorMessage = `(${new Date().toISOString()}) Error in action to match: ${error.message} - DATA: ${dataString} - RAW ERROR: ${rawErrorMessage}`
+        logger.log(errorMessage, 'error');
     }
 
     function getPlayerState(playerId) {
