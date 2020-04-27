@@ -36,15 +36,34 @@ describe('log winner after game', () => {
 
         expect(registerLogGame).toBeCalledWith('P1A', 'P2A', expect.any(Number));
     });
-});
 
-function catchError(callback) {
-    try {
-        callback();
-    } catch (error) {
-        return error;
-    }
-}
+    test('when the player wins against a Bot, should NOT log game', () => {
+        const registerLogGame = jest.fn().mockImplementation(() => Promise.resolve());
+        const {match} = setupIntegrationTest({
+            playerOrder: ['P1A', 'BOT'],
+            playerStateById: {
+                'P1A': {
+                    stationCards: [stationCard({id: 'S1A'})]
+                },
+                'BOT': {
+                    stationCards: []
+                }
+            }
+        }, {
+            playerId: 'P1A',
+            opponentId: 'BOT',
+            matchDeps: {registerLogGame}
+        });
+
+        match.refresh('P1A');
+
+        expect(registerLogGame).not.toBeCalled();
+    });
+
+    //TODO: test: Player LOSES against BOT, should NOT LOG GAME
+    //TODO: test: Any player retreats, should log game
+    //TODO: test: If player retreats BEFORE THE GAME STARTS, should NOT log game
+});
 
 function stationCard({place = 'draw', flipped = false, id}) {
     return {

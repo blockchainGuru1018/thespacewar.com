@@ -186,7 +186,8 @@ class MatchComService {
             }
         } else if (this._playerHasLost(secondPlayerId)) {
             this._matchService.playerRetreat(secondPlayerId);
-            if (secondPlayerId !== 'BOT' || firstPlayerId !== 'BOT') {
+            const gameIsHumanVsHuman = secondPlayerId !== 'BOT' && firstPlayerId !== 'BOT';
+            if (gameIsHumanVsHuman) {
                 this._registerLogGame(firstPlayerId, secondPlayerId, this._matchService.gameLengthSeconds())
                     .catch(error => {
                         this._logError(error);
