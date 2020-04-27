@@ -60,6 +60,29 @@ describe('log winner after game', () => {
         expect(registerLogGame).not.toBeCalled();
     });
 
+    test('Player LOSES against BOT, should NOT LOG GAME', () => {
+        const registerLogGame = jest.fn().mockImplementation(() => Promise.resolve());
+        const {match} = setupIntegrationTest({
+            playerOrder: ['P1A', 'BOT'],
+            playerStateById: {
+                'P1A': {
+                    stationCards: []
+                },
+                'BOT': {
+                    stationCards: [stationCard({id: 'S1A'})]
+                }
+            }
+        }, {
+            playerId: 'BOT',
+            opponentId: 'P1A',
+            matchDeps: {registerLogGame}
+        });
+
+        match.refresh('P1A');
+
+        expect(registerLogGame).not.toBeCalled();
+    });
+
     //TODO: test: Player LOSES against BOT, should NOT LOG GAME
     //TODO: test: Any player retreats, should log game
     //TODO: test: If player retreats BEFORE THE GAME STARTS, should NOT log game

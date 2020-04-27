@@ -178,7 +178,7 @@ class MatchComService {
         const lastStand = this._gameServiceFactory.lastStand();
         if (this._playerHasLost(firstPlayerId)) {
             this._matchService.playerRetreat(firstPlayerId);
-            if (secondPlayerId !== 'BOT' || firstPlayerId !== 'BOT') {
+            if (secondPlayerId !== 'BOT' && firstPlayerId !== 'BOT') {
                 this._registerLogGame(secondPlayerId, firstPlayerId, this._matchService.gameLengthSeconds())
                     .catch(error => {
                         this._logError(error);
