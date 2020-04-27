@@ -161,8 +161,12 @@ class MatchComService {
     }
 
     _gameEndedCheck() {
-        if (!this._matchService.isGameOn()) return;
+        if (this._gameIsOver()) {
+            this._endGame();
+        }
+    }
 
+    _endGame() {
         const [firstPlayerId, secondPlayerId] = this._matchService.getPlayerOrder();
 
         const firstPlayerStateService = this._playerServiceProvider.getStateServiceById(firstPlayerId);
@@ -171,21 +175,22 @@ class MatchComService {
         const secondPlayerStateService = this._playerServiceProvider.getStateServiceById(secondPlayerId);
         const allSecondPlayerStationCardsAreDamaged = secondPlayerStateService.getUnflippedStationCardsCount() === 0;
 
-
-        if (!allFirstPlayerStationCardsAreDamaged && !allSecondPlayerStationCardsAreDamaged) return;
-
         const lastStand = this._gameServiceFactory.lastStand();
         if (this._playerHasLost(firstPlayerId)) {
             this._matchService.playerRetreat(firstPlayerId);
             if (secondPlayerId !== 'BOT' || firstPlayerId !== 'BOT') {
                 this._registerLogGame(secondPlayerId, firstPlayerId, this._matchService.gameLengthSeconds())
-                    .catch(error => {this._logError(error);});
+                    .catch(error => {
+                        this._logError(error);
+                    });
             }
         } else if (this._playerHasLost(secondPlayerId)) {
             this._matchService.playerRetreat(secondPlayerId);
             if (secondPlayerId !== 'BOT' || firstPlayerId !== 'BOT') {
-               this._registerLogGame(firstPlayerId, secondPlayerId, this._matchService.gameLengthSeconds())
-                   .catch(error => {this._logError(error);});
+                this._registerLogGame(firstPlayerId, secondPlayerId, this._matchService.gameLengthSeconds())
+                    .catch(error => {
+                        this._logError(error);
+                    });
             }
         } else if (lastStand.canStart()) {
             if (allSecondPlayerStationCardsAreDamaged && this._playerCanAvoidStationCardAttack(secondPlayerId)) {
@@ -196,6 +201,23 @@ class MatchComService {
                 firstPlayerLastStand.start();
             }
         }
+    }
+
+    _gameIsOver() {
+        const theGameHasStarted = this._matchService.isGameOn();
+        return theGameHasStarted && this._somePlayerHasWon();
+    }
+
+    _somePlayerHasWon() {
+        const [firstPlayerId, secondPlayerId] = this._matchService.getPlayerOrder();
+
+        const firstPlayerStateService = this._playerServiceProvider.getStateServiceById(firstPlayerId);
+        const allFirstPlayerStationCardsAreDamaged = firstPlayerStateService.getUnflippedStationCardsCount() === 0;
+
+        const secondPlayerStateService = this._playerServiceProvider.getStateServiceById(secondPlayerId);
+        const allSecondPlayerStationCardsAreDamaged = secondPlayerStateService.getUnflippedStationCardsCount() === 0;
+
+        return allFirstPlayerStationCardsAreDamaged || allSecondPlayerStationCardsAreDamaged;
     }
 
     _logError(error) {

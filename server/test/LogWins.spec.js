@@ -1,37 +1,37 @@
-const {
-    assert,
-    refute,
-    sinon
-} = require('./testUtils/bocha-jest/bocha-jest.js');
-const FakeCardDataAssembler = require('../../shared/test/testUtils/FakeCardDataAssembler.js');
-const createCard = FakeCardDataAssembler.createCard;
-const FatalError = require('../../shared/card/FatalError.js');
 const setupIntegrationTest = require('./testUtils/setupIntegrationTest.js');
 
-test('when finish a game and player is the winner should log game', () => {
-    //TODO WRITE TEST
-    expect(true).toBe(true);
-    //const registerLogGame = jest.fn();
-  //  const { match } = setupIntegrationTest({}, {matchDeps: {registerLogGame}});
-//
-  //  match.retreat('P2A');
-//
-    //expect(registerLogGame).toBeCalledWith();
+describe('log winner after game', () => {
+    test('when SECOND player won should register win', () => {
+        const registerLogGame = jest.fn().mockImplementation(() => Promise.resolve());
+        const {match} = setupIntegrationTest({
+            playerStateById: {
+                'P1A': {
+                    stationCards: []
+                },
+                'P2A': {
+                    stationCard: [stationCard({id: 'S2A'})]
+                }
+            }
+        }, {matchDeps: {registerLogGame}});
+
+        match.refresh('P1A');
+
+        expect(registerLogGame).toBeCalledWith('P2A', 'P1A', expect.any(Number));
+    });
 });
 
 function catchError(callback) {
     try {
         callback();
-    }
-    catch (error) {
+    } catch (error) {
         return error;
     }
 }
 
-function stationCard({ place = 'draw', flipped, id }) {
+function stationCard({place = 'draw', flipped = false, id}) {
     return {
         place,
         flipped,
-        card: { id }
+        card: {id}
     };
 }
