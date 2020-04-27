@@ -26,6 +26,7 @@ const {DebugPassword} = require('./semi-secret.js');
 const morgan = require('morgan');
 const config = require('../config');
 const cookieParser = require('cookie-parser');
+const serverRuntimeGlobals = require('./serverRuntimeGlobals.js');
 let inDevelopment;
 let app;
 let server;
@@ -57,6 +58,8 @@ function getPort() {
 
 function startServer(config) {
     inDevelopment = config.inDevelopment;
+
+    serverRuntimeGlobals.isRunningInTestEnvironment = inDevelopment;
 
     return new Promise(async resolve => {
         app = express();

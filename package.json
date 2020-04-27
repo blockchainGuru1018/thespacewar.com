@@ -11,6 +11,8 @@
     "dev:test": "./node_modules/.bin/jest --watch",
     "dev:client": "cd ./client && webpack --watch",
     "dev:server": "node ./scripts/startInDevelopment.js",
+    "dev:login": "node ./loginService/startFakeLoginService.js",
+    "dev:score": "node ./scoreService/startFakeScoreService.js",
     "pre-commit": "jest --changedSince=HEAD",
     "client": "npm run dev:client",
     "server": "npm run dev:server"

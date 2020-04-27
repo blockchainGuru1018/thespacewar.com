@@ -2,6 +2,7 @@ const Player = require('../player/Player.js');
 const Match = require('./Match.js');
 const CardDataAssembler = require('../../shared/CardDataAssembler.js');
 const CardInfoRepository = require('../../shared/CardInfoRepository.js');
+const MatchRegisterLog = require('./service/MatchRegisterLog.js');
 
 const BotId = 'BOT';
 
@@ -9,7 +10,8 @@ module.exports = function ({
     socketRepository,
     rawCardDataRepository,
     gameConfig,
-    logger
+    logger,
+    userRepository
 }) {
 
     const cardDataAssembler = CardDataAssembler({ rawCardDataRepository });
@@ -30,7 +32,8 @@ module.exports = function ({
             logger,
             rawCardDataRepository,
             gameConfig,
-            endMatch: () => endMatch(matchId)
+            endMatch: () => endMatch(matchId),
+            registerLogGame: MatchRegisterLog({userRepository}).registerLogGame
         });
     }
 
@@ -47,7 +50,8 @@ module.exports = function ({
             logger,
             rawCardDataRepository,
             gameConfig,
-            endMatch: () => endMatch(matchId)
+            endMatch: () => endMatch(matchId),
+            registerLogGame: () => Promise.resolve()
         });
     }
 

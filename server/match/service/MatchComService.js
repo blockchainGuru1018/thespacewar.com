@@ -1,3 +1,5 @@
+const {inspect} = require('util');
+
 const LOG_ALL_EMITS = false;
 
 const preparePlayerState = require('./preparePlayerState.js');
@@ -223,9 +225,8 @@ class MatchComService {
     }
 
     _logError(error) {
-        const rawErrorMessage = JSON.stringify(error, null, 4);
-        const dataString = JSON.stringify(data, null, 4);
-        const errorMessage = `(${new Date().toISOString()}) Error in action to match: ${error.message} - DATA: ${dataString} - RAW ERROR: ${rawErrorMessage}`
+        const rawErrorMessage = JSON.stringify(inspect(error), null, 4);
+        const errorMessage = `(${new Date().toISOString()}) Error in action to match: ${error.message} - RAW ERROR: ${rawErrorMessage}`
         this._logger.log(errorMessage, 'error');
     }
 

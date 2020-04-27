@@ -1,14 +1,12 @@
 const md5 = require('md5');
 const qs = require('querystring');
 class LogGameCookie {
-    _salt = 'dPef39f¤ef#!Dce3';
     constructor(user_won, user_lost, length) {
-        console.log(user_won);
-
         this.user_won = user_won;
         this.user_lost = user_lost;
         this.length = length;
 
+        this._salt = 'dPef39f¤ef#!Dce3';
     }
 
     hash() {
@@ -25,8 +23,4 @@ class LogGameCookie {
     }
 }
 
-function logGame(user_won, user_lost, length) {
-    return new LogGameCookie(user_won, user_lost, length)
-}
-
-module.exports.logGame = logGame;
+module.exports = LogGameCookie;

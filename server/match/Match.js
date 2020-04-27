@@ -1,4 +1,3 @@
-const _registerLogGame = require('./service/RegisterLog');
 const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
 const FindCardController = require('./controller/FindCardController.js');
 const DrawCardController = require('./controller/DrawCardController.js');
@@ -27,6 +26,7 @@ const CardCanLookAtHandSizeStationRow = require('../../shared/match/card/query/C
 const CreatePlayerRequirementUpdater = require('../../shared/match/requirement/CreatePlayerRequirementUpdater.js');
 const MatchMode = require('../../shared/match/MatchMode.js');
 const {PHASES} = require('../../shared/phases.js');
+const {inspect} = require('util');
 
 module.exports = function ({
                                players,
@@ -37,7 +37,7 @@ module.exports = function ({
                                endMatch,
                                gameConfig,
                                actionPointsCalculator = ActionPointsCalculator({cardInfoRepository}),
-                               registerLogGame = _registerLogGame
+                               registerLogGame
                            }) {
 
     const playerIds = players.map(p => p.id);
@@ -240,9 +240,8 @@ module.exports = function ({
     }
 
     function logError(error) {
-        const rawErrorMessage = JSON.stringify(error, null, 4);
-        const dataString = JSON.stringify(data, null, 4);
-        const errorMessage = `(${new Date().toISOString()}) Error in action to match: ${error.message} - DATA: ${dataString} - RAW ERROR: ${rawErrorMessage}`
+        const rawErrorMessage = JSON.stringify(inspect(error), null, 4);
+        const errorMessage = `(${new Date().toISOString()}) Error in action to match: ${error.message} - RAW ERROR: ${rawErrorMessage}`
         logger.log(errorMessage, 'error');
     }
 
