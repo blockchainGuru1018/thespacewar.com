@@ -176,23 +176,9 @@ class MatchComService {
         const allSecondPlayerStationCardsAreDamaged = secondPlayerStateService.getUnflippedStationCardsCount() === 0;
 
         const lastStand = this._gameServiceFactory.lastStand();
-        if (this._playerHasLost(firstPlayerId)) {
-            this._matchService.playerRetreat(firstPlayerId);
-            if (secondPlayerId !== 'BOT' && firstPlayerId !== 'BOT') {
-                this._registerLogGame(secondPlayerId, firstPlayerId, this._matchService.gameLengthSeconds())
-                    .catch(error => {
-                        this._logError(error);
-                    });
-            }
-        } else if (this._playerHasLost(secondPlayerId)) {
-            this._matchService.playerRetreat(secondPlayerId);
-            const gameIsHumanVsHuman = secondPlayerId !== 'BOT' && firstPlayerId !== 'BOT';
-            if (gameIsHumanVsHuman) {
-                this._registerLogGame(firstPlayerId, secondPlayerId, this._matchService.gameLengthSeconds())
-                    .catch(error => {
-                        this._logError(error);
-                    });
-            }
+        if (this._somePlayerHasLost()) {
+            const losingPlayerId = this._playerHasLost(firstPlayerId) ? firstPlayerId : secondPlayerId;
+            this._applyPlayerLost(losingPlayerId);
         } else if (lastStand.canStart()) {
             if (allSecondPlayerStationCardsAreDamaged && this._playerCanAvoidStationCardAttack(secondPlayerId)) {
                 const secondPlayerLastStand = this._playerServiceFactory.playerLastStand(secondPlayerId);
@@ -202,6 +188,21 @@ class MatchComService {
                 firstPlayerLastStand.start();
             }
         }
+    }
+
+    _applyPlayerLost(playerId) {
+        this._matchService.playerRetreat(playerId);
+        if (this._matchService.gameIsHumanVsHuman()) {
+            this._registerLogGame(this._matchService.getOpponentId(playerId), playerId, this._matchService.gameLengthSeconds())
+                .catch(error => {
+                    this._logError(error);
+                });
+        }
+    }
+
+    _somePlayerHasLost() {
+        const [firstPlayerId, secondPlayerId] = this._matchService.getPlayerOrder();
+        return this._playerHasLost(firstPlayerId) || this._playerHasLost(secondPlayerId)
     }
 
     _gameIsOver() {

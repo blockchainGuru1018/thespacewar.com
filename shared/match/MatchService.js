@@ -72,6 +72,11 @@ class MatchService {
         }, EndMatchDelay);
     }
 
+    gameIsHumanVsHuman() {
+        const [firstPlayerId, secondPlayerId] = this.getPlayerOrder();
+        return secondPlayerId !== 'BOT' && firstPlayerId !== 'BOT';
+    }
+
     somePlayerHasAlreadyRetreated() {
         return !!this.getState().retreatedPlayerId;
     }

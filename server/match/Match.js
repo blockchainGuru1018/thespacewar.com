@@ -26,19 +26,19 @@ const CardsThatCanLookAtHandSizeStationRow = require('../../shared/match/card/qu
 const CardCanLookAtHandSizeStationRow = require('../../shared/match/card/query/CardCanLookAtHandSizeStationRow.js');
 const CreatePlayerRequirementUpdater = require('../../shared/match/requirement/CreatePlayerRequirementUpdater.js');
 const MatchMode = require('../../shared/match/MatchMode.js');
-const { PHASES } = require('../../shared/phases.js');
+const {PHASES} = require('../../shared/phases.js');
 
 module.exports = function ({
-    players,
-    matchId,
-    cardInfoRepository,
-    logger,
-    rawCardDataRepository,
-    endMatch,
-    gameConfig,
-    actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository }),
-    registerLogGame = _registerLogGame
-}) {
+                               players,
+                               matchId,
+                               cardInfoRepository,
+                               logger,
+                               rawCardDataRepository,
+                               endMatch,
+                               gameConfig,
+                               actionPointsCalculator = ActionPointsCalculator({cardInfoRepository}),
+                               registerLogGame = _registerLogGame
+                           }) {
 
     const playerIds = players.map(p => p.id);
     const firstPlayerId = randomItem(playerIds);
@@ -80,7 +80,7 @@ module.exports = function ({
 
     const matchService = playerServiceFactory.matchService();
     const playerServiceProvider = playerServiceFactory.playerServiceProvider();
-    const stateChangeListener = new StateChangeListener({ playerServiceProvider, matchService, logger });
+    const stateChangeListener = new StateChangeListener({playerServiceProvider, matchService, logger});
     const matchComService = new MatchComService({
         matchId,
         players,
@@ -99,7 +99,7 @@ module.exports = function ({
         playerServiceFactory,
         playerRequirementServicesFactory
     });
-    const playerOverworkFactory = PlayerOverworkFactory({ playerServiceFactory });
+    const playerOverworkFactory = PlayerOverworkFactory({playerServiceFactory});
 
     const stateSerializer = gameServiceFactory.stateSerializer();
     const controllerDeps = {
@@ -189,7 +189,7 @@ module.exports = function ({
     };
     return {
         ...unwrappedApi,
-        ...wrapApi({ api, matchComService, stateChangeListener })
+        ...wrapApi({api, matchComService, stateChangeListener})
     };
 
     function refresh(playerId) {
@@ -206,7 +206,7 @@ module.exports = function ({
         playerStateService.removeAndDiscardCardFromStationOrZone(cardId);
     }
 
-    function repairCard(playerId, { repairerCardId, cardToRepairId }) {
+    function repairCard(playerId, {repairerCardId, cardToRepairId}) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         const cardFactory = playerServiceFactory.cardFactory();
 
@@ -229,10 +229,12 @@ module.exports = function ({
     }
 
     function retreat(playerId) {
-        registerLogGame(matchService.getOpponentId(playerId), playerId, matchService.gameLengthSeconds())
-            .catch(error => {
-                logError(error);
-            });
+        if (matchService.gameIsHumanVsHuman()) {
+            registerLogGame(matchService.getOpponentId(playerId), playerId, matchService.gameLengthSeconds())
+                .catch(error => {
+                    logError(error);
+                });
+        }
         matchService.playerRetreat(playerId);
         matchComService.emitCurrentStateToPlayers();
     }
@@ -270,7 +272,7 @@ module.exports = function ({
     }
 };
 
-function wrapApi({ api, matchComService, stateChangeListener }) {
+function wrapApi({api, matchComService, stateChangeListener}) {
     const wrappedApi = {};
     for (const name of Object.keys(api)) {
         if (typeof api[name] === 'function') {
@@ -285,8 +287,7 @@ function wrapApi({ api, matchComService, stateChangeListener }) {
                 try {
                     result = api[name](...args);
                     stateChangeListener.snapshot();
-                }
-                finally {
+                } finally {
                     //WARNING: See related warning about ".callStarted". If it no longer exists, delete this warning.
                     matchComService.callEnded();
                     //END OF WARNING
@@ -294,8 +295,7 @@ function wrapApi({ api, matchComService, stateChangeListener }) {
 
                 return result;
             };
-        }
-        else {
+        } else {
             wrappedApi[name] = api[name];
         }
     }
