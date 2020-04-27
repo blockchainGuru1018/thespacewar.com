@@ -9,7 +9,7 @@ describe('log winner after game', () => {
                     stationCards: []
                 },
                 'P2A': {
-                    stationCard: [stationCard({id: 'S2A'})]
+                    stationCards: [stationCard({id: 'S2A'})]
                 }
             }
         }, {matchDeps: {registerLogGame}});
@@ -17,6 +17,24 @@ describe('log winner after game', () => {
         match.refresh('P1A');
 
         expect(registerLogGame).toBeCalledWith('P2A', 'P1A', expect.any(Number));
+    });
+
+    test('when FIRST player won should register win', () => {
+        const registerLogGame = jest.fn().mockImplementation(() => Promise.resolve());
+        const {match} = setupIntegrationTest({
+            playerStateById: {
+                'P1A': {
+                    stationCards: [stationCard({id: 'S2A'})]
+                },
+                'P2A': {
+                    stationCards: []
+                }
+            }
+        }, {matchDeps: {registerLogGame}});
+
+        match.refresh('P1A');
+
+        expect(registerLogGame).toBeCalledWith('P1A', 'P2A', expect.any(Number));
     });
 });
 

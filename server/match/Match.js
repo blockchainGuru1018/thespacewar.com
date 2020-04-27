@@ -28,8 +28,6 @@ const CreatePlayerRequirementUpdater = require('../../shared/match/requirement/C
 const MatchMode = require('../../shared/match/MatchMode.js');
 const { PHASES } = require('../../shared/phases.js');
 
-const ServiceTypes = PlayerServiceProvider.TYPE;
-
 module.exports = function ({
     players,
     matchId,
