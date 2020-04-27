@@ -229,7 +229,7 @@ module.exports = function ({
     }
 
     function retreat(playerId) {
-        if (matchService.gameIsHumanVsHuman()) {
+        if (matchService.gameIsHumanVsHuman() && matchService.isGameOn()) {
             registerLogGame(matchService.getOpponentId(playerId), playerId, matchService.gameLengthSeconds())
                 .catch(error => {
                     logError(error);

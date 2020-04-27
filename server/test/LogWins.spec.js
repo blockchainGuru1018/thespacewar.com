@@ -1,4 +1,5 @@
 const setupIntegrationTest = require('./testUtils/setupIntegrationTest.js');
+const MatchMode = require('../../shared/match/MatchMode.js');
 
 describe('log winner after game', () => {
     test('when SECOND player won should register win', () => {
@@ -129,10 +130,29 @@ describe('log winner after game', () => {
         expect(registerLogGame).not.toBeCalled();
     });
 
-    //TODO: test: Player LOSES against BOT, should NOT LOG GAME
-    //TODO: test: Any player retreats, should log game
+    test('if player retreats BEFORE game starts, should NOT log game', () => {
+        const registerLogGame = jest.fn().mockImplementation(() => Promise.resolve());
+        const {match} = setupIntegrationTest({
+            mode: MatchMode.selectStationCards,
+            playerOrder: ['P1A', 'P2A'],
+            playerStateById: {
+                'P1A': {
+                    stationCards: [stationCard({id: 'S2A'})]
+                },
+                'P2A': {
+                    stationCards: [stationCard({id: 'S1A'})]
+                }
+            }
+        }, {
+            playerId: 'P1A',
+            opponentId: 'P2A',
+            matchDeps: {registerLogGame}
+        });
 
-    //TODO: test: If player retreats BEFORE THE GAME STARTS, should NOT log game
+        match.retreat('P1A');
+
+        expect(registerLogGame).not.toBeCalled();
+    });
 });
 
 function stationCard({place = 'draw', flipped = false, id}) {
