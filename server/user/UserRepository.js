@@ -32,7 +32,7 @@ module.exports = function (deps) {
         clearOldUsers();
 
         addUser(user, secret);
-        rawCookieToUserId.set(rawCookie, user.id);
+        rawCookieToUserId.set(user.id, rawCookie);
 
         return user;
     }

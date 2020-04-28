@@ -9,7 +9,6 @@ function loginCookieFromRawCookieStringOrNull(rawCookieStringOrNull) {
 }
 
 class LoginCookie {
-    _salt = 'dgRdfkWMfGWJdE¤53d8P63h';
 
     constructor(cookieString) {
         const cookieParts = cookieString.split(':');
@@ -19,6 +18,8 @@ class LoginCookie {
         this.country = cookieParts[2];
         this.rating = cookieParts[3];
         this._cookieHash = cookieParts[4];
+
+        this._salt = 'dgRdfkWMfGWJdE¤53d8P63h';
     }
 
     hash() {
