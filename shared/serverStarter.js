@@ -11,6 +11,7 @@ module.exports = {
 };
 
 function installNpmPackages() {
+    // SERVER TEST
     const scriptPath = path.join(__dirname, '..', 'server');
     console.info(' (1/2) - Installing dependencies');
     child_process.execSync(`cd ${scriptPath} && bash ./install`);
