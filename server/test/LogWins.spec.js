@@ -107,6 +107,30 @@ describe('log winner after game', () => {
         expect(registerLogGame).toBeCalledWith('P2A', 'P1A', expect.any(Number));
     });
 
+    test('If player retreats, should ONLY log game ONCE', () => {
+        const registerLogGame = jest.fn().mockImplementation(() => Promise.resolve());
+        const {match} = setupIntegrationTest({
+            playerOrder: ['P1A', 'P2A'],
+            playerStateById: {
+                'P1A': {
+                    stationCards: [stationCard({id: 'S2A'})]
+                },
+                'P2A': {
+                    stationCards: [stationCard({id: 'S1A'})]
+                }
+            }
+        }, {
+            playerId: 'P2A',
+            opponentId: 'P1A',
+            matchDeps: {registerLogGame}
+        });
+
+        match.retreat('P1A');
+        match.retreat('P1A');
+
+        expect(registerLogGame).toBeCalledTimes(1);
+    });
+
     test('When player retreats against Bot, should NOT log game', () => {
         const registerLogGame = jest.fn().mockImplementation(() => Promise.resolve());
         const {match} = setupIntegrationTest({
