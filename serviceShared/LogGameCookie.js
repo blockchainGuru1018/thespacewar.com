@@ -14,12 +14,12 @@ class LogGameCookie {
     }
 
     postData() {
-        return {
+        return qs.stringify({
             user_won: this.user_won,
             user_lost: this.user_lost,
             length: this.length,
             hash: this.hash()
-        };
+        });
     }
 }
 
