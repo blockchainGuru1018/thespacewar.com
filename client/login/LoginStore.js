@@ -67,8 +67,7 @@ module.exports = function ({
         ]);
 
         if (!loggedInToHome) { // NOT logged in to PHP server
-            const isLoggedInAsGuest = !!loggedInToGame;
-            if (!isLoggedInAsGuest) { // TODO Is this needed?
+            if (!localGameDataFacade.guestModeOn()) {
                 dispatch('_resetLocallyStoredUserData');
             }
         } else if (loggedInToGame) { // User is logged in to the PHP server AND the Node server
