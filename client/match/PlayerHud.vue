@@ -23,6 +23,7 @@
                 <template v-if="canGoToNextTurn">
                     <button
                         v-if="nextPhaseButtonText"
+                        :disabled="nextPhaseButtonDisabled"
                         class="playerHud-phaseText nextPhaseButton nextPhaseButton-onTheLeft"
                         @click="nextPhaseClick"
                     >
@@ -30,6 +31,7 @@
                     </button>
                     <button
                         v-else-if="endTurnButtonVisible"
+                        :disabled="nextPhaseButtonDisabled"
                         class="playerHud-phaseText nextPhaseButton nextPhaseButton-endTurn nextPhaseButton-onTheLeft"
                         @click="nextPhaseClick"
                     >
@@ -135,6 +137,7 @@
         data() {
             return {
                 enlargedCardVisible: false,
+                nextPhaseButtonDisabled: false,
             };
         },
         computed: {
@@ -264,6 +267,11 @@
                 this.playerReady();
             },
             nextPhaseClick() {
+                this.nextPhaseButtonDisabled = true;
+                setTimeout(() => {
+                    this.nextPhaseButtonDisabled = false;
+                }, 1000)
+
                 this.goToNextPhase();
             },
             hideEnlargedCard() {
