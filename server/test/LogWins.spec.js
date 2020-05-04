@@ -58,7 +58,7 @@ describe('log winner after game', () => {
 
         match.refresh('P1A');
 
-        expect(registerLogGame).not.toBeCalled();
+        expect(registerLogGame).toBeCalledWith('BOT', 'P1A', expect.any(Number));
     });
 
     test('Player LOSES against BOT, should NOT LOG GAME', () => {
@@ -81,7 +81,7 @@ describe('log winner after game', () => {
 
         match.refresh('P1A');
 
-        expect(registerLogGame).not.toBeCalled();
+        expect(registerLogGame).toBeCalledWith('P1A', 'BOT', expect.any(Number));
     });
 
     test('Any player retreats, should log game', () => {
