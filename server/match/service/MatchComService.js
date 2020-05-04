@@ -199,6 +199,11 @@ class MatchComService {
                 .catch(error => {
                     this._logError(error);
                 });
+        } else if (this._matchService.gameIsHumanVsBot()) {
+            this._registerLogGame(playerId, this._matchService.getOpponentId(playerId), 0)
+                .catch(error => {
+                    this._logError(error);
+                });
         }
     }
 

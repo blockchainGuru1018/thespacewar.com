@@ -129,7 +129,7 @@
             "defense": "0",
             "attack": "0",
             "number_copies": "2",
-            "author": "Baranov_Evgenii",
+            "author": "Evgenii Baranov",
             "deck": "1"
         },
         {
@@ -165,7 +165,7 @@
             "defense": "0",
             "attack": "0",
             "number_copies": "1",
-            "author": "I_g0rZh",
+            "author": "Igor Zhuravlov",
             "deck": "1"
         },
         {
@@ -201,7 +201,7 @@
             "defense": "0",
             "attack": "0",
             "number_copies": "2",
-            "author": "jamesteohart",
+            "author": "Chin Leong TEOH",
             "deck": "1"
         },
         {
@@ -237,7 +237,7 @@
             "defense": "5",
             "attack": "0",
             "number_copies": "3",
-            "author": "I_g0rZh",
+            "author": "Igor Zhuravlov",
             "deck": "1"
         },
         {
@@ -345,7 +345,7 @@
             "defense": "0",
             "attack": "0",
             "number_copies": "4",
-            "author": "dvargg",
+            "author": "Vasyl Duda",
             "deck": "1"
         },
         {
@@ -369,7 +369,7 @@
             "defense": "0",
             "attack": "0",
             "number_copies": "2",
-            "author": "slena",
+            "author": "Olena Pantiukh",
             "deck": "1"
         },
         {
@@ -387,13 +387,13 @@
         {
             "id": "38",
             "name": "Fatal Error",
-            "price": "0",
+            "price": "X",
             "type_card": "orange",
-            "detail": "Destroy a flipped station card [ OR ] destroy any non-station card, opponent receives extra action points of the card in the next turn.",
+            "detail": "Destroy any card in play with action cost X.",
             "defense": "0",
             "attack": "0",
             "number_copies": "2",
-            "author": "ragnarok",
+            "author": "David Rajecky",
             "deck": "1"
         },
         {
@@ -417,7 +417,7 @@
             "defense": "0",
             "attack": "0",
             "number_copies": "2",
-            "author": "vitaliy_sokol",
+            "author": "Vitaliy Sokol",
             "deck": "1"
         },
         {
@@ -441,7 +441,7 @@
             "defense": "0",
             "attack": "0",
             "number_copies": "1",
-            "author": "sdecoret",
+            "author": "Sébastien Decoret",
             "deck": "1"
         },
         {
@@ -457,5 +457,5 @@
             "deck": "1"
         }
     ],
-    "saveTime": 1586724689693
+    "saveTime": 1588472097990
 }
