@@ -81,7 +81,7 @@ describe('log winner after game', () => {
 
         match.refresh('P1A');
 
-        expect(registerLogGame).git not.toBeCalled();
+        expect(registerLogGame).not.toBeCalled();
     });
 
     test('Any player retreats, should log game', () => {

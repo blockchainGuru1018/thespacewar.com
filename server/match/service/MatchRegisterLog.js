@@ -32,6 +32,5 @@ async function postScore(url, user_won, user_lost, length) {
         }
     };
     const logGameCookie = new LogGameCookie(user_won, user_lost, length);
-    console.log('POST SCORE: ', logGameCookie.postData(), 'RAW: ', url, user_won, user_lost, length);
     return axios.post(url, logGameCookie.postData(), config);
 }
