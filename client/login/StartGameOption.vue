@@ -178,7 +178,6 @@
       bottom: -15px;
     }
 
-
     @media only screen and (max-width: 425px)
     {
       .game-option {

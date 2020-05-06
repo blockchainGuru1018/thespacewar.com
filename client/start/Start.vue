@@ -180,4 +180,5 @@
     .view-wrapper--visible {
         opacity: 1;
     }
+    
 </style>
