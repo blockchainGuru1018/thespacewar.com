@@ -168,9 +168,9 @@
         opacity: 0;
         z-index: 1;
         position: fixed;
-        transform: translate(-50%, -50%);
-        left: 50%;
-        top: 50%;
+        /*transform: translate(-50%, -50%);*/
+        right: -10px;
+        bottom: -10px;
 
         display: flex;
         justify-content: center;

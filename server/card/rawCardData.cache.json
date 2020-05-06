@@ -29,7 +29,7 @@
             "name": "Stormfalcon",
             "price": "4",
             "type_card": "blue",
-            "detail": "Normal space ship.",
+            "detail": "Normal spaceship.",
             "defense": "3",
             "attack": "5",
             "number_copies": "1",
@@ -77,7 +77,7 @@
             "name": "EMP Missile",
             "price": "2",
             "type_card": "red",
-            "detail": "Destroys Energy Shield or paralyzes space ship (turn the card and it cannot do anything until repaired).",
+            "detail": "Destroys Energy Shield or paralyzes spaceship (turn the card and it cannot do anything until repaired).",
             "defense": "2",
             "attack": "0",
             "number_copies": "2",
@@ -101,7 +101,7 @@
             "name": "Full Attack",
             "price": "2",
             "type_card": "violet",
-            "detail": "+1 attack value of your space ships (not missiles or cannons).",
+            "detail": "+1 attack value of your spaceships (not missiles or cannons).",
             "defense": "0",
             "attack": "0",
             "number_copies": "2",
@@ -129,7 +129,7 @@
             "defense": "0",
             "attack": "0",
             "number_copies": "2",
-            "author": "Baranov_Evgenii",
+            "author": "Evgenii Baranov",
             "deck": "1"
         },
         {
@@ -165,7 +165,7 @@
             "defense": "0",
             "attack": "0",
             "number_copies": "1",
-            "author": "I_g0rZh",
+            "author": "Igor Zhuravlov",
             "deck": "1"
         },
         {
@@ -173,7 +173,7 @@
             "name": "Target Missed",
             "price": "0",
             "type_card": "orange",
-            "detail": "Play this card directly during enemy attack from space ship (not collision, missile or cannon) to make the attack fail.",
+            "detail": "Play this card directly during enemy attack from spaceship (not collision, missile or cannon) to make the attack fail.",
             "defense": "0",
             "attack": "0",
             "number_copies": "3",
@@ -201,7 +201,7 @@
             "defense": "0",
             "attack": "0",
             "number_copies": "2",
-            "author": "jamesteohart",
+            "author": "Chin Leong TEOH",
             "deck": "1"
         },
         {
@@ -237,7 +237,7 @@
             "defense": "5",
             "attack": "0",
             "number_copies": "3",
-            "author": "I_g0rZh",
+            "author": "Igor Zhuravlov",
             "deck": "1"
         },
         {
@@ -269,7 +269,7 @@
             "name": "Thunderbolt",
             "price": "2",
             "type_card": "blue",
-            "detail": "Normal space ship.",
+            "detail": "Normal spaceship.",
             "defense": "3",
             "attack": "2",
             "number_copies": "1",
@@ -281,7 +281,7 @@
             "name": "The Gladiator",
             "price": "2",
             "type_card": "blue",
-            "detail": "Normal space ship.",
+            "detail": "Normal spaceship.",
             "defense": "2",
             "attack": "3",
             "number_copies": "1",
@@ -345,7 +345,7 @@
             "defense": "0",
             "attack": "0",
             "number_copies": "4",
-            "author": "dvargg",
+            "author": "Vasyl Duda",
             "deck": "1"
         },
         {
@@ -353,7 +353,7 @@
             "name": "Battlestar",
             "price": "3",
             "type_card": "blue",
-            "detail": "Normal space ship.",
+            "detail": "Normal spaceship.",
             "defense": "4",
             "attack": "2",
             "number_copies": "2",
@@ -369,7 +369,7 @@
             "defense": "0",
             "attack": "0",
             "number_copies": "2",
-            "author": "slena",
+            "author": "Olena Pantiukh",
             "deck": "1"
         },
         {
@@ -387,13 +387,13 @@
         {
             "id": "38",
             "name": "Fatal Error",
-            "price": "0",
+            "price": "X",
             "type_card": "orange",
-            "detail": "Destroy a flipped station card [ OR ] destroy any non-station card, opponent receives extra action points of the card in the next turn.",
+            "detail": "Destroy any card in play with action cost X.",
             "defense": "0",
             "attack": "0",
             "number_copies": "2",
-            "author": "ragnarok",
+            "author": "David Rajecky",
             "deck": "1"
         },
         {
@@ -417,7 +417,7 @@
             "defense": "0",
             "attack": "0",
             "number_copies": "2",
-            "author": "vitaliy_sokol",
+            "author": "Vitaliy Sokol",
             "deck": "1"
         },
         {
@@ -425,7 +425,7 @@
             "name": "The Liberator",
             "price": "4",
             "type_card": "blue",
-            "detail": "Normal space ship.",
+            "detail": "Normal spaceship.",
             "defense": "6",
             "attack": "2",
             "number_copies": "1",
@@ -441,7 +441,7 @@
             "defense": "0",
             "attack": "0",
             "number_copies": "1",
-            "author": "sdecoret",
+            "author": "Sébastien Decoret",
             "deck": "1"
         },
         {
@@ -457,5 +457,5 @@
             "deck": "1"
         }
     ],
-    "saveTime": 1586724689693
+    "saveTime": 1588561851957
 }
