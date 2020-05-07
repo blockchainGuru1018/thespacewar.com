@@ -15,8 +15,7 @@
     "dev:score": "node ./scoreService/startFakeScoreService.js",
     "pre-commit": "jest --changedSince=HEAD",
     "client": "npm run dev:client",
-    "rating": "node ./fakeServerService/fakerLeaderBoardService.js",
-    "server": "concurrently -m -n \"npm run dev:client\" \"npm run dev:server\" \"npm run rating\" \"npm run client\" \"npm run dev:score\""
+    "server": "concurrently -m -n \"npm run dev:client\" \"npm run dev:server\" \"npm run client\" \"npm run dev:login\" \"npm run dev:score\""
   },
   "repository": {
     "type": "git",
