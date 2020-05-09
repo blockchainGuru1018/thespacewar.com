@@ -43,19 +43,10 @@
     const loginHelpers = Vuex.createNamespacedHelpers('login');
     const guestHelpers = Vuex.createNamespacedHelpers('guest');
     const User = require('../../shared/user/User.js');
-    const {uniqueNamesGenerator, adjectives, colors, names} = require('unique-names-generator');
 
     export default {
         name: "StartGameOption",
         computed: {
-            username: {
-                get() {
-                    return this.genericUsername();
-                },
-                set(username) {
-                    this.$store.state.login.username = username;
-                }
-            },
             usernameMaxLength() {
                 return User.MaxNameLength;
             },
@@ -78,12 +69,6 @@
             ...guestHelpers.mapActions([
                 'playAgainstAi'
             ]),
-            genericUsername() {
-                return uniqueNamesGenerator({
-                    dictionaries: [adjectives, colors, names], // colors can be omitted here as not used
-                    length: 2
-                });
-            }
         }
     }
 
