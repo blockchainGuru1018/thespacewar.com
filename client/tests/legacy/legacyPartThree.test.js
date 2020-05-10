@@ -152,56 +152,6 @@ describe('Fatal Error:', () => {
             assert.elementText('.guideText', 'Select any card to destroy');
         });
     });
-    describe.skip('when put down card Fatal Error and then select opponent card in player zone', () => {
-        beforeEach(async () => {
-            matchController = FakeMatchController({ emit: stub() });
-            const { dispatch } = createController({ matchController: matchController });
-            controller.showPage();
-            dispatch('stateChanged', FakeState({
-                turn: 1,
-                currentPlayer: 'P1A',
-                phase: 'action',
-                cardsOnHand: [{ id: 'C1A', type: 'event', commonId: FatalErrorCommonId }],
-                cardsInZone: [{ id: 'C2A' }],
-                cardsInOpponentZone: [{ id: 'C3A' }],
-                stationCards: [{ place: 'draw', id: 'S1A' }],
-                opponentCardsInZone: [{ id: 'C4A' }],
-                opponentCardsInPlayerZone: [{ id: 'C5A' }],
-                opponentStationCards: [{ place: 'draw', id: 'S2A' }],
-                events: [
-                    PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C2A' }),
-                    PutDownCardEvent({ turn: 1, location: 'zone', cardId: 'C3A' })
-                ]
-            }));
-            await timeout();
-            await click('.playerCardsOnHand .cardOnHand');
-            await click('.playerEventCardGhost');
-
-            await click('.opponentCardsInPlayerZone .card:eq(0) .selectable');
-        });
-        test('should NOT have card in zone', () => {
-            assert.elementCount('.field-playerZoneCards .card:not(.card-placeholder)', 1);
-        });
-        test('should NOT have card in hand', () => {
-            assert.elementCount('.playerCardsOnHand .cardOnHand', 0);
-        });
-        test('should have discarded card', () => {
-            assert.elementCount('.field-player .field-discardPile .card[data-cardId="C1A"]', 1);
-        });
-        test('should NOT show guide text', () => {
-            assert.elementCount('.guideText', 0);
-        });
-        test('should NOT be able to select ANY card', () => {
-            assert.elementCount('.selectable', 0);
-        });
-        test('should emit put down card with opponent card id as "choice"', () => {
-            assert.calledWith(matchController.emit, 'putDownCard', {
-                location: 'zone',
-                cardId: 'C1A',
-                choice: 'C5A'
-            });
-        });
-    });
 });
 describe.skip('Trigger happy joe:', () => {
     describe('when moved to opponent zone last turn and has attacked station card once this turn and ready card again for attack', () => {
