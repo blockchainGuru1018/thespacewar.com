@@ -1,27 +1,40 @@
 <template>
     <div class="game-option">
-        <div class="btn btn-login">
-            <a :href="loginUrl">Login</a>
+        <div class="content-option">
+            <div class="btn-sign">
+                <div class="btn btn-login">
+                    <a :href="loginUrl">Login</a>
+                </div>
+                <div class="btn btn-register">
+                    <a href="https://thespacewar.com/register">Register</a>
+                </div>
+            </div>
+
+            <hr>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vehicula pharetra elit at dapibus.
+                Aenean tincidunt, odio in efficitur faucibus, nibh nisl finibus ligula, eget iaculis justo mauris in
+                purus.
+                Quisque convallis maximus dui, et tincidunt ipsum fermentum at.</p>
+            <button
+                v-if="playAsGuestOn"
+                class="btn btn-guest"
+                @click="playAgainstAi"
+            >
+                Play against AI
+            </button>
+            <button
+                v-else
+                class="btn btn-guest"
+                :disabled="true"
+            >
+                Play against AI (coming soon)
+            </button>
         </div>
-        <div class="btn btn-register">
-            <a href="https://thespacewar.com/register">Register</a>
+        <div id="metal-corner">
+            <img src="https://images.thespacewar.com/metal-corner.png" alt="">
         </div>
-        <hr>
-        <button
-            v-if="playAsGuestOn"
-            class="btn btn-guest"
-            @click="playAgainstAi"
-        >
-            Play against AI
-        </button>
-        <button
-            v-else
-            class="btn btn-guest"
-            :disabled="true"
-        >
-            Play against AI (coming soon)
-        </button>
     </div>
+
 </template>
 
 <script>
@@ -31,19 +44,10 @@
     const loginHelpers = Vuex.createNamespacedHelpers('login');
     const guestHelpers = Vuex.createNamespacedHelpers('guest');
     const User = require('../../shared/user/User.js');
-    const {uniqueNamesGenerator, adjectives, colors, names} = require('unique-names-generator');
 
     export default {
         name: "StartGameOption",
         computed: {
-            username: {
-                get() {
-                    return this.genericUsername();
-                },
-                set(username) {
-                    this.$store.state.login.username = username;
-                }
-            },
             usernameMaxLength() {
                 return User.MaxNameLength;
             },
@@ -66,12 +70,6 @@
             ...guestHelpers.mapActions([
                 'playAgainstAi'
             ]),
-            genericUsername() {
-                return uniqueNamesGenerator({
-                    dictionaries: [adjectives, colors, names], // colors can be omitted here as not used
-                    length: 2
-                });
-            }
         }
     }
 
@@ -91,50 +89,95 @@
         position: relative;
         z-index: 2;
         text-align: center;
+        background: url(https://images.thespacewar.com/intro-frame.png);
+        background-position: right bottom;
+        // background-size: contain;
+        max-width: 990px;
+        width: 100%;
+        min-height: 380px;
+        background-repeat: no-repeat;
 
-        hr {
-            border-bottom: 3px solid #fff;
-            border-top: none;
-            border-right: none;
-            border-left: none;
-        }
+        .content-option {
+            max-width: 520px;
+            margin-top: 80px;
+            margin-right: 80px;
+            float: right;
 
-        .btn {
-            font-family: "Space Mono", monospace;
-            font-size: 1em;
-            display: inline-block;
-            margin: 0 4px;
-            color: $linkWhite;
+            .btn-sign {
+                margin: 15px 0px;
+            }
 
-            a {
+            hr {
+                border-bottom: 3px solid #fff;
+                border-top: none;
+                border-right: none;
+                border-left: none;
+            }
+
+            p {
                 color: $linkWhite;
             }
 
-            &.btn-login {
-            }
+            .btn {
+                font-family: "Space Mono", monospace;
+                font-size: 1em;
+                display: inline-block;
+                margin: 0 4px;
+                color: $linkWhite;
+                position: relative;
+                z-index: 10;
 
-            &.btn-login {
-
-            }
-
-            &.btn-guest {
-                clear: both;
-                background-color: #0b0b0ba6;
-                border: 0;
-                width: 100%;
-                margin: 0;
-                padding: 3px 6px;
-                display: block;
-
-                &:hover:not(:disabled) {
-                    color: #dfdfdf;
-                    background-color: #222422;
-                    cursor: pointer;
+                a {
+                    color: $linkWhite;
+                    text-decoration: none;
                 }
 
-                &:disabled {
-                    color: #999;
+                &.btn-login {
+                    text-transform: uppercase;
                 }
+
+                &.btn-register {
+                    text-transform: uppercase;
+                }
+
+                &.btn-guest {
+                    clear: both;
+                    background-color: #66cc00;
+                    border: 2px solid #72f200;
+                    width: 80%;
+                    margin: 0 auto;
+                    padding: 5px 12px;
+                    display: block;
+                    text-transform: uppercase;
+                    position: relative;
+                    z-index: 10;
+
+                    &:hover:not(:disabled) {
+                        color: #dfdfdf;
+                        background-color: #222422;
+                        cursor: pointer;
+                    }
+
+                    &:disabled {
+                        color: #999;
+                    }
+                }
+            }
+        }
+
+    }
+
+    #metal-corner {
+        position: fixed;
+        z-index: 3;
+        right: -5px;
+        bottom: -15px;
+    }
+
+    @media only screen and (max-width: 425px) {
+        .game-option {
+            .content-option {
+
             }
         }
     }

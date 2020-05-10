@@ -25,6 +25,10 @@ const localGameDataFacade = require('../utils/localGameDataFacade.js');
 const ajax = require('../utils/ajax.js');
 require('../utils/cheatEngine.js');
 
+let UserAuth = require('../../shared/user/UserAuth.js');
+let Cookie = require('cookie-reader');
+let retrieveSession = require('../../shared/session/retrieveSession.js');
+
 Vue.use(Vuex);
 Vue.use(PortalVue);
 Vue.use(vClickOutside);
@@ -40,7 +44,7 @@ function bootstrap() {
 
     // 1st order dependencies
     const socket = io();
-    const router = Router({ pagesByName, pageDependencies });
+    const router = Router({pagesByName, pageDependencies});
     const rawCardDataRepository = ClientRawCardDataRepository();
     const rootStore = RootStore();
     Object.assign(pageDependencies, {
@@ -52,8 +56,8 @@ function bootstrap() {
 
     // 2nd order dependencies
     const configRepository = ConfigRepository({socket});
-    const userRepository = UserRepository({ socket });
-    const cardDataAssembler = CardDataAssembler({ rawCardDataRepository });
+    const userRepository = UserRepository({socket});
+    const cardDataAssembler = CardDataAssembler({rawCardDataRepository});
     Object.assign(pageDependencies, {
         cardDataAssembler,
         configRepository,
@@ -61,9 +65,9 @@ function bootstrap() {
     });
 
     // 3rd order dependencies
-    const cardInfoRepository = CardInfoRepository({ cardDataAssembler });
-    const matchRepository = MatchRepository({ socket, userRepository });
-    const matchControllerFactory = MatchControllerFactory({ socket, userRepository })
+    const cardInfoRepository = CardInfoRepository({cardDataAssembler});
+    const matchRepository = MatchRepository({socket, userRepository});
+    const matchControllerFactory = MatchControllerFactory({socket, userRepository})
     Object.assign(pageDependencies, {
         cardInfoRepository,
         matchRepository,
@@ -76,13 +80,13 @@ function bootstrap() {
         rawCardDataRepository
     });
     const stores = [
-        ConfigStore({ rootStore, configRepository }),
-        LoadingStore({ rootStore, pageDependencies }),
-        LoginStore({ route: router.route, rootStore, userRepository, botUpdateListener }),
-        LobbyStore({ route: router.route, rootStore, userRepository, matchRepository, botUpdateListener }),
+        ConfigStore({rootStore, configRepository}),
+        LoadingStore({rootStore, pageDependencies}),
+        LoginStore({route: router.route, rootStore, userRepository, botUpdateListener}),
+        LobbyStore({route: router.route, rootStore, userRepository, matchRepository, botUpdateListener, retrieveSession: retrieveSession({Cookie, UserAuth})}),
         GuestStore(),
-        UserStore({ rootStore, userRepository }),
-        AudioStore()
+        UserStore({rootStore, userRepository}),
+        AudioStore(),
     ];
     for (const store of stores) {
         rootStore.registerModule(store.name, store);
@@ -93,7 +97,7 @@ function bootstrap() {
         }
     }
 
-    router.route('start', { pageDependencies });
+    router.route('start', {pageDependencies});
 }
 
 window.loginDebug = password => {
@@ -103,7 +107,7 @@ window.loginDebug = password => {
 window.readMasterLog = () => {
     (async () => {
         const password = localGameDataFacade.DebugPassword.get();
-        const { text } = await ajax.jsonPost('/master-log', { password: password });
+        const {text} = await ajax.jsonPost('/master-log', {password: password});
         console.info('-----------');
         console.info(text);
         console.info('-----------');

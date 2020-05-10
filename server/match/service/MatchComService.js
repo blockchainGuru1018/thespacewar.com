@@ -200,7 +200,7 @@ class MatchComService {
                     this._logError(error);
                 });
         } else if (this._matchService.gameIsHumanVsBot()) {
-            this._registerLogGame(playerId, this._matchService.getOpponentId(playerId), 0)
+            this._registerLogGame(playerId, this._matchService.getOpponentId(playerId), this._matchService.gameLengthSeconds(), 0)
                 .catch(error => {
                     this._logError(error);
                 });
