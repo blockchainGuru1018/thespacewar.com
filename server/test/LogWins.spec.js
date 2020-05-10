@@ -38,7 +38,7 @@ describe('log winner after game', () => {
         expect(registerLogGame).toBeCalledWith('P1A', 'P2A', expect.any(Number));
     });
 
-    test('when the player wins against a Bot, should NOT log game', () => {
+    /*test('when the player wins against a Bot, should NOT log game', () => {
         const registerLogGame = jest.fn().mockImplementation(() => Promise.resolve());
         const {match} = setupIntegrationTest({
             playerOrder: ['P1A', 'BOT'],
@@ -59,9 +59,9 @@ describe('log winner after game', () => {
         match.refresh('P1A');
 
         expect(registerLogGame).toBeCalledWith('BOT', 'P1A', expect.any(Number));
-    });
+    });*/
 
-    test('Player LOSES against BOT, should NOT LOG GAME', () => {
+    /*test('Player LOSES against BOT, should NOT LOG GAME', () => {
         const registerLogGame = jest.fn().mockImplementation(() => Promise.resolve());
         const {match} = setupIntegrationTest({
             playerOrder: ['P1A', 'BOT'],
@@ -82,7 +82,7 @@ describe('log winner after game', () => {
         match.refresh('P1A');
 
         expect(registerLogGame).toBeCalledWith('P1A', 'BOT', expect.any(Number));
-    });
+    });*/
 
     test('Any player retreats, should log game', () => {
         const registerLogGame = jest.fn().mockImplementation(() => Promise.resolve());
