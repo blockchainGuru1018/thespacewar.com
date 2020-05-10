@@ -50,18 +50,18 @@ describe('Fatal Error:', () => {
                 turn: 1,
                 currentPlayer: 'P1A',
                 phase: 'action',
-                cardsOnHand: [{ id: 'C1A', type: 'event', commonId: FatalErrorCommonId }],
+                cardsOnHand: [{ id: 'C1A', type: 'event', commonId: FatalErrorCommonId, cost: 1 }],
                 cardsInZone: [{ id: 'C2A' }],
                 cardsInOpponentZone: [{ id: 'C3A' }],
                 stationCards: [
-                    { place: 'draw', id: 'C4A' },
+                    { place: 'action', id: 'C4A' },
                     { place: 'draw', id: 'C9A', flipped: true, card: createCard({ id: 'C9A' }) }
                 ],
-                opponentCardsInZone: [{ id: 'C5A' }],
-                opponentCardsInPlayerZone: [{ id: 'C6A' }],
+                opponentCardsInZone: [{ id: 'C5A', cost: 1 }],
+                opponentCardsInPlayerZone: [{ id: 'C6A', cost: 1 }],
                 opponentStationCards: [
                     { place: 'draw', id: 'C7A', flipped: false },
-                    { place: 'draw', id: 'C8A', flipped: true, card: createCard({ id: 'C8A' }) }
+                    { place: 'draw', id: 'C8A', flipped: true, cost: 1, card: createCard({ id: 'C8A' }) }
                 ]
             }));
             await timeout();

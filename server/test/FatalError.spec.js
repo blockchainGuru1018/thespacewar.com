@@ -10,17 +10,19 @@ const setupIntegrationTest = require('./testUtils/setupIntegrationTest.js');
 
 const FatalErrorCommonId = FatalError.CommonId;
 
+const SameCostAsFatalError = 0; //Can be whatever, just has to be consistent in test
+
 test('when put down fatal error and choice as an opponent unflipped station card should throw error', () => {
     const { match } = setupIntegrationTest({
         playerStateById: {
             turn: 1,
             'P1A': {
                 phase: 'action',
-                cardsOnHand: [createCard({ id: 'C1A', commonId: FatalError.CommonId })],
+                cardsOnHand: [createCard({ id: 'C1A', commonId: FatalError.CommonId, cost: SameCostAsFatalError })],
             },
             'P2A': {
                 stationCards: [
-                    stationCard({ id: 'C2A', flipped: false }),
+                    stationCard({ id: 'C2A', flipped: false, card: {cost: SameCostAsFatalError} }),
                     stationCard({ id: 'C3A', flipped: true }),
                 ]
             }
@@ -39,11 +41,14 @@ test('when put down fatal error and choice is a FLIPPED station card should NOT 
             turn: 1,
             'P1A': {
                 phase: 'action',
-                cardsOnHand: [createCard({ id: 'C1A', commonId: FatalError.CommonId })],
+                cardsOnHand: [createCard({ id: 'C1A', commonId: FatalError.CommonId, cost: SameCostAsFatalError })],
+                stationCards: [
+                    stationCard({place: 'action', flipped: false, id: 'S1A'})
+                ]
             },
             'P2A': {
                 stationCards: [
-                    stationCard({ id: 'C2A', flipped: true }),
+                    stationCard({ id: 'C2A', flipped: true, card: {cost: SameCostAsFatalError}}),
                     stationCard({ id: 'C3A', flipped: false }),
                 ]
             }
@@ -63,10 +68,10 @@ test('when put down Fatal Error should emit draw card requirement to second play
         playerStateById: {
             'P1A': {
                 phase: 'action',
-                cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: FatalErrorCommonId })]
+                cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: FatalErrorCommonId, cost: SameCostAsFatalError})]
             },
             'P2A': {
-                cardsInOpponentZone: [createCard({ id: 'C2A' })],
+                cardsInOpponentZone: [createCard({ id: 'C2A', cost: SameCostAsFatalError })],
                 cardsInDeck: [
                     createCard({ id: 'C3A' }),
                     createCard({ id: 'C4A' })
@@ -92,11 +97,11 @@ test('when put down Fatal Error for flipped station card should NOT emit draw ca
             turn: 1,
             'P1A': {
                 phase: 'action',
-                cardsOnHand: [createCard({ id: 'C1A', commonId: FatalError.CommonId })],
+                cardsOnHand: [createCard({ id: 'C1A', commonId: FatalError.CommonId, cost: SameCostAsFatalError})],
             },
             'P2A': {
                 stationCards: [
-                    stationCard({ id: 'C2A', flipped: true }),
+                    stationCard({ id: 'C2A', flipped: true, card: {cost: SameCostAsFatalError} }),
                     stationCard({ id: 'C3A', flipped: false }),
                 ]
             }
@@ -120,10 +125,10 @@ function catchError(callback) {
     }
 }
 
-function stationCard({ place = 'draw', flipped, id }) {
+function stationCard({ place = 'draw', flipped, id, card = {} }) {
     return {
         place,
         flipped,
-        card: { id }
+        card: { id, ...card }
     };
 }
