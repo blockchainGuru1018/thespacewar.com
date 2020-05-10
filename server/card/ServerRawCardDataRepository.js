@@ -8,9 +8,10 @@ module.exports = function () {
 };
 
 async function getCardData() {
+    throw new Error('NOT GETTING DATA')
+
     const url = 'https://admin.thespacewar.com/services/api/cards?deck=1';
     console.info('Getting fresh cards JSON from:', url);
-
     const response = await axios.get(url);
     return response.data;
 }
