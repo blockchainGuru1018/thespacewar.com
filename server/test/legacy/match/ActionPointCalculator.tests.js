@@ -8,6 +8,7 @@ const DiscardCardEvent = require('../../../../shared/event/DiscardCardEvent.js')
 const PutDownCardEvent = require('../../../../shared/PutDownCardEvent.js');
 const RemoveStationCardEvent = require('../../../../shared/event/RemoveStationCardEvent.js');
 const MoveStationCardEvent = require('../../../../shared/event/MoveStationCardEvent.js');
+const FatalErrorUsedEvent = require('../../../../shared/event/FatalErrorUsedEvent.js');
 const FullForceForward = require('../../../../shared/card/FullForceForward.js');
 
 module.exports = {
@@ -408,6 +409,20 @@ module.exports = {
         });
 
         assert.equals(actionPoints, 2);
+    },
+    'when has fatal error used event should retract action points for event' () {
+        const calculator = ActionPointCalculator({
+            cardInfoRepository: FakeCardInfoRepository([{ commonId: 'C1A', cost: 1 }])
+        });
+
+        const actionPoints = calculator.calculate({
+            events: [FatalErrorUsedEvent({turn: 1, phase: 'action', targetCardCommonId: 'C1A'})],
+            turn: 1,
+            phase: 'action',
+            actionStationCardsCount: 1
+        });
+
+        assert.equals(actionPoints, 1);
     }
 };
 

@@ -38,6 +38,10 @@ module.exports = function ({ cardInfoRepository }) {
             else if (event.type === 'overwork') {
                 actionPoints += 2;
             }
+            else if(event.type === 'fatalErrorUsed') {
+                const costOfTargetCard = getCostOfCard(event.targetCardCommonId)
+                actionPoints -= costOfTargetCard;
+            }
         }
 
         const moveStationCardEventsThisTurn = eventsThisTurn.filter(e => e.type === 'moveStationCard');
