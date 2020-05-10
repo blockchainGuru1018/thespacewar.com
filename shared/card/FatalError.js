@@ -18,7 +18,8 @@ module.exports = class FatalError extends BaseCard {
     get actionWhenPutDownInHomeZone() {
         return new FatalErrorDestroyCardAction({
             playerId: this.playerId,
-            fatalErrorCost: this.cost
+            fatalErrorCost: this.cost,
+            toggleEqualCostAbility: false
         });
     }
 };

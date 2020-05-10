@@ -1,8 +1,9 @@
 module.exports = class FatalErrorDestroyCardAction {
 
-    constructor({ playerId, fatalErrorCost }) {
+    constructor({ playerId, fatalErrorCost, toggleEqualCostAbility = true }) {
         this._playerId = playerId;
         this._fatalErrorCost = fatalErrorCost;
+        this._toggleEqualCostAbility = toggleEqualCostAbility;
     }
 
     get showCardImage() {
@@ -22,7 +23,7 @@ module.exports = class FatalErrorDestroyCardAction {
     }
 
     validTarget(target) {
-        return target.cost === this._fatalErrorCost
+        return (!this._toggleEqualCostAbility || target.cost === this._fatalErrorCost)
             && (this._isFlippedEnemyStationCard(target)
             || this._isEnemyNonStationCard(target));
     }
