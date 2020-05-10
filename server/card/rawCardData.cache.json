@@ -387,7 +387,7 @@
         {
             "id": "38",
             "name": "Fatal Error",
-            "price": "0",
+            "price": "X",
             "type_card": "orange",
             "detail": "Destroy a flipped station card [ OR ] destroy any non-station card and the opponent may draw 2 cards.",
             "defense": "0",
