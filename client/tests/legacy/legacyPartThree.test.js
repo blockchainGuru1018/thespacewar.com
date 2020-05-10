@@ -21,7 +21,6 @@ const FatalErrorCommonId = '38';
 const TriggerHappyJoeCommonId = '24';
 
 let controller;
-let matchController;
 
 function createController({ matchController = FakeMatchController() } = {}) { //Has side effects to afford a convenient tear down
     controller = createTestController({ matchController });
@@ -40,7 +39,6 @@ afterEach(() => {
     controller && controller.tearDown();
 
     controller = null;
-    matchController = null;
 });
 
 describe('Fatal Error:', () => {
