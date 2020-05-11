@@ -83,7 +83,7 @@ class MatchService {
      */
     gameIsHumanVsBot() {
         const [firstPlayerId, secondPlayerId] = this.getPlayerOrder();
-        return firstPlayerId === 'BOT' && secondPlayerId !== 'BOT';
+        return firstPlayerId === 'BOT' || secondPlayerId === 'BOT';
     }
 
     somePlayerHasAlreadyRetreated() {
