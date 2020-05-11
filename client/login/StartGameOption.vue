@@ -3,7 +3,7 @@
         <div class="content-option">
             <div class="btn-sign">
                 <div class="btn btn-login">
-                    <a :href="loginUrl">Login</a>
+                    <a href="https://thespacewar.com/login">Login</a>
                 </div>
                 <div class="btn btn-register">
                     <a href="https://thespacewar.com/register">Register</a>
@@ -11,10 +11,8 @@
             </div>
 
             <hr>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vehicula pharetra elit at dapibus.
-                Aenean tincidunt, odio in efficitur faucibus, nibh nisl finibus ligula, eget iaculis justo mauris in
-                purus.
-                Quisque convallis maximus dui, et tincidunt ipsum fermentum at.</p>
+            <p>Play The Space War in your browser. <br>
+            To keep your score if you win make sure to register your free account or login using the links above.</p>
             <button
                 v-if="playAsGuestOn"
                 class="btn btn-guest"
@@ -116,6 +114,7 @@
 
             p {
                 color: $linkWhite;
+                font-family: "Space Mono", monospace;
             }
 
             .btn {
@@ -131,9 +130,12 @@
                     color: $linkWhite;
                     text-decoration: none;
                 }
+                
+                a:hover {text-decoration: underlined;}
 
                 &.btn-login {
                     text-transform: uppercase;
+                    margin-right:20px;
                 }
 
                 &.btn-register {
