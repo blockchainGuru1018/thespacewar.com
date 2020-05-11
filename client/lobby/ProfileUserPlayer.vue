@@ -99,9 +99,9 @@
 <style scoped lang="scss">
     .profile-user-player {
         padding: 6px 10px;
-        text-align: center;
+        text-align: left;
         opacity: 1;
-        background-color: #0000007d;
+        // background-color: #0000007d;
         margin-bottom: 15px;
         .username {
             text-transform: capitalize;
