@@ -293,7 +293,12 @@ class BaseCard {
             && this._ifHasControlOfOpponentTurnCanPlayCard()
             && this._isEventCardAndCanPlayEventCards()
             && this._canThePlayer.affordCard(this)
-            && !this._wouldOverstepMaxInPlayLimit();
+            && !this._wouldOverstepMaxInPlayLimit()
+            && this._canBePlayedInThisPhase();
+    }
+
+    _canBePlayedInThisPhase() {
+        return true;
     }
 
     isOpponentCard(otherPlayerId) {

@@ -387,9 +387,9 @@
         {
             "id": "38",
             "name": "Fatal Error",
-            "price": "0",
+            "price": "X",
             "type_card": "orange",
-            "detail": "Destroy a flipped station card [ OR ] destroy any non-station card and the opponent may draw 2 cards.",
+            "detail": "Destroy any card in play with action cost X.",
             "defense": "0",
             "attack": "0",
             "number_copies": "2",
@@ -457,5 +457,5 @@
             "deck": "1"
         }
     ],
-    "saveTime": 1589071814994
+    "saveTime": 1589403818936
 }

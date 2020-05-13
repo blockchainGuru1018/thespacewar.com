@@ -2,6 +2,7 @@ const Vue = require('vue');
 const PutDownCardEvent = require('../../shared/PutDownCardEvent.js');
 const TheDarkDestroyer = require('../../shared/card/TheDarkDestroyer.js');
 const Avoid = require('../../shared/card/Avoid.js');
+const FatalError = require('../../shared/card/FatalError.js');
 const falsyOp = () => false;
 
 module.exports = function (deps) {
@@ -136,8 +137,7 @@ module.exports = function (deps) {
 
         if (state.activeAction.showCardImage) {
             return cardInfoRepository.getImageUrl(state.activeActionCardData.commonId);
-        }
-        else {
+        } else {
             return '';
         }
     }
@@ -391,8 +391,13 @@ module.exports = function (deps) {
                         return isOpponentCard;
                     }
                     else {
-                        const opponentCard = rootGetters['match/createCard'](cardData, { isOpponent: isOpponentCard });
-                        return card.actionWhenPutDownInHomeZone.validTarget(opponentCard);
+                        const opponentCard = rootGetters['match/createCard'](cardData, {isOpponent: isOpponentCard});
+                        if (card.commonId === FatalError.CommonId) {
+                            const actionPoints = rootGetters['match/playerActionPointsCalculator'].calculate();
+                            return card.actionWhenPutDownInHomeZone.validTarget(opponentCard, actionPoints);
+                        } else {
+                            return card.actionWhenPutDownInHomeZone.validTarget(opponentCard);
+                        }
                     }
                 },
                 onFinish: targetCardIds => dispatch('putDownCard', { location, cardData, choice: targetCardIds[0] })

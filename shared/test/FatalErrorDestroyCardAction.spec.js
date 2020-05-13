@@ -1,7 +1,7 @@
 const FakeCardDataAssembler = require('./testUtils/FakeCardDataAssembler.js');
 const FatalErrorDestroyCardAction = require('../card/fatalError/FatalErrorDestroyCardAction.js');
 
-test('Cannot select unflipped station cards for action when put down in home zone', () => {
+test('Can NOT select unflipped station cards for action when put down in home zone', () => {
     const fatalErrorAction = createAction();
 
     const canSelect = fatalErrorAction.validTarget(opponentUnflippedStationCard());
@@ -9,12 +9,12 @@ test('Cannot select unflipped station cards for action when put down in home zon
     expect(canSelect).toBe(false);
 });
 
-test('Can select flipped station cards for action when put down in home zone', () => {
+test('Can NOT select flipped station cards for action when put down in home zone', () => {
     const fatalErrorAction = createAction();
 
     const canSelect = fatalErrorAction.validTarget(opponentflippedStationCard());
 
-    expect(canSelect).toBe(true);
+    expect(canSelect).toBe(false);
 });
 
 test('Can select non-station cards', () => {
@@ -25,7 +25,7 @@ test('Can select non-station cards', () => {
     expect(canSelect).toBe(true);
 });
 
-test('Cannot select own cards', () => {
+test('Can NOT select own cards', () => {
     const playerId = 'P1A';
     const fatalErrorAction = createAction({playerId});
     const target = ownNonStationCard();
@@ -36,7 +36,7 @@ test('Cannot select own cards', () => {
     expect(canSelect).toBe(false);
 });
 
-test('Cannot select own station cards', () => {
+test('Can NOT select own station cards', () => {
     const playerId = 'P1A';
     const fatalErrorAction = createAction({playerId});
     const target = ownFlippedStationCard();
@@ -47,22 +47,39 @@ test('Cannot select own station cards', () => {
     expect(canSelect).toBe(false);
 });
 
-test('When target card costs NOT the same as Fatal Error can NOT select it', () => {
+test('Can NOT target card that costs 2 when has 1 action point', () => {
     const playerId = 'P1A';
-    const fatalErrorAction = createAction({playerId, fatalErrorCost: 1});
-    const target = opponentflippedStationCard({cost: 2});
+    const fatalErrorAction = createAction({
+        playerId,
+        toggleCostPenaltyAbility: true,
+        toggleEqualCostAbility: false
+    });
+    const target = opponentNonStationCard({cost: 2});
+    const actionPoints = 1;
 
-    const canSelect = fatalErrorAction.validTarget(target);
+    const canSelect = fatalErrorAction.validTarget(target, actionPoints);
 
     expect(canSelect).toBe(false);
 });
 
-test('When target card costs exactly the same as Fatal Error can select it', () => {
+test('Can target card that costs 2 when has 2 action points', () => {
     const playerId = 'P1A';
-    const fatalErrorAction = createAction({playerId, fatalErrorCost: 1});
-    const target = opponentflippedStationCard({cost: 1});
+    const fatalErrorAction = createAction({playerId, toggleCostPenaltyAbility: true, toggleEqualCostAbility: false});
+    const target = opponentNonStationCard({cost: 2});
+    const actionPoints = 2;
 
-    const canSelect = fatalErrorAction.validTarget(target);
+    const canSelect = fatalErrorAction.validTarget(target, actionPoints);
+
+    expect(canSelect).toBe(true);
+});
+
+test('Can target card that costs 1 when has 2 action points', () => {
+    const playerId = 'P1A';
+    const fatalErrorAction = createAction({playerId, toggleCostPenaltyAbility: true, toggleEqualCostAbility: false});
+    const target = opponentNonStationCard({cost: 1});
+    const actionPoints = 2;
+
+    const canSelect = fatalErrorAction.validTarget(target, actionPoints);
 
     expect(canSelect).toBe(true);
 });
@@ -70,7 +87,6 @@ test('When target card costs exactly the same as Fatal Error can select it', () 
 function createAction(options = {}) {
     return new FatalErrorDestroyCardAction({
         playerId: options.playerId || '',
-        fatalErrorCost: 0,
         ...options
     });
 }
@@ -83,8 +99,8 @@ function opponentUnflippedStationCard() {
     return Target({isOpponentCard: () => true, isStationCard: () => true, flipped: false});
 }
 
-function opponentNonStationCard() {
-    return Target({isOpponentCard: () => true, isStationCard: () => false});
+function opponentNonStationCard(options = {}) {
+    return Target({isOpponentCard: () => true, isStationCard: () => false, ...options});
 }
 
 function ownNonStationCard() {

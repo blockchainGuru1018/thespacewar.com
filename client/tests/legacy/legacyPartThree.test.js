@@ -90,8 +90,8 @@ describe('Fatal Error:', () => {
         test('should NOT be able to select opponents unflipped station card', () => {
             assert.elementCount('.field-opponent .stationCard:not(.stationCard--flipped) .selectable', 0);
         });
-        test('should be able to select opponents flipped station card', () => {
-            assert.elementCount('.field-opponent .stationCard--flipped .selectable', 1);
+        test('should NOT be able to select opponents flipped station card', () => {
+            assert.elementCount('.field-opponent .stationCard--flipped .selectable', 0);
         });
         test('should NOT be able to select first player card in home zone', () => {
             assert.elementCount('.playerCardsInZone .card:eq(0) .selectable', 0);

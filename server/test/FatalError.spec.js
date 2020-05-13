@@ -35,7 +35,7 @@ test('when put down fatal error and choice as an opponent unflipped station card
     expect(error.message).toBe('Cannot put down card');
 });
 
-test('when put down fatal error and choice is a FLIPPED station card should NOT throw error', () => {
+test('when put down fatal error and choice is a FLIPPED station card SHOULD throw error', () => {
     const { match } = setupIntegrationTest({
         playerStateById: {
             turn: 1,
@@ -57,12 +57,12 @@ test('when put down fatal error and choice is a FLIPPED station card should NOT 
 
     const error = catchError(() => match.putDownCard('P1A', { location: 'zone', cardId: 'C1A', choice: 'C2A' }));
 
-    expect(error).toBeFalsy();
+    expect(error).toBeTruthy();
 });
 
-test('when put down Fatal Error should emit draw card requirement to second player', () => {
+test('when player put down Fatal Error should emit FatalErrorUsed event to player', () => {
     const {
-        secondPlayerConnection,
+        firstPlayerAsserter,
         match
     } = setupIntegrationTest({
         playerStateById: {
@@ -71,7 +71,7 @@ test('when put down Fatal Error should emit draw card requirement to second play
                 cardsOnHand: [createCard({ id: 'C1A', type: 'event', commonId: FatalErrorCommonId, cost: SameCostAsFatalError})]
             },
             'P2A': {
-                cardsInOpponentZone: [createCard({ id: 'C2A', cost: SameCostAsFatalError })],
+                cardsInOpponentZone: [createCard({ id: 'C2A', commonId: 'C2B', cost: SameCostAsFatalError })],
                 cardsInDeck: [
                     createCard({ id: 'C3A' }),
                     createCard({ id: 'C4A' })
@@ -82,38 +82,10 @@ test('when put down Fatal Error should emit draw card requirement to second play
 
     match.putDownCard('P1A', { location: 'zone', cardId: 'C1A', choice: 'C2A' });
 
-    assert.calledOnce(secondPlayerConnection.stateChanged);
-    assert.calledWith(secondPlayerConnection.stateChanged, sinon.match({
-        requirements: [sinon.match({ type: 'drawCard', count: 2 })]
-    }));
-});
-
-test('when put down Fatal Error for flipped station card should NOT emit draw card requirement to second player', () => {
-    const {
-        secondPlayerConnection,
-        match
-    } = setupIntegrationTest({
-        playerStateById: {
-            turn: 1,
-            'P1A': {
-                phase: 'action',
-                cardsOnHand: [createCard({ id: 'C1A', commonId: FatalError.CommonId, cost: SameCostAsFatalError})],
-            },
-            'P2A': {
-                stationCards: [
-                    stationCard({ id: 'C2A', flipped: true, card: {cost: SameCostAsFatalError} }),
-                    stationCard({ id: 'C3A', flipped: false }),
-                ]
-            }
-        }
+    firstPlayerAsserter.hasEvent(event => {
+        return event.type === 'fatalErrorUsed'
+            && event.targetCardCommonId === 'C2B';
     });
-
-    match.putDownCard('P1A', { location: 'zone', cardId: 'C1A', choice: 'C2A' });
-
-    assert.calledOnce(secondPlayerConnection.stateChanged);
-    refute.calledWith(secondPlayerConnection.stateChanged, sinon.match({
-        requirements: [sinon.match({ type: 'drawCard', count: 2 })]
-    }));
 });
 
 function catchError(callback) {

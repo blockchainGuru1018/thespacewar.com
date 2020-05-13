@@ -11,6 +11,7 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
 
     return {
         send,
+        hasEvent,
         hasStationCard,
         hasUnflippedStationCard,
         hasStationCardInRow,
@@ -152,6 +153,12 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
         const state = playerConnection.stateChanged.lastCall.args[0];
         const matchingEvents = state.events.filter(event => event.type === PutDownCardEvent.Type && event.cardId === cardId);
         assert(matchingEvents.length > 0, 'Should have at least 1 matching putDownCardEvent');
+    }
+
+    function hasEvent(eventComparer) {
+        const state = playerConnection.stateChanged.lastCall.args[0];
+        const matchingEvents = state.events.filter(eventComparer);
+        assert(matchingEvents.length > 0, 'Should have at least 1 matching event');
     }
 
     function hasEventBeforeOtherEvent(firstEvent, secondEvent) {
