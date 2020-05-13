@@ -77,15 +77,6 @@ class MatchService {
         return secondPlayerId !== 'BOT' && firstPlayerId !== 'BOT';
     }
 
-    /**
-     * @description Check if player human start game with BOT
-     * @returns {boolean|boolean}
-     */
-    gameIsHumanVsBot() {
-        const [firstPlayerId, secondPlayerId] = this.getPlayerOrder();
-        return firstPlayerId === 'BOT' || secondPlayerId === 'BOT';
-    }
-
     somePlayerHasAlreadyRetreated() {
         return !!this.getState().retreatedPlayerId;
     }

@@ -178,14 +178,7 @@ class MatchComService {
         const allSecondPlayerStationCardsAreDamaged = secondPlayerStateService.getUnflippedStationCardsCount() === 0;
 
         const lastStand = this._gameServiceFactory.lastStand();
-        if (this._matchService.gameIsHumanVsBot()) {
-            const losingPlayerId = this._playerHasLost(firstPlayerId) ? firstPlayerId : secondPlayerId;
-            console.log("Losing: ", losingPlayerId);
-            this._registerLogGame(losingPlayerId, this._matchService.getOpponentId(losingPlayerId), this._matchService.gameLengthSeconds(), 0)
-                .catch(error => {
-                    this._logError(error);
-                });
-        }
+
         if (this._somePlayerHasLost()) {
             const losingPlayerId = this._playerHasLost(firstPlayerId) ? firstPlayerId : secondPlayerId;
             this._applyPlayerLost(losingPlayerId);
@@ -202,12 +195,10 @@ class MatchComService {
 
     _applyPlayerLost(playerId) {
         this._matchService.playerRetreat(playerId);
-        if (this._matchService.gameIsHumanVsHuman()) {
-            this._registerLogGame(this._matchService.getOpponentId(playerId), playerId, this._matchService.gameLengthSeconds())
-                .catch(error => {
-                    this._logError(error);
-                });
-        }
+        this._registerLogGame(this._matchService.getOpponentId(playerId), playerId, this._matchService.gameLengthSeconds())
+            .catch(error => {
+                this._logError(error);
+            });
     }
 
     _somePlayerHasLost() {
