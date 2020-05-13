@@ -7,26 +7,23 @@ module.exports = function ({
                                userRepository
                            }) {
     return {
-        registerLogGame,
-        registerLogGameBot
+        registerLogGame
     };
 
     async function registerLogGame(winnerUserId, loserUserId, gameLengthSeconds) {
+        if (winnerUserId === 'BOT') return; // We don't log this
+
         const winnerCookieUserId = userRepository.getUserCookieId(winnerUserId);
-        const loserCookieUserId = userRepository.getUserCookieId(loserUserId);
+
+        if (loserUserId === 'BOT') {
+            const loserCookieUserId = 0;
+        } else {
+            const loserCookieUserId = userRepository.getUserCookieId(loserUserId);
+        }
+
         if (winnerCookieUserId === loserCookieUserId) throw new Error('Cannot log game between the same users');
 
         return postScore(scoreUrl(), winnerCookieUserId, loserCookieUserId, gameLengthSeconds);
-    }
-
-    async function registerLogGameBot(winnerUserId, loserUserId, gameLengthSeconds) {
-        if(loserUserId !== 'BOT') {
-            return;
-        }
-
-        const winnerCookieUserId = userRepository.getUserCookieId(winnerUserId);
-
-        return postScore(scoreUrl(), winnerCookieUserId, 0, gameLengthSeconds);
     }
 
 };
