@@ -1,27 +1,17 @@
 <template>
     <transition name="fade-slow">
-        <div
-            v-if="showEndGameScreen"
-            class="endGameOverlay"
-        >
-            <div
-                v-if="hasLostGame"
-                class="defeatText endGameText"
-            >
+        <div v-if="showEndGameScreen" class="endGameOverlay">
+            <div v-if="hasLostGame" class="defeatText endGameText">
                 DEFEAT
             </div>
-            <div
-                v-else-if="hasWonGame"
-                class="victoryText endGameText"
-            >
+            <div v-else-if="hasWonGame" class="victoryText endGameText">
                 VICTORY
             </div>
-            <button
-                class="endGameButton"
-                @click="endGame"
-            >
+            <button class="endGameButton" @click="endGame">
                 End game
             </button>
+            <a href="https://thespacewar.com/account" class="account">Account Profile</a>
+
         </div>
     </transition>
 </template>
@@ -86,5 +76,12 @@
             background-color: transparent;
             color: white;
         }
+    }
+
+    .account {
+        color: #286aea;
+        font-family: "Space Mono", inherit monospace;
+        font-size: 1.5em;
+        z-index: 10;
     }
 </style>

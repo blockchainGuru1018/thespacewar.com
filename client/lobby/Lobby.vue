@@ -1,44 +1,42 @@
 <template>
     <div v-if="ownUser" class="lobby">
         <div class="users-container">
-          <div class="row">
-            <ProfileUserPlayer/>
-            <div class="list-opponents">
-              <div class="users-header">
-                  <div class="users-headerTitle">
-                      Select opponent
-                  </div>
-              </div>
-              <div class="users-wrapper">
-                  <div class="users">
-                      <div tabindex="0" class="user" @click="startGameWithBot" @keydown.enter="startGameWithBot">
-                          <span class="user-name">
-                              Mr.Roboto
-                          </span>
-                      </div>
-                      <div v-if="availableUsers.length === 0" class="users-noUsersAvailable">
-                          None available
-                      </div>
-                      <template v-else>
-                          <div v-for="user in availableUsers" :key="user.id" tabindex="0" class="user" @click="userClick(user)" @keydown.enter="userClick(user)">
-                              <span class="user-name">
-                                  {{ user.name }}
-                              </span>
-                              <Flag :country="user.country"/>
-                              <span class="user-rating">
-                                  {{ user.rating }}
-                              </span>
-                          </div>
-                      </template>
+            <div class="row">
+                <ProfileUserPlayer/>
+                <div class="list-opponents">
+                    <div class="users-header">
+                        <div class="users-headerTitle">
+                            Select opponent
+                        </div>
+                    </div>
+                    <div class="users-wrapper">
+                        <div class="users">
+                            <div tabindex="0" class="user" @click="startGameWithBot" @keydown.enter="startGameWithBot">
+                                <span class="user-name">Mr.Roboto</span>
+                            </div>
+                            <div v-if="availableUsers.length === 0" class="users-noUsersAvailable">
+                                None available
+                            </div>
+                            <template v-else>
+                                <div v-for="user in availableUsers" :key="user.id" tabindex="0" class="user" @click="userClick(user)" @keydown.enter="userClick(user)">
+                                    <span class="user-name">
+                                        {{ user.name }}
+                                    </span>
+                                    <Flag :country="user.country"/>
+                                    <span class="user-rating">
+                                        {{ user.rating }}
+                                    </span>
+                                </div>
+                            </template>
 
-                      <div class="users-sectionHeader">
-                          {{ usersInGameCount }} users playing
-                      </div>
-                  </div>
-              </div>
+                            <div class="users-sectionHeader">
+                                {{ usersInGameCount }} users playing
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-
-          </div>
 
         </div>
     </div>
@@ -89,13 +87,14 @@
     };
 </script>
 <style scoped lang="scss">
-    .lobby{
-      width: 100%;
-      min-height: 740px;
+    .lobby {
+        width: 100%;
+        min-height: 740px;
     }
-    .users-container{
+
+    .users-container {
         background: url(https://images.thespacewar.com/metal-corner.png) right bottom no-repeat,
-                    url(https://images.thespacewar.com/frame-bg-lobby.png) right bottom no-repeat;
+        url(https://images.thespacewar.com/frame-bg-lobby.png) right bottom no-repeat;
         width: 100%;
         max-width: 500px;
         position: absolute;
@@ -103,15 +102,17 @@
         top: 0px;
         height: 100%;
 
-        .row{
-          margin-top: 75px;
-          margin-left: 60px;
-          margin-right: 60px;
-          .list-opponents{
-            margin-left: 20px;
-          }
+        .row {
+            margin-top: 75px;
+            margin-left: 60px;
+            margin-right: 60px;
+
+            .list-opponents {
+                margin-left: 20px;
+            }
         }
     }
+
     .users-headerTitle {
         font-size: 16px;
         color: white;

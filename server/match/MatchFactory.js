@@ -51,7 +51,7 @@ module.exports = function ({
             rawCardDataRepository,
             gameConfig,
             endMatch: () => endMatch(matchId),
-            registerLogGame: MatchRegisterLog({userRepository}).registerLogGameBot
+            registerLogGame: MatchRegisterLog({userRepository}).registerLogGame
         });
     }
 
