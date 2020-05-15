@@ -62,7 +62,6 @@ module.exports = function CardDataAssembler({
 };
 
 function CardData(cardJson) {
-    console.log('cardJson', cardJson);
     const color = cardJson.type_card;
     return {
         id: createUniqueCardId(cardJson.id),
