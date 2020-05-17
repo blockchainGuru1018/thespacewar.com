@@ -38,6 +38,7 @@ const classes = [
     require('./DisturbingSignals.js'),
     require('./Fast.js'),
     require('./Drone.js'),
+    require('./Repair.js'),
 ];
 
 module.exports = classes;
