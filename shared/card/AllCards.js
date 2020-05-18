@@ -39,6 +39,7 @@ const classes = [
     require('./Fast.js'),
     require('./Drone.js'),
     require('./Repair.js'),
+    require('./DestroyDuration.js'),
 ];
 
 module.exports = classes;
