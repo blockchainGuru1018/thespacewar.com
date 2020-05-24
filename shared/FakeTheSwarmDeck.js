@@ -228,7 +228,7 @@ module.exports = () => [
         paralyzed: false
     },
     {
-        id: '19',
+        id: '20',
         commonId: '90',
         color: 'blue',
         type: 'space-ship',
@@ -240,12 +240,25 @@ module.exports = () => [
         paralyzed: false
     },
     {
-        id: '19',
+        id: '21',
         commonId: '86',
         color: 'orange',
         type: 'space-ship',
         name: 'Drone',
         description: 'If played from hand: you may draw a card.',
+        cost: 1,
+        attack: 0,
+        defense: 0,
+        paralyzed: false
+    },
+    {
+
+        id: 22,
+        commonId: 79,
+        color: 'violet',
+        type: 'duration',
+        name: 'Toxic gas',
+        description: 'Deal 1 damage to enemy station at the start of your draw phase. Shields protects but receives 2 damage instead of 1.',
         cost: 1,
         attack: 0,
         defense: 0,
