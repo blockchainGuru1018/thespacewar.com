@@ -151,7 +151,7 @@ describe('log winner after game', () => {
 
         match.retreat('P1A');
 
-        expect(registerLogGame).not.toBeCalled();
+        expect(registerLogGame).toBeCalledWith('BOT', 'P1A', expect.any(Number));
     });
 
     test('if player retreats BEFORE game starts, should NOT log game', () => {

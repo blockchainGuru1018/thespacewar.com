@@ -507,9 +507,7 @@ module.exports = function ({
     }
 
     function matchService() {
-        const matchService = new MatchService({ endMatch, gameConfig });
-        matchService.setState(state);
-        return matchService;
+        return gameServiceFactory.matchService();
     }
 
     function cached(constructor) {

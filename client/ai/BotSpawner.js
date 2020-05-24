@@ -48,14 +48,15 @@ module.exports = function ({
     }
 
     function spawn() {
+        const state = clientState.toServerState();
         gameServiceFactory = GameServiceFactory({
-            state: clientState.read(),
+            state,
             endMatch: () => console.info('END MATCH'),
             rawCardDataRepository,
             gameConfig
         });
         playerServiceFactory = PlayerServiceFactory({
-            state: clientState.toServerState(),
+            state,
             logger: (...args) => console.log('LOGGER:', ...args),
             endMatch: () => console.info('END MATCH'),
             gameConfig,

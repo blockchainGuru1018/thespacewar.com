@@ -69,7 +69,8 @@ module.exports = function ({
         cardInfoRepository,
         actionPointsCalculator,
         endMatch,
-        logger
+        logger,
+        registerLogGame
     });
 
     const gameServiceFactory = serviceFactoryFactory.gameServiceFactory();
@@ -89,8 +90,7 @@ module.exports = function ({
         playerServiceProvider,
         playerServiceFactory,
         gameServiceFactory,
-        stateChangeListener,
-        registerLogGame
+        stateChangeListener
     });
 
     const playerRequirementUpdaterFactory = new PlayerRequirementUpdaterFactory({
@@ -229,12 +229,6 @@ module.exports = function ({
     }
 
     function retreat(playerId) {
-        if (matchService.gameIsHumanVsHuman() && matchService.isGameOn()) {
-            registerLogGame(matchService.getOpponentId(playerId), playerId, matchService.gameLengthSeconds())
-                .catch(error => {
-                    logError(error);
-                });
-        }
         matchService.playerRetreat(playerId);
         matchComService.emitCurrentStateToPlayers();
     }

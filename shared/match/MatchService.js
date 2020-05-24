@@ -4,12 +4,15 @@ const EndMatchDelay = 15 * 1000;
 class MatchService {
 
     constructor({
-                    gameConfig,
-                    endMatch = () => {
-                    }
-                } = {}) {
+        gameConfig,
+        endMatch = () => {},
+        registerLogGame = () => Promise.resolve(),
+        logger = { log: (...args) => console.log('PlayerStateService logger: ', ...args) }
+    } = {}) {
         this._state = {};
         this._gameConfig = gameConfig;
+        this._registerLogGame = registerLogGame
+        this._logger = logger;
         this.endMatch = endMatch;
     }
 
@@ -61,6 +64,10 @@ class MatchService {
     playerRetreat(playerId) {
         if (this.somePlayerHasAlreadyRetreated() || this.hasGameEnded()) return;
 
+        if(this._gameHasStartedFully()) {
+            this._logLostGame(playerId);
+        }
+
         this.update(state => {
             state.ended = true;
             state.retreatedPlayerId = playerId;
@@ -70,6 +77,18 @@ class MatchService {
         setTimeout(() => {
             endMatch()
         }, EndMatchDelay);
+    }
+
+    _logLostGame(losingPlayerId) {
+        const winningPlayerId = this.getOpponentId(losingPlayerId);
+        this._registerLogGame(winningPlayerId, losingPlayerId, this.gameLengthSeconds())
+            .catch(error => {
+                this._logError(error);
+            });
+    }
+
+    _gameHasStartedFully() {
+        return this.isGameOn();
     }
 
     gameIsHumanVsHuman() {
@@ -182,6 +201,12 @@ class MatchService {
         let currentTime = Date.now();
 
         return (currentTime - this._state.gameStartTime) / 1000;
+    }
+
+    _logError(error) {
+        const rawErrorMessage = JSON.stringify(inspect(error), null, 4);
+        const errorMessage = `(${new Date().toISOString()}) Error in action to match: ${error.message} - RAW ERROR: ${rawErrorMessage}`
+        this._logger.log(errorMessage, 'error');
     }
 }
 

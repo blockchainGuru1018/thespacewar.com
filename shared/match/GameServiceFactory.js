@@ -7,7 +7,7 @@ const DeckFactory = require('../../server/deck/DeckFactory.js');
 const ActionPointsCalculator = require('./ActionPointsCalculator.js');
 const LastStand = require('./LastStand.js');
 
-module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig }) {
+module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig, registerLogGame }) {
 
     const objectsByNameAndPlayerId = {};
 
@@ -66,7 +66,11 @@ module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig 
     }
 
     function matchService() {
-        const matchService = new MatchService({ gameConfig, endMatch });
+        const matchService = new MatchService({
+            gameConfig,
+            endMatch,
+            registerLogGame
+        });
         matchService.setState(state);
         return matchService;
     }

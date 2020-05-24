@@ -13,6 +13,7 @@ module.exports = function ({
     rawCardDataRepository,
     endMatch,
     gameConfig,
+    registerLogGame,
     actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository })
 }) {
 
@@ -34,7 +35,8 @@ module.exports = function ({
             state,
             endMatch,
             rawCardDataRepository,
-            gameConfig
+            gameConfig,
+            registerLogGame
         });
     }
 
