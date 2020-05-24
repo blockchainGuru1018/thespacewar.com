@@ -43,10 +43,5 @@ async function postScore(url, user_won, user_lost, length) {
         }
     };
     const logGameCookie = new LogGameCookie(user_won, user_lost, length);
-    console.log('SCORE - Sending request');
-    const response = await axios.post(url, logGameCookie.postData(), config);
-    console.log('SCORE - Got response:');
-    console.log(response);
-
-    return response;
+    return axios.post(url, logGameCookie.postData(), config);
 }
