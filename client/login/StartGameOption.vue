@@ -3,7 +3,7 @@
         <div class="content-option">
             <div class="btn-sign">
                 <div class="btn btn-login">
-                    <a href="https://thespacewar.com/login">Login</a>
+                    <a :href="loginUrl">Login</a>
                 </div>
                 <div class="btn btn-register">
                     <a href="https://thespacewar.com/register">Register</a>
@@ -36,8 +36,6 @@
 </template>
 
 <script>
-    import featureToggles from "../utils/featureToggles";
-
     const Vuex = require('vuex');
     const loginHelpers = Vuex.createNamespacedHelpers('login');
     const guestHelpers = Vuex.createNamespacedHelpers('guest');
