@@ -141,6 +141,10 @@ function PutDownCardController(deps) {
                     throw new CheatError('Cannot put down card');
                 }
             }
+
+            if(!card.canBePlayed()) {
+                throw new CheatError('Cannot put down card');
+            }
         }
         else if (location.startsWith('station')) {
             CardFacade(cardData.id, playerId)

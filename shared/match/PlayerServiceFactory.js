@@ -37,6 +37,7 @@ const MoreCardsCanBeDrawnForDrawPhase = require('./rules/MoreCardsCanBeDrawnForD
 const QueryPlayerRequirements = require('./requirement/QueryPlayerRequirements.js');
 const PlayerActionPointsCalculator = require('./PlayerActionPointsCalculator.js');
 const PlayerDeck = require('./PlayerDeck.js');
+const QueryBoard = require('./QueryBoard.js');
 const ServiceTypes = PlayerServiceProvider.TYPE;
 
 module.exports = function ({
@@ -95,6 +96,7 @@ module.exports = function ({
         sacrificeCard: cached(sacrificeCard),
         actionLog: cached(actionLog),
         playerActionPointsCalculator: cached(playerActionPointsCalculator),
+        queryBoard: cached(queryBoard),
         actionPointsCalculator: () => actionPointsCalculator
     };
 
@@ -414,6 +416,12 @@ module.exports = function ({
             playerStateService: api.playerStateService(playerId),
             matchService: gameServiceFactory.matchService(),
         });
+    }
+
+    function queryBoard(playerId) {
+        return new QueryBoard({
+            opponentStateService: api.playerStateService(api.opponentId(playerId))
+        })
     }
 
     function queryAttacks(playerId) {
