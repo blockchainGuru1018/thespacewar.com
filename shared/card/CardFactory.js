@@ -32,6 +32,7 @@ module.exports = class CardFactory {
         const canThePlayer = this._playerServiceProvider.getCanThePlayerServiceById(playerId);
         const playerRuleService = this._playerServiceProvider.getRuleServiceById(playerId);
         const turnControl = this._playerServiceFactory.turnControl(playerId);
+        const queryBoard = this._playerServiceFactory.queryBoard(playerId);
 
         return new Constructor({
             card: cardData,
@@ -48,6 +49,7 @@ module.exports = class CardFactory {
                 canThePlayer
             }),
             playerPhase: this._playerServiceFactory.playerPhase(playerId),
+            queryBoard,
             addRequirementFromSpec: this._playerServiceFactory.addRequirementFromSpec(playerId),
             alternativeConditions
         });

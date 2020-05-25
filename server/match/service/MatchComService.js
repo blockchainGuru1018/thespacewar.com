@@ -181,7 +181,7 @@ class MatchComService {
 
         if (this._somePlayerHasLost()) {
             const losingPlayerId = this._playerHasLost(firstPlayerId) ? firstPlayerId : secondPlayerId;
-            this._applyPlayerLost(losingPlayerId);
+            this._matchService.playerRetreat(losingPlayerId);
         } else if (lastStand.canStart()) {
             if (allSecondPlayerStationCardsAreDamaged && this._playerCanAvoidStationCardAttack(secondPlayerId)) {
                 const secondPlayerLastStand = this._playerServiceFactory.playerLastStand(secondPlayerId);
@@ -191,14 +191,6 @@ class MatchComService {
                 firstPlayerLastStand.start();
             }
         }
-    }
-
-    _applyPlayerLost(playerId) {
-        this._matchService.playerRetreat(playerId);
-        this._registerLogGame(this._matchService.getOpponentId(playerId), playerId, this._matchService.gameLengthSeconds())
-            .catch(error => {
-                this._logError(error);
-            });
     }
 
     _somePlayerHasLost() {

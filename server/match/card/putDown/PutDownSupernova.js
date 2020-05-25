@@ -37,24 +37,12 @@ function PutDownSupernova({
 
         playerStateService.putDownEventCardInZone(cardData);
 
-        const opponentRequirementService = playerServiceProvider.getRequirementServiceById(opponentId);
-        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
-
-        const bothPlayersCanDiscardSomeCard =
-            playerRequirementService.canAddDiscardCardRequirementWithCountOrLess(discardCardCount)
-            && opponentRequirementService.canAddDiscardCardRequirementWithCountOrLess(discardCardCount);
-
-        addRequirementsToPlayer({ playerId, bothPlayersCanDiscardSomeCard });
-        addRequirementsToPlayer({ playerId: opponentId, bothPlayersCanDiscardSomeCard });
+        addRequirementsToPlayer({ playerId });
+        addRequirementsToPlayer({ playerId: opponentId });
     }
 
-    function addRequirementsToPlayer({ playerId, bothPlayersCanDiscardSomeCard }) {
+    function addRequirementsToPlayer({ playerId }) {
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
-        playerRequirementService.addDiscardCardRequirement({
-            count: discardCardCount,
-            common: bothPlayersCanDiscardSomeCard,
-            cardCommonId: Supernova.CommonId
-        });
         playerRequirementService.addDamageStationCardRequirement({
             count: discardCardCount,
             common: true,

@@ -16,6 +16,7 @@ class BaseCard {
         cardEffect,
         playerPhase,
         addRequirementFromSpec,
+        queryBoard,
         alternativeConditions = {}
     }) {
         this.playerId = playerId;
@@ -31,6 +32,7 @@ class BaseCard {
         this._cardEffect = cardEffect;
         this._playerPhase = playerPhase;
         this._addRequirementFromSpec = addRequirementFromSpec;
+        this._queryBoard = queryBoard;
         this._alternativeConditions = alternativeConditions;
     }
 
@@ -294,11 +296,16 @@ class BaseCard {
             && this._isEventCardAndCanPlayEventCards()
             && this._canThePlayer.affordCard(this)
             && !this._wouldOverstepMaxInPlayLimit()
-            && this._canBePlayedInThisPhase();
+            && this._canBePlayedInThisPhase()
+            && !this._someCardIsPreventingThisCardToBePlayed();
     }
 
     _canBePlayedInThisPhase() {
         return true;
+    }
+
+    _someCardIsPreventingThisCardToBePlayed() {
+        return false;
     }
 
     isOpponentCard(otherPlayerId) {
@@ -306,7 +313,8 @@ class BaseCard {
     }
 
     _canGenerallyPlayCardsOrCanAlwaysPlayCard() {
-        return this._playerRuleService.canPutDownCardsInHomeZone() || this.canBePutDownAnyTime();
+        return this._playerRuleService.canPutDownCardsInHomeZone()
+            || this.canBePutDownAnyTime();
     }
 
     _ifHasControlOfOpponentTurnCanPlayCard() {

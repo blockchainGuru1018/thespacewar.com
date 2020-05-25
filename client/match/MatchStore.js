@@ -35,6 +35,7 @@ const CardsThatCanLookAtHandSizeStationRow = require('../../shared/match/card/qu
 const MoreCardsCanBeDrawnForDrawPhase = require('../../shared/match/rules/MoreCardsCanBeDrawnForDrawPhase.js');
 const LookAtStationRow = require('../../shared/match/card/actions/LookAtStationRow.js');
 const PlayerActionPointsCalculator = require('../../shared/match/PlayerActionPointsCalculator.js');
+const QueryBoard = require('../../shared/match/QueryBoard.js');
 const ClientPlayerDeck = require('../card/ClientPlayerDeck.js');
 
 const {
@@ -163,6 +164,7 @@ module.exports = function (deps) {
             getCanThePlayer,
             canThePlayer,
             canTheOpponent,
+            queryBoard,
             turnControl,
             playerPhase,
             opponentPhase,
@@ -390,7 +392,8 @@ module.exports = function (deps) {
             playerServiceFactory: {
                 addRequirementFromSpec: () => ClientLimitNotice,
                 turnControl: () => getters.turnControl,
-                playerPhase: () => getters.playerPhase
+                playerPhase: () => getters.playerPhase,
+                queryBoard: () => getters.queryBoard
             }
         });
     }
@@ -550,6 +553,12 @@ module.exports = function (deps) {
             playerStateService: getters.opponentStateService,
             opponentStateService: getters.playerStateService
         });
+    }
+
+    function queryBoard(state, getters) {
+        return new QueryBoard({
+            opponentStateService: getters.opponentStateService
+        })
     }
 
     function turnControl(state, getters) {
