@@ -3,7 +3,8 @@ const BotId = 'BOT';
 module.exports = function ({
     userRepository,
     socketRepository,
-    matchFactory
+    matchFactory,
+    logger
 }) {
 
     const matchById = new Map();
@@ -127,7 +128,12 @@ module.exports = function ({
 
     function emitMatchCreate(match, userId) {
         const opponentSocket = socketRepository.getForUser(userId);
-        opponentSocket.emit('match/create', match.toClientModel());
+        try {
+            opponentSocket.emit('match/create', match.toClientModel());
+        }
+        catch(error) {
+            logger.log(`Disconnected user - Tried to emit to user that has disconnected (matchId:${match.id}, userId:${userId})`, 'match');
+        }
     }
 
     function registerMatchWithUsers(match, users) {

@@ -4,6 +4,7 @@ const User = require("../../shared/user/User.js");
 module.exports = function (deps) {
 
     const socketMaster = deps.socketMaster;
+    const logger = deps.logger;
 
     const secretToUserId = new Map();
     const rawCookieToUserId = new Map();
@@ -61,8 +62,7 @@ module.exports = function (deps) {
     function userIdFromSecret(secret) {
         if (secretToUserId.has(secret)) {
             return secretToUserId.get(secret);
-        }
-        else {
+        } else {
             return null;
         }
     }

@@ -77,12 +77,17 @@ class MatchComService {
                 'match'
             );
         }
-        playerConnection.emit('match', {
-            matchId: this._matchId,
-            playerId: playerId,
-            action,
-            value
-        });
+        try {
+            playerConnection.emit('match', {
+                matchId: this._matchId,
+                playerId: playerId,
+                action,
+                value
+            });
+        }
+        catch (error) {
+            this._logger.log(`Disconnected user - Tried to emit to user that has disconnected (matchId:${this._matchId}, userId:${playerId})`, 'match');
+        }
     }
 
     prepareStationCardsForClient(stationCards) {

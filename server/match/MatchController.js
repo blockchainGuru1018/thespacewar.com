@@ -61,6 +61,11 @@ module.exports = function (deps) {
 
     function sendMatchIsDeadMessageToUserSocketConnection({ userId, matchId }) {
         const userConnection = socketRepository.getForUser(userId);
-        userConnection.emit('match', { matchId, playerId: userId, action: 'matchIsDead' });
+        try {
+            userConnection.emit('match', { matchId, playerId: userId, action: 'matchIsDead' });
+        }
+        catch(error) {
+            logger.log(`Disconnected user - Tried to emit to user that has disconnected (matchId:${matchId}, userId:${userId})`, 'match');
+        }
     }
 };
