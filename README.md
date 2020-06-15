@@ -1,9 +1,8 @@
-Not open source.
-
-Copyright and all rights reserved etc. 
+Not open source. Copyright and all rights reserved etc. 
 __________________________
 
-The server is pulling from this repo each minute.
+Important! The server is pulling from this repo (master branch) each minute with a cron. Make sure to test locally before pushing your commits to the master branch.
+__________________________
 
 # Software installed on this server
 * Node 10.12.0
