@@ -204,7 +204,7 @@ class MatchService {
     }
 
     _logError(error) {
-        const rawErrorMessage = JSON.stringify(inspect(error), null, 4);
+        const rawErrorMessage = JSON.stringify(error, null, 4);
         const errorMessage = `(${new Date().toISOString()}) Error in action to match: ${error.message} - RAW ERROR: ${rawErrorMessage}`
         this._logger.log(errorMessage, 'error');
     }

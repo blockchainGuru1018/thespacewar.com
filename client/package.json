@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "root/index.js",
-  "scripts": {},
+  "scripts": {
+    "build": "webpack"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
