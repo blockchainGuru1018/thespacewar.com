@@ -63,7 +63,7 @@ function startServer(config) {
 
     return new Promise(async resolve => {
         app = express();
-        app.use(morgan('dev'));
+        //app.use(morgan('dev')); Disabled 2020-06-23: Useful for performance tuning and debugging, but noisy otherwise.
         app.use(cookieParser());
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({extended: true}));
