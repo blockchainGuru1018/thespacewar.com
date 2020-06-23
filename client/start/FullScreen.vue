@@ -38,6 +38,7 @@
             }
         },
         mounted() {
+            this.enableFullscreen()
             this.watchFullScreen();
         },
         methods: {
@@ -53,7 +54,7 @@
                 /*
                 |-----------------------------------------------------
                 | Only run with clicked full screen mode
-                | Capture event fullscreen
+                | Capture event fullscreen   
                 |-----------------------------------------------------
                  */
                 document.addEventListener('fullscreenchange', (event) => {
