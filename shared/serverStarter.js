@@ -13,7 +13,7 @@ module.exports = {
 function installNpmPackages() {
     const scriptPath = path.join(__dirname, '..');
     console.log(' (1/2) - Installing dependencies (script path: ' + scriptPath + ')');
-    child_process.execSync(`cd ${scriptPath} && npm install-all`);
+    child_process.execSync(`cd ${scriptPath} && npm run install-all`);
     console.log(' (1.5/2) - Done installing dependencies');
 }
 
