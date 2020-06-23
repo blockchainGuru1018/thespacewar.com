@@ -13,36 +13,29 @@ const mockLocalStorageResponse = (response) => {
 
 describe('swarm deck toggle', () => {
 
-
-    it('should not display the toggle swarm deck when "ft-swarm-toggle" its on local store as "false"', () => {
-        // Arrange
+    it('should NOT display the toggle for the Swarm Deck when its feature toggle is off', () => {
         mockLocalStorageResponse('false');
         let wrapper = mount(ToggleSwarmDeckButton);
-        // Assert
+
         expectNotToBeDisplayed(wrapper);
     });
 
     it('should not display the toggle swarm deck when "ft-swarm-toggle" its not local store', () => {
-        // Arrange
         mockLocalStorageResponse(undefined);
         let wrapper = mount(ToggleSwarmDeckButton);
 
-        // Assert
         expectNotToBeDisplayed(wrapper);
     });
 
     it('should  display the toggle swarm deck when "ft-swarm-toggle" its on local store as "true"', () => {
-        // Arrange
         mockLocalStorageResponse('true');
         let wrapper = mount(ToggleSwarmDeckButton);
 
-        // Assert
         expect(wrapper.vm.swarmDeckToggleVisible).toBe(true);
         expect(window.localStorage.getItem).toHaveBeenCalledWith('ft-swarm-toggle');
         expect(wrapper.find('label').exists()).toBeTruthy();
     });
 });
-
 
 const expectNotToBeDisplayed = (wrapper) => {
     expect(wrapper.vm.swarmDeckToggleVisible).toBe(false);
