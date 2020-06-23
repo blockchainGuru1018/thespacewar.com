@@ -16,7 +16,7 @@
     "pre-commit": "jest --changedSince=HEAD",
     "client": "npm run dev:client",
     "server": "concurrently -m -n \"npm run dev:client\" \"npm run dev:server\" \"npm run client\" \"npm run dev:login\" \"npm run dev:score\"",
-    "install-all": "npm install && cd ./client && npm install && cd .. & cd ./server && npm install && cd .. && cd ./shared && npm install && cd .. && cd ./shared && npm install && cd .. && cd ./serviceShared && npm install && cd .. && cd ./client/testUtils/bocha-jest/bocha && npm install && cd ../../../../ && cd ./server/test/testUtils/bocha-jest/bocha && npm install && cd ../../../../../ && cd ./shared/test/testUtils/bocha-jest/bocha && npm install && cd ../../../../../ && cd client && npm run build"
+    "install-all": "npm install && cd ./client && npm install && npm rebuild node-sass && cd .. & cd ./server && npm install && cd .. && cd ./shared && npm install && cd .. && cd ./shared && npm install && cd .. && cd ./serviceShared && npm install && cd .. && cd ./client/testUtils/bocha-jest/bocha && npm install && cd ../../../../ && cd ./server/test/testUtils/bocha-jest/bocha && npm install && cd ../../../../../ && cd ./shared/test/testUtils/bocha-jest/bocha && npm install && cd ../../../../../ && cd client && npm run build"
   },
   "repository": {
     "type": "git",
