@@ -1,6 +1,6 @@
 <template>
     <div v-if="ownUser" class="lobby">
-        <div class="accountDiv">
+        <div class="account_div">
             <a href="https://thespacewar.com/account" class="account">&#8592; Back to Account</a>
         </div>
         <div class="users-container">
@@ -195,7 +195,7 @@
         text-decoration: none;
         font-weight: bold;
     }
-    .accountDiv {
+    .account_div {
         margin-right: 1175px;
         margin-bottom: 550px;
     }
