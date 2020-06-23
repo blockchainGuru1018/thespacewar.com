@@ -25,7 +25,6 @@ module.exports = function ({
     }
 
     function canStart() {
-      console.log("playerStateService.isBot(): ", playerStateService.isBot());
       if (playerStateService.isBot()) return false;
       const allStationCardsAreDamaged =
         playerStateService.getUnflippedStationCardsCount() === 0;
