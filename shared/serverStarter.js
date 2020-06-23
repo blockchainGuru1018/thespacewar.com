@@ -11,9 +11,9 @@ module.exports = {
 };
 
 function installNpmPackages() {
-    const scriptPath = path.join(__dirname, '..', 'scripts');
+    const scriptPath = path.join(__dirname);
     console.info(' (1/2) - Installing dependencies');
-    child_process.execSync(`cd ${scriptPath} && bash ./install`);
+    child_process.execSync(`cd ${scriptPath} && npm install-all`);
 }
 
 function startServer() {
