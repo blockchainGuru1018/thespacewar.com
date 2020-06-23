@@ -31,11 +31,11 @@ const locationToText = {
 };
 
 module.exports = function ({
-    matchService,
-    playerStateService,
-    cardInfoRepository,
-    userRepository
-}) {
+                               matchService,
+                               playerStateService,
+                               cardInfoRepository,
+                               userRepository
+                           }) {
 
     return {
         queryLatest,
@@ -73,30 +73,31 @@ module.exports = function ({
             });
     }
 
-    function damagedInAttack({ defenderCardId, defenderCardCommonId, damageInflictedByDefender }) {
+    function damagedInAttack({defenderCardId, defenderCardCommonId, damageInflictedByDefender}) {
         log({
             action: 'damagedInAttack',
+            commonCardId: defenderCardCommonId,
             text: `${cardInfoText(defenderCardCommonId)} took ${damageInflictedByDefender} damage`,
             defenderCardId
         });
     }
 
-    function paralyzed({ defenderCardId, defenderCardCommonId }) {
+    function paralyzed({defenderCardId, defenderCardCommonId}) {
         log({
-            action: 'paralyzed',
+            action: 'paralyzed', commonCardId: defenderCardCommonId,
             text: `${cardInfoText(defenderCardCommonId)} was paralyzed`,
             defenderCardId
         });
     }
 
-    function cardDestroyed({ cardCommonId }) {
+    function cardDestroyed({cardCommonId}) {
         log({
-            action: 'destroyed',
+            action: 'destroyed', commonCardId: cardCommonId,
             text: `${cardInfoText(cardCommonId)} was discarded`
         });
     }
 
-    function cardsDiscarded({ cardCommonIds }) {
+    function cardsDiscarded({cardCommonIds}) {
         if (cardCommonIds.length === 0) return;
 
         const text = listInTextWithCorrectGrammar({
@@ -105,26 +106,26 @@ module.exports = function ({
             suffixMany: ' were discarded'
         });
 
-        log({ action: 'discarded', text });
+        log({action: 'discarded', text});
     }
 
-    function opponentPlayedCards({ cardIds, cardCommonIds }) {
+    function opponentPlayedCards({cardIds, cardCommonIds}) {
         if (cardCommonIds.length === 0) return;
 
-        const text = `${opponentName()} played *${(listInTextWithCorrectGrammar({ cardCommonIds }))}#`;
-        log({ action: 'played', text, cardIds });
+        const text = `${opponentName()} played *${(listInTextWithCorrectGrammar({cardCommonIds}))}#`;
+        log({action: 'played', text, cardIds, cardCommonIds});
     }
 
-    function opponentMovedCard({ cardCommonId }) {
+    function opponentMovedCard({cardCommonId}) {
         log({
-            action: 'moved',
+            action: 'moved', commonCardId: cardCommonId,
             text: `${opponentName()} moved ${cardInfoText(cardCommonId)}`
         });
     }
 
-    function opponentRepairedCard({ repairedCardId, repairedCardCommonId }) {
+    function opponentRepairedCard({repairedCardId, repairedCardCommonId}) {
         log({
-            action: 'repairedCard',
+            action: 'repairedCard', commonCardId: repairedCardCommonId,
             text: `${opponentName()} moved ${cardInfoText(repairedCardCommonId)}`,
             repairedCardId
         });
@@ -138,30 +139,31 @@ module.exports = function ({
         let text;
         if (count === 1) {
             text = `${opponentName()} repaired a *station card#`
-        }
-        else {
+        } else {
             text = `${opponentName()} repaired ${count} station ${count === 1 ? 'card' : 'cards'}#`
         }
 
-        log({ action, text, count });
+        log({action, text, count});
     }
 
-    function opponentCounteredCard({ cardCommonId }) {
+    function opponentCounteredCard({cardCommonId}) {
         log({
             action: 'countered',
+            commonCardId: cardCommonId,
             text: `${opponentName()} countered ${cardInfoText(cardCommonId)}`
         });
     }
 
-    function opponentCounteredAttackOnCard({ defenderCardId, defenderCardCommonId }) {
+    function opponentCounteredAttackOnCard({defenderCardId, defenderCardCommonId}) {
         log({
             action: ActionTypes.counteredAttackOnCard,
+            commonCardId: defenderCardCommonId,
             text: `${opponentName()} stopped attack on ${cardInfoText(defenderCardCommonId)}`,
             defenderCardId
         });
     }
 
-    function opponentCounteredAttackOnStation({ targetStationCardIds }) {
+    function opponentCounteredAttackOnStation({targetStationCardIds}) {
         const count = targetStationCardIds.length;
         log({
             action: ActionTypes.counteredAttackOnCard,
@@ -181,7 +183,7 @@ module.exports = function ({
         });
     }
 
-    function stationCardsWereDamaged({ targetCount }) {
+    function stationCardsWereDamaged({targetCount}) {
         log({
             action: 'stationCardsDamaged',
             text: `*${targetCount} station ${targetCount === 1 ? 'card' : 'cards'}# ${targetCount === 1 ? 'was' : 'were'} damaged`
@@ -205,12 +207,13 @@ module.exports = function ({
     function opponentTriggeredCard(cardInfo) {
         log({
             action: 'triggered',
+            commonCardId: cardInfo.commonId,
             text: `${opponentName()} triggered ${cardInfoText(cardInfo.commonId)}`,
             cardId: cardInfo.id
         });
     }
 
-    function opponentMovedStationCard({ fromLocation, toLocation }) {
+    function opponentMovedStationCard({fromLocation, toLocation}) {
         const fromLocationText = locationToText[fromLocation];
         const toLocationText = locationToText[toLocation];
         log({
@@ -219,14 +222,14 @@ module.exports = function ({
         });
     }
 
-    function opponentMilledCardsFromYourDeck({ milledCardCommonIds }) {
+    function opponentMilledCardsFromYourDeck({milledCardCommonIds}) {
         const text = listInTextWithCorrectGrammar({
             cardCommonIds: milledCardCommonIds,
             suffixNone: ' milled but no cards were discarded',
             suffixSingle: ' was milled',
             suffixMany: ' were milled'
         });
-        log({ action: 'milled', text });
+        log({action: 'milled', text});
     }
 
     function opponentTookControlOfTurn() {
@@ -257,18 +260,15 @@ module.exports = function ({
         });
     }
 
-    function listInTextWithCorrectGrammar({ cardCommonIds, suffixNone = '', suffixSingle = '', suffixMany = '' }) {
+    function listInTextWithCorrectGrammar({cardCommonIds, suffixNone = '', suffixSingle = '', suffixMany = ''}) {
         let text = '';
         if (cardCommonIds.length === 0) {
             text = `${opponentName()}${suffixNone}`;
-        }
-        else if (cardCommonIds.length === 1) {
+        } else if (cardCommonIds.length === 1) {
             text = `${cardInfoText(cardCommonIds[0])}${suffixSingle}`;
-        }
-        else if (cardCommonIds.length === 2) {
+        } else if (cardCommonIds.length === 2) {
             text = `${cardInfoText(cardCommonIds[0])} & ${cardInfoText(cardCommonIds[1])}${suffixMany}`;
-        }
-        else {
+        } else {
             const cardInfoTextsListed = cardCommonIds.slice(0, -1).map(id => cardInfoText(id)).join(', ');
             const lastCardInfoText = cardInfoText(cardCommonIds[cardCommonIds.length - 1]);
             text = `${cardInfoTextsListed} & ${lastCardInfoText} were milled`;
@@ -282,9 +282,10 @@ module.exports = function ({
     }
 
     function log({
-        action,
-        ...entry
-    }) {
+                     action,
+                     ...entry
+                 }) {
+        console.log(entry);
         playerStateService.update(playerState => {
             playerState.actionLogEntries.push({
                 action,

@@ -12,8 +12,11 @@
         <span
                 v-if="expanded"
                 class="actionLog-entryText"
+                ref="card-span"
+                @click="logEntryCardClicked($event)"
                 v-html="getEntryHtml(entry)"
-        />
+        >
+        </span>
     </div>
 </template>
 
@@ -24,24 +27,37 @@
         name: 'ActionLogEntryItem',
         props: {
             entry: {},
-            expanded: false
+            expanded: false,
+
         },
         methods: {
+            logEntryCardClicked(e) {
+                e.preventDefault();
+                if (e.target.className === 'log-entry-card-link') {
+                    this.displayCardPreview();
+                }
+            },
             getEntryHtml(entry) {
-                return ActionLogEntryHelper(entry).html();
+                console.log(entry);
+                return ActionLogEntryHelper(entry).htmlWithOrWithoutLink();
             },
             getTitleText(entry) {
                 return ActionLogEntryHelper(entry).titleText();
             },
             getIconImage(entry) {
                 return entry.iconUrl;
+            },
+            displayCardPreview() {
+
             }
         }
     }
 </script>
 
-<style lang="scss" >
-    a {
+<style lang="scss">
+    .log-entry-card-link {
         text-decoration: underline;
+        cursor: pointer;
+        font-weight: 900;
     }
 </style>

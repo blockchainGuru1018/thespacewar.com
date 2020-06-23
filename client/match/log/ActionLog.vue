@@ -60,7 +60,7 @@
 
         &:hover {
             background: rgba(18, 18, 18, .5);
-            cursor: pointer;
+            /*cursor: pointer;*/
         }
     }
 
