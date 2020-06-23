@@ -41,6 +41,7 @@ const classes = [
     require('./Repair.js'),
     require('./DestroyDuration.js'),
     require('./ToxicGas.js'),
+    require('./Revive.js'),
 ];
 
 module.exports = classes;
