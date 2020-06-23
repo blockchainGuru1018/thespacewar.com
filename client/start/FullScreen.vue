@@ -38,6 +38,7 @@
             }
         },
         mounted() {
+            this.enableFullscreen()
             this.watchFullScreen();
         },
         methods: {
