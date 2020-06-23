@@ -17,6 +17,7 @@ module.exports = function ({
     function onSelectCard(playerId, { cardGroups }) {
         const selectedCardsCount = getSelectedCardsCount(cardGroups);
         validateIfCanProgressRequirementByCount(selectedCardsCount, playerId);
+        validateIfCanProgressRequirementByCost({cardGroups,playerId});
 
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
         const requirement = playerRequirementService.getFirstMatchingRequirement({ type: 'findCard' });
@@ -48,6 +49,11 @@ module.exports = function ({
         if (!canProgressRequirement) {
             throw new CheatError('Cannot select more cards than required');
         }
+    }
+    function validateIfCanProgressRequirementByCost({cardGroups,playerId}) {
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const totalCost = cardGroups[0].cardIds.reduce((acc, cardId) => acc + (playerStateService.findCardFromAnySource(cardId) || {}).cost || 0,0) // fix to pass test, MUST be refractor to match test
+        console.log('totalCost',totalCost);
     }
 
     function progressRequirementByCount(count, playerId) {
