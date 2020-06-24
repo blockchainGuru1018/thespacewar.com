@@ -31,7 +31,6 @@
     </div>
 </template>
 <script>
-    import featureToggles from "../utils/featureToggles";
     const Vuex = require('vuex');
     const loadingHelpers = Vuex.createNamespacedHelpers('loading');
     const userHelpers = Vuex.createNamespacedHelpers('user');
@@ -87,24 +86,8 @@
                     && this.useAccessKey;
             }
         },
-        methods: {
-            async requestFullScreen() {
-                try {
-                    if(!featureToggles.isEnabled('disabled-fullscreen')) {
-                        //await document.documentElement.requestFullscreen();
-                    }
-                }
-                catch (error) {
-                    // eslint-disable-next-line no-console
-                    console.error('Got error when requested fullscreen:', error);
-                }
-            },
-        },
         async mounted() {
             this.$store.dispatch('audio/main');
-
-            document.addEventListener('click', this.requestFullScreen, { once: true });
-            document.addEventListener('keydown', this.requestFullScreen, { once: true });
         },
         components: {
             Lobby,
