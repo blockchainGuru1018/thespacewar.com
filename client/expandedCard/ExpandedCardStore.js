@@ -28,6 +28,7 @@ module.exports = function () {
 
     function expandCard({ state }, cardData) {
         state.cardData = cardData;
+        console.log(cardData);
         state.commander = '';
     }
 

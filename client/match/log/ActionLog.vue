@@ -3,7 +3,6 @@
             v-if="!holdingCard"
             ref="actionLog"
             :class="['actionLog', {'actionLog--collapsed': !expanded}]"
-            @click="toggleExpanded"
     >
         <ActionLogEntryItem v-for="(entry,index) in entries" :key="index" :entry="entry" :expanded="expanded"/>
     </div>

@@ -13,9 +13,10 @@
                 v-if="expanded"
                 class="actionLog-entryText"
                 ref="card-span"
-                @click="logEntryCardClicked($event)"
-                v-html="getEntryHtml(entry)"
         >
+            {{normalizeText(entry)}}
+            <a class="log-entry-card-link" @click="expandLogCard" v-if="isClickableAction(entry)"> <strong> {{boldEffect(entry)}}</strong></a>
+            <strong v-else> {{boldEffect(entry)}}</strong>
         </span>
     </div>
 </template>
@@ -23,6 +24,9 @@
 <script>
     import ActionLogEntryHelper from "./ActionLogEntry.js";
 
+    const Vuex = require('vuex');
+    const expandedCardHelpers = Vuex.createNamespacedHelpers('expandedCard');
+    const cardHelpers = Vuex.createNamespacedHelpers('card');
     export default {
         name: 'ActionLogEntryItem',
         props: {
@@ -31,14 +35,42 @@
 
         },
         methods: {
-            logEntryCardClicked(e) {
-                e.preventDefault();
-                if (e.target.className === 'log-entry-card-link') {
-                    this.displayCardPreview();
+            ...cardHelpers.mapActions([
+                'getCardDataByCommonId'
+            ]),
+            ...expandedCardHelpers.mapActions([
+                'expandCard'
+            ]),
+            isClickableAction(entry) {
+                return ['played',
+                    'moved',
+                    'repairedCard',
+                    'paralyzed',
+                    'countered',
+                    'counteredAttackOnCard',
+                    'damagedInAttack',
+                    'triggered',
+                    'receivedCardFromCommander',
+                ].includes(entry.action);
+            },
+            normalizeText(entry) {
+                console.log(entry);
+                // Mr.Roboto expanded station by *1 station card#
+                return entry.text.replace("*", "**").split(/\*\*/)[0];
+            },
+            boldEffect(entry) {
+                console.log(entry.text.replace("*", "**").split(/\*\*/));
+                return entry.text.replace("*", "**").split(/\*\*/)[1].replace("*", "").replace("##", "").replace("#", "");
+            },
+            async expandLogCard() {
+                if (this.entry.cardCommonId) {
+                    this.expandCard(await this.getCardDataByCommonId(this.entry.cardCommonId));
+                }
+                if (this.entry.cardCommonIds) {
+                    this.expandCard(await this.getCardDataByCommonId(this.entry.cardCommonIds[0]));
                 }
             },
             getEntryHtml(entry) {
-                console.log(entry);
                 return ActionLogEntryHelper(entry).htmlWithOrWithoutLink();
             },
             getTitleText(entry) {
@@ -46,9 +78,6 @@
             },
             getIconImage(entry) {
                 return entry.iconUrl;
-            },
-            displayCardPreview() {
-
             }
         }
     }
