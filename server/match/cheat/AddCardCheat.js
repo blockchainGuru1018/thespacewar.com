@@ -1,6 +1,6 @@
 module.exports = function ({
-    playerServiceProvider,
-    cardDataAssembler
+    cardDataAssembler,
+    playerServiceFactory
 }) {
 
     return {
@@ -9,7 +9,7 @@ module.exports = function ({
     };
 
     function forPlayerWithData(playerId, { count, commonId, playerCheatedId = null }) {
-        const playerStateService = playerServiceProvider.getStateServiceById(
+        const playerStateService = playerServiceFactory.playerStateService(
             playerCheatedId ? playerCheatedId : playerId
           );
         const cardCount = Math.min(count, 10);
