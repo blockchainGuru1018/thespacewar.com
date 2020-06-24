@@ -199,7 +199,7 @@
     
     .lobby-userAccountPageLinkDiv {
         position: fixed;
-        left: 2px;
+        left: 10px;
         top: 5px;
     }
 </style>
