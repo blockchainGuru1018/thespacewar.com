@@ -1,7 +1,7 @@
 <template>
     <div v-if="ownUser" class="lobby">
-        <div class="account_div">
-            <a href="https://thespacewar.com/account" class="account">&#8592; Back to Account</a>
+        <div class="lobby-userAccountPageLinkDiv">
+            <a href="https://thespacewar.com/account" class="lobby-userAccountPageLink">&#8592; Back to Account</a>
         </div>
         <div class="users-container">
             <div class="row">
@@ -187,7 +187,8 @@
         font-size: .7em;
         letter-spacing: .2em;
     }
-    .account {
+
+    .lobby-userAccountPageLink {
         color: white;
         font-family: "Space Mono", inherit monospace;
         font-size: 1.0em;
@@ -195,8 +196,10 @@
         text-decoration: none;
         font-weight: bold;
     }
-    .account_div {
-        margin-right: 1175px;
-        margin-bottom: 550px;
+    
+    .lobby-userAccountPageLinkDiv {
+        position: fixed;
+        left: 2px;
+        top: 5px;
     }
 </style>
