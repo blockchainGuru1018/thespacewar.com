@@ -52,5 +52,21 @@ module.exports = {
 
         assert.equals(cards.length, 1);
         assert.match(cards[0], { id: 'C1A' });
+    },
+    'can exclude card by id': function () {
+        const testHelper = TestHelper(createState({
+            currentPlayer: 'P1A',
+            playerStateById: {
+                'P1A': {
+                    discardedCards: [createCard({ id: 'NOT_FILTERED_CARD' }), createCard({ id: 'FILTERED_CARD' })]
+                }
+            },
+        }));
+        const sourceFetcher = testHelper.sourceFetcher('P1A');
+
+        const cards = sourceFetcher.discardPile({ excludeCardIds: ["NOT_FILTERED_CARD"]});
+
+        assert.equals(cards.length, 1);
+        assert.match(cards[0], { id: 'FILTERED_CARD' });
     }
 };

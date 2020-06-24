@@ -140,7 +140,7 @@ function SourceFetcher({
         return card => {
             if (!cardFulfillsTypeFilter(card, filter)) return false;
             if (!cardFulfillsCanBeCounteredFilter(triggerCard, card, filter)) return false;
-
+            if (!cardFulfillsExcludeCardIds(card,filter)) return false
             return true;
         };
     }
@@ -166,6 +166,11 @@ function SourceFetcher({
     function cardFulfillsTypeFilter(card, filter) {
         const hasTypeFilter = 'type' in filter;
         return !hasTypeFilter || filter.type.includes(card.type);
+    }
+
+    function cardFulfillsExcludeCardIds(card,filter){
+        const hasExcludeCardIds = 'excludeCardIds' in filter;
+        return !hasExcludeCardIds || !filter.excludeCardIds.find((value) => value === card.id)
     }
 
     function cardFromStationCard(stationCard) {

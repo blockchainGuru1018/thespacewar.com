@@ -27,7 +27,7 @@ function FindCardRequirementFactory({
                 destroyCard: requirementSpec.dormantEffect.destroyTriggerCard
             }
         }
-
+        
         return requirement;
     }
 
@@ -43,7 +43,7 @@ function FindCardRequirementFactory({
     function cardGroupFromSource(source) {
         return {
             source,
-            cards: sourceFetcher[source](requirementSpec.filter)
+            cards: sourceFetcher[source]({...requirementSpec.filter, excludeCardIds: [card.id]})
         };
     }
 }

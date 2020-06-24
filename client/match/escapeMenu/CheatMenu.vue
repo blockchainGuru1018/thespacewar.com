@@ -96,7 +96,7 @@
                 ];
             },
             cardOptions() {
-                const allCards = this.cardDataAssembler.createOneOfEach();
+                const allCards = this.cardDataAssembler.createLibrary();
                 return allCards.map(cardData => {
                     return { value: cardData.commonId, text: cardData.name };
                 });
