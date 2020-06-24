@@ -46,6 +46,14 @@
                 </select>
             </label>
         </div>
+        <div class="escapeMenu-option">
+            <label>
+                <span>Player</span>
+                <select v-model="cheatPlayerId">
+                <option v-for="(value,key) in playerOrder" :key="key" :value="value">{{value}}</option>
+                </select>
+            </label>
+        </div>
         <button
             class="escapeMenu-option"
             @click="sendCheat"
@@ -74,6 +82,7 @@
                 cheatType: 'addCard',
                 cheatCount: 1,
                 cheatCommonId: '',
+                cheatPlayerId: "BOT",
             };
         },
         computed: {
@@ -82,6 +91,9 @@
             ]),
             ...matchHelpers.mapGetters([
                 'cardDataAssembler'
+            ]),
+            ...matchHelpers.mapState([
+                'playerOrder'
             ]),
             visible() {
                 return this.view === ViewNames.cheat;
@@ -110,9 +122,10 @@
                 this.selectView(ViewNames.debug);
             },
             sendCheat() {
-                window.cheat(this.cheatType, {
+                 window.cheat(this.cheatType, {
                     count: this.cheatCount,
-                    commonId: this.cheatCommonId
+                    commonId: this.cheatCommonId,
+                    playerCheatedId: this.cheatPlayerId
                 });
             },
         }
