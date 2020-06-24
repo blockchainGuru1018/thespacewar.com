@@ -45,15 +45,15 @@ module.exports = function ({
     }
 
 
-    function enableDeckToggle(deck) {
+    function enableDeckToggle(deckName) {
         disableDeckToggle();
-        if (['swarm'].includes(deck)) {
-            localStorage.setItem(`ft-${deck}-toggle`, 'true')
+        if (['the-swarm'].includes(deckName)) {
+            localStorage.setItem(`ft-${deckName}-toggle`, 'true')
         }
     }
 
     function disableDeckToggle() {
-        ['swarm'].forEach(
+        ['the-swarm'].forEach(
             deckName => localStorage.removeItem(`ft-${deckName}-toggle`)
         );
     }
