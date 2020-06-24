@@ -54,7 +54,7 @@
                 /*
                 |-----------------------------------------------------
                 | Only run with clicked full screen mode
-                | Capture event fullscreen
+                | Capture event fullscreen   
                 |-----------------------------------------------------
                  */
                 document.addEventListener('fullscreenchange', (event) => {
