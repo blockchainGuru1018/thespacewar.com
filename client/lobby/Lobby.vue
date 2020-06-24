@@ -1,5 +1,8 @@
 <template>
     <div v-if="ownUser" class="lobby">
+        <div class="lobby-userAccountPageLinkDiv">
+            <a href="https://thespacewar.com/account" class="lobby-userAccountPageLink">&#8592; Back to Account</a>
+        </div>
         <div class="users-container">
             <div class="row">
                 <ProfileUserPlayer/>
@@ -183,5 +186,20 @@
         padding-left: 5px;
         font-size: .7em;
         letter-spacing: .2em;
+    }
+
+    .lobby-userAccountPageLink {
+        color: white;
+        font-family: "Space Mono", inherit monospace;
+        font-size: 1.0em;
+        z-index: 10;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    
+    .lobby-userAccountPageLinkDiv {
+        position: fixed;
+        left: 10px;
+        top: 5px;
     }
 </style>
