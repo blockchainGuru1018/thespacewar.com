@@ -2,6 +2,8 @@ export default function (entry) {
     const logActionsWithCard = ['played',
         'moved',
         'repairedCard',
+        'paralyzed',
+        'destroyed',
         'countered',
         'counteredAttackOnCard',
         'damagedInAttack',
@@ -40,29 +42,14 @@ export default function (entry) {
     }
 
     function htmlWithLink() {
-        const textWithSubstitutedSensitiveCharacters = getTextWithSubstitutedSensitiveCharacters(entry);
-        return encodeHtml(textWithSubstitutedSensitiveCharacters)
-            .replace('*', '**')
-            .replace('#', '##')
-            .replace('**', '{*').replace('##', '#}')
-            .split('_amp_').join('&')
-            .split('_115_').join('s')
-            .split('_83_').join('S')
-            .split(/{/)
-            .join('<a class="log-entry-card-link">')
-            .split(/\*/)
-            .join('')
-            .split(/#/)
-            .join('')
-            .split(/}/)
-            .join('</a>');
-    }
+        const cardName = entry.text.substring(
+            entry.text.lastIndexOf("*") + 1,
+            entry.text.lastIndexOf("#")
+        ).replace("#", "");
 
-    function getTextWithSubstitutedSensitiveCharacters(entry) {
-        return entry.text
-            .split('&').join('_amp_')
-            .split('s').join('_115_')
-            .split('S').join('_83_');
+        const cardNameWithAnchors = `<a class="log-entry-card-link"> ${cardName} </a>`;
+
+        return html().replace(cardName, cardNameWithAnchors);
     }
 
 

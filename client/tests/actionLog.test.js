@@ -11,24 +11,22 @@ describe('ActionLog', () => {
 
 
     it('Should render a ActionLogEntryItem for each action log in the store', () => {
-        // Arrange
         store = mockStore();
         const wrapper = mount(ActionLog, {store, localVue});
-        // Assert
+
         expect(wrapper.find('a').exists()).toBeTruthy();
         expect(wrapper.find('a').text()).toBe('Fast Missile');
         expect(wrapper.findAll(ActionLogEntryItem).length).toBe(2);
     });
 
     it(`should call previewCard method when card name's link clicked`, async () => {
-        // Arrange
         store = mockStore();
-        let spy = jest.spyOn(ActionLogEntryItem.methods, 'displayCardPreview')
+        let spy = jest.spyOn(ActionLogEntryItem.methods, 'expandLogCard')
         const wrapper = mount(ActionLog, {store, localVue})
-        // Act
+
         const entryLogs = wrapper.findAll(ActionLogEntryItem);
         await entryLogs.wrappers[0].find('a').trigger('click');
-        // Assert
+
         expect(spy).toHaveBeenCalledTimes(1);
 
     });

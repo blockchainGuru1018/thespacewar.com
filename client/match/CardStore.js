@@ -58,7 +58,6 @@ module.exports = function (deps) {
             movingStationCard,
         },
         actions: {
-            getCardDataByCommonId,
             // Utils/Transient cards
             moveCardToZoneAsTransient,
             removeTransientCard,
@@ -106,6 +105,7 @@ module.exports = function (deps) {
 
             //Misc
             cancelCurrentUserInteraction,
+            getCardDataByCommonId,
         }
     };
 
@@ -145,6 +145,7 @@ module.exports = function (deps) {
     function getCardDataByCommonId(state, commonId) {
         return cardInfoRepository.getCard(commonId);
     }
+
 
     function canSelectMoreCardsForAction(state, getters, rootState, rootGetters) {
         if (!state.activeAction) return false;

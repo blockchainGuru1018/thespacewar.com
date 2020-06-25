@@ -76,7 +76,7 @@ module.exports = function ({
     function damagedInAttack({defenderCardId, defenderCardCommonId, damageInflictedByDefender}) {
         log({
             action: 'damagedInAttack',
-            commonCardId: defenderCardCommonId,
+            cardCommonId: defenderCardCommonId,
             text: `${cardInfoText(defenderCardCommonId)} took ${damageInflictedByDefender} damage`,
             defenderCardId
         });
@@ -84,7 +84,7 @@ module.exports = function ({
 
     function paralyzed({defenderCardId, defenderCardCommonId}) {
         log({
-            action: 'paralyzed', commonCardId: defenderCardCommonId,
+            action: 'paralyzed', cardCommonId: defenderCardCommonId,
             text: `${cardInfoText(defenderCardCommonId)} was paralyzed`,
             defenderCardId
         });
@@ -92,7 +92,7 @@ module.exports = function ({
 
     function cardDestroyed({cardCommonId}) {
         log({
-            action: 'destroyed', commonCardId: cardCommonId,
+            action: 'destroyed', cardCommonId: cardCommonId,
             text: `${cardInfoText(cardCommonId)} was discarded`
         });
     }
@@ -125,7 +125,7 @@ module.exports = function ({
 
     function opponentRepairedCard({repairedCardId, repairedCardCommonId}) {
         log({
-            action: 'repairedCard', commonCardId: repairedCardCommonId,
+            action: 'repairedCard', cardCommonId: repairedCardCommonId,
             text: `${opponentName()} moved ${cardInfoText(repairedCardCommonId)}`,
             repairedCardId
         });
@@ -149,7 +149,7 @@ module.exports = function ({
     function opponentCounteredCard({cardCommonId}) {
         log({
             action: 'countered',
-            commonCardId: cardCommonId,
+            cardCommonId: cardCommonId,
             text: `${opponentName()} countered ${cardInfoText(cardCommonId)}`
         });
     }
@@ -157,7 +157,7 @@ module.exports = function ({
     function opponentCounteredAttackOnCard({defenderCardId, defenderCardCommonId}) {
         log({
             action: ActionTypes.counteredAttackOnCard,
-            commonCardId: defenderCardCommonId,
+            cardCommonId: defenderCardCommonId,
             text: `${opponentName()} stopped attack on ${cardInfoText(defenderCardCommonId)}`,
             defenderCardId
         });
@@ -207,7 +207,7 @@ module.exports = function ({
     function opponentTriggeredCard(cardInfo) {
         log({
             action: 'triggered',
-            commonCardId: cardInfo.commonId,
+            cardCommonId: cardInfo.commonId,
             text: `${opponentName()} triggered ${cardInfoText(cardInfo.commonId)}`,
             cardId: cardInfo.id
         });
@@ -249,6 +249,7 @@ module.exports = function ({
     function opponentReceivedCardFromCommander(cardCommonId) {
         log({
             action: 'receivedCardFromCommander',
+            cardCommonId,
             text: `${opponentName()} received ${cardInfoText(cardCommonId)} from their commander`
         });
     }
@@ -256,6 +257,7 @@ module.exports = function ({
     function receivedCardFromCommander(cardCommonId) {
         log({
             action: 'receivedCardFromCommander',
+            cardCommonId,
             text: `You received ${cardInfoText(cardCommonId)} from your commander`
         });
     }
