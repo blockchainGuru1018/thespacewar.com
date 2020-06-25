@@ -33,10 +33,9 @@ module.exports = function () {
     }
 
     async function expandCardByCommonId({dispatch, state}, cardCommonId) {
+        dispatch('hideExpandedCard');
         state.cardData = await dispatch('card/getCardDataByCommonId', cardCommonId, {root: true});
-        state.commander = '';
     }
-
 
     function expandCommanderCard({state}, commander) {
         state.commander = commander;

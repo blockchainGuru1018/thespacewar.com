@@ -31,11 +31,11 @@ const locationToText = {
 };
 
 module.exports = function ({
-                               matchService,
-                               playerStateService,
-                               cardInfoRepository,
-                               userRepository
-                           }) {
+         matchService,
+         playerStateService,
+         cardInfoRepository,
+         userRepository
+    }) {
 
     return {
         queryLatest,

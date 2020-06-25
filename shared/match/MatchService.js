@@ -74,7 +74,6 @@ class MatchService {
         });
 
         const endMatch = this.endMatch;
-        // TODO: the delay its because of this but it give error after u finish
         setTimeout(() => {
             endMatch()
         }, EndMatchDelay);

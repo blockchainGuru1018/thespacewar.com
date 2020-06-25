@@ -1,22 +1,21 @@
 <template>
     <div
 
-            :title="getTitleText(entry)"
-            class="actionLog-entry"
+        :title="getTitleText(entry)"
+        class="actionLog-entry"
     >
         <img
-                :src="getIconImage(entry)"
-                class="actionLog-entryIcon"
-                alt="action log entry icon"
+            :src="getIconImage(entry)"
+            class="actionLog-entryIcon"
+            alt="action log entry icon"
         >
         <span
-                v-if="expanded"
-                class="actionLog-entryText"
-                ref="card-span"
-                @click="logEntryCardClicked($event,entry)"
-                v-html="getEntryHtml(entry)"
-        >
-        </span>
+            v-if="expanded"
+            ref="card-span"
+            class="actionLog-entryText"
+            @click="logEntryCardClicked($event,entry)"
+            v-html="getEntryHtml(entry)"
+        />
     </div>
 </template>
 
@@ -39,7 +38,7 @@
             }),
             logEntryCardClicked(e, entry) {
                 e.preventDefault();
-                if (e.target.className === 'log-entry-card-link') {
+                if (e.target.className === 'actionLog-entryCardLink') {
                     e.stopPropagation();
                     this.expandLogCard(entry);
                 }
@@ -65,11 +64,10 @@
 </script>
 
 <style lang="scss">
-    .log-entry-card-link {
+    .actionLog-entryCardLink {
         text-decoration: underline;
         cursor: pointer;
         font-weight: 900;
-        transform: translate(-50%, -50%) scale(1.8);
         left: 50%;
         top: 50%;
     }

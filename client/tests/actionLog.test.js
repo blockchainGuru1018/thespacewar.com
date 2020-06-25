@@ -9,7 +9,6 @@ localVue.use(Vuex);
 describe('ActionLog', () => {
     let store;
 
-
     it('Should render a ActionLogEntryItem for each action log in the store', () => {
         store = mockStore();
         const wrapper = mount(ActionLog, {store, localVue});
@@ -57,7 +56,7 @@ const mockStore = () => {
                     actionLog: () => {
                         return {
                             queryLatest: () => [
-                                {//Mr.Roboto expanded station by <strong>1 station card</strong>
+                                {
                                     action: "expandedStation",
                                     count: 1,
                                     iconUrl: "/icon/expand.svg",

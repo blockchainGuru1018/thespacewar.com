@@ -1,5 +1,6 @@
 export default function (entry) {
-    const logActionsWithCard = ['played',
+    const logActionsWithCard = [
+        'played',
         'moved',
         'repairedCard',
         'paralyzed',
@@ -16,7 +17,6 @@ export default function (entry) {
         htmlWithOrWithoutLink,
         titleText,
     };
-
 
     function htmlWithOrWithoutLink() {
         if (logActionsWithCard.includes(entry.action)) {
@@ -42,16 +42,19 @@ export default function (entry) {
     }
 
     function htmlWithLink() {
-        const cardName = entry.text.substring(
-            entry.text.lastIndexOf("*") + 1,
-            entry.text.lastIndexOf("#")
-        ).replace("#", "");
+        const cardName = getCardName();
 
-        const cardNameWithAnchors = `<a class="log-entry-card-link"> ${cardName} </a>`;
+        const cardNameWithAnchors = `<a class="actionLog-entryCardLink"> ${cardName} </a>`;
 
         return html().replace(cardName, cardNameWithAnchors);
     }
 
+    function getCardName() {
+        return entry.text.substring(
+            entry.text.lastIndexOf("*") + 1,
+            entry.text.lastIndexOf("#")
+        ).replace("#", "");
+    }
 
     function titleText() {
         return entry.text
