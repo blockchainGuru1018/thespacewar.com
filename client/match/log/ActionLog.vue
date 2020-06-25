@@ -3,6 +3,7 @@
             v-if="!holdingCard"
             ref="actionLog"
             :class="['actionLog', {'actionLog--collapsed': !expanded}]"
+            @click="toggleExpanded"
     >
         <ActionLogEntryItem v-for="(entry,index) in entries" :key="index" :entry="entry" :expanded="expanded"/>
     </div>
@@ -12,8 +13,8 @@
     const matchHelpers = Vuex.createNamespacedHelpers('match');
     const cardHelpers = Vuex.createNamespacedHelpers('card');
     const actionLogHelpers = Vuex.createNamespacedHelpers('actionLog');
-    const expandedCardHelpers = Vuex.createNamespacedHelpers('expandedCard');
     import ActionLogEntryItem from "./ActionLogEntryItem.vue";
+
     export default {
         components: {
             ActionLogEntryItem

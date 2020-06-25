@@ -18,7 +18,6 @@
                 </svg>
             </button>
             <FullScreen/>
-            <ExpandReduceLog/>
         </div>
         <ActionLog/>
         <PlayerBanner
@@ -34,7 +33,6 @@
 <script>
     import ToggleInfoModeButtonContainer from '../infoMode/ToggleInfoModeButtonContainer.vue';
     import FullScreen from "../../start/FullScreen.vue";
-    import ExpandReduceLog from "../../start/ExpandReduceLog.vue";
 
     const Vuex = require('vuex');
     const matchHelpers = Vuex.createNamespacedHelpers('match');
@@ -58,7 +56,6 @@
             ActionLog,
             ToggleInfoModeButtonContainer,
             FullScreen,
-            ExpandReduceLog,
         }
     }
 </script>

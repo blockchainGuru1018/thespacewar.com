@@ -287,7 +287,6 @@ module.exports = function ({
                      action,
                      ...entry
                  }) {
-        console.log(entry);
         playerStateService.update(playerState => {
             playerState.actionLogEntries.push({
                 action,

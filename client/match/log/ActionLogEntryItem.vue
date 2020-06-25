@@ -40,6 +40,7 @@
             logEntryCardClicked(e, entry) {
                 e.preventDefault();
                 if (e.target.className === 'log-entry-card-link') {
+                    e.stopPropagation();
                     this.expandLogCard(entry);
                 }
             },
@@ -68,5 +69,8 @@
         text-decoration: underline;
         cursor: pointer;
         font-weight: 900;
+        transform: translate(-50%, -50%) scale(1.8);
+        left: 50%;
+        top: 50%;
     }
 </style>
