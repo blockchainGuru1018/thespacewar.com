@@ -14,6 +14,7 @@ module.exports = function () {
         actions: {
             expandCard,
             expandCommanderCard,
+            expandCardByCommonId,
             hideExpandedCard
         }
     };
@@ -26,17 +27,22 @@ module.exports = function () {
         return getCardImageUrl.byCommonId(state.cardData.commonId);
     }
 
-    function expandCard({ state }, cardData) {
+    function expandCard({state}, cardData) {
         state.cardData = cardData;
         state.commander = '';
     }
 
-    function expandCommanderCard({ state }, commander) {
+    async function expandCardByCommonId({dispatch, state}, cardCommonId) {
+        dispatch('hideExpandedCard');
+        state.cardData = await dispatch('card/getCardDataByCommonId', cardCommonId, {root: true});
+    }
+
+    function expandCommanderCard({state}, commander) {
         state.commander = commander;
         state.cardData = null;
     }
 
-    function hideExpandedCard({ state }) {
+    function hideExpandedCard({state}) {
         state.cardData = null;
         state.commander = '';
     }
