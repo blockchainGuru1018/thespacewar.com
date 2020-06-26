@@ -8,11 +8,13 @@ module.exports = {
           {
             "type": "findCard",
             "count": 2,
-            "maxCost": 6,
+            "actionPointsLimit": 6,
             "sources": [
               "discardPile"
             ],
-            "target": "hand"
+            "target": "hand",
+            "submitOnEverySelect": true,
+            "cancelable": true
           }
         ]
       }

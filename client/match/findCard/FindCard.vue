@@ -106,7 +106,7 @@
                 'requirementIsCancelable'
             ]),
             cardsToSelect() {
-                return this.requirement.count - this.selectedCardInfos.length;
+                return this.requirement.submitOnEverySelect? this.requirement.count : this.requirement.count - this.selectedCardInfos.length;
             },
             cardsAvailableToSelect() {
                 return this.filteredRequirement.cardGroups.reduce((acc, group) => acc + group.cards.length, 0);
@@ -125,7 +125,7 @@
                 return `Pick ${this.cardsToSelect} ${pluralize('card', this.cardsToSelect)}${endText}`;
             },
             subHeaderText() {
-                const actionPoints = this.actionPoints2;
+                const actionPoints = this.requirement.actionPointsLimit ? this.requirement.actionPointsLimit.actionPointsLeft : this.actionPoints2;
                 return `${actionPoints} action ${pluralize('point', actionPoints)} remaining`;
             }
         },
