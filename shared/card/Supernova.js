@@ -11,6 +11,14 @@ class Supernova extends BaseCard {
         return '15';
     }
 
+    canBePlayed() {
+        return super.canBePlayed() && this._canPlayerAffordStationCards();
+    }
+
+    _canPlayerAffordStationCards() {
+        return this._matchService._state.playerStateById[this.playerId].stationCards.filter(card => !card.flipped).length > 3;
+    }
+
     _someCardIsPreventingThisCardToBePlayed() {
         return this._queryBoard.opponentHasCardInPlay(card => card.commonId === Avoid.CommonId)
     }
