@@ -16,7 +16,7 @@ class Supernova extends BaseCard {
     }
 
     _canPlayerAffordStationCards() {
-        return this._matchService._state.playerStateById[this.playerId].stationCards.filter(card => !card.flipped).length > 3;
+        return this._playerStateService.getUnflippedStationCards().length > 3;
     }
 
     _someCardIsPreventingThisCardToBePlayed() {
