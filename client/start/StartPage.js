@@ -17,14 +17,14 @@ module.exports = function ({
     function show() {
         vm = new Vue({
                 store: rootStore,
-                render(h) {
-                    return h(StartView);
-                },
                 created() {
                     const uri = window.location.search.substring(1);
                     const params = new URLSearchParams(uri);
                     const deck = params.get("deck");
                    enableDeckToggle(deck);
+                },
+                render(h) {
+                    return h(StartView);
                 },
             }
         );
@@ -46,16 +46,10 @@ module.exports = function ({
 
 
     function enableDeckToggle(deckName) {
-        disableDeckToggle();
         if (['the-swarm'].includes(deckName)) {
             localStorage.setItem(`ft-${deckName}-toggle`, 'true')
         }
     }
 
-    function disableDeckToggle() {
-        ['the-swarm'].forEach(
-            deckName => localStorage.removeItem(`ft-${deckName}-toggle`)
-        );
-    }
 }
 ;
