@@ -153,19 +153,11 @@ class BaseCard {
     }
 
     canTargetCardForSacrifice(otherCard) {
-        if (!this.canBeSacrificed()) return false;
-
-        if (otherCard.isStationCard()) {
-            return this.canTargetStationCardsForSacrifice();
-        }
-        else {
-            return this.canTargetCard(otherCard);
-        }
+        return false;
     }
 
     canTargetStationCardsForSacrifice() {
-        return !this.isInHomeZone()
-            && !this._hasMovedThisTurn();
+        return false;
     }
 
     canBeUsed() {
