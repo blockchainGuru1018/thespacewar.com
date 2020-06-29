@@ -15,6 +15,7 @@
     "dev:score": "node ./scoreService/startFakeScoreService.js",
     "pre-commit": "jest --changedSince=HEAD",
     "client": "npm run dev:client",
+    "build-prod": "cd ./client && npm run build-prod && cd.. && git add . && git commit -m \"automatic commit for build\" --no-verify",
     "server": "concurrently -m -n \"npm run dev:client\" \"npm run dev:server\" \"npm run client\" \"npm run dev:login\" \"npm run dev:score\"",
     "install-all": "npm install && cd ./client && npm install && npm rebuild node-sass && cd .. & cd ./server && npm install && cd .. && cd ./shared && npm install && cd .. && cd ./shared && npm install && cd .. && cd ./serviceShared && npm install && cd .. && cd ./loginService && npm install && cd .. && cd ./scoreService && npm install && cd .. && cd ./client/testUtils/bocha-jest/bocha && npm install && cd ../../../../ && cd ./server/test/testUtils/bocha-jest/bocha && npm install && cd ../../../../../ && cd ./shared/test/testUtils/bocha-jest/bocha && npm install && cd ../../../../../ && cd client && npm run build"
   },
@@ -36,7 +37,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run pre-commit",
+      "pre-commit": "npm run pre-commit && npm run build-prod",
       "pre-push": "npm test"
     }
   },
