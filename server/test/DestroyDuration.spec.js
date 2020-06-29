@@ -92,7 +92,7 @@ describe('Destroy Duration Card', () => {
                 defense: 1,
                 paralyzed: false
             }
-        ])
+        ]);
         expect(match.getOwnState('P1A').discardedCards).toEqual([
             {
                 id: "21",
@@ -106,7 +106,7 @@ describe('Destroy Duration Card', () => {
                 defense: 1,
                 paralyzed: false
             }
-        ])
+        ]);
     });
 
     it('Should not be able to sacrifice on first turn', () => {

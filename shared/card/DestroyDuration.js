@@ -9,6 +9,7 @@ module.exports = class DestroyDuration extends BaseCard {
     static get CommonId() {
         return '86';
     }
+
     // TODO: this logic will be probably repeated with different arguments find a way to avoid it
     canBeSacrificed() {
         if (this.paralyzed) return false;
