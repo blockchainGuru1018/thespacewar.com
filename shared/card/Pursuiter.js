@@ -11,7 +11,6 @@ module.exports = class Pursuiter extends CanBeSacrified(BaseCard) {
   }
 
   canTargetCardForSacrifice(otherCard) {
-
     if (otherCard.isStationCard()) {
       return this.canTargetStationCardsForSacrifice();
     } else {

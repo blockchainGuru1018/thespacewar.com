@@ -11,7 +11,6 @@ module.exports = class DestroyDuration extends CanBeSacrified(BaseCard) {
     }
 
     canTargetCardForSacrifice(otherCard) {
-        if (!otherCard.canBeTargeted()) return false;
         if (otherCard.type !== 'duration') return false;
         if (otherCard.playerId === this.playerId) return false;
 
