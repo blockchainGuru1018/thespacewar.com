@@ -11,6 +11,7 @@ describe("Destroy Duration", () => {
     };
     expect(card.canTargetCardForSacrifice(otherCard)).toBe(true);
   });
+  
   it("can NOT target space ship for sacrifice", () => {
     const card = new DestroyDuration({
       playerId: "P1A",
