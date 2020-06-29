@@ -6,14 +6,14 @@ const PRODUCTION = true;
 const USING_PM2 = true;
 
 module.exports = {
-    installNpmPackages,
+    installNpmPackagesAndBuildProdClient,
     startServer
 };
 
-function installNpmPackages() {
+function installNpmPackagesAndBuildProdClient() {
     const scriptPath = path.join(__dirname, '..');
     console.log(' (1/2) - Installing dependencies (script path: ' + scriptPath + ')');
-    child_process.execSync(`cd ${scriptPath} && npm run install-all`);
+    child_process.execSync(`cd ${scriptPath} && npm run install-all && npm run build-prod`);
     console.log(' (1.5/2) - Done installing dependencies');
 }
 

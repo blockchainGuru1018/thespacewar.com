@@ -5,7 +5,7 @@ Important! The server is pulling from this repo (master branch) each minute with
 __________________________
 
 # Software installed on this server
-* Node 10.12.0
+* Node 12.16.2
 * Npm 6.4.1
 * Redis 4.0.9
 * Nginx 1.14.0
