@@ -7,16 +7,20 @@ class Supernova extends BaseCard {
         super(deps);
     }
 
+    static get StationCardDestroyed() {
+        return 3;
+    }
+
     static get CommonId() {
         return '15';
     }
 
     canBePlayed() {
-        return super.canBePlayed() && this._canPlayerAffordStationCards();
+        return super.canBePlayed() && this._hasMoreStationCardsThanSupernovaDestroys();
     }
 
-    _canPlayerAffordStationCards() {
-        return this._playerStateService.getUnflippedStationCards().length > 3;
+    _hasMoreStationCardsThanSupernovaDestroys() {
+        return this._playerStateService.getUnflippedStationCards().length > Supernova.StationCardDestroyed;
     }
 
     _someCardIsPreventingThisCardToBePlayed() {
