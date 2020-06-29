@@ -77,7 +77,8 @@
         >
             <div class="dimOverlay" />
             <div
-                v-click-outside="hideEnlargedCard" class="card card--enlarged"
+                v-click-outside="hideEnlargedCard"
+                class="card card--enlarged"
                 :style="cardStyle"
             />
         </portal>
@@ -100,6 +101,23 @@
             <CounterAttack />
         </portal>
         <NotificationBannerContainer />
+        <ConfirmationDialog
+            v-if="displayConfirmLog"
+            @close="closeModal"
+            @confirm="goToNextPhaseAndCloseModal"
+        >
+            <template slot="header">
+                <h4>Are you sure?</h4>
+            </template>
+            <template slot="body">
+                <span>You still have card with posible actions to play, are you sure you want to end your turn?</span>
+            </template>
+            <template slot="footer">
+                <span>
+                    re you sure?
+                </span>
+            </template>
+        </ConfirmationDialog>
     </div>
 </template>
 <script>
@@ -113,14 +131,17 @@
     const Vuex = require('vuex');
     const resolveModuleWithPossibleDefault = require('../../client/utils/resolveModuleWithPossibleDefault.js');
     const FindCard = resolveModuleWithPossibleDefault(require('./findCard/FindCard.vue'));
+    import ConfirmationDialog from './ConfirmationDialog.vue';
+
+    const escapeMenuHelpers = Vuex.createNamespacedHelpers('escapeMenu');
     const CounterCard = resolveModuleWithPossibleDefault(require('./counterCard/CounterCard.vue'));
     const CounterAttack = resolveModuleWithPossibleDefault(require('./counterAttack/CounterAttack.vue'));
-    const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
-    const { mapGetters: mapPermissionGetters } = Vuex.createNamespacedHelpers('permission');
+    const {mapState, mapGetters, mapActions} = Vuex.createNamespacedHelpers('match');
+    const {mapGetters: mapPermissionGetters} = Vuex.createNamespacedHelpers('permission');
     const cardHelpers = Vuex.createNamespacedHelpers('card');
     const requirementHelpers = Vuex.createNamespacedHelpers('requirement');
     const startGameHelpers = Vuex.createNamespacedHelpers('startGame');
-    const { PHASES } = require('./phases.js');
+    const {PHASES} = require('./phases.js');
 
     export default {
         components: {
@@ -131,6 +152,7 @@
             NotificationBannerContainer,
             FindCard,
             CounterCard,
+            ConfirmationDialog,
             CounterAttack,
             LookAtStationRowOverlay,
         },
@@ -138,6 +160,7 @@
             return {
                 enlargedCardVisible: false,
                 nextPhaseButtonDisabled: false,
+                displayConfirmLog: false,
             };
         },
         computed: {
@@ -159,7 +182,8 @@
                 'gameOn',
                 'playerPerfectPlan',
                 'playerRuleService',
-                'playerDrawPhase'
+                'playerDrawPhase',
+                'getCardsPendingForAction'
             ]),
             ...requirementHelpers.mapGetters([
                 'waitingForOtherPlayerToFinishRequirements',
@@ -236,18 +260,17 @@
                     && this.phase !== PHASES.wait
                     && !this.turnControl.opponentHasControlOfPlayersTurn();
             },
+
             cardStyle() {
                 if (this.activeActionCardImageUrl) {
                     return {
                         backgroundImage: `url(${this.activeActionCardImageUrl})`
                     };
-                }
-                else if (this.requirementCardImageUrl) {
+                } else if (this.requirementCardImageUrl) {
                     return {
                         backgroundImage: `url(${this.requirementCardImageUrl})`
                     };
-                }
-                else {
+                } else {
                     return {
                         display: 'none'
                     };
@@ -263,6 +286,12 @@
             ...startGameHelpers.mapActions([
                 'playerReady'
             ]),
+            ...escapeMenuHelpers.mapActions([
+                'selectView',
+            ]),
+            closeModal() {
+                this.displayConfirmLog = false;
+            },
             readyClick() {
                 this.playerReady();
             },
@@ -272,7 +301,14 @@
                     this.nextPhaseButtonDisabled = false;
                 }, 1000)
 
+                this.checkAndDisplayConfirmModalOrGoToNextPhase();
+            },
+            goToNextPhaseAndCloseModal() {
+                this.displayConfirmLog = false;
                 this.goToNextPhase();
+            },
+            checkAndDisplayConfirmModalOrGoToNextPhase() {
+                return this.getCardsPendingForAction.length > 0 ? this.displayConfirmLog = true : this.goToNextPhase();
             },
             hideEnlargedCard() {
                 this.enlargedCardVisible = false;
