@@ -4,13 +4,6 @@
             <header class="modal-header">
                 <slot name="header">
                     This is the default tile!
-                    <button
-                        type="button"
-                        class="btn-close"
-                        @click="close"
-                    >
-                        x
-                    </button>
                 </slot>
             </header>
             <section class="modal-body">
@@ -21,21 +14,6 @@
             <footer class="modal-footer">
                 <slot name="footer">
                     I'm the default footer!
-
-                    <button
-                        type="button"
-                        class="btn-green"
-                        @click="close"
-                    >
-                        Close me!
-                    </button>
-                    <button
-                        type="button"
-                        class="btn-green"
-                        @click="confirm"
-                    >
-                        yes!
-                    </button>
                 </slot>
             </footer>
         </div>
@@ -59,6 +37,9 @@
     .modal-backdrop {
         position: fixed;
         top: 0;
+        color: #FFF;
+        font-family: "Space Mono", monospace;
+        letter-spacing: .18em;
         z-index: 9999;
         bottom: 0;
         left: 0;
@@ -75,7 +56,6 @@
         left: 50%;
         transform: translate(-50%, -50%);
         display: flex;
-        margin: 30px auto;
         flex-direction: column;
         align-items: stretch;
         padding: 20px 0;
@@ -87,18 +67,16 @@
 
     .modal-header,
     .modal-footer {
-        padding: 15px;
+        padding-left: 15px;
+        padding-right: 15px;
         display: flex;
     }
 
     .modal-header {
-        border-bottom: 1px solid #eeeeee;
-        color: #4AAE9B;
         justify-content: space-between;
     }
 
     .modal-footer {
-        border-top: 1px solid #eeeeee;
         justify-content: flex-end;
     }
 
@@ -107,20 +85,5 @@
         padding: 20px 10px;
     }
 
-    .btn-close {
-        border: none;
-        font-size: 20px;
-        padding: 20px;
-        cursor: pointer;
-        font-weight: bold;
-        color: #4AAE9B;
-        background: transparent;
-    }
 
-    .btn-green {
-        color: white;
-        background: #4AAE9B;
-        border: 1px solid #4AAE9B;
-        border-radius: 2px;
-    }
 </style>

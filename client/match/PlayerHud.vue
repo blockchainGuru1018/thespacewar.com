@@ -107,15 +107,36 @@
             @confirm="goToNextPhaseAndCloseModal"
         >
             <template slot="header">
-                <h4>Are you sure?</h4>
+                <div class="confirmDialogHeader">
+                    Warning
+                </div>
             </template>
             <template slot="body">
-                <span>You still have card with posible actions to play, are you sure you want to end your turn?</span>
+                <div class="confirmDialogContent">
+                    <p>
+                        You still have card with actions to play.
+                        <br>
+                        Are you sure you want to end your turn?
+                    </p>
+                </div>
             </template>
             <template slot="footer">
-                <span>
-                    re you sure?
-                </span>
+                <div class="slot-footer-container">
+                    <div class="confirmBoxOption">
+                        <span class="marginLeft10">
+                            Yes
+                        </span>
+                    </div>
+                    <div class="separator70Percent" />
+                    <div
+                        class="confirmBoxOption"
+                        @click="displayConfirmLog = false"
+                    >
+                        <span class="marginRight10">
+                            No
+                        </span>
+                    </div>
+                </div>
             </template>
         </ConfirmationDialog>
     </div>
@@ -447,5 +468,53 @@
         display: flex;
         justify-content: center;
         align-items: center;
+    }
+
+    .slot-footer-container {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        align-content: space-between;
+    }
+
+    .confirmBoxOption {
+        width: 15%;
+        display: flex;
+        text-align: center;
+        justify-content: center;
+        span {
+            cursor: pointer;
+            &:hover {
+                color: red;
+                transition: 0.5s;
+            }
+        }
+    }
+
+    .marginRight10 {
+        margin-right: 10px;
+    }
+
+    .marginLeft10 {
+        margin-left: 10px;
+    }
+
+    .separator70Percent {
+        width: 70%;
+    }
+
+    .confirmDialogContent {
+        width: 100%;
+
+        p {
+            margin: 20px;
+        }
+    }
+
+    .confirmDialogHeader {
+        width: 100%;
+        text-align: center;
+        font-weight: bold;
+        font-size: x-large;
     }
 </style>
