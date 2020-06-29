@@ -16,6 +16,7 @@ module.exports = function ({
             firstRequirement,
             firstRequirementIsDiscardCard,
             firstRequirementIsDamageStationCard,
+            firstRequirementIsDamageShieldCard,
             firstRequirementIsDrawCard,
             firstRequirementIsFindCard,
             firstRequirementIsCounterCard,
@@ -57,6 +58,13 @@ module.exports = function ({
     function firstRequirementIsDamageStationCard(state, getters) {
         return getters.firstRequirement
             && getters.firstRequirement.type === 'damageStationCard';
+    }
+
+    function firstRequirementIsDamageShieldCard(state, getters) {
+        const isFirstRequirementIsDamageShieldCard = getters.firstRequirement
+        && getters.firstRequirement.type === 'damageShieldCard';
+        if (isFirstRequirementIsDamageShieldCard) rootStore.dispatch('match/selectAsAttacker', {id: getters.firstRequirement.cardId})
+        return isFirstRequirementIsDamageShieldCard
     }
 
     function firstRequirementIsDrawCard(state, getters) {

@@ -76,7 +76,7 @@
             <div
                 v-if="canBeSelectedAsDefender"
                 class="attackable actionOverlay actionOverlay--turnedAround"
-                @click="selectAsDefender(card)"
+                @click="readyToDefenseClick(card)"
             >
                 <div
                     v-if="predictedResultsIfAttacked.defenderParalyzed"
@@ -252,7 +252,8 @@
             }),
             ...mapPermissionGetters([
                 'canSelectCardsForActiveAction',
-                'canDiscardActivateDurationCards'
+                'canDiscardActivateDurationCards',
+                'canSelectShieldCardsForRequirement'
             ]),
             ...mapCardState([
                 'transientPlayerCardsInHomeZone',
@@ -380,9 +381,13 @@
             },
             canBeSelectedAsDefender() {
                 const card = this.createCard(this.card, { isOpponent: !this.isPlayerCard });
-                return !this.isPlayerCard
+                if(this.canSelectShieldCardsForRequirement && this.card.type === 'defense'){
+                    return true;
+                } else {
+                    return !this.isPlayerCard
                     && this.attackerCardId
                     && this.attackerCard.canAttackCard(card);
+                }
             },
             canBeDiscarded() {
                 if (this.card.type !== 'duration') return false;
@@ -409,8 +414,8 @@
             canSelectCardForAction() {
                 if (this.isTransient) return false;
                 if (this.isPlayerCard) return false;
-                if (!this.canSelectCardsForActiveAction) return false;
                 if (this.isSelectedForAction) return false;
+                if (!this.canSelectCardsForActiveAction) return false;
 
                 const options = {
                     cardData: this.card,
@@ -482,6 +487,13 @@
             },
             readyToAttackClick() {
                 this.selectAsAttacker(this.card);
+            },
+            readyToDefenseClick() {
+                if (this.canSelectShieldCardsForRequirement && this.card.type === 'defense'){
+                    this.selectAsDefender({card: this.card, fromRequirement: 'damageShieldCard'});
+                } else {
+                    this.selectAsDefender({card: this.card});
+                }
             },
             discardClick() {
                 this.discardDurationCard(this.card);

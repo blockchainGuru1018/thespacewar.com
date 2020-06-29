@@ -40,7 +40,7 @@ const classes = [
     require('./Drone.js'),
     require('./Repair.js'),
     require('./DestroyDuration.js'),
-    require('./ToxicGas.js'),
+    require('./ToxicGas.js')
 ];
 
 module.exports = classes;

@@ -22,6 +22,7 @@ function AttackController(deps) {
         cancelCounterAttack,
         onAttackStationCards,
         onDamageStationCard,
+        onDamageShieldCard,
         onSacrifice
     };
 
@@ -207,6 +208,22 @@ function AttackController(deps) {
         const requirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'damageStationCard' });
         requirementUpdater.progressRequirementByCount(targetIds.length);
     }
+    
+    function onDamageShieldCard(playerId, { sourceId , targetIds }) {
+        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
+
+        const damageShieldCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'damageShieldCard' });
+        if (!damageShieldCardRequirement) {
+            throw new CheatError('Cannot damage shield card');
+        }
+        if (damageShieldCardRequirement.count < targetIds.length) {
+            throw new CheatError('Cannot damage shield card');
+        }
+
+        const requirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'damageShieldCard' });
+        requirementUpdater.progressRequirementByCount(targetIds.length);
+    }
+    
 
     function onSacrifice(playerId, { cardId, targetCardId, targetCardIds }) {
         if (!!targetCardIds && !!targetCardId) throw new CheatError('Cannot sacrifice');

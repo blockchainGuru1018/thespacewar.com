@@ -44,6 +44,9 @@ function PlayerRequirementService({
         else if (type === 'discardCard') {
             return addDiscardCardRequirement(requirement);
         }
+        else if (type === 'damageShieldsOrStationCard') {
+            return addDamageShieldsOrStationCardRequirement(requirement);
+        }
         else if (type === 'damageStationCard') {
             return addDamageStationCardRequirement(requirement);
         }
@@ -98,6 +101,36 @@ function PlayerRequirementService({
         }
 
         return null;
+    }
+
+    function addDamageShieldsOrStationCardRequirement({ count, common = false, cardCommonId = null, reason = '' , card = null}) {
+
+        // preguntar por escudos
+        const hasOpponentShields = opponentStateService.hasMatchingCardInHomeZone((c)=> c.type == 'defense' );
+        if(hasOpponentShields) {
+            return addDamageShieldCardRequirement({ count, common, cardCommonId, reason, card })
+        }else{
+            return addDamageStationCardRequirement({ count, common, cardCommonId, reason })
+        }
+    }
+
+    function addDamageShieldCardRequirement({ count, common = false, cardCommonId = null, reason = '' , card = null}) {
+        
+            const requirement = { type: 'damageShieldCard', count };
+            if (reason) {
+                requirement.reason = reason;
+            }
+            if (common) {
+                requirement.common = true;
+            }
+            if (cardCommonId) {
+                requirement.cardCommonId = cardCommonId;
+            }
+            if (card) {
+                requirement.cardId = card.id;
+            }
+            addRequirement(requirement);
+            return requirement;
     }
 
     function addDamageStationCardRequirement({ count, common = false, cardCommonId = null, reason = '' }) {
