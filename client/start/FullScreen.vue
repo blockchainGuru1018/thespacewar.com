@@ -38,12 +38,16 @@
             }
         },
         mounted() {
+            this.enableFullscreen()
             this.watchFullScreen();
         },
         methods: {
             async enableFullscreen() {
                 this.showButton = 'reduce';
-                await document.documentElement.requestFullscreen();
+
+                if (!window.runningInTestHarness) { //Note 2020-06-24: Making this code depend on the test because of the difficulty of mocking the documentElement property
+                    await window.document.documentElement.requestFullscreen();
+                }
             },
             disableFullscreen() {
                 document.exitFullscreen();
@@ -53,7 +57,7 @@
                 /*
                 |-----------------------------------------------------
                 | Only run with clicked full screen mode
-                | Capture event fullscreen
+                | Capture event fullscreen   
                 |-----------------------------------------------------
                  */
                 document.addEventListener('fullscreenchange', (event) => {

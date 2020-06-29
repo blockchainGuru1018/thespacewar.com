@@ -149,6 +149,9 @@ function setupRoutes(deps, controllers) {
     app.get('/', (req, res) => {
         res.sendFile(path.join(__dirname, 'client-dist', 'index.html'));
     });
+    app.get('/experiments', (req, res) => {
+        res.sendFile(path.join(__dirname, 'client-dist', 'experiments-page.html'));
+    });
     app.get('/index.js', (req, res) => {
         res.sendFile(path.join(__dirname, 'client-dist', 'index.js'));
     });

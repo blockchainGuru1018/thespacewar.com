@@ -20,25 +20,25 @@ describe('swarm deck toggle', () => {
         expectNotToBeDisplayed(wrapper);
     });
 
-    it('should not display the toggle swarm deck when "ft-swarm-toggle" its not local store', () => {
+    it('should not display the toggle swarm deck when "ft-the-swarm-toggle" its not local store', () => {
         mockLocalStorageResponse(undefined);
         let wrapper = mount(ToggleSwarmDeckButton);
 
         expectNotToBeDisplayed(wrapper);
     });
 
-    it('should  display the toggle swarm deck when "ft-swarm-toggle" its on local store as "true"', () => {
+    it('should  display the toggle swarm deck when "ft-the-swarm-toggle" its on local store as "true"', () => {
         mockLocalStorageResponse('true');
         let wrapper = mount(ToggleSwarmDeckButton);
 
         expect(wrapper.vm.swarmDeckToggleVisible).toBe(true);
-        expect(window.localStorage.getItem).toHaveBeenCalledWith('ft-swarm-toggle');
+        expect(window.localStorage.getItem).toHaveBeenCalledWith('ft-the-swarm-toggle');
         expect(wrapper.find('label').exists()).toBeTruthy();
     });
 });
 
 const expectNotToBeDisplayed = (wrapper) => {
     expect(wrapper.vm.swarmDeckToggleVisible).toBe(false);
-    expect(window.localStorage.getItem).toHaveBeenCalledWith('ft-swarm-toggle');
+    expect(window.localStorage.getItem).toHaveBeenCalledWith('ft-the-swarm-toggle');
     expect(wrapper.find('label').exists()).toBeFalsy();
 }

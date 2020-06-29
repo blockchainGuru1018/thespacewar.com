@@ -370,7 +370,9 @@ module.exports = function ({
             playerId,
             matchService: api.matchService(),
             playerTurnControl: api.turnControl(playerId),
-            opponentTurnControl: api.turnControl(api.opponentId(playerId))
+            opponentTurnControl: api.turnControl(api.opponentId(playerId)),
+            playerStateService: api.playerStateService(playerId),
+            queryPlayerRequirements: api.queryPlayerRequirements(playerId),
         });
     }
 
