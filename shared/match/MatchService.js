@@ -73,10 +73,7 @@ class MatchService {
             state.retreatedPlayerId = playerId;
         });
 
-        const endMatch = this.endMatch;
-        setTimeout(() => {
-            endMatch()
-        }, EndMatchDelay);
+       this.endMatch();
     }
 
     _logLostGame(losingPlayerId) {
