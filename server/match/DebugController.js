@@ -34,7 +34,21 @@ function DebugController(deps) {
         const { playerOrder } = matchService.getState();
         restoredState.playerOrder = playerOrder;
 
+        moveClockStartTime(restoredState.gameStartTime, restoredState); // Perhaps should start from last clock.event
         restoreFromState(restoredState);
+    }
+
+    function moveClockStartTime(timeForAction, state) {
+        for (const playerId of Object.keys(state.playerStateById)) {
+            const clock = state.playerStateById[playerId].clock;
+
+            const now = Date.now();
+            const timeSinceAction = now - timeForAction;
+            clock.startTime += timeSinceAction;
+            for (const event of clock.events) {
+                event.time += timeSinceAction;
+            }
+        }
     }
 
     function timeAlive() {
