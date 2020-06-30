@@ -100,6 +100,47 @@
             <CounterAttack />
         </portal>
         <NotificationBannerContainer />
+        <ConfirmationDialog
+            v-if="displayConfirmLog"
+            @close="closeModal"
+            @confirm="goToNextPhaseAndCloseModal"
+        >
+            <template slot="header">
+                <div class="confirmDialogHeader">
+                    Warning
+                </div>
+            </template>
+            <template slot="body">
+                <div class="confirmDialogContent">
+                    <p>
+                        You still have card with actions to play.
+                        <br>
+                        Are you sure you want to end your turn?
+                    </p>
+                </div>
+            </template>
+            <template slot="footer">
+                <div class="slot-footer-container">
+                    <div
+                        class="confirmBoxOption"
+                        @click="goToNextPhaseAndCloseModal"
+                    >
+                        <span class="marginLeft10">
+                            Yes
+                        </span>
+                    </div>
+                    <div class="separator70Percent" />
+                    <div
+                        class="confirmBoxOption"
+                        @click="displayConfirmLog = false"
+                    >
+                        <span class="marginRight10">
+                            No
+                        </span>
+                    </div>
+                </div>
+            </template>
+        </ConfirmationDialog>
     </div>
 </template>
 <script>
@@ -113,6 +154,9 @@
     const Vuex = require('vuex');
     const resolveModuleWithPossibleDefault = require('../../client/utils/resolveModuleWithPossibleDefault.js');
     const FindCard = resolveModuleWithPossibleDefault(require('./findCard/FindCard.vue'));
+    import ConfirmationDialog from './ConfirmationDialog.vue';
+
+    const escapeMenuHelpers = Vuex.createNamespacedHelpers('escapeMenu');
     const CounterCard = resolveModuleWithPossibleDefault(require('./counterCard/CounterCard.vue'));
     const CounterAttack = resolveModuleWithPossibleDefault(require('./counterAttack/CounterAttack.vue'));
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
@@ -131,6 +175,7 @@
             NotificationBannerContainer,
             FindCard,
             CounterCard,
+            ConfirmationDialog,
             CounterAttack,
             LookAtStationRowOverlay,
         },
@@ -138,6 +183,7 @@
             return {
                 enlargedCardVisible: false,
                 nextPhaseButtonDisabled: false,
+                displayConfirmLog: false,
             };
         },
         computed: {
@@ -159,7 +205,8 @@
                 'gameOn',
                 'playerPerfectPlan',
                 'playerRuleService',
-                'playerDrawPhase'
+                'playerDrawPhase',
+                'getCardsPendingForAction'
             ]),
             ...requirementHelpers.mapGetters([
                 'waitingForOtherPlayerToFinishRequirements',
@@ -263,6 +310,12 @@
             ...startGameHelpers.mapActions([
                 'playerReady'
             ]),
+            ...escapeMenuHelpers.mapActions([
+                'selectView',
+            ]),
+            closeModal() {
+                this.displayConfirmLog = false;
+            },
             readyClick() {
                 this.playerReady();
             },
@@ -272,7 +325,14 @@
                     this.nextPhaseButtonDisabled = false;
                 }, 1000)
 
+                this.checkAndDisplayConfirmModalOrGoToNextPhase();
+            },
+            goToNextPhaseAndCloseModal() {
+                this.displayConfirmLog = false;
                 this.goToNextPhase();
+            },
+            checkAndDisplayConfirmModalOrGoToNextPhase() {
+                return this.getCardsPendingForAction.length > 0 ? this.displayConfirmLog = true : this.goToNextPhase();
             },
             hideEnlargedCard() {
                 this.enlargedCardVisible = false;
@@ -411,5 +471,53 @@
         display: flex;
         justify-content: center;
         align-items: center;
+    }
+
+    .slot-footer-container {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        align-content: space-between;
+    }
+
+    .confirmBoxOption {
+        width: 15%;
+        display: flex;
+        text-align: center;
+        justify-content: center;
+        span {
+            cursor: pointer;
+            &:hover {
+                color: red;
+                transition: 0.5s;
+            }
+        }
+    }
+
+    .marginRight10 {
+        margin-right: 10px;
+    }
+
+    .marginLeft10 {
+        margin-left: 10px;
+    }
+
+    .separator70Percent {
+        width: 70%;
+    }
+
+    .confirmDialogContent {
+        width: 100%;
+
+        p {
+            margin: 20px;
+        }
+    }
+
+    .confirmDialogHeader {
+        width: 100%;
+        text-align: center;
+        font-weight: bold;
+        font-size: x-large;
     }
 </style>
