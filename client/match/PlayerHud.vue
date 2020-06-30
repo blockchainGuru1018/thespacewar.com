@@ -122,7 +122,10 @@
             </template>
             <template slot="footer">
                 <div class="slot-footer-container">
-                    <div class="confirmBoxOption">
+                    <div
+                        class="confirmBoxOption"
+                        @click="goToNextPhaseAndCloseModal"
+                    >
                         <span class="marginLeft10">
                             Yes
                         </span>
