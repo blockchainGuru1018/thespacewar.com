@@ -128,7 +128,6 @@ function PlayerRequirementService({
             requirement.cardId = card.id;
         }
         addRequirement(requirement);
-        console.log(requirement)
         return requirement;
     }
 

@@ -19,24 +19,6 @@ describe("damageShieldsOrStationCard requirement", () => {
             { type: 'damageStationCard', count: 1 },
         ], 'P1A', testHelper);
     });
-    it("Should be able to damage a Shield card instead Station Card if opponent has Shield cards in own home zone", () => {
-        const shieldCardType = createCard({ id: 'C4A', stopsStationAttack: () => true } )
-        // shieldCardType.stopsStationAttack = () => true;
-        const testHelper = TestHelper(createState({
-            playerStateById: {
-                'P1A': { cardsInZone: [createCard({ id: 'C1A' })] },
-                'P2A': { cardsInZone: [shieldCardType, createCard({ id: 'C5A' })] }
-            }
-        }));
-        const service = testHelper.playerRequirementService('P1A');
-
-        service.addCardRequirement({ type: 'damageShieldsOrStationCard', count: 1, card: createCard({ id: 'C1A' }) });
- 
-        expectRequirementsEquals([
-            { type: 'damageShieldCard', count: 1, cardId: "C1A" },
-        ], 'P1A', testHelper);
-    });
-
 });
 
 

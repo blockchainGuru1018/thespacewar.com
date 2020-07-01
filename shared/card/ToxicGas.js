@@ -31,7 +31,7 @@ module.exports = class ToxicGas extends BaseCard {
         return true;
     }
     canAttackCard(otherCard) {
-        return otherCard.stopsStationAttack;
+        return otherCard.stopsStationAttack();
     }
 
     attackCard(defenderCard) {
