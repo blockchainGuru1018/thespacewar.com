@@ -276,31 +276,5 @@ module.exports = () => [
         attack: 0,
         defense: 0,
         paralyzed: false
-    },
-    {
-
-        id: 24,
-        commonId: 88,
-        color: 'orange',
-        type: 'event',
-        name: 'Revive',
-        description: 'Deal 1 damage to enemy station at the start of your draw phase. Shields protects but receives 2 damage instead of 1.',
-        cost: 3,
-        attack: 0,
-        defense: 0,
-        paralyzed: false
-    },
-    {
-
-        id: 25,
-        commonId: 88,
-        color: 'orange',
-        type: 'event',
-        name: 'Revive',
-        description: 'Deal 1 damage to enemy station at the start of your draw phase. Shields protects but receives 2 damage instead of 1.',
-        cost: 3,
-        attack: 0,
-        defense: 0,
-        paralyzed: false
-    },
+    }
 ];

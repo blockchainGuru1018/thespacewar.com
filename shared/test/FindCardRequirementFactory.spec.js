@@ -14,7 +14,6 @@ test('can create a requirement with a limit of actions points',()=>{
     }));
 
     const findCardRequirementFactory = FindCardRequirementFactory({
-        //sourceFetcher: { discardPile: ()=>{return [{id: '1', cost: 6}, {id: '2', cost: 7}]}},
         sourceFetcher: testHelper.sourceFetcher('P1A'),
         requirementSpec: {
             "type": "findCard",
@@ -29,8 +28,8 @@ test('can create a requirement with a limit of actions points',()=>{
         card: {commonId: 88}
     });
 
-    const r = findCardRequirementFactory.create();
-    expect(r).toEqual({ 
+    const result = findCardRequirementFactory.create();
+    expect(result).toEqual({ 
         type: "findCard",
         cardGroups: [ {
             source: 'discardPile',
