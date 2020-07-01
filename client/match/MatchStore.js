@@ -121,6 +121,7 @@ module.exports = function (deps) {
             isFirstPlayer,
             gameOn,
             choosingStartingPlayer,
+            getTotalCardsOnHand,
             selectingStartingStationCards,
             isOwnTurn,
             nextPhase,
@@ -269,6 +270,10 @@ module.exports = function (deps) {
             currentPhase: state.phase
         });
         return nextPhase || 'wait';
+    }
+
+    function getTotalCardsOnHand(state){
+        return state.playerCardsOnHand;
     }
 
     function nextPhaseWithAction(state, getters) {
