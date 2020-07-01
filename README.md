@@ -170,25 +170,25 @@ you get better tests, better code, and it's more fun!
 
 Notes from August on Discord 2020-06-22
 -
-to summarize what we talked about:
-Architecture:
+to summarize what we talked about:  
+Architecture:  
 - Matchmaking: Login, lobby, connects with the server through regular http calls
 - Match: Players connect with a Match.js instance on the server through WebSockets.
 - Shared: Common code that exists both on the client and the server.
 
-Good to know files (when starting to plan a new feature):
-Match.vue - Entry point for most View files when in a match
-MatchStore.js - Entry point for syncing with the server and creating classes found in Shared
-Match.js (server) - Entry point for calls from MatchStore.js via WebSockets. Basically the starting point for any action when in a game against another player!
-server.js - Starting point for the server (good to know if you want to look how it all fits together)
+Good to know files (when starting to plan a new feature):  
+Match.vue - Entry point for most View files when in a match  
+MatchStore.js - Entry point for syncing with the server and creating classes found in Shared  
+Match.js (server) - Entry point for calls from MatchStore.js via WebSockets. Basically the starting point for any action when in a game against another player!  
+server.js - Starting point for the server (good to know if you want to look how it all fits together)  
 index.js (client) - Starting point for the client (good to know if you want to look how it all fits together on the front end)
 
-Git:
+Git:  
 Use branches! When it works and you've tested it, make a pull request and drag the task to QA in KanbanFlow. I will look at it asap! Make sure to include the branch name on the card in KanbanFlow as well as to include the link to the Pull Request as a comment.
 
-Tests:
-/client: High-level testing for a Match (see Architecture above). Almost no tests regarding Matchmaking (see Architecture above).
-/server: High-level testing against Match.js. Almost no tests regarding Matchmaking.
+Tests:  
+/client: High-level testing for a Match (see Architecture above). Almost no tests regarding Matchmaking (see Architecture above).  
+/server: High-level testing against Match.js. Almost no tests regarding Matchmaking.  
 /shared: Unit tests on individual classes (mostly)
 
 - We are using Jest for testing.
