@@ -104,8 +104,7 @@ function PlayerRequirementService({
     }
 
     function addDamageShieldsOrStationCardRequirement({ count, common = false, cardCommonId = null, reason = '', card = null }) {
-        const hasOpponentShields = opponentStateService.hasMatchingCardInHomeZone(c => c.stopsStationAttack);
-
+        const hasOpponentShields = opponentStateService.hasMatchingCardInHomeZone(c => c.stopsStationAttack());
         if (hasOpponentShields) {
             return addDamageShieldCardRequirement({ count, common, cardCommonId, reason, card })
         } else {
@@ -129,6 +128,7 @@ function PlayerRequirementService({
             requirement.cardId = card.id;
         }
         addRequirement(requirement);
+        console.log(requirement)
         return requirement;
     }
 
