@@ -118,6 +118,7 @@
             </template>
             <template slot="footer">
                 <div class="slot-footer-container">
+                    <div class="separator20Percent" />
                     <div
                         class="confirmBoxOption"
                         @click="goToNextPhaseAndCloseModal"
@@ -126,7 +127,7 @@
                             Yes
                         </span>
                     </div>
-                    <div class="separator70Percent" />
+                    <div class="separator30Percent" />
                     <div
                         class="confirmBoxOption"
                         @click="closeModal"
@@ -323,7 +324,6 @@
                 setTimeout(() => {
                     this.nextPhaseButtonDisabled = false;
                 }, 1000);
-
                 const validationsForChangePhase = [
                     {
                         validationFunc: this.isActionPhaseAndHaveNotPutDownStationCard,
@@ -371,7 +371,7 @@
                 this.displayConfirmLog = true
             },
             closeModal() {
-                this.nextTurnValidationIndex = this.nextTurnValidationIndex === 0 ? 0: this.nextTurnValidationIndex - 1;
+                this.nextTurnValidationIndex = this.nextTurnValidationIndex === 0 ? 0 : this.nextTurnValidationIndex - 1;
                 this.displayConfirmLog = false;
             },
             hideEnlargedCard() {
@@ -525,10 +525,9 @@
         display: flex;
         text-align: center;
         justify-content: center;
-
+        font-size: x-large;
         span {
             cursor: pointer;
-
             &:hover {
                 color: red;
                 transition: 0.5s;
@@ -544,13 +543,16 @@
         margin-left: 10px;
     }
 
-    .separator70Percent {
-        width: 70%;
+    .separator30Percent {
+        width: 30%;
+    }
+
+    .separator20Percent {
+        width: 20%;
     }
 
     .confirmDialogContent {
         width: 100%;
-
         p {
             margin: 20px;
         }

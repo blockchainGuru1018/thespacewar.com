@@ -26,7 +26,7 @@ afterEach(() => {
 });
 
 describe('attack phase', () => {
-    it('should not see end turn modal confirmation', async () => {
+    it('should not see end turn modal confirmation when cards in zone have not posible actions', async () => {
         const {dispatch, showPage} = controller;
         showPage();
         dispatch('stateChanged', FakeState({
@@ -47,7 +47,7 @@ describe('attack phase', () => {
     });
 
 
-    it('should  see end turn modal confirmation', async () => {
+    it('should  see end turn modal confirmation when cards in zone still can perform actions', async () => {
         const {dispatch, showPage} = controller;
         showPage();
         dispatch('stateChanged', FakeState({
