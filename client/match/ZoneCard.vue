@@ -199,6 +199,7 @@
 <script>
     const Vuex = require('vuex');
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
+    const { mapGetters: mapRequirementGetters } = Vuex.createNamespacedHelpers("requirement");
     const {
         mapState: mapCardState,
         mapGetters: mapCardGetters,
@@ -265,6 +266,7 @@
             ...mapCardGetters([
                 'activeActionCard'
             ]),
+            ...mapRequirementGetters(["attackerRequirement"]),
             behaviourCard() {
                 return this.createCard(this.card, { playerId: this.ownerId });
             },
@@ -381,7 +383,11 @@
             },
             canBeSelectedAsDefender() {
                 const card = this.createCard(this.card, { isOpponent: !this.isPlayerCard });
-                if(this.canSelectShieldCardsForRequirement && this.card.type === 'defense'){
+              if (
+                this.canSelectShieldCardsForRequirement &&
+                !this.isPlayerCard &&
+                card.stopsStationAttack()
+              ) {
                     return true;
                 } else {
                     return !this.isPlayerCard
@@ -425,9 +431,15 @@
                 return this.checkIfCanBeSelectedForAction(options);
             },
             predictedResultsIfAttacked() {
+              if (this.canSelectShieldCardsForRequirement) {
+                return this.createCard({
+                  commonId: this.attackerRequirement
+                }).simulateAttackingCard(this.behaviourCard);
+              } else {
                 if (!this.attackerCardId) return null;
 
                 return this.attackerCard.simulateAttackingCard(this.behaviourCard);
+              }
             },
             predictedResultsIfRepaired() {
                 if (!this.repairerCardId) return null;
@@ -489,10 +501,16 @@
                 this.selectAsAttacker(this.card);
             },
             readyToDefenseClick() {
-                if (this.canSelectShieldCardsForRequirement && this.card.type === 'defense'){
-                    this.selectAsDefender({card: this.card, fromRequirement: 'damageShieldCard'});
+                if (
+                    this.canSelectShieldCardsForRequirement &&
+                    this.createCard(this.card).stopsStationAttack()
+                ) {
+                    this.selectAsDefender({
+                    card: this.card,
+                    fromRequirement: "damageShieldCard"
+                    });
                 } else {
-                    this.selectAsDefender({card: this.card});
+                    this.selectAsDefender({ card: this.card });
                 }
             },
             discardClick() {

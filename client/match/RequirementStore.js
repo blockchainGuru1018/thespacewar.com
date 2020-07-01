@@ -24,6 +24,7 @@ module.exports = function ({
             countInFirstRequirement,
             selectedCardsCount,
             cardsLeftToSelect,
+            attackerRequirement,
             requirementCardImageUrl,
             requirementIsCancelable,
             _firstCardIdThatCanLookAtHandSizeStationRow
@@ -63,7 +64,6 @@ module.exports = function ({
     function firstRequirementIsDamageShieldCard(state, getters) {
         const isFirstRequirementIsDamageShieldCard = getters.firstRequirement
         && getters.firstRequirement.type === 'damageShieldCard';
-        if (isFirstRequirementIsDamageShieldCard) rootStore.dispatch('match/selectAsAttacker', {id: getters.firstRequirement.cardId})
         return isFirstRequirementIsDamageShieldCard
     }
 
@@ -101,7 +101,9 @@ module.exports = function ({
     function cardsLeftToSelect(state, getters) {
         return getters.countInFirstRequirement - getters.selectedCardsCount;
     }
-
+    function attackerRequirement(state, getters) {
+        return getters.firstRequirement.cardCommonId
+    }
     function requirementCardImageUrl(state, getters) {
         const firstRequirement = getters.firstRequirement;
         if (!firstRequirement || !firstRequirement.cardCommonId) return '';

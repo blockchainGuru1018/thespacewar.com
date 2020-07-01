@@ -167,7 +167,11 @@ function AttackController(deps) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         const attackerCardData = playerStateService.findCard(attackerCardId);
         const attackerCard = cardFactory.createCardForPlayer(attackerCardData, playerId);
-        if (!attackerCard.canAttack()) throw new CheatError('Cannot attack');
+        if('canFakeAttack' in attackerCard){
+            if(!attackerCard.canFakeAttack() && !attackerCard.canAttack()) throw new CheatError('Cannot attack')
+        } else if(!attackerCard.canAttack()){ 
+                throw new CheatError('Cannot attack')
+        }
 
         const opponentId = matchComService.getOpponentId(playerId);
         const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
@@ -209,7 +213,7 @@ function AttackController(deps) {
         requirementUpdater.progressRequirementByCount(targetIds.length);
     }
     
-    function onDamageShieldCard(playerId, { sourceId , targetIds }) {
+    function onDamageShieldCard(playerId, {  targetIds }) {
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
 
         const damageShieldCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'damageShieldCard' });
