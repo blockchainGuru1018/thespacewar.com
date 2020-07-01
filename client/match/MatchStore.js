@@ -49,6 +49,7 @@ const ClientLimitNotice = { note: 'not_allowed_on_client' };
 module.exports = function (deps) {
 
     const route = deps.route;
+    const rootStore = deps.rootStore;
     const userRepository = deps.userRepository;
     const opponentUser = deps.opponentUser;
     const matchId = deps.matchId;
@@ -231,6 +232,7 @@ module.exports = function (deps) {
             cancelRepair,
             selectForRepair,
             damageStationCards, //todo rename to "damageStationCardsForRequirement",
+            damageShieldCards,
             onActionLogChange,
             onOpponentActionLogChange,
             triggerCardAttackedEffect,
@@ -971,9 +973,13 @@ module.exports = function (deps) {
         state.attackerCardId = card.id;
     }
 
-    function selectAsDefender({ state, dispatch }, card) {
-        const attackerCardId = state.attackerCardId;
+    function selectAsDefender({ state, dispatch }, { card, fromRequirement = null}) {
+        let attackerCardId = state.attackerCardId;
         const defenderCardId = card.id;
+        if(fromRequirement === 'damageShieldCard'){
+            attackerCardId = rootStore.getters['requirement/firstRequirement'].cardId
+             dispatch('damageShieldCards', [defenderCardId])
+        }
         matchController.emit('attack', { attackerCardId, defenderCardId });
 
         dispatch('registerAttack', { attackerCardId, defenderCardId });
@@ -1033,6 +1039,10 @@ module.exports = function (deps) {
 
     function damageStationCards({}, targetIds) {
         matchController.emit('damageStationCards', { targetIds });
+    }
+
+    function damageShieldCards({}, targetIds) {
+        matchController.emit('damageShieldCards', { targetIds });
     }
 
     function retreat() {

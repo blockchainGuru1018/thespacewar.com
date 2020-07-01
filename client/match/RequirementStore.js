@@ -16,6 +16,7 @@ module.exports = function ({
             firstRequirement,
             firstRequirementIsDiscardCard,
             firstRequirementIsDamageStationCard,
+            firstRequirementIsDamageShieldCard,
             firstRequirementIsDrawCard,
             firstRequirementIsFindCard,
             firstRequirementIsCounterCard,
@@ -23,6 +24,7 @@ module.exports = function ({
             countInFirstRequirement,
             selectedCardsCount,
             cardsLeftToSelect,
+            attackerRequirement,
             requirementCardImageUrl,
             requirementIsCancelable,
             _firstCardIdThatCanLookAtHandSizeStationRow
@@ -59,6 +61,12 @@ module.exports = function ({
             && getters.firstRequirement.type === 'damageStationCard';
     }
 
+    function firstRequirementIsDamageShieldCard(state, getters) {
+        const isFirstRequirementIsDamageShieldCard = getters.firstRequirement
+        && getters.firstRequirement.type === 'damageShieldCard';
+        return isFirstRequirementIsDamageShieldCard
+    }
+
     function firstRequirementIsDrawCard(state, getters) {
         return getters.firstRequirement
             && getters.firstRequirement.type === 'drawCard';
@@ -93,7 +101,9 @@ module.exports = function ({
     function cardsLeftToSelect(state, getters) {
         return getters.countInFirstRequirement - getters.selectedCardsCount;
     }
-
+    function attackerRequirement(state, getters) {
+        return getters.firstRequirement.cardCommonId
+    }
     function requirementCardImageUrl(state, getters) {
         const firstRequirement = getters.firstRequirement;
         if (!firstRequirement || !firstRequirement.cardCommonId) return '';

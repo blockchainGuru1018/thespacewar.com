@@ -175,6 +175,7 @@ module.exports = function ({
         attackStationCard: attackController.onAttackStationCards, // TODO Rename attackStationCards (pluralized),
         sacrifice: attackController.onSacrifice,
         damageStationCards: attackController.onDamageStationCard,
+        damageShieldCards: attackController.onDamageShieldCard,
         selectCardForFindCardRequirement: findCardController.onSelectCard,
         cancelRequirement: PlayerCommand(CancelRequirementCommand, controllerDeps),
         overwork: overworkController.overwork,

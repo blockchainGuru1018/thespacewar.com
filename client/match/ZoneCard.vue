@@ -76,7 +76,7 @@
             <div
                 v-if="canBeSelectedAsDefender"
                 class="attackable actionOverlay actionOverlay--turnedAround"
-                @click="selectAsDefender(card)"
+                @click="readyToDefenseClick(card)"
             >
                 <div
                     v-if="predictedResultsIfAttacked.defenderParalyzed"
@@ -199,6 +199,7 @@
 <script>
     const Vuex = require('vuex');
     const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
+    const { mapGetters: mapRequirementGetters } = Vuex.createNamespacedHelpers("requirement");
     const {
         mapState: mapCardState,
         mapGetters: mapCardGetters,
@@ -252,7 +253,8 @@
             }),
             ...mapPermissionGetters([
                 'canSelectCardsForActiveAction',
-                'canDiscardActivateDurationCards'
+                'canDiscardActivateDurationCards',
+                'canSelectShieldCardsForRequirement'
             ]),
             ...mapCardState([
                 'transientPlayerCardsInHomeZone',
@@ -264,6 +266,7 @@
             ...mapCardGetters([
                 'activeActionCard'
             ]),
+            ...mapRequirementGetters(["attackerRequirement"]),
             behaviourCard() {
                 return this.createCard(this.card, { playerId: this.ownerId });
             },
@@ -380,9 +383,17 @@
             },
             canBeSelectedAsDefender() {
                 const card = this.createCard(this.card, { isOpponent: !this.isPlayerCard });
-                return !this.isPlayerCard
+              if (
+                this.canSelectShieldCardsForRequirement &&
+                !this.isPlayerCard &&
+                card.stopsStationAttack()
+              ) {
+                    return true;
+                } else {
+                    return !this.isPlayerCard
                     && this.attackerCardId
                     && this.attackerCard.canAttackCard(card);
+                }
             },
             canBeDiscarded() {
                 if (this.card.type !== 'duration') return false;
@@ -409,8 +420,8 @@
             canSelectCardForAction() {
                 if (this.isTransient) return false;
                 if (this.isPlayerCard) return false;
-                if (!this.canSelectCardsForActiveAction) return false;
                 if (this.isSelectedForAction) return false;
+                if (!this.canSelectCardsForActiveAction) return false;
 
                 const options = {
                     cardData: this.card,
@@ -420,9 +431,15 @@
                 return this.checkIfCanBeSelectedForAction(options);
             },
             predictedResultsIfAttacked() {
+              if (this.canSelectShieldCardsForRequirement) {
+                return this.createCard({
+                  commonId: this.attackerRequirement
+                }).simulateAttackingCard(this.behaviourCard);
+              } else {
                 if (!this.attackerCardId) return null;
 
                 return this.attackerCard.simulateAttackingCard(this.behaviourCard);
+              }
             },
             predictedResultsIfRepaired() {
                 if (!this.repairerCardId) return null;
@@ -482,6 +499,19 @@
             },
             readyToAttackClick() {
                 this.selectAsAttacker(this.card);
+            },
+            readyToDefenseClick() {
+                if (
+                    this.canSelectShieldCardsForRequirement &&
+                    this.createCard(this.card).stopsStationAttack()
+                ) {
+                    this.selectAsDefender({
+                    card: this.card,
+                    fromRequirement: "damageShieldCard"
+                    });
+                } else {
+                    this.selectAsDefender({ card: this.card });
+                }
             },
             discardClick() {
                 this.discardDurationCard(this.card);

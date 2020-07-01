@@ -22,6 +22,7 @@ function AttackController(deps) {
         cancelCounterAttack,
         onAttackStationCards,
         onDamageStationCard,
+        onDamageShieldCard,
         onSacrifice
     };
 
@@ -166,7 +167,11 @@ function AttackController(deps) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         const attackerCardData = playerStateService.findCard(attackerCardId);
         const attackerCard = cardFactory.createCardForPlayer(attackerCardData, playerId);
-        if (!attackerCard.canAttack()) throw new CheatError('Cannot attack');
+        if('canFakeAttack' in attackerCard){
+            if(!attackerCard.canFakeAttack() && !attackerCard.canAttack()) throw new CheatError('Cannot attack')
+        } else if(!attackerCard.canAttack()){ 
+                throw new CheatError('Cannot attack')
+        }
 
         const opponentId = matchComService.getOpponentId(playerId);
         const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
@@ -207,6 +212,22 @@ function AttackController(deps) {
         const requirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'damageStationCard' });
         requirementUpdater.progressRequirementByCount(targetIds.length);
     }
+    
+    function onDamageShieldCard(playerId, {  targetIds }) {
+        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
+
+        const damageShieldCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'damageShieldCard' });
+        if (!damageShieldCardRequirement) {
+            throw new CheatError('Cannot damage shield card');
+        }
+        if (damageShieldCardRequirement.count < targetIds.length) {
+            throw new CheatError('Cannot damage shield card');
+        }
+
+        const requirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'damageShieldCard' });
+        requirementUpdater.progressRequirementByCount(targetIds.length);
+    }
+    
 
     function onSacrifice(playerId, { cardId, targetCardId, targetCardIds }) {
         if (!!targetCardIds && !!targetCardId) throw new CheatError('Cannot sacrifice');
