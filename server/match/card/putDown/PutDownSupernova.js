@@ -1,6 +1,6 @@
 const Supernova = require('../../../../shared/card/Supernova.js');
 
-const discardCardCount = 3;
+const discardCardCount = Supernova.StationCardDestroyed;
 PutDownSupernova.CommonId = Supernova.CommonId;
 
 function PutDownSupernova({
