@@ -87,6 +87,7 @@ class MatchComService {
         }
         catch (error) {
             this._logger.log(`Disconnected user - Tried to emit to user that has disconnected (matchId:${this._matchId}, userId:${playerId})`, 'match');
+            this._logger.log(`RAW ERROR FROM while trying to connect to player: ${error.message}`, 'match');
         }
     }
 
