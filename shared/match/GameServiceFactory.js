@@ -6,6 +6,7 @@ const StateSerializer = require('../../server/match/StateSerializer.js');
 const DeckFactory = require('../../server/deck/DeckFactory.js');
 const ActionPointsCalculator = require('./ActionPointsCalculator.js');
 const LastStand = require('./LastStand.js');
+const MatchRestorer = require('./MatchRestorer.js');
 
 module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig, registerLogGame }) {
 
@@ -20,7 +21,8 @@ module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig,
         cardInfoRepository: cached(cardInfoRepository),
         actionPointsCalculator: cached(actionPointsCalculator),
         stateSerializer: cached(stateSerializer),
-        deckFactory: cached(deckFactory)
+        deckFactory: cached(deckFactory),
+        matchRestorer: cached(matchRestorer)
     };
 
     return api;
@@ -59,9 +61,15 @@ module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig,
 
     function gameActionTimeMachine() {
         return GameActionTimeMachine({
-            matchService: api.matchService(),
-            stateSerializer: api.stateSerializer(),
+            matchRestorer: api.matchRestorer(),
             gameConfig
+        });
+}
+
+    function matchRestorer() {
+        return MatchRestorer({
+            matchService: api.matchService(),
+            stateSerializer: api.stateSerializer()
         });
     }
 

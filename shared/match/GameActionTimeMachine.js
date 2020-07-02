@@ -1,6 +1,5 @@
 module.exports = function ({
-    matchService,
-    stateSerializer,
+    matchRestorer,
     gameConfig
 }) {
 
@@ -30,39 +29,37 @@ module.exports = function ({
     }
 
     function saveStateForCardId(cardId) {
-        const state = stateSerializer.serialize(matchService.getState());
+        const state = matchRestorer.getRestorableState();
         stateCardIdTimeTuples.push([state, cardId, Date.now()]);
     }
 
     function revertStateToBeforeCardWasPutDown(cardId) {
         const [storedStateJson, _, timeForAction] = stateCardIdTimeTuples.slice().reverse().find(([_, id]) => id === cardId);
-        const restoredState = stateSerializer.parse(storedStateJson);
-        restoreFromState(restoredState, timeForAction);
+        restoreFromState(storedStateJson, timeForAction);
 
         clearOldPutDownCardState();
     }
 
-    function saveStateForAttackData(stateBeforeAttack, { attackerCardId, defenderCardIds, time }) {
+    function saveStateForAttackData(stateBeforeAttack, {attackerCardId, defenderCardIds, time}) {
         stateAttackDataTimeTuples.push([
             stateBeforeAttack,
-            { attackerCardId, defenderCardIds, time },
+            {attackerCardId, defenderCardIds, time},
             Date.now()
         ]);
     }
 
-    function revertStateToBeforeAttack({ attackerCardData, defenderCardsData, time }) {
+    function revertStateToBeforeAttack({attackerCardData, defenderCardsData, time}) {
         const [storedStateJson, _, timeForAction] = findStateTupleFromDataKey({
             attackerCardData,
             defenderCardsData,
             time
         });
-        const restoredState = stateSerializer.parse(storedStateJson);
-        restoreFromState(restoredState, timeForAction);
+        restoreFromState(storedStateJson, timeForAction);
 
         clearOldAttackState();
     }
 
-    function findStateTupleFromDataKey({ attackerCardData, defenderCardsData, time }) {
+    function findStateTupleFromDataKey({attackerCardData, defenderCardsData, time}) {
         return stateAttackDataTimeTuples
             .slice()
             .reverse()
@@ -73,34 +70,21 @@ module.exports = function ({
             });
     }
 
-    function restoreFromState(restoreState, timeForAction) {
-        delete restoreState.gameStartTime;
-        delete restoreState.playerOrder;
-        delete restoreState.playersConnected;
-
-        const state = matchService.getState();
-        for (const playerId of Object.keys(restoreState.playerStateById)) {
-            restoreState.playerStateById[playerId].actionLogEntries = state.playerStateById[playerId].actionLogEntries;
-        }
-
-        for (const key of Object.keys(restoreState)) {
-            state[key] = restoreState[key];
-        }
-
-        moveClockStartTime(timeForAction, state);
-
-        matchService.setState(state);
+    function restoreFromState(storedStateJson, timeForAction) {
+        matchRestorer.restoreFromRestorableState(storedStateJson, [MoveClockStartTime(timeForAction)]);
     }
 
-    function moveClockStartTime(timeForAction, state) {
-        for (const playerId of Object.keys(state.playerStateById)) {
-            const clock = state.playerStateById[playerId].clock;
+    function MoveClockStartTime(timeForAction) {
+        return state => {
+            for (const playerId of Object.keys(state.playerStateById)) {
+                const clock = state.playerStateById[playerId].clock;
 
-            const now = Date.now();
-            const timeSinceAction = now - timeForAction;
-            clock.startTime += timeSinceAction;
-            for (const event of clock.events) {
-                event.time += timeSinceAction;
+                const now = Date.now();
+                const timeSinceAction = now - timeForAction;
+                clock.startTime += timeSinceAction;
+                for (const event of clock.events) {
+                    event.time += timeSinceAction;
+                }
             }
         }
     }
