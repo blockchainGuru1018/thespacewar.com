@@ -6,7 +6,7 @@ module.exports = function ({
     playerServiceProvider,
     matchService,
     playerServiceFactory,
-    stateMemento
+    gameActionTimeMachine
 }) {
 
     return {
@@ -96,7 +96,7 @@ module.exports = function ({
         //  after the card has been countered. If that would be the case in the future, this solution would have to be reconsidered.
         for (const group of cardGroups) {
             for (const cardId of group.cardIds) {
-                stateMemento.saveStateForCardId(cardId);
+                gameActionTimeMachine.saveStateForCardId(cardId);
             }
         }
 

@@ -118,7 +118,7 @@ module.exports = function ({
         playerServiceFactory,
         playerRequirementServicesFactory,
         playerCardServicesFactory,
-        stateMemento: gameServiceFactory.stateMemento(),
+        gameActionTimeMachine: gameServiceFactory.gameActionTimeMachine(),
         gameConfig
     };
 

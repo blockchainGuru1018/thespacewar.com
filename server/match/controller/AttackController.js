@@ -12,7 +12,7 @@ function AttackController(deps) {
         stateSerializer,
         playerServiceProvider,
         playerServiceFactory,
-        stateMemento,
+        gameActionTimeMachine,
         playerRequirementUpdaterFactory
     } = deps;
 
@@ -52,7 +52,7 @@ function AttackController(deps) {
 
         const event = playerStateService.registerAttack({ attackerCardId, defenderCardId });
         const attackData = { attackerCardId, defenderCardIds: [defenderCardId], time: event.created };
-        stateMemento.saveStateForAttackData(stateBeforeAttack, attackData);
+        gameActionTimeMachine.saveStateForAttackData(stateBeforeAttack, attackData);
 
         if (defenderCardWasDestroyed) {
             const cardData = opponentStateService.removeCard(defenderCardId);
@@ -104,7 +104,7 @@ function AttackController(deps) {
 
         progressCounterCardRequirementByCount(1, playerId);
 
-        stateMemento.revertStateToBeforeAttack(attackData);
+        gameActionTimeMachine.revertStateToBeforeAttack(attackData);
 
         const opponentId = matchService.getOpponentId(playerId);
         const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
@@ -142,7 +142,7 @@ function AttackController(deps) {
 
     function cancelCounterAttack(playerId, { cardId }) {
         validateIfCanProgressCounterAttackRequirementByCount(0, playerId);
-        stateMemento.revertStateToBeforeCardWasPutDown(cardId);
+        gameActionTimeMachine.revertStateToBeforeCardWasPutDown(cardId);
         matchComService.emitCurrentStateToPlayers();
     }
 

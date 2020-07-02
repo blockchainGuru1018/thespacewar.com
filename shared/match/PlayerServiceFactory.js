@@ -159,7 +159,7 @@ module.exports = function ({
         return PlayerStationAttacker({
             matchService: api.matchService(),
             stateSerializer: gameServiceFactory.stateSerializer(),
-            stateMemento: gameServiceFactory.stateMemento(),
+            gameActionTimeMachine: gameServiceFactory.gameActionTimeMachine(),
             playerStateService: api.playerStateService(playerId),
             canThePlayer: api.canThePlayer(playerId),
             opponentStateService: api.playerStateService(api.opponentId(playerId)),
