@@ -232,7 +232,7 @@ module.exports = () => [
         commonId: '90',
         color: 'blue',
         type: 'space-ship',
-        name: 'Drone',
+        name: 'Repair',
         description: 'Can repair 3 damage to spaceship or 1 damage to station.',
         cost: 1,
         attack: 0,
@@ -264,4 +264,17 @@ module.exports = () => [
         defense: 0,
         paralyzed: false
     },
+    {
+
+        id: 23,
+        commonId: 88,
+        color: 'orange',
+        type: 'event',
+        name: 'Revive',
+        description: 'Deal 1 damage to enemy station at the start of your draw phase. Shields protects but receives 2 damage instead of 1.',
+        cost: 3,
+        attack: 0,
+        defense: 0,
+        paralyzed: false
+    }
 ];

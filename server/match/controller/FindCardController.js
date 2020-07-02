@@ -17,11 +17,15 @@ module.exports = function ({
     function onSelectCard(playerId, { cardGroups }) {
         const selectedCardsCount = getSelectedCardsCount(cardGroups);
         validateIfCanProgressRequirementByCount(selectedCardsCount, playerId);
-
+        
         const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
         const requirement = playerRequirementService.getFirstMatchingRequirement({ type: 'findCard' });
-
+        
         progressRequirementByCount(selectedCardsCount, playerId);
+
+        if(requirement.actionPointsLimit){
+            progressRequirementByActionPointsLeft(getCost({cardGroups, playerId}),playerId, cardGroups.length === 0);            
+        }
 
         if (destroyCardFromUseOfDormantEffect(requirement)) {
             logUseOfDormantEffect(playerId, requirement.usedDormantEffect.cardId);
@@ -42,6 +46,13 @@ module.exports = function ({
         }
     }
 
+    function getCost({cardGroups,playerId}) {
+        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const allCardInGroups = cardGroups.reduce((acc,cardGroup) => acc.concat(cardGroup.cardIds),[]);
+        const totalCost = allCardInGroups.reduce((acc, cardId) => acc + (playerStateService.findCardFromAnySource(cardId) || {}).cost || 0,0);
+        return totalCost;
+    }
+
     function validateIfCanProgressRequirementByCount(count, playerId) {
         const playerRequirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'findCard' });
         const canProgressRequirement = playerRequirementUpdater.canProgressRequirementByCount(count);
@@ -53,6 +64,11 @@ module.exports = function ({
     function progressRequirementByCount(count, playerId) {
         const playerRequirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'findCard' });
         playerRequirementUpdater.progressRequirementByCount(count);
+    }
+
+    function progressRequirementByActionPointsLeft(actionPointsConsumed, playerId, isCardGroupsEmpty) {
+        const playerRequirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'findCard' });
+        playerRequirementUpdater.progressRequirementByActionPointsLeft(actionPointsConsumed, isCardGroupsEmpty);
     }
 
     function moveCardsToHomeZone(cardGroups, playerId) {

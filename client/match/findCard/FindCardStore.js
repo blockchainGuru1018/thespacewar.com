@@ -46,12 +46,14 @@ module.exports = function ({
 
     function selectCard({ state, getters }, { id, source }) {
         state.selectedCardInfos.push({ id, source });
-
-        if (state.selectedCardInfos.length === getters.requirement.count) {
+        if (getters.requirement.submitOnEverySelect ) {
+            const cardGroups = groupFromSelectedCardIdsBySource([{ id, source }]);
+            matchController.emit('selectCardForFindCardRequirement', { cardGroups });
+        } else if (state.selectedCardInfos.length === getters.requirement.count) {
             const cardGroups = groupFromSelectedCardIdsBySource(state.selectedCardInfos);
             state.selectedCardInfos = [];
             matchController.emit('selectCardForFindCardRequirement', { cardGroups });
-        }
+        } 
     }
 
     function groupFromSelectedCardIdsBySource(selectedCardInfos) {
