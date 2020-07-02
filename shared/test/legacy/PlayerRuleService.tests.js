@@ -173,7 +173,6 @@ module.exports = {
                 queryEvents: {countReplaces: ()=> 2}  
             });
 
-
             assert.equals(service.canReplaceCards(), true);
         },
         'and RECYCLE_AT_START_OF_GAME = false'() {
@@ -184,7 +183,6 @@ module.exports = {
                 playerCommanders: {has: ()=> false},
                 queryEvents: {countReplaces: ()=> 2}  
             });
-
 
             assert.equals(service.canReplaceCards(), false);
         }
