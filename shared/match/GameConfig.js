@@ -8,7 +8,8 @@ const propertyMap = {
     MAX_REPLACES: 'maxReplaces',
     TIME_TO_COUNTER: 'timeToCounter',
     ACCESS_KEY: 'accessKey',
-    NICIA_SATU_STARTS_WITH_ENERGY_SHIELD: 'niciaSatuStartsWithEnergyShield'
+    NICIA_SATU_STARTS_WITH_ENERGY_SHIELD: 'niciaSatuStartsWithEnergyShield',
+    TIME_PER_PLAYER_IN_MINUTES: 'timePerPlayerInMinute'
 };
 
 const Defaults = convertConfig(DEFAULT_CONFIG);
@@ -25,6 +26,7 @@ function GameConfig({
     maxReplaces = Defaults.maxReplaces,
     timeToCounter = Defaults.timeToCounter,
     accessKey = Defaults.accessKey,
+    timePerPlayerInMinutes = Defaults.accessKey,
     niciaSatuStartsWithEnergyShield = Defaults.niciaSatuStartsWithEnergyShield
 } = {}) {
 
@@ -37,6 +39,7 @@ function GameConfig({
         maxReplaces: () => maxReplaces,
         timeToCounter: () => timeToCounter,
         accessKey: () => accessKey,
+        timePerPlayerInMinutes: () => timePerPlayerInMinutes,
         niciaSatuStartsWithEnergyShield: () => niciaSatuStartsWithEnergyShield
     };
 }
