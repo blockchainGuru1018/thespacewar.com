@@ -23,7 +23,7 @@ beforeEach(() => {
             getType() {
             },
             getCost() {
-                return 2;
+                return 3;
             },
             getImageUrl() {
             }
@@ -68,7 +68,7 @@ describe('action phase', () => {
             phase: 'action',
             events: [PutDownCardEvent({turn: 2, location: 'zone'}),
                 PutDownCardEvent({turn: 2, location: 'station-action'})],
-            stationCards: [{place: 'action'}, {place: 'action'}],
+            stationCards: [{place: 'action'}, {place: 'action'}, {place: 'action'}],
             cardsOnHand: [createCard({id: 'C2A'}), createCard({id: 'C3A'})]
         }));
 
@@ -77,7 +77,27 @@ describe('action phase', () => {
         await click('.nextPhaseButton-onTheLeft');
         assert.elementCount('.confirmDialogHeader', 0);
     });
-    it('should  see end turn modal confirmation when have action points > 1 and cards in hand > 1', async () => {
+    it('should  not see end turn modal confirmation when have action points > 1 and cards in hand > 1', async () => {
+        const {dispatch, showPage} = controller;
+        showPage();
+        dispatch('stateChanged', FakeState({
+            turn: 2,
+            currentPlayer: 'P1A',
+            phase: 'action',
+            events: [
+                PutDownCardEvent({turn: 2, location: 'zone'}),
+                PutDownCardEvent({turn: 2, location: 'station-action'})
+            ],
+            stationCards: [{place: 'action'}, {place: 'action'}, {place: 'action'},],
+            cardsOnHand: [createCard({id: 'C2A'}), createCard({id: 'C3A'})]
+        }));
+
+        await timeout();
+
+        await click('.nextPhaseButton-onTheLeft');
+        assert.elementCount('.confirmDialogHeader', 0);
+    });
+    it('should see end turn modal confirmation when have action points > 1 and cards in hand > 1', async () => {
         const {dispatch, showPage} = controller;
         showPage();
         dispatch('stateChanged', FakeState({
@@ -86,7 +106,7 @@ describe('action phase', () => {
             phase: 'action',
             events: [PutDownCardEvent({turn: 2, location: 'zone'}),
                 PutDownCardEvent({turn: 2, location: 'station-action'})],
-            stationCards: [{place: 'action'}, {place: 'action'}, {place: 'action'}],
+            stationCards: [{place: 'action'}, {place: 'action'}, {place: 'action'}, {place: 'action'}, {place: 'action'}],
             cardsOnHand: [createCard({id: 'C2A'}), createCard({id: 'C3A'})]
         }));
 
@@ -94,7 +114,7 @@ describe('action phase', () => {
 
         await click('.nextPhaseButton-onTheLeft');
         assert.elementCount('.confirmDialogHeader', 1);
-        assert.elementText('.confirmDialogContent', `You have 2 actions remaining this turn. Are you sure you don't want to use them?`)
+        assert.elementText('.confirmDialogContent', `You have 5 actions remaining this turn. Are you sure you don't want to use them?`);
     });
     it('should  see end turn modal confirmation when have not putdown station cards', async () => {
         const {dispatch, showPage} = controller;
@@ -121,7 +141,7 @@ describe('action phase', () => {
             turn: 2,
             currentPlayer: 'P1A',
             phase: 'action',
-            events: [ PutDownCardEvent({turn: 2, location: 'station-action'})],
+            events: [PutDownCardEvent({turn: 2, location: 'station-action'})],
             stationCards: [{place: 'action'}],
             cardsOnHand: [createCard({id: 'C2A'}), createCard({id: 'C3A'})]
         }));

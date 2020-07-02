@@ -335,7 +335,7 @@
                     },
                     {
                         validationFunc: this.isAttackPhaseAndHaveCardWithAvailableActions,
-                        msg: `You still have card with actions to play. Are you sure you want to end your turn?`
+                        msg: `You have a spaceship or missile that has not moved and/or attacked. Are you sure you want to end your turn?`
                     }
                 ];
 
@@ -351,7 +351,7 @@
                 return this.goToNextPhase();
             },
             isActionPhaseAndHaveCardsAndActionPointsLeft() {
-                return this.phase === PHASES.action && this.actionPoints2 > 0 && this.getTotalCardsOnHand.length > 1;
+                return this.phase === PHASES.action && this.actionPoints2 > 1 && this.getTotalCardsOnHand.length > 1;
             },
             isAttackPhaseAndHaveCardWithAvailableActions() {
                 return this.phase === PHASES.attack && this.getCardsPendingForAction.length > 0;
