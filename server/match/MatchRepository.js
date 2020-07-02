@@ -4,7 +4,8 @@ module.exports = function ({
     userRepository,
     socketRepository,
     matchFactory,
-    logger
+    logger,
+    fridge
 }) {
 
     const matchById = new Map();
@@ -17,32 +18,42 @@ module.exports = function ({
         reconnectBot,
         getById,
         getForUser,
-        clearOldMatches
+        clearOldMatches,
+        storeAll,
+        restoreAll,
+        _deleteAll
     };
 
-    async function create({ playerId, opponentId }) {
-        if (!socketRepository.hasConnectionToUser(opponentId)) {
-            throw new Error('Opponent player is not connected');
-        }
-        if (getForUser(playerId)) {
-            throw new Error('Player is already in a match');
-        }
-        if (getForUser(opponentId)) {
-            throw new Error('Opponent is already in a match');
-        }
-
-        const users = await getUsers([playerId, opponentId]);
-        if (users.some(u => u === null)) throw new Error('Some users for the match does not exist');
-
-        const match = matchFactory.create({ users, endMatch });
-        registerMatchWithUsers(match, users);
-
-        emitMatchCreate(match, opponentId);
-
+    async function create({playerId, opponentId}) {
+        const match = await createForPlayers({playerIds: [playerId, opponentId], emitMatchCreateEventTo: [opponentId]});
         return match.toClientModel();
     }
 
-    async function createWithBot({ playerId }) {
+    async function createForPlayers({playerIds, emitMatchCreateEventTo = null}) {
+        for (const playerId of playerIds) {
+            if (!socketRepository.hasConnectionToUser(playerId)) {
+                throw new Error('Player is not connected: ' + playerId);
+            }
+            if (getForUser(playerId)) {
+                throw new Error('Player is already in a match: ' + playerId);
+            }
+        }
+
+        const users = await getUsers(playerIds);
+        if (users.some(u => u === null)) throw new Error('Some users for the match does not exist');
+
+        const match = matchFactory.create({users, endMatch});
+        registerMatchWithUsers(match, users);
+
+        const emitToPlayers = emitMatchCreateEventTo ? emitMatchCreateEventTo : playerIds;
+        for (const playerId of emitToPlayers) {
+            emitMatchCreate(match, playerId);
+        }
+
+        return match;
+    }
+
+    async function createWithBot({playerId}) {
         if (getForUser(playerId)) {
             throw new Error('Player is already in a match');
         }
@@ -50,13 +61,13 @@ module.exports = function ({
         const user = await userRepository.getUser(playerId);
         if (!user) throw new Error('Some users for the match does not exist');
 
-        const match = matchFactory.createWithBot({ user, endMatch });
+        const match = matchFactory.createWithBot({user, endMatch});
         registerMatchWithUsers(match, [user]);
 
         return match.toClientModel();
     }
 
-    async function reconnect({ playerId, matchId }) {
+    async function reconnect({playerId, matchId}) {
         const match = getForUser(playerId);
         if (!match) throw new Error('Cannot find match for player');
 
@@ -64,7 +75,7 @@ module.exports = function ({
         registerUserEnteredMatch(playerId);
     }
 
-    async function reconnectBot({ playerId, matchId }) {
+    async function reconnectBot({playerId, matchId}) {
         const match = getForUser(playerId);
         if (!match) throw new Error('Cannot find match for player');
 
@@ -87,6 +98,31 @@ module.exports = function ({
             }
         });
         matchIdsToClear.forEach(matchId => endMatch(matchId));
+    }
+
+    function storeAll() {
+        const matches = Array.from(matchById.values());
+        fridge.putIn(
+            matches.map(match => {
+                return {
+                    restorableState: match.getRestorableState(),
+                    playerIds: match.playerIds()
+                };
+            })
+        );
+    }
+
+    async function restoreAll() {
+        const restorableMatches = fridge.takeOutAll();
+        for (const restorableMatchInfo of restorableMatches) {
+            const match = await createForPlayers({playerIds: restorableMatchInfo.playerIds});
+            match.restoreFromRestorableState(restorableMatchInfo.restorableState);
+        }
+    }
+
+    function _deleteAll() {
+        matchById.clear();
+        matchByUserId.clear()
     }
 
     function endMatch(matchId) {
@@ -113,13 +149,13 @@ module.exports = function ({
     async function updatePlayerMatchConnection(playerId, matchId) {
         const match = await getById(matchId);
         const connection = socketRepository.getForUser(playerId);
-        match.updatePlayer(playerId, { connection });
+        match.updatePlayer(playerId, {connection});
     }
 
     async function updateBotMatchConnection(playerId, botId, matchId) {
         const match = await getById(matchId);
         const connection = socketRepository.getForUser(playerId);
-        match.updatePlayer(botId, { connection });
+        match.updatePlayer(botId, {connection});
     }
 
     function getUsers(userIds) {
@@ -133,6 +169,7 @@ module.exports = function ({
         }
         catch(error) {
             logger.log(`Disconnected user - Tried to emit to user that has disconnected (matchId:${match.id}, userId:${userId})`, 'match');
+            logger.log(`RAW ERROR while trying to connect to player: ${error.message}`, 'match')
         }
     }
 

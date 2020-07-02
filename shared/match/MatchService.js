@@ -1,5 +1,4 @@
 const MatchMode = require('./MatchMode.js');
-const EndMatchDelay = 15 * 1000;
 
 class MatchService {
 
@@ -14,6 +13,10 @@ class MatchService {
         this._registerLogGame = registerLogGame
         this._logger = logger;
         this.endMatch = endMatch;
+    }
+
+    matchId() {
+        return this._state.matchId;
     }
 
     setState(state) {

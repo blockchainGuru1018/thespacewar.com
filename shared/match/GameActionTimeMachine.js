@@ -71,15 +71,21 @@ module.exports = function ({
     }
 
     function restoreFromState(storedStateJson, timeForAction) {
-        matchRestorer.restoreFromRestorableState(storedStateJson, [MoveClockStartTime(timeForAction)]);
+        matchRestorer.restoreFromRestorableState({
+            restorableStateJson: storedStateJson,
+            stateTreatmentMiddleware: [MoveClockStartTime(timeForAction)],
+            keepActionLog: true
+        });
     }
 
     function MoveClockStartTime(timeForAction) {
         return state => {
+            const now = Date.now();
+            state.gameStartTime = now;
+
             for (const playerId of Object.keys(state.playerStateById)) {
                 const clock = state.playerStateById[playerId].clock;
 
-                const now = Date.now();
                 const timeSinceAction = now - timeForAction;
                 clock.startTime += timeSinceAction;
                 for (const event of clock.events) {

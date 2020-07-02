@@ -64,7 +64,7 @@ module.exports = {
             },
             'should throw error'() {
                 assert(this.error);
-                assert.equals(this.error.message, 'Player is already in a match');
+                assert.startsWith(this.error.message, 'Player is already in a match');
             }
         },
         'when opponent is already in a game': {
@@ -84,7 +84,7 @@ module.exports = {
             },
             'should throw error'() {
                 assert(this.error);
-                assert.equals(this.error.message, 'Opponent is already in a match');
+                assert.startsWith(this.error.message, 'Player is already in a match');
             }
         },
         'when create match and then its ended': {
