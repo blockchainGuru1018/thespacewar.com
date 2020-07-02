@@ -8,7 +8,8 @@ module.exports = function ({
         getCost,
         getName,
         getImageUrl,
-        getType
+        getType,
+        getCard
     };
 
     function getCost(cardCommonId) {

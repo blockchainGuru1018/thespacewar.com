@@ -17,12 +17,12 @@ function DebugController(deps) {
 
     function onSaveMatch(saverPlayerId, saveName) {
         const state = { ...matchService.getState() };
-        const stateJson = JSON.stringify({ state, saverPlayerId });
+        const stateJson = JSON.stringify({ state, saverPlayerId, saveTime: Date.now()  });
         storeSavedGameJson(filePath(saveName), stateJson);
     }
 
     function onRestoreSavedMatch(playerId, { saveName, opponentId }) {
-        const { state: restoredState, saverPlayerId } = readSavedGameData(saveName);
+        const { state: restoredState, saverPlayerId, saveTime } = readSavedGameData(saveName);
         const previousOpponentId = restoredState.playerOrder.find(id => id !== saverPlayerId);
 
         restoredState.playerStateById = {
@@ -34,7 +34,21 @@ function DebugController(deps) {
         const { playerOrder } = matchService.getState();
         restoredState.playerOrder = playerOrder;
 
+        moveClockStartTime(saveTime, restoredState); // Perhaps should start from last clock.event
         restoreFromState(restoredState);
+    }
+
+    function moveClockStartTime(timeForAction, state) {
+        for (const playerId of Object.keys(state.playerStateById)) {
+            const clock = state.playerStateById[playerId].clock;
+
+            const now = Date.now();
+            const timeSinceAction = now - timeForAction;
+            clock.startTime += timeSinceAction;
+            for (const event of clock.events) {
+                event.time += timeSinceAction;
+            }
+        }
     }
 
     function timeAlive() {

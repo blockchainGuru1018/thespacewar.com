@@ -218,6 +218,7 @@
                 'firstRequirement',
                 'firstRequirementIsDiscardCard',
                 'firstRequirementIsDamageStationCard',
+                'firstRequirementIsDamageShieldCard',
                 'firstRequirementIsDrawCard',
                 'cardsLeftToSelect',
                 'countInFirstRequirement',
@@ -299,6 +300,10 @@
                 }
                 else if (this.firstRequirementIsDamageStationCard && this.cardsLeftToSelect > 0) {
                     return `Select ${this.cardsLeftToSelect} station ${pluralize('card',
+                        this.cardsLeftToSelect)} to damage`;
+                }
+                else if (this.firstRequirementIsDamageShieldCard && this.cardsLeftToSelect > 0) {
+                    return `Select ${this.cardsLeftToSelect} shield ${pluralize('card',
                         this.cardsLeftToSelect)} to damage`;
                 }
                 else if (this.firstRequirementIsDrawCard) {

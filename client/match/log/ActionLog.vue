@@ -5,34 +5,25 @@
         :class="['actionLog', {'actionLog--collapsed': !expanded}]"
         @click="toggleExpanded"
     >
-        <div
-            v-for="(entry, index) in entries"
+        <ActionLogEntryItem
+            v-for="(entry,index) in entries"
             :key="index"
-            :title="getTitleText(entry)"
-            class="actionLog-entry"
-        >
-            <img
-                :src="entry.iconUrl"
-                class="actionLog-entryIcon"
-                alt="action log entry icon"
-            >
-            <span
-                v-if="expanded"
-                class="actionLog-entryText"
-                v-html="getEntryHtml(entry)"
-            />
-        </div>
+            :entry="entry"
+            :expanded="expanded"
+        />
     </div>
 </template>
 <script>
-    import ActionLogEntry from "./ActionLogEntry.js";
-
     const Vuex = require('vuex');
     const matchHelpers = Vuex.createNamespacedHelpers('match');
     const cardHelpers = Vuex.createNamespacedHelpers('card');
     const actionLogHelpers = Vuex.createNamespacedHelpers('actionLog');
+    import ActionLogEntryItem from "./ActionLogEntryItem.vue";
 
-    module.exports = {
+    export default {
+        components: {
+            ActionLogEntryItem
+        },
         computed: {
             ...matchHelpers.mapGetters([
                 'actionLog'
@@ -50,13 +41,7 @@
         methods: {
             ...actionLogHelpers.mapActions([
                 'toggleExpanded'
-            ]),
-            getEntryHtml(entry) {
-                return ActionLogEntry(entry).html();
-            },
-            getTitleText(entry) {
-                return ActionLogEntry(entry).titleText();
-            }
+            ])
         }
     };
 </script>
@@ -80,7 +65,7 @@
 
         &:hover {
             background: rgba(18, 18, 18, .5);
-            cursor: pointer;
+            /*cursor: pointer;*/
         }
     }
 

@@ -1,4 +1,4 @@
-import ActionLogEntry from "../log/ActionLogEntry.js";
+import ActionLogEntry from "../log/ActionLogEntryHelper.js";
 
 const TimeVisible = 3000;
 const ApproximateLengthOfCssLeaveTransition = 1500;

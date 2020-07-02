@@ -33,7 +33,7 @@
         },
         computed: {
             swarmDeckToggleVisible() {
-                return featureToggles.isEnabled('swarm-toggle');
+                return featureToggles.isEnabled('the-swarm-toggle');
             }
         },
         mounted() {

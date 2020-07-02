@@ -175,27 +175,21 @@ class MatchComService {
 
     _endGame() {
         const [firstPlayerId, secondPlayerId] = this._matchService.getPlayerOrder();
-
-        const firstPlayerStateService = this._playerServiceProvider.getStateServiceById(firstPlayerId);
-        const allFirstPlayerStationCardsAreDamaged = firstPlayerStateService.getUnflippedStationCardsCount() === 0;
-
-        const secondPlayerStateService = this._playerServiceProvider.getStateServiceById(secondPlayerId);
-        const allSecondPlayerStationCardsAreDamaged = secondPlayerStateService.getUnflippedStationCardsCount() === 0;
-
         const lastStand = this._gameServiceFactory.lastStand();
 
         if (this._somePlayerHasLost()) {
-            const losingPlayerId = this._playerHasLost(firstPlayerId) ? firstPlayerId : secondPlayerId;
+            const losingPlayerId = this._playerHasLost(firstPlayerId)? firstPlayerId: secondPlayerId;
             this._matchService.playerRetreat(losingPlayerId);
         } else if (lastStand.canStart()) {
-            if (allSecondPlayerStationCardsAreDamaged && this._playerCanAvoidStationCardAttack(secondPlayerId)) {
-                const secondPlayerLastStand = this._playerServiceFactory.playerLastStand(secondPlayerId);
+            const secondPlayerLastStand = this._playerServiceFactory.playerLastStand(secondPlayerId);
+            const firstPlayerLastStand = this._playerServiceFactory.playerLastStand(firstPlayerId);
+            if (secondPlayerLastStand.canStart()) {
                 secondPlayerLastStand.start();
-            } else if (allFirstPlayerStationCardsAreDamaged && this._playerCanAvoidStationCardAttack(firstPlayerId)) {
-                const firstPlayerLastStand = this._playerServiceFactory.playerLastStand(firstPlayerId);
+            } else if (firstPlayerLastStand.canStart()) {
                 firstPlayerLastStand.start();
             }
         }
+
     }
 
     _somePlayerHasLost() {
@@ -231,7 +225,7 @@ class MatchComService {
         const allStationCardsAreDamaged = playerStateService.getUnflippedStationCardsCount() === 0;
         const lastStand = this._gameServiceFactory.lastStand(playerId);
         const cannotCounterOrHasAlreadyCountered = !this._playerCanAvoidStationCardAttack(playerId)
-            || lastStand.hasEnded();
+            || lastStand.hasEnded(); // WARNING 2020-06-22: _playerCanAvoidStationCardAttack is duplicated in PlayerLastStand.js.
         return allStationCardsAreDamaged && cannotCounterOrHasAlreadyCountered;
     }
 

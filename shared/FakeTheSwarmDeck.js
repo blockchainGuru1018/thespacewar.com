@@ -245,10 +245,10 @@ module.exports = () => [
         color: 'orange',
         type: 'space-ship',
         name: 'Destroy Duration',
-        description: 'If played from hand: you may draw a card.',
+        description: 'After first turn: Sacrifice instead of attacking to destroy a duration card.',
         cost: 1,
-        attack: 0,
-        defense: 0,
+        attack: 1,
+        defense: 1,
         paralyzed: false
     },
     {

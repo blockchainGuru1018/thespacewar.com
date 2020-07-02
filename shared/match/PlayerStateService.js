@@ -32,6 +32,11 @@ class PlayerStateService {
         this._stateTouchListeners = [];
     }
 
+    isBot() {
+        const playerId = this.getPlayerId();
+        return playerId === "BOT";
+      }
+
     reset(useTheSwarmDeck = false) {
         const playerId = this.getPlayerId();
         this._matchService.connectPlayer(playerId); //TODO This is already done in StartGame.js. Why is it also done here?

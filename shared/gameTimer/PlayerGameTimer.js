@@ -18,8 +18,8 @@ module.exports = function ({
         return playerClock.getTime() <= 0;
     }
 
-    function resetAll() {
-        const duration = 15 * 60 * 1000;
+    function resetAll(timePerPlayerInMinutes) {
+        const duration = (timePerPlayerInMinutes || 15) * 60 * 1000;
         opponentClock.reset(duration);
         playerClock.reset(duration);
     }

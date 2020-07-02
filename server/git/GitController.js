@@ -17,7 +17,7 @@ module.exports = function (deps) {
         console.info('GitController: closing server');
         await closeServer();
         console.info('GitController: running start server script');
-        serverStarter.installNpmPackages();
+        serverStarter.installNpmPackagesAndBuildProdClient();
         serverStarter.startServer();
 
         res.end();

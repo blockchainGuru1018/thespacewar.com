@@ -24,6 +24,7 @@ module.exports = function (deps) {
             canPutDownMoreStationCardsThisTurn,
             canPutDownMoreStartingStationCards,
             canSelectStationCards,
+            canSelectShieldCardsForRequirement,
             canSelectCardsForActiveAction,
             canPutDownStationCardInHomeZone,
             canIssueOverwork: canIssueOverworkGetter,
@@ -121,6 +122,14 @@ module.exports = function (deps) {
         const damageStationCardRequirement = getFrom('firstRequirementIsDamageStationCard', 'requirement');
         const cardsLeftToSelect = getFrom('cardsLeftToSelect', 'requirement');
         return damageStationCardRequirement && cardsLeftToSelect > 0;
+    }
+    function canSelectShieldCardsForRequirement(state, getters) { 
+        if (getters.waitingForOtherPlayerToFinishRequirements) return false;
+
+        const damageShieldCardRequirement = getFrom('firstRequirementIsDamageShieldCard', 'requirement');
+        const cardsLeftToSelect = getFrom('cardsLeftToSelect', 'requirement');
+        
+        return damageShieldCardRequirement && cardsLeftToSelect > 0;
     }
 
     function canSelectCardsForActiveAction(state, getters, rootState) {
