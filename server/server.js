@@ -208,9 +208,9 @@ function setupRoutes(deps, controllers) {
         }
     });
 
-    app.get('/test-match-restoration', async (req, res) => {
-        await controllers.match._testMatchRestoration();
-    });
+    // app.get('/test-match-restoration', async (req, res) => {
+    //     await controllers.match._testMatchRestoration();
+    // });
 
     function validateDebugPassword(password) {
         const timeSinceLastCheck = Date.now() - lastCheckTime;
