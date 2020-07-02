@@ -26,7 +26,7 @@ function GameConfig({
     maxReplaces = Defaults.maxReplaces,
     timeToCounter = Defaults.timeToCounter,
     accessKey = Defaults.accessKey,
-    timePerPlayerInMinute = Defaults.accessKey,
+    timePerPlayerInMinutes = Defaults.accessKey,
     niciaSatuStartsWithEnergyShield = Defaults.niciaSatuStartsWithEnergyShield
 } = {}) {
 
@@ -39,7 +39,7 @@ function GameConfig({
         maxReplaces: () => maxReplaces,
         timeToCounter: () => timeToCounter,
         accessKey: () => accessKey,
-        timePerPlayerInMinute: () => timePerPlayerInMinute,
+        timePerPlayerInMinutes: () => timePerPlayerInMinutes,
         niciaSatuStartsWithEnergyShield: () => niciaSatuStartsWithEnergyShield
     };
 }

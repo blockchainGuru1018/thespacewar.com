@@ -27,7 +27,7 @@ function StartGameController({
                 resetPlayers(playerIds, useTheSwarmDeck);
 
                 const playerGameTimer = playerServiceFactory.playerGameTimer(playerId);
-                playerGameTimer.resetAll(matchService.getGameConfigEntity().timePerPlayerInMinute);
+                playerGameTimer.resetAll(matchService.getGameConfigEntity().timePerPlayerInMinutes);
 
                 matchComService.emitCurrentStateToPlayers();
             }
