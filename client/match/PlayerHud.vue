@@ -77,7 +77,8 @@
         >
             <div class="dimOverlay" />
             <div
-                v-click-outside="hideEnlargedCard" class="card card--enlarged"
+                v-click-outside="hideEnlargedCard"
+                class="card card--enlarged"
                 :style="cardStyle"
             />
         </portal>
@@ -100,6 +101,44 @@
             <CounterAttack />
         </portal>
         <NotificationBannerContainer />
+        <ConfirmationDialog
+            v-if="displayConfirmLog"
+        >
+            <template slot="header">
+                <div class="confirmDialogHeader">
+                    Warning
+                </div>
+            </template>
+            <template slot="body">
+                <div class="confirmDialogContent">
+                    <p>
+                        {{ confirmModalContentText }}
+                    </p>
+                </div>
+            </template>
+            <template slot="footer">
+                <div class="slot-footer-container">
+                    <div class="separator20Percent" />
+                    <div
+                        class="confirmBoxOption"
+                        @click="goToNextPhaseAndCloseModal"
+                    >
+                        <span class="marginLeft10">
+                            Yes
+                        </span>
+                    </div>
+                    <div class="separator30Percent" />
+                    <div
+                        class="confirmBoxOption"
+                        @click="closeModal"
+                    >
+                        <span class="marginRight10">
+                            No
+                        </span>
+                    </div>
+                </div>
+            </template>
+        </ConfirmationDialog>
     </div>
 </template>
 <script>
@@ -113,14 +152,17 @@
     const Vuex = require('vuex');
     const resolveModuleWithPossibleDefault = require('../../client/utils/resolveModuleWithPossibleDefault.js');
     const FindCard = resolveModuleWithPossibleDefault(require('./findCard/FindCard.vue'));
+    import ConfirmationDialog from './ConfirmationDialog.vue';
+
+    const escapeMenuHelpers = Vuex.createNamespacedHelpers('escapeMenu');
     const CounterCard = resolveModuleWithPossibleDefault(require('./counterCard/CounterCard.vue'));
     const CounterAttack = resolveModuleWithPossibleDefault(require('./counterAttack/CounterAttack.vue'));
-    const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
-    const { mapGetters: mapPermissionGetters } = Vuex.createNamespacedHelpers('permission');
+    const {mapState, mapGetters, mapActions} = Vuex.createNamespacedHelpers('match');
+    const {mapGetters: mapPermissionGetters} = Vuex.createNamespacedHelpers('permission');
     const cardHelpers = Vuex.createNamespacedHelpers('card');
     const requirementHelpers = Vuex.createNamespacedHelpers('requirement');
     const startGameHelpers = Vuex.createNamespacedHelpers('startGame');
-    const { PHASES } = require('./phases.js');
+    const {PHASES} = require('./phases.js');
 
     export default {
         components: {
@@ -131,6 +173,7 @@
             NotificationBannerContainer,
             FindCard,
             CounterCard,
+            ConfirmationDialog,
             CounterAttack,
             LookAtStationRowOverlay,
         },
@@ -138,6 +181,9 @@
             return {
                 enlargedCardVisible: false,
                 nextPhaseButtonDisabled: false,
+                displayConfirmLog: false,
+                confirmModalContentText: '',
+                nextTurnValidationIndex: 0
             };
         },
         computed: {
@@ -147,10 +193,12 @@
             ...mapState([
                 'phase',
                 'playerCardsOnHand',
+                'playerStation'
             ]),
             ...mapGetters([
                 'nextPhaseWithAction',
                 'maxHandSize',
+                'getTotalCardsOnHand',
                 'actionPoints2',
                 'queryEvents',
                 'playerRetreated',
@@ -159,7 +207,8 @@
                 'gameOn',
                 'playerPerfectPlan',
                 'playerRuleService',
-                'playerDrawPhase'
+                'playerDrawPhase',
+                'getCardsPendingForAction'
             ]),
             ...requirementHelpers.mapGetters([
                 'waitingForOtherPlayerToFinishRequirements',
@@ -180,6 +229,8 @@
             ]),
             ...mapPermissionGetters([
                 'canIssueOverwork',
+                'canPutDownMoreStationCardsThisTurn',
+                'canPutDownStationCards',
                 'opponentHasControlOfPlayersTurn'
             ]),
             startGameButtonContainerVisible() {
@@ -241,13 +292,11 @@
                     return {
                         backgroundImage: `url(${this.activeActionCardImageUrl})`
                     };
-                }
-                else if (this.requirementCardImageUrl) {
+                } else if (this.requirementCardImageUrl) {
                     return {
                         backgroundImage: `url(${this.requirementCardImageUrl})`
                     };
-                }
-                else {
+                } else {
                     return {
                         display: 'none'
                     };
@@ -263,16 +312,67 @@
             ...startGameHelpers.mapActions([
                 'playerReady'
             ]),
+            ...escapeMenuHelpers.mapActions([
+                'selectView',
+            ]),
             readyClick() {
                 this.playerReady();
             },
             nextPhaseClick() {
                 this.nextPhaseButtonDisabled = true;
+
                 setTimeout(() => {
                     this.nextPhaseButtonDisabled = false;
-                }, 1000)
+                }, 1000);
+                const validationsForChangePhase = [
+                    {
+                        validationFunc: this.isActionPhaseAndHaveNotPutDownStationCard,
+                        msg: `Are you sure you don't want to put down a station card this turn?`
+                    },
+                    {
+                        validationFunc: this.isActionPhaseAndHaveCardsAndActionPointsLeft,
+                        msg: `You have ${this.actionPoints2} actions remaining this turn. Are you sure you don't want to use them?`
+                    },
+                    {
+                        validationFunc: this.isAttackPhaseAndHaveCardWithAvailableActions,
+                        msg: `You still have card with actions to play. Are you sure you want to end your turn?`
+                    }
+                ];
 
-                this.goToNextPhase();
+                for (let i = this.nextTurnValidationIndex; i < validationsForChangePhase.length; i++) {
+                    const validation = validationsForChangePhase[i];
+                    if (validation.validationFunc()) {
+                        this.nextTurnValidationIndex++;
+                        this.displayConfirmationModal(validation.msg);
+                        return;
+                    }
+                }
+                this.nextTurnValidationIndex = this.nextPhaseWithAction === PHASES.wait ? 0 : this.nextTurnValidationIndex;
+                return this.goToNextPhase();
+            },
+            isActionPhaseAndHaveCardsAndActionPointsLeft() {
+                return this.phase === PHASES.action && this.actionPoints2 > 0 && this.getTotalCardsOnHand.length > 1;
+            },
+            isAttackPhaseAndHaveCardWithAvailableActions() {
+                return this.phase === PHASES.attack && this.getCardsPendingForAction.length > 0;
+            },
+            isActionPhaseAndHaveNotPutDownStationCard() {
+                const totalStationCards = this.playerStation.actionCards.length +
+                    this.playerStation.drawCards.length + this.playerStation.handSizeCards.length;
+                return this.phase === PHASES.action && this.getTotalCardsOnHand.length > 1 && totalStationCards < 8 &&
+                    this.canPutDownStationCards && this.canPutDownMoreStationCardsThisTurn;
+            },
+            goToNextPhaseAndCloseModal() {
+                this.displayConfirmLog = false;
+                this.nextPhaseClick();
+            },
+            displayConfirmationModal(contentMessage) {
+                this.confirmModalContentText = contentMessage;
+                this.displayConfirmLog = true
+            },
+            closeModal() {
+                this.nextTurnValidationIndex = this.nextTurnValidationIndex === 0 ? 0 : this.nextTurnValidationIndex - 1;
+                this.displayConfirmLog = false;
             },
             hideEnlargedCard() {
                 this.enlargedCardVisible = false;
@@ -411,5 +511,57 @@
         display: flex;
         justify-content: center;
         align-items: center;
+    }
+
+    .slot-footer-container {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        align-content: space-between;
+    }
+
+    .confirmBoxOption {
+        width: 15%;
+        display: flex;
+        text-align: center;
+        justify-content: center;
+        font-size: x-large;
+        span {
+            cursor: pointer;
+            &:hover {
+                color: red;
+                transition: 0.5s;
+            }
+        }
+    }
+
+    .marginRight10 {
+        margin-right: 10px;
+    }
+
+    .marginLeft10 {
+        margin-left: 10px;
+    }
+
+    .separator30Percent {
+        width: 30%;
+    }
+
+    .separator20Percent {
+        width: 20%;
+    }
+
+    .confirmDialogContent {
+        width: 100%;
+        p {
+            margin: 20px;
+        }
+    }
+
+    .confirmDialogHeader {
+        width: 100%;
+        text-align: center;
+        font-weight: bold;
+        font-size: x-large;
     }
 </style>
