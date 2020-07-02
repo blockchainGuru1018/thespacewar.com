@@ -162,6 +162,32 @@ module.exports = {
 
             assert.equals(playerRuleService.canPutDownEventCards(), false);
         }
+    },
+    'Should be able to replace a card when starts a new game': {
+        'and RECYCLE_AT_START_OF_GAME = true'() {
+
+            const service = new PlayerRuleService({  
+                gameConfig: GameConfig({ recycleAtStartOfGame: true, maxReplaces: 3 }),
+                matchService: new MatchService(),
+                playerCommanders: {has: ()=> false},
+                queryEvents: {countReplaces: ()=> 2}  
+            });
+
+
+            assert.equals(service.canReplaceCards(), true);
+        },
+        'and RECYCLE_AT_START_OF_GAME = false'() {
+
+            const service = new PlayerRuleService({  
+                gameConfig: GameConfig({ recycleAtStartOfGame: false, maxReplaces: 3 }),
+                matchService: new MatchService(),
+                playerCommanders: {has: ()=> false},
+                queryEvents: {countReplaces: ()=> 2}  
+            });
+
+
+            assert.equals(service.canReplaceCards(), false);
+        }
     }
 };
 

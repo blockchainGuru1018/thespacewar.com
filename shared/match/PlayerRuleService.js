@@ -163,20 +163,29 @@ class PlayerRuleService {
     }
 
     canReplaceCards() {
-        if (this._matchService.mode() !== MatchMode.game) {
-            return this._queryEvents.countReplaces() < this._gameConfig.maxReplaces();
-        }
-        else if (this._playerCommanders.has(Commander.DrStein)) {
+        if(this._canReplaceCardAtStartOfGame()) return true
+        if(this._canTriggerDrSteinEffect()){
             const currentTurn = this._matchService.getTurn();
             const replacesThisTurn = this._queryEvents.countReplacesOnTurn(currentTurn);
-
-            return this._playerPhase.isAction()
-                && replacesThisTurn < this._gameConfig.maxReplaces();
+            return replacesThisTurn < this._gameConfig.maxReplaces();
         }
-
         return false;
     }
 
+    _canReplaceCardAtStartOfGame (){
+        if(!this._gameHasStarted() && this._gameConfig.recycleAtStartOfGame()){
+            return this._queryEvents.countReplaces() < this._gameConfig.maxReplaces()
+        } else {
+            return false;
+        }
+    }
+
+    _gameHasStarted(){
+        return this._matchService.mode() === MatchMode.game;
+    }
+    _canTriggerDrSteinEffect(){
+        return this._playerCommanders.has(Commander.DrStein) && this._playerPhase.isAction()
+    }
     _playerHasControlOfTheirOwnActionPhase() {
         return this._turnControl.playerHasControlOfOwnTurn() && this._playerPhase.isAction();
     }

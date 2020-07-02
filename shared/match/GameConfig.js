@@ -9,7 +9,8 @@ const propertyMap = {
     TIME_TO_COUNTER: 'timeToCounter',
     ACCESS_KEY: 'accessKey',
     NICIA_SATU_STARTS_WITH_ENERGY_SHIELD: 'niciaSatuStartsWithEnergyShield',
-    TIME_PER_PLAYER_IN_MINUTES: 'timePerPlayerInMinute'
+    TIME_PER_PLAYER_IN_MINUTES: 'timePerPlayerInMinute',
+    RECYCLE_AT_START_OF_GAME: 'recycleAtStartOfGame', 
 };
 
 const Defaults = convertConfig(DEFAULT_CONFIG);
@@ -27,7 +28,8 @@ function GameConfig({
     timeToCounter = Defaults.timeToCounter,
     accessKey = Defaults.accessKey,
     timePerPlayerInMinutes = Defaults.accessKey,
-    niciaSatuStartsWithEnergyShield = Defaults.niciaSatuStartsWithEnergyShield
+    niciaSatuStartsWithEnergyShield = Defaults.niciaSatuStartsWithEnergyShield,
+    recycleAtStartOfGame = Defaults.recycleAtStartOfGame
 } = {}) {
 
     return {
@@ -40,7 +42,8 @@ function GameConfig({
         timeToCounter: () => timeToCounter,
         accessKey: () => accessKey,
         timePerPlayerInMinutes: () => timePerPlayerInMinutes,
-        niciaSatuStartsWithEnergyShield: () => niciaSatuStartsWithEnergyShield
+        niciaSatuStartsWithEnergyShield: () => niciaSatuStartsWithEnergyShield,
+        recycleAtStartOfGame: () => recycleAtStartOfGame
     };
 }
 
