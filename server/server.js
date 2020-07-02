@@ -6,6 +6,7 @@ const SocketIO = require('socket.io');
 const wrapControllersWithRejectionProtection = require('./utils/wrapControllersWithRejectionProtection.js');
 const SecurityController = require('./user/SecurityController.js');
 const SocketRepository = require('./user/SocketRepository.js');
+const InMemoryFridge = require('./utils/InMemoryFridge.js');
 const UserRepository = require('./user/UserRepository.js');
 const UserController = require('./user/UserController.js');
 const MatchFactory = require('./match/MatchFactory.js');
@@ -110,7 +111,8 @@ async function run({config, closeServer, exitProcess}) {
         rawCardDataRepository,
         gameConfig: GameConfig.fromConfig(config.gameConfig),
         userRepository: UserRepository({socketMaster}),
-        socketRepository: SocketRepository({socketMaster})
+        socketRepository: SocketRepository({socketMaster}),
+        fridge: InMemoryFridge()
     };
 
     //2nd level dependencies
@@ -204,6 +206,10 @@ function setupRoutes(deps, controllers) {
         } else {
             res.json({text: `Invalid password`});
         }
+    });
+
+    app.get('/test-match-restoration', async (req, res) => {
+        await controllers.match._testMatchRestoration();
     });
 
     function validateDebugPassword(password) {

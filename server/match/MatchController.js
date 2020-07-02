@@ -8,7 +8,8 @@ module.exports = function (deps) {
         create,
         createWithBot,
         getOwnState,
-        onAction
+        onAction,
+        _testMatchRestoration
     };
 
     async function create(req, res) {
@@ -52,6 +53,15 @@ module.exports = function (deps) {
         else {
             sendMatchIsDeadMessageToUserSocketConnection({ userId, matchId });
         }
+    }
+
+    async function _testMatchRestoration() {
+        await matchRepository.storeAll();
+
+        matchRepository._deleteAll();
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        await matchRepository.restoreAll();
     }
 
     function matchActionLogMessage({ action, value, playerId }) {

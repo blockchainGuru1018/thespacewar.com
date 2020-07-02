@@ -8,17 +8,15 @@ const prepareOpponentState = require('./prepareOpponentState.js');
 class MatchComService {
 
     constructor({
-                    matchId,
-                    players,
-                    logger,
-                    matchService,
-                    playerServiceProvider,
-                    playerServiceFactory,
-                    gameServiceFactory,
-                    stateChangeListener,
-                    registerLogGame
-                }) {
-        this._matchId = matchId;
+        players,
+        logger,
+        matchService,
+        playerServiceProvider,
+        playerServiceFactory,
+        gameServiceFactory,
+        stateChangeListener,
+        registerLogGame
+    }) {
         this._players = players;
         this._logger = logger;
         this._matchService = matchService;
@@ -79,15 +77,15 @@ class MatchComService {
         }
         try {
             playerConnection.emit('match', {
-                matchId: this._matchId,
+                matchId: this._matchService.matchId(),
                 playerId: playerId,
                 action,
                 value
             });
         }
         catch (error) {
-            this._logger.log(`Disconnected user - Tried to emit to user that has disconnected (matchId:${this._matchId}, userId:${playerId})`, 'match');
-            this._logger.log(`RAW ERROR FROM while trying to connect to player: ${error.message}`, 'match');
+            this._logger.log(`Disconnected user - Tried to emit to user that has disconnected (matchId:${this._matchService.matchId()}, userId:${playerId})`, 'match');
+            this._logger.log(`RAW ERROR while trying to connect to player: ${error.message}`, 'match');
         }
     }
 
@@ -179,7 +177,7 @@ class MatchComService {
         const lastStand = this._gameServiceFactory.lastStand();
 
         if (this._somePlayerHasLost()) {
-            const losingPlayerId = this._playerHasLost(firstPlayerId)? firstPlayerId: secondPlayerId;
+            const losingPlayerId = this._playerHasLost(firstPlayerId) ? firstPlayerId : secondPlayerId;
             this._matchService.playerRetreat(losingPlayerId);
         } else if (lastStand.canStart()) {
             const secondPlayerLastStand = this._playerServiceFactory.playerLastStand(secondPlayerId);
