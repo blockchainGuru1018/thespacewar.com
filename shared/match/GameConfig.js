@@ -9,7 +9,7 @@ const propertyMap = {
     TIME_TO_COUNTER: 'timeToCounter',
     ACCESS_KEY: 'accessKey',
     NICIA_SATU_STARTS_WITH_ENERGY_SHIELD: 'niciaSatuStartsWithEnergyShield',
-    TIME_PER_PLAYER_IN_MINUTES: 'timePerPlayerInMinute',
+    TIME_PER_PLAYER_IN_MINUTES: 'timePerPlayerInMinutes',
     RECYCLE_AT_START_OF_GAME: 'recycleAtStartOfGame', 
 };
 
