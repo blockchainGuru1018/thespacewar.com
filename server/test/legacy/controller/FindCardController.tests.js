@@ -305,7 +305,7 @@ function Controller(deps = {}) {
                 return PlayerId;
             }
         },
-        stateMemento: {
+        gameActionTimeMachine: {
             saveStateForCardId() {}
         }
     });

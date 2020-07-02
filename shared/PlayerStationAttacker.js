@@ -3,7 +3,7 @@ const CheatError = require('../server/match/CheatError.js');
 module.exports = function ({
     matchService,
     stateSerializer,
-    stateMemento,
+    gameActionTimeMachine,
     playerStateService,
     canThePlayer,
     opponentStateService,
@@ -53,7 +53,7 @@ module.exports = function ({
         const event = playerStateService.registerAttack({ attackerCardId, targetStationCardIds });
 
         const attackData = { attackerCardId, defenderCardIds: targetStationCardIds, time: event.created };
-        stateMemento.saveStateForAttackData(stateBeforeAttack, attackData);
+        gameActionTimeMachine.saveStateForAttackData(stateBeforeAttack, attackData);
 
         opponentActionLog.stationCardsWereDamaged({ targetCount: targetStationCardIds.length });
 

@@ -62,7 +62,7 @@ module.exports = function ({ //TODO Is there a better name for this class? Perha
                 addedRequirement = requirementService.addEmptyCommonWaitingRequirement(requirement);
             }
             else {
-                requirement.card = card; 
+                if(requirement.type === 'damageShieldsOrStationCard')requirement.card = card.getCardData(); 
                 addedRequirement = requirementService.addCardRequirement(requirement);
             }
 

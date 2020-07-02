@@ -13,13 +13,14 @@ function FindCardRequirementFactory({
     function create() {
         const requirement = {
             type: requirementSpec.type,
-            cardGroups: cardGroupsFromSpec(requirementSpec),
+            cardGroups: cardGroupsFromSpec(),
             cardCommonId: card.commonId,
             count: requirementSpec.count,
             target: requirementSpec.target,
-            common: requirementSpec.common,
+            common: !!requirementSpec.common,
             waiting: requirementSpec.count === 0 && requirementSpec.common,
-            cancelable: requirementSpec.cancelable
+            cancelable: !!requirementSpec.cancelable,
+            submitOnEverySelect: !!requirementSpec.submitOnEverySelect
         };
         if (requirementSpec.dormantEffect) {
             requirement.usedDormantEffect = {
@@ -27,12 +28,17 @@ function FindCardRequirementFactory({
                 destroyCard: requirementSpec.dormantEffect.destroyTriggerCard
             }
         }
+        if (requirementSpec.actionPointsLimit) {
+            requirement.actionPointsLimit = {
+                actionPointsLeft: requirementSpec.actionPointsLimit.actionPointsLeft? requirementSpec.actionPointsLimit.actionPointsLeft : requirementSpec.actionPointsLimit
+            };
+        }
 
         return requirement;
     }
 
-    function cardGroupsFromSpec(spec) {
-        if (spec.count > 0) {
+    function cardGroupsFromSpec() {
+        if (requirementSpec.count > 0) {
             return requirementSpec.sources.map(cardGroupFromSource);
         }
         else {
@@ -41,9 +47,13 @@ function FindCardRequirementFactory({
     }
 
     function cardGroupFromSource(source) {
+        const filters = {...requirementSpec.filter, excludeCardIds: [card.id]}
+        if (requirementSpec.actionPointsLimit) {
+            filters.actionPointsLeft = requirementSpec.actionPointsLimit
+        }
         return {
             source,
-            cards: sourceFetcher[source](requirementSpec.filter)
+            cards: sourceFetcher[source](filters)
         };
     }
 }

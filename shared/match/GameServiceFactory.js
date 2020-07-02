@@ -1,11 +1,12 @@
 const MatchService = require('./MatchService.js');
-const StateMemento = require('./StateMemento.js');
+const GameActionTimeMachine = require('./GameActionTimeMachine.js');
 const CardDataAssembler = require('../CardDataAssembler.js');
 const CardInfoRepository = require('../CardInfoRepository.js');
 const StateSerializer = require('../../server/match/StateSerializer.js');
 const DeckFactory = require('../../server/deck/DeckFactory.js');
 const ActionPointsCalculator = require('./ActionPointsCalculator.js');
 const LastStand = require('./LastStand.js');
+const MatchRestorer = require('./MatchRestorer.js');
 
 module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig, registerLogGame }) {
 
@@ -15,12 +16,13 @@ module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig,
         _cache: objectsByNameAndPlayerId,
         lastStand: cached(lastStand),
         matchService: cached(matchService),
-        stateMemento: cached(stateMemento),
+        gameActionTimeMachine: cached(gameActionTimeMachine),
         cardDataAssembler: cached(cardDataAssembler),
         cardInfoRepository: cached(cardInfoRepository),
         actionPointsCalculator: cached(actionPointsCalculator),
         stateSerializer: cached(stateSerializer),
-        deckFactory: cached(deckFactory)
+        deckFactory: cached(deckFactory),
+        matchRestorer: cached(matchRestorer)
     };
 
     return api;
@@ -57,11 +59,17 @@ module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig,
         });
     }
 
-    function stateMemento() {
-        return StateMemento({
-            matchService: api.matchService(),
-            stateSerializer: api.stateSerializer(),
+    function gameActionTimeMachine() {
+        return GameActionTimeMachine({
+            matchRestorer: api.matchRestorer(),
             gameConfig
+        });
+}
+
+    function matchRestorer() {
+        return MatchRestorer({
+            matchService: api.matchService(),
+            stateSerializer: api.stateSerializer()
         });
     }
 

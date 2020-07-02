@@ -55,7 +55,20 @@ class PlayerRequirementUpdater {
             this.resolve();
         }
     }
-
+    progressRequirementByActionPointsLeft(actionPointsConsumed = 1, isCardGroupsEmpty) { 
+        const requirement = this._get();
+        if(requirement){
+            if (requirement.actionPointsLimit.actionPointsLeft >= actionPointsConsumed) {
+                this._update(requirement => {
+                    requirement.actionPointsLimit.actionPointsLeft -= actionPointsConsumed;
+                    requirement.cardGroups[0].cards = requirement.cardGroups[0].cards.filter(card =>card.cost <= requirement.actionPointsLimit.actionPointsLeft)
+                });
+            }
+            if(requirement.actionPointsLimit.actionPointsLeft === 0 || isCardGroupsEmpty){
+                this.completeRequirement();
+            }
+    } 
+    }
     resolve() {
         const requirement = this._get();
 

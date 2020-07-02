@@ -22,7 +22,7 @@ module.exports = function CardDataAssembler({
     function createLibrary() {
         return [
             ...rawCardDataRepository.get().map(CardData),
-            ...FakeTheSwarmDeck()
+            ...FakeTheSwarmDeck().reduce((acc,value) => acc.find((v) => v.commonId === value.commonId)? acc : acc.concat([value]),[])
         ];
     }
 
@@ -49,14 +49,14 @@ module.exports = function CardDataAssembler({
     }
 
     function createFromCommonId(commonId) {
-        const unmappedCardData = rawCardDataRepository.get();
-        const cardJson = unmappedCardData.find(c => c.id === commonId.toString());
-        if (!cardJson) {
+        const unmappedCardData = createLibrary();
+        const cardData = unmappedCardData.find(c => c.commonId === commonId);
+        if (!cardData) {
             console.error('Could not find card data for card with ID ' + commonId);
             return {};
         }
         else {
-            return CardData(cardJson);
+            return cardData;
         }
     }
 };

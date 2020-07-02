@@ -11,7 +11,7 @@ function PutDownCardController(deps) {
         matchComService,
         cardFactory,
         playerServiceProvider,
-        stateMemento,
+        gameActionTimeMachine,
         playerRequirementUpdaterFactory,
         playerServiceFactory,
         playerRequirementServicesFactory,
@@ -38,7 +38,7 @@ function PutDownCardController(deps) {
 
         checkIfCanPutDownCard({ playerId, location, cardData, choice });
 
-        stateMemento.saveStateForCardId(cardId);
+        gameActionTimeMachine.saveStateForCardId(cardId);
 
         removeCardFromCurrentLocation({ playerId, location, cardData });
         if (location.startsWith('station')) {
@@ -56,7 +56,7 @@ function PutDownCardController(deps) {
         const playerStateService = playerServiceProvider.getStateServiceById(playerId);
         const card = playerStateService.createBehaviourCardById(cardId);
         if (card.type === 'event') {
-            stateMemento.revertStateToBeforeCardWasPutDown(cardId);
+            gameActionTimeMachine.revertStateToBeforeCardWasPutDown(cardId);
         }
 
         matchComService.emitCurrentStateToPlayers();
@@ -74,7 +74,7 @@ function PutDownCardController(deps) {
         const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
         const targetCard = opponentStateService.createBehaviourCardById(targetCardId);
 
-        stateMemento.revertStateToBeforeCardWasPutDown(targetCardId);
+        gameActionTimeMachine.revertStateToBeforeCardWasPutDown(targetCardId);
 
         const turnControl = playerServiceFactory.turnControl(playerId);
         if (turnControl.opponentHasControlOfPlayersTurn()) {

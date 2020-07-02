@@ -29,37 +29,21 @@ const {PHASES} = require('../../shared/phases.js');
 const {inspect} = require('util');
 
 module.exports = function ({
-                               players,
-                               matchId,
-                               cardInfoRepository,
-                               logger,
-                               rawCardDataRepository,
-                               endMatch,
-                               gameConfig,
-                               actionPointsCalculator = ActionPointsCalculator({cardInfoRepository}),
-                               registerLogGame
-                           }) {
-
-    const playerIds = players.map(p => p.id);
-    const firstPlayerId = randomItem(playerIds);
-    const playerOrder = [
-        firstPlayerId,
-        playerIds.find(id => id !== firstPlayerId)
-    ];
-
-    const state = {
-        mode: MatchMode.firstMode,
-        gameStartTime: Date.now(),
-        turn: 1,
-        currentPlayer: firstPlayerId,
-        playerOrder,
-        playersConnected: 0,
-        readyPlayerIds: [],
-        ended: false,
-        retreatedPlayerId: null,
-        lastStandInfo: null,
-        playerStateById: {}
-    };
+    players,
+    matchId,
+    cardInfoRepository,
+    logger,
+    rawCardDataRepository,
+    endMatch,
+    gameConfig,
+    actionPointsCalculator = ActionPointsCalculator({cardInfoRepository}),
+    registerLogGame
+}) {
+    const state = createMatchState({
+        matchId,
+        playerIds: players.map(p => p.id),
+        firstPlayerId: randomItem(players.map(p => p.id))
+    });
 
     const serviceFactoryFactory = ServiceFactoryFactory({
         state,
@@ -83,7 +67,6 @@ module.exports = function ({
     const playerServiceProvider = playerServiceFactory.playerServiceProvider();
     const stateChangeListener = new StateChangeListener({playerServiceProvider, matchService, logger});
     const matchComService = new MatchComService({
-        matchId,
         players,
         logger,
         matchService,
@@ -118,7 +101,7 @@ module.exports = function ({
         playerServiceFactory,
         playerRequirementServicesFactory,
         playerCardServicesFactory,
-        stateMemento: gameServiceFactory.stateMemento(),
+        gameActionTimeMachine: gameServiceFactory.gameActionTimeMachine(),
         gameConfig
     };
 
@@ -135,22 +118,6 @@ module.exports = function ({
     const overworkController = OverworkController(controllerDeps);
     const perfectPlanController = PerfectPlanController(controllerDeps);
 
-    const unwrappedApi = {
-        id: matchId,
-        matchId, //TODO Remove all uses
-        get players() {
-            return matchComService.getPlayers();
-        },
-        start: startGameController.start,
-        refresh,
-        getOwnState: getPlayerState,
-        restoreFromState,
-        toClientModel,
-        hasEnded,
-        saveMatch: debugController.onSaveMatch,
-        updatePlayer: matchComService.updatePlayer.bind(matchComService),
-        timeAlive: debugController.timeAlive
-    };
     const api = {
         selectPlayerToStart: startGameController.selectPlayerToStart,
         selectCommander: startGameController.selectCommander,
@@ -189,7 +156,30 @@ module.exports = function ({
         cheat: cheatController.onCheat
     };
     return {
-        ...unwrappedApi,
+        get id() {
+            return matchService.matchId();
+        },
+        get matchId() {
+            return matchService.matchId();
+        },
+        get players() {
+            return matchComService.getPlayers();
+        },
+        playerIds() {
+            return matchService.getPlayerIds();
+        },
+        start: startGameController.start,
+        refresh,
+        getOwnState: getPlayerState,
+        restoreFromState,
+        getRestorableState,
+        restoreFromRestorableState,
+        toClientModel,
+        hasEnded,
+        saveMatch: debugController.onSaveMatch,
+        updatePlayer: matchComService.updatePlayer.bind(matchComService),
+        timeAlive: debugController.timeAlive,
+
         ...wrapApi({api, matchComService, stateChangeListener})
     };
 
@@ -253,11 +243,19 @@ module.exports = function ({
         state.playersConnected = 2;
     }
 
+    function getRestorableState() {
+        return gameServiceFactory.matchRestorer().getRestorableState();
+    }
+
+    function restoreFromRestorableState(restorableStateJson) {
+        return gameServiceFactory.matchRestorer().restoreFromRestorableState({restorableStateJson});
+    }
+
     function toClientModel() {
         const players = matchComService.getPlayers();
         return {
             playerIds: players.map(p => p.id),
-            id: matchId
+            id: matchService.matchId()
         }
     }
 
@@ -338,6 +336,30 @@ function PlayerCommand(Command, deps) {
             });
         }
     };
+}
+
+function createMatchState({
+    firstPlayerId,
+    playerIds,
+    matchId
+}) {
+    return {
+        matchId,
+        mode: MatchMode.firstMode,
+        gameStartTime: Date.now(),
+        turn: 1,
+        currentPlayer: firstPlayerId,
+        playerOrder: [
+            firstPlayerId,
+            playerIds.find(id => id !== firstPlayerId)
+        ],
+        playersConnected: 0,
+        readyPlayerIds: [],
+        ended: false,
+        retreatedPlayerId: null,
+        lastStandInfo: null,
+        playerStateById: {}
+    }
 }
 
 function randomItem(collection) {
