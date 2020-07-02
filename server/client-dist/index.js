@@ -1327,7 +1327,7 @@ eval("\n\nconst NullState = {\n  startTime: 0,\n  duration: 0,\n  events: []\n};
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nmodule.exports = function ({\n  opponentClock,\n  playerClock\n}) {\n  return {\n    switchTo,\n    hasEnded,\n    resetAll\n  };\n\n  function switchTo() {\n    opponentClock.stop();\n    playerClock.start();\n  }\n\n  function hasEnded() {\n    return playerClock.getTime() <= 0;\n  }\n\n  function resetAll(timePerPlayerInMinute) {\n    const duration = (timePerPlayerInMinute || 15) * 60 * 1000;\n    opponentClock.reset(duration);\n    playerClock.reset(duration);\n  }\n};\n\n//# sourceURL=webpack:///../shared/gameTimer/PlayerGameTimer.js?");
+eval("\n\nmodule.exports = function ({\n  opponentClock,\n  playerClock\n}) {\n  return {\n    switchTo,\n    hasEnded,\n    resetAll\n  };\n\n  function switchTo() {\n    opponentClock.stop();\n    playerClock.start();\n  }\n\n  function hasEnded() {\n    return playerClock.getTime() <= 0;\n  }\n\n  function resetAll(timePerPlayerInMinutes) {\n    const duration = (timePerPlayerInMinutes || 15) * 60 * 1000;\n    opponentClock.reset(duration);\n    playerClock.reset(duration);\n  }\n};\n\n//# sourceURL=webpack:///../shared/gameTimer/PlayerGameTimer.js?");
 
 /***/ }),
 
