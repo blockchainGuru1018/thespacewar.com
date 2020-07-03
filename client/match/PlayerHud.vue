@@ -324,6 +324,10 @@
                 setTimeout(() => {
                     this.nextPhaseButtonDisabled = false;
                 }, 1000);
+
+                return this.validateAndGoToNextPhase();
+            },
+            validateAndGoToNextPhase() {
                 const validationsForChangePhase = [
                     {
                         validationFunc: this.isActionPhaseAndHaveNotPutDownStationCard,
@@ -338,16 +342,16 @@
                         msg: `You have a spaceship or missile that has not moved and/or attacked. Are you sure you want to end your turn?`
                     }
                 ];
-
                 for (let i = this.nextTurnValidationIndex; i < validationsForChangePhase.length; i++) {
                     const validation = validationsForChangePhase[i];
                     if (validation.validationFunc()) {
-                        this.nextTurnValidationIndex++;
+                        this.nextTurnValidationIndex = i + 1;
                         this.displayConfirmationModal(validation.msg);
                         return;
                     }
                 }
                 this.nextTurnValidationIndex = this.nextPhaseWithAction === PHASES.wait ? 0 : this.nextTurnValidationIndex;
+                this.displayConfirmLog = false;
                 return this.goToNextPhase();
             },
             isActionPhaseAndHaveCardsAndActionPointsLeft() {
@@ -363,8 +367,9 @@
                     this.canPutDownStationCards && this.canPutDownMoreStationCardsThisTurn;
             },
             goToNextPhaseAndCloseModal() {
-                this.displayConfirmLog = false;
-                this.nextPhaseClick();
+
+                // this.displayConfirmLog = false;
+                this.validateAndGoToNextPhase();
             },
             displayConfirmationModal(contentMessage) {
                 this.confirmModalContentText = contentMessage;
@@ -526,8 +531,10 @@
         text-align: center;
         justify-content: center;
         font-size: x-large;
+
         span {
             cursor: pointer;
+
             &:hover {
                 color: red;
                 transition: 0.5s;
@@ -553,6 +560,7 @@
 
     .confirmDialogContent {
         width: 100%;
+
         p {
             margin: 20px;
         }
