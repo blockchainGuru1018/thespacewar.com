@@ -10,7 +10,8 @@ const propertyMap = {
     ACCESS_KEY: 'accessKey',
     NICIA_SATU_STARTS_WITH_ENERGY_SHIELD: 'niciaSatuStartsWithEnergyShield',
     TIME_PER_PLAYER_IN_MINUTES: 'timePerPlayerInMinutes',
-    RECYCLE_AT_START_OF_GAME: 'recycleAtStartOfGame', 
+    RECYCLE_AT_START_OF_GAME: 'recycleAtStartOfGame',
+    SECONDS_OF_WAIT_BETWEEN_ACTIONS_OF_AI_BOT: 'secondsOfWaitBetweenActionsOfAiBot', 
 };
 
 const Defaults = convertConfig(DEFAULT_CONFIG);
@@ -29,7 +30,8 @@ function GameConfig({
     accessKey = Defaults.accessKey,
     timePerPlayerInMinutes = Defaults.accessKey,
     niciaSatuStartsWithEnergyShield = Defaults.niciaSatuStartsWithEnergyShield,
-    recycleAtStartOfGame = Defaults.recycleAtStartOfGame
+    recycleAtStartOfGame = Defaults.recycleAtStartOfGame,
+    secondsOfWaitBetweenActionsOfAiBot = Defaults.secondsOfWaitBetweenActionsOfAiBot
 } = {}) {
 
     return {
@@ -43,7 +45,8 @@ function GameConfig({
         accessKey: () => accessKey,
         timePerPlayerInMinutes: () => timePerPlayerInMinutes,
         niciaSatuStartsWithEnergyShield: () => niciaSatuStartsWithEnergyShield,
-        recycleAtStartOfGame: () => recycleAtStartOfGame
+        recycleAtStartOfGame: () => recycleAtStartOfGame,
+        secondsOfWaitBetweenActionsOfAiBot: () => Math.round(secondsOfWaitBetweenActionsOfAiBot * 1000),
     };
 }
 

@@ -26,7 +26,7 @@ module.exports = function ({
     rawCardDataRepository,
     userRepository,
     gameConfig,
-    delay = 0,
+    delay = false,
     createBot = options => Bot(options)
 }) {
 
@@ -40,7 +40,7 @@ module.exports = function ({
     function spawnWithDelayIfSet() {
         if (delay) {
             clearTimeout(timeoutId);
-            timeoutId = setTimeout(spawn, delay);
+            timeoutId = setTimeout(spawn, gameConfig.secondsOfWaitBetweenActionsOfAiBot());
         }
         else {
             spawn();
