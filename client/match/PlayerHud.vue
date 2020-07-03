@@ -350,7 +350,7 @@
                         return;
                     }
                 }
-                this.nextTurnValidationIndex = this.nextPhaseWithAction === PHASES.wait ? 0 : this.nextTurnValidationIndex;
+                this.nextTurnValidationIndex =  0;
                 this.displayConfirmLog = false;
                 return this.goToNextPhase();
             },
