@@ -8,8 +8,10 @@
             class="infoMode"
             @click="next"
         >
+            <StartTutorialSuggestion v-if="showTutorialSuggestion" />
             <component
                 :is="Steps[step]"
+                v-else
                 :t-id="`infoMode-step${step}`"
             />
         </div>
@@ -17,10 +19,16 @@
 </template>
 <script>
     import TutorialSteps from "./tutorial/TutorialSteps.js";
+    import StartTutorialSuggestion from "./tutorial/StartTutorialSuggestion.vue";
 
     export default {
         name: 'InfoMode',
-        components: TutorialSteps.ComponentsByName,
+        components:
+            {
+                ...TutorialSteps.ComponentsByName,
+                StartTutorialSuggestion
+            },
+        props: ['showTutorialSuggestion'],
         data() {
             return {
                 step: 0
@@ -41,11 +49,17 @@
         },
         methods: {
             next() {
+                if (this.showTutorialSuggestion) {
+                    this.$emit('hide');
+                } else {
+                    this.goToNextTutorialStep();
+                }
+            },
+            goToNextTutorialStep() {
                 if (this.step === this.Steps.length - 1) {
                     this.step = 0;
                     this.$emit('hide');
-                }
-                else {
+                } else {
                     this.step += 1;
                 }
             }
