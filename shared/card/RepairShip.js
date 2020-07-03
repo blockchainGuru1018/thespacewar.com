@@ -5,7 +5,10 @@ module.exports = class RepairShip extends BaseCard {
     constructor({ repairCapability, ...deps }) {
         super(deps);
 
-        this._repairCapability = repairCapability;
+        this._repairCapability = 3;
+    }
+    static get CommonId() {
+        return '90';
     }
 
     canAttack() {

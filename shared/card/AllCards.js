@@ -38,7 +38,7 @@ const classes = [
     require('./DisturbingSignals.js'),
     require('./Fast.js'),
     require('./Drone.js'),
-    require('./Repair.js'),
+    require('./RepairShip.js'),
     require('./DestroyDuration.js'),
     require('./ToxicGas.js'),
     require('./Revive.js'),
