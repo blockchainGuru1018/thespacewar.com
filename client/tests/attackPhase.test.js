@@ -65,6 +65,7 @@ describe('attack phase', () => {
 
         await click('.nextPhaseButton-endTurn');
         assert.elementCount('.confirmDialogHeader', 1);
+        assert.elementText('.confirmDialogContent', `You have a spaceship or missile that has not moved and/or attacked. Are you sure you want to end your turn?`);
     });
 
 
