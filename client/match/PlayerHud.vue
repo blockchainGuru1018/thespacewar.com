@@ -118,8 +118,12 @@
             </template>
             <template slot="footer">
                 <div class="slot-footer-container">
-                    <div class="separator20Percent" />
+                    <div 
+                        v-show="!showOnlyConfirm"
+                        class="separator20Percent"
+                    />
                     <div
+                        v-show="!showOnlyConfirm"
                         class="confirmBoxOption"
                         @click="goToNextPhaseAndCloseModal"
                     >
@@ -127,13 +131,17 @@
                             Yes
                         </span>
                     </div>
-                    <div class="separator30Percent" />
                     <div
+                        v-show="!showOnlyConfirm" 
+                        class="separator30Percent"
+                    />
+                    <div
+                        :class=" showOnlyConfirm? 'confirmDialogCenterButton':''"
                         class="confirmBoxOption"
                         @click="closeModal"
                     >
-                        <span class="marginRight10">
-                            No
+                        <span :class=" showOnlyConfirm? '': 'marginRight10'">
+                            {{ showOnlyConfirm? 'OK' : 'No' }}
                         </span>
                     </div>
                 </div>
@@ -183,7 +191,8 @@
                 nextPhaseButtonDisabled: false,
                 displayConfirmLog: false,
                 confirmModalContentText: '',
-                nextTurnValidationIndex: 0
+                nextTurnValidationIndex: 0,
+                showOnlyConfirm: false,
             };
         },
         computed: {
@@ -193,7 +202,8 @@
             ...mapState([
                 'phase',
                 'playerCardsOnHand',
-                'playerStation'
+                'playerStation',
+                'onLastChangeToWin'
             ]),
             ...mapGetters([
                 'nextPhaseWithAction',
@@ -303,6 +313,15 @@
                 }
             }
         },
+        watch:{
+            onLastChangeToWin(_new, _old){
+                if(_old === false && _new === true){ // TODO only to be clear, but also could be if(_new && (_new && !_old)) 
+                        this.displayConfirmationModal(
+                            `Your timer has reached zero! This is your last chance to make a winning move. You have 3 minutes to complete this turn and after this turn, the victory goes to your opponent.`
+                            , true);
+                }
+            }
+        },
         methods: {
             ...mapActions([
                 'goToNextPhase',
@@ -371,13 +390,15 @@
                 // this.displayConfirmLog = false;
                 this.validateAndGoToNextPhase();
             },
-            displayConfirmationModal(contentMessage) {
+            displayConfirmationModal(contentMessage, showOnlyConfirm = false) {
                 this.confirmModalContentText = contentMessage;
-                this.displayConfirmLog = true
+                this.displayConfirmLog = true;
+                this.showOnlyConfirm = showOnlyConfirm;
             },
             closeModal() {
                 this.nextTurnValidationIndex = this.nextTurnValidationIndex === 0 ? 0 : this.nextTurnValidationIndex - 1;
                 this.displayConfirmLog = false;
+                this.showOnlyConfirm = false;
             },
             hideEnlargedCard() {
                 this.enlargedCardVisible = false;
@@ -556,6 +577,10 @@
 
     .separator20Percent {
         width: 20%;
+    }
+
+    .confirmDialogCenterButton {
+        flex: auto
     }
 
     .confirmDialogContent {
