@@ -116,7 +116,8 @@ module.exports = function (deps) {
             highlightCardIds: [],
             flashAttackedCardId: null,
             flashDiscardPile: false,
-            flashOpponentDiscardPile: false
+            flashOpponentDiscardPile: false,
+            onLastChangeToWin: false,
         },
         getters: {
             isFirstPlayer,
@@ -242,7 +243,8 @@ module.exports = function (deps) {
             triggerFlashDiscardPileEffect,
             triggerFlashOpponentDiscardPileEffect,
             shakeTheScreen,
-            matchIsDead
+            matchIsDead,
+            onLastChangeToWin
         }
     };
 
@@ -880,6 +882,11 @@ module.exports = function (deps) {
             setTimeout(() => window.location.reload(), 3 * 60 * 1000);
         }
 
+        if (getters.gameOn && getters.playerClock.getTime() <= 0 && !state.onLastChangeToWin) {
+            setTimeout(() => window.location.reload(), 3 * 60 * 1000 );
+            dispatch('onLastChangeToWin',true);
+        }
+
         function preMergeHook(key, datum) {
             if (gameHasBegun) {
                 if (key === 'actionLogEntries') {
@@ -1243,5 +1250,9 @@ module.exports = function (deps) {
         const matchData = {id: matchId, playerIds};
 
         localGameDataFacade.setOngoingMatch(matchData);
+    }
+    
+    function onLastChangeToWin({state}, value){
+        state.onLastChangeToWin = value;
     }
 };
