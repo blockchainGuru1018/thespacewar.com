@@ -9,9 +9,13 @@ module.exports = function TimeOutService(
     const timeOutPerPlayer = new Map();
 
     return {
-        updateTimeOutForPlayer
+        updateTimeOutForPlayer,
+        getForPlayer,
     };
 
+    function getForPlayer(playerId) {
+        return timeOutPerPlayer.get(playerId);
+    }
 
     function updateTimeOutForPlayer(playerId, playerState) {
         if (playerState && playerState.phase !== PHASES.wait) {

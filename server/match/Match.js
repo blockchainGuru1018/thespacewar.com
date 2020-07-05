@@ -182,6 +182,7 @@ module.exports = function ({
         toClientModel,
         hasEnded,
         updateTimeOut,
+        getTimeOutForPlayer,
         saveMatch: debugController.onSaveMatch,
         updatePlayer: matchComService.updatePlayer.bind(matchComService),
         timeAlive: debugController.timeAlive,
@@ -193,7 +194,9 @@ module.exports = function ({
         const playerState = getPlayerState(playerId);
         timeOutService.updateTimeOutForPlayer(playerId,playerState);
     }
-
+    function getTimeOutForPlayer(playerId) {
+        return timeOutService.getForPlayer(playerId);
+    }
     function refresh(playerId) {
         startGameController.repairPotentiallyInconsistentState(playerId);
         matchComService.emitCurrentStateToPlayers();
