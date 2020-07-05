@@ -70,23 +70,11 @@ module.exports = function ({
     function onDisconnect() {
         if (connectedUserId) {
             userRepository.updateUser(connectedUserId, user => {
-                disconnectedTimeOutHandler(connectedUserId);
                 user.disconnected();
             });
         }
     }
 
-    function disconnectedTimeOutHandler(userId){
-        logger.log(`user with id ${userId} as disconnected creating timeout function`);
-         setTimeout(() => {
-            const onGoingMatch = matchRepository.getForUser(userId);
-            const userThatWillRetreat = userRepository.getUser(userId);
-            if (onGoingMatch && userThatWillRetreat && !userThatWillRetreat.isConnected) {
-        logger.log(`user with id ${userId} was forced to retreat`);
-                onGoingMatch.retreat()
-            }
-        }, 30000);
-    }
 
     async function onMatchMessage(data) {
         if (!isSocketMessageAuthorized(data)) {
