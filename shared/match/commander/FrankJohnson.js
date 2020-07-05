@@ -1,4 +1,3 @@
-const FrankJohnsonConfig = require('./config/FrankJohnsonConfig.json');
 const GlobalConfig = require('../../../config.json');
 module.exports = function () {
     return {
