@@ -10,7 +10,6 @@
     </portal>
 </template>
 <script>
-    // TODO: find a way when gameOn to no show the tutorial sugguestion when loading
 
     import InfoMode from "./InfoMode.vue";
     import Vuex from 'vuex';
