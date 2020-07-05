@@ -21,6 +21,7 @@ const PlayerServiceProvider = require('../../shared/match/PlayerServiceProvider.
 const PlayerOverworkFactory = require('../../shared/match/overwork/PlayerOverworkFactory.js');
 const ServiceFactoryFactory = require('../../shared/match/ServiceFactoryFactory.js');
 const LookAtStationRow = require('../../shared/match/card/actions/LookAtStationRow.js');
+const TimeOutService = require('./service/TimeOutService.js');
 const CardsThatCanLookAtHandSizeStationRow = require('../../shared/match/card/query/CardsThatCanLookAtHandSizeStationRow.js');
 const CardCanLookAtHandSizeStationRow = require('../../shared/match/card/query/CardCanLookAtHandSizeStationRow.js');
 const CreatePlayerRequirementUpdater = require('../../shared/match/requirement/CreatePlayerRequirementUpdater.js');
@@ -29,21 +30,23 @@ const {PHASES} = require('../../shared/phases.js');
 const {inspect} = require('util');
 
 module.exports = function ({
-    players,
-    matchId,
-    cardInfoRepository,
-    logger,
-    rawCardDataRepository,
-    endMatch,
-    gameConfig,
-    actionPointsCalculator = ActionPointsCalculator({cardInfoRepository}),
-    registerLogGame
-}) {
+                               players,
+                               matchId,
+                               cardInfoRepository,
+                               logger,
+                               rawCardDataRepository,
+                               endMatch,
+                               gameConfig,
+                               actionPointsCalculator = ActionPointsCalculator({cardInfoRepository}),
+                               registerLogGame,
+
+                           }) {
     const state = createMatchState({
         matchId,
         playerIds: players.map(p => p.id),
         firstPlayerId: randomItem(players.map(p => p.id))
     });
+
 
     const serviceFactoryFactory = ServiceFactoryFactory({
         state,
@@ -62,7 +65,6 @@ module.exports = function ({
     const playerCardServicesFactory = serviceFactoryFactory.playerCardServicesFactory();
     const playerRequirementServicesFactory = serviceFactoryFactory.playerRequirementServicesFactory();
     const CardFacade = serviceFactoryFactory.cardFacadeContext();
-
     const matchService = playerServiceFactory.matchService();
     const playerServiceProvider = playerServiceFactory.playerServiceProvider();
     const stateChangeListener = new StateChangeListener({playerServiceProvider, matchService, logger});
@@ -75,6 +77,7 @@ module.exports = function ({
         gameServiceFactory,
         stateChangeListener
     });
+    const timeOutService = new TimeOutService({gameConfig,retreat});
 
     const playerRequirementUpdaterFactory = new PlayerRequirementUpdaterFactory({
         playerServiceProvider,
@@ -90,6 +93,7 @@ module.exports = function ({
         matchService,
         matchComService,
         restoreFromState,
+        updateTimeOut,
         playerServiceProvider,
         cardFactory: playerServiceFactory.cardFactory(),
         stateChangeListener,
@@ -155,6 +159,7 @@ module.exports = function ({
         restoreSavedMatch: debugController.onRestoreSavedMatch,
         cheat: cheatController.onCheat
     };
+
     return {
         get id() {
             return matchService.matchId();
@@ -176,12 +181,18 @@ module.exports = function ({
         restoreFromRestorableState,
         toClientModel,
         hasEnded,
+        updateTimeOut,
         saveMatch: debugController.onSaveMatch,
         updatePlayer: matchComService.updatePlayer.bind(matchComService),
         timeAlive: debugController.timeAlive,
 
         ...wrapApi({api, matchComService, stateChangeListener})
     };
+
+    function updateTimeOut(playerId) {
+        const playerState = getPlayerState(playerId);
+        timeOutService.updateTimeOutForPlayer(playerId,playerState);
+    }
 
     function refresh(playerId) {
         startGameController.repairPotentiallyInconsistentState(playerId);
@@ -339,10 +350,10 @@ function PlayerCommand(Command, deps) {
 }
 
 function createMatchState({
-    firstPlayerId,
-    playerIds,
-    matchId
-}) {
+                              firstPlayerId,
+                              playerIds,
+                              matchId
+                          }) {
     return {
         matchId,
         mode: MatchMode.firstMode,

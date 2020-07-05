@@ -1,12 +1,12 @@
 module.exports = function ({
-    socketRepository,
-    matchRepository,
-    userRepository,
-    securityController,
-    logger,
-    controllers,
-    connection
-}) {
+                               socketRepository,
+                               matchRepository,
+                               userRepository,
+                               securityController,
+                               logger,
+                               controllers,
+                               connection
+                           }) {
 
     const BotId = 'BOT';
     let connectedUserId;
@@ -20,7 +20,7 @@ module.exports = function ({
         connection.on('match', onMatchMessage);
     }
 
-    async function onRegisterConnection({ secret, userId }) {
+    async function onRegisterConnection({secret, userId}) {
         if (!securityController.isAuthorized(secret, userId)) {
             logger.log('Unauthorized user performing action on match', 'authorization');
             return;
@@ -40,15 +40,14 @@ module.exports = function ({
                     playerId: userId,
                     matchId: ongoingMatch.id
                 });
-            }
-            catch (error) {
+            } catch (error) {
                 logger.log('Error when registering connection for user: ' + error.message, 'reconnect error');
                 logger.log('Raw error: ' + error, 'reconnect error');
             }
         }
     }
 
-    async function onReconnectBot({ secret, userId }) {
+    async function onReconnectBot({secret, userId}) {
         if (!securityController.isAuthorized(secret, userId)) {
             logger.log('Unauthorized user performing action on match', 'authorization');
             return;
@@ -61,8 +60,7 @@ module.exports = function ({
                     playerId: userId,
                     matchId: ongoingMatch.id
                 });
-            }
-            catch (error) {
+            } catch (error) {
                 logger.log('Error when reconnecting bot: ' + error.message, 'reconnect error');
                 logger.log('Raw error: ' + error, 'reconnect error');
             }
@@ -72,9 +70,22 @@ module.exports = function ({
     function onDisconnect() {
         if (connectedUserId) {
             userRepository.updateUser(connectedUserId, user => {
+                disconnectedTimeOutHandler(connectedUserId);
                 user.disconnected();
             });
         }
+    }
+
+    function disconnectedTimeOutHandler(userId){
+        logger.log(`user with id ${userId} as disconnected creating timeout function`);
+         setTimeout(() => {
+            const onGoingMatch = matchRepository.getForUser(userId);
+            const userThatWillRetreat = userRepository.getUser(userId);
+            if (onGoingMatch && userThatWillRetreat && !userThatWillRetreat.isConnected) {
+        logger.log(`user with id ${userId} was forced to retreat`);
+                onGoingMatch.retreat()
+            }
+        }, 30000);
     }
 
     async function onMatchMessage(data) {
@@ -85,8 +96,7 @@ module.exports = function ({
 
         try {
             await controllers.match.onAction(data);
-        }
-        catch (error) {
+        } catch (error) {
             const rawErrorMessage = JSON.stringify(error, null, 4);
             const dataString = JSON.stringify(data, null, 4);
             const errorMessage = `(${new Date().toISOString()}) Error in action to match: ${error.message} - DATA: ${dataString} - RAW ERROR: ${rawErrorMessage}`
