@@ -1,17 +1,10 @@
-import {createLocalVue, mount} from "@vue/test-utils";
-import StartTutorialSuggestion from "../match/infoMode/tutorial/StartTutorialSuggestion";
-
 const FakeState = require('../testUtils/FakeState.js');
 const {createController} = require('../testUtils');
 const getCardImageUrl = require('../utils/getCardImageUrl.js');
 const {
     assert,
-    refute,
     sinon,
-    timeout,
-    dom: {
-        click
-    }
+    timeout
 } = require('../testUtils/bocha-jest/bocha-jest.js');
 
 let controller;
@@ -26,10 +19,7 @@ afterEach(() => {
     controller && controller.tearDown();
 });
 
-
 describe('StartTutorialSuggestion info screen', () => {
-
-
     it('Should not be displayed when gameOn its true', async () => {
         await renderWithoutState();
         const {dispatch} = controller;
@@ -40,9 +30,7 @@ describe('StartTutorialSuggestion info screen', () => {
     it('Should be displayed when gameOn its false', async () => {
         await renderWithoutState();
         assert.elementCount('#startTutorialText', 1);
-
     });
-
 });
 
 async function renderWithoutState() {
