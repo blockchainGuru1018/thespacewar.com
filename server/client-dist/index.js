@@ -93,7 +93,7 @@
 /*! exports provided: AMOUNT_OF_CARDS_IN_START_HAND, OVERWORK_IS_ACTIVE, MAX_STATION_CARDS, STATION_CARDS_AT_START, MILL_CARD_AMOUNT, MAX_REPLACES, TIME_TO_COUNTER, USE_ACCESS_KEY, ACCESS_KEY, NICIA_SATU_STARTS_WITH_ENERGY_SHIELD, RECYCLE_AT_START_OF_GAME, TIME_PER_PLAYER_IN_MINUTES, SECONDS_OF_WAIT_BETWEEN_ACTIONS_OF_AI_BOT, MINUTES_OF_INACTIVITY_RESULT_IN_AUTOLOSS, COMMANDER_FRANK_JOHNSON_MAX_STATION_CARDS, default */
 /***/ (function(module) {
 
-eval("module.exports = {\"AMOUNT_OF_CARDS_IN_START_HAND\":6,\"OVERWORK_IS_ACTIVE\":true,\"MAX_STATION_CARDS\":8,\"STATION_CARDS_AT_START\":3,\"MILL_CARD_AMOUNT\":2,\"MAX_REPLACES\":3,\"TIME_TO_COUNTER\":10000,\"USE_ACCESS_KEY\":false,\"ACCESS_KEY\":\"testing123\",\"NICIA_SATU_STARTS_WITH_ENERGY_SHIELD\":true,\"RECYCLE_AT_START_OF_GAME\":false,\"TIME_PER_PLAYER_IN_MINUTES\":0.2,\"SECONDS_OF_WAIT_BETWEEN_ACTIONS_OF_AI_BOT\":3,\"MINUTES_OF_INACTIVITY_RESULT_IN_AUTOLOSS\":5,\"COMMANDER_FRANK_JOHNSON_MAX_STATION_CARDS\":11};\n\n//# sourceURL=webpack:///../config.json?");
+eval("module.exports = {\"AMOUNT_OF_CARDS_IN_START_HAND\":6,\"OVERWORK_IS_ACTIVE\":true,\"MAX_STATION_CARDS\":8,\"STATION_CARDS_AT_START\":3,\"MILL_CARD_AMOUNT\":2,\"MAX_REPLACES\":3,\"TIME_TO_COUNTER\":10000,\"USE_ACCESS_KEY\":false,\"ACCESS_KEY\":\"testing123\",\"NICIA_SATU_STARTS_WITH_ENERGY_SHIELD\":true,\"RECYCLE_AT_START_OF_GAME\":false,\"TIME_PER_PLAYER_IN_MINUTES\":20,\"SECONDS_OF_WAIT_BETWEEN_ACTIONS_OF_AI_BOT\":3,\"MINUTES_OF_INACTIVITY_RESULT_IN_AUTOLOSS\":5,\"COMMANDER_FRANK_JOHNSON_MAX_STATION_CARDS\":11};\n\n//# sourceURL=webpack:///../config.json?");
 
 /***/ }),
 
@@ -1735,7 +1735,7 @@ eval("\n\nconst FrankJohnson = 'FrankJohnson';\nconst NiciaSatu = 'NiciaSatu';\n
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nconst FrankJohnsonConfig = __webpack_require__(/*! ./config/FrankJohnsonConfig.json */ \"../shared/match/commander/config/FrankJohnsonConfig.json\");\n\nmodule.exports = function () {\n  return {\n    maxStationCards: () => FrankJohnsonConfig.maxStationCards\n  };\n};\n\n//# sourceURL=webpack:///../shared/match/commander/FrankJohnson.js?");
+eval("\n\nconst GlobalConfig = __webpack_require__(/*! ../../../config.json */ \"../config.json\");\n\nmodule.exports = function () {\n  return {\n    maxStationCards: () => GlobalConfig.COMMANDER_FRANK_JOHNSON_MAX_STATION_CARDS\n  };\n};\n\n//# sourceURL=webpack:///../shared/match/commander/FrankJohnson.js?");
 
 /***/ }),
 
@@ -1748,17 +1748,6 @@ eval("\n\nconst FrankJohnsonConfig = __webpack_require__(/*! ./config/FrankJohns
 
 "use strict";
 eval("\n\nconst Commander = __webpack_require__(/*! ./Commander.js */ \"../shared/match/commander/Commander.js\");\n\nconst FrankJohnson = __webpack_require__(/*! ./FrankJohnson.js */ \"../shared/match/commander/FrankJohnson.js\");\n\nmodule.exports = function ({\n  playerStateService\n}) {\n  return {\n    has,\n    get,\n    select,\n    hasSelectedSomeCommander\n  };\n\n  function has(commanderType) {\n    return playerStateService.getPlayerState().commanders.includes(commanderType);\n  }\n\n  function get(commanderType) {\n    if (commanderType === Commander.FrankJohnson) {\n      return FrankJohnson();\n    }\n  }\n\n  function select(commanderType) {\n    playerStateService.update(playerState => {\n      playerState.commanders = [commanderType];\n    });\n  }\n\n  function hasSelectedSomeCommander() {\n    const playerState = playerStateService.getPlayerState();\n    const commanders = playerState.commanders;\n    return commanders.length > 0;\n  }\n};\n\n//# sourceURL=webpack:///../shared/match/commander/PlayerCommanders.js?");
-
-/***/ }),
-
-/***/ "../shared/match/commander/config/FrankJohnsonConfig.json":
-/*!****************************************************************!*\
-  !*** ../shared/match/commander/config/FrankJohnsonConfig.json ***!
-  \****************************************************************/
-/*! exports provided: maxStationCards, default */
-/***/ (function(module) {
-
-eval("module.exports = {\"maxStationCards\":11};\n\n//# sourceURL=webpack:///../shared/match/commander/config/FrankJohnsonConfig.json?");
 
 /***/ }),
 
