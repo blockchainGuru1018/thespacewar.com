@@ -116,7 +116,9 @@ module.exports = function (deps) {
             highlightCardIds: [],
             flashAttackedCardId: null,
             flashDiscardPile: false,
-            flashOpponentDiscardPile: false
+            flashOpponentDiscardPile: false,
+            onLastChangeToWin: false,
+            timeRanOutVSBot: false,
         },
         getters: {
             isFirstPlayer,
@@ -242,7 +244,9 @@ module.exports = function (deps) {
             triggerFlashDiscardPileEffect,
             triggerFlashOpponentDiscardPileEffect,
             shakeTheScreen,
-            matchIsDead
+            matchIsDead,
+            onLastChangeToWin,
+            timeRanOutVSBot
         }
     };
 
@@ -875,9 +879,17 @@ module.exports = function (deps) {
         if (!gameHasBegun) {
             gameHasBegun = true;
         }
-
-        if (getters.gameOn && getters.opponentClock.getTime() <= 0) {
+        if (getters.gameOn && getters.opponentClock.getTime() <= 0 && !isOpponentBot) {
             setTimeout(() => window.location.reload(), 3 * 60 * 1000);
+        }
+
+        if (getters.gameOn && getters.playerClock.getTime() <= 0 && (!state.onLastChangeToWin| !state.timeRanOutVSBot) ) {
+            if(isOpponentBot){
+                dispatch('timeRanOutVSBot',true);
+            }else{
+                setTimeout(() => window.location.reload(), 3 * 60 * 1000 );
+                dispatch('onLastChangeToWin',true);
+            }
         }
 
         function preMergeHook(key, datum) {
@@ -1243,5 +1255,17 @@ module.exports = function (deps) {
         const matchData = {id: matchId, playerIds};
 
         localGameDataFacade.setOngoingMatch(matchData);
+    }
+    
+    function onLastChangeToWin({state}, value){
+        state.onLastChangeToWin = value;
+    }
+    
+    function timeRanOutVSBot({state}, value){
+        state.timeRanOutVSBot = value;
+    }
+
+    function isOpponentBot(){
+        return opponentUser.id === 'BOT';
     }
 };
