@@ -203,7 +203,8 @@
                 'phase',
                 'playerCardsOnHand',
                 'playerStation',
-                'onLastChangeToWin'
+                'onLastChangeToWin',
+                'timeRanOutVSBot'
             ]),
             ...mapGetters([
                 'nextPhaseWithAction',
@@ -318,6 +319,13 @@
                 if(_old === false && _new === true){ // TODO only to be clear, but also could be if(_new && (_new && !_old)) 
                         this.displayConfirmationModal(
                             `Your timer has reached zero! This is your last chance to make a winning move. You have 3 minutes to complete this turn and after this turn, the victory goes to your opponent.`
+                            , true);
+                }
+            },
+            timeRanOutVSBot(_new, _old){
+                if(_old === false && _new === true){ // TODO only to be clear, but also could be if(_new && (_new && !_old)) 
+                        this.displayConfirmationModal(
+                            `Your time is out. Normally this would be your final turn to win the game otherwise you would loose but as you are playing versus the bot and probably still learning how to play you can keep going how long you want.`
                             , true);
                 }
             }

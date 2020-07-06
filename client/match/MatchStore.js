@@ -118,6 +118,7 @@ module.exports = function (deps) {
             flashDiscardPile: false,
             flashOpponentDiscardPile: false,
             onLastChangeToWin: false,
+            timeRanOutVSBot: false,
         },
         getters: {
             isFirstPlayer,
@@ -244,7 +245,8 @@ module.exports = function (deps) {
             triggerFlashOpponentDiscardPileEffect,
             shakeTheScreen,
             matchIsDead,
-            onLastChangeToWin
+            onLastChangeToWin,
+            timeRanOutVSBot
         }
     };
 
@@ -877,14 +879,17 @@ module.exports = function (deps) {
         if (!gameHasBegun) {
             gameHasBegun = true;
         }
-
-        if (getters.gameOn && getters.opponentClock.getTime() <= 0) {
+        if (getters.gameOn && getters.opponentClock.getTime() <= 0 && !isOpponentBot) {
             setTimeout(() => window.location.reload(), 3 * 60 * 1000);
         }
 
-        if (getters.gameOn && getters.playerClock.getTime() <= 0 && !state.onLastChangeToWin) {
-            setTimeout(() => window.location.reload(), 3 * 60 * 1000 );
-            dispatch('onLastChangeToWin',true);
+        if (getters.gameOn && getters.playerClock.getTime() <= 0 && (!state.onLastChangeToWin| !state.timeRanOutVSBot) ) {
+            if(isOpponentBot){
+                dispatch('timeRanOutVSBot',true);
+            }else{
+                setTimeout(() => window.location.reload(), 3 * 60 * 1000 );
+                dispatch('onLastChangeToWin',true);
+            }
         }
 
         function preMergeHook(key, datum) {
@@ -1254,5 +1259,13 @@ module.exports = function (deps) {
     
     function onLastChangeToWin({state}, value){
         state.onLastChangeToWin = value;
+    }
+    
+    function timeRanOutVSBot({state}, value){
+        state.timeRanOutVSBot = value;
+    }
+
+    function isOpponentBot(){
+        return opponentUser.id === 'BOT';
     }
 };

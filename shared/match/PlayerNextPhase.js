@@ -108,7 +108,7 @@ module.exports = function ({
             matchService.goToNextPlayer();
         }
 
-        if (playerGameTimer.hasEnded()) {
+        if (playerGameTimer.hasEnded() && matchService.gameIsHumanVsHuman()) {
             matchService.playerRetreat(getPlayerId());
         }
     }
