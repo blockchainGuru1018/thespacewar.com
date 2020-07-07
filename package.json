@@ -7,7 +7,8 @@
     "doc": "docs"
   },
   "scripts": {
-    "prettier": "prettier --write '**/*.js'",
+    "prettier": "./node_modules/.bin/prettier --write '**/*.js'",
+    "lint": "./node_modules/.bin/eslint --fix --env-info .",
     "test": "./node_modules/.bin/jest",
     "dev:test": "./node_modules/.bin/jest --watch",
     "dev:client": "cd ./client && npm run build-watch",
