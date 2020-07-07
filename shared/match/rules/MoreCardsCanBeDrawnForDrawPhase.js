@@ -2,10 +2,10 @@
 // the number of draw-row station cards you have. It does NOT take into account the amount
 // of cards left in your deck for example.
 module.exports = function MoreCardsCanBeDrawnForDrawPhase({
-    playerPhase,
-    countCardsLeftToDrawForDrawPhase,
+  playerPhase,
+  countCardsLeftToDrawForDrawPhase,
 }) {
-    return () => {
-        return playerPhase.isDraw() && countCardsLeftToDrawForDrawPhase() > 0;
-    };
+  return () => {
+    return playerPhase.isDraw() && countCardsLeftToDrawForDrawPhase() > 0;
+  };
 };

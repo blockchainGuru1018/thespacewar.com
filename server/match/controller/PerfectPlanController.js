@@ -1,15 +1,13 @@
 module.exports = function ({ playerServiceFactory }) {
-    return {
-        perfectPlan,
-    };
+  return {
+    perfectPlan,
+  };
 
-    function perfectPlan(playerId) {
-        const playerPerfectPlan = playerServiceFactory.playerPerfectPlan(
-            playerId
-        );
-        if (!playerPerfectPlan.canIssuePerfectPlan())
-            throw new Error("Cannot issue Overwork");
+  function perfectPlan(playerId) {
+    const playerPerfectPlan = playerServiceFactory.playerPerfectPlan(playerId);
+    if (!playerPerfectPlan.canIssuePerfectPlan())
+      throw new Error("Cannot issue Overwork");
 
-        playerPerfectPlan.perfectPlan();
-    }
+    playerPerfectPlan.perfectPlan();
+  }
 };

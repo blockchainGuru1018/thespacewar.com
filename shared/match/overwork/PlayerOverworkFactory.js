@@ -1,9 +1,9 @@
 module.exports = function ({ playerServiceFactory }) {
-    return {
-        create,
-    };
+  return {
+    create,
+  };
 
-    function create(playerId) {
-        return playerServiceFactory.playerOverwork(playerId);
-    }
+  function create(playerId) {
+    return playerServiceFactory.playerOverwork(playerId);
+  }
 };

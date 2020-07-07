@@ -4,17 +4,17 @@ const CanCounterCardsWithCostOrLess = require("./mixins/CanCounterCardsWithCostO
 const CanBePutDownAnyTime = require("./mixins/CanBePutDownAnyTime.js");
 
 module.exports = class Luck extends CanBePutDownAnyTime(
-    CanCounterCardsWithCostOrLess(2, BaseCard)
+  CanCounterCardsWithCostOrLess(2, BaseCard)
 ) {
-    static get CommonId() {
-        return info.CommonId;
-    }
+  static get CommonId() {
+    return info.CommonId;
+  }
 
-    static get Info() {
-        return info;
-    }
+  static get Info() {
+    return info;
+  }
 
-    get choicesWhenPutDownInHomeZone() {
-        return info.choicesWhenPutDownInHomeZone;
-    }
+  get choicesWhenPutDownInHomeZone() {
+    return info.choicesWhenPutDownInHomeZone;
+  }
 };

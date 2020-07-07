@@ -9,15 +9,15 @@ app.use(CookieParser());
 const Port = 8081;
 const portPlayGame = process.env.PORT || 8080;
 app.get("/fake-login", (req, res) => {
-    const cookieString = new LoginCookieString()
-        .id("august-id")
-        .username("august-name")
-        .country("se")
-        .rating("10")
-        .generateHash()
-        .create();
-    res.cookie("loggedin", cookieString);
-    res.redirect(`http://${req.hostname}:${portPlayGame}`);
+  const cookieString = new LoginCookieString()
+    .id("august-id")
+    .username("august-name")
+    .country("se")
+    .rating("10")
+    .generateHash()
+    .create();
+  res.cookie("loggedin", cookieString);
+  res.redirect(`http://${req.hostname}:${portPlayGame}`);
 });
 
 app.listen(Port, () => console.log("Listening on port: " + Port));

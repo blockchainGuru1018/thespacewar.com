@@ -1,11 +1,11 @@
 module.exports = {
-    withStubs,
+  withStubs,
 };
 
 function withStubs(stubs = {}) {
-    return {
-        canPutDownEventCards: () => true,
-        canPutDownCardsInHomeZone: () => true,
-        ...stubs,
-    };
+  return {
+    canPutDownEventCards: () => true,
+    canPutDownCardsInHomeZone: () => true,
+    ...stubs,
+  };
 }

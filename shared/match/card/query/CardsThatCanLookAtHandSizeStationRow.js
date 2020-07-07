@@ -1,10 +1,10 @@
 module.exports = function ({ playerStateService }) {
-    return () => {
-        return playerStateService.getMatchingBehaviourCards((card) => {
-            return (
-                card.grantsAbilityToLookAtHandSizeStationRow &&
-                card.canLookAtHandSizeStationRow()
-            );
-        });
-    };
+  return () => {
+    return playerStateService.getMatchingBehaviourCards((card) => {
+      return (
+        card.grantsAbilityToLookAtHandSizeStationRow &&
+        card.canLookAtHandSizeStationRow()
+      );
+    });
+  };
 };

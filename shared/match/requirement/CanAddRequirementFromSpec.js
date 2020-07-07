@@ -6,72 +6,69 @@ const infoByCardCommonId = require("../../card/info/infoByCardCommonId.js");
 // requirement should be added or not.
 // Maybe there is a better name to this class to clarify this fact?
 module.exports = function ({ playerStateService, requirementConditions }) {
-    return {
-        forCardPutDownInHomeZone: () => true,
-        forCardPutDownInHomeZoneWithChoice,
-        forCardWithSpecAndTarget,
+  return {
+    forCardPutDownInHomeZone: () => true,
+    forCardPutDownInHomeZoneWithChoice,
+    forCardWithSpecAndTarget,
+  };
+
+  function forCardPutDownInHomeZoneWithChoice(cardData, choice) {
+    const info = infoByCardCommonId[cardData.commonId];
+    if (!info) return;
+
+    const card = playerStateService.createBehaviourCard(cardData);
+    const spec = info.requirementSpecsWhenPutDownInHomeZone;
+    if (!spec) return;
+
+    return forCardWithSpecAndTarget(card, spec, choice);
+  }
+
+  function forCardWithSpecAndTarget(card, spec, target = null) {
+    return (
+      spec.forOpponent.every(
+        meetsAll([
+          LivesUpToOnlyWhenCondition(card, target),
+          LivesUpToOnlyWhenNotCondition(card, target),
+        ])
+      ) &&
+      spec.forPlayer.every(
+        meetsAll([
+          LivesUpToOnlyWhenCondition(card, target),
+          LivesUpToOnlyWhenNotCondition(card, target),
+        ])
+      )
+    );
+  }
+
+  function meetsAll(fns) {
+    return (data) => fns.every((fn) => fn(data));
+  }
+
+  function LivesUpToOnlyWhenCondition(card, choice) {
+    return (specForPlayer) => {
+      if (specForPlayer.onlyWhen) {
+        return requirementConditions.onlyWhen(specForPlayer.onlyWhen, {
+          card,
+          specForPlayer,
+          target: choice,
+        });
+      } else {
+        return true;
+      }
     };
+  }
 
-    function forCardPutDownInHomeZoneWithChoice(cardData, choice) {
-        const info = infoByCardCommonId[cardData.commonId];
-        if (!info) return;
-
-        const card = playerStateService.createBehaviourCard(cardData);
-        const spec = info.requirementSpecsWhenPutDownInHomeZone;
-        if (!spec) return;
-
-        return forCardWithSpecAndTarget(card, spec, choice);
-    }
-
-    function forCardWithSpecAndTarget(card, spec, target = null) {
-        return (
-            spec.forOpponent.every(
-                meetsAll([
-                    LivesUpToOnlyWhenCondition(card, target),
-                    LivesUpToOnlyWhenNotCondition(card, target),
-                ])
-            ) &&
-            spec.forPlayer.every(
-                meetsAll([
-                    LivesUpToOnlyWhenCondition(card, target),
-                    LivesUpToOnlyWhenNotCondition(card, target),
-                ])
-            )
-        );
-    }
-
-    function meetsAll(fns) {
-        return (data) => fns.every((fn) => fn(data));
-    }
-
-    function LivesUpToOnlyWhenCondition(card, choice) {
-        return (specForPlayer) => {
-            if (specForPlayer.onlyWhen) {
-                return requirementConditions.onlyWhen(specForPlayer.onlyWhen, {
-                    card,
-                    specForPlayer,
-                    target: choice,
-                });
-            } else {
-                return true;
-            }
-        };
-    }
-
-    function LivesUpToOnlyWhenNotCondition(card, choice) {
-        return (specForPlayer) => {
-            if (specForPlayer.onlyWhenNot) {
-                return requirementConditions.onlyWhenNot(
-                    specForPlayer.onlyWhenNot,
-                    {
-                        card,
-                        specForPlayer,
-                        target: choice,
-                    }
-                );
-            } else {
-                return true;
-            }
-        };
-    }
+  function LivesUpToOnlyWhenNotCondition(card, choice) {
+    return (specForPlayer) => {
+      if (specForPlayer.onlyWhenNot) {
+        return requirementConditions.onlyWhenNot(specForPlayer.onlyWhenNot, {
+          card,
+          specForPlayer,
+          target: choice,
+        });
+      } else {
+        return true;
+      }
+    };
+  }
 };

@@ -1,37 +1,35 @@
 const CheatError = require("../../server/match/CheatError.js");
 
 module.exports = function ({
-    matchService,
-    playerStateService,
-    playerNextPhase,
-    opponentNextPhase,
+  matchService,
+  playerStateService,
+  playerNextPhase,
+  opponentNextPhase,
 }) {
-    return {
-        validateCanGoToNextPhase,
-        nextPhase,
-    };
+  return {
+    validateCanGoToNextPhase,
+    nextPhase,
+  };
 
-    function validateCanGoToNextPhase() {
-        if (!isCurrentPlayer()) {
-            throw new CheatError("Switching phase when not your own turn");
-        }
-
-        playerNextPhase.validateCanGoToNextPhase();
+  function validateCanGoToNextPhase() {
+    if (!isCurrentPlayer()) {
+      throw new CheatError("Switching phase when not your own turn");
     }
 
-    function nextPhase() {
-        if (playerNextPhase.canEndTurnForPlayer()) {
-            playerNextPhase.endTurnForPlayer();
+    playerNextPhase.validateCanGoToNextPhase();
+  }
 
-            opponentNextPhase.next();
-        } else {
-            playerNextPhase.next();
-        }
-    }
+  function nextPhase() {
+    if (playerNextPhase.canEndTurnForPlayer()) {
+      playerNextPhase.endTurnForPlayer();
 
-    function isCurrentPlayer() {
-        return (
-            matchService.getCurrentPlayer() === playerStateService.getPlayerId()
-        );
+      opponentNextPhase.next();
+    } else {
+      playerNextPhase.next();
     }
+  }
+
+  function isCurrentPlayer() {
+    return matchService.getCurrentPlayer() === playerStateService.getPlayerId();
+  }
 };

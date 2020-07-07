@@ -1,110 +1,110 @@
 <template>
-    <div class="login">
-        <input
-            @keydown.exact.enter="loginClick"
-            class="login-username"
-            placeholder="username"
-            v-model.trim="username"
-            :maxlength="usernameMaxLength"
-        />
-        <button
-            :style="{opacity: username.length >= 3 ? 1 : 0}"
-            @click="loginClick"
-            class="login-submit"
-        >
-            >
-        </button>
-    </div>
+  <div class="login">
+    <input
+      v-model.trim="username"
+      class="login-username"
+      placeholder="username"
+      :maxlength="usernameMaxLength"
+      @keydown.exact.enter="loginClick"
+    />
+    <button
+      :style="{ opacity: username.length >= 3 ? 1 : 0 }"
+      class="login-submit"
+      @click="loginClick"
+    >
+      >
+    </button>
+  </div>
 </template>
 <script>
-    const Vuex = require('vuex');
-    const loginHelpers = Vuex.createNamespacedHelpers('login');
-    const User = require('../../shared/user/User.js');
+const Vuex = require("vuex");
+const loginHelpers = Vuex.createNamespacedHelpers("login");
+const User = require("../../shared/user/User.js");
 
-    module.exports = {
-        computed: {
-            username: {
-                get() {
-                    return this.$store.state.login.username;
-                },
-                set(username) {
-                    this.$store.state.login.username = username;
-                }
-            },
-            usernameMaxLength() {
-                return User.MaxNameLength;
-            }
-        },
-        methods: {
-            ...loginHelpers.mapActions([
-                'login'
-            ]),
-            loginClick() {
-                if (this.username.length > 0) {
-                    this.login(this.username);
-                }
-            },
-            keydown(event) {
-                if (!event.altKey) return;
+module.exports = {
+  computed: {
+    username: {
+      get() {
+        return this.$store.state.login.username;
+      },
+      set(username) {
+        this.$store.state.login.username = username;
+      },
+    },
+    usernameMaxLength() {
+      return User.MaxNameLength;
+    },
+  },
+  methods: {
+    ...loginHelpers.mapActions(["login"]),
+    loginClick() {
+      if (this.username.length > 0) {
+        this.login(this.username);
+      }
+    },
+    keydown(event) {
+      if (!event.altKey) return;
 
-                if (event.code === 'Digit1') {
-                    this.username = 'Mr.A';
-                    this.loginClick();
-                }
-                else if (event.code === 'Digit2') {
-                    this.username = 'Mr.B';
-                    this.loginClick();
+      if (event.code === "Digit1") {
+        this.username = "Mr.A";
+        this.loginClick();
+      } else if (event.code === "Digit2") {
+        this.username = "Mr.B";
+        this.loginClick();
 
-                    setTimeout(() => {
-                        document.querySelectorAll('.user')[1].click();
-                    }, 800);
-                }
-            }
-        },
-        mounted() {
-            window.addEventListener('keydown', this.keydown);
-        },
-        destroyed() {
-            window.removeEventListener('keydown', this.keydown);
-        }
-    };
+        setTimeout(() => {
+          document.querySelectorAll(".user")[1].click();
+        }, 800);
+      }
+    },
+  },
+  mounted() {
+    window.addEventListener("keydown", this.keydown);
+  },
+  destroyed() {
+    window.removeEventListener("keydown", this.keydown);
+  },
+};
 </script>
 <style scoped lang="scss">
-    .login-username {
-        font-family: "Space Mono", monospace;
-        font-size: 20px;
-        background: rgba(0, 0, 0, .4);
-        color: white;
-        display: block;
-        border: 0;
-        padding: 4px;
+.login-username {
+  font-family: "Space Mono", monospace;
+  font-size: 20px;
+  background: rgba(0, 0, 0, 0.4);
+  color: white;
+  display: block;
+  border: 0;
+  padding: 4px;
 
-        &:hover, &:active, &:focus {
-            outline: 1px solid white;
-        }
-    }
+  &:hover,
+  &:active,
+  &:focus {
+    outline: 1px solid white;
+  }
+}
 
-    .login-submit {
-        font-family: "Space Mono", monospace;
-        display: block;
-        margin-left: 10px;
-        font-size: 20px;
-        padding: 4px 12px;
-        background: rgba(0, 0, 0, .4);
-        border: none;
-        color: white;
-        outline: 0;
-        box-sizing: border-box;
+.login-submit {
+  font-family: "Space Mono", monospace;
+  display: block;
+  margin-left: 10px;
+  font-size: 20px;
+  padding: 4px 12px;
+  background: rgba(0, 0, 0, 0.4);
+  border: none;
+  color: white;
+  outline: 0;
+  box-sizing: border-box;
 
-        &:hover, &:focus {
-            outline: 1px solid white;
-            position: relative;
-        }
+  &:hover,
+  &:focus {
+    outline: 1px solid white;
+    position: relative;
+  }
 
-        &:active {
-            color: white;
-            background: black;
-            outline: 1px solid white;
-        }
-    }
+  &:active {
+    color: white;
+    background: black;
+    outline: 1px solid white;
+  }
+}
 </style>

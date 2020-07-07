@@ -4,17 +4,17 @@ const CardCostComparer = require("./CardCostComparer.js");
 const TypesInOrder = ["duration", "event", "spaceShip", "missile", "defense"];
 
 module.exports = function DecideCardToDiscard({
-    playerStateService,
-    types = TypesInOrder,
+  playerStateService,
+  types = TypesInOrder,
 }) {
-    return () => {
-        const cards = playerStateService
-            .getCardsOnHand()
-            .slice()
-            .sort(CardCostComparer())
-            .sort(CardTypeComparer(types));
+  return () => {
+    const cards = playerStateService
+      .getCardsOnHand()
+      .slice()
+      .sort(CardCostComparer())
+      .sort(CardTypeComparer(types));
 
-        if (cards.length) return cards[0].id;
-        throw new Error("No cards to discard");
-    };
+    if (cards.length) return cards[0].id;
+    throw new Error("No cards to discard");
+  };
 };

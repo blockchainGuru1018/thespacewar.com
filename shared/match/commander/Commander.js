@@ -6,10 +6,10 @@ const TheMiller = "TheMiller";
 const KeveBakins = "KeveBakins";
 
 module.exports = {
-    FrankJohnson,
-    NiciaSatu,
-    GeneralJackson,
-    DrStein,
-    TheMiller,
-    KeveBakins,
+  FrankJohnson,
+  NiciaSatu,
+  GeneralJackson,
+  DrStein,
+  TheMiller,
+  KeveBakins,
 };

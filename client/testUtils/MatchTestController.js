@@ -7,12 +7,12 @@ const cardsJson = require("../../server/card/rawCardData.cache.json").data;
 const { mount, createLocalVue } = require("@vue/test-utils");
 
 const MatchView = resolveModuleWithPossibleDefault(
-    require("../match/Match.vue")
+  require("../match/Match.vue")
 );
 const MatchStores = require("../match/MatchStores.js");
 const PortalVue = resolveModuleWithPossibleDefault(require("portal-vue"));
 const vClickOutside = resolveModuleWithPossibleDefault(
-    require("v-click-outside")
+  require("v-click-outside")
 );
 
 const localVue = createLocalVue();
@@ -22,63 +22,62 @@ localVue.use(PortalVue);
 localVue.use(vClickOutside);
 
 const dummyCardInfoRepository = {
-    getType() {},
-    getCost() {},
-    getImageUrl() {},
+  getType() {},
+  getCost() {},
+  getImageUrl() {},
 };
 
 module.exports = function TestController({
-    playerIds = ["P1A", "P2A"],
-    matchId = "M1A",
-    ...pageDeps
+  playerIds = ["P1A", "P2A"],
+  matchId = "M1A",
+  ...pageDeps
 } = {}) {
-    const store = new Vuex.Store({ strict: false });
-    registerFakeAudioModule(store);
+  const store = new Vuex.Store({ strict: false });
+  registerFakeAudioModule(store);
 
-    const [ownId, opponentId] = playerIds;
-    const matchController = pageDeps.matchController || FakeMatchController();
+  const [ownId, opponentId] = playerIds;
+  const matchController = pageDeps.matchController || FakeMatchController();
 
-    pageDeps.matchControllerFactory =
-        pageDeps.matchControllerFactory ||
-        FakeMatchControllerFactory({ matchController });
-    pageDeps.userRepository =
-        pageDeps.userRepository ||
-        FakeUserRepository({ ownUser: { id: ownId } });
-    pageDeps.cardInfoRepository =
-        pageDeps.cardInfoRepository || dummyCardInfoRepository;
-    pageDeps.rawCardDataRepository = { init() {}, get: () => cardsJson };
-    pageDeps.rootStore = store;
+  pageDeps.matchControllerFactory =
+    pageDeps.matchControllerFactory ||
+    FakeMatchControllerFactory({ matchController });
+  pageDeps.userRepository =
+    pageDeps.userRepository || FakeUserRepository({ ownUser: { id: ownId } });
+  pageDeps.cardInfoRepository =
+    pageDeps.cardInfoRepository || dummyCardInfoRepository;
+  pageDeps.rawCardDataRepository = { init() {}, get: () => cardsJson };
+  pageDeps.rootStore = store;
 
-    MatchStores({
-        ...pageDeps,
-        rootStore: store,
-        matchId,
-        opponentUser: { id: opponentId },
-    });
-    let wrapper;
+  MatchStores({
+    ...pageDeps,
+    rootStore: store,
+    matchId,
+    opponentUser: { id: opponentId },
+  });
+  let wrapper;
 
-    return {
-        dispatch(...args) {
-            pageDeps.matchControllerFactory.getStoreDispatch()(...args);
-        },
-        showPage() {
-            wrapper = mount(MatchView, {
-                store,
-                localVue,
-                attachToDocument: true,
-            });
-        },
-        tearDown() {
-            wrapper.destroy();
-        },
-    };
+  return {
+    dispatch(...args) {
+      pageDeps.matchControllerFactory.getStoreDispatch()(...args);
+    },
+    showPage() {
+      wrapper = mount(MatchView, {
+        store,
+        localVue,
+        attachToDocument: true,
+      });
+    },
+    tearDown() {
+      wrapper.destroy();
+    },
+  };
 };
 
 function registerFakeAudioModule(rootStore) {
-    rootStore.registerModule("audio", {
-        namespaced: true,
-        actions: {
-            background() {},
-        },
-    });
+  rootStore.registerModule("audio", {
+    namespaced: true,
+    actions: {
+      background() {},
+    },
+  });
 }

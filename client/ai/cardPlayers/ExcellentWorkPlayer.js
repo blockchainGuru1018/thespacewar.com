@@ -1,44 +1,44 @@
 const ExcellentWork = require("../../../shared/card/ExcellentWork.js");
 
 module.exports = function ({
-    matchController,
-    decideRowForStationCard,
-    playerRuleService,
+  matchController,
+  decideRowForStationCard,
+  playerRuleService,
 }) {
-    return {
-        forCard,
-        play,
-    };
+  return {
+    forCard,
+    play,
+  };
 
-    function forCard(card) {
-        return card.commonId === ExcellentWork.CommonId;
-    }
+  function forCard(card) {
+    return card.commonId === ExcellentWork.CommonId;
+  }
 
-    function play(card) {
-        if (playerRuleService.hasReachedMaximumStationCardCapacity()) {
-            playToDrawExtraCards(card);
-        } else {
-            playAsExtraStationCard(card);
-        }
+  function play(card) {
+    if (playerRuleService.hasReachedMaximumStationCardCapacity()) {
+      playToDrawExtraCards(card);
+    } else {
+      playAsExtraStationCard(card);
     }
+  }
 
-    function playToDrawExtraCards(card) {
-        matchController.emit("putDownCard", {
-            cardId: card.id,
-            location: "zone",
-            choice: "draw",
-        });
-    }
+  function playToDrawExtraCards(card) {
+    matchController.emit("putDownCard", {
+      cardId: card.id,
+      location: "zone",
+      choice: "draw",
+    });
+  }
 
-    function playAsExtraStationCard(card) {
-        matchController.emit("putDownCard", {
-            cardId: card.id,
-            location: stationLocation(),
-            choice: "putDownAsExtraStationCard",
-        });
-    }
+  function playAsExtraStationCard(card) {
+    matchController.emit("putDownCard", {
+      cardId: card.id,
+      location: stationLocation(),
+      choice: "putDownAsExtraStationCard",
+    });
+  }
 
-    function stationLocation() {
-        return `station-${decideRowForStationCard()}`;
-    }
+  function stationLocation() {
+    return `station-${decideRowForStationCard()}`;
+  }
 };

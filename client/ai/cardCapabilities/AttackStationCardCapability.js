@@ -1,28 +1,28 @@
 module.exports = function AttackStationCardCapability({
-    card,
-    matchController,
-    opponentStateService,
+  card,
+  matchController,
+  opponentStateService,
 }) {
-    return {
-        canDoIt,
-        doIt,
-    };
+  return {
+    canDoIt,
+    doIt,
+  };
 
-    function canDoIt() {
-        return card.canAttackStationCards();
-    }
+  function canDoIt() {
+    return card.canAttackStationCards();
+  }
 
-    function doIt() {
-        matchController.emit("attackStationCard", {
-            attackerCardId: card.id,
-            targetStationCardIds: getTargetStationCardIds(card.attack),
-        });
-    }
+  function doIt() {
+    matchController.emit("attackStationCard", {
+      attackerCardId: card.id,
+      targetStationCardIds: getTargetStationCardIds(card.attack),
+    });
+  }
 
-    function getTargetStationCardIds(count) {
-        return opponentStateService
-            .getUnflippedStationCards()
-            .slice(0, count)
-            .map((s) => s.id);
-    }
+  function getTargetStationCardIds(count) {
+    return opponentStateService
+      .getUnflippedStationCards()
+      .slice(0, count)
+      .map((s) => s.id);
+  }
 };

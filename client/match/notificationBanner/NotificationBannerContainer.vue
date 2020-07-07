@@ -1,30 +1,29 @@
 <template>
-    <portal
-        v-if="wrapperVisible"
-        to="match"
-    >
-        <NotificationBanner
-            :visible="bannerVisible"
-            :notificationHtml="notificationHtml"
-        />
-    </portal>
+  <portal v-if="wrapperVisible" to="match">
+    <NotificationBanner
+      :visible="bannerVisible"
+      :notification-html="notificationHtml"
+    />
+  </portal>
 </template>
 
 <script>
-    import NotificationBanner from "./NotificationBanner.vue";
-    import Vuex from 'vuex';
+import NotificationBanner from "./NotificationBanner.vue";
+import Vuex from "vuex";
 
-    const notificationBannerHelpers = Vuex.createNamespacedHelpers('notificationBanner');
+const notificationBannerHelpers = Vuex.createNamespacedHelpers(
+  "notificationBanner"
+);
 
-    export default {
-        name: "NotificationBannerContainer",
-        components: { NotificationBanner },
-        computed: {
-            ...notificationBannerHelpers.mapState([
-                'wrapperVisible',
-                'bannerVisible',
-                'notificationHtml'
-            ])
-        }
-    }
+export default {
+  name: "NotificationBannerContainer",
+  components: { NotificationBanner },
+  computed: {
+    ...notificationBannerHelpers.mapState([
+      "wrapperVisible",
+      "bannerVisible",
+      "notificationHtml",
+    ]),
+  },
+};
 </script>

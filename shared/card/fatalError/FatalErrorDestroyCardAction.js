@@ -1,40 +1,40 @@
 module.exports = class FatalErrorDestroyCardAction {
-    constructor({ playerId }) {
-        this._playerId = playerId;
-    }
+  constructor({ playerId }) {
+    this._playerId = playerId;
+  }
 
-    get showCardImage() {
-        return true;
-    }
+  get showCardImage() {
+    return true;
+  }
 
-    get showTransientCardInHomeZone() {
-        return true;
-    }
+  get showTransientCardInHomeZone() {
+    return true;
+  }
 
-    get name() {
-        return "destroyAnyCard";
-    }
+  get name() {
+    return "destroyAnyCard";
+  }
 
-    get text() {
-        return "Select any card to destroy";
-    }
+  get text() {
+    return "Select any card to destroy";
+  }
 
-    validTarget(target, actionPoints = 0) {
-        return (
-            this.canTargetFromCostPenaltyAbility(target, actionPoints) &&
-            this._isEnemyNonStationCard(target)
-        );
-    }
+  validTarget(target, actionPoints = 0) {
+    return (
+      this.canTargetFromCostPenaltyAbility(target, actionPoints) &&
+      this._isEnemyNonStationCard(target)
+    );
+  }
 
-    canTargetFromCostPenaltyAbility(target, actionPoints) {
-        return target.cost <= actionPoints;
-    }
+  canTargetFromCostPenaltyAbility(target, actionPoints) {
+    return target.cost <= actionPoints;
+  }
 
-    _isEnemyNonStationCard(target) {
-        return this._isEnemyTarget(target) && !target.isStationCard();
-    }
+  _isEnemyNonStationCard(target) {
+    return this._isEnemyTarget(target) && !target.isStationCard();
+  }
 
-    _isEnemyTarget(target) {
-        return target.isOpponentCard(this._playerId);
-    }
+  _isEnemyTarget(target) {
+    return target.isOpponentCard(this._playerId);
+  }
 };

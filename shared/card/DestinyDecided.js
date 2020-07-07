@@ -1,25 +1,25 @@
 const BaseCard = require("./BaseCard.js");
 
 class DestinyDecided extends BaseCard {
-    constructor(deps) {
-        super(deps);
-    }
+  constructor(deps) {
+    super(deps);
+  }
 
-    static get CommonId() {
-        return "64";
-    }
+  static get CommonId() {
+    return "64";
+  }
 
-    get preventsOpponentFromPlayingAnEventCard() {
-        return true;
-    }
+  get preventsOpponentFromPlayingAnEventCard() {
+    return true;
+  }
 
-    get preventsPlayerFromPlayingAnyCards() {
-        return true;
-    }
+  get preventsPlayerFromPlayingAnyCards() {
+    return true;
+  }
 
-    get limitsOpponentToPlayingMaxCardCount() {
-        return 1;
-    }
+  get limitsOpponentToPlayingMaxCardCount() {
+    return 1;
+  }
 }
 
 module.exports = DestinyDecided;

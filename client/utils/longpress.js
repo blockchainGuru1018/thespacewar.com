@@ -4,24 +4,24 @@ let longpressTimeoutId;
 let longPressed = false;
 
 document.addEventListener("mouseup", (event) => {
-    clearTimeout(longpressTimeoutId);
+  clearTimeout(longpressTimeoutId);
 
-    if (longPressed) {
-        event.preventDefault();
-        event.stopPropagation();
-        longPressed = false;
-    }
+  if (longPressed) {
+    event.preventDefault();
+    event.stopPropagation();
+    longPressed = false;
+  }
 });
 
 module.exports = {
-    bind(element, { value }) {
-        element.addEventListener("mousedown", () => {
-            clearTimeout(longpressTimeoutId);
+  bind(element, { value }) {
+    element.addEventListener("mousedown", () => {
+      clearTimeout(longpressTimeoutId);
 
-            longpressTimeoutId = setTimeout(() => {
-                longPressed = true;
-                value();
-            }, LONG_PRESS_TIME);
-        });
-    },
+      longpressTimeoutId = setTimeout(() => {
+        longPressed = true;
+        value();
+      }, LONG_PRESS_TIME);
+    });
+  },
 };

@@ -4,9 +4,9 @@ const initVueAndPlugins = require("./initVueAndPlugins.js");
 initVueAndPlugins();
 
 module.exports = {
-    createController,
+  createController,
 };
 
 function createController(options = {}) {
-    return MatchTestController(options);
+  return MatchTestController(options);
 }

@@ -11,21 +11,19 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const Port = 8082;
 
 app.post("/fake-score", (req, res) => {
-    const { user_won, user_lost, length, hash } = req.body;
-    const logGameCookie = new LogGameCookie(user_won, user_lost, length);
-    if (logGameCookie.hash() !== hash) {
-        console.log(
-            `INVALID HASH (${user_won}, ${user_lost}, ${length}, ${hash})`
-        );
-        res.status(403);
-        res.end();
-    } else {
-        console.log(
-            `LOGGED SCORE SUCCESSFULLY! (${user_won}, ${user_lost}, ${length}, ${hash})`
-        );
-        res.status(200);
-        res.end();
-    }
+  const { user_won, user_lost, length, hash } = req.body;
+  const logGameCookie = new LogGameCookie(user_won, user_lost, length);
+  if (logGameCookie.hash() !== hash) {
+    console.log(`INVALID HASH (${user_won}, ${user_lost}, ${length}, ${hash})`);
+    res.status(403);
+    res.end();
+  } else {
+    console.log(
+      `LOGGED SCORE SUCCESSFULLY! (${user_won}, ${user_lost}, ${length}, ${hash})`
+    );
+    res.status(200);
+    res.end();
+  }
 });
 
 app.listen(Port, () => console.log("Listening on port: " + Port));

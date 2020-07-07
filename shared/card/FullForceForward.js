@@ -3,9 +3,9 @@ const AllowsFriendlySpaceShipsToMoveTurnWhenPutDown = require("./mixins/AllowsFr
 const FriendlySpaceShipAttackBonus = require("./mixins/FriendlySpaceShipAttackBonus.js");
 
 module.exports = class FullForceForward extends FriendlySpaceShipAttackBonus(1)(
-    BaseCard
+  BaseCard
 ) {
-    static get CommonId() {
-        return "9";
-    }
+  static get CommonId() {
+    return "9";
+  }
 };

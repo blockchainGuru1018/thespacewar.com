@@ -6,20 +6,20 @@ const playerRuleServiceFactory = require("../fakeFactories/playerRuleServiceFact
 const { defaults } = require("./bocha-jest/bocha");
 
 module.exports = {
-    createCard,
+  createCard,
 };
 
 function createCard(Constructor, options = {}) {
-    defaults(options, {
-        canThePlayer: canThePlayerFactory.withStubs(),
-        queryEvents: queryEventsFactory.withStubs(),
-        playerStateService: playerStateServiceFactory.withStubs(),
-        cardEffect: {
-            attackBoostForCardType: () => 0,
-            cardTypeCanMoveOnTurnPutDown: () => false,
-        },
-        playerRuleService: playerRuleServiceFactory.withStubs(),
-        turnControl: { playerHasControlOfOpponentsTurn: () => false },
-    });
-    return new Constructor(options);
+  defaults(options, {
+    canThePlayer: canThePlayerFactory.withStubs(),
+    queryEvents: queryEventsFactory.withStubs(),
+    playerStateService: playerStateServiceFactory.withStubs(),
+    cardEffect: {
+      attackBoostForCardType: () => 0,
+      cardTypeCanMoveOnTurnPutDown: () => false,
+    },
+    playerRuleService: playerRuleServiceFactory.withStubs(),
+    turnControl: { playerHasControlOfOpponentsTurn: () => false },
+  });
+  return new Constructor(options);
 }

@@ -3,11 +3,11 @@ const BaseCard = require("./BaseCard.js");
 const Slow = require("./mixins/Slow");
 
 module.exports = class AlienMissile extends Slow(BaseCard) {
-    constructor(deps) {
-        super(deps);
-    }
+  constructor(deps) {
+    super(deps);
+  }
 
-    static get CommonId() {
-        return "83";
-    }
+  static get CommonId() {
+    return "83";
+  }
 };

@@ -4,5 +4,14 @@
     "source.fixAll.eslint": true
   },
   "vetur.validation.template": false,
-  "eslint.codeAction.disableRuleComment": {}
+  "eslint.codeAction.disableRuleComment": {},
+  "editor.wordWrap": "wordWrapColumn",
+  "editor.wordWrapColumn": 120,
+  "editor.rulers": [
+    80,
+    {
+      "column": 120,
+      "color": "#FF0000"
+    }
+  ]
 }

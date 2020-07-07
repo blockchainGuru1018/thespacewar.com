@@ -1,6 +1,6 @@
 module.exports = (superclass) =>
-    class extends superclass {
-        get numberOfAttacksPerTurn() {
-            return 2;
-        }
-    };
+  class extends superclass {
+    get numberOfAttacksPerTurn() {
+      return 2;
+    }
+  };

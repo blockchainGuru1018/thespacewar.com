@@ -6,20 +6,20 @@ const GetCardsInDeckCheat = require("./GetCardsInDeckCheat.js");
 const AddDamageStationCardRequirementCheat = require("./AddDamageStationCardRequirementCheat.js");
 
 module.exports = function (deps) {
-    const cheats = [
-        AddRequirementCheat(deps),
-        AddDamageStationCardRequirementCheat(deps),
-        ActionPointsCheat(deps),
-        AddCardCheat(deps),
-        RemoveAllRequirementsCheat(deps),
-        GetCardsInDeckCheat(deps),
-    ];
+  const cheats = [
+    AddRequirementCheat(deps),
+    AddDamageStationCardRequirementCheat(deps),
+    ActionPointsCheat(deps),
+    AddCardCheat(deps),
+    RemoveAllRequirementsCheat(deps),
+    GetCardsInDeckCheat(deps),
+  ];
 
-    return {
-        fromType,
-    };
+  return {
+    fromType,
+  };
 
-    function fromType(type) {
-        return cheats.find((c) => c.getType() === type);
-    }
+  function fromType(type) {
+    return cheats.find((c) => c.getType() === type);
+  }
 };

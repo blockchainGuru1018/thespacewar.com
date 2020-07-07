@@ -5,9 +5,9 @@ const game = "game";
 const Order = [chooseStartingPlayer, selectStationCards, game];
 
 module.exports = {
-    Order,
-    firstMode: Order[0],
-    chooseStartingPlayer,
-    selectStationCards,
-    game,
+  Order,
+  firstMode: Order[0],
+  chooseStartingPlayer,
+  selectStationCards,
+  game,
 };

@@ -8,12 +8,12 @@ const defaults = require("lodash.defaults");
 const defaultsDeep = require("lodash.defaultsdeep");
 
 module.exports = {
-    assert: assert,
-    refute: refute,
-    sinon: sinon,
-    stub: sinon.stub,
-    fakeClock: fakeClock,
-    timeoutPromise: timeoutPromise,
-    defaults: defaults,
-    defaultsDeep: defaultsDeep,
+  assert: assert,
+  refute: refute,
+  sinon: sinon,
+  stub: sinon.stub,
+  fakeClock: fakeClock,
+  timeoutPromise: timeoutPromise,
+  defaults: defaults,
+  defaultsDeep: defaultsDeep,
 };

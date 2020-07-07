@@ -4,13 +4,13 @@ const PreventsOpponentMissilesFromAttacking = require("./mixins/PreventsOpponent
 const PreventsOpponentMissilesFromMoving = require("./mixins/PreventsOpponentMissilesFromMoving.js");
 
 module.exports = class DisturbingSignals extends PreventsOpponentMissilesFromAttacking(
-    PreventsOpponentMissilesFromMoving(BaseCard)
+  PreventsOpponentMissilesFromMoving(BaseCard)
 ) {
-    constructor(deps) {
-        super(deps);
-    }
+  constructor(deps) {
+    super(deps);
+  }
 
-    static get CommonId() {
-        return "91";
-    }
+  static get CommonId() {
+    return "91";
+  }
 };

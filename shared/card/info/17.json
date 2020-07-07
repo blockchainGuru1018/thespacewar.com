@@ -5,15 +5,10 @@
       {
         "type": "findCard",
         "count": 2,
-        "sources": [
-          "deck",
-          "discardPile"
-        ],
+        "sources": ["deck", "discardPile"],
         "target": "homeZone",
         "filter": {
-          "type": [
-            "missile"
-          ]
+          "type": ["missile"]
         }
       }
     ]

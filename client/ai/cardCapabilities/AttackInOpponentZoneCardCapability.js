@@ -1,27 +1,27 @@
 module.exports = function ({ card, opponentStateService, matchController }) {
-    return {
-        canDoIt,
-        doIt,
-    };
+  return {
+    canDoIt,
+    doIt,
+  };
 
-    function canDoIt() {
-        return !card.isInHomeZone() && targets().length > 0;
-    }
+  function canDoIt() {
+    return !card.isInHomeZone() && targets().length > 0;
+  }
 
-    function doIt() {
-        matchController.emit("attack", {
-            attackerCardId: card.id,
-            defenderCardId: firstTarget().id,
-        });
-    }
+  function doIt() {
+    matchController.emit("attack", {
+      attackerCardId: card.id,
+      defenderCardId: firstTarget().id,
+    });
+  }
 
-    function firstTarget() {
-        return targets()[0];
-    }
+  function firstTarget() {
+    return targets()[0];
+  }
 
-    function targets() {
-        return opponentStateService.getMatchingBehaviourCards((opponentCard) =>
-            card.canAttackCard(opponentCard)
-        );
-    }
+  function targets() {
+    return opponentStateService.getMatchingBehaviourCards((opponentCard) =>
+      card.canAttackCard(opponentCard)
+    );
+  }
 };

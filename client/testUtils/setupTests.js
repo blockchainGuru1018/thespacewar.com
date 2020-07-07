@@ -5,6 +5,6 @@ jsdomDevtoolsFormatter.install();
 
 const isBrowserEnvironment = !!global.window;
 if (isBrowserEnvironment) {
-    setupFakeLeaderLine();
-    window.runningInTestHarness = true;
+  setupFakeLeaderLine();
+  window.runningInTestHarness = true;
 }

@@ -1,6 +1,6 @@
 module.exports = function () {
-    return {
-        id: "BOT",
-        name: "Mr.Robot",
-    };
+  return {
+    id: "BOT",
+    name: "Mr.Robot",
+  };
 };

@@ -11,84 +11,84 @@ const BotId = "BOT";
 const PlayerId = "P1A";
 
 module.exports = {
-    setupFromStateWithStubs,
-    setupFromState,
-    createMatchController,
-    BotId,
-    PlayerId,
+  setupFromStateWithStubs,
+  setupFromState,
+  createMatchController,
+  BotId,
+  PlayerId,
 };
 
 async function setupFromStateWithStubs(fakeClientState = {}, stubs = {}) {
-    const clientState = await setupClientState(fakeClientState);
-    const matchController = createMatchController();
+  const clientState = await setupClientState(fakeClientState);
+  const matchController = createMatchController();
 
-    const botSpawner = BotSpawner({
-        matchController,
-        clientState,
-        rawCardDataRepository: FakeRawCardDataRepository(),
-        userRepository: createFakeUserRepositoryToSpawnBot(clientState),
-        gameConfig: GameConfig(),
-        createBot: (options) => {
-            Bot({
-                ...options,
-                ...stubs,
-            });
-        },
-    });
-    botSpawner.spawn();
+  const botSpawner = BotSpawner({
+    matchController,
+    clientState,
+    rawCardDataRepository: FakeRawCardDataRepository(),
+    userRepository: createFakeUserRepositoryToSpawnBot(clientState),
+    gameConfig: GameConfig(),
+    createBot: (options) => {
+      Bot({
+        ...options,
+        ...stubs,
+      });
+    },
+  });
+  botSpawner.spawn();
 
-    return { matchController };
+  return { matchController };
 }
 
 async function setupFromState(fakeClientState = {}, fakeRawCardData = []) {
-    const clientState = await setupClientState(fakeClientState);
-    const matchController = createMatchController();
-    const botSpawner = BotSpawner({
-        opponentUserId: PlayerId,
-        matchController,
-        clientState,
-        rawCardDataRepository: FakeRawCardDataRepository(fakeRawCardData),
-        userRepository: createFakeUserRepositoryToSpawnBot(clientState),
-        gameConfig: GameConfig(),
-    });
-    botSpawner.spawn();
+  const clientState = await setupClientState(fakeClientState);
+  const matchController = createMatchController();
+  const botSpawner = BotSpawner({
+    opponentUserId: PlayerId,
+    matchController,
+    clientState,
+    rawCardDataRepository: FakeRawCardDataRepository(fakeRawCardData),
+    userRepository: createFakeUserRepositoryToSpawnBot(clientState),
+    gameConfig: GameConfig(),
+  });
+  botSpawner.spawn();
 
-    return { matchController };
+  return { matchController };
 }
 
 function createMatchController() {
-    return FakeMatchController({}, { stub: jest.fn() });
+  return FakeMatchController({}, { stub: jest.fn() });
 }
 
 async function setupClientState(fakeClientState) {
-    const clientState = ClientState({
-        userRepository: FakeUserRepository({
-            ownUser: { id: BotId, name: "Mr.Robot" },
-            opponentUser: { id: PlayerId, name: "P1B" },
-        }),
-        opponentUser: { id: PlayerId },
-    });
+  const clientState = ClientState({
+    userRepository: FakeUserRepository({
+      ownUser: { id: BotId, name: "Mr.Robot" },
+      opponentUser: { id: PlayerId, name: "P1B" },
+    }),
+    opponentUser: { id: PlayerId },
+  });
 
-    const defaultedFakeClientState = defaultFakeClientState(fakeClientState);
-    await clientState.update(defaultedFakeClientState);
+  const defaultedFakeClientState = defaultFakeClientState(fakeClientState);
+  await clientState.update(defaultedFakeClientState);
 
-    return clientState;
+  return clientState;
 }
 
 function defaultFakeClientState(stateOptions = {}) {
-    stateOptions.currentPlayer = stateOptions.currentPlayer || BotId;
-    stateOptions.playerOrder = stateOptions.playerOrder || [BotId, PlayerId];
+  stateOptions.currentPlayer = stateOptions.currentPlayer || BotId;
+  stateOptions.playerOrder = stateOptions.playerOrder || [BotId, PlayerId];
 
-    return FakeState(stateOptions);
+  return FakeState(stateOptions);
 }
 
 function createFakeUserRepositoryToSpawnBot({ ownUser, opponentUser }) {
-    return {
-        getUserById: (id) => {
-            if (id === ownUser.id) {
-                return { name: "Mr. Roboto", id: "BOT" };
-            }
-            return opponentUser;
-        },
-    };
+  return {
+    getUserById: (id) => {
+      if (id === ownUser.id) {
+        return { name: "Mr. Roboto", id: "BOT" };
+      }
+      return opponentUser;
+    },
+  };
 }

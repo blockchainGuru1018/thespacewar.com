@@ -1,59 +1,57 @@
 const BaseCard = require("./BaseCard.js");
 const _DamageToShields = 2;
 module.exports = class ToxicGas extends BaseCard {
-    constructor(deps) {
-        super({ ...deps });
-    }
+  constructor(deps) {
+    super({ ...deps });
+  }
 
-    static get DamageToShields() {
-        return _DamageToShields;
-    }
-    static get CommonId() {
-        return "79";
-    }
+  static get DamageToShields() {
+    return _DamageToShields;
+  }
+  static get CommonId() {
+    return "79";
+  }
 
-    get requirementsWhenEnterDrawPhase() {
-        return {
-            forOpponent: [],
-            forPlayer: [
-                {
-                    type: "damageShieldsOrStationCard",
-                    count: 1,
-                    cardCommonId: this.CommonId,
-                },
-            ],
-        };
-    }
-    canAttack() {
-        return false;
-    }
-    canFakeAttack() {
-        return true;
-    }
-    canAttackCard(otherCard) {
-        return otherCard.stopsStationAttack();
-    }
+  get requirementsWhenEnterDrawPhase() {
+    return {
+      forOpponent: [],
+      forPlayer: [
+        {
+          type: "damageShieldsOrStationCard",
+          count: 1,
+          cardCommonId: this.CommonId,
+        },
+      ],
+    };
+  }
+  canAttack() {
+    return false;
+  }
+  canFakeAttack() {
+    return true;
+  }
+  canAttackCard(otherCard) {
+    return otherCard.stopsStationAttack();
+  }
 
-    attackCard(defenderCard) {
-        const {
-            defenderDestroyed,
-            defenderParalyzed,
-        } = this.simulateAttackingCard(defenderCard);
+  attackCard(defenderCard) {
+    const { defenderDestroyed, defenderParalyzed } = this.simulateAttackingCard(
+      defenderCard
+    );
 
-        defenderCard.destroyed = defenderDestroyed;
-        defenderCard.paralyzed = defenderParalyzed;
-        defenderCard.damage = _DamageToShields;
-    }
+    defenderCard.destroyed = defenderDestroyed;
+    defenderCard.paralyzed = defenderParalyzed;
+    defenderCard.damage = _DamageToShields;
+  }
 
-    simulateAttackingCard(defenderCard) {
-        const defenderCurrentDamage = defenderCard.damage;
-        const defenderTotalDefense =
-            defenderCard.defense - defenderCurrentDamage;
-        const cardAttack = _DamageToShields;
-        return {
-            defenderDestroyed: cardAttack >= defenderTotalDefense,
-            defenderDamage: defenderCurrentDamage + cardAttack,
-            defenderParalyzed: false,
-        };
-    }
+  simulateAttackingCard(defenderCard) {
+    const defenderCurrentDamage = defenderCard.damage;
+    const defenderTotalDefense = defenderCard.defense - defenderCurrentDamage;
+    const cardAttack = _DamageToShields;
+    return {
+      defenderDestroyed: cardAttack >= defenderTotalDefense,
+      defenderDamage: defenderCurrentDamage + cardAttack,
+      defenderParalyzed: false,
+    };
+  }
 };

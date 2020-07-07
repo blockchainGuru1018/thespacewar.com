@@ -4,84 +4,84 @@ const FakeMatchController = require("../testUtils/FakeMatchController.js");
 const Commander = require("../../shared/match/commander/Commander.js");
 const { createController } = require("../testUtils");
 const {
-    assert,
-    timeout,
-    dom: { click },
+  assert,
+  timeout,
+  dom: { click },
 } = require("../testUtils/bocha-jest/bocha-jest.js");
 
 let controller;
 let matchController;
 
 function setUpController(optionsAndPageDeps = {}) {
-    //Has side effects to afford a convenient tear down
-    matchController = FakeMatchController();
-    controller = createController({ matchController, ...optionsAndPageDeps });
+  //Has side effects to afford a convenient tear down
+  matchController = FakeMatchController();
+  controller = createController({ matchController, ...optionsAndPageDeps });
 
-    return controller;
+  return controller;
 }
 
 beforeEach(() => {
-    getCardImageUrl.byCommonId = (commonId) => `/${commonId}`;
+  getCardImageUrl.byCommonId = (commonId) => `/${commonId}`;
 });
 
 afterEach(() => {
-    controller && controller.tearDown();
-    matchController = null;
-    controller = null;
+  controller && controller.tearDown();
+  matchController = null;
+  controller = null;
 });
 
 describe("when has 1 station card in draw row in action phase and click move", () => {
-    beforeEach(async () => {
-        const { dispatch, showPage } = setUpController();
-        showPage();
-        dispatch(
-            "stateChanged",
-            FakeState({
-                turn: 1,
-                currentPlayer: "P1A",
-                phase: "action",
-                stationCards: [{ id: "C1A", place: "draw" }],
-                commanders: [Commander.KeveBakins],
-            })
-        );
-        await timeout();
-        await click(".playerStationCards .stationCard .moveToOtherStationRow");
-    });
+  beforeEach(async () => {
+    const { dispatch, showPage } = setUpController();
+    showPage();
+    dispatch(
+      "stateChanged",
+      FakeState({
+        turn: 1,
+        currentPlayer: "P1A",
+        phase: "action",
+        stationCards: [{ id: "C1A", place: "draw" }],
+        commanders: [Commander.KeveBakins],
+      })
+    );
+    await timeout();
+    await click(".playerStationCards .stationCard .moveToOtherStationRow");
+  });
 
-    test("should ONLY show station ghosts", async () => {
-        assert.elementCount(".card-ghost", 3);
-        assert.elementCount(".playerStationCards .card-ghost", 3);
-    });
+  test("should ONLY show station ghosts", async () => {
+    assert.elementCount(".card-ghost", 3);
+    assert.elementCount(".playerStationCards .card-ghost", 3);
+  });
 
-    test("should NOT show card being moved", async () => {
-        assert.elementCount(".playerStationCards .stationCard", 0);
-    });
+  test("should NOT show card being moved", async () => {
+    assert.elementCount(".playerStationCards .stationCard", 0);
+  });
 });
 
 describe("when move station card from draw row to action row", () => {
-    beforeEach(async () => {
-        const { dispatch, showPage } = setUpController();
-        showPage();
-        dispatch(
-            "stateChanged",
-            FakeState({
-                turn: 1,
-                currentPlayer: "P1A",
-                phase: "action",
-                stationCards: [{ id: "C1A", place: "draw" }],
-                commanders: [Commander.KeveBakins],
-            })
-        );
-        await timeout();
+  beforeEach(async () => {
+    const { dispatch, showPage } = setUpController();
+    showPage();
+    dispatch(
+      "stateChanged",
+      FakeState({
+        turn: 1,
+        currentPlayer: "P1A",
+        phase: "action",
+        stationCards: [{ id: "C1A", place: "draw" }],
+        commanders: [Commander.KeveBakins],
+      })
+    );
+    await timeout();
 
-        await click(".playerStationCards .stationCard .moveToOtherStationRow");
-        await click(".playerStationCards .card-ghost:eq(1)");
-    });
+    await click(".playerStationCards .stationCard .moveToOtherStationRow");
+    await click(".playerStationCards .card-ghost:eq(1)");
+  });
 
-    test("should emit move station card", async () => {
-        assert.calledWith(matchController.emit, "moveStationCard", {
-            cardId: "C1A",
-            location: "station-action",
-        });
+  test("should emit move station card", async () => {
+    assert.calledWith(matchController.emit, "moveStationCard", {
+      cardId: "C1A",
+      location: "station-action",
     });
+  });
 });

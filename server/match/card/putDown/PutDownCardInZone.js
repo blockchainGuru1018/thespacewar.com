@@ -1,12 +1,12 @@
 module.exports = function ({ playerServiceProvider }) {
-    return {
-        forPlayer,
-    };
+  return {
+    forPlayer,
+  };
 
-    function forPlayer(playerId, cardData) {
-        const playerStateService = playerServiceProvider.getStateServiceById(
-            playerId
-        );
-        playerStateService.putDownCardInZone(cardData);
-    }
+  function forPlayer(playerId, cardData) {
+    const playerStateService = playerServiceProvider.getStateServiceById(
+      playerId
+    );
+    playerStateService.putDownCardInZone(cardData);
+  }
 };

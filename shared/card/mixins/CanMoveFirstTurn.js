@@ -1,6 +1,6 @@
 module.exports = (superclass) =>
-    class extends superclass {
-        canMoveOnTurnWhenPutDown() {
-            return true;
-        }
-    };
+  class extends superclass {
+    canMoveOnTurnWhenPutDown() {
+      return true;
+    }
+  };

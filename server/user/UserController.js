@@ -4,132 +4,127 @@ const UserBuilder = require("../../shared/user/UserBuilder.js");
 const User = require("../../shared/user/User.js");
 const LoginCookie = require("../../serviceShared/LoginCookie.js");
 module.exports = function ({ userRepository, gameConfig }) {
-    return {
-        login,
-        guestLogin,
-        sendLogGame,
-        testAccessKey,
-        getAll,
+  return {
+    login,
+    guestLogin,
+    sendLogGame,
+    testAccessKey,
+    getAll,
+  };
+
+  async function login(req, res) {
+    verifyAccessKey(req);
+    verifyLoginCookie(req);
+
+    const loggedInUser = await setupLoggedInUser(req);
+    res.json(loggedInUser.toData());
+  }
+
+  async function guestLogin(req, res) {
+    verifyAccessKey(req);
+
+    const guestUser = await setupGuestUser(req);
+    res.json(guestUser.toData());
+  }
+
+  async function sendLogGame(req, res) {
+    let logGame = await new LogGame.logGame(
+      req.body.user_won,
+      req.body.user_lost,
+      req.body.length
+    );
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
     };
+    axios
+      .post("https://thespacewar.com/log-game", logGame.postData(), config)
+      .then((response) => {
+        res.send(response.data);
+      })
+      .then((error) => {
+        res.send(error.statusText);
+      })
+      .catch((error) => {
+        res.send(error.todo);
+      });
+  }
 
-    async function login(req, res) {
-        verifyAccessKey(req);
-        verifyLoginCookie(req);
+  function verifyAccessKey(req) {
+    if (req.body.accessKey !== gameConfig.accessKey()) new Error("Wrong key");
+  }
 
-        const loggedInUser = await setupLoggedInUser(req);
-        res.json(loggedInUser.toData());
+  function verifyLoginCookie(req) {
+    const loginCookie = LoginCookie.loginCookieFromRawCookieStringOrNull(
+      retrieveRawCookie(req)
+    );
+    if (!loginCookie.verify()) {
+      throw new Error("Unauthorized cookie");
     }
+  }
 
-    async function guestLogin(req, res) {
-        verifyAccessKey(req);
+  async function setupLoggedInUser(req) {
+    const user = new UserBuilder()
+      .name(validUsernameFromCookie(req))
+      .country(countryFromLoginCookie(req))
+      .rating(ratingFromLoginCookie(req))
+      .build();
+    return userRepository.addUserAndClearOldUsers(
+      user,
+      req.body.secret,
+      retrieveRawCookie(req)
+    );
+  }
 
-        const guestUser = await setupGuestUser(req);
-        res.json(guestUser.toData());
-    }
+  async function setupGuestUser(req) {
+    const user = new UserBuilder()
+      .name(validGuestUsername(req))
+      .asGuest()
+      .build();
+    return userRepository.addGuestUser(user, req.body.secret);
+  }
 
-    async function sendLogGame(req, res) {
-        let logGame = await new LogGame.logGame(
-            req.body.user_won,
-            req.body.user_lost,
-            req.body.length
-        );
-        const config = {
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-        };
-        axios
-            .post(
-                "https://thespacewar.com/log-game",
-                logGame.postData(),
-                config
-            )
-            .then((response) => {
-                res.send(response.data);
-            })
-            .then((error) => {
-                res.send(error.statusText);
-            })
-            .catch((error) => {
-                res.send(error.todo);
-            });
-    }
+  function validGuestUsername(req) {
+    return validUsername(req.body.name);
+  }
 
-    function verifyAccessKey(req) {
-        if (req.body.accessKey !== gameConfig.accessKey())
-            new Error("Wrong key");
-    }
+  function validUsernameFromCookie(req) {
+    return validUsername(nameFromLoginCookie(req));
+  }
 
-    function verifyLoginCookie(req) {
-        const loginCookie = LoginCookie.loginCookieFromRawCookieStringOrNull(
-            retrieveRawCookie(req)
-        );
-        if (!loginCookie.verify()) {
-            throw new Error("Unauthorized cookie");
-        }
-    }
+  function validUsername(rawName) {
+    return rawName.slice(0, User.MaxNameLength);
+  }
 
-    async function setupLoggedInUser(req) {
-        const user = new UserBuilder()
-            .name(validUsernameFromCookie(req))
-            .country(countryFromLoginCookie(req))
-            .rating(ratingFromLoginCookie(req))
-            .build();
-        return userRepository.addUserAndClearOldUsers(
-            user,
-            req.body.secret,
-            retrieveRawCookie(req)
-        );
-    }
+  function nameFromLoginCookie(req) {
+    return loginCookieFromRequest(req).username;
+  }
 
-    async function setupGuestUser(req) {
-        const user = new UserBuilder()
-            .name(validGuestUsername(req))
-            .asGuest()
-            .build();
-        return userRepository.addGuestUser(user, req.body.secret);
-    }
+  function countryFromLoginCookie(req) {
+    return loginCookieFromRequest(req).country;
+  }
 
-    function validGuestUsername(req) {
-        return validUsername(req.body.name);
-    }
+  function ratingFromLoginCookie(req) {
+    return loginCookieFromRequest(req).rating;
+  }
 
-    function validUsernameFromCookie(req) {
-        return validUsername(nameFromLoginCookie(req));
-    }
+  function loginCookieFromRequest(req) {
+    return LoginCookie.loginCookieFromRawCookieStringOrNull(
+      retrieveRawCookie(req)
+    );
+  }
 
-    function validUsername(rawName) {
-        return rawName.slice(0, User.MaxNameLength);
-    }
+  function retrieveRawCookie(req) {
+    return req.cookies.loggedin;
+  }
 
-    function nameFromLoginCookie(req) {
-        return loginCookieFromRequest(req).username;
-    }
+  function testAccessKey(req, res) {
+    res.json({ valid: req.body.key === gameConfig.accessKey() });
+  }
 
-    function countryFromLoginCookie(req) {
-        return loginCookieFromRequest(req).country;
-    }
-
-    function ratingFromLoginCookie(req) {
-        return loginCookieFromRequest(req).rating;
-    }
-
-    function loginCookieFromRequest(req) {
-        return LoginCookie.loginCookieFromRawCookieStringOrNull(
-            retrieveRawCookie(req)
-        );
-    }
-
-    function retrieveRawCookie(req) {
-        return req.cookies.loggedin;
-    }
-
-    function testAccessKey(req, res) {
-        res.json({ valid: req.body.key === gameConfig.accessKey() });
-    }
-
-    async function getAll(req, res) {
-        const users = await userRepository.getAll();
-        res.json(users);
-    }
+  async function getAll(req, res) {
+    const users = await userRepository.getAll();
+    res.json(users);
+  }
 };

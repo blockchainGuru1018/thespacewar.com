@@ -1,8 +1,8 @@
 module.exports = function failIfThrows(fn) {
-    try {
-        fn();
-    } catch (e) {
-        return false;
-    }
-    return true;
+  try {
+    fn();
+  } catch (e) {
+    return false;
+  }
+  return true;
 };

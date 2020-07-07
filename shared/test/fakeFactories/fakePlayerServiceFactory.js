@@ -1,10 +1,10 @@
 module.exports = {
-    withStubs,
+  withStubs,
 };
 
 function withStubs(stubs = {}) {
-    return {
-        turnControl: () => ({}),
-        ...stubs,
-    };
+  return {
+    turnControl: () => ({}),
+    ...stubs,
+  };
 }

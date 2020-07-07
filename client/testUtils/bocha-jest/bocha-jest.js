@@ -11,27 +11,27 @@ const toJestTest = require("./toJestTest.js");
 const nodeAssert = require("assert");
 
 assert.elementTextStartsWith = function (selector, text) {
-    const element = document.querySelector(selector);
-    if (!element)
-        throw new Error("Cannot find element with selector: " + selector);
+  const element = document.querySelector(selector);
+  if (!element)
+    throw new Error("Cannot find element with selector: " + selector);
 
-    const startsWithText = element.textContent.trim().startsWith(text);
-    nodeAssert.ok(
-        startsWithText,
-        `Element "${selector}" should start with text "${text}" but has text ${element.textContent}`
-    );
+  const startsWithText = element.textContent.trim().startsWith(text);
+  nodeAssert.ok(
+    startsWithText,
+    `Element "${selector}" should start with text "${text}" but has text ${element.textContent}`
+  );
 };
 
 module.exports = {
-    dom: {
-        click,
-    },
-    stub,
-    sinon,
-    timeout,
-    refute,
-    assert,
-    toJestTest,
-    defaults,
-    fakeClock,
+  dom: {
+    click,
+  },
+  stub,
+  sinon,
+  timeout,
+  refute,
+  assert,
+  toJestTest,
+  defaults,
+  fakeClock,
 };

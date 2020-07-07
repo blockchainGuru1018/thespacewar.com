@@ -1,6 +1,6 @@
 module.exports = (superclass) =>
-    class extends superclass {
-        canMoveAndAttackOnSameTurn() {
-            return false;
-        }
-    };
+  class extends superclass {
+    canMoveAndAttackOnSameTurn() {
+      return false;
+    }
+  };

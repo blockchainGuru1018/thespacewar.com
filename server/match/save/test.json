@@ -1,1 +1,1319 @@
-{"state":{"mode":"game","gameStartTime":1593281197889,"turn":4,"currentPlayer":"0175019","playerOrder":["BOT","0175019"],"playersConnected":4,"readyPlayerIds":["BOT","0175019"],"ended":false,"retreatedPlayerId":null,"lastStandInfo":null,"playerStateById":{"0175019":{"cardsInDeck":[],"cardsOnHand":[{"id":"17","commonId":"91","color":"violet","type":"duration","name":"Disturbing Signals","description":"Enemy missiles can't move or attack.","cost":1,"attack":0,"defense":0,"paralyzed":false},{"id":22,"commonId":79,"color":"violet","type":"duration","name":"Toxic gas","description":"Deal 1 damage to enemy station at the start of your draw phase. Shields protects but receives 2 damage instead of 1.","cost":1,"attack":0,"defense":0,"paralyzed":false},{"id":"10","commonId":"6","color":"red","type":"missile","name":"HELLO","description":"I dunno","cost":1,"attack":1,"defense":1,"paralyzed":false},{"id":"11","commonId":"6","color":"red","type":"missile","name":"HELLO","description":"I dunno","cost":1,"attack":1,"defense":1,"paralyzed":false},{"id":"3","commonId":"6","color":"red","type":"missile","name":"HELLO","description":"I dunno","cost":1,"attack":1,"defense":1,"paralyzed":false},{"id":"14","commonId":"84","color":"red","type":"missile","name":"Acid Projectile","description":"Fast (can move the first turn). If played from hand: you may draw a card.","cost":1,"attack":1,"defense":1,"paralyzed":false},{"id":"13","commonId":"83","color":"red","type":"missile","name":"Alien Missile","description":"Slow (each turn can either move or attack but not both)","cost":1,"attack":5,"defense":1,"paralyzed":false}],"stationCards":[{"place":"draw","card":{"id":"4","commonId":"6","color":"red","type":"missile","name":"HELLO","description":"I dunno","cost":1,"attack":1,"defense":1,"paralyzed":false},"flipped":true},{"place":"action","card":{"id":"6","commonId":"6","color":"red","type":"missile","name":"HELLO","description":"I dunno","cost":1,"attack":1,"defense":1,"paralyzed":false}},{"place":"handSize","card":{"id":"9","commonId":"6","color":"red","type":"missile","name":"HELLO","description":"I dunno","cost":1,"attack":1,"defense":1,"paralyzed":false}},{"place":"draw","card":{"id":"2","commonId":"6","color":"red","type":"missile","name":"HELLO","description":"I dunno","cost":1,"attack":1,"defense":1,"paralyzed":false}},{"place":"draw","card":{"id":"12","commonId":"6","color":"red","type":"missile","name":"HELLO","description":"I dunno","cost":1,"attack":1,"defense":1,"paralyzed":false}},{"place":"draw","card":{"id":"8","commonId":"6","color":"red","type":"missile","name":"HELLO","description":"I dunno","cost":1,"attack":1,"defense":1,"paralyzed":false}},{"place":"action","card":{"id":"1","commonId":"6","color":"red","type":"missile","name":"HELLO","description":"I dunno","cost":1,"attack":1,"defense":1,"paralyzed":false}},{"place":"action","card":{"id":"19","commonId":"78","color":"blue","type":"space-ship","name":"Drone","description":"If played from hand: you may draw a card.","cost":1,"attack":1,"defense":1,"paralyzed":false}}],"cardsInZone":[{"id":"15","commonId":"81","color":"green","type":"defense","name":"Shield","description":"Protects base station. (You can have several Shield in play at the same time.)","cost":1,"attack":0,"defense":3,"paralyzed":false,"damage":2,"destroyed":false},{"id":"20","commonId":"90","color":"blue","type":"space-ship","name":"Drone","description":"Can repair 3 damage to spaceship or 1 damage to station.","cost":1,"attack":0,"defense":2,"paralyzed":false},{"id":"21","commonId":"86","color":"orange","type":"space-ship","name":"Drone","description":"If played from hand: you may draw a card.","cost":1,"attack":0,"defense":0,"paralyzed":false}],"cardsInOpponentZone":[],"discardedCards":[{"id":"7","commonId":"6","color":"red","type":"missile","name":"HELLO","description":"I dunno","cost":1,"attack":1,"defense":1,"paralyzed":false},{"id":"5","commonId":"6","color":"red","type":"missile","name":"HELLO","description":"I dunno","cost":1,"attack":1,"defense":1,"paralyzed":false},{"id":"18","commonId":"95","color":"violet","type":"duration","name":"Fast","description":"Your space ships are fast (they can move the first turn they enter play).","cost":1,"attack":0,"defense":0,"paralyzed":false},{"id":"16","commonId":"87","color":"red","type":"duration","name":"Extra Draw","description":"Draw 2 extra cards in your draw phase","cost":2,"attack":0,"defense":0,"paralyzed":false}],"phase":"action","actionPoints":0,"events":[{"type":"addCardToHand","created":1593281204831,"cardId":"4"},{"type":"drawCard","created":1593281204831,"turn":1,"byEvent":true},{"type":"putDownCard","created":1593281206269,"turn":1,"location":"station-draw","cardId":"4","cardCommonId":"6","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":true},{"type":"putDownCard","created":1593281207285,"turn":1,"location":"station-action","cardId":"6","cardCommonId":"6","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":true},{"type":"putDownCard","created":1593281209112,"turn":1,"location":"station-handSize","cardId":"9","cardCommonId":"6","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":true},{"type":"putDownCard","created":1593281214798,"turn":1,"location":"station-draw","cardId":"2","cardCommonId":"6","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":true},{"type":"addCardToHand","created":1593281233941,"cardId":"12"},{"type":"drawCard","created":1593281233941,"turn":1,"byEvent":false},{"type":"addCardToHand","created":1593281234997,"cardId":"15"},{"type":"drawCard","created":1593281234997,"turn":1,"byEvent":false},{"type":"putDownCard","created":1593281250660,"turn":1,"location":"zone","cardId":"15","cardCommonId":"81","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":false},{"type":"putDownCard","created":1593281259218,"turn":1,"location":"station-draw","cardId":"12","cardCommonId":"6","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":false},{"type":"putDownCard","created":1593281265364,"turn":1,"location":"zone","cardId":"20","cardCommonId":"90","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":false},{"type":"addCardToHand","created":1593281293596,"cardId":"16"},{"type":"drawCard","created":1593281293596,"turn":2,"byEvent":false},{"type":"addCardToHand","created":1593281295500,"cardId":"5"},{"type":"drawCard","created":1593281295500,"turn":2,"byEvent":false},{"type":"addCardToHand","created":1593281296116,"cardId":"8"},{"type":"drawCard","created":1593281296116,"turn":2,"byEvent":false},{"type":"putDownCard","created":1593281301192,"turn":2,"location":"station-draw","cardId":"8","cardCommonId":"6","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":false},{"type":"discardCard","created":1593281365870,"turn":2,"phase":"discard","cardId":"7","cardCommonId":"6"},{"type":"addCardToHand","created":1593281377724,"cardId":"18"},{"type":"drawCard","created":1593281377724,"turn":3,"byEvent":false},{"type":"addCardToHand","created":1593281378934,"cardId":22},{"type":"drawCard","created":1593281378934,"turn":3,"byEvent":false},{"type":"addCardToHand","created":1593281379700,"cardId":"10"},{"type":"drawCard","created":1593281379700,"turn":3,"byEvent":false},{"type":"addCardToHand","created":1593281385900,"cardId":"1"},{"type":"drawCard","created":1593281385900,"turn":3,"byEvent":false},{"type":"putDownCard","created":1593281392999,"turn":3,"location":"station-action","cardId":"1","cardCommonId":"6","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":false},{"type":"putDownCard","created":1593281396933,"turn":3,"location":"zone","cardId":"16","cardCommonId":"87","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":false},{"type":"discardCard","created":1593281405149,"turn":3,"phase":"discard","cardId":"5","cardCommonId":"6"},{"type":"discardCard","created":1593281409421,"turn":3,"phase":"discard","cardId":"18","cardCommonId":"95"},{"type":"repairCard","created":1593281415040,"turn":3,"cardId":"20","cardCommonId":"90","repairedCardId":"15","repairedCardCommonId":"81"},{"type":"addCardToHand","created":1593281431181,"cardId":"11"},{"type":"drawCard","created":1593281431181,"turn":4,"byEvent":true},{"type":"addCardToHand","created":1593281431949,"cardId":"3"},{"type":"drawCard","created":1593281431949,"turn":4,"byEvent":true},{"type":"addCardToHand","created":1593281433381,"cardId":"19"},{"type":"drawCard","created":1593281433381,"turn":4,"byEvent":false},{"type":"addCardToHand","created":1593281434397,"cardId":"14"},{"type":"drawCard","created":1593281434397,"turn":4,"byEvent":false},{"type":"addCardToHand","created":1593281435781,"cardId":"13"},{"type":"drawCard","created":1593281435781,"turn":4,"byEvent":false},{"type":"addCardToHand","created":1593281436647,"cardId":"21"},{"type":"drawCard","created":1593281436647,"turn":4,"byEvent":false},{"type":"discardCard","created":1593281448790,"turn":4,"phase":"preparation","cardId":"16","cardCommonId":"87"},{"type":"putDownCard","created":1593281453661,"turn":4,"location":"zone","cardId":"21","cardCommonId":"86","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":false},{"type":"putDownCard","created":1593281459242,"turn":4,"location":"station-action","cardId":"19","cardCommonId":"78","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":false}],"requirements":[],"actionLogEntries":[{"action":"played","text":"Mr.Roboto played **Shield##","cardIds":["15"],"cardCommonIds":["81"]},{"action":"played","text":"Mr.Roboto played **Fast Missile##","cardIds":["8"],"cardCommonIds":["6"]},{"action":"expandedStation","text":"Mr.Roboto expanded station by *1 station card#","count":1},{"action":"stationCardsDamaged","text":"*1 station card# was damaged"},{"action":"played","text":"Mr.Roboto played **Fast Missile##","cardIds":["4"],"cardCommonIds":["6"]},{"action":"expandedStation","text":"Mr.Roboto expanded station by *1 station card#","count":1},{"action":"damagedInAttack","cardCommonId":"81","text":"*Shield# took 1 damage","defenderCardId":"15"},{"action":"played","text":"Mr.Roboto played **Fast Missile##","cardIds":["5"],"cardCommonIds":["6"]},{"action":"expandedStation","text":"Mr.Roboto expanded station by *1 station card#","count":1},{"action":"damagedInAttack","cardCommonId":"81","text":"*Shield# took 1 damage","defenderCardId":"15"},{"action":"played","text":"Mr.Roboto played **Fast Missile##","cardIds":["10"],"cardCommonIds":["6"]},{"action":"played","text":"Mr.Roboto played **Fast Missile##","cardIds":["3"],"cardCommonIds":["6"]},{"action":"damagedInAttack","cardCommonId":"81","text":"*Shield# took 1 damage","defenderCardId":"15"},{"action":"damagedInAttack","cardCommonId":"81","text":"*Shield# took 1 damage","defenderCardId":"15"}],"commanders":["NiciaSatu"],"clock":{"events":[{"type":"stop","time":1593281198863},{"type":"start","time":1593281203993},{"type":"stop","time":1593281216832},{"type":"start","time":1593281224423},{"type":"stop","time":1593281283637},{"type":"start","time":1593281292039},{"type":"stop","time":1593281367036},{"type":"start","time":1593281373846},{"type":"stop","time":1593281420486},{"type":"start","time":1593281429105}],"duration":900000,"startTime":1593281198862}},"BOT":{"cardsInDeck":[{"id":"7","commonId":"6","color":"red","type":"missile","name":"HELLO","description":"I dunno","cost":1,"attack":1,"defense":1,"paralyzed":false},{"id":"12","commonId":"6","color":"red","type":"missile","name":"HELLO","description":"I dunno","cost":1,"attack":1,"defense":1,"paralyzed":false},{"id":"14","commonId":"84","color":"red","type":"missile","name":"Acid Projectile","description":"Fast (can move the first turn). If played from hand: you may draw a card.","cost":1,"attack":1,"defense":1,"paralyzed":false},{"id":"19","commonId":"78","color":"blue","type":"space-ship","name":"Drone","description":"If played from hand: you may draw a card.","cost":1,"attack":1,"defense":1,"paralyzed":false},{"id":22,"commonId":79,"color":"violet","type":"duration","name":"Toxic gas","description":"Deal 1 damage to enemy station at the start of your draw phase. Shields protects but receives 2 damage instead of 1.","cost":1,"attack":0,"defense":0,"paralyzed":false},{"id":"6","commonId":"6","color":"red","type":"missile","name":"HELLO","description":"I dunno","cost":1,"attack":1,"defense":1,"paralyzed":false},{"id":"1","commonId":"6","color":"red","type":"missile","name":"HELLO","description":"I dunno","cost":1,"attack":1,"defense":1,"paralyzed":false},{"id":"13","commonId":"83","color":"red","type":"missile","name":"Alien Missile","description":"Slow (each turn can either move or attack but not both)","cost":1,"attack":5,"defense":1,"paralyzed":false},{"id":"18","commonId":"95","color":"violet","type":"duration","name":"Fast","description":"Your space ships are fast (they can move the first turn they enter play).","cost":1,"attack":0,"defense":0,"paralyzed":false},{"id":"16","commonId":"87","color":"red","type":"duration","name":"Extra Draw","description":"Draw 2 extra cards in your draw phase","cost":2,"attack":0,"defense":0,"paralyzed":false},{"id":"11","commonId":"6","color":"red","type":"missile","name":"HELLO","description":"I dunno","cost":1,"attack":1,"defense":1,"paralyzed":false}],"cardsOnHand":[],"stationCards":[{"place":"draw","card":{"id":"2","commonId":"6","color":"red","type":"missile","name":"HELLO","description":"I dunno","cost":1,"attack":1,"defense":1,"paralyzed":false}},{"place":"action","card":{"id":"9","commonId":"6","color":"red","type":"missile","name":"HELLO","description":"I dunno","cost":1,"attack":1,"defense":1,"paralyzed":false}},{"place":"handSize","card":{"id":"17","commonId":"91","color":"violet","type":"duration","name":"Disturbing Signals","description":"Enemy missiles can't move or attack.","cost":1,"attack":0,"defense":0,"paralyzed":false}},{"place":"action","card":{"id":"20","commonId":"90","color":"blue","type":"space-ship","name":"Drone","description":"Can repair 3 damage to spaceship or 1 damage to station.","cost":1,"attack":0,"defense":2,"paralyzed":false}},{"place":"action","card":{"id":"21","commonId":"86","color":"orange","type":"space-ship","name":"Drone","description":"If played from hand: you may draw a card.","cost":1,"attack":0,"defense":0,"paralyzed":false}},{"place":"draw","card":{}}],"cardsInZone":[{"id":"15","commonId":"81","color":"green","type":"defense","name":"Shield","description":"Protects base station. (You can have several Shield in play at the same time.)","cost":1,"attack":0,"defense":3,"paralyzed":false}],"cardsInOpponentZone":[],"discardedCards":[{"id":"8","commonId":"6","color":"red","type":"missile","name":"HELLO","description":"I dunno","cost":1,"attack":1,"defense":1,"paralyzed":false},{"id":"4","commonId":"6","color":"red","type":"missile","name":"HELLO","description":"I dunno","cost":1,"attack":1,"defense":1,"paralyzed":false},{"id":"5","commonId":"6","color":"red","type":"missile","name":"HELLO","description":"I dunno","cost":1,"attack":1,"defense":1,"paralyzed":false},{"id":"10","commonId":"6","color":"red","type":"missile","name":"HELLO","description":"I dunno","cost":1,"attack":1,"defense":1,"paralyzed":false},{"id":"3","commonId":"6","color":"red","type":"missile","name":"HELLO","description":"I dunno","cost":1,"attack":1,"defense":1,"paralyzed":false}],"phase":"wait","actionPoints":0,"events":[{"type":"putDownCard","created":1593281200622,"turn":1,"location":"draw","cardId":"2","cardCommonId":"6","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":true},{"type":"putDownCard","created":1593281201466,"turn":1,"location":"action","cardId":"9","cardCommonId":"6","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":true},{"type":"putDownCard","created":1593281202307,"turn":1,"location":"handSize","cardId":"17","cardCommonId":"91","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":true},{"type":"addCardToHand","created":1593281217726,"cardId":"21"},{"type":"drawCard","created":1593281217726,"turn":1,"byEvent":false},{"type":"putDownCard","created":1593281219387,"turn":1,"location":"zone","cardId":"15","cardCommonId":"81","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":false},{"type":"putDownCard","created":1593281220227,"turn":1,"location":"zone","cardId":"8","cardCommonId":"6","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":false},{"type":"putDownCard","created":1593281221066,"turn":1,"location":"station-action","cardId":"20","cardCommonId":"90","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":false},{"type":"attack","created":1593281223583,"turn":1,"attackerCardId":"8","cardCommonId":"6","countered":false,"targetStationCardIds":["4"]},{"type":"discardCard","created":1593281223584,"turn":1,"phase":"attack","cardId":"8","cardCommonId":"6"},{"type":"addCardToHand","created":1593281284496,"cardId":"4"},{"type":"drawCard","created":1593281284496,"turn":2,"byEvent":false},{"type":"putDownCard","created":1593281287058,"turn":2,"location":"zone","cardId":"4","cardCommonId":"6","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":false},{"type":"putDownCard","created":1593281288058,"turn":2,"location":"station-action","cardId":"21","cardCommonId":"86","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":false},{"type":"attack","created":1593281291175,"turn":2,"attackerCardId":"4","cardCommonId":"6","countered":false,"defenderCardId":"15"},{"type":"discardCard","created":1593281291175,"turn":2,"phase":"attack","cardId":"4","cardCommonId":"6"},{"type":"addCardToHand","created":1593281354451},{"type":"addCardToHand","created":1593281367908,"cardId":"5"},{"type":"drawCard","created":1593281367908,"turn":3,"byEvent":false},{"type":"putDownCard","created":1593281369580,"turn":3,"location":"zone","cardId":"5","cardCommonId":"6","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":false},{"type":"putDownCard","created":1593281370427,"turn":3,"location":"station-draw","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":false},{"type":"attack","created":1593281372977,"turn":3,"attackerCardId":"5","cardCommonId":"6","countered":false,"defenderCardId":"15"},{"type":"discardCard","created":1593281372977,"turn":3,"phase":"attack","cardId":"5","cardCommonId":"6"},{"type":"addCardToHand","created":1593281421367,"cardId":"10"},{"type":"drawCard","created":1593281421367,"turn":4,"byEvent":false},{"type":"addCardToHand","created":1593281422204,"cardId":"3"},{"type":"drawCard","created":1593281422204,"turn":4,"byEvent":false},{"type":"putDownCard","created":1593281423885,"turn":4,"location":"zone","cardId":"10","cardCommonId":"6","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":false},{"type":"putDownCard","created":1593281424745,"turn":4,"location":"zone","cardId":"3","cardCommonId":"6","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":false},{"type":"attack","created":1593281427305,"turn":4,"attackerCardId":"10","cardCommonId":"6","countered":false,"defenderCardId":"15"},{"type":"discardCard","created":1593281427305,"turn":4,"phase":"attack","cardId":"10","cardCommonId":"6"},{"type":"attack","created":1593281428222,"turn":4,"attackerCardId":"3","cardCommonId":"6","countered":false,"defenderCardId":"15"},{"type":"discardCard","created":1593281428222,"turn":4,"phase":"attack","cardId":"3","cardCommonId":"6"}],"requirements":[],"actionLogEntries":[{"action":"played","text":"august-name played **Shield##","cardIds":["15"],"cardCommonIds":["81"]},{"action":"expandedStation","text":"august-name expanded station by *1 station card#","count":1},{"action":"played","text":"august-name played **Drone##","cardIds":["20"],"cardCommonIds":["90"]},{"action":"expandedStation","text":"august-name expanded station by *2 station cards#","count":2},{"action":"played","text":"august-name played **Extra Draw##","cardIds":["16"],"cardCommonIds":["87"]},{"action":"repairedCard","cardCommonId":"81","text":"august-name moved *Shield#","repairedCardId":"15"},{"action":"played","text":"august-name played **Drone##","cardIds":["21"],"cardCommonIds":["86"]},{"action":"expandedStation","text":"august-name expanded station by *1 station card#","count":1}],"commanders":["FrankJohnson"],"clock":{"events":[{"type":"stop","time":1593281198863},{"type":"start","time":1593281216832},{"type":"stop","time":1593281224423},{"type":"start","time":1593281283637},{"type":"stop","time":1593281292039},{"type":"start","time":1593281367036},{"type":"stop","time":1593281373846},{"type":"start","time":1593281420486},{"type":"stop","time":1593281429105}],"duration":900000,"startTime":1593281198863}}}},"saverPlayerId":"0175019"}
+{
+  "state": {
+    "mode": "game",
+    "gameStartTime": 1593281197889,
+    "turn": 4,
+    "currentPlayer": "0175019",
+    "playerOrder": ["BOT", "0175019"],
+    "playersConnected": 4,
+    "readyPlayerIds": ["BOT", "0175019"],
+    "ended": false,
+    "retreatedPlayerId": null,
+    "lastStandInfo": null,
+    "playerStateById": {
+      "0175019": {
+        "cardsInDeck": [],
+        "cardsOnHand": [
+          {
+            "id": "17",
+            "commonId": "91",
+            "color": "violet",
+            "type": "duration",
+            "name": "Disturbing Signals",
+            "description": "Enemy missiles can't move or attack.",
+            "cost": 1,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": 22,
+            "commonId": 79,
+            "color": "violet",
+            "type": "duration",
+            "name": "Toxic gas",
+            "description": "Deal 1 damage to enemy station at the start of your draw phase. Shields protects but receives 2 damage instead of 1.",
+            "cost": 1,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "10",
+            "commonId": "6",
+            "color": "red",
+            "type": "missile",
+            "name": "HELLO",
+            "description": "I dunno",
+            "cost": 1,
+            "attack": 1,
+            "defense": 1,
+            "paralyzed": false
+          },
+          {
+            "id": "11",
+            "commonId": "6",
+            "color": "red",
+            "type": "missile",
+            "name": "HELLO",
+            "description": "I dunno",
+            "cost": 1,
+            "attack": 1,
+            "defense": 1,
+            "paralyzed": false
+          },
+          {
+            "id": "3",
+            "commonId": "6",
+            "color": "red",
+            "type": "missile",
+            "name": "HELLO",
+            "description": "I dunno",
+            "cost": 1,
+            "attack": 1,
+            "defense": 1,
+            "paralyzed": false
+          },
+          {
+            "id": "14",
+            "commonId": "84",
+            "color": "red",
+            "type": "missile",
+            "name": "Acid Projectile",
+            "description": "Fast (can move the first turn). If played from hand: you may draw a card.",
+            "cost": 1,
+            "attack": 1,
+            "defense": 1,
+            "paralyzed": false
+          },
+          {
+            "id": "13",
+            "commonId": "83",
+            "color": "red",
+            "type": "missile",
+            "name": "Alien Missile",
+            "description": "Slow (each turn can either move or attack but not both)",
+            "cost": 1,
+            "attack": 5,
+            "defense": 1,
+            "paralyzed": false
+          }
+        ],
+        "stationCards": [
+          {
+            "place": "draw",
+            "card": {
+              "id": "4",
+              "commonId": "6",
+              "color": "red",
+              "type": "missile",
+              "name": "HELLO",
+              "description": "I dunno",
+              "cost": 1,
+              "attack": 1,
+              "defense": 1,
+              "paralyzed": false
+            },
+            "flipped": true
+          },
+          {
+            "place": "action",
+            "card": {
+              "id": "6",
+              "commonId": "6",
+              "color": "red",
+              "type": "missile",
+              "name": "HELLO",
+              "description": "I dunno",
+              "cost": 1,
+              "attack": 1,
+              "defense": 1,
+              "paralyzed": false
+            }
+          },
+          {
+            "place": "handSize",
+            "card": {
+              "id": "9",
+              "commonId": "6",
+              "color": "red",
+              "type": "missile",
+              "name": "HELLO",
+              "description": "I dunno",
+              "cost": 1,
+              "attack": 1,
+              "defense": 1,
+              "paralyzed": false
+            }
+          },
+          {
+            "place": "draw",
+            "card": {
+              "id": "2",
+              "commonId": "6",
+              "color": "red",
+              "type": "missile",
+              "name": "HELLO",
+              "description": "I dunno",
+              "cost": 1,
+              "attack": 1,
+              "defense": 1,
+              "paralyzed": false
+            }
+          },
+          {
+            "place": "draw",
+            "card": {
+              "id": "12",
+              "commonId": "6",
+              "color": "red",
+              "type": "missile",
+              "name": "HELLO",
+              "description": "I dunno",
+              "cost": 1,
+              "attack": 1,
+              "defense": 1,
+              "paralyzed": false
+            }
+          },
+          {
+            "place": "draw",
+            "card": {
+              "id": "8",
+              "commonId": "6",
+              "color": "red",
+              "type": "missile",
+              "name": "HELLO",
+              "description": "I dunno",
+              "cost": 1,
+              "attack": 1,
+              "defense": 1,
+              "paralyzed": false
+            }
+          },
+          {
+            "place": "action",
+            "card": {
+              "id": "1",
+              "commonId": "6",
+              "color": "red",
+              "type": "missile",
+              "name": "HELLO",
+              "description": "I dunno",
+              "cost": 1,
+              "attack": 1,
+              "defense": 1,
+              "paralyzed": false
+            }
+          },
+          {
+            "place": "action",
+            "card": {
+              "id": "19",
+              "commonId": "78",
+              "color": "blue",
+              "type": "space-ship",
+              "name": "Drone",
+              "description": "If played from hand: you may draw a card.",
+              "cost": 1,
+              "attack": 1,
+              "defense": 1,
+              "paralyzed": false
+            }
+          }
+        ],
+        "cardsInZone": [
+          {
+            "id": "15",
+            "commonId": "81",
+            "color": "green",
+            "type": "defense",
+            "name": "Shield",
+            "description": "Protects base station. (You can have several Shield in play at the same time.)",
+            "cost": 1,
+            "attack": 0,
+            "defense": 3,
+            "paralyzed": false,
+            "damage": 2,
+            "destroyed": false
+          },
+          {
+            "id": "20",
+            "commonId": "90",
+            "color": "blue",
+            "type": "space-ship",
+            "name": "Drone",
+            "description": "Can repair 3 damage to spaceship or 1 damage to station.",
+            "cost": 1,
+            "attack": 0,
+            "defense": 2,
+            "paralyzed": false
+          },
+          {
+            "id": "21",
+            "commonId": "86",
+            "color": "orange",
+            "type": "space-ship",
+            "name": "Drone",
+            "description": "If played from hand: you may draw a card.",
+            "cost": 1,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          }
+        ],
+        "cardsInOpponentZone": [],
+        "discardedCards": [
+          {
+            "id": "7",
+            "commonId": "6",
+            "color": "red",
+            "type": "missile",
+            "name": "HELLO",
+            "description": "I dunno",
+            "cost": 1,
+            "attack": 1,
+            "defense": 1,
+            "paralyzed": false
+          },
+          {
+            "id": "5",
+            "commonId": "6",
+            "color": "red",
+            "type": "missile",
+            "name": "HELLO",
+            "description": "I dunno",
+            "cost": 1,
+            "attack": 1,
+            "defense": 1,
+            "paralyzed": false
+          },
+          {
+            "id": "18",
+            "commonId": "95",
+            "color": "violet",
+            "type": "duration",
+            "name": "Fast",
+            "description": "Your space ships are fast (they can move the first turn they enter play).",
+            "cost": 1,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "16",
+            "commonId": "87",
+            "color": "red",
+            "type": "duration",
+            "name": "Extra Draw",
+            "description": "Draw 2 extra cards in your draw phase",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          }
+        ],
+        "phase": "action",
+        "actionPoints": 0,
+        "events": [
+          { "type": "addCardToHand", "created": 1593281204831, "cardId": "4" },
+          {
+            "type": "drawCard",
+            "created": 1593281204831,
+            "turn": 1,
+            "byEvent": true
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593281206269,
+            "turn": 1,
+            "location": "station-draw",
+            "cardId": "4",
+            "cardCommonId": "6",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": true
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593281207285,
+            "turn": 1,
+            "location": "station-action",
+            "cardId": "6",
+            "cardCommonId": "6",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": true
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593281209112,
+            "turn": 1,
+            "location": "station-handSize",
+            "cardId": "9",
+            "cardCommonId": "6",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": true
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593281214798,
+            "turn": 1,
+            "location": "station-draw",
+            "cardId": "2",
+            "cardCommonId": "6",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": true
+          },
+          { "type": "addCardToHand", "created": 1593281233941, "cardId": "12" },
+          {
+            "type": "drawCard",
+            "created": 1593281233941,
+            "turn": 1,
+            "byEvent": false
+          },
+          { "type": "addCardToHand", "created": 1593281234997, "cardId": "15" },
+          {
+            "type": "drawCard",
+            "created": 1593281234997,
+            "turn": 1,
+            "byEvent": false
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593281250660,
+            "turn": 1,
+            "location": "zone",
+            "cardId": "15",
+            "cardCommonId": "81",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": false
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593281259218,
+            "turn": 1,
+            "location": "station-draw",
+            "cardId": "12",
+            "cardCommonId": "6",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": false
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593281265364,
+            "turn": 1,
+            "location": "zone",
+            "cardId": "20",
+            "cardCommonId": "90",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": false
+          },
+          { "type": "addCardToHand", "created": 1593281293596, "cardId": "16" },
+          {
+            "type": "drawCard",
+            "created": 1593281293596,
+            "turn": 2,
+            "byEvent": false
+          },
+          { "type": "addCardToHand", "created": 1593281295500, "cardId": "5" },
+          {
+            "type": "drawCard",
+            "created": 1593281295500,
+            "turn": 2,
+            "byEvent": false
+          },
+          { "type": "addCardToHand", "created": 1593281296116, "cardId": "8" },
+          {
+            "type": "drawCard",
+            "created": 1593281296116,
+            "turn": 2,
+            "byEvent": false
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593281301192,
+            "turn": 2,
+            "location": "station-draw",
+            "cardId": "8",
+            "cardCommonId": "6",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": false
+          },
+          {
+            "type": "discardCard",
+            "created": 1593281365870,
+            "turn": 2,
+            "phase": "discard",
+            "cardId": "7",
+            "cardCommonId": "6"
+          },
+          { "type": "addCardToHand", "created": 1593281377724, "cardId": "18" },
+          {
+            "type": "drawCard",
+            "created": 1593281377724,
+            "turn": 3,
+            "byEvent": false
+          },
+          { "type": "addCardToHand", "created": 1593281378934, "cardId": 22 },
+          {
+            "type": "drawCard",
+            "created": 1593281378934,
+            "turn": 3,
+            "byEvent": false
+          },
+          { "type": "addCardToHand", "created": 1593281379700, "cardId": "10" },
+          {
+            "type": "drawCard",
+            "created": 1593281379700,
+            "turn": 3,
+            "byEvent": false
+          },
+          { "type": "addCardToHand", "created": 1593281385900, "cardId": "1" },
+          {
+            "type": "drawCard",
+            "created": 1593281385900,
+            "turn": 3,
+            "byEvent": false
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593281392999,
+            "turn": 3,
+            "location": "station-action",
+            "cardId": "1",
+            "cardCommonId": "6",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": false
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593281396933,
+            "turn": 3,
+            "location": "zone",
+            "cardId": "16",
+            "cardCommonId": "87",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": false
+          },
+          {
+            "type": "discardCard",
+            "created": 1593281405149,
+            "turn": 3,
+            "phase": "discard",
+            "cardId": "5",
+            "cardCommonId": "6"
+          },
+          {
+            "type": "discardCard",
+            "created": 1593281409421,
+            "turn": 3,
+            "phase": "discard",
+            "cardId": "18",
+            "cardCommonId": "95"
+          },
+          {
+            "type": "repairCard",
+            "created": 1593281415040,
+            "turn": 3,
+            "cardId": "20",
+            "cardCommonId": "90",
+            "repairedCardId": "15",
+            "repairedCardCommonId": "81"
+          },
+          { "type": "addCardToHand", "created": 1593281431181, "cardId": "11" },
+          {
+            "type": "drawCard",
+            "created": 1593281431181,
+            "turn": 4,
+            "byEvent": true
+          },
+          { "type": "addCardToHand", "created": 1593281431949, "cardId": "3" },
+          {
+            "type": "drawCard",
+            "created": 1593281431949,
+            "turn": 4,
+            "byEvent": true
+          },
+          { "type": "addCardToHand", "created": 1593281433381, "cardId": "19" },
+          {
+            "type": "drawCard",
+            "created": 1593281433381,
+            "turn": 4,
+            "byEvent": false
+          },
+          { "type": "addCardToHand", "created": 1593281434397, "cardId": "14" },
+          {
+            "type": "drawCard",
+            "created": 1593281434397,
+            "turn": 4,
+            "byEvent": false
+          },
+          { "type": "addCardToHand", "created": 1593281435781, "cardId": "13" },
+          {
+            "type": "drawCard",
+            "created": 1593281435781,
+            "turn": 4,
+            "byEvent": false
+          },
+          { "type": "addCardToHand", "created": 1593281436647, "cardId": "21" },
+          {
+            "type": "drawCard",
+            "created": 1593281436647,
+            "turn": 4,
+            "byEvent": false
+          },
+          {
+            "type": "discardCard",
+            "created": 1593281448790,
+            "turn": 4,
+            "phase": "preparation",
+            "cardId": "16",
+            "cardCommonId": "87"
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593281453661,
+            "turn": 4,
+            "location": "zone",
+            "cardId": "21",
+            "cardCommonId": "86",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": false
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593281459242,
+            "turn": 4,
+            "location": "station-action",
+            "cardId": "19",
+            "cardCommonId": "78",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": false
+          }
+        ],
+        "requirements": [],
+        "actionLogEntries": [
+          {
+            "action": "played",
+            "text": "Mr.Roboto played **Shield##",
+            "cardIds": ["15"],
+            "cardCommonIds": ["81"]
+          },
+          {
+            "action": "played",
+            "text": "Mr.Roboto played **Fast Missile##",
+            "cardIds": ["8"],
+            "cardCommonIds": ["6"]
+          },
+          {
+            "action": "expandedStation",
+            "text": "Mr.Roboto expanded station by *1 station card#",
+            "count": 1
+          },
+          {
+            "action": "stationCardsDamaged",
+            "text": "*1 station card# was damaged"
+          },
+          {
+            "action": "played",
+            "text": "Mr.Roboto played **Fast Missile##",
+            "cardIds": ["4"],
+            "cardCommonIds": ["6"]
+          },
+          {
+            "action": "expandedStation",
+            "text": "Mr.Roboto expanded station by *1 station card#",
+            "count": 1
+          },
+          {
+            "action": "damagedInAttack",
+            "cardCommonId": "81",
+            "text": "*Shield# took 1 damage",
+            "defenderCardId": "15"
+          },
+          {
+            "action": "played",
+            "text": "Mr.Roboto played **Fast Missile##",
+            "cardIds": ["5"],
+            "cardCommonIds": ["6"]
+          },
+          {
+            "action": "expandedStation",
+            "text": "Mr.Roboto expanded station by *1 station card#",
+            "count": 1
+          },
+          {
+            "action": "damagedInAttack",
+            "cardCommonId": "81",
+            "text": "*Shield# took 1 damage",
+            "defenderCardId": "15"
+          },
+          {
+            "action": "played",
+            "text": "Mr.Roboto played **Fast Missile##",
+            "cardIds": ["10"],
+            "cardCommonIds": ["6"]
+          },
+          {
+            "action": "played",
+            "text": "Mr.Roboto played **Fast Missile##",
+            "cardIds": ["3"],
+            "cardCommonIds": ["6"]
+          },
+          {
+            "action": "damagedInAttack",
+            "cardCommonId": "81",
+            "text": "*Shield# took 1 damage",
+            "defenderCardId": "15"
+          },
+          {
+            "action": "damagedInAttack",
+            "cardCommonId": "81",
+            "text": "*Shield# took 1 damage",
+            "defenderCardId": "15"
+          }
+        ],
+        "commanders": ["NiciaSatu"],
+        "clock": {
+          "events": [
+            { "type": "stop", "time": 1593281198863 },
+            { "type": "start", "time": 1593281203993 },
+            { "type": "stop", "time": 1593281216832 },
+            { "type": "start", "time": 1593281224423 },
+            { "type": "stop", "time": 1593281283637 },
+            { "type": "start", "time": 1593281292039 },
+            { "type": "stop", "time": 1593281367036 },
+            { "type": "start", "time": 1593281373846 },
+            { "type": "stop", "time": 1593281420486 },
+            { "type": "start", "time": 1593281429105 }
+          ],
+          "duration": 900000,
+          "startTime": 1593281198862
+        }
+      },
+      "BOT": {
+        "cardsInDeck": [
+          {
+            "id": "7",
+            "commonId": "6",
+            "color": "red",
+            "type": "missile",
+            "name": "HELLO",
+            "description": "I dunno",
+            "cost": 1,
+            "attack": 1,
+            "defense": 1,
+            "paralyzed": false
+          },
+          {
+            "id": "12",
+            "commonId": "6",
+            "color": "red",
+            "type": "missile",
+            "name": "HELLO",
+            "description": "I dunno",
+            "cost": 1,
+            "attack": 1,
+            "defense": 1,
+            "paralyzed": false
+          },
+          {
+            "id": "14",
+            "commonId": "84",
+            "color": "red",
+            "type": "missile",
+            "name": "Acid Projectile",
+            "description": "Fast (can move the first turn). If played from hand: you may draw a card.",
+            "cost": 1,
+            "attack": 1,
+            "defense": 1,
+            "paralyzed": false
+          },
+          {
+            "id": "19",
+            "commonId": "78",
+            "color": "blue",
+            "type": "space-ship",
+            "name": "Drone",
+            "description": "If played from hand: you may draw a card.",
+            "cost": 1,
+            "attack": 1,
+            "defense": 1,
+            "paralyzed": false
+          },
+          {
+            "id": 22,
+            "commonId": 79,
+            "color": "violet",
+            "type": "duration",
+            "name": "Toxic gas",
+            "description": "Deal 1 damage to enemy station at the start of your draw phase. Shields protects but receives 2 damage instead of 1.",
+            "cost": 1,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "6",
+            "commonId": "6",
+            "color": "red",
+            "type": "missile",
+            "name": "HELLO",
+            "description": "I dunno",
+            "cost": 1,
+            "attack": 1,
+            "defense": 1,
+            "paralyzed": false
+          },
+          {
+            "id": "1",
+            "commonId": "6",
+            "color": "red",
+            "type": "missile",
+            "name": "HELLO",
+            "description": "I dunno",
+            "cost": 1,
+            "attack": 1,
+            "defense": 1,
+            "paralyzed": false
+          },
+          {
+            "id": "13",
+            "commonId": "83",
+            "color": "red",
+            "type": "missile",
+            "name": "Alien Missile",
+            "description": "Slow (each turn can either move or attack but not both)",
+            "cost": 1,
+            "attack": 5,
+            "defense": 1,
+            "paralyzed": false
+          },
+          {
+            "id": "18",
+            "commonId": "95",
+            "color": "violet",
+            "type": "duration",
+            "name": "Fast",
+            "description": "Your space ships are fast (they can move the first turn they enter play).",
+            "cost": 1,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "16",
+            "commonId": "87",
+            "color": "red",
+            "type": "duration",
+            "name": "Extra Draw",
+            "description": "Draw 2 extra cards in your draw phase",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "11",
+            "commonId": "6",
+            "color": "red",
+            "type": "missile",
+            "name": "HELLO",
+            "description": "I dunno",
+            "cost": 1,
+            "attack": 1,
+            "defense": 1,
+            "paralyzed": false
+          }
+        ],
+        "cardsOnHand": [],
+        "stationCards": [
+          {
+            "place": "draw",
+            "card": {
+              "id": "2",
+              "commonId": "6",
+              "color": "red",
+              "type": "missile",
+              "name": "HELLO",
+              "description": "I dunno",
+              "cost": 1,
+              "attack": 1,
+              "defense": 1,
+              "paralyzed": false
+            }
+          },
+          {
+            "place": "action",
+            "card": {
+              "id": "9",
+              "commonId": "6",
+              "color": "red",
+              "type": "missile",
+              "name": "HELLO",
+              "description": "I dunno",
+              "cost": 1,
+              "attack": 1,
+              "defense": 1,
+              "paralyzed": false
+            }
+          },
+          {
+            "place": "handSize",
+            "card": {
+              "id": "17",
+              "commonId": "91",
+              "color": "violet",
+              "type": "duration",
+              "name": "Disturbing Signals",
+              "description": "Enemy missiles can't move or attack.",
+              "cost": 1,
+              "attack": 0,
+              "defense": 0,
+              "paralyzed": false
+            }
+          },
+          {
+            "place": "action",
+            "card": {
+              "id": "20",
+              "commonId": "90",
+              "color": "blue",
+              "type": "space-ship",
+              "name": "Drone",
+              "description": "Can repair 3 damage to spaceship or 1 damage to station.",
+              "cost": 1,
+              "attack": 0,
+              "defense": 2,
+              "paralyzed": false
+            }
+          },
+          {
+            "place": "action",
+            "card": {
+              "id": "21",
+              "commonId": "86",
+              "color": "orange",
+              "type": "space-ship",
+              "name": "Drone",
+              "description": "If played from hand: you may draw a card.",
+              "cost": 1,
+              "attack": 0,
+              "defense": 0,
+              "paralyzed": false
+            }
+          },
+          { "place": "draw", "card": {} }
+        ],
+        "cardsInZone": [
+          {
+            "id": "15",
+            "commonId": "81",
+            "color": "green",
+            "type": "defense",
+            "name": "Shield",
+            "description": "Protects base station. (You can have several Shield in play at the same time.)",
+            "cost": 1,
+            "attack": 0,
+            "defense": 3,
+            "paralyzed": false
+          }
+        ],
+        "cardsInOpponentZone": [],
+        "discardedCards": [
+          {
+            "id": "8",
+            "commonId": "6",
+            "color": "red",
+            "type": "missile",
+            "name": "HELLO",
+            "description": "I dunno",
+            "cost": 1,
+            "attack": 1,
+            "defense": 1,
+            "paralyzed": false
+          },
+          {
+            "id": "4",
+            "commonId": "6",
+            "color": "red",
+            "type": "missile",
+            "name": "HELLO",
+            "description": "I dunno",
+            "cost": 1,
+            "attack": 1,
+            "defense": 1,
+            "paralyzed": false
+          },
+          {
+            "id": "5",
+            "commonId": "6",
+            "color": "red",
+            "type": "missile",
+            "name": "HELLO",
+            "description": "I dunno",
+            "cost": 1,
+            "attack": 1,
+            "defense": 1,
+            "paralyzed": false
+          },
+          {
+            "id": "10",
+            "commonId": "6",
+            "color": "red",
+            "type": "missile",
+            "name": "HELLO",
+            "description": "I dunno",
+            "cost": 1,
+            "attack": 1,
+            "defense": 1,
+            "paralyzed": false
+          },
+          {
+            "id": "3",
+            "commonId": "6",
+            "color": "red",
+            "type": "missile",
+            "name": "HELLO",
+            "description": "I dunno",
+            "cost": 1,
+            "attack": 1,
+            "defense": 1,
+            "paralyzed": false
+          }
+        ],
+        "phase": "wait",
+        "actionPoints": 0,
+        "events": [
+          {
+            "type": "putDownCard",
+            "created": 1593281200622,
+            "turn": 1,
+            "location": "draw",
+            "cardId": "2",
+            "cardCommonId": "6",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": true
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593281201466,
+            "turn": 1,
+            "location": "action",
+            "cardId": "9",
+            "cardCommonId": "6",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": true
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593281202307,
+            "turn": 1,
+            "location": "handSize",
+            "cardId": "17",
+            "cardCommonId": "91",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": true
+          },
+          { "type": "addCardToHand", "created": 1593281217726, "cardId": "21" },
+          {
+            "type": "drawCard",
+            "created": 1593281217726,
+            "turn": 1,
+            "byEvent": false
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593281219387,
+            "turn": 1,
+            "location": "zone",
+            "cardId": "15",
+            "cardCommonId": "81",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": false
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593281220227,
+            "turn": 1,
+            "location": "zone",
+            "cardId": "8",
+            "cardCommonId": "6",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": false
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593281221066,
+            "turn": 1,
+            "location": "station-action",
+            "cardId": "20",
+            "cardCommonId": "90",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": false
+          },
+          {
+            "type": "attack",
+            "created": 1593281223583,
+            "turn": 1,
+            "attackerCardId": "8",
+            "cardCommonId": "6",
+            "countered": false,
+            "targetStationCardIds": ["4"]
+          },
+          {
+            "type": "discardCard",
+            "created": 1593281223584,
+            "turn": 1,
+            "phase": "attack",
+            "cardId": "8",
+            "cardCommonId": "6"
+          },
+          { "type": "addCardToHand", "created": 1593281284496, "cardId": "4" },
+          {
+            "type": "drawCard",
+            "created": 1593281284496,
+            "turn": 2,
+            "byEvent": false
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593281287058,
+            "turn": 2,
+            "location": "zone",
+            "cardId": "4",
+            "cardCommonId": "6",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": false
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593281288058,
+            "turn": 2,
+            "location": "station-action",
+            "cardId": "21",
+            "cardCommonId": "86",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": false
+          },
+          {
+            "type": "attack",
+            "created": 1593281291175,
+            "turn": 2,
+            "attackerCardId": "4",
+            "cardCommonId": "6",
+            "countered": false,
+            "defenderCardId": "15"
+          },
+          {
+            "type": "discardCard",
+            "created": 1593281291175,
+            "turn": 2,
+            "phase": "attack",
+            "cardId": "4",
+            "cardCommonId": "6"
+          },
+          { "type": "addCardToHand", "created": 1593281354451 },
+          { "type": "addCardToHand", "created": 1593281367908, "cardId": "5" },
+          {
+            "type": "drawCard",
+            "created": 1593281367908,
+            "turn": 3,
+            "byEvent": false
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593281369580,
+            "turn": 3,
+            "location": "zone",
+            "cardId": "5",
+            "cardCommonId": "6",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": false
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593281370427,
+            "turn": 3,
+            "location": "station-draw",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": false
+          },
+          {
+            "type": "attack",
+            "created": 1593281372977,
+            "turn": 3,
+            "attackerCardId": "5",
+            "cardCommonId": "6",
+            "countered": false,
+            "defenderCardId": "15"
+          },
+          {
+            "type": "discardCard",
+            "created": 1593281372977,
+            "turn": 3,
+            "phase": "attack",
+            "cardId": "5",
+            "cardCommonId": "6"
+          },
+          { "type": "addCardToHand", "created": 1593281421367, "cardId": "10" },
+          {
+            "type": "drawCard",
+            "created": 1593281421367,
+            "turn": 4,
+            "byEvent": false
+          },
+          { "type": "addCardToHand", "created": 1593281422204, "cardId": "3" },
+          {
+            "type": "drawCard",
+            "created": 1593281422204,
+            "turn": 4,
+            "byEvent": false
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593281423885,
+            "turn": 4,
+            "location": "zone",
+            "cardId": "10",
+            "cardCommonId": "6",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": false
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593281424745,
+            "turn": 4,
+            "location": "zone",
+            "cardId": "3",
+            "cardCommonId": "6",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": false
+          },
+          {
+            "type": "attack",
+            "created": 1593281427305,
+            "turn": 4,
+            "attackerCardId": "10",
+            "cardCommonId": "6",
+            "countered": false,
+            "defenderCardId": "15"
+          },
+          {
+            "type": "discardCard",
+            "created": 1593281427305,
+            "turn": 4,
+            "phase": "attack",
+            "cardId": "10",
+            "cardCommonId": "6"
+          },
+          {
+            "type": "attack",
+            "created": 1593281428222,
+            "turn": 4,
+            "attackerCardId": "3",
+            "cardCommonId": "6",
+            "countered": false,
+            "defenderCardId": "15"
+          },
+          {
+            "type": "discardCard",
+            "created": 1593281428222,
+            "turn": 4,
+            "phase": "attack",
+            "cardId": "3",
+            "cardCommonId": "6"
+          }
+        ],
+        "requirements": [],
+        "actionLogEntries": [
+          {
+            "action": "played",
+            "text": "august-name played **Shield##",
+            "cardIds": ["15"],
+            "cardCommonIds": ["81"]
+          },
+          {
+            "action": "expandedStation",
+            "text": "august-name expanded station by *1 station card#",
+            "count": 1
+          },
+          {
+            "action": "played",
+            "text": "august-name played **Drone##",
+            "cardIds": ["20"],
+            "cardCommonIds": ["90"]
+          },
+          {
+            "action": "expandedStation",
+            "text": "august-name expanded station by *2 station cards#",
+            "count": 2
+          },
+          {
+            "action": "played",
+            "text": "august-name played **Extra Draw##",
+            "cardIds": ["16"],
+            "cardCommonIds": ["87"]
+          },
+          {
+            "action": "repairedCard",
+            "cardCommonId": "81",
+            "text": "august-name moved *Shield#",
+            "repairedCardId": "15"
+          },
+          {
+            "action": "played",
+            "text": "august-name played **Drone##",
+            "cardIds": ["21"],
+            "cardCommonIds": ["86"]
+          },
+          {
+            "action": "expandedStation",
+            "text": "august-name expanded station by *1 station card#",
+            "count": 1
+          }
+        ],
+        "commanders": ["FrankJohnson"],
+        "clock": {
+          "events": [
+            { "type": "stop", "time": 1593281198863 },
+            { "type": "start", "time": 1593281216832 },
+            { "type": "stop", "time": 1593281224423 },
+            { "type": "start", "time": 1593281283637 },
+            { "type": "stop", "time": 1593281292039 },
+            { "type": "start", "time": 1593281367036 },
+            { "type": "stop", "time": 1593281373846 },
+            { "type": "start", "time": 1593281420486 },
+            { "type": "stop", "time": 1593281429105 }
+          ],
+          "duration": 900000,
+          "startTime": 1593281198863
+        }
+      }
+    }
+  },
+  "saverPlayerId": "0175019"
+}

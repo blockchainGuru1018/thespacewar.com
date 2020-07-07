@@ -16,25 +16,25 @@ import GameTimer from "./steps/GameTimer.vue";
 import HomeZone0 from "./steps/HomeZone0.vue";
 
 const ComponentsByName = {
-    Winning,
-    HomeZone0,
-    HomeZone,
-    HomeZone2,
-    OpponentZone,
-    Piles,
-    PhasesIntro,
-    DrawPhase,
-    ActionPhase,
-    DiscardPhase,
-    AttackPhase,
-    CardTypes,
-    CardTypes2,
-    EventCards,
-    GameTimer,
-    LastTip,
+  Winning,
+  HomeZone0,
+  HomeZone,
+  HomeZone2,
+  OpponentZone,
+  Piles,
+  PhasesIntro,
+  DrawPhase,
+  ActionPhase,
+  DiscardPhase,
+  AttackPhase,
+  CardTypes,
+  CardTypes2,
+  EventCards,
+  GameTimer,
+  LastTip,
 };
 
 export default {
-    InOrder: Object.values(ComponentsByName),
-    ComponentsByName,
+  InOrder: Object.values(ComponentsByName),
+  ComponentsByName,
 };

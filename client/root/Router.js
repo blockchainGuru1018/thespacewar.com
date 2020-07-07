@@ -1,23 +1,23 @@
 module.exports = function (deps) {
-    const pagesByName = deps.pagesByName;
-    const pageDependencies = deps.pageDependencies;
+  const pagesByName = deps.pagesByName;
+  const pageDependencies = deps.pageDependencies;
 
-    pageDependencies.route = route;
+  pageDependencies.route = route;
 
-    let currentPage;
+  let currentPage;
 
-    return {
-        route,
-    };
+  return {
+    route,
+  };
 
-    function route(pageName, pageArguments) {
-        if (currentPage && currentPage.hide) {
-            currentPage.hide();
-        }
-
-        const pageConstructor = pagesByName[pageName];
-        const page = pageConstructor(pageDependencies);
-        currentPage = page;
-        page.show(pageArguments);
+  function route(pageName, pageArguments) {
+    if (currentPage && currentPage.hide) {
+      currentPage.hide();
     }
+
+    const pageConstructor = pagesByName[pageName];
+    const page = pageConstructor(pageDependencies);
+    currentPage = page;
+    page.show(pageArguments);
+  }
 };
