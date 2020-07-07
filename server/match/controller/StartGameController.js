@@ -103,9 +103,19 @@ function repairRequirements({
     const discardCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'discardCard' });
     if (discardCardRequirement && discardCardRequirement.count > 0) {
         const cardsOnHandCount = playerStateService.getCardsOnHandCount();
-        if (cardsOnHandCount === 0) {
+        if (cardsOnHandCount === 0 ) {
             const playerId = playerStateService.getPlayerId();
             const requirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'discardCard' });
+            requirementUpdater.completeRequirement();
+        }
+    }
+
+    const drawCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'drawCard' });
+    if (drawCardRequirement && drawCardRequirement.count > 0) {
+        const cardsInDeckCount = playerStateService.getDeck().getCardCount();
+        if (cardsInDeckCount === 0) {
+            const playerId = playerStateService.getPlayerId();
+            const requirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'drawCard' });
             requirementUpdater.completeRequirement();
         }
     }
