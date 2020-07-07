@@ -139,6 +139,21 @@ function repairRequirements({
             requirementUpdater.completeRequirement();
         }
     }
+
+    const drawCardRequirement = playerRequirementService.getFirstMatchingRequirement(
+        { type: "drawCard" }
+    );
+    if (drawCardRequirement && drawCardRequirement.count > 0) {
+        const cardsInDeckCount = playerStateService.getDeck().getCardCount();
+        if (cardsInDeckCount === 0) {
+            const playerId = playerStateService.getPlayerId();
+            const requirementUpdater = playerRequirementUpdaterFactory.create(
+                playerId,
+                { type: "drawCard" }
+            );
+            requirementUpdater.completeRequirement();
+        }
+    }
 }
 
 module.exports = StartGameController;
