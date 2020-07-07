@@ -7,6 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
+    "prettier": "prettier --write '**/*.js'",
     "test": "./node_modules/.bin/jest",
     "dev:test": "./node_modules/.bin/jest --watch",
     "dev:client": "cd ./client && npm run build-watch",
@@ -33,8 +34,13 @@
   "devDependencies": {
     "@babel/preset-env": "^7.8.4",
     "concurrently": "^5.2.0",
+    "eslint": "^7.4.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-vue": "^7.0.0-alpha.9",
     "husky": "^4.2.3",
-    "jest": "^25.1.0"
+    "jest": "^25.1.0",
+    "prettier": "^2.0.5"
   },
   "husky": {
     "hooks": {
