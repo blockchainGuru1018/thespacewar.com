@@ -1,5 +1,4 @@
 module.exports = function (deps) {
-
     const pagesByName = deps.pagesByName;
     const pageDependencies = deps.pageDependencies;
 
@@ -8,7 +7,7 @@ module.exports = function (deps) {
     let currentPage;
 
     return {
-        route
+        route,
     };
 
     function route(pageName, pageArguments) {

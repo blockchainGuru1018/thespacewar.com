@@ -1,1 +1,1 @@
-module.exports = require('../../shared/phases.js');
+module.exports = require("../../shared/phases.js");

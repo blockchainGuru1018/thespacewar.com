@@ -1,4 +1,4 @@
-const CommonId = '12';
+const CommonId = "12";
 
 module.exports = {
     CommonId,
@@ -6,17 +6,15 @@ module.exports = {
         forOpponent: [],
         forPlayer: [
             {
-                type: 'findCard',
+                type: "findCard",
                 count: 1,
-                sources: [
-                    'opponentCardsInZone'
-                ],
+                sources: ["opponentCardsInZone"],
                 filter: {
-                    type: 'duration'
+                    type: "duration",
                 },
-                target: 'opponentDiscardPile',
-                dormantEffect: { destroyTriggerCard: true }
-            }
-        ]
-    }
+                target: "opponentDiscardPile",
+                dormantEffect: { destroyTriggerCard: true },
+            },
+        ],
+    },
 };

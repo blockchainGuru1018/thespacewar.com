@@ -1,8 +1,7 @@
 module.exports = function MatchInfoRepository(deps) {
-
     return {
         getTurn,
-        getPlayerPhase
+        getPlayerPhase,
     };
 
     function getTurn() {
@@ -12,4 +11,4 @@ module.exports = function MatchInfoRepository(deps) {
     function getPlayerPhase(playerId) {
         return deps.playerStateById[playerId].phase;
     }
-}
+};

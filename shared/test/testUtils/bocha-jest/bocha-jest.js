@@ -1,4 +1,4 @@
-const toJestTest = require('./toJestTest.js');
+const toJestTest = require("./toJestTest.js");
 
 module.exports = {
     toJestTest,

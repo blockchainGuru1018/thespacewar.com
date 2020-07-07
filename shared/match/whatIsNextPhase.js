@@ -1,5 +1,4 @@
-
-const { COMMON_PHASE_ORDER, PHASES } = require('../phases.js');
+const { COMMON_PHASE_ORDER, PHASES } = require("../phases.js");
 
 module.exports = whatIsNextPhase;
 
@@ -9,7 +8,10 @@ function whatIsNextPhase({ hasDurationCardInPlay, currentPhase }) {
 
     const nextPhase = nextPhaseInOrder(currentPhase);
     if (nextPhase === PHASES.preparation && !hasDurationCardInPlay) {
-        return whatIsNextPhase({ hasDurationCardInPlay, currentPhase: PHASES.preparation });
+        return whatIsNextPhase({
+            hasDurationCardInPlay,
+            currentPhase: PHASES.preparation,
+        });
     }
     return nextPhase;
 }
@@ -19,5 +21,5 @@ function lastPhase() {
 }
 
 function nextPhaseInOrder(currentPhase) {
-    return COMMON_PHASE_ORDER[(COMMON_PHASE_ORDER.indexOf(currentPhase) + 1)];
+    return COMMON_PHASE_ORDER[COMMON_PHASE_ORDER.indexOf(currentPhase) + 1];
 }

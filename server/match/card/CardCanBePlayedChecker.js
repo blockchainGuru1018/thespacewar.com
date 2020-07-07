@@ -1,6 +1,4 @@
-const Checkers = [
-    require('./putDown/PutDownFatalError.js'),
-];
+const Checkers = [require("./putDown/PutDownFatalError.js")];
 
 module.exports = function CardCanBePlayedChecker(deps) {
     const checkerByCommonId = {};
@@ -11,14 +9,14 @@ module.exports = function CardCanBePlayedChecker(deps) {
 
     return {
         hasCheckerForCard,
-        canBePlayed
+        canBePlayed,
     };
 
     function hasCheckerForCard({ commonId }) {
         return getCheckerForCard({ commonId });
     }
 
-    function canBePlayed(playerId, cardData, { choice = '' } = {}) {
+    function canBePlayed(playerId, cardData, { choice = "" } = {}) {
         const checker = getCheckerForCard(cardData);
         return checker.canBePlayed(playerId, cardData, { choice });
     }

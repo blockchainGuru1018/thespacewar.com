@@ -1,60 +1,58 @@
-const DiscardCardEvent = require('../../shared/event/DiscardCardEvent.js');
-const AttackEvent = require('../../shared/event/AttackEvent.js');
-const QueryEvents = require('../../shared/event/QueryEvents.js');
-const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
+const DiscardCardEvent = require("../../shared/event/DiscardCardEvent.js");
+const AttackEvent = require("../../shared/event/AttackEvent.js");
+const QueryEvents = require("../../shared/event/QueryEvents.js");
+const ActionPointsCalculator = require("../../shared/match/ActionPointsCalculator.js");
 const MatchService = require("../../shared/match/MatchService.js");
 const CanThePlayer = require("../../shared/match/CanThePlayer.js");
 const TurnControl = require("../../shared/match/TurnControl.js");
 const PlayerPhase = require("../../shared/match/PlayerPhase.js");
 const PlayerRuleService = require("../../shared/match/PlayerRuleService.js");
 const ClientPlayerStateService = require("./ClientPlayerStateService");
-const QueryPlayerRequirements = require('../../shared/match/requirement/QueryPlayerRequirements.js');
-const PlayerRequirementService = require('../../shared/match/requirement/PlayerRequirementService.js');
-const PlayerPerfectPlan = require('../../shared/match/perfectPlan/PlayerPerfectPlan.js');
-const CardFactory = require('../../shared/card/CardFactory.js');
-const ClientPlayerServiceProvider = require('./ClientPlayerServiceProvider.js');
-const EventFactory = require('../../shared/event/EventFactory.js');
-const GameConfig = require('../../shared/match/GameConfig.js');
-const MoveStationCard = require('../../shared/match/MoveStationCard.js');
-const ActionLog = require('../../shared/match/log/ActionLog.js');
-const Miller = require('../../shared/match/mill/Miller.js');
-const PlayerDrawPhase = require('../../shared/match/PlayerDrawPhase.js');
-const mapFromClientToServerState = require('./mapFromClientToServerState.js');
-const localGameDataFacade = require('../utils/localGameDataFacade.js');
-const whatIsNextPhase = require('../../shared/match/whatIsNextPhase.js');
-const MatchMode = require('../../shared/match/MatchMode.js');
-const CardDataAssembler = require('../../shared/CardDataAssembler.js');
-const PlayerCommanders = require('../../shared/match/commander/PlayerCommanders.js');
+const QueryPlayerRequirements = require("../../shared/match/requirement/QueryPlayerRequirements.js");
+const PlayerRequirementService = require("../../shared/match/requirement/PlayerRequirementService.js");
+const PlayerPerfectPlan = require("../../shared/match/perfectPlan/PlayerPerfectPlan.js");
+const CardFactory = require("../../shared/card/CardFactory.js");
+const ClientPlayerServiceProvider = require("./ClientPlayerServiceProvider.js");
+const EventFactory = require("../../shared/event/EventFactory.js");
+const GameConfig = require("../../shared/match/GameConfig.js");
+const MoveStationCard = require("../../shared/match/MoveStationCard.js");
+const ActionLog = require("../../shared/match/log/ActionLog.js");
+const Miller = require("../../shared/match/mill/Miller.js");
+const PlayerDrawPhase = require("../../shared/match/PlayerDrawPhase.js");
+const mapFromClientToServerState = require("./mapFromClientToServerState.js");
+const localGameDataFacade = require("../utils/localGameDataFacade.js");
+const whatIsNextPhase = require("../../shared/match/whatIsNextPhase.js");
+const MatchMode = require("../../shared/match/MatchMode.js");
+const CardDataAssembler = require("../../shared/CardDataAssembler.js");
+const PlayerCommanders = require("../../shared/match/commander/PlayerCommanders.js");
 const Commander = require("../../shared/match/commander/Commander.js");
-const Clock = require('../../shared/gameTimer/Clock.js');
-const PlayerCardInPlay = require('./card/PlayerCardInPlay.js');
-const LastStand = require('../../shared/match/LastStand.js');
-const ClientStateChanger = require('../state/ClientStateChanger.js');
-const CountCardsLeftToDrawForDrawPhase = require('../../shared/match/rules/CountCardsLeftToDrawForDrawPhase.js');
-const CardsThatCanLookAtHandSizeStationRow = require('../../shared/match/card/query/CardsThatCanLookAtHandSizeStationRow.js');
-const MoreCardsCanBeDrawnForDrawPhase = require('../../shared/match/rules/MoreCardsCanBeDrawnForDrawPhase.js');
-const LookAtStationRow = require('../../shared/match/card/actions/LookAtStationRow.js');
-const PlayerActionPointsCalculator = require('../../shared/match/PlayerActionPointsCalculator.js');
-const QueryBoard = require('../../shared/match/QueryBoard.js');
-const ClientPlayerDeck = require('../card/ClientPlayerDeck.js');
+const Clock = require("../../shared/gameTimer/Clock.js");
+const PlayerCardInPlay = require("./card/PlayerCardInPlay.js");
+const LastStand = require("../../shared/match/LastStand.js");
+const ClientStateChanger = require("../state/ClientStateChanger.js");
+const CountCardsLeftToDrawForDrawPhase = require("../../shared/match/rules/CountCardsLeftToDrawForDrawPhase.js");
+const CardsThatCanLookAtHandSizeStationRow = require("../../shared/match/card/query/CardsThatCanLookAtHandSizeStationRow.js");
+const MoreCardsCanBeDrawnForDrawPhase = require("../../shared/match/rules/MoreCardsCanBeDrawnForDrawPhase.js");
+const LookAtStationRow = require("../../shared/match/card/actions/LookAtStationRow.js");
+const PlayerActionPointsCalculator = require("../../shared/match/PlayerActionPointsCalculator.js");
+const QueryBoard = require("../../shared/match/QueryBoard.js");
+const ClientPlayerDeck = require("../card/ClientPlayerDeck.js");
 
-const {
-    COMMON_PHASE_ORDER,
-    PHASES
-} = require('./phases.js');
+const { COMMON_PHASE_ORDER, PHASES } = require("./phases.js");
 
 const FlashCardTime = 2000;
-const ClientLimitNotice = { note: 'not_allowed_on_client' };
+const ClientLimitNotice = { note: "not_allowed_on_client" };
 
 module.exports = function (deps) {
-
     const route = deps.route;
     const rootStore = deps.rootStore;
     const userRepository = deps.userRepository;
     const opponentUser = deps.opponentUser;
     const matchId = deps.matchId;
     const cardInfoRepository = deps.cardInfoRepository;
-    const actionPointsCalculator = deps.actionPointsCalculator || ActionPointsCalculator({ cardInfoRepository });
+    const actionPointsCalculator =
+        deps.actionPointsCalculator ||
+        ActionPointsCalculator({ cardInfoRepository });
     const matchController = deps.matchController;
     const rawCardDataRepository = deps.rawCardDataRepository;
 
@@ -65,7 +63,7 @@ module.exports = function (deps) {
 
     return {
         namespaced: true,
-        name: 'match',
+        name: "match",
         state: {
             mode: MatchMode.firstMode,
             readyPlayerIds: [],
@@ -76,7 +74,7 @@ module.exports = function (deps) {
             opponentActionLogEntries: [],
             turn: 1,
             currentPlayer: null,
-            phase: '',
+            phase: "",
             events: [],
             requirements: [],
             matchId,
@@ -89,18 +87,18 @@ module.exports = function (deps) {
             playerStation: {
                 drawCards: [],
                 actionCards: [],
-                handSizeCards: []
+                handSizeCards: [],
             },
             playerCardsInOpponentZone: [],
             playerCardsInDeckCount: 0,
             opponentCommanders: [],
-            opponentPhase: '',
+            opponentPhase: "",
             opponentCardCount: 0,
             opponentDiscardedCards: [],
             opponentStation: {
                 drawCards: [],
                 actionCards: [],
-                handSizeCards: []
+                handSizeCards: [],
             },
             opponentCardsInPlayerZone: [],
             opponentCardsInZone: [],
@@ -196,7 +194,7 @@ module.exports = function (deps) {
             maxStationCardCount,
             opponentMaxStationCardCount,
             gameConfig,
-            cardDataAssembler
+            cardDataAssembler,
         },
         actions: {
             // remote
@@ -246,8 +244,8 @@ module.exports = function (deps) {
             shakeTheScreen,
             matchIsDead,
             onLastChangeToWin,
-            timeRanOutVSBot
-        }
+            timeRanOutVSBot,
+        },
     };
 
     function isFirstPlayer(state) {
@@ -259,7 +257,9 @@ module.exports = function (deps) {
     }
 
     function choosingStartingPlayer(state, getters) {
-        return state.mode === MatchMode.chooseStartingPlayer && getters.isOwnTurn;
+        return (
+            state.mode === MatchMode.chooseStartingPlayer && getters.isOwnTurn
+        );
     }
 
     function selectingStartingStationCards(state) {
@@ -273,21 +273,24 @@ module.exports = function (deps) {
     function nextPhase(state, getters) {
         const nextPhase = whatIsNextPhase({
             hasDurationCardInPlay: getters.playerStateService.hasDurationCardInPlay(),
-            currentPhase: state.phase
+            currentPhase: state.phase,
         });
-        return nextPhase || 'wait';
+        return nextPhase || "wait";
     }
 
-    function getTotalCardsOnHand(state){
+    function getTotalCardsOnHand(state) {
         return state.playerCardsOnHand;
     }
 
     function nextPhaseWithAction(state, getters) {
         let nextPhase = getters.nextPhase;
-        if (nextPhase === PHASES.discard && getters.amountOfCardsToDiscard === 0) {
+        if (
+            nextPhase === PHASES.discard &&
+            getters.amountOfCardsToDiscard === 0
+        ) {
             nextPhase = whatIsNextPhase({
                 hasDurationCardInPlay: getters.playerStateService.hasDurationCardInPlay(),
-                currentPhase: PHASES.discard
+                currentPhase: PHASES.discard,
             });
         }
 
@@ -295,10 +298,9 @@ module.exports = function (deps) {
             if (getters.canSkipAttackPhaseWithPlayerCardsInPlay) {
                 nextPhase = whatIsNextPhase({
                     hasDurationCardInPlay: getters.playerStateService.hasDurationCardInPlay(),
-                    currentPhase: PHASES.attack
+                    currentPhase: PHASES.attack,
                 });
             }
-
         }
 
         return nextPhase || PHASES.wait;
@@ -307,27 +309,42 @@ module.exports = function (deps) {
     function numberOfPhasesUntilNextPhaseWithAction(state, getters) {
         const currentNextPhase = getters.nextPhase;
         const nextPhaseWithAction = getters.nextPhaseWithAction;
-        return Math.max(0, getNumberOfPhasesBetween(currentNextPhase, nextPhaseWithAction));
+        return Math.max(
+            0,
+            getNumberOfPhasesBetween(currentNextPhase, nextPhaseWithAction)
+        );
     }
 
     function canSkipAttackPhaseWithPlayerCardsInPlay(state, getters) {
-        const playerCardsInPlay = [...state.playerCardsInZone, ...state.playerCardsInOpponentZone]
-            .map(cardData => getters.createCard(cardData, { alternativeConditions: { phase: 'attack' } }))
-            .map(card => {
+        const playerCardsInPlay = [
+            ...state.playerCardsInZone,
+            ...state.playerCardsInOpponentZone,
+        ]
+            .map((cardData) =>
+                getters.createCard(cardData, {
+                    alternativeConditions: { phase: "attack" },
+                })
+            )
+            .map((card) => {
                 return PlayerCardInPlay({
                     card,
                     attackerSelected: false,
                     canThePlayer: getters.canThePlayer,
-                    opponentStateService: getters.opponentStateService
+                    opponentStateService: getters.opponentStateService,
                 });
             });
 
         for (const card of playerCardsInPlay) {
-            if (card.canMove() || card.canAttack() || card.canBeSacrificed() || card.canRepair()) return false;
+            if (
+                card.canMove() ||
+                card.canAttack() ||
+                card.canBeSacrificed() ||
+                card.canRepair()
+            )
+                return false;
         }
 
         return true;
-
     }
 
     function cardsToDrawInDrawPhase(state) {
@@ -343,7 +360,10 @@ module.exports = function (deps) {
     }
 
     function amountOfCardsToDiscard(state, getters) {
-        return Math.max(0, state.playerCardsOnHand.length - getters.maxHandSize);
+        return Math.max(
+            0,
+            state.playerCardsOnHand.length - getters.maxHandSize
+        );
     }
 
     function startingStationCardsToPutDownCount(state, getters) {
@@ -352,49 +372,67 @@ module.exports = function (deps) {
     }
 
     function hasPutDownNonFreeCardThisTurn(state) {
-        return state.events.some(e =>
-            e.turn === state.turn
-            && e.type === 'putDownCard'
-            && e.location === 'zone'
-            && cardInfoRepository.getCost(e.cardCommonId) > 0);
+        return state.events.some(
+            (e) =>
+                e.turn === state.turn &&
+                e.type === "putDownCard" &&
+                e.location === "zone" &&
+                cardInfoRepository.getCost(e.cardCommonId) > 0
+        );
     }
 
-    function actionPoints2(state) { //TODO Rename "actionPoints"
+    function actionPoints2(state) {
+        //TODO Rename "actionPoints"
         return actionPointsCalculator.calculate({
             phase: state.phase,
             turn: state.turn,
             events: state.events,
-            actionStationCardsCount: state.playerStation.actionCards.length
+            actionStationCardsCount: state.playerStation.actionCards.length,
         });
     }
 
     function createCard(state, getters) {
-        return (cardData, { isOpponent = false, playerId = null, alternativeConditions } = {}) => {
-            const id = playerId || (isOpponent ? state.opponentUser.id : state.ownUser.id);
-            return getters.cardFactory.createCardForPlayer(cardData, id, alternativeConditions);
+        return (
+            cardData,
+            { isOpponent = false, playerId = null, alternativeConditions } = {}
+        ) => {
+            const id =
+                playerId ||
+                (isOpponent ? state.opponentUser.id : state.ownUser.id);
+            return getters.cardFactory.createCardForPlayer(
+                cardData,
+                id,
+                alternativeConditions
+            );
         };
     }
 
-    function findPlayerCard(state) { // TODO Rename => findPlayerCardInZones
-        return cardId => {
-            return state.playerCardsInZone.find(c => c.id === cardId)
-                || state.playerCardsInOpponentZone.find(c => c.id === cardId)
-                || null;
-        }
+    function findPlayerCard(state) {
+        // TODO Rename => findPlayerCardInZones
+        return (cardId) => {
+            return (
+                state.playerCardsInZone.find((c) => c.id === cardId) ||
+                state.playerCardsInOpponentZone.find((c) => c.id === cardId) ||
+                null
+            );
+        };
     }
 
     function findPlayerCardFromAllSources(state, getters) {
-        return cardId => {
-            const cardInSomeZone = state.playerCardsInZone.find(c => c.id === cardId)
-                || state.playerCardsInOpponentZone.find(c => c.id === cardId)
-                || state.playerCardsOnHand.find(c => c.id === cardId);
+        return (cardId) => {
+            const cardInSomeZone =
+                state.playerCardsInZone.find((c) => c.id === cardId) ||
+                state.playerCardsInOpponentZone.find((c) => c.id === cardId) ||
+                state.playerCardsOnHand.find((c) => c.id === cardId);
             if (cardInSomeZone) return cardInSomeZone;
 
-            const stationCard = getters.allPlayerStationCards.find(s => s.id === cardId);
+            const stationCard = getters.allPlayerStationCards.find(
+                (s) => s.id === cardId
+            );
             if (stationCard) return stationCard.card;
 
             return null;
-        }
+        };
     }
 
     function cardFactory(state, getters) {
@@ -405,8 +443,8 @@ module.exports = function (deps) {
                 addRequirementFromSpec: () => ClientLimitNotice,
                 turnControl: () => getters.turnControl,
                 playerPhase: () => getters.playerPhase,
-                queryBoard: () => getters.queryBoard
-            }
+                queryBoard: () => getters.queryBoard,
+            },
         });
     }
 
@@ -416,16 +454,17 @@ module.exports = function (deps) {
 
     function playerCommanders(state, getters) {
         return PlayerCommanders({
-            playerStateService: getters.playerStateService
+            playerStateService: getters.playerStateService,
         });
     }
 
     function playerDrawPhase(state, getters) {
         return PlayerDrawPhase({
             miller: getters.miller,
-            moreCardsCanBeDrawnForDrawPhase: getters.calculateMoreCardsCanBeDrawnForDrawPhase,
+            moreCardsCanBeDrawnForDrawPhase:
+                getters.calculateMoreCardsCanBeDrawnForDrawPhase,
             playerDeck: getters.playerDeck,
-            playerPhase: getters.playerPhase
+            playerPhase: getters.playerPhase,
         });
     }
 
@@ -440,7 +479,7 @@ module.exports = function (deps) {
 
     function opponentCommanders(state, getters) {
         return PlayerCommanders({
-            playerStateService: getters.opponentStateService
+            playerStateService: getters.opponentStateService,
         });
     }
 
@@ -450,13 +489,13 @@ module.exports = function (deps) {
             playerStateService: getters.playerStateService,
             playerPhase: getters.playerPhase,
             opponentActionLog: getters.opponentActionLog,
-            playerCommanders: getters.playerCommanders
+            playerCommanders: getters.playerCommanders,
         });
     }
 
     function lastStand(state, getters) {
         return LastStand({
-            matchService: getters.matchService
+            matchService: getters.matchService,
         });
     }
 
@@ -469,7 +508,7 @@ module.exports = function (deps) {
             opponentRequirementService: getters.opponentRequirementService,
             playerCommanders: getters.playerCommanders,
             opponentActionLog: ClientLimitNotice,
-            addRequirementFromSpec: ClientLimitNotice
+            addRequirementFromSpec: ClientLimitNotice,
         });
     }
 
@@ -487,8 +526,10 @@ module.exports = function (deps) {
             gameConfig: getters.gameConfig,
             playerCommanders: getters.playerCommanders,
             queryEvents: getters.queryEvents,
-            moreCardsCanBeDrawnForDrawPhase: getters.calculateMoreCardsCanBeDrawnForDrawPhase,
-            countCardsLeftToDrawForDrawPhase: getters.calculateCountCardsLeftToDrawForDrawPhase
+            moreCardsCanBeDrawnForDrawPhase:
+                getters.calculateMoreCardsCanBeDrawnForDrawPhase,
+            countCardsLeftToDrawForDrawPhase:
+                getters.calculateCountCardsLeftToDrawForDrawPhase,
         });
     }
 
@@ -502,15 +543,18 @@ module.exports = function (deps) {
             canThePlayer: ClientLimitNotice,
             turnControl: ClientLimitNotice,
             playerPhase: ClientLimitNotice,
-            moreCardsCanBeDrawnForDrawPhase: getters.calculateMoreCardsCanBeDrawnForDrawPhase,
-            countCardsLeftToDrawForDrawPhase: getters.calculateCountCardsLeftToDrawForDrawPhase
+            moreCardsCanBeDrawnForDrawPhase:
+                getters.calculateMoreCardsCanBeDrawnForDrawPhase,
+            countCardsLeftToDrawForDrawPhase:
+                getters.calculateCountCardsLeftToDrawForDrawPhase,
         });
     }
 
     function calculateMoreCardsCanBeDrawnForDrawPhase(state, getters) {
         return MoreCardsCanBeDrawnForDrawPhase({
             playerPhase: getters.playerPhase,
-            countCardsLeftToDrawForDrawPhase: getters.calculateCountCardsLeftToDrawForDrawPhase
+            countCardsLeftToDrawForDrawPhase:
+                getters.calculateCountCardsLeftToDrawForDrawPhase,
         });
     }
 
@@ -518,29 +562,31 @@ module.exports = function (deps) {
         return CountCardsLeftToDrawForDrawPhase({
             matchService: getters.matchService,
             queryEvents: getters.queryEvents,
-            playerStateService: getters.playerStateService
+            playerStateService: getters.playerStateService,
         });
     }
 
     function lookAtStationRow(state, getters) {
         return LookAtStationRow({
-            cardsThatCanLookAtHandSizeStationRow: getters.cardsThatCanLookAtHandSizeStationRow,
+            cardsThatCanLookAtHandSizeStationRow:
+                getters.cardsThatCanLookAtHandSizeStationRow,
             cardCanLookAtHandSizeStationRow: ClientLimitNotice,
             addRequirementFromSpec: ClientLimitNotice,
-            canAddRequirementFromSpec: ClientLimitNotice
+            canAddRequirementFromSpec: ClientLimitNotice,
         });
     }
 
     function cardsThatCanLookAtHandSizeStationRow(state, getters) {
         return CardsThatCanLookAtHandSizeStationRow({
-            playerStateService: getters.playerStateService
+            playerStateService: getters.playerStateService,
         });
     }
 
     function getCanThePlayer(state, getters) {
-        return playerId => playerId === state.ownUser.id
-            ? getters.canThePlayer
-            : getters.canTheOpponent
+        return (playerId) =>
+            playerId === state.ownUser.id
+                ? getters.canThePlayer
+                : getters.canTheOpponent;
     }
 
     function canThePlayer(state, getters) {
@@ -554,7 +600,7 @@ module.exports = function (deps) {
             playerPhase: getters.playerPhase,
             playerCommanders: getters.playerCommanders,
             lastStand: getters.lastStand,
-            playerActionPointsCalculator: getters.playerActionPointsCalculator
+            playerActionPointsCalculator: getters.playerActionPointsCalculator,
         });
     }
 
@@ -563,14 +609,14 @@ module.exports = function (deps) {
             matchService: getters.matchService,
             queryEvents: getters.queryEvents,
             playerStateService: getters.opponentStateService,
-            opponentStateService: getters.playerStateService
+            opponentStateService: getters.playerStateService,
         });
     }
 
     function queryBoard(state, getters) {
         return new QueryBoard({
-            opponentStateService: getters.opponentStateService
-        })
+            opponentStateService: getters.opponentStateService,
+        });
     }
 
     function turnControl(state, getters) {
@@ -581,18 +627,21 @@ module.exports = function (deps) {
             playerPhase: getters.playerPhase,
             opponentStateService: getters.opponentStateService,
             opponentPhase: getters.opponentPhase,
-            opponentActionLog: ClientLimitNotice
+            opponentActionLog: ClientLimitNotice,
         });
     }
 
     function playerPhase(state, getters) {
-        return new PlayerPhase({ matchService: getters.matchService, playerStateService: getters.playerStateService });
+        return new PlayerPhase({
+            matchService: getters.matchService,
+            playerStateService: getters.playerStateService,
+        });
     }
 
     function opponentPhase(state, getters) {
         return new PlayerPhase({
             matchService: getters.matchService,
-            playerStateService: getters.opponentStateService
+            playerStateService: getters.opponentStateService,
         });
     }
 
@@ -601,7 +650,7 @@ module.exports = function (deps) {
             playerStateService: getters.playerStateService,
             opponentStateService: getters.opponentStateService,
             playerCommanders: ClientLimitNotice,
-            moreCardsCanBeDrawnForDrawPhase: ClientLimitNotice
+            moreCardsCanBeDrawnForDrawPhase: ClientLimitNotice,
         });
     }
 
@@ -610,7 +659,7 @@ module.exports = function (deps) {
             playerStateService: getters.opponentStateService,
             opponentStateService: getters.playerStateService,
             playerCommanders: ClientLimitNotice,
-            moreCardsCanBeDrawnForDrawPhase: ClientLimitNotice
+            moreCardsCanBeDrawnForDrawPhase: ClientLimitNotice,
         });
     }
 
@@ -620,7 +669,7 @@ module.exports = function (deps) {
             opponentStateService: getters.opponentStateService,
             queryPlayerRequirements: getters.queryPlayerRequirements,
             playerCommanders: ClientLimitNotice,
-            moreCardsCanBeDrawnForDrawPhase: ClientLimitNotice
+            moreCardsCanBeDrawnForDrawPhase: ClientLimitNotice,
         });
     }
 
@@ -630,19 +679,19 @@ module.exports = function (deps) {
             opponentStateService: getters.playerStateService,
             queryPlayerRequirements: getters.queryOpponentRequirements,
             playerCommanders: ClientLimitNotice,
-            moreCardsCanBeDrawnForDrawPhase: ClientLimitNotice
+            moreCardsCanBeDrawnForDrawPhase: ClientLimitNotice,
         });
     }
 
     function playerClock(state, getters) {
         return Clock({
-            playerStateService: getters.playerStateService
+            playerStateService: getters.playerStateService,
         });
     }
 
     function opponentClock(state, getters) {
         return Clock({
-            playerStateService: getters.opponentStateService
+            playerStateService: getters.opponentStateService,
         });
     }
 
@@ -666,18 +715,20 @@ module.exports = function (deps) {
             cardFactory: () => getters.cardFactory,
             gameConfig: getters.gameConfig,
             deckIsEmpty: () => {
-                return state.playerCardsInDeckCount <= 0
+                return state.playerCardsInDeckCount <= 0;
             },
             deckFactory: {
-                create: cards => ClientPlayerDeck(cards.length)
-            }
+                create: (cards) => ClientPlayerDeck(cards.length),
+            },
         });
     }
 
     function opponentStateService(state, getters) {
         return new ClientPlayerStateService({
             updateStore: () => {
-                console.error('Trying to update state through opponent state service, this is NOT intended behaviour.')
+                console.error(
+                    "Trying to update state through opponent state service, this is NOT intended behaviour."
+                );
             },
             playerId: state.opponentUser.id,
             matchService: getters.matchService,
@@ -685,50 +736,54 @@ module.exports = function (deps) {
             cardFactory: () => getters.cardFactory,
             gameConfig: getters.gameConfig,
             deckIsEmpty: () => {
-                return state.opponentCardsInDeckCount <= 0
-            }
+                return state.opponentCardsInDeckCount <= 0;
+            },
         });
     }
 
     function playerEventRepository(state, getters) {
         return {
-            getAll: () => state.events
+            getAll: () => state.events,
         };
     }
 
     function queryEvents(state, getters) {
         const eventRepository = {
-            getAll: () => state.events
+            getAll: () => state.events,
         };
         const opponentEventRepository = {
-            getAll: () => state.opponentEvents
+            getAll: () => state.opponentEvents,
         };
-        return new QueryEvents({ eventRepository, opponentEventRepository, matchService: getters.matchService });
+        return new QueryEvents({
+            eventRepository,
+            opponentEventRepository,
+            matchService: getters.matchService,
+        });
     }
 
     function queryOpponentEvents(state, getters) {
         return new QueryEvents({
             eventRepository: {
-                getAll: () => state.opponentEvents
+                getAll: () => state.opponentEvents,
             },
             opponentEventRepository: {
-                getAll: () => state.events
+                getAll: () => state.events,
             },
-            matchService: getters.matchService
+            matchService: getters.matchService,
         });
     }
 
     function actionLog(state, getters) {
         return ActionLog({
             playerStateService: getters.playerStateService,
-            cardInfoRepository
+            cardInfoRepository,
         });
     }
 
     function opponentActionLog(state, getters) {
         return ActionLog({
             playerStateService: getters.opponentStateService,
-            cardInfoRepository
+            cardInfoRepository,
         });
     }
 
@@ -738,21 +793,20 @@ module.exports = function (deps) {
             playerPhase: getters.playerPhase,
             eventRepository: getters.playerEventRepository,
             playerStateService: getters.playerStateService,
-            matchService: getters.matchService
+            matchService: getters.matchService,
         });
     }
 
     function eventFactory(state, getters) {
         return EventFactory({
-            matchService: getters.matchService
+            matchService: getters.matchService,
         });
     }
 
     function matchService(state, getters) {
         const matchService = new MatchService({
             gameConfig: getters.gameConfig,
-            endMatch: () => {
-            }
+            endMatch: () => {},
         });
         const serverState = mapFromClientToServerState(state);
         matchService.setState(serverState);
@@ -794,124 +848,143 @@ module.exports = function (deps) {
     function attackerCard(state, getters) {
         if (!state.attackerCardId) return null;
 
-        const attackerCard = getters.allPlayerCardsInOwnAndOpponentZone.find(c => c.id === state.attackerCardId);
+        const attackerCard = getters.allPlayerCardsInOwnAndOpponentZone.find(
+            (c) => c.id === state.attackerCardId
+        );
         return getters.createCard(attackerCard);
     }
 
     function repairerCard(state, getters) {
         if (!state.repairerCardId) return null;
 
-        const repairerCard = getters.allPlayerCardsInOwnAndOpponentZone.find(c => c.id === state.repairerCardId);
+        const repairerCard = getters.allPlayerCardsInOwnAndOpponentZone.find(
+            (c) => c.id === state.repairerCardId
+        );
         return getters.createCard(repairerCard);
     }
 
     function attackerCanAttackStationCards(state, getters) {
-        return !!getters.attackerCard && getters.attackerCard.canAttackStationCards();
+        return (
+            !!getters.attackerCard &&
+            getters.attackerCard.canAttackStationCards()
+        );
     }
 
     function allPlayerCardsInOwnAndOpponentZone(state) {
-        return [
-            ...state.playerCardsInZone,
-            ...state.playerCardsInOpponentZone
-        ];
+        return [...state.playerCardsInZone, ...state.playerCardsInOpponentZone];
     }
 
     function allPlayerStationCards(state) {
         return [
             ...state.playerStation.drawCards,
             ...state.playerStation.actionCards,
-            ...state.playerStation.handSizeCards
+            ...state.playerStation.handSizeCards,
         ];
     }
 
     function allPlayerDurationCards(state) {
-        return state.playerCardsInZone.filter(c => c.type === 'duration');
+        return state.playerCardsInZone.filter((c) => c.type === "duration");
     }
 
     function allOpponentStationCards(state) {
         return [
             ...state.opponentStation.drawCards,
             ...state.opponentStation.actionCards,
-            ...state.opponentStation.handSizeCards
+            ...state.opponentStation.handSizeCards,
         ];
     }
 
     function playerUnflippedStationCardCount(state, getters) {
-        return getters.allPlayerStationCards.filter(s => !s.flipped).length;
+        return getters.allPlayerStationCards.filter((s) => !s.flipped).length;
     }
 
     function opponentUnflippedStationCardCount(state, getters) {
-        return getters.allOpponentStationCards.filter(s => !s.flipped).length;
+        return getters.allOpponentStationCards.filter((s) => !s.flipped).length;
     }
 
     function askToDrawCard() {
-        matchController.emit('drawCard');
+        matchController.emit("drawCard");
     }
 
     function passDrawPhase() {
-        matchController.emit('passDrawPhase');
+        matchController.emit("passDrawPhase");
     }
 
     function askToDiscardOpponentTopTwoCards() {
-        matchController.emit('discardOpponentTopTwoCards');
+        matchController.emit("discardOpponentTopTwoCards");
     }
 
     function overwork() {
-        matchController.emit('overwork');
+        matchController.emit("overwork");
     }
 
     function perfectPlan() {
-        matchController.emit('perfectPlan');
+        matchController.emit("perfectPlan");
     }
 
     function toggleControlOfTurn() {
-        matchController.emit('toggleControlOfTurn');
+        matchController.emit("toggleControlOfTurn");
     }
 
     function skipDrawCard() {
-        matchController.emit('skipDrawCard');
+        matchController.emit("skipDrawCard");
     }
 
-    function stateChanged({state, getters, dispatch}, data) {
-        const clientStateChanger = ClientStateChanger({state, preMergeHook});
+    function stateChanged({ state, getters, dispatch }, data) {
+        const clientStateChanger = ClientStateChanger({ state, preMergeHook });
         clientStateChanger.stateChanged(data);
 
         if (!gameHasBegun) {
             gameHasBegun = true;
         }
-        if (getters.gameOn && getters.opponentClock.getTime() <= 0 && !isOpponentBot) {
+        if (
+            getters.gameOn &&
+            getters.opponentClock.getTime() <= 0 &&
+            !isOpponentBot
+        ) {
             setTimeout(() => window.location.reload(), 3 * 60 * 1000);
         }
 
-        if (getters.gameOn && getters.playerClock.getTime() <= 0 && (!state.onLastChangeToWin| !state.timeRanOutVSBot) ) {
-            if(isOpponentBot){
-                dispatch('timeRanOutVSBot',true);
-            }else{
-                setTimeout(() => window.location.reload(), 3 * 60 * 1000 );
-                dispatch('onLastChangeToWin',true);
+        if (
+            getters.gameOn &&
+            getters.playerClock.getTime() <= 0 &&
+            !state.onLastChangeToWin | !state.timeRanOutVSBot
+        ) {
+            if (isOpponentBot) {
+                dispatch("timeRanOutVSBot", true);
+            } else {
+                setTimeout(() => window.location.reload(), 3 * 60 * 1000);
+                dispatch("onLastChangeToWin", true);
             }
         }
 
         function preMergeHook(key, datum) {
             if (gameHasBegun) {
-                if (key === 'actionLogEntries') {
+                if (key === "actionLogEntries") {
                     if (datum.length !== state.actionLogEntries.length) {
                         setTimeout(() => {
-                            dispatch('onActionLogChange');
+                            dispatch("onActionLogChange");
                         });
                     }
-                } else if (key === 'opponentActionLogEntries') {
-                    if (datum.length !== state.opponentActionLogEntries.length) {
+                } else if (key === "opponentActionLogEntries") {
+                    if (
+                        datum.length !== state.opponentActionLogEntries.length
+                    ) {
                         setTimeout(() => {
-                            dispatch('onOpponentActionLogChange');
+                            dispatch("onOpponentActionLogChange");
                         });
                     }
-                } else if (key === 'currentPlayer' && datum !== state.currentPlayer) {
-                    dispatch('card/cancelCurrentUserInteraction', null, {root: true}); //TODO Fix circular dependency on CardStore
-                } else if (key === 'lastStandInfo') {
+                } else if (
+                    key === "currentPlayer" &&
+                    datum !== state.currentPlayer
+                ) {
+                    dispatch("card/cancelCurrentUserInteraction", null, {
+                        root: true,
+                    }); //TODO Fix circular dependency on CardStore
+                } else if (key === "lastStandInfo") {
                     if (datum) {
                         endLastStandIntervalId = setInterval(() => {
-                            dispatch('endLastStand');
+                            dispatch("endLastStand");
                         }, 5000);
                     }
                 }
@@ -919,14 +992,14 @@ module.exports = function (deps) {
         }
     }
 
-    function goToNextPhase({state, getters}) {
-
-        const phasesUntilAction = getters.numberOfPhasesUntilNextPhaseWithAction;
+    function goToNextPhase({ state, getters }) {
+        const phasesUntilAction =
+            getters.numberOfPhasesUntilNextPhaseWithAction;
         for (let i = 0; i < phasesUntilAction; i++) {
-            matchController.emit('nextPhase', {currentPhase: state.phase});
+            matchController.emit("nextPhase", { currentPhase: state.phase });
             state.phase = getters.nextPhase;
         }
-        matchController.emit('nextPhase', {currentPhase: state.phase});
+        matchController.emit("nextPhase", { currentPhase: state.phase });
 
         const nextPhaseWithAction = getters.nextPhaseWithAction;
         state.phase = nextPhaseWithAction;
@@ -936,205 +1009,276 @@ module.exports = function (deps) {
     }
 
     function getCardsPendingForAction(state, getters) {
-        return [...state.playerCardsInZone].map(cardData => getters.createCard(cardData)).filter(card => {
-            const cardInPlay = PlayerCardInPlay({
-                card,
-                attackerSelected: false,
-                canThePlayer: getters.canThePlayer,
-                opponentStateService: getters.opponentStateService
+        return [...state.playerCardsInZone]
+            .map((cardData) => getters.createCard(cardData))
+            .filter((card) => {
+                const cardInPlay = PlayerCardInPlay({
+                    card,
+                    attackerSelected: false,
+                    canThePlayer: getters.canThePlayer,
+                    opponentStateService: getters.opponentStateService,
+                });
+                return (
+                    cardInPlay.canMove() ||
+                    cardInPlay.canAttack() ||
+                    cardInPlay.canBeSacrificed() ||
+                    cardInPlay.canRepair()
+                );
             });
-            return cardInPlay.canMove() || cardInPlay.canAttack() || cardInPlay.canBeSacrificed() || cardInPlay.canRepair()
-        });
     }
 
-    function placeCardInZone({state}, card) {
+    function placeCardInZone({ state }, card) {
         state.playerCardsInZone.push(card);
     }
 
-    function discardCard({state, getters, dispatch}, cardId) {
-        const cardIndexOnHand = state.playerCardsOnHand.findIndex(c => c.id === cardId);
+    function discardCard({ state, getters, dispatch }, cardId) {
+        const cardIndexOnHand = state.playerCardsOnHand.findIndex(
+            (c) => c.id === cardId
+        );
         const discardedCard = state.playerCardsOnHand[cardIndexOnHand];
         state.playerCardsOnHand.splice(cardIndexOnHand, 1);
         state.playerDiscardedCards.push(discardedCard);
 
-        state.events.push(DiscardCardEvent({
-            turn: state.turn,
-            phase: state.phase,
-            cardId: cardId,
-            cardCommonId: discardedCard.commonId
-        }));
-        matchController.emit('discardCard', cardId);
+        state.events.push(
+            DiscardCardEvent({
+                turn: state.turn,
+                phase: state.phase,
+                cardId: cardId,
+                cardCommonId: discardedCard.commonId,
+            })
+        );
+        matchController.emit("discardCard", cardId);
 
-        if (state.phase === PHASES.discard && getters.amountOfCardsToDiscard === 0) {
-            dispatch('goToNextPhase');
+        if (
+            state.phase === PHASES.discard &&
+            getters.amountOfCardsToDiscard === 0
+        ) {
+            dispatch("goToNextPhase");
         }
     }
 
-    function setActionPoints({state}, actionPoints) { // TODO Should be removed, all action points should be calculated through events
+    function setActionPoints({ state }, actionPoints) {
+        // TODO Should be removed, all action points should be calculated through events
     }
 
-    function moveCard({getters}, {id}) {
+    function moveCard({ getters }, { id }) {
         getters.playerStateService.moveCard(id);
-        matchController.emit('moveCard', id);
+        matchController.emit("moveCard", id);
     }
 
-    function opponentDiscardedDurationCard({state}, {card}) {
+    function opponentDiscardedDurationCard({ state }, { card }) {
         state.opponentDiscardedCards.push(card);
-        const cardIndexInZone = state.opponentCardsInZone.findIndex(c => c.id === card.id);
+        const cardIndexInZone = state.opponentCardsInZone.findIndex(
+            (c) => c.id === card.id
+        );
         state.opponentCardsInZone.splice(cardIndexInZone, 1);
     }
 
-    function opponentMovedCard({state}, cardId) {
-        const cardIndex = state.opponentCardsInZone.findIndex(c => c.id === cardId);
+    function opponentMovedCard({ state }, cardId) {
+        const cardIndex = state.opponentCardsInZone.findIndex(
+            (c) => c.id === cardId
+        );
         const [card] = state.opponentCardsInZone.splice(cardIndex, 1);
         state.opponentCardsInPlayerZone.push(card);
     }
 
     //TODO Should NOT take "cards" as a parameter. This should be emitted and received by a StateChanged event
-    function drawCards({state, dispatch}, {cards = [], moreCardsCanBeDrawn}) {
+    function drawCards(
+        { state, dispatch },
+        { cards = [], moreCardsCanBeDrawn }
+    ) {
         state.playerCardsOnHand.push(...cards);
         if (!moreCardsCanBeDrawn) {
-            dispatch('goToNextPhase');
+            dispatch("goToNextPhase");
         }
     }
 
-    function selectAsAttacker({state}, card) {
+    function selectAsAttacker({ state }, card) {
         state.attackerCardId = card.id;
     }
 
-    function selectAsDefender({state, dispatch}, { card, fromRequirement = null}) {
+    function selectAsDefender(
+        { state, dispatch },
+        { card, fromRequirement = null }
+    ) {
         let attackerCardId = state.attackerCardId;
         const defenderCardId = card.id;
-        if(fromRequirement === 'damageShieldCard'){
-            attackerCardId = rootStore.getters['requirement/firstRequirement'].cardId
-             dispatch('damageShieldCards', [defenderCardId])
+        if (fromRequirement === "damageShieldCard") {
+            attackerCardId =
+                rootStore.getters["requirement/firstRequirement"].cardId;
+            dispatch("damageShieldCards", [defenderCardId]);
         }
-        matchController.emit('attack', {attackerCardId, defenderCardId});
+        matchController.emit("attack", { attackerCardId, defenderCardId });
 
-        dispatch('registerAttack', {attackerCardId, defenderCardId});
-        dispatch('triggerCardAttackedEffect', defenderCardId);
+        dispatch("registerAttack", { attackerCardId, defenderCardId });
+        dispatch("triggerCardAttackedEffect", defenderCardId);
     }
 
-    function opponentAttackedCard({state}, {
-        attackerCardId,
-        defenderCardId,
-        newDamage,
-        attackerCardWasDestroyed,
-        defenderCardWasDestroyed
-    }) {
-        const defenderCardInPlayerZone = state.playerCardsInZone.find(c => c.id === defenderCardId);
-        const defenderCardInOpponentZone = state.playerCardsInOpponentZone.find(c => c.id === defenderCardId);
-        const defenderCard = defenderCardInPlayerZone || defenderCardInOpponentZone;
-        const defenderCardZone = defenderCardInPlayerZone ? state.playerCardsInZone : state.playerCardsInOpponentZone;
+    function opponentAttackedCard(
+        { state },
+        {
+            attackerCardId,
+            defenderCardId,
+            newDamage,
+            attackerCardWasDestroyed,
+            defenderCardWasDestroyed,
+        }
+    ) {
+        const defenderCardInPlayerZone = state.playerCardsInZone.find(
+            (c) => c.id === defenderCardId
+        );
+        const defenderCardInOpponentZone = state.playerCardsInOpponentZone.find(
+            (c) => c.id === defenderCardId
+        );
+        const defenderCard =
+            defenderCardInPlayerZone || defenderCardInOpponentZone;
+        const defenderCardZone = defenderCardInPlayerZone
+            ? state.playerCardsInZone
+            : state.playerCardsInOpponentZone;
         if (defenderCardWasDestroyed) {
-            const defenderCardIndex = defenderCardZone.findIndex(c => c.id === defenderCardId);
+            const defenderCardIndex = defenderCardZone.findIndex(
+                (c) => c.id === defenderCardId
+            );
             defenderCardZone.splice(defenderCardIndex, 1);
         } else {
             defenderCard.damage = newDamage;
         }
 
         if (attackerCardWasDestroyed) {
-            const attackerCardInPlayerZone = state.opponentCardsInZone.find(c => c.id === attackerCardId);
-            const attackerCardZone = attackerCardInPlayerZone ? state.opponentCardsInZone : state.opponentCardsInPlayerZone;
-            const attackerCardIndex = attackerCardZone.findIndex(c => c.id === attackerCardId);
+            const attackerCardInPlayerZone = state.opponentCardsInZone.find(
+                (c) => c.id === attackerCardId
+            );
+            const attackerCardZone = attackerCardInPlayerZone
+                ? state.opponentCardsInZone
+                : state.opponentCardsInPlayerZone;
+            const attackerCardIndex = attackerCardZone.findIndex(
+                (c) => c.id === attackerCardId
+            );
             attackerCardZone.splice(attackerCardIndex, 1);
         }
     }
 
-    function cancelAttack({dispatch}) {
-        dispatch('endAttack');
+    function cancelAttack({ dispatch }) {
+        dispatch("endAttack");
     }
 
-    function endAttack({state}) {
+    function endAttack({ state }) {
         state.attackerCardId = null;
         state.selectedDefendingStationCards = [];
     }
 
-    function selectAsRepairer({state}, repairerCardId) {
+    function selectAsRepairer({ state }, repairerCardId) {
         state.repairerCardId = repairerCardId;
     }
 
-    function cancelRepair({state}) {
+    function cancelRepair({ state }) {
         state.repairerCardId = null;
     }
 
-    function selectForRepair({state}, cardToRepairId) {
+    function selectForRepair({ state }, cardToRepairId) {
         const repairerCardId = state.repairerCardId;
         state.repairerCardId = null;
 
-        matchController.emit('repairCard', {repairerCardId, cardToRepairId});
+        matchController.emit("repairCard", { repairerCardId, cardToRepairId });
     }
 
     function damageStationCards({}, targetIds) {
-        matchController.emit('damageStationCards', {targetIds});
+        matchController.emit("damageStationCards", { targetIds });
     }
 
     function damageShieldCards({}, targetIds) {
-        matchController.emit('damageShieldCards', { targetIds });
+        matchController.emit("damageShieldCards", { targetIds });
     }
 
     function retreat() {
-        matchController.emit('retreat');
+        matchController.emit("retreat");
     }
 
-    function selectStationCardAsDefender({state, getters, dispatch}, {id}) {
+    function selectStationCardAsDefender({ state, getters, dispatch }, { id }) {
         const attackerCard = getters.attackerCard;
         const targetStationCardIds = state.selectedDefendingStationCards;
         targetStationCardIds.push(id);
 
-        const selectedLastStationCard = getters.opponentUnflippedStationCardCount === targetStationCardIds.length;
-        const selectedMaxTargetCount = targetStationCardIds.length >= attackerCard.attack;
+        const selectedLastStationCard =
+            getters.opponentUnflippedStationCardCount ===
+            targetStationCardIds.length;
+        const selectedMaxTargetCount =
+            targetStationCardIds.length >= attackerCard.attack;
         const attackerCardId = state.attackerCardId;
         if (selectedMaxTargetCount || selectedLastStationCard) {
-            matchController.emit('attackStationCard', {attackerCardId, targetStationCardIds});
-            dispatch('registerAttack', {attackerCardId, targetStationCardIds});
-            dispatch('shakeTheScreen');
+            matchController.emit("attackStationCard", {
+                attackerCardId,
+                targetStationCardIds,
+            });
+            dispatch("registerAttack", {
+                attackerCardId,
+                targetStationCardIds,
+            });
+            dispatch("shakeTheScreen");
         }
     }
 
-    function registerAttack({state, getters, dispatch}, {attackerCardId, defenderCardId = null, targetStationCardIds = null}) {
-        const cardData = getters.allPlayerCardsInOwnAndOpponentZone.find(c => c.id === attackerCardId);
-        if (cardData.type === 'missile') {
-            dispatch('removePlayerCard', attackerCardId);
+    function registerAttack(
+        { state, getters, dispatch },
+        { attackerCardId, defenderCardId = null, targetStationCardIds = null }
+    ) {
+        const cardData = getters.allPlayerCardsInOwnAndOpponentZone.find(
+            (c) => c.id === attackerCardId
+        );
+        if (cardData.type === "missile") {
+            dispatch("removePlayerCard", attackerCardId);
         }
-        state.events.push(AttackEvent({
-            turn: state.turn,
-            attackerCardId,
-            defenderCardId,
-            targetStationCardIds,
-            cardCommonId: cardData.commonId
-        }));
+        state.events.push(
+            AttackEvent({
+                turn: state.turn,
+                attackerCardId,
+                defenderCardId,
+                targetStationCardIds,
+                cardCommonId: cardData.commonId,
+            })
+        );
 
-        dispatch('endAttack');
+        dispatch("endAttack");
     }
 
-    function removePlayerCard({state}, cardId) {
-        const cardInZoneIndex = state.playerCardsInZone.findIndex(c => c.id === cardId);
+    function removePlayerCard({ state }, cardId) {
+        const cardInZoneIndex = state.playerCardsInZone.findIndex(
+            (c) => c.id === cardId
+        );
         if (cardInZoneIndex >= 0) {
             state.playerCardsInZone.splice(cardInZoneIndex, 1);
         } else {
-            const cardInOpponentZoneIndex = state.playerCardsInOpponentZone.findIndex(c => c.id === cardId);
+            const cardInOpponentZoneIndex = state.playerCardsInOpponentZone.findIndex(
+                (c) => c.id === cardId
+            );
             if (cardInOpponentZoneIndex >= 0) {
-                state.playerCardsInOpponentZone.splice(cardInOpponentZoneIndex, 1);
+                state.playerCardsInOpponentZone.splice(
+                    cardInOpponentZoneIndex,
+                    1
+                );
             }
         }
     }
 
-    function discardDurationCard({state, getters, dispatch}, cardData) {
-        matchController.emit('discardDurationCard', cardData.id);
+    function discardDurationCard({ state, getters, dispatch }, cardData) {
+        matchController.emit("discardDurationCard", cardData.id);
         state.playerDiscardedCards.push(cardData);
-        const cardIndexInZone = state.playerCardsInZone.findIndex(c => c.id === cardData.id);
+        const cardIndexInZone = state.playerCardsInZone.findIndex(
+            (c) => c.id === cardData.id
+        );
         state.playerCardsInZone.splice(cardIndexInZone, 1);
 
-        state.events.push(DiscardCardEvent({
-            turn: state.turn,
-            phase: state.phase,
-            cardId: cardData.id,
-            cardCommonId: cardData.commonId
-        }));
+        state.events.push(
+            DiscardCardEvent({
+                turn: state.turn,
+                phase: state.phase,
+                cardId: cardData.id,
+                cardCommonId: cardData.commonId,
+            })
+        );
 
         if (getters.allPlayerDurationCards.length === 0) {
-            dispatch('goToNextPhase');
+            dispatch("goToNextPhase");
         }
     }
 
@@ -1145,59 +1289,66 @@ module.exports = function (deps) {
 
     function deleteMatchLocalDataAndReturnToStart() {
         localGameDataFacade.removeOngoingMatch();
-        route('start');
+        route("start");
     }
 
     function getNumberOfPhasesBetween(a, b) {
         const phasesIncludingWaitInOrder = [...COMMON_PHASE_ORDER, PHASES.wait];
-        return phasesIncludingWaitInOrder.indexOf(b) - phasesIncludingWaitInOrder.indexOf(a);
+        return (
+            phasesIncludingWaitInOrder.indexOf(b) -
+            phasesIncludingWaitInOrder.indexOf(a)
+        );
     }
 
-    function onActionLogChange({state, dispatch}) {
+    function onActionLogChange({ state, dispatch }) {
         const actionLogEntries = state.actionLogEntries;
         const latestEntry = actionLogEntries[actionLogEntries.length - 1];
 
         const action = latestEntry.action;
-        if (action === 'played') {
-            dispatch('highlightCards', latestEntry.cardIds);
-        } else if (action === 'damagedInAttack') {
-            dispatch('triggerCardAttackedEffect', latestEntry.defenderCardId);
-        } else if (action === 'paralyzed') {
-            dispatch('highlightCards', [latestEntry.defenderCardId]);
-        } else if (action === 'destroyed') {
-            dispatch('triggerFlashDiscardPileEffect');
-        } else if (action === 'discarded') {
-            dispatch('triggerFlashDiscardPileEffect');
-        } else if (action === 'stationCardsDamaged') {
-            dispatch('shakeTheScreen');
-        } else if (action === 'countered') {
-            dispatch('notificationBanner/showForActionLogEntry', latestEntry, {root: true});
-            dispatch('triggerFlashDiscardPileEffect');
-        } else if (action === 'repairedCard') {
-            dispatch('highlightCards', [latestEntry.repairedCardId]);
-        } else if (action === 'counteredAttackOnCard') {
-            dispatch('notificationBanner/showForActionLogEntry', latestEntry, {root: true});
-            dispatch('highlightCards', [latestEntry.defenderCardId]);
+        if (action === "played") {
+            dispatch("highlightCards", latestEntry.cardIds);
+        } else if (action === "damagedInAttack") {
+            dispatch("triggerCardAttackedEffect", latestEntry.defenderCardId);
+        } else if (action === "paralyzed") {
+            dispatch("highlightCards", [latestEntry.defenderCardId]);
+        } else if (action === "destroyed") {
+            dispatch("triggerFlashDiscardPileEffect");
+        } else if (action === "discarded") {
+            dispatch("triggerFlashDiscardPileEffect");
+        } else if (action === "stationCardsDamaged") {
+            dispatch("shakeTheScreen");
+        } else if (action === "countered") {
+            dispatch("notificationBanner/showForActionLogEntry", latestEntry, {
+                root: true,
+            });
+            dispatch("triggerFlashDiscardPileEffect");
+        } else if (action === "repairedCard") {
+            dispatch("highlightCards", [latestEntry.repairedCardId]);
+        } else if (action === "counteredAttackOnCard") {
+            dispatch("notificationBanner/showForActionLogEntry", latestEntry, {
+                root: true,
+            });
+            dispatch("highlightCards", [latestEntry.defenderCardId]);
         }
     }
 
-    function onOpponentActionLogChange({state, dispatch}) {
+    function onOpponentActionLogChange({ state, dispatch }) {
         const actionLogEntries = state.opponentActionLogEntries;
         const latestEntry = actionLogEntries[actionLogEntries.length - 1];
 
         const action = latestEntry.action;
-        if (action === 'destroyed') {
-            dispatch('triggerFlashOpponentDiscardPileEffect');
-        } else if (action === 'repairedCard') {
-            dispatch('highlightCards', [latestEntry.repairedCardId]);
-        } else if (action === 'countered') {
-            dispatch('triggerFlashOpponentDiscardPileEffect');
-        } else if (action === 'counteredAttackOnCard') {
-            dispatch('highlightCards', [latestEntry.defenderCardId]);
+        if (action === "destroyed") {
+            dispatch("triggerFlashOpponentDiscardPileEffect");
+        } else if (action === "repairedCard") {
+            dispatch("highlightCards", [latestEntry.repairedCardId]);
+        } else if (action === "countered") {
+            dispatch("triggerFlashOpponentDiscardPileEffect");
+        } else if (action === "counteredAttackOnCard") {
+            dispatch("highlightCards", [latestEntry.defenderCardId]);
         }
     }
 
-    function triggerFlashDiscardPileEffect({state}) {
+    function triggerFlashDiscardPileEffect({ state }) {
         setTimeout(() => {
             state.flashDiscardPile = true;
         });
@@ -1206,7 +1357,7 @@ module.exports = function (deps) {
         }, FlashCardTime);
     }
 
-    function triggerFlashOpponentDiscardPileEffect({state}) {
+    function triggerFlashOpponentDiscardPileEffect({ state }) {
         setTimeout(() => {
             state.flashOpponentDiscardPile = true;
         });
@@ -1215,7 +1366,7 @@ module.exports = function (deps) {
         }, FlashCardTime);
     }
 
-    function triggerCardAttackedEffect({state}, cardId) {
+    function triggerCardAttackedEffect({ state }, cardId) {
         setTimeout(() => {
             state.flashAttackedCardId = cardId;
         });
@@ -1224,7 +1375,7 @@ module.exports = function (deps) {
         }, FlashCardTime);
     }
 
-    function highlightCards({state}, cardIds) {
+    function highlightCards({ state }, cardIds) {
         setTimeout(() => {
             state.highlightCardIds = cardIds;
         });
@@ -1233,7 +1384,7 @@ module.exports = function (deps) {
         }, FlashCardTime);
     }
 
-    function shakeTheScreen({state}) {
+    function shakeTheScreen({ state }) {
         setTimeout(() => {
             state.shake = true;
         });
@@ -1247,25 +1398,25 @@ module.exports = function (deps) {
     }
 
     function endLastStand() {
-        matchController.emit('endLastStand');
+        matchController.emit("endLastStand");
     }
 
     function persistOngoingMatch() {
         const playerIds = [userRepository.getOwnUser().id, opponentUser.id];
-        const matchData = {id: matchId, playerIds};
+        const matchData = { id: matchId, playerIds };
 
         localGameDataFacade.setOngoingMatch(matchData);
     }
-    
-    function onLastChangeToWin({state}, value){
+
+    function onLastChangeToWin({ state }, value) {
         state.onLastChangeToWin = value;
     }
-    
-    function timeRanOutVSBot({state}, value){
+
+    function timeRanOutVSBot({ state }, value) {
         state.timeRanOutVSBot = value;
     }
 
-    function isOpponentBot(){
-        return opponentUser.id === 'BOT';
+    function isOpponentBot() {
+        return opponentUser.id === "BOT";
     }
 };

@@ -1,14 +1,14 @@
-module.exports = function ({
-    playerServiceFactory
-}) {
-
+module.exports = function ({ playerServiceFactory }) {
     return {
-        perfectPlan
+        perfectPlan,
     };
 
     function perfectPlan(playerId) {
-        const playerPerfectPlan = playerServiceFactory.playerPerfectPlan(playerId);
-        if (!playerPerfectPlan.canIssuePerfectPlan()) throw new Error('Cannot issue Overwork');
+        const playerPerfectPlan = playerServiceFactory.playerPerfectPlan(
+            playerId
+        );
+        if (!playerPerfectPlan.canIssuePerfectPlan())
+            throw new Error("Cannot issue Overwork");
 
         playerPerfectPlan.perfectPlan();
     }

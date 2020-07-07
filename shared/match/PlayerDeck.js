@@ -1,9 +1,6 @@
-module.exports = function PlayerDeck({
-    playerStateService
-}) {
-
+module.exports = function PlayerDeck({ playerStateService }) {
     return {
-        hasMore
+        hasMore,
     };
 
     function hasMore() {

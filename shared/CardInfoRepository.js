@@ -1,7 +1,4 @@
-module.exports = function ({
-    cardDataAssembler
-}) {
-
+module.exports = function ({ cardDataAssembler }) {
     let cards = null;
 
     return {
@@ -9,12 +6,12 @@ module.exports = function ({
         getName,
         getImageUrl,
         getType,
-        getCard
+        getCard,
     };
 
     function getCost(cardCommonId) {
         const card = getCard(cardCommonId);
-        const costTextOrZero = card.cost || '0';
+        const costTextOrZero = card.cost || "0";
         return parseInt(costTextOrZero, 10) || 0;
     }
 
@@ -32,14 +29,13 @@ module.exports = function ({
     }
 
     function getCard(cardCommonId) {
-        const card = getCards().find(c => c.commonId === cardCommonId);
+        const card = getCards().find((c) => c.commonId === cardCommonId);
         if (!card) {
             if (clientIsBrowser()) {
                 console.error(`Could not find card with ID ${cardCommonId}`);
             }
             return {};
-        }
-        else {
+        } else {
             return card;
         }
     }
@@ -54,5 +50,5 @@ module.exports = function ({
 };
 
 function clientIsBrowser() {
-    return !(typeof window === 'undefined');
+    return !(typeof window === "undefined");
 }

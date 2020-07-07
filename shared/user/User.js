@@ -1,6 +1,13 @@
 class User {
-
-    constructor({name, country = 'se', rating = 0, id, created = Date.now(), inMatch = false, isConnected = false}) {
+    constructor({
+        name,
+        country = "se",
+        rating = 0,
+        id,
+        created = Date.now(),
+        inMatch = false,
+        isConnected = false,
+    }) {
         this.rating = rating;
         this.name = name;
         this.country = country;
@@ -56,4 +63,4 @@ class User {
     }
 }
 
-module.exports = User
+module.exports = User;

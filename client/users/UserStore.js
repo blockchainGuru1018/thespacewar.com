@@ -1,21 +1,18 @@
-module.exports = function ({
-    userRepository
-}) {
-
+module.exports = function ({ userRepository }) {
     return {
         namespaced: true,
-        name: 'user',
+        name: "user",
         state: {
             ownUser: userRepository.getOwnUser(),
-            users: []
+            users: [],
         },
         getters: {
-            allowedInLobby
+            allowedInLobby,
         },
         actions: {
             init,
-            storeOwnUser
-        }
+            storeOwnUser,
+        },
     };
 
     function allowedInLobby(state) {
@@ -23,7 +20,7 @@ module.exports = function ({
     }
 
     async function init({ state }) {
-        userRepository.onUsersChanged(users => {
+        userRepository.onUsersChanged((users) => {
             state.users = users;
         });
 

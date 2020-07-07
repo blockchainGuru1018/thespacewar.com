@@ -1,27 +1,28 @@
-const CheatError = require('../CheatError.js');
-const PlayerServiceProvider = require('../../../shared/match/PlayerServiceProvider.js');
+const CheatError = require("../CheatError.js");
+const PlayerServiceProvider = require("../../../shared/match/PlayerServiceProvider.js");
 
 function NextPhaseCardController(deps) {
-
     const {
         matchService,
         matchComService,
         playerServiceProvider,
-        playerServiceFactory
+        playerServiceFactory,
     } = deps;
 
     return {
         onNextPhase,
         onToggleControlOfTurn,
         playerReady,
-        passDrawPhase
+        passDrawPhase,
     };
 
     function onNextPhase(playerId, { currentPhase }) {
         const playerPhase = playerServiceFactory.playerPhase(playerId);
         if (currentPhase !== playerPhase.get()) return;
 
-        const playerPhaseControl = playerServiceFactory.playerPhaseControl(playerId);
+        const playerPhaseControl = playerServiceFactory.playerPhaseControl(
+            playerId
+        );
         playerPhaseControl.validateCanGoToNextPhase();
         playerPhaseControl.nextPhase();
 
@@ -29,18 +30,27 @@ function NextPhaseCardController(deps) {
     }
 
     function onToggleControlOfTurn(playerId) {
-        const turnControl = playerServiceProvider.byTypeAndId(PlayerServiceProvider.TYPE.turnControl, playerId);
-        if (!turnControl.canToggleControlOfTurn()) throw new CheatError('Cannot toggle control of turn');
+        const turnControl = playerServiceProvider.byTypeAndId(
+            PlayerServiceProvider.TYPE.turnControl,
+            playerId
+        );
+        if (!turnControl.canToggleControlOfTurn())
+            throw new CheatError("Cannot toggle control of turn");
 
         turnControl.toggleControlOfTurn();
         matchComService.emitCurrentStateToPlayers();
     }
 
     function playerReady(playerId) {
-        const playerRuleService = playerServiceFactory.playerRuleService(playerId);
-        if (playerRuleService.canPutDownMoreStartingStationCards()) throw new CheatError('Must select all starting station cards before reading');
+        const playerRuleService = playerServiceFactory.playerRuleService(
+            playerId
+        );
+        if (playerRuleService.canPutDownMoreStartingStationCards())
+            throw new CheatError(
+                "Must select all starting station cards before reading"
+            );
 
-        matchService.update(state => {
+        matchService.update((state) => {
             state.readyPlayerIds.push(playerId);
         });
 
@@ -49,7 +59,9 @@ function NextPhaseCardController(deps) {
 
             const playerOrder = matchService.getPlayerOrder();
             for (playerId of playerOrder) {
-                const playerStartGame = playerServiceFactory.startGame(playerId);
+                const playerStartGame = playerServiceFactory.startGame(
+                    playerId
+                );
                 playerStartGame.startedGame();
             }
 
@@ -62,12 +74,14 @@ function NextPhaseCardController(deps) {
     }
 
     function passDrawPhase(playerId) {
-        const canPassDrawPhase = playerServiceFactory.playerDrawPhase(playerId).canPass();
+        const canPassDrawPhase = playerServiceFactory
+            .playerDrawPhase(playerId)
+            .canPass();
         if (!canPassDrawPhase) {
-            throw new CheatError('Cannot pass draw phase');
+            throw new CheatError("Cannot pass draw phase");
         }
 
-        onNextPhase(playerId, { currentPhase: 'draw' });
+        onNextPhase(playerId, { currentPhase: "draw" });
     }
 }
 

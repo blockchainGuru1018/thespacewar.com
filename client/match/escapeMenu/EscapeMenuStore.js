@@ -1,11 +1,11 @@
-import localGameDataFacade from '../../utils/localGameDataFacade.js';
-import ajax from '../../utils/ajax.js';
-import {ViewNames} from "./views.js";
+import localGameDataFacade from "../../utils/localGameDataFacade.js";
+import ajax from "../../utils/ajax.js";
+import { ViewNames } from "./views.js";
 
 module.exports = function () {
     return {
         namespaced: true,
-        name: 'escapeMenu',
+        name: "escapeMenu",
         state: {
             view: ViewNames.main,
             visible: false,
@@ -17,11 +17,13 @@ module.exports = function () {
             selectView,
             show,
             hide,
-        }
+        },
     };
 
     async function validateDebug({ state }) {
-        const { valid } = await ajax.jsonPost('/test-debug', { password: localGameDataFacade.DebugPassword.get() });
+        const { valid } = await ajax.jsonPost("/test-debug", {
+            password: localGameDataFacade.DebugPassword.get(),
+        });
         if (valid) {
             state.validatedDebug = true;
         }

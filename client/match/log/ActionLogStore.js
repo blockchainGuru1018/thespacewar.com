@@ -1,15 +1,15 @@
 export default function () {
     return {
         namespaced: true,
-        name: 'actionLog',
+        name: "actionLog",
         state: {
-            expanded: true
+            expanded: true,
         },
         actions: {
             toggleExpanded,
             collapse,
-            expand
-        }
+            expand,
+        },
     };
 
     function toggleExpanded({ state }) {
@@ -23,4 +23,4 @@ export default function () {
     function expand({ state }) {
         state.expanded = true;
     }
-};
+}

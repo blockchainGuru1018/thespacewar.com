@@ -1,15 +1,17 @@
-const CheatError = require('../../../shared/match/card/CheatError.js');
+const CheatError = require("../../../shared/match/card/CheatError.js");
 
 module.exports = function LookAtStationRowCommand({
     lookAtStationRow,
-    playerCardFactory
+    playerCardFactory,
 }) {
     return ({ cardId, stationRow }) => {
         if (!validStationRow(stationRow)) {
-            throw new CheatError('Can currently only look at handSize station row');
+            throw new CheatError(
+                "Can currently only look at handSize station row"
+            );
         }
         if (!lookAtStationRow.cardCanDoIt(cardId)) {
-            throw new CheatError('Cannot look at station row');
+            throw new CheatError("Cannot look at station row");
         }
 
         const card = playerCardFactory.fromId(cardId);
@@ -18,5 +20,5 @@ module.exports = function LookAtStationRowCommand({
 };
 
 function validStationRow(stationRow) {
-    return stationRow === 'handSize';
+    return stationRow === "handSize";
 }

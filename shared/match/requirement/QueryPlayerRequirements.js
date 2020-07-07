@@ -1,14 +1,13 @@
-const _canMill = require('../mill/canMill.js');
-const Commander = require('../commander/Commander.js');
-const findMatchingRequirement = require('./findMatchingRequirements.js');
+const _canMill = require("../mill/canMill.js");
+const Commander = require("../commander/Commander.js");
+const findMatchingRequirement = require("./findMatchingRequirements.js");
 
 function QueryPlayerRequirements({
     playerStateService,
     opponentStateService,
     playerCommanders,
-    moreCardsCanBeDrawnForDrawPhase
+    moreCardsCanBeDrawnForDrawPhase,
 }) {
-
     return {
         all,
         hasAnyRequirements,
@@ -17,13 +16,11 @@ function QueryPlayerRequirements({
         firstRequirementIsOfType,
         canAddDiscardCardRequirementWithCountOrLess,
         getQueuedDamageStationCardCount,
-        canMill
+        canMill,
     };
 
     function all() {
-        return playerStateService.getPlayerState()
-            .requirements
-            .slice();
+        return playerStateService.getPlayerState().requirements.slice();
     }
 
     function hasAnyRequirements() {
@@ -31,14 +28,13 @@ function QueryPlayerRequirements({
     }
 
     function isWaitingOnOpponentFinishingRequirement() {
-        return all().some(r => r.waiting);
+        return all().some((r) => r.waiting);
     }
 
     function getFirstMatchingRequirement(matchingCondition) {
         const requirements = playerStateService
             .getPlayerState()
-            .requirements
-            .slice();
+            .requirements.slice();
         return findMatchingRequirement(requirements, matchingCondition);
     }
 
@@ -55,29 +51,29 @@ function QueryPlayerRequirements({
     function getCountOrMinimumAvailableForDiscardingCards(maxCount) {
         const cardsOnHandCount = playerStateService.getCardsOnHandCount();
 
-        const currentDiscardCardRequirementsCount =
-            all()
-                .filter(r => r.type === 'discardCard')
-                .reduce((total, requirement) => total + requirement.count, 0);
+        const currentDiscardCardRequirementsCount = all()
+            .filter((r) => r.type === "discardCard")
+            .reduce((total, requirement) => total + requirement.count, 0);
 
-        const maxDiscardCount = cardsOnHandCount - currentDiscardCardRequirementsCount;
+        const maxDiscardCount =
+            cardsOnHandCount - currentDiscardCardRequirementsCount;
         return Math.min(maxDiscardCount, maxCount);
     }
 
     function getQueuedDamageStationCardCount() {
         return all()
-            .filter(r => r.type === 'damageStationCard')
+            .filter((r) => r.type === "damageStationCard")
             .reduce((total, requirement) => total + requirement.count, 0);
     }
 
     function canMill() {
         return _canMill({
             isWaitingOnOpponentFinishingRequirement: isWaitingOnOpponentFinishingRequirement(),
-            firstRequirementIsDrawCard: firstRequirementIsOfType('drawCard'),
+            firstRequirementIsDrawCard: firstRequirementIsOfType("drawCard"),
             opponentDeckIsEmpty: opponentStateService.deckIsEmpty(),
             playerHasTheMiller: playerCommanders.has(Commander.TheMiller),
-            moreCardsCanBeDrawnForDrawPhase: moreCardsCanBeDrawnForDrawPhase()
-        })
+            moreCardsCanBeDrawnForDrawPhase: moreCardsCanBeDrawnForDrawPhase(),
+        });
     }
 }
 

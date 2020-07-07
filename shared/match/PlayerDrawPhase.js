@@ -2,22 +2,20 @@ module.exports = function ({
     miller,
     moreCardsCanBeDrawnForDrawPhase,
     playerDeck,
-    playerPhase
+    playerPhase,
 }) {
-
     return {
         moreCardsCanBeDrawn,
-        canPass
+        canPass,
     };
 
     function moreCardsCanBeDrawn() {
-        return moreCardsCanBeDrawnForDrawPhase()
-            && playerDeck.hasMore();
+        return moreCardsCanBeDrawnForDrawPhase() && playerDeck.hasMore();
     }
 
     function canPass() {
-        return playerPhase.isDraw()
-            && !miller.canMill()
-            && !moreCardsCanBeDrawn();
+        return (
+            playerPhase.isDraw() && !miller.canMill() && !moreCardsCanBeDrawn()
+        );
     }
 };

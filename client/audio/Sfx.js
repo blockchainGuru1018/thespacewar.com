@@ -1,5 +1,10 @@
-module.exports = function ({ name, info, buffer, audioContext, destinationNode }) {
-
+module.exports = function ({
+    name,
+    info,
+    buffer,
+    audioContext,
+    destinationNode,
+}) {
     const gain = info.gain;
     const loop = info.loop;
 
@@ -21,7 +26,7 @@ module.exports = function ({ name, info, buffer, audioContext, destinationNode }
         fadeIn,
         fadeOut,
         kill,
-        ...info
+        ...info,
     };
 
     function playImmediately() {
@@ -38,7 +43,10 @@ module.exports = function ({ name, info, buffer, audioContext, destinationNode }
 
         clearInterval(fadeInIntervalId);
         fadeInIntervalId = setInterval(() => {
-            gainNode.gain.value = Math.min(targetGain, gainNode.gain.value + step);
+            gainNode.gain.value = Math.min(
+                targetGain,
+                gainNode.gain.value + step
+            );
             if (targetGain - gainNode.gain.value < step) {
                 clearInterval(fadeInIntervalId);
             }
@@ -48,13 +56,11 @@ module.exports = function ({ name, info, buffer, audioContext, destinationNode }
     function fadeOut(fadeTime = 2000, intervalTime = 30) {
         if (!playing()) return;
 
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             if (Date.now() - startedPlaying < fadeTime) {
                 kill();
                 resolve();
-            }
-            else {
-
+            } else {
                 const step = gain / (fadeTime / intervalTime);
 
                 clearInterval(fadeOutIntervalId);

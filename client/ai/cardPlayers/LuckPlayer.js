@@ -1,12 +1,9 @@
-const Luck = require('../../../shared/card/Luck.js');
+const Luck = require("../../../shared/card/Luck.js");
 
-module.exports = function ({
-    matchController
-}) {
-
+module.exports = function ({ matchController }) {
     return {
         forCard,
-        play
+        play,
     };
 
     function forCard({ commonId }) {
@@ -14,6 +11,10 @@ module.exports = function ({
     }
 
     function play(card) {
-        matchController.emit('putDownCard', { cardId: card.id, location: 'zone', choice: 'draw' });
+        matchController.emit("putDownCard", {
+            cardId: card.id,
+            location: "zone",
+            choice: "draw",
+        });
     }
 };

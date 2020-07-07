@@ -1,8 +1,7 @@
-const AudioLoader = require('./AudioLoader.js');
-const AudioSettings = require('./AudioSettings.js');
+const AudioLoader = require("./AudioLoader.js");
+const AudioSettings = require("./AudioSettings.js");
 
 module.exports = function ({ nameToInfo }) {
-
     const settings = AudioSettings();
 
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -16,7 +15,7 @@ module.exports = function ({ nameToInfo }) {
     let sounds = [];
     AudioLoader({ nameToInfo, destinationNode, audioContext })
         .loadSounds()
-        .then(loadedSounds => {
+        .then((loadedSounds) => {
             sounds = loadedSounds;
             for (const audio of audioQueue) {
                 audio.callback();
@@ -40,27 +39,29 @@ module.exports = function ({ nameToInfo }) {
     };
 
     function playSong(name) {
-        const sound = sounds.find(s => s.name === name);
+        const sound = sounds.find((s) => s.name === name);
         if (!sound) {
-            const hasAlreadyQueueMusic = audioQueue.some(a => a.name === name);
+            const hasAlreadyQueueMusic = audioQueue.some(
+                (a) => a.name === name
+            );
             if (!hasAlreadyQueueMusic) {
                 audioQueue.push({ name: name, callback: () => playSong(name) });
             }
-        }
-        else if (!sound.playing()) {
+        } else if (!sound.playing()) {
             if (sound.exclusive) {
-                const competingSound = sounds.find(s => s.exclusive && s.name !== name);
+                const competingSound = sounds.find(
+                    (s) => s.exclusive && s.name !== name
+                );
                 competingSound.fadeOut(2000);
                 sound.fadeIn(2000);
-            }
-            else {
+            } else {
                 sound.fadeIn();
             }
         }
     }
 
     function playEffect(name) {
-        const sound = sounds.find(s => s.name === name);
+        const sound = sounds.find((s) => s.name === name);
         if (sound) {
             sound.playImmediately();
         }

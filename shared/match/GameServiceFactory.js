@@ -1,15 +1,20 @@
-const MatchService = require('./MatchService.js');
-const GameActionTimeMachine = require('./GameActionTimeMachine.js');
-const CardDataAssembler = require('../CardDataAssembler.js');
-const CardInfoRepository = require('../CardInfoRepository.js');
-const StateSerializer = require('../../server/match/StateSerializer.js');
-const DeckFactory = require('../../server/deck/DeckFactory.js');
-const ActionPointsCalculator = require('./ActionPointsCalculator.js');
-const LastStand = require('./LastStand.js');
-const MatchRestorer = require('./MatchRestorer.js');
+const MatchService = require("./MatchService.js");
+const GameActionTimeMachine = require("./GameActionTimeMachine.js");
+const CardDataAssembler = require("../CardDataAssembler.js");
+const CardInfoRepository = require("../CardInfoRepository.js");
+const StateSerializer = require("../../server/match/StateSerializer.js");
+const DeckFactory = require("../../server/deck/DeckFactory.js");
+const ActionPointsCalculator = require("./ActionPointsCalculator.js");
+const LastStand = require("./LastStand.js");
+const MatchRestorer = require("./MatchRestorer.js");
 
-module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig, registerLogGame }) {
-
+module.exports = function ({
+    state,
+    endMatch,
+    rawCardDataRepository,
+    gameConfig,
+    registerLogGame,
+}) {
     const objectsByNameAndPlayerId = {};
 
     const api = {
@@ -22,14 +27,14 @@ module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig,
         actionPointsCalculator: cached(actionPointsCalculator),
         stateSerializer: cached(stateSerializer),
         deckFactory: cached(deckFactory),
-        matchRestorer: cached(matchRestorer)
+        matchRestorer: cached(matchRestorer),
     };
 
     return api;
 
     function lastStand() {
         return LastStand({
-            matchService: api.matchService()
+            matchService: api.matchService(),
         });
     }
 
@@ -39,13 +44,13 @@ module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig,
 
     function cardInfoRepository() {
         return CardInfoRepository({
-            cardDataAssembler: api.cardDataAssembler()
+            cardDataAssembler: api.cardDataAssembler(),
         });
     }
 
     function actionPointsCalculator() {
         return ActionPointsCalculator({
-            cardInfoRepository: api.cardInfoRepository()
+            cardInfoRepository: api.cardInfoRepository(),
         });
     }
 
@@ -55,21 +60,21 @@ module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig,
 
     function deckFactory() {
         return DeckFactory({
-            cardDataAssembler: api.cardDataAssembler()
+            cardDataAssembler: api.cardDataAssembler(),
         });
     }
 
     function gameActionTimeMachine() {
         return GameActionTimeMachine({
             matchRestorer: api.matchRestorer(),
-            gameConfig
+            gameConfig,
         });
-}
+    }
 
     function matchRestorer() {
         return MatchRestorer({
             matchService: api.matchService(),
-            stateSerializer: api.stateSerializer()
+            stateSerializer: api.stateSerializer(),
         });
     }
 
@@ -77,7 +82,7 @@ module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig,
         const matchService = new MatchService({
             gameConfig,
             endMatch,
-            registerLogGame
+            registerLogGame,
         });
         matchService.setState(state);
         return matchService;
@@ -86,7 +91,7 @@ module.exports = function ({ state, endMatch, rawCardDataRepository, gameConfig,
     function cached(constructor) {
         const name = constructor.name;
         return (playerIdOrUndefined) => {
-            const key = name + ':' + playerIdOrUndefined;
+            const key = name + ":" + playerIdOrUndefined;
             const existingCopy = objectsByNameAndPlayerId[key];
             if (existingCopy) return existingCopy;
 

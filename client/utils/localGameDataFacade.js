@@ -1,16 +1,16 @@
 const Keys = {
-    OwnUser: 'own-user',
-    OngoingMatch: 'ongoing-match',
-    AudioSettings: 'audio-settings',
-    DebugPassword: 'debug-password',
-    AccessKey: 'access-key',
-    GuestMode: 'guest-mode',
+    OwnUser: "own-user",
+    OngoingMatch: "ongoing-match",
+    AudioSettings: "audio-settings",
+    DebugPassword: "debug-password",
+    AccessKey: "access-key",
+    GuestMode: "guest-mode",
 };
 
 const DoNotRemoveKeysWhenRemoveAll = [
     Keys.AccessKey,
     Keys.DebugPassword,
-    Keys.AudioSettings
+    Keys.AudioSettings,
 ];
 
 module.exports = Facade();
@@ -29,7 +29,7 @@ function Facade() {
         activateGuestMode: () => Setter(Keys.GuestMode)(true),
         clearGuestMode: () => Remover(Keys.GuestMode)(),
 
-        removeAll
+        removeAll,
     };
 
     for (const objectKey of Object.keys(Keys)) {
@@ -38,7 +38,7 @@ function Facade() {
             get: Getter(localStorageKey),
             set: Setter(localStorageKey),
             remove: Remover(localStorageKey),
-            getWithDefault: DefaultGetter(localStorageKey)
+            getWithDefault: DefaultGetter(localStorageKey),
         };
     }
 
@@ -46,18 +46,20 @@ function Facade() {
 }
 
 function removeAll() {
-    const keysToRemove = Object.values(Keys).filter(key => !DoNotRemoveKeysWhenRemoveAll.includes(key));
+    const keysToRemove = Object.values(Keys).filter(
+        (key) => !DoNotRemoveKeysWhenRemoveAll.includes(key)
+    );
     for (const localStorageKey of keysToRemove) {
         Remover(localStorageKey)();
     }
 }
 
 function Getter(key) {
-    return () => getAndParseOrNull(key)
+    return () => getAndParseOrNull(key);
 }
 
 function Setter(key) {
-    return value => {
+    return (value) => {
         stringifyAndSet(key, value);
         return value;
     };
@@ -75,15 +77,14 @@ function DefaultGetter(key) {
         if (!storedValue) {
             Setter(key)(defaultValue);
             return defaultValue;
-        }
-        else {
+        } else {
             return storedValue;
         }
     };
 }
 
 function getAndParseOrNull(key) {
-    const textOrNull = localStorage.getItem(key)
+    const textOrNull = localStorage.getItem(key);
     return textOrNull ? JSON.parse(textOrNull) : null;
 }
 

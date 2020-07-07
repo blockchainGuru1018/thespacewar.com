@@ -1,8 +1,4 @@
-module.exports = function ({
-    matchRestorer,
-    gameConfig
-}) {
-
+module.exports = function ({ matchRestorer, gameConfig }) {
     let stateAttackDataTimeTuples = [];
     let stateCardIdTimeTuples = [];
 
@@ -10,22 +6,25 @@ module.exports = function ({
         saveStateForCardId,
         revertStateToBeforeCardWasPutDown,
         saveStateForAttackData,
-        revertStateToBeforeAttack
+        revertStateToBeforeAttack,
     };
 
     function clearOldPutDownCardState() {
         const now = Date.now();
-        stateCardIdTimeTuples = stateCardIdTimeTuples
-            .filter(([state, cardId, time]) => {
+        stateCardIdTimeTuples = stateCardIdTimeTuples.filter(
+            ([state, cardId, time]) => {
                 return now - time <= gameConfig.timeToCounter();
-            });
+            }
+        );
     }
 
     function clearOldAttackState() {
         const now = Date.now();
-        stateAttackDataTimeTuples = stateAttackDataTimeTuples.filter(([state, attackData, time]) => {
-            return now - time <= gameConfig.timeToCounter();
-        });
+        stateAttackDataTimeTuples = stateAttackDataTimeTuples.filter(
+            ([state, attackData, time]) => {
+                return now - time <= gameConfig.timeToCounter();
+            }
+        );
     }
 
     function saveStateForCardId(cardId) {
@@ -34,39 +33,59 @@ module.exports = function ({
     }
 
     function revertStateToBeforeCardWasPutDown(cardId) {
-        const [storedStateJson, _, timeForAction] = stateCardIdTimeTuples.slice().reverse().find(([_, id]) => id === cardId);
+        const [storedStateJson, _, timeForAction] = stateCardIdTimeTuples
+            .slice()
+            .reverse()
+            .find(([_, id]) => id === cardId);
         restoreFromState(storedStateJson, timeForAction);
 
         clearOldPutDownCardState();
     }
 
-    function saveStateForAttackData(stateBeforeAttack, {attackerCardId, defenderCardIds, time}) {
+    function saveStateForAttackData(
+        stateBeforeAttack,
+        { attackerCardId, defenderCardIds, time }
+    ) {
         stateAttackDataTimeTuples.push([
             stateBeforeAttack,
-            {attackerCardId, defenderCardIds, time},
-            Date.now()
+            { attackerCardId, defenderCardIds, time },
+            Date.now(),
         ]);
     }
 
-    function revertStateToBeforeAttack({attackerCardData, defenderCardsData, time}) {
+    function revertStateToBeforeAttack({
+        attackerCardData,
+        defenderCardsData,
+        time,
+    }) {
         const [storedStateJson, _, timeForAction] = findStateTupleFromDataKey({
             attackerCardData,
             defenderCardsData,
-            time
+            time,
         });
         restoreFromState(storedStateJson, timeForAction);
 
         clearOldAttackState();
     }
 
-    function findStateTupleFromDataKey({attackerCardData, defenderCardsData, time}) {
+    function findStateTupleFromDataKey({
+        attackerCardData,
+        defenderCardsData,
+        time,
+    }) {
         return stateAttackDataTimeTuples
             .slice()
             .reverse()
             .find(([_, dataKey]) => {
-                return dataKey.attackerCardId === attackerCardData.id
-                    && dataKey.defenderCardIds.every(cardId => defenderCardsData.some(cardData => cardData.id === cardId))
-                    && dataKey.time === time;
+                return (
+                    dataKey.attackerCardId === attackerCardData.id &&
+                    dataKey.defenderCardIds.every((cardId) =>
+                        defenderCardsData.some(
+                            (cardData) => cardData.id === cardId
+                        )
+                    ) &&
+                    dataKey.time === time
+                );
             });
     }
 
@@ -74,12 +93,12 @@ module.exports = function ({
         matchRestorer.restoreFromRestorableState({
             restorableStateJson: storedStateJson,
             stateTreatmentMiddleware: [MoveClockStartTime(timeForAction)],
-            keepActionLog: true
+            keepActionLog: true,
         });
     }
 
     function MoveClockStartTime(timeForAction) {
-        return state => {
+        return (state) => {
             const now = Date.now();
             state.gameStartTime = now;
 
@@ -92,6 +111,6 @@ module.exports = function ({
                     event.time += timeSinceAction;
                 }
             }
-        }
+        };
     }
 };

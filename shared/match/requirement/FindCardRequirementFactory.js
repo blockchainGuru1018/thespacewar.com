@@ -1,13 +1,8 @@
-FindCardRequirementFactory.type = 'findCard';
+FindCardRequirementFactory.type = "findCard";
 
-function FindCardRequirementFactory({
-    sourceFetcher,
-    requirementSpec,
-    card
-}) {
-
+function FindCardRequirementFactory({ sourceFetcher, requirementSpec, card }) {
     return {
-        create
+        create,
     };
 
     function create() {
@@ -20,17 +15,20 @@ function FindCardRequirementFactory({
             common: !!requirementSpec.common,
             waiting: requirementSpec.count === 0 && requirementSpec.common,
             cancelable: !!requirementSpec.cancelable,
-            submitOnEverySelect: !!requirementSpec.submitOnEverySelect
+            submitOnEverySelect: !!requirementSpec.submitOnEverySelect,
         };
         if (requirementSpec.dormantEffect) {
             requirement.usedDormantEffect = {
                 cardId: card.id,
-                destroyCard: requirementSpec.dormantEffect.destroyTriggerCard
-            }
+                destroyCard: requirementSpec.dormantEffect.destroyTriggerCard,
+            };
         }
         if (requirementSpec.actionPointsLimit) {
             requirement.actionPointsLimit = {
-                actionPointsLeft: requirementSpec.actionPointsLimit.actionPointsLeft? requirementSpec.actionPointsLimit.actionPointsLeft : requirementSpec.actionPointsLimit
+                actionPointsLeft: requirementSpec.actionPointsLimit
+                    .actionPointsLeft
+                    ? requirementSpec.actionPointsLimit.actionPointsLeft
+                    : requirementSpec.actionPointsLimit,
             };
         }
 
@@ -40,20 +38,22 @@ function FindCardRequirementFactory({
     function cardGroupsFromSpec() {
         if (requirementSpec.count > 0) {
             return requirementSpec.sources.map(cardGroupFromSource);
-        }
-        else {
+        } else {
             return [];
         }
     }
 
     function cardGroupFromSource(source) {
-        const filters = {...requirementSpec.filter, excludeCardIds: [card.id]}
+        const filters = {
+            ...requirementSpec.filter,
+            excludeCardIds: [card.id],
+        };
         if (requirementSpec.actionPointsLimit) {
-            filters.actionPointsLeft = requirementSpec.actionPointsLimit
+            filters.actionPointsLeft = requirementSpec.actionPointsLimit;
         }
         return {
             source,
-            cards: sourceFetcher[source](filters)
+            cards: sourceFetcher[source](filters),
         };
     }
 }

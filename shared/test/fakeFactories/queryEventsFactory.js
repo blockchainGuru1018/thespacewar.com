@@ -6,9 +6,9 @@ const queryEventsFactory = {
             getRepairsOnTurn: () => [],
             getAttacksOnTurn: () => [],
             playerCardWasInHandAfterOpponentCardWasPlayed: () => false,
-            ...stubs
+            ...stubs,
         };
-    }
+    },
 };
 
 module.exports = queryEventsFactory;

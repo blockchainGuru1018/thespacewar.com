@@ -1,13 +1,13 @@
-const ExcellentWork = require('../../../shared/card/ExcellentWork.js');
+const ExcellentWork = require("../../../shared/card/ExcellentWork.js");
 
 module.exports = function ({
     matchController,
     decideRowForStationCard,
-    playerRuleService
+    playerRuleService,
 }) {
     return {
         forCard,
-        play
+        play,
     };
 
     function forCard(card) {
@@ -17,25 +17,24 @@ module.exports = function ({
     function play(card) {
         if (playerRuleService.hasReachedMaximumStationCardCapacity()) {
             playToDrawExtraCards(card);
-        }
-        else {
+        } else {
             playAsExtraStationCard(card);
         }
     }
 
     function playToDrawExtraCards(card) {
-        matchController.emit('putDownCard', {
+        matchController.emit("putDownCard", {
             cardId: card.id,
-            location: 'zone',
-            choice: 'draw'
+            location: "zone",
+            choice: "draw",
         });
     }
 
     function playAsExtraStationCard(card) {
-        matchController.emit('putDownCard', {
+        matchController.emit("putDownCard", {
             cardId: card.id,
             location: stationLocation(),
-            choice: 'putDownAsExtraStationCard'
+            choice: "putDownAsExtraStationCard",
         });
     }
 

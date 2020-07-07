@@ -3,8 +3,8 @@ module.exports = function (attackerCard, defenderCard) {
     const defenderTotalDefense = defenderCard.defense - defenderCurrentDamage;
     const cardAttack = attackerCard.attack;
     return {
-        attackerDestroyed: attackerCard.type === 'missile',
+        attackerDestroyed: attackerCard.type === "missile",
         defenderDestroyed: cardAttack >= defenderTotalDefense,
-        defenderDamage: defenderCurrentDamage + cardAttack
+        defenderDamage: defenderCurrentDamage + cardAttack,
     };
 };

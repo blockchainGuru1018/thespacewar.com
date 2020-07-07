@@ -1,14 +1,12 @@
-module.exports = function ({
-    playerOverworkFactory
-}) {
-
+module.exports = function ({ playerOverworkFactory }) {
     return {
-        overwork
+        overwork,
     };
 
     function overwork(playerId) {
         const playerOverwork = playerOverworkFactory.create(playerId);
-        if (!playerOverwork.canIssueOverwork()) throw new Error('Cannot issue Overwork');
+        if (!playerOverwork.canIssueOverwork())
+            throw new Error("Cannot issue Overwork");
 
         playerOverwork.overwork();
     }

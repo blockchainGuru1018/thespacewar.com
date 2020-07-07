@@ -1,19 +1,16 @@
-const _CardCanBePlacedInStation = require('./CardCanBePlacedInStation.js');
+const _CardCanBePlacedInStation = require("./CardCanBePlacedInStation.js");
 
-module.exports = function CardFacadeContext({
-    playerServiceFactory
-}) {
+module.exports = function CardFacadeContext({ playerServiceFactory }) {
     return CardFacade;
 
     function CardFacade(cardId, playerId) {
-
         const objectsByNameAndPlayerId = {};
 
         let api;
 
         api = {
             _cache: objectsByNameAndPlayerId,
-            CardCanBePlacedInStation: cached(CardCanBePlacedInStation)
+            CardCanBePlacedInStation: cached(CardCanBePlacedInStation),
         };
 
         return api;
@@ -21,8 +18,12 @@ module.exports = function CardFacadeContext({
         function CardCanBePlacedInStation() {
             return _CardCanBePlacedInStation({
                 card: card(),
-                playerStateService: playerServiceFactory.playerStateService(playerId),
-                playerRuleService: playerServiceFactory.playerRuleService(playerId)
+                playerStateService: playerServiceFactory.playerStateService(
+                    playerId
+                ),
+                playerRuleService: playerServiceFactory.playerRuleService(
+                    playerId
+                ),
             });
         }
 
@@ -41,7 +42,7 @@ module.exports = function CardFacadeContext({
         function cached(constructor) {
             const name = constructor.name;
             return (playerIdOrUndefined) => {
-                const key = name + ':' + playerIdOrUndefined;
+                const key = name + ":" + playerIdOrUndefined;
                 const existingCopy = objectsByNameAndPlayerId[key];
                 if (existingCopy) return existingCopy;
 

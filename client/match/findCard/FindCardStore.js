@@ -1,26 +1,24 @@
-module.exports = function ({
-    matchController
-}) {
-
+module.exports = function ({ matchController }) {
     return {
-        name: 'findCard',
+        name: "findCard",
         namespaced: true,
         state: {
-            selectedCardInfos: []
+            selectedCardInfos: [],
         },
         getters: {
             requirement,
-            filteredRequirement
+            filteredRequirement,
         },
         actions: {
             done,
-            selectCard
-        }
+            selectCard,
+        },
     };
 
     function requirement(state, getters, rootState, rootGetters) {
-        const firstRequirement = rootGetters['requirement/firstRequirement'];
-        const isFindCardRequirement = firstRequirement && firstRequirement.type === 'findCard';
+        const firstRequirement = rootGetters["requirement/firstRequirement"];
+        const isFindCardRequirement =
+            firstRequirement && firstRequirement.type === "findCard";
         if (isFindCardRequirement) {
             return firstRequirement;
         }
@@ -29,31 +27,46 @@ module.exports = function ({
 
     function filteredRequirement(state, getters) {
         const cardGroups = getters.requirement.cardGroups
-            .map(group => {
+            .map((group) => {
                 return {
                     source: group.source,
-                    cards: group.cards.filter(c => !state.selectedCardInfos.some(i => i.id === c.id))
-                }
+                    cards: group.cards.filter(
+                        (c) =>
+                            !state.selectedCardInfos.some((i) => i.id === c.id)
+                    ),
+                };
             })
-            .filter(group => group.cards.length > 0);
+            .filter((group) => group.cards.length > 0);
 
         return { cardGroups };
     }
 
     function done() {
-        matchController.emit('selectCardForFindCardRequirement', { cardGroups: [] });
+        matchController.emit("selectCardForFindCardRequirement", {
+            cardGroups: [],
+        });
     }
 
     function selectCard({ state, getters }, { id, source }) {
         state.selectedCardInfos.push({ id, source });
-        if (getters.requirement.submitOnEverySelect ) {
-            const cardGroups = groupFromSelectedCardIdsBySource([{ id, source }]);
-            matchController.emit('selectCardForFindCardRequirement', { cardGroups });
-        } else if (state.selectedCardInfos.length === getters.requirement.count) {
-            const cardGroups = groupFromSelectedCardIdsBySource(state.selectedCardInfos);
+        if (getters.requirement.submitOnEverySelect) {
+            const cardGroups = groupFromSelectedCardIdsBySource([
+                { id, source },
+            ]);
+            matchController.emit("selectCardForFindCardRequirement", {
+                cardGroups,
+            });
+        } else if (
+            state.selectedCardInfos.length === getters.requirement.count
+        ) {
+            const cardGroups = groupFromSelectedCardIdsBySource(
+                state.selectedCardInfos
+            );
             state.selectedCardInfos = [];
-            matchController.emit('selectCardForFindCardRequirement', { cardGroups });
-        } 
+            matchController.emit("selectCardForFindCardRequirement", {
+                cardGroups,
+            });
+        }
     }
 
     function groupFromSelectedCardIdsBySource(selectedCardInfos) {
@@ -64,6 +77,9 @@ module.exports = function ({
         }
 
         const allSources = Object.keys(cardIdsBySource);
-        return allSources.map(source => ({ source, cardIds: cardIdsBySource[source] }));
+        return allSources.map((source) => ({
+            source,
+            cardIds: cardIdsBySource[source],
+        }));
     }
 };

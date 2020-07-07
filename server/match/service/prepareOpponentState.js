@@ -1,32 +1,32 @@
-const obscureOpponentEvents = require('./obscureOpponentEvents.js');
-const itemNamesForOpponentByItemNameForPlayer = require('../itemNamesForOpponentByItemNameForPlayer.js');
-const StatePreparer = require('./StatePreparer.js');
+const obscureOpponentEvents = require("./obscureOpponentEvents.js");
+const itemNamesForOpponentByItemNameForPlayer = require("../itemNamesForOpponentByItemNameForPlayer.js");
+const StatePreparer = require("./StatePreparer.js");
 const MatchMode = require("../../../shared/match/MatchMode.js");
 
 const obscurerByKey = {
     stationCards: {
-        obscure: require('./prepareStationCardsForClient'),
-        key: 'stationCards'
+        obscure: require("./prepareStationCardsForClient"),
+        key: "stationCards",
     },
     cardsOnHand: {
         obscure(cardsOnHand) {
             return cardsOnHand.length;
         },
-        key: 'opponentCardCount'
+        key: "opponentCardCount",
     },
     cardsInDeck: {
         obscure(cardsInDeck) {
             return cardsInDeck.length;
         },
-        key: 'opponentCardsInDeckCount'
+        key: "opponentCardsInDeckCount",
     },
     events: {
         obscure: obscureOpponentEvents,
-        key: 'opponentEvents'
+        key: "opponentEvents",
     },
     actionLogEntries: {
-        obscure: value => value,
-        key: 'opponentActionLogEntries'
+        obscure: (value) => value,
+        key: "opponentActionLogEntries",
     },
     commanders: {
         obscure: (value, context) => {
@@ -36,41 +36,41 @@ const obscurerByKey = {
 
             return [];
         },
-        key: 'opponentCommanders'
+        key: "opponentCommanders",
     },
     clock: {
-        obscure: value => value,
-        key: 'opponentClock'
+        obscure: (value) => value,
+        key: "opponentClock",
     },
     requirements: {
-        obscure: value => {
-            return value.map(requirement => ({
+        obscure: (value) => {
+            return value.map((requirement) => ({
                 type: requirement.type,
-                count: requirement.count
+                count: requirement.count,
             }));
         },
-        key: 'opponentRequirements'
-    }
+        key: "opponentRequirements",
+    },
 };
 
 const whitelist = [
-    'discardedCards',
-    'cardsInZone',
-    'cardsInOpponentZone',
-    'cardsInDeck',
-    'stationCards',
-    'cardsOnHand',
-    'events',
-    'phase',
-    'actionLogEntries',
-    'commanders',
-    'clock',
-    'requirements'
+    "discardedCards",
+    "cardsInZone",
+    "cardsInOpponentZone",
+    "cardsInDeck",
+    "stationCards",
+    "cardsOnHand",
+    "events",
+    "phase",
+    "actionLogEntries",
+    "commanders",
+    "clock",
+    "requirements",
 ];
 
 const statePreparer = StatePreparer({
     whitelist,
     obscureHandlerByKey: obscurerByKey,
-    alternateItemNames: itemNamesForOpponentByItemNameForPlayer
+    alternateItemNames: itemNamesForOpponentByItemNameForPlayer,
 });
 module.exports = statePreparer.prepare;

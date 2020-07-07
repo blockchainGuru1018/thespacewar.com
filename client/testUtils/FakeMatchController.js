@@ -1,14 +1,13 @@
-const defaults = require('lodash/defaults');
+const defaults = require("lodash/defaults");
 
 module.exports = function FakeMatchController(options = {}, testOptions) {
     return defaults(options, {
-        start() {
-        },
+        start() {},
         emit: (testOptions && testOptions.stub) || getSinonStub(),
-        stop() { }
+        stop() {},
     });
 };
 
 function getSinonStub() {
-    return require('./bocha-jest/bocha-jest.js').stub();
+    return require("./bocha-jest/bocha-jest.js").stub();
 }

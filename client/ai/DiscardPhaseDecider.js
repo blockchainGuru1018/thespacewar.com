@@ -1,21 +1,20 @@
-const { PHASES } = require('../../shared/phases.js');
+const { PHASES } = require("../../shared/phases.js");
 
 module.exports = function ({
     matchController,
     playerDiscardPhase,
-    decideCardToDiscard
+    decideCardToDiscard,
 }) {
     return {
-        decide
+        decide,
     };
 
     function decide() {
         if (playerDiscardPhase.canLeavePhase()) {
-            matchController.emit('nextPhase', { currentPhase: PHASES.discard });
-        }
-        else {
+            matchController.emit("nextPhase", { currentPhase: PHASES.discard });
+        } else {
             const cardToDiscardId = decideCardToDiscard();
-            matchController.emit('discardCard', cardToDiscardId);
+            matchController.emit("discardCard", cardToDiscardId);
         }
     }
 };

@@ -1,4 +1,4 @@
-const BaseCard = require('./BaseCard.js');
+const BaseCard = require("./BaseCard.js");
 
 class GoodKarma extends BaseCard {
     constructor(deps) {
@@ -6,27 +6,23 @@ class GoodKarma extends BaseCard {
     }
 
     static get CommonId() {
-        return '11';
+        return "11";
     }
 
     get requirementsWhenEnterDrawPhase() {
         const cardCommonId = GoodKarma.CommonId;
         return {
             forOpponent: [],
-            forPlayer: [
-                { type: 'drawCard', count: 3, cardCommonId }
-            ]
-        }
+            forPlayer: [{ type: "drawCard", count: 3, cardCommonId }],
+        };
     }
 
     get requirementsWhenLeavingDrawPhase() {
         const cardCommonId = GoodKarma.CommonId;
         return {
             forOpponent: [],
-            forPlayer: [
-                { type: 'discardCard', count: 1, cardCommonId }
-            ]
-        }
+            forPlayer: [{ type: "discardCard", count: 1, cardCommonId }],
+        };
     }
 }
 

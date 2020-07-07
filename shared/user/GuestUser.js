@@ -1,11 +1,8 @@
-const User = require('./User.js');
+const User = require("./User.js");
 
 class GuestUser extends User {
-    constructor({
-        name,
-        id
-    }) {
-        super({name, id});
+    constructor({ name, id }) {
+        super({ name, id });
     }
 
     static fromData(data) {

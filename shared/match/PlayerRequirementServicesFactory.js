@@ -1,12 +1,11 @@
-const CanAddRequirementFromSpec = require('./requirement/CanAddRequirementFromSpec.js');
-const RequirementConditions = require('./requirement/RequirementConditions.js');
-const TargetIsFlippedStationCard = require('./requirement/conditions/TargetIsFlippedStationCard.js');
+const CanAddRequirementFromSpec = require("./requirement/CanAddRequirementFromSpec.js");
+const RequirementConditions = require("./requirement/RequirementConditions.js");
+const TargetIsFlippedStationCard = require("./requirement/conditions/TargetIsFlippedStationCard.js");
 
 module.exports = function ({
     playerServiceFactory,
-    playerCardServicesFactory
+    playerCardServicesFactory,
 }) {
-
     const objectsByNameAndPlayerId = {};
 
     const api = {
@@ -21,24 +20,28 @@ module.exports = function ({
 
     function canAddRequirementFromSpec(playerId) {
         return CanAddRequirementFromSpec({
-            playerStateService: playerServiceFactory.playerStateService(playerId),
-            requirementConditions: api.requirementConditions(playerId)
+            playerStateService: playerServiceFactory.playerStateService(
+                playerId
+            ),
+            requirementConditions: api.requirementConditions(playerId),
         });
     }
 
     function requirementConditions(playerId) {
-        const opponentCardFactory = playerCardServicesFactory.playerCardFactory(playerServiceFactory.opponentId(playerId));
+        const opponentCardFactory = playerCardServicesFactory.playerCardFactory(
+            playerServiceFactory.opponentId(playerId)
+        );
         return RequirementConditions({
-            requirementConditionsByType: api.requirementConditionsByType(playerId),
+            requirementConditionsByType: api.requirementConditionsByType(
+                playerId
+            ),
             opponentCardFactory: opponentCardFactory,
         });
     }
 
     function requirementConditionsByType(playerId) {
         return {
-            onlyWhen: [
-                api.targetIsFlippedStationCard(playerId)
-            ]
+            onlyWhen: [api.targetIsFlippedStationCard(playerId)],
         };
     }
 
@@ -49,7 +52,7 @@ module.exports = function ({
     function cached(constructor) {
         const name = constructor.name;
         return (playerIdOrUndefined) => {
-            const key = name + ':' + playerIdOrUndefined;
+            const key = name + ":" + playerIdOrUndefined;
             const existingCopy = objectsByNameAndPlayerId[key];
             if (existingCopy) return existingCopy;
 

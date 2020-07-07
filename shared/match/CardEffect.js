@@ -1,39 +1,37 @@
-module.exports = function ({
-    canThePlayer,
-    playerStateService
-}) {
+module.exports = function ({ canThePlayer, playerStateService }) {
     return {
         attackBoostForCardType,
-        cardTypeCanMoveOnTurnPutDown
+        cardTypeCanMoveOnTurnPutDown,
     };
 
     function attackBoostForCardType(type) {
-        if (type !== 'spaceShip') return 0;
+        if (type !== "spaceShip") return 0;
 
         return sum(attackBoostForEachDurationCard());
     }
 
     function cardTypeCanMoveOnTurnPutDown(type) {
-        if (type !== 'spaceShip') return false;
+        if (type !== "spaceShip") return false;
 
         return cardsWithEffectToMoveTurnWhenPutDown().length > 0;
     }
 
     function cardsWithEffectToMoveTurnWhenPutDown() {
-        return usableDurationCards()
-            .filter(c => c.allowsFriendlySpaceShipsToMoveTurnWhenPutDown);
+        return usableDurationCards().filter(
+            (c) => c.allowsFriendlySpaceShipsToMoveTurnWhenPutDown
+        );
     }
 
     function attackBoostForEachDurationCard() {
         return usableDurationCards()
-            .filter(c => c.friendlySpaceShipAttackBonus)
-            .map(c => c.friendlySpaceShipAttackBonus);
+            .filter((c) => c.friendlySpaceShipAttackBonus)
+            .map((c) => c.friendlySpaceShipAttackBonus);
     }
 
     function usableDurationCards() {
         return playerStateService
             .getDurationBehaviourCards()
-            .filter(c => canThePlayer.useThisDurationCard(c.id));
+            .filter((c) => canThePlayer.useThisDurationCard(c.id));
     }
 
     function sum(list) {

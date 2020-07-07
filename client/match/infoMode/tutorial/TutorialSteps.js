@@ -31,10 +31,10 @@ const ComponentsByName = {
     CardTypes2,
     EventCards,
     GameTimer,
-    LastTip
+    LastTip,
 };
 
 export default {
     InOrder: Object.values(ComponentsByName),
-    ComponentsByName
+    ComponentsByName,
 };

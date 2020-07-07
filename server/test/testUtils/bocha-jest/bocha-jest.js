@@ -1,11 +1,5 @@
-const {
-    stub,
-    defaults,
-    assert,
-    refute,
-    sinon
-} = require('./bocha');
-const toJestTest = require('./toJestTest.js');
+const { stub, defaults, assert, refute, sinon } = require("./bocha");
+const toJestTest = require("./toJestTest.js");
 
 module.exports = {
     stub,

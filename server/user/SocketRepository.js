@@ -1,5 +1,4 @@
 module.exports = function (deps) {
-
     const socketMaster = deps.socketMaster;
 
     const connectionByUserId = new Map();
@@ -9,7 +8,7 @@ module.exports = function (deps) {
         setForUser,
         getForUser,
         hasConnectionToUser,
-        getAllConnectedUserIds
+        getAllConnectedUserIds,
     };
 
     function getSocketMaster() {

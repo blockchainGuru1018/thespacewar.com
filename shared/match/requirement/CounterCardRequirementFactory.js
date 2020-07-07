@@ -1,22 +1,23 @@
-CounterCardRequirementFactory.type = 'counterCard';
+CounterCardRequirementFactory.type = "counterCard";
 
 function CounterCardRequirementFactory({
     sourceFetcher,
     requirementSpec,
-    card
+    card,
 }) {
-
     return {
-        create
+        create,
     };
 
     function create() {
         return {
             type: requirementSpec.type,
-            cardGroups: requirementSpec.sources.map(source => cardGroupFromSource(source, card)),
+            cardGroups: requirementSpec.sources.map((source) =>
+                cardGroupFromSource(source, card)
+            ),
             count: requirementSpec.count,
             cardId: card.id,
-            cardCommonId: card.commonId
+            cardCommonId: card.commonId,
         };
     }
 
@@ -27,7 +28,7 @@ function CounterCardRequirementFactory({
 
         return {
             source,
-            cards: fetchCardsFromSource(filter, options)
+            cards: fetchCardsFromSource(filter, options),
         };
     }
 }

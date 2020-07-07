@@ -1,14 +1,13 @@
 const localGameDataFacade = require("../utils/localGameDataFacade.js");
 
 module.exports = function () {
-
     let settings = localGameDataFacade.AudioSettings.getWithDefault({
-        masterGain: .75
+        masterGain: 0.75,
     });
 
     return {
         masterGain,
-        setMasterGain
+        setMasterGain,
     };
 
     function masterGain() {
@@ -22,7 +21,7 @@ module.exports = function () {
     function mergeAudioSettings(newSettings) {
         settings = localGameDataFacade.AudioSettings.set({
             ...settings,
-            ...newSettings
+            ...newSettings,
         });
     }
 };

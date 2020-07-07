@@ -1,5 +1,5 @@
-const info = require('./info/66.config.js');
-const BaseCard = require('./BaseCard.js');
+const info = require("./info/66.config.js");
+const BaseCard = require("./BaseCard.js");
 
 module.exports = class Expansion extends BaseCard {
     constructor(deps) {
@@ -15,6 +15,6 @@ module.exports = class Expansion extends BaseCard {
     }
 
     get eventSpecsWhenPutDownInHomeZone() {
-        return [{ type: 'freeExtraStationCardGranted', count: 2 }];
+        return [{ type: "freeExtraStationCardGranted", count: 2 }];
     }
 };

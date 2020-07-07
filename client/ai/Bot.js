@@ -1,5 +1,5 @@
-const MatchMode = require('../../shared/match/MatchMode.js');
-const Commander = require('../../shared/match/commander/Commander.js');
+const MatchMode = require("../../shared/match/MatchMode.js");
+const Commander = require("../../shared/match/commander/Commander.js");
 
 module.exports = function ({
     matchService,
@@ -16,9 +16,10 @@ module.exports = function ({
     discardPhaseDecider,
     decideCardToDiscard,
     attackPhaseDecider,
-    matchController
+    matchController,
 }) {
-    if (queryPlayerRequirements.isWaitingOnOpponentFinishingRequirement()) return;
+    if (queryPlayerRequirements.isWaitingOnOpponentFinishingRequirement())
+        return;
     if (hasAnyRequirements()) {
         performRequirement();
     }
@@ -27,31 +28,27 @@ module.exports = function ({
 
     if (isChoosingStartingPlayer()) {
         choosingStartingPlayer();
-    }
-    else if (isSelectingStartingStationCards()) {
+    } else if (isSelectingStartingStationCards()) {
         selectingStartingStationCards();
-    }
-    else {
+    } else {
         if (playerPhase.isDraw()) {
             drawPhaseDecider.decide();
-        }
-        else if (playerPhase.isPreparation()) {
+        } else if (playerPhase.isPreparation()) {
             preparationPhaseDecider.decide();
-        }
-        else if (playerPhase.isAction()) {
+        } else if (playerPhase.isAction()) {
             actionPhaseDecider.decide();
-        }
-        else if (playerPhase.isDiscard()) {
+        } else if (playerPhase.isDiscard()) {
             discardPhaseDecider.decide();
-        }
-        else if (playerPhase.isAttack()) {
+        } else if (playerPhase.isAttack()) {
             attackPhaseDecider.decide();
         }
     }
 
     function isChoosingStartingPlayer() {
-        return matchService.mode() === MatchMode.chooseStartingPlayer
-            && matchService.getCurrentPlayer() === playerStateService.getPlayerId();
+        return (
+            matchService.mode() === MatchMode.chooseStartingPlayer &&
+            matchService.getCurrentPlayer() === playerStateService.getPlayerId()
+        );
     }
 
     function isSelectingStartingStationCards() {
@@ -63,39 +60,44 @@ module.exports = function ({
         if (canPutDownMoreStationCards) {
             const cardsOnHand = playerStateService.getCardsOnHand();
             const location = locationForStartingStationCard();
-            matchController.emit('selectStartingStationCard', { cardId: cardsOnHand[0].id, location });
-        }
-        else if (!playerCommanders.hasSelectedSomeCommander()) {
-            matchController.emit('selectCommander', { commander: Commander.FrankJohnson });
-        }
-        else if (!playerStateService.isReadyForGame()) {
-            matchController.emit('playerReady');
+            matchController.emit("selectStartingStationCard", {
+                cardId: cardsOnHand[0].id,
+                location,
+            });
+        } else if (!playerCommanders.hasSelectedSomeCommander()) {
+            matchController.emit("selectCommander", {
+                commander: Commander.FrankJohnson,
+            });
+        } else if (!playerStateService.isReadyForGame()) {
+            matchController.emit("playerReady");
         }
     }
 
     function locationForStartingStationCard() {
         const cardsSelected = playerRuleService.amountOfStartingStationCardsSelected();
         if (cardsSelected === 0) {
-            return 'draw';
-        }
-        else if (cardsSelected === 1) {
-            return 'action';
-        }
-        else if (cardsSelected === 2) {
-            return 'handSize';
-        }
-        else {
-            return 'action';
+            return "draw";
+        } else if (cardsSelected === 1) {
+            return "action";
+        } else if (cardsSelected === 2) {
+            return "handSize";
+        } else {
+            return "action";
         }
     }
 
     function choosingStartingPlayer() {
-        matchController.emit('selectPlayerToStart', { playerToStartId: playerStateService.getPlayerId() });
+        matchController.emit("selectPlayerToStart", {
+            playerToStartId: playerStateService.getPlayerId(),
+        });
     }
 
     function damageOpponentStationCards() {
-        const targetIds = opponentStateService.getUnflippedStationCards().slice(0, getDamageStationCardRequirementCount()).map(c => c.id);
-        matchController.emit('damageStationCards', { targetIds });
+        const targetIds = opponentStateService
+            .getUnflippedStationCards()
+            .slice(0, getDamageStationCardRequirementCount())
+            .map((c) => c.id);
+        matchController.emit("damageStationCards", { targetIds });
     }
 
     function hasRequirementOfType(type) {
@@ -103,7 +105,7 @@ module.exports = function ({
     }
 
     function getDamageStationCardRequirementCount() {
-        return getRequirementOfType('damageStationCard').count;
+        return getRequirementOfType("damageStationCard").count;
     }
 
     function getRequirementOfType(type) {
@@ -115,13 +117,11 @@ module.exports = function ({
     }
 
     function performRequirement() {
-        if (hasRequirementOfType('drawCard')) {
-            matchController.emit('drawCard');
-        }
-        else if (hasRequirementOfType('discardCard')) {
-            matchController.emit('discardCard', decideCardToDiscard());
-        }
-        else if (hasRequirementOfType('damageStationCard')) {
+        if (hasRequirementOfType("drawCard")) {
+            matchController.emit("drawCard");
+        } else if (hasRequirementOfType("discardCard")) {
+            matchController.emit("discardCard", decideCardToDiscard());
+        } else if (hasRequirementOfType("damageStationCard")) {
             damageOpponentStationCards();
         }
     }

@@ -1,19 +1,20 @@
 module.exports = function ({
     playerStateService,
     opponentStateService,
-    opponentActionLog
+    opponentActionLog,
 }) {
-
     return {
         collideWithCard,
-        collideWithStation
+        collideWithStation,
     };
 
     function collideWithCard(sacrificedCardId, targetCardId) {
         sacrificeCard(sacrificedCardId);
 
         const targetCardData = opponentStateService.findCard(targetCardId);
-        const targetCard = opponentStateService.createBehaviourCard(targetCardData);
+        const targetCard = opponentStateService.createBehaviourCard(
+            targetCardData
+        );
         const targetCardDamageBefore = targetCard.damage;
         const targetCardDamageAfter = targetCard.damage + 4;
         const targetDefense = targetCard.defense || 0;
@@ -21,17 +22,19 @@ module.exports = function ({
             opponentStateService.removeCard(targetCardId);
             opponentStateService.discardCard(targetCardData);
 
-            opponentActionLog.cardDestroyed({ cardCommonId: targetCardData.commonId });
-        }
-        else {
-            opponentStateService.updateCardById(targetCardId, card => {
+            opponentActionLog.cardDestroyed({
+                cardCommonId: targetCardData.commonId,
+            });
+        } else {
+            opponentStateService.updateCardById(targetCardId, (card) => {
                 card.damage = targetCardDamageAfter;
             });
 
             opponentActionLog.damagedInAttack({
                 defenderCardId: targetCardId,
                 defenderCardCommonId: targetCardData.commonId,
-                damageInflictedByDefender: targetCardDamageAfter - targetCardDamageBefore
+                damageInflictedByDefender:
+                    targetCardDamageAfter - targetCardDamageBefore,
             });
         }
     }
@@ -42,12 +45,16 @@ module.exports = function ({
         for (const targetCardId of targetCardIds) {
             opponentStateService.flipStationCard(targetCardId);
 
-            opponentActionLog.stationCardsWereDamaged({ targetCount: targetCardIds.length });
+            opponentActionLog.stationCardsWereDamaged({
+                targetCount: targetCardIds.length,
+            });
         }
     }
 
     function sacrificeCard(sacrificedCardId) {
-        const sacrificedCardData = playerStateService.removeCard(sacrificedCardId);
+        const sacrificedCardData = playerStateService.removeCard(
+            sacrificedCardId
+        );
         playerStateService.discardCard(sacrificedCardData);
     }
 };

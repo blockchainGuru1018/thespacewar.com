@@ -1,34 +1,40 @@
-export default function ({
-                             rootDispatch
-                         }) {
+export default function ({ rootDispatch }) {
     return {
         namespaced: true,
-        name: 'infoMode',
+        name: "infoMode",
         state: {
             visible: false,
-            _shouldDisplayTutorialSuggestion: true
+            _shouldDisplayTutorialSuggestion: true,
         },
         actions: {
             _setVisibility,
             toggle,
             hideTutorialSuggestion,
-            hide
+            hide,
         },
         getters: {
-            shouldDisplayTutorialSuggestion
+            shouldDisplayTutorialSuggestion,
         },
         mutations: {
             toggleHideTutorialSuggestion: (state) => {
                 state._shouldDisplayTutorialSuggestion = false;
-            }
-        }
+            },
+        },
     };
 
-    function shouldDisplayTutorialSuggestion(state, getters, rootState,rootGetters) {
-        return state._shouldDisplayTutorialSuggestion && !rootGetters['match/gameOn'];
+    function shouldDisplayTutorialSuggestion(
+        state,
+        getters,
+        rootState,
+        rootGetters
+    ) {
+        return (
+            state._shouldDisplayTutorialSuggestion &&
+            !rootGetters["match/gameOn"]
+        );
     }
 
-    function _setVisibility({state}, visible) {
+    function _setVisibility({ state }, visible) {
         if (visible) {
             collapseActionLog();
         } else {
@@ -37,18 +43,18 @@ export default function ({
         state.visible = visible;
     }
 
-    function toggle({state, dispatch}) {
-        dispatch('_setVisibility', !state.visible);
-        dispatch('hideTutorialSuggestion');
+    function toggle({ state, dispatch }) {
+        dispatch("_setVisibility", !state.visible);
+        dispatch("hideTutorialSuggestion");
     }
 
-    function hide({dispatch}) {
-        dispatch('_setVisibility', false);
-        dispatch('hideTutorialSuggestion');
+    function hide({ dispatch }) {
+        dispatch("_setVisibility", false);
+        dispatch("hideTutorialSuggestion");
     }
 
-    function hideTutorialSuggestion({commit}) {
-        commit('toggleHideTutorialSuggestion')
+    function hideTutorialSuggestion({ commit }) {
+        commit("toggleHideTutorialSuggestion");
     }
 
     function collapseActionLog() {

@@ -1,11 +1,18 @@
-function AttackEvent({ turn, attackerCardId, defenderCardId = null, targetStationCardIds = null, cardCommonId, countered = false }) {
+function AttackEvent({
+    turn,
+    attackerCardId,
+    defenderCardId = null,
+    targetStationCardIds = null,
+    cardCommonId,
+    countered = false,
+}) {
     const event = {
-        type: 'attack',
+        type: "attack",
         created: Date.now(),
         turn,
         attackerCardId,
         cardCommonId,
-        countered
+        countered,
     };
     if (defenderCardId) {
         event.defenderCardId = defenderCardId;
@@ -16,7 +23,7 @@ function AttackEvent({ turn, attackerCardId, defenderCardId = null, targetStatio
     return event;
 }
 
-AttackEvent.forTest = data => {
+AttackEvent.forTest = (data) => {
     const attackEvent = AttackEvent(data);
     attackEvent.created = data.created || attackEvent.created;
     return attackEvent;
@@ -25,7 +32,8 @@ AttackEvent.forTest = data => {
 AttackEvent.card = (attackerCardId, defenderCardId, created) => {
     const attackEvent = AttackEvent({ attackerCardId, defenderCardId });
     if (created) {
-        attackEvent.created = typeof created === 'string' ? Date.parse(created) : created;
+        attackEvent.created =
+            typeof created === "string" ? Date.parse(created) : created;
     }
     return attackEvent;
 };

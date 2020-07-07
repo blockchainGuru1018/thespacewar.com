@@ -1,4 +1,4 @@
-const CommonId = '16';
+const CommonId = "16";
 
 module.exports = {
     CommonId,
@@ -6,9 +6,9 @@ module.exports = {
         forOpponent: [],
         forPlayer: [
             {
-                type: 'counterAttack',
-                count: 1
-            }
-        ]
-    }
+                type: "counterAttack",
+                count: 1,
+            },
+        ],
+    },
 };

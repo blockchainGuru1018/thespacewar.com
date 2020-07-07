@@ -1,7 +1,6 @@
-const { COMMON_PHASE_ORDER, PHASES } = require('../phases.js');
+const { COMMON_PHASE_ORDER, PHASES } = require("../phases.js");
 
 module.exports = class PlayerPhase {
-
     constructor({ matchService, playerStateService, opponentStateService }) {
         this._matchService = matchService;
         this._playerStateService = playerStateService;
@@ -25,7 +24,7 @@ module.exports = class PlayerPhase {
     }
 
     set(phase) {
-        this._playerStateService.update(playerState => {
+        this._playerStateService.update((playerState) => {
             playerState.phase = phase;
         });
     }
@@ -35,12 +34,17 @@ module.exports = class PlayerPhase {
     }
 
     isLastPhase() {
-        return this._playerStateService.getPhase() === COMMON_PHASE_ORDER[COMMON_PHASE_ORDER.length - 1];
+        return (
+            this._playerStateService.getPhase() ===
+            COMMON_PHASE_ORDER[COMMON_PHASE_ORDER.length - 1]
+        );
     }
 
     isFirstDraw() {
-        return this._playerStateService.getPhase() === PHASES.draw
-            && this._matchService.getTurn() === 1;
+        return (
+            this._playerStateService.getPhase() === PHASES.draw &&
+            this._matchService.getTurn() === 1
+        );
     }
 
     isDraw() {

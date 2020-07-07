@@ -1,22 +1,21 @@
-const { PHASES } = require('../../shared/phases.js');
+const { PHASES } = require("../../shared/phases.js");
 
 module.exports = function ({
     matchController,
     playerStateService,
-    cardCapabilityFactory
+    cardCapabilityFactory,
 }) {
-
     const CapabilitiesInPriorityOrder = [
         cardCapabilityFactory.attackStationCard,
         cardCapabilityFactory.repair,
         cardCapabilityFactory.attackInHomeZone,
         cardCapabilityFactory.attackInOpponentZone,
         cardCapabilityFactory.attackEnergyShield,
-        cardCapabilityFactory.move
+        cardCapabilityFactory.move,
     ];
 
     return {
-        decide
+        decide,
     };
 
     function decide() {
@@ -36,14 +35,16 @@ module.exports = function ({
             }
         }
 
-        matchController.emit('nextPhase', { currentPhase: PHASES.attack });
+        matchController.emit("nextPhase", { currentPhase: PHASES.attack });
     }
 
     function getCardsFromBothZones() {
         const cardDataFromZones = [
             ...playerStateService.getCardsInZone(),
-            ...playerStateService.getCardsInOpponentZone()
+            ...playerStateService.getCardsInOpponentZone(),
         ];
-        return cardDataFromZones.map(cardData => playerStateService.createBehaviourCard(cardData));
+        return cardDataFromZones.map((cardData) =>
+            playerStateService.createBehaviourCard(cardData)
+        );
     }
 };

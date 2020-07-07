@@ -1,29 +1,37 @@
-const CheatError = require('../CheatError.js');
+const CheatError = require("../CheatError.js");
 const MatchMode = require("../../../shared/match/MatchMode.js");
 
 function DiscardCardController(deps) {
-
     const {
         matchService,
         playerServiceProvider,
         playerServiceFactory,
-        playerRequirementUpdaterFactory
+        playerRequirementUpdaterFactory,
     } = deps;
 
     return {
-        onDiscardCard
+        onDiscardCard,
     };
 
     function onDiscardCard(playerId, cardId) {
-        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const playerStateService = playerServiceProvider.getStateServiceById(
+            playerId
+        );
         const discardedCard = playerStateService.findCardFromHand(cardId);
-        if (!discardedCard) throw new CheatError('Invalid state - someone is cheating');
+        if (!discardedCard)
+            throw new CheatError("Invalid state - someone is cheating");
 
-        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
-        const isRequiredDiscard = !!playerRequirementService.getFirstMatchingRequirement({ type: 'discardCard' });
-        const playerRuleService = playerServiceFactory.playerRuleService(playerId);
+        const playerRequirementService = playerServiceProvider.getRequirementServiceById(
+            playerId
+        );
+        const isRequiredDiscard = !!playerRequirementService.getFirstMatchingRequirement(
+            { type: "discardCard" }
+        );
+        const playerRuleService = playerServiceFactory.playerRuleService(
+            playerId
+        );
         if (!playerRuleService.canDiscardCards()) {
-            throw new CheatError('Illegal discard');
+            throw new CheatError("Illegal discard");
         }
 
         playerStateService.removeCardFromHand(cardId);
@@ -31,11 +39,10 @@ function DiscardCardController(deps) {
 
         if (isRequiredDiscard) {
             onRequiredDiscard(playerId);
-        }
-        else if (playerRuleService.canReplaceCards()) {
+        } else if (playerRuleService.canReplaceCards()) {
             playerRequirementService.addDrawCardRequirement({ count: 1 });
 
-            const event = { type: 'replaceCard' };
+            const event = { type: "replaceCard" };
             if (matchService.mode() === MatchMode.game) {
                 event.turn = matchService.getTurn();
             }
@@ -44,7 +51,10 @@ function DiscardCardController(deps) {
     }
 
     function onRequiredDiscard(playerId) {
-        const requirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'discardCard' });
+        const requirementUpdater = playerRequirementUpdaterFactory.create(
+            playerId,
+            { type: "discardCard" }
+        );
         requirementUpdater.progressRequirementByCount(1);
     }
 }

@@ -1,9 +1,11 @@
-const info = require('./info/34.config.js');
-const BaseCard = require('./BaseCard.js');
-const CanCounterCardsWithCostOrLess = require('./mixins/CanCounterCardsWithCostOrLess.js');
+const info = require("./info/34.config.js");
+const BaseCard = require("./BaseCard.js");
+const CanCounterCardsWithCostOrLess = require("./mixins/CanCounterCardsWithCostOrLess.js");
 
-module.exports = class Avoid extends CanCounterCardsWithCostOrLess(Infinity, BaseCard) {
-
+module.exports = class Avoid extends CanCounterCardsWithCostOrLess(
+    Infinity,
+    BaseCard
+) {
     constructor({ addRequirementFromSpec, ...deps }) {
         super(deps);
         this._addRequirementFromSpec = addRequirementFromSpec;

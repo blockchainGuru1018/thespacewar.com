@@ -1,12 +1,7 @@
 const LOG_ALL_STATE_CHANGES = false;
 
 class StateChangeListener {
-
-    constructor({
-        playerServiceProvider,
-        matchService,
-        logger
-    }) {
+    constructor({ playerServiceProvider, matchService, logger }) {
         this._matchService = matchService;
         this._logger = logger;
         this._snapshotListeners = [];
@@ -29,7 +24,9 @@ class StateChangeListener {
         const snapshot = { changedKeysByPlayerId: {} };
         const playerIds = Object.keys(this._snapshotData.changedKeysByPlayerId);
         for (const playerId of playerIds) {
-            snapshot.changedKeysByPlayerId[playerId] = Array.from(this._snapshotData.changedKeysByPlayerId[playerId]);
+            snapshot.changedKeysByPlayerId[playerId] = Array.from(
+                this._snapshotData.changedKeysByPlayerId[playerId]
+            );
         }
 
         for (const listener of this._snapshotListeners) {
@@ -55,7 +52,7 @@ class StateChangeListener {
         if (LOG_ALL_STATE_CHANGES) {
             this._logger.log(
                 `[${new Date().toISOString()}] state touched: playerId=${playerId}, prop=${property}`,
-                'playerStateChange'
+                "playerStateChange"
             );
         }
     }

@@ -1,12 +1,12 @@
 function RemoveStationCardEvent({ stationCard, turn, phase }) {
     return {
-        type: 'removeStationCard',
+        type: "removeStationCard",
         created: Date.now(),
         turn,
         phase,
         location: `station-${stationCard.place}`,
         cardId: getStationCardId(stationCard),
-        cardCommonId: getStationCardCommonId(stationCard)
+        cardCommonId: getStationCardCommonId(stationCard),
     };
 }
 
@@ -17,5 +17,5 @@ function getStationCardId(stationCard) {
 }
 
 function getStationCardCommonId(stationCard) {
-    return stationCard.card ? stationCard.card.commonId : 'unknown';
+    return stationCard.card ? stationCard.card.commonId : "unknown";
 }

@@ -1,20 +1,29 @@
-const GrandOpportunity = require('../../../../shared/card/GrandOpportunity.js');
+const GrandOpportunity = require("../../../../shared/card/GrandOpportunity.js");
 
 PutDownGrandOpportunity.CommonId = GrandOpportunity.CommonId;
 
 function PutDownGrandOpportunity({ playerServiceProvider }) {
-
     return {
-        forPlayer
+        forPlayer,
     };
 
     function forPlayer(playerId, cardData) {
-        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
+        const playerStateService = playerServiceProvider.getStateServiceById(
+            playerId
+        );
+        const playerRequirementService = playerServiceProvider.getRequirementServiceById(
+            playerId
+        );
 
         playerStateService.putDownEventCardInZone(cardData);
-        playerRequirementService.addDrawCardRequirement({ count: 5, cardCommonId: cardData.commonId });
-        playerRequirementService.addDiscardCardRequirement({ count: 1, cardCommonId: cardData.commonId });
+        playerRequirementService.addDrawCardRequirement({
+            count: 5,
+            cardCommonId: cardData.commonId,
+        });
+        playerRequirementService.addDiscardCardRequirement({
+            count: 1,
+            cardCommonId: cardData.commonId,
+        });
     }
 }
 

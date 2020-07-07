@@ -1,12 +1,14 @@
-const CheatError = require('../../../shared/match/card/CheatError.js');
+const CheatError = require("../../../shared/match/card/CheatError.js");
 
 module.exports = function CancelRequirement({
-    createPlayerRequirementUpdater
+    createPlayerRequirementUpdater,
 }) {
     return () => {
-        const firstRequirementUpdater = createPlayerRequirementUpdater({ cancelable: true });
+        const firstRequirementUpdater = createPlayerRequirementUpdater({
+            cancelable: true,
+        });
         if (!firstRequirementUpdater.exists()) {
-            throw new CheatError('No cancelable requirement');
+            throw new CheatError("No cancelable requirement");
         }
 
         firstRequirementUpdater.resolve();

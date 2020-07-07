@@ -1,4 +1,4 @@
-const CheatError = require('../server/match/CheatError.js');
+const CheatError = require("../server/match/CheatError.js");
 
 module.exports = function ({
     matchService,
@@ -7,59 +7,88 @@ module.exports = function ({
     playerStateService,
     canThePlayer,
     opponentStateService,
-    opponentActionLog
+    opponentActionLog,
 }) {
-
     return {
         validateAttackOnStationCards,
-        attackStationCards
+        attackStationCards,
     };
 
-    function validateAttackOnStationCards(playerId, { attackerCardId, targetStationCardIds }) {
+    function validateAttackOnStationCards(
+        playerId,
+        { attackerCardId, targetStationCardIds }
+    ) {
         const cannotAttackStationCards = canThePlayer.attackStationCards();
-        if (!cannotAttackStationCards) throw new CheatError('Cannot attack station cards');
+        if (!cannotAttackStationCards)
+            throw new CheatError("Cannot attack station cards");
         const attackerCardData = playerStateService.findCard(attackerCardId);
         const opponentStationCards = opponentStateService.getStationCards();
         const unflippedOpponentStationCardsCount = opponentStateService.getUnflippedStationCardsCount();
-        if (unflippedOpponentStationCardsCount > targetStationCardIds.length
-            && attackerCardData.attack > targetStationCardIds.length) {
-            throw new CheatError('Need more target station cards to attack');
+        if (
+            unflippedOpponentStationCardsCount > targetStationCardIds.length &&
+            attackerCardData.attack > targetStationCardIds.length
+        ) {
+            throw new CheatError("Need more target station cards to attack");
         }
 
-        const attackerCard = playerStateService.createBehaviourCard(attackerCardData);
+        const attackerCard = playerStateService.createBehaviourCard(
+            attackerCardData
+        );
         if (!attackerCard.canAttackStationCards()) {
-            throw new CheatError('Cannot attack station');
+            throw new CheatError("Cannot attack station");
         }
         if (targetStationCardIds.length > attackerCard.attack) {
-            throw new CheatError('Cannot attack that many station cards with card');
+            throw new CheatError(
+                "Cannot attack that many station cards with card"
+            );
         }
 
-        const targetStationCards = opponentStationCards.filter(s => targetStationCardIds.includes(s.card.id));
-        if (targetStationCards.some(c => c.flipped)) {
-            throw new CheatError('Cannot attack a flipped station card');
+        const targetStationCards = opponentStationCards.filter((s) =>
+            targetStationCardIds.includes(s.card.id)
+        );
+        if (targetStationCards.some((c) => c.flipped)) {
+            throw new CheatError("Cannot attack a flipped station card");
         }
     }
 
     function attackStationCards({ attackerCardId, targetStationCardIds }) {
-        const targetStationCards = opponentStateService.getStationCards().filter(s => targetStationCardIds.includes(s.card.id));
+        const targetStationCards = opponentStateService
+            .getStationCards()
+            .filter((s) => targetStationCardIds.includes(s.card.id));
         if (!targetStationCards.length) return;
 
-        const stateBeforeAttack = stateSerializer.serialize(matchService.getState());
+        const stateBeforeAttack = stateSerializer.serialize(
+            matchService.getState()
+        );
 
         for (const targetCardId of targetStationCardIds) {
             opponentStateService.flipStationCard(targetCardId);
         }
 
-        const event = playerStateService.registerAttack({ attackerCardId, targetStationCardIds });
+        const event = playerStateService.registerAttack({
+            attackerCardId,
+            targetStationCardIds,
+        });
 
-        const attackData = { attackerCardId, defenderCardIds: targetStationCardIds, time: event.created };
-        gameActionTimeMachine.saveStateForAttackData(stateBeforeAttack, attackData);
+        const attackData = {
+            attackerCardId,
+            defenderCardIds: targetStationCardIds,
+            time: event.created,
+        };
+        gameActionTimeMachine.saveStateForAttackData(
+            stateBeforeAttack,
+            attackData
+        );
 
-        opponentActionLog.stationCardsWereDamaged({ targetCount: targetStationCardIds.length });
+        opponentActionLog.stationCardsWereDamaged({
+            targetCount: targetStationCardIds.length,
+        });
 
         const attackerCardData = playerStateService.findCard(attackerCardId);
-        const attackerCard = playerStateService.createBehaviourCard(attackerCardData);
-        if (attackerCard.type === 'missile') {
+        const attackerCard = playerStateService.createBehaviourCard(
+            attackerCardData
+        );
+        if (attackerCard.type === "missile") {
             playerStateService.removeCard(attackerCardId);
             playerStateService.discardCard(attackerCardData);
         }

@@ -5,18 +5,17 @@ module.exports = function AttackInHomeZoneCardCapability({
 }) {
     return {
         canDoIt,
-        doIt
+        doIt,
     };
 
     function canDoIt() {
-        return !card.canAttackStationCards()
-            && hasAvailableTargets();
+        return !card.canAttackStationCards() && hasAvailableTargets();
     }
 
     function doIt() {
-        matchController.emit('attack', {
+        matchController.emit("attack", {
             attackerCardId: card.id,
-            defenderCardId: firstTarget().id
+            defenderCardId: firstTarget().id,
         });
     }
 
@@ -29,6 +28,8 @@ module.exports = function AttackInHomeZoneCardCapability({
     }
 
     function targets(playerCard) {
-        return opponentStateService.getMatchingBehaviourCards(opponentCard => playerCard.canAttackCard(opponentCard));
+        return opponentStateService.getMatchingBehaviourCards((opponentCard) =>
+            playerCard.canAttackCard(opponentCard)
+        );
     }
 };

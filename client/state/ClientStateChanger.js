@@ -1,17 +1,13 @@
 const storeItemNameByServerItemName = {
-    cardsInZone: 'playerCardsInZone',
-    cardsInOpponentZone: 'playerCardsInOpponentZone',
-    discardedCards: 'playerDiscardedCards',
-    cardsOnHand: 'playerCardsOnHand'
+    cardsInZone: "playerCardsInZone",
+    cardsInOpponentZone: "playerCardsInOpponentZone",
+    discardedCards: "playerDiscardedCards",
+    cardsOnHand: "playerCardsOnHand",
 };
 
-module.exports = function StateChanger({
-    state,
-    preMergeHook = () => {}
-}) {
-
+module.exports = function StateChanger({ state, preMergeHook = () => {} }) {
     return {
-        stateChanged
+        stateChanged,
     };
 
     function stateChanged(data) {
@@ -19,13 +15,11 @@ module.exports = function StateChanger({
             const datum = data[key];
             preMergeHook(key, datum);
 
-            if (key === 'stationCards') {
+            if (key === "stationCards") {
                 setPlayerStationCards(datum);
-            }
-            else if (key === 'opponentStationCards') {
+            } else if (key === "opponentStationCards") {
                 setOpponentStationCards(datum);
-            }
-            else {
+            } else {
                 const localKey = storeItemNameByServerItemName[key] || key;
                 state[localKey] = datum;
             }
@@ -34,25 +28,25 @@ module.exports = function StateChanger({
 
     function setPlayerStationCards(stationCards) {
         state.playerStation.drawCards = stationCards
-            .filter(s => s.place === 'draw')
+            .filter((s) => s.place === "draw")
             .sort(stationCardsByIsFlippedComparer);
         state.playerStation.actionCards = stationCards
-            .filter(s => s.place === 'action')
+            .filter((s) => s.place === "action")
             .sort(stationCardsByIsFlippedComparer);
         state.playerStation.handSizeCards = stationCards
-            .filter(s => s.place === 'handSize')
+            .filter((s) => s.place === "handSize")
             .sort(stationCardsByIsFlippedComparer);
     }
 
     function setOpponentStationCards(stationCards) {
         state.opponentStation.drawCards = stationCards
-            .filter(s => s.place === 'draw')
+            .filter((s) => s.place === "draw")
             .sort(stationCardsByIsFlippedComparer);
         state.opponentStation.actionCards = stationCards
-            .filter(s => s.place === 'action')
+            .filter((s) => s.place === "action")
             .sort(stationCardsByIsFlippedComparer);
         state.opponentStation.handSizeCards = stationCards
-            .filter(s => s.place === 'handSize')
+            .filter((s) => s.place === "handSize")
             .sort(stationCardsByIsFlippedComparer);
     }
 };

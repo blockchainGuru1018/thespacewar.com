@@ -3,7 +3,7 @@ module.exports = function () {
 
     return {
         putIn,
-        takeOutAll
+        takeOutAll,
     };
 
     function putIn(newData) {
@@ -13,4 +13,4 @@ module.exports = function () {
     function takeOutAll() {
         return data;
     }
-}
+};

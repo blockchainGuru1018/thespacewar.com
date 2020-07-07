@@ -3,7 +3,7 @@ module.exports = function ({
     opponentDeckIsEmpty,
     playerHasTheMiller,
     firstRequirementIsDrawCard,
-    moreCardsCanBeDrawnForDrawPhase
+    moreCardsCanBeDrawnForDrawPhase,
 }) {
     if (isWaitingOnOpponentFinishingRequirement) return false;
     if (opponentDeckIsEmpty) return false;

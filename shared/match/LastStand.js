@@ -3,10 +3,7 @@ const LastStandLengthWithMargin = LastStandLength - 500;
 
 LastStand.LastStandLength = LastStandLength;
 
-function LastStand({
-    matchService,
-}) {
-
+function LastStand({ matchService }) {
     return {
         canStart,
         remainingSeconds,

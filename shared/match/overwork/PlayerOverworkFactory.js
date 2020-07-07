@@ -1,9 +1,6 @@
-module.exports = function ({
-    playerServiceFactory
-}) {
-
+module.exports = function ({ playerServiceFactory }) {
     return {
-        create
+        create,
     };
 
     function create(playerId) {

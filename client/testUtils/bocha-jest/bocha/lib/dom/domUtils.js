@@ -1,4 +1,4 @@
-var Sizzle = require('sizzle');
+var Sizzle = require("sizzle");
 
 module.exports = {
     getUniqueElement: getUniqueElement,
@@ -6,15 +6,19 @@ module.exports = {
     getElementClasses: getElementClasses,
     getElementText: getElementText,
     getElementExactText: getElementExactText,
-    getElementHtml: getElementHtml
+    getElementHtml: getElementHtml,
 };
 
 function getUniqueElement(selectorOrElement) {
-    if (typeof selectorOrElement === 'string') {
+    if (typeof selectorOrElement === "string") {
         var elements = Sizzle(selectorOrElement);
         var count = elements.length;
         if (count !== 1) {
-            var errorMessage = 'Exactly one element must match selector "' + selectorOrElement + '" but found ' + count;
+            var errorMessage =
+                'Exactly one element must match selector "' +
+                selectorOrElement +
+                '" but found ' +
+                count;
             throw new Error(errorMessage);
         }
         return elements[0];
@@ -22,7 +26,7 @@ function getUniqueElement(selectorOrElement) {
     if (selectorOrElement instanceof HTMLElement) {
         return selectorOrElement;
     }
-    throw new Error('Illegal argument: Must be selector or HTMLElement');
+    throw new Error("Illegal argument: Must be selector or HTMLElement");
 }
 
 function getElementCount(selector) {
@@ -36,7 +40,7 @@ function getElementClasses(selector) {
 
 function getElementText(selector) {
     var element = getUniqueElement(selector);
-    return element.textContent.replace(/\s+/g,' ');
+    return element.textContent.replace(/\s+/g, " ");
 }
 
 function getElementExactText(selector) {

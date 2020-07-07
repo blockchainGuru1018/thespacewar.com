@@ -1,15 +1,14 @@
-const Sfx = require('./Sfx.js');
+const Sfx = require("./Sfx.js");
 
 module.exports = function ({ nameToInfo, destinationNode, audioContext }) {
-
     const bufferByUrl = {};
 
     return {
-        loadSounds
+        loadSounds,
     };
 
     async function loadSounds() {
-        const urls = Object.values(nameToInfo).map(info => info.url);
+        const urls = Object.values(nameToInfo).map((info) => info.url);
         await cacheSoundBuffersByUrl(urls);
         return createSounds();
     }
@@ -28,7 +27,7 @@ module.exports = function ({ nameToInfo, destinationNode, audioContext }) {
     function cacheSoundBuffersByUrl(urls) {
         return Promise.all(
             urls
-                .map(url => [url, loadSound(url)])
+                .map((url) => [url, loadSound(url)])
                 .map(async ([url, soundBufferPromise]) => {
                     bufferByUrl[url] = await soundBufferPromise;
                 })
@@ -38,14 +37,18 @@ module.exports = function ({ nameToInfo, destinationNode, audioContext }) {
     function loadSound(url) {
         return new Promise((resolve, reject) => {
             var request = new XMLHttpRequest();
-            request.open('GET', url, true);
-            request.responseType = 'arraybuffer';
+            request.open("GET", url, true);
+            request.responseType = "arraybuffer";
 
             // Decode asynchronously
             request.onload = function () {
-                audioContext.decodeAudioData(request.response, function (buffer) {
-                    resolve(buffer);
-                }, reject);
+                audioContext.decodeAudioData(
+                    request.response,
+                    function (buffer) {
+                        resolve(buffer);
+                    },
+                    reject
+                );
             };
             request.send();
         });

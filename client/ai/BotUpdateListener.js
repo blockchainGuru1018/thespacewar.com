@@ -1,31 +1,30 @@
-const BotSpawner = require('./BotSpawner.js');
-const ClientState = require('../state/ClientState.js');
-const MatchControllerFactory = require('../match/MatchControllerFactory.js');
+const BotSpawner = require("./BotSpawner.js");
+const ClientState = require("../state/ClientState.js");
+const MatchControllerFactory = require("../match/MatchControllerFactory.js");
 
-module.exports = function ({
-    socket,
-    rawCardDataRepository,
-}) {
-
+module.exports = function ({ socket, rawCardDataRepository }) {
     return {
-        start
+        start,
     };
 
     function start({ matchId, playerUser, botUser }) {
-        const userRepository = createUserRepositoryForBot({ playerUser, botUser });
+        const userRepository = createUserRepositoryForBot({
+            playerUser,
+            botUser,
+        });
         const clientState = ClientState({
             userRepository,
             opponentUser: playerUser,
-            matchId
+            matchId,
         });
         const matchControllerFactory = MatchControllerFactory({
             socket,
-            userRepository
+            userRepository,
         });
         const matchController = matchControllerFactory.create({
             dispatch: onMatchControllerDispatch,
             matchId,
-            playerIdControllerBot: playerUser.id
+            playerIdControllerBot: playerUser.id,
         });
         matchController.start();
 
@@ -37,18 +36,17 @@ module.exports = function ({
                 rawCardDataRepository,
                 userRepository,
                 delay: true,
-                gameConfig: clientState.gameConfig()
+                gameConfig: clientState.gameConfig(),
             });
             botSpawner.spawn();
         });
 
         async function onMatchControllerDispatch(actionName, value) {
-            if (actionName === 'stateChanged') {
+            if (actionName === "stateChanged") {
                 try {
                     await clientState.update(value);
-                }
-                catch (error) {
-                    console.info('Error on state change from server!');
+                } catch (error) {
+                    console.info("Error on state change from server!");
                     console.error(error);
                 }
             }
@@ -57,13 +55,13 @@ module.exports = function ({
 
     function createUserRepositoryForBot({ playerUser, botUser }) {
         return {
-            getUserById: id => {
+            getUserById: (id) => {
                 if (id === botUser.id) {
                     return botUser;
                 }
                 return playerUser;
             },
-            getOwnUser: () => botUser
+            getOwnUser: () => botUser,
         };
     }
 };

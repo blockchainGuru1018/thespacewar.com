@@ -1,14 +1,14 @@
-const ajax = require('../utils/ajax.js');
+const ajax = require("../utils/ajax.js");
 const localGameDataFacade = require("../utils/localGameDataFacade.js");
 
 module.exports = function (deps) {
-
     const socket = deps.socket;
 
     let ownUser = null;
     let cachedUsers = [];
 
-    if (isAlreadyLoggedIn()) { //TODO Might be unnecessary if we still check this in LoadingStore
+    if (isAlreadyLoggedIn()) {
+        //TODO Might be unnecessary if we still check this in LoadingStore
         ownUser = localGameDataFacade.getOwnUser();
     }
 
@@ -18,19 +18,25 @@ module.exports = function (deps) {
         getOwnUser,
         getAll,
         getAllLocal,
-        onUsersChanged
+        onUsersChanged,
     };
 
     function storeOwnUser(user) {
         ownUser = user;
 
         if (!!user) {
-            socket.emit('registerConnection', { secret: ajax.secret(), userId: user.id });
+            socket.emit("registerConnection", {
+                secret: ajax.secret(),
+                userId: user.id,
+            });
         }
     }
 
     function reconnectBot() {
-        socket.emit('reconnectBot', { secret: ajax.secret(), userId: ownUser.id });
+        socket.emit("reconnectBot", {
+            secret: ajax.secret(),
+            userId: ownUser.id,
+        });
     }
 
     function getOwnUser() {
@@ -38,7 +44,7 @@ module.exports = function (deps) {
     }
 
     async function getAll() {
-        const users = await ajax.get('/user');
+        const users = await ajax.get("/user");
         cachedUsers = [...users];
         return users;
     }
@@ -48,7 +54,7 @@ module.exports = function (deps) {
     }
 
     function onUsersChanged(callback) {
-        socket.on('user/change', users => {
+        socket.on("user/change", (users) => {
             cachedUsers = [...users];
             callback(users);
         });

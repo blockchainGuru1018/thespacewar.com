@@ -1,8 +1,7 @@
-const BaseCard = require('./BaseCard.js');
-const Avoid = require('./Avoid.js');
+const BaseCard = require("./BaseCard.js");
+const Avoid = require("./Avoid.js");
 
 class Supernova extends BaseCard {
-
     constructor(deps) {
         super(deps);
     }
@@ -12,19 +11,27 @@ class Supernova extends BaseCard {
     }
 
     static get CommonId() {
-        return '15';
+        return "15";
     }
 
     canBePlayed() {
-        return super.canBePlayed() && this._hasMoreStationCardsThanSupernovaDestroys();
+        return (
+            super.canBePlayed() &&
+            this._hasMoreStationCardsThanSupernovaDestroys()
+        );
     }
 
     _hasMoreStationCardsThanSupernovaDestroys() {
-        return this._playerStateService.getUnflippedStationCards().length > Supernova.StationCardDestroyed;
+        return (
+            this._playerStateService.getUnflippedStationCards().length >
+            Supernova.StationCardDestroyed
+        );
     }
 
     _someCardIsPreventingThisCardToBePlayed() {
-        return this._queryBoard.opponentHasCardInPlay(card => card.commonId === Avoid.CommonId)
+        return this._queryBoard.opponentHasCardInPlay(
+            (card) => card.commonId === Avoid.CommonId
+        );
     }
 }
 

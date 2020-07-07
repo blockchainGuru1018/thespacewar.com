@@ -1,4 +1,4 @@
-const md5 = require('md5');
+const md5 = require("md5");
 
 function loginCookieFromRawCookieStringOrNull(rawCookieStringOrNull) {
     if (rawCookieStringOrNull) {
@@ -9,9 +9,8 @@ function loginCookieFromRawCookieStringOrNull(rawCookieStringOrNull) {
 }
 
 class LoginCookie {
-
     constructor(cookieString) {
-        const cookieParts = cookieString.split(':');
+        const cookieParts = cookieString.split(":");
 
         this.id = cookieParts[0];
         this.username = cookieParts[1];
@@ -19,11 +18,13 @@ class LoginCookie {
         this.rating = cookieParts[3];
         this._cookieHash = cookieParts[4];
 
-        this._salt = 'dgRdfkWMfGWJdE¤53d8P63h';
+        this._salt = "dgRdfkWMfGWJdE¤53d8P63h";
     }
 
     hash() {
-        return md5(`${this.id}${this.username}${this.country}${this.rating}${this._salt}`);
+        return md5(
+            `${this.id}${this.username}${this.country}${this.rating}${this._salt}`
+        );
     }
 
     verify() {
@@ -33,11 +34,11 @@ class LoginCookie {
 
 class InvalidCookie extends LoginCookie {
     constructor() {
-        super('0:no_name:no_country:0:no_hash');
+        super("0:no_name:no_country:0:no_hash");
     }
 
     hash() {
-        throw new Error('Trying to retrieve hash from invalid cookie');
+        throw new Error("Trying to retrieve hash from invalid cookie");
     }
 
     verify() {
@@ -46,5 +47,5 @@ class InvalidCookie extends LoginCookie {
 }
 
 module.exports = {
-    loginCookieFromRawCookieStringOrNull
+    loginCookieFromRawCookieStringOrNull,
 };

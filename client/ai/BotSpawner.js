@@ -1,21 +1,21 @@
-const Bot = require('./Bot.js');
-const GameServiceFactory = require('../../shared/match/GameServiceFactory.js');
-const PlayerServiceFactory = require('../../shared/match/PlayerServiceFactory.js');
-const CardRulesFactory = require('./cardRules/CardRulesFactory.js');
-const DrawPhaseDecider = require('./DrawPhaseDecider.js');
-const PreparationPhaseDecider = require('./PreparationPhaseDecider.js');
-const ActionPhaseDecider = require('./ActionPhaseDecider.js');
-const DiscardPhaseDecider = require('./DiscardPhaseDecider.js');
-const AttackPhaseDecider = require('./AttackPhaseDecider.js');
-const DecideCardToDiscard = require('./DecideCardToDiscard.js');
-const DecideRowForStationCard = require('./DecideRowForStationCard.js');
-const DecideCardToPlaceAsStationCard = require('./DecideCardToPlaceAsStationCard.js');
-const PlayCardCapability = require('./cardCapabilities/PlayCardCapability.js');
-const CardCapabilityFactory = require('./cardCapabilities/CardCapabilityFactory.js');
-const LuckPlayer = require('./cardPlayers/LuckPlayer.js');
-const ExcellentWorkPlayer = require('./cardPlayers/ExcellentWorkPlayer.js');
+const Bot = require("./Bot.js");
+const GameServiceFactory = require("../../shared/match/GameServiceFactory.js");
+const PlayerServiceFactory = require("../../shared/match/PlayerServiceFactory.js");
+const CardRulesFactory = require("./cardRules/CardRulesFactory.js");
+const DrawPhaseDecider = require("./DrawPhaseDecider.js");
+const PreparationPhaseDecider = require("./PreparationPhaseDecider.js");
+const ActionPhaseDecider = require("./ActionPhaseDecider.js");
+const DiscardPhaseDecider = require("./DiscardPhaseDecider.js");
+const AttackPhaseDecider = require("./AttackPhaseDecider.js");
+const DecideCardToDiscard = require("./DecideCardToDiscard.js");
+const DecideRowForStationCard = require("./DecideRowForStationCard.js");
+const DecideCardToPlaceAsStationCard = require("./DecideCardToPlaceAsStationCard.js");
+const PlayCardCapability = require("./cardCapabilities/PlayCardCapability.js");
+const CardCapabilityFactory = require("./cardCapabilities/CardCapabilityFactory.js");
+const LuckPlayer = require("./cardPlayers/LuckPlayer.js");
+const ExcellentWorkPlayer = require("./cardPlayers/ExcellentWorkPlayer.js");
 
-const BotId = 'BOT';
+const BotId = "BOT";
 
 let timeoutId = null;
 
@@ -27,22 +27,23 @@ module.exports = function ({
     userRepository,
     gameConfig,
     delay = false,
-    createBot = options => Bot(options)
+    createBot = (options) => Bot(options),
 }) {
-
     let playerServiceFactory;
     let gameServiceFactory;
 
     return {
-        spawn: spawnWithDelayIfSet
+        spawn: spawnWithDelayIfSet,
     };
 
     function spawnWithDelayIfSet() {
         if (delay) {
             clearTimeout(timeoutId);
-            timeoutId = setTimeout(spawn, gameConfig.secondsOfWaitBetweenActionsOfAiBot());
-        }
-        else {
+            timeoutId = setTimeout(
+                spawn,
+                gameConfig.secondsOfWaitBetweenActionsOfAiBot()
+            );
+        } else {
             spawn();
         }
     }
@@ -51,29 +52,33 @@ module.exports = function ({
         const state = clientState.toServerState();
         gameServiceFactory = GameServiceFactory({
             state,
-            endMatch: () => console.info('END MATCH'),
+            endMatch: () => console.info("END MATCH"),
             rawCardDataRepository,
-            gameConfig
+            gameConfig,
         });
         playerServiceFactory = PlayerServiceFactory({
             state,
-            logger: (...args) => console.log('LOGGER:', ...args),
-            endMatch: () => console.info('END MATCH'),
+            logger: (...args) => console.log("LOGGER:", ...args),
+            endMatch: () => console.info("END MATCH"),
             gameConfig,
             actionPointsCalculator: gameServiceFactory.actionPointsCalculator(),
             gameServiceFactory,
-            userRepository
+            userRepository,
         });
 
         createBot({
             matchService: gameServiceFactory.matchService(),
             playerStateService: playerServiceFactory.playerStateService(BotId),
-            queryPlayerRequirements: playerServiceFactory.queryPlayerRequirements(BotId),
+            queryPlayerRequirements: playerServiceFactory.queryPlayerRequirements(
+                BotId
+            ),
             playerRuleService: playerServiceFactory.playerRuleService(BotId),
             playerCommanders: playerServiceFactory.playerCommanders(BotId),
             playerPhase: playerServiceFactory.playerPhase(BotId),
             turnControl: playerServiceFactory.turnControl(BotId),
-            opponentStateService: playerServiceFactory.playerStateService(opponentUserId),
+            opponentStateService: playerServiceFactory.playerStateService(
+                opponentUserId
+            ),
             decideCardToDiscard: decideCardToDiscard(),
             drawPhaseDecider: drawPhaseDecider(),
             preparationPhaseDecider: preparationPhaseDecider(),
@@ -81,32 +86,36 @@ module.exports = function ({
             discardPhaseDecider: discardPhaseDecider(),
             attackPhaseDecider: attackPhaseDecider(),
             matchController,
-            clientState
+            clientState,
         });
     }
 
     function drawPhaseDecider() {
         return DrawPhaseDecider({
             matchController,
-            playerDrawPhase: playerServiceFactory.playerDrawPhase(BotId)
+            playerDrawPhase: playerServiceFactory.playerDrawPhase(BotId),
         });
     }
 
     function preparationPhaseDecider() {
         return PreparationPhaseDecider({
-            matchController
+            matchController,
         });
     }
 
     function actionPhaseDecider() {
-        const playerStateService = playerServiceFactory.playerStateService(BotId);
+        const playerStateService = playerServiceFactory.playerStateService(
+            BotId
+        );
         return ActionPhaseDecider({
             matchController,
             playerStateService,
             playerRuleService: playerServiceFactory.playerRuleService(BotId),
             decideRowForStationCard: decideRowForStationCard(),
-            decideCardToPlaceAsStationCard: DecideCardToPlaceAsStationCard({ playerStateService }),
-            playCardCapability: playCardCapability()
+            decideCardToPlaceAsStationCard: DecideCardToPlaceAsStationCard({
+                playerStateService,
+            }),
+            playCardCapability: playCardCapability(),
         });
     }
 
@@ -120,9 +129,11 @@ module.exports = function ({
                 ExcellentWorkPlayer({
                     matchController,
                     decideRowForStationCard: decideRowForStationCard(),
-                    playerRuleService: playerServiceFactory.playerRuleService(BotId),
+                    playerRuleService: playerServiceFactory.playerRuleService(
+                        BotId
+                    ),
                 }),
-            ]
+            ],
         });
     }
 
@@ -130,7 +141,7 @@ module.exports = function ({
         return DiscardPhaseDecider({
             matchController,
             playerDiscardPhase: playerServiceFactory.playerDiscardPhase(BotId),
-            decideCardToDiscard: decideCardToDiscard()
+            decideCardToDiscard: decideCardToDiscard(),
         });
     }
 
@@ -138,28 +149,34 @@ module.exports = function ({
         return AttackPhaseDecider({
             matchController,
             playerStateService: playerServiceFactory.playerStateService(BotId),
-            opponentStateService: playerServiceFactory.playerStateService(opponentUserId),
+            opponentStateService: playerServiceFactory.playerStateService(
+                opponentUserId
+            ),
             cardCapabilityFactory: CardCapabilityFactory({
                 playerServiceFactory,
                 playerId: BotId,
                 opponentId: opponentUserId,
-                matchController
-            })
+                matchController,
+            }),
         });
     }
 
     function decideCardToDiscard() {
-        return DecideCardToDiscard({ playerStateService: playerServiceFactory.playerStateService(BotId) });
+        return DecideCardToDiscard({
+            playerStateService: playerServiceFactory.playerStateService(BotId),
+        });
     }
 
     function decideRowForStationCard() {
-        return DecideRowForStationCard({ playerStateService: playerServiceFactory.playerStateService(BotId) });
+        return DecideRowForStationCard({
+            playerStateService: playerServiceFactory.playerStateService(BotId),
+        });
     }
 
     function cardRules() {
         const cardRulesFactory = CardRulesFactory({
             BotId,
-            playerServiceFactory
+            playerServiceFactory,
         });
         return cardRulesFactory.createAll();
     }

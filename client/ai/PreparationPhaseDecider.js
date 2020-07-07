@@ -1,14 +1,11 @@
-const { PHASES } = require('../../shared/phases.js');
+const { PHASES } = require("../../shared/phases.js");
 
-module.exports = function ({
-    matchController
-}) {
-
+module.exports = function ({ matchController }) {
     return {
-        decide
+        decide,
     };
 
     function decide() {
-        matchController.emit('nextPhase', { currentPhase: PHASES.preparation });
+        matchController.emit("nextPhase", { currentPhase: PHASES.preparation });
     }
 };

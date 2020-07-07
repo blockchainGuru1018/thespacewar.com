@@ -1,10 +1,9 @@
-const resolveModuleWithPossibleDefault = require('../../client/utils/resolveModuleWithPossibleDefault.js');
-const Vue = resolveModuleWithPossibleDefault(require('vue'));
-const MatchView = require('./Match.vue').default;
-const MatchStores = require('./MatchStores.js');
+const resolveModuleWithPossibleDefault = require("../../client/utils/resolveModuleWithPossibleDefault.js");
+const Vue = resolveModuleWithPossibleDefault(require("vue"));
+const MatchView = require("./Match.vue").default;
+const MatchStores = require("./MatchStores.js");
 
 module.exports = function (deps) {
-
     const rootStore = deps.rootStore;
 
     let vm;
@@ -12,7 +11,7 @@ module.exports = function (deps) {
 
     return {
         show,
-        hide
+        hide,
     };
 
     function show({ matchId, opponentUser }) {
@@ -22,9 +21,9 @@ module.exports = function (deps) {
             store: rootStore,
             render(h) {
                 return h(MatchView, {});
-            }
+            },
         });
-        const hook = document.createElement('div');
+        const hook = document.createElement("div");
         document.body.appendChild(hook);
         vm.$mount(hook);
     }

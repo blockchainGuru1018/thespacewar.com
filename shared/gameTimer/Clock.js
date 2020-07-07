@@ -1,22 +1,21 @@
 const NullState = {
     startTime: 0,
     duration: 0,
-    events: []
+    events: [],
 };
 
 function Clock({ playerStateService }) {
-
     return {
         reset,
         start,
         stop,
-        getTime
+        getTime,
     };
 
     function reset(duration) {
         const startTime = Date.now();
 
-        playerStateService.update(playerState => {
+        playerStateService.update((playerState) => {
             playerState.clock.events = [];
             playerState.clock.duration = duration;
             playerState.clock.startTime = startTime;
@@ -26,20 +25,20 @@ function Clock({ playerStateService }) {
     }
 
     function start() {
-        if (latestEventType() === 'start') return;
+        if (latestEventType() === "start") return;
 
         pushEvent({
-            type: 'start',
-            time: Date.now()
+            type: "start",
+            time: Date.now(),
         });
     }
 
     function stop() {
-        if (latestEventType() === 'stop') return;
+        if (latestEventType() === "stop") return;
 
         pushEvent({
-            type: 'stop',
-            time: Date.now()
+            type: "stop",
+            time: Date.now(),
         });
     }
 
@@ -49,20 +48,23 @@ function Clock({ playerStateService }) {
 
         const now = Date.now();
         const elapsedTimeIfNotInterrupted = now - startTime;
-        return duration - (elapsedTimeIfNotInterrupted - totalElapsedInterruptionTime(now));
+        return (
+            duration -
+            (elapsedTimeIfNotInterrupted - totalElapsedInterruptionTime(now))
+        );
     }
 
     function latestEventType() {
         const events = state().events;
         if (events.length === 0) {
-            return 'start';
+            return "start";
         }
 
         return events[events.length - 1].type;
     }
 
     function pushEvent(event) {
-        playerStateService.update(playerState => {
+        playerStateService.update((playerState) => {
             playerState.clock.events.push(event);
         });
     }
@@ -73,10 +75,9 @@ function Clock({ playerStateService }) {
         let interruptionTime = 0;
         let lastStop = null;
         for (const event of events) {
-            if (lastStop === null && event.type === 'stop') {
+            if (lastStop === null && event.type === "stop") {
                 lastStop = event;
-            }
-            else if (event.type === 'start') {
+            } else if (event.type === "start") {
                 interruptionTime += event.time - lastStop.time;
                 lastStop = null;
             }
@@ -98,9 +99,7 @@ function Clock({ playerStateService }) {
 
     function clockInitialized() {
         const playerState = playerStateService.getPlayerState();
-        return !!playerState.clock &&
-            !!playerState.clock.events;
-
+        return !!playerState.clock && !!playerState.clock.events;
     }
 }
 

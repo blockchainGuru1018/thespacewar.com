@@ -1,5 +1,5 @@
-const Info = require('./info/13.config.js');
-const BaseCard = require('./BaseCard.js');
+const Info = require("./info/13.config.js");
+const BaseCard = require("./BaseCard.js");
 
 module.exports = class OverCapacity extends BaseCard {
     constructor(deps) {
@@ -7,7 +7,7 @@ module.exports = class OverCapacity extends BaseCard {
     }
 
     static get CommonId() {
-        return '13';
+        return "13";
     }
 
     static get Info() {

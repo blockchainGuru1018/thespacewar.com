@@ -1,5 +1,5 @@
 module.exports = {
-    setupFakeLeaderLine
+    setupFakeLeaderLine,
 };
 
 function setupFakeLeaderLine() {

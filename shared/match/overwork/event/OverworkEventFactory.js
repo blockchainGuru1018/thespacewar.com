@@ -1,13 +1,9 @@
-const OverworkEvent = require('./OverworkEvent.js');
+const OverworkEvent = require("./OverworkEvent.js");
 
-module.exports = function ({
-    matchService,
-    playerStateService
-}) {
-
+module.exports = function ({ matchService, playerStateService }) {
     return {
         createAndStore,
-        create
+        create,
     };
 
     function createAndStore() {

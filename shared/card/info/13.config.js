@@ -3,14 +3,12 @@ module.exports = {
         forOpponent: [],
         forPlayer: [
             {
-                type: 'findCard',
+                type: "findCard",
                 count: 1,
-                sources: [
-                    'handSizeStationCards'
-                ],
-                target: 'hand',
-                cancelable: true
-            }
-        ]
-    }
+                sources: ["handSizeStationCards"],
+                target: "hand",
+                cancelable: true,
+            },
+        ],
+    },
 };

@@ -5,7 +5,7 @@ module.exports = function AttackEnergyShieldCardCapability({
 }) {
     return {
         canDoIt,
-        doIt
+        doIt,
     };
 
     function canDoIt() {
@@ -13,9 +13,9 @@ module.exports = function AttackEnergyShieldCardCapability({
     }
 
     function doIt() {
-        matchController.emit('attack', {
+        matchController.emit("attack", {
             attackerCardId: card.id,
-            defenderCardId: firstTarget().id
+            defenderCardId: firstTarget().id,
         });
     }
 
@@ -24,9 +24,13 @@ module.exports = function AttackEnergyShieldCardCapability({
     }
 
     function targets() {
-        return opponentStateService.getMatchingBehaviourCards(opponentCard => {
-            return opponentCard.stopsStationAttack()
-                && card.canAttackCard(opponentCard);
-        });
+        return opponentStateService.getMatchingBehaviourCards(
+            (opponentCard) => {
+                return (
+                    opponentCard.stopsStationAttack() &&
+                    card.canAttackCard(opponentCard)
+                );
+            }
+        );
     }
 };

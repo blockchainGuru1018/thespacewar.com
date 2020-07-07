@@ -1,5 +1,5 @@
 class UserAuth {
-    constructor({id, username, country, rating = 0}) {
+    constructor({ id, username, country, rating = 0 }) {
         this._id = id;
         this._username = username;
         this._country = country;

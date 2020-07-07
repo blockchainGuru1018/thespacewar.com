@@ -4,9 +4,9 @@ const canThePlayerFactory = {
             moveThisCard: () => true,
             attackWithThisCard: () => true,
             affordCard: () => true,
-            ...stubs
+            ...stubs,
         };
-    }
+    },
 };
 
 module.exports = canThePlayerFactory;

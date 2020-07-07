@@ -1,16 +1,18 @@
-const MatchMode = require('./MatchMode.js');
+const MatchMode = require("./MatchMode.js");
 
 class MatchService {
-
     constructor({
         gameConfig,
         endMatch = () => {},
         registerLogGame = () => Promise.resolve(),
-        logger = { log: (...args) => console.log('PlayerStateService logger: ', ...args) }
+        logger = {
+            log: (...args) =>
+                console.log("PlayerStateService logger: ", ...args),
+        },
     } = {}) {
         this._state = {};
         this._gameConfig = gameConfig;
-        this._registerLogGame = registerLogGame
+        this._registerLogGame = registerLogGame;
         this._logger = logger;
         this.endMatch = endMatch;
     }
@@ -36,7 +38,7 @@ class MatchService {
     }
 
     setCurrentPlayer(playerId) {
-        this.update(state => {
+        this.update((state) => {
             state.currentPlayer = playerId;
         });
 
@@ -67,24 +69,27 @@ class MatchService {
     playerRetreat(playerId) {
         if (this.somePlayerHasAlreadyRetreated() || this.hasGameEnded()) return;
 
-        if(this._gameHasStartedFully()) {
+        if (this._gameHasStartedFully()) {
             this._logLostGame(playerId);
         }
 
-        this.update(state => {
+        this.update((state) => {
             state.ended = true;
             state.retreatedPlayerId = playerId;
         });
 
-       this.endMatch();
+        this.endMatch();
     }
 
     _logLostGame(losingPlayerId) {
         const winningPlayerId = this.getOpponentId(losingPlayerId);
-        this._registerLogGame(winningPlayerId, losingPlayerId, this.gameLengthSeconds())
-            .catch(error => {
-                this._logError(error);
-            });
+        this._registerLogGame(
+            winningPlayerId,
+            losingPlayerId,
+            this.gameLengthSeconds()
+        ).catch((error) => {
+            this._logError(error);
+        });
     }
 
     _gameHasStartedFully() {
@@ -93,7 +98,7 @@ class MatchService {
 
     gameIsHumanVsHuman() {
         const [firstPlayerId, secondPlayerId] = this.getPlayerOrder();
-        return secondPlayerId !== 'BOT' && firstPlayerId !== 'BOT';
+        return secondPlayerId !== "BOT" && firstPlayerId !== "BOT";
     }
 
     somePlayerHasAlreadyRetreated() {
@@ -106,21 +111,31 @@ class MatchService {
 
     getOpponentId(playerId) {
         const firstPlayerId = this.getFirstPlayerId();
-        return firstPlayerId === playerId ? this.getLastPlayerId() : firstPlayerId;
+        return firstPlayerId === playerId
+            ? this.getLastPlayerId()
+            : firstPlayerId;
     }
 
     isPlayerCardInHomeZone(playerId, cardId) {
-        return this._state.playerStateById[playerId].cardsInZone.some(c => c.id === cardId);
+        return this._state.playerStateById[playerId].cardsInZone.some(
+            (c) => c.id === cardId
+        );
     }
 
     cardsAreInSameZone(card, otherCard) {
-        const otherCardIsInItsHomeZone = this.isPlayerCardInHomeZone(otherCard.playerId, otherCard.id);
-        const cardIsInHomeZone = this.isPlayerCardInHomeZone(card.playerId, card.id);
+        const otherCardIsInItsHomeZone = this.isPlayerCardInHomeZone(
+            otherCard.playerId,
+            otherCard.id
+        );
+        const cardIsInHomeZone = this.isPlayerCardInHomeZone(
+            card.playerId,
+            card.id
+        );
         return otherCardIsInItsHomeZone !== cardIsInHomeZone;
     }
 
     goToNextTurn() {
-        this.update(state => {
+        this.update((state) => {
             state.turn += 1;
             state.currentPlayer = this.getFirstPlayerId();
         });
@@ -131,10 +146,12 @@ class MatchService {
         const currentPlayerId = this.getCurrentPlayer();
         const currentPlayerIndex = playerOrder.indexOf(currentPlayerId);
         if (currentPlayerIndex === playerOrder.length - 1) {
-            throw new Error('Cannot go to next player. There are no more players for this turn.');
+            throw new Error(
+                "Cannot go to next player. There are no more players for this turn."
+            );
         }
 
-        this.update(state => {
+        this.update((state) => {
             state.currentPlayer = playerOrder[currentPlayerIndex + 1];
         });
     }
@@ -164,8 +181,7 @@ class MatchService {
     }
 
     isGameOn() {
-        return this._state.mode === MatchMode.game
-            && !this._state.ended;
+        return this._state.mode === MatchMode.game && !this._state.ended;
     }
 
     startSelectingStationCards() {
@@ -185,7 +201,9 @@ class MatchService {
     }
 
     allPlayersReady() {
-        return this._state.playerOrder.every(id => this._state.readyPlayerIds.includes(id));
+        return this._state.playerOrder.every((id) =>
+            this._state.readyPlayerIds.includes(id)
+        );
     }
 
     connectPlayer(playerId) {
@@ -205,8 +223,10 @@ class MatchService {
 
     _logError(error) {
         const rawErrorMessage = JSON.stringify(error, null, 4);
-        const errorMessage = `(${new Date().toISOString()}) Error in action to match: ${error.message} - RAW ERROR: ${rawErrorMessage}`
-        this._logger.log(errorMessage, 'error');
+        const errorMessage = `(${new Date().toISOString()}) Error in action to match: ${
+            error.message
+        } - RAW ERROR: ${rawErrorMessage}`;
+        this._logger.log(errorMessage, "error");
     }
 }
 

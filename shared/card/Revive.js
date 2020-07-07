@@ -1,5 +1,5 @@
-const BaseCard = require('./BaseCard.js');
-const info = require('./info/88.config.js');
+const BaseCard = require("./BaseCard.js");
+const info = require("./info/88.config.js");
 
 module.exports = class Revive extends BaseCard {
     constructor(deps) {
@@ -7,10 +7,9 @@ module.exports = class Revive extends BaseCard {
     }
 
     static get CommonId() {
-        return '88';
+        return "88";
     }
 
-    
     static get Info() {
         return info;
     }

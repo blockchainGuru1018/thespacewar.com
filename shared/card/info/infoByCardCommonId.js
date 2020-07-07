@@ -1,7 +1,7 @@
-const AllCards = require('../AllCards.js');
+const AllCards = require("../AllCards.js");
 
 const infoByCardCommonId = {};
-AllCards.forEach(Card => {
+AllCards.forEach((Card) => {
     if (Card.Info) {
         infoByCardCommonId[Card.CommonId] = Card.Info;
     }

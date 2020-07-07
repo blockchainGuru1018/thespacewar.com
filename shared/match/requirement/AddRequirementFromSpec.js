@@ -1,18 +1,19 @@
-const infoByCardCommonId = require('../../card/info/infoByCardCommonId.js');
+const infoByCardCommonId = require("../../card/info/infoByCardCommonId.js");
 
-module.exports = function ({ //TODO Is there a better name for this class? Perhaps "AddRequirementSpec"/"RequirementSpecAdder"
+module.exports = function ({
+    //TODO Is there a better name for this class? Perhaps "AddRequirementSpec"/"RequirementSpecAdder"
     playerStateService,
     opponentStateService,
     playerRequirementService,
     playerRequirementFactory,
     opponentRequirementService,
-    opponentRequirementFactory
+    opponentRequirementFactory,
 }) {
     return {
         forCardAndChoiceOfRequirement,
         forCardPutDownInHomeZone,
         forCardAndSpec,
-        forReasonAndSpec
+        forReasonAndSpec,
     };
 
     function forCardAndChoiceOfRequirement(cardData, choice) {
@@ -50,20 +51,36 @@ module.exports = function ({ //TODO Is there a better name for this class? Perha
     }
 
     function forCardAndSpecAndPlayer(card, spec, playerId) {
-        const requirementFactory = playerStateService.getPlayerId() === playerId ? playerRequirementFactory : opponentRequirementFactory;
-        const requirementService = playerStateService.getPlayerId() === playerId ? playerRequirementService : opponentRequirementService;
+        const requirementFactory =
+            playerStateService.getPlayerId() === playerId
+                ? playerRequirementFactory
+                : opponentRequirementFactory;
+        const requirementService =
+            playerStateService.getPlayerId() === playerId
+                ? playerRequirementService
+                : opponentRequirementService;
 
-        const requirementSpecs = playerId === playerStateService.getPlayerId() ? spec.forPlayer : spec.forOpponent;
+        const requirementSpecs =
+            playerId === playerStateService.getPlayerId()
+                ? spec.forPlayer
+                : spec.forOpponent;
         for (const spec of requirementSpecs) {
-            const requirement = requirementFactory.createForCardAndSpec(card, spec);
+            const requirement = requirementFactory.createForCardAndSpec(
+                card,
+                spec
+            );
 
             let addedRequirement;
             if (isEmptyCommonWaitingRequirement(requirement)) {
-                addedRequirement = requirementService.addEmptyCommonWaitingRequirement(requirement);
-            }
-            else {
-                if(requirement.type === 'damageShieldsOrStationCard')requirement.card = card.getCardData(); 
-                addedRequirement = requirementService.addCardRequirement(requirement);
+                addedRequirement = requirementService.addEmptyCommonWaitingRequirement(
+                    requirement
+                );
+            } else {
+                if (requirement.type === "damageShieldsOrStationCard")
+                    requirement.card = card.getCardData();
+                addedRequirement = requirementService.addCardRequirement(
+                    requirement
+                );
             }
 
             if (spec.ifAddedAddAlso && addedRequirement) {
@@ -87,16 +104,23 @@ module.exports = function ({ //TODO Is there a better name for this class? Perha
     }
 
     function forReasonAndSpecAndPlayer(reason, spec, playerId) {
-        const requirementService = playerStateService.getPlayerId() === playerId ? playerRequirementService : opponentRequirementService;
+        const requirementService =
+            playerStateService.getPlayerId() === playerId
+                ? playerRequirementService
+                : opponentRequirementService;
 
-        const requirementSpecs = playerId === playerStateService.getPlayerId() ? spec.forPlayer : spec.forOpponent;
+        const requirementSpecs =
+            playerId === playerStateService.getPlayerId()
+                ? spec.forPlayer
+                : spec.forOpponent;
         for (const spec of requirementSpecs) {
             const requirement = { ...spec, reason };
 
             if (isEmptyCommonWaitingRequirement(requirement)) {
-                requirementService.addEmptyCommonWaitingRequirement(requirement);
-            }
-            else {
+                requirementService.addEmptyCommonWaitingRequirement(
+                    requirement
+                );
+            } else {
                 requirementService.addCardRequirement(requirement);
             }
         }

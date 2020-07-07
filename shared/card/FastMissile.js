@@ -1,5 +1,5 @@
-const BaseCard = require('./BaseCard.js');
-const CanMoveFirstTurn = require('./mixins/CanMoveFirstTurn.js');
+const BaseCard = require("./BaseCard.js");
+const CanMoveFirstTurn = require("./mixins/CanMoveFirstTurn.js");
 
 module.exports = class FastMissile extends CanMoveFirstTurn(BaseCard) {
     constructor(deps) {
@@ -7,6 +7,6 @@ module.exports = class FastMissile extends CanMoveFirstTurn(BaseCard) {
     }
 
     static get CommonId() {
-        return '6';
+        return "6";
     }
 };

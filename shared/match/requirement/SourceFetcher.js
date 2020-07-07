@@ -1,21 +1,21 @@
 module.exports = SourceFetcher;
 
 const OpponentSourceToPlayerSource = {
-    opponentDrawStationCards: 'drawStationCards',
-    opponentActionStationCards: 'actionStationCards',
-    opponentHandSizeStationCards: 'handSizeStationCards',
-    opponentHand: 'hand',
-    opponentCardsInZone: 'cardsInZone'
+    opponentDrawStationCards: "drawStationCards",
+    opponentActionStationCards: "actionStationCards",
+    opponentHandSizeStationCards: "handSizeStationCards",
+    opponentHand: "hand",
+    opponentCardsInZone: "cardsInZone",
 };
 
-SourceFetcher.opponentSourceToPlayerSource = opponentSource => OpponentSourceToPlayerSource[opponentSource];
+SourceFetcher.opponentSourceToPlayerSource = (opponentSource) =>
+    OpponentSourceToPlayerSource[opponentSource];
 
 function SourceFetcher({
     playerStateService,
     opponentStateService,
-    canThePlayer
+    canThePlayer,
 }) {
-
     //TODO Would be a good idea to consider refactoring to follow the Open-closed the next time we're doing work here.
     // For example, each "source" could be their own module which encapsulate how they retrieve the cards and also contain
     // the _single_ mapping from "OpponentSourceToPlayerSource" that relates to it.
@@ -34,26 +34,28 @@ function SourceFetcher({
         opponentDiscardPile: () => [],
         opponentDrawStationCards: shuffleOutput(opponentDrawStationCards),
         opponentActionStationCards: shuffleOutput(opponentActionStationCards),
-        opponentHandSizeStationCards: shuffleOutput(opponentHandSizeStationCards),
+        opponentHandSizeStationCards: shuffleOutput(
+            opponentHandSizeStationCards
+        ),
         opponentHand: shuffleOutput(opponentHand),
         opponentAny: shuffleOutput(opponentAny),
-        opponentCardsInZone
+        opponentCardsInZone,
     };
 
     function deck(specFilter) {
         return playerStateService
             .getCardsInDeck()
-            .map(cardData => playerStateService.createBehaviourCard(cardData))
+            .map((cardData) => playerStateService.createBehaviourCard(cardData))
             .filter(cardFilter(specFilter))
-            .map(card => card.getCardData());
+            .map((card) => card.getCardData());
     }
 
     function discardPile(specFilter) {
         return playerStateService
             .getDiscardedCards()
-            .map(cardData => playerStateService.createBehaviourCard(cardData))
+            .map((cardData) => playerStateService.createBehaviourCard(cardData))
             .filter(cardFilter(specFilter))
-            .map(card => card.getCardData());
+            .map((card) => card.getCardData());
     }
 
     function drawStationCards(specFilter) {
@@ -61,9 +63,9 @@ function SourceFetcher({
             .getDrawStationCards()
             .filter(stationCardFilter(specFilter))
             .map(cardFromStationCard)
-            .map(cardData => playerStateService.createBehaviourCard(cardData))
+            .map((cardData) => playerStateService.createBehaviourCard(cardData))
             .filter(cardFilter(specFilter))
-            .map(card => card.getCardData());
+            .map((card) => card.getCardData());
     }
 
     function actionStationCards(specFilter) {
@@ -71,9 +73,9 @@ function SourceFetcher({
             .getActionStationCards()
             .filter(stationCardFilter(specFilter))
             .map(cardFromStationCard)
-            .map(cardData => playerStateService.createBehaviourCard(cardData))
+            .map((cardData) => playerStateService.createBehaviourCard(cardData))
             .filter(cardFilter(specFilter))
-            .map(card => card.getCardData());
+            .map((card) => card.getCardData());
     }
 
     function handSizeStationCards(specFilter) {
@@ -81,21 +83,23 @@ function SourceFetcher({
             .getHandSizeStationCards()
             .filter(stationCardFilter(specFilter))
             .map(cardFromStationCard)
-            .map(cardData => playerStateService.createBehaviourCard(cardData))
+            .map((cardData) => playerStateService.createBehaviourCard(cardData))
             .filter(cardFilter(specFilter))
-            .map(card => card.getCardData());
+            .map((card) => card.getCardData());
     }
 
     function opponentAny(specFilter, { triggerCard } = { triggerCard: null }) {
         return opponentStateService
-            .getMatchingBehaviourCardsPutDownAnywhere(cardFilter(specFilter, triggerCard))
-            .map(card => card.getCardData());
+            .getMatchingBehaviourCardsPutDownAnywhere(
+                cardFilter(specFilter, triggerCard)
+            )
+            .map((card) => card.getCardData());
     }
 
     function opponentCardsInZone(specFilter) {
         return opponentStateService
             .getMatchingBehaviourCardsInZone(cardFilter(specFilter))
-            .map(card => card.getCardData());
+            .map((card) => card.getCardData());
     }
 
     function opponentDrawStationCards(specFilter) {
@@ -103,9 +107,9 @@ function SourceFetcher({
             .getDrawStationCards()
             .filter(stationCardFilter(specFilter))
             .map(cardFromStationCard)
-            .map(cardData => playerStateService.createBehaviourCard(cardData))
+            .map((cardData) => playerStateService.createBehaviourCard(cardData))
             .filter(cardFilter(specFilter))
-            .map(card => card.getCardData());
+            .map((card) => card.getCardData());
     }
 
     function opponentActionStationCards(specFilter) {
@@ -113,9 +117,9 @@ function SourceFetcher({
             .getActionStationCards()
             .filter(stationCardFilter(specFilter))
             .map(cardFromStationCard)
-            .map(cardData => playerStateService.createBehaviourCard(cardData))
+            .map((cardData) => playerStateService.createBehaviourCard(cardData))
             .filter(cardFilter(specFilter))
-            .map(card => card.getCardData());
+            .map((card) => card.getCardData());
     }
 
     function opponentHandSizeStationCards(specFilter) {
@@ -123,33 +127,34 @@ function SourceFetcher({
             .getHandSizeStationCards()
             .filter(stationCardFilter(specFilter))
             .map(cardFromStationCard)
-            .map(cardData => playerStateService.createBehaviourCard(cardData))
+            .map((cardData) => playerStateService.createBehaviourCard(cardData))
             .filter(cardFilter(specFilter))
-            .map(card => card.getCardData());
+            .map((card) => card.getCardData());
     }
 
     function opponentHand(specFilter) {
         return opponentStateService
             .getCardsOnHand()
-            .map(cardData => playerStateService.createBehaviourCard(cardData))
+            .map((cardData) => playerStateService.createBehaviourCard(cardData))
             .filter(cardFilter(specFilter))
-            .map(card => card.getCardData());
+            .map((card) => card.getCardData());
     }
 
     function cardFilter(filter = {}, triggerCard = null) {
-        return card => {
+        return (card) => {
             if (!cardFulfillsTypeFilter(card, filter)) return false;
-            if (!cardFulfillsCanBeCounteredFilter(triggerCard, card, filter)) return false;
-            if (!cardFulfillsExcludeCardIds(card,filter)) return false
-            if (!cardFulfillsActionPointsLeft(card,filter)) return false
-            
+            if (!cardFulfillsCanBeCounteredFilter(triggerCard, card, filter))
+                return false;
+            if (!cardFulfillsExcludeCardIds(card, filter)) return false;
+            if (!cardFulfillsActionPointsLeft(card, filter)) return false;
+
             return true;
         };
     }
 
     function stationCardFilter(filter = {}) {
-        return stationCard => {
-            if ('onlyFlippedStationCards' in filter) {
+        return (stationCard) => {
+            if ("onlyFlippedStationCards" in filter) {
                 return filter.onlyFlippedStationCards
                     ? stationCard.flipped
                     : !stationCard.flipped;
@@ -161,22 +166,26 @@ function SourceFetcher({
     function cardFulfillsCanBeCounteredFilter(triggerCard, card, filter) {
         if (filter.canBeCountered !== true) return true;
 
-        return canThePlayer.counterCard(card)
-            && triggerCard.canCounterCard(card);
+        return (
+            canThePlayer.counterCard(card) && triggerCard.canCounterCard(card)
+        );
     }
 
     function cardFulfillsTypeFilter(card, filter) {
-        const hasTypeFilter = 'type' in filter;
+        const hasTypeFilter = "type" in filter;
         return !hasTypeFilter || filter.type.includes(card.type);
     }
 
-    function cardFulfillsExcludeCardIds(card,filter){
-        const hasExcludeCardIds = 'excludeCardIds' in filter;
-        return !hasExcludeCardIds || !filter.excludeCardIds.find((value) => value === card.id)
+    function cardFulfillsExcludeCardIds(card, filter) {
+        const hasExcludeCardIds = "excludeCardIds" in filter;
+        return (
+            !hasExcludeCardIds ||
+            !filter.excludeCardIds.find((value) => value === card.id)
+        );
     }
 
-    function cardFulfillsActionPointsLeft(card,filter){
-        const hasActionPointsLeft = 'actionPointsLeft' in filter;
+    function cardFulfillsActionPointsLeft(card, filter) {
+        const hasActionPointsLeft = "actionPointsLeft" in filter;
         return !hasActionPointsLeft || card.cost <= filter.actionPointsLeft;
     }
 

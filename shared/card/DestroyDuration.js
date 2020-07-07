@@ -1,5 +1,5 @@
-const BaseCard = require('./BaseCard.js');
-const CanBeSacrified = require('./mixins/CanBeSacrificed.js');
+const BaseCard = require("./BaseCard.js");
+const CanBeSacrified = require("./mixins/CanBeSacrificed.js");
 
 module.exports = class DestroyDuration extends CanBeSacrified(BaseCard) {
     constructor(deps) {
@@ -7,14 +7,13 @@ module.exports = class DestroyDuration extends CanBeSacrified(BaseCard) {
     }
 
     static get CommonId() {
-        return '86';
+        return "86";
     }
 
     canTargetCardForSacrifice(otherCard) {
-        if (otherCard.type !== 'duration') return false;
+        if (otherCard.type !== "duration") return false;
         if (otherCard.playerId === this.playerId) return false;
 
         return true;
     }
-
 };

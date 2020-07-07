@@ -1,7 +1,6 @@
-const ajax = require('../utils/ajax.js');
+const ajax = require("../utils/ajax.js");
 
 module.exports = function (deps) {
-
     const socket = deps.socket;
     const userRepository = deps.userRepository;
 
@@ -9,11 +8,11 @@ module.exports = function (deps) {
         create,
         createWithBot,
         getOwnState,
-        onMatchCreatedForPlayer
+        onMatchCreatedForPlayer,
     };
 
     function create({ playerId, opponentId }) {
-        return ajax.jsonPost('/match', { playerId, opponentId });
+        return ajax.jsonPost("/match", { playerId, opponentId });
     }
 
     function createWithBot({ playerId }) {
@@ -26,7 +25,7 @@ module.exports = function (deps) {
     }
 
     function onMatchCreatedForPlayer(callback) {
-        socket.on('match/create', matchData => {
+        socket.on("match/create", (matchData) => {
             const ownUserId = userRepository.getOwnUser().id;
             if (matchData.playerIds.includes(ownUserId)) {
                 callback(matchData);

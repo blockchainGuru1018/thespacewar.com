@@ -1,4 +1,4 @@
-const BaseCard = require('./BaseCard.js');
+const BaseCard = require("./BaseCard.js");
 
 module.exports = class ExtraDraw extends BaseCard {
     constructor(deps) {
@@ -6,16 +6,14 @@ module.exports = class ExtraDraw extends BaseCard {
     }
 
     static get CommonId() {
-        return '87';
+        return "87";
     }
 
     get requirementsWhenEnterDrawPhase() {
         const cardCommonId = ExtraDraw.CommonId;
         return {
             forOpponent: [],
-            forPlayer: [
-                {type: 'drawCard', count: 2, cardCommonId}
-            ]
-        }
+            forPlayer: [{ type: "drawCard", count: 2, cardCommonId }],
+        };
     }
 };

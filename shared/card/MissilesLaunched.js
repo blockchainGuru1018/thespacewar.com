@@ -1,5 +1,5 @@
-const info = require('./info/17.json');
-const BaseCard = require('./BaseCard.js');
+const info = require("./info/17.json");
+const BaseCard = require("./BaseCard.js");
 
 class MissilesLaunched extends BaseCard {
     constructor(deps) {

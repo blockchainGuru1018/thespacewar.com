@@ -1,19 +1,20 @@
-const getCardImageUrl = require('../utils/getCardImageUrl.js');
-const FakeState = require('../testUtils/FakeState.js');
-const FakeMatchController = require('../testUtils/FakeMatchController.js');
-const Neutralization = require('../../shared/card/Neutralization.js');
-const DisturbingSensor = require('../../shared/card/DisturbingSensor.js');
-const { createController } = require('../testUtils');
+const getCardImageUrl = require("../utils/getCardImageUrl.js");
+const FakeState = require("../testUtils/FakeState.js");
+const FakeMatchController = require("../testUtils/FakeMatchController.js");
+const Neutralization = require("../../shared/card/Neutralization.js");
+const DisturbingSensor = require("../../shared/card/DisturbingSensor.js");
+const { createController } = require("../testUtils");
 const {
     assert,
     sinon,
     timeout,
-} = require('../testUtils/bocha-jest/bocha-jest.js');
+} = require("../testUtils/bocha-jest/bocha-jest.js");
 
 let controller;
 let matchController;
 
-function setUpController(optionsAndPageDeps = {}) { //Has side effects to afford a convenient tear down
+function setUpController(optionsAndPageDeps = {}) {
+    //Has side effects to afford a convenient tear down
     matchController = FakeMatchController();
     controller = createController({ matchController, ...optionsAndPageDeps });
 
@@ -21,7 +22,7 @@ function setUpController(optionsAndPageDeps = {}) { //Has side effects to afford
 }
 
 beforeEach(() => {
-    sinon.stub(getCardImageUrl, 'byCommonId').returns('/#');
+    sinon.stub(getCardImageUrl, "byCommonId").returns("/#");
 });
 
 afterEach(() => {
@@ -32,53 +33,71 @@ afterEach(() => {
     controller = null;
 });
 
-describe('when has duration card Neutralization and other duration card', () => {
+describe("when has duration card Neutralization and other duration card", () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
-        dispatch('stateChanged', FakeState({
-            turn: 1,
-            currentPlayer: 'P1A',
-            phase: 'draw',
-            playerCardsInDeckCount: 1,
-            cardsInZone: [
-                { id: 'C1A', type: 'duration', commonId: Neutralization.CommonId },
-                { id: 'C2A', type: 'duration' }
-            ]
-        }));
+        dispatch(
+            "stateChanged",
+            FakeState({
+                turn: 1,
+                currentPlayer: "P1A",
+                phase: "draw",
+                playerCardsInDeckCount: 1,
+                cardsInZone: [
+                    {
+                        id: "C1A",
+                        type: "duration",
+                        commonId: Neutralization.CommonId,
+                    },
+                    { id: "C2A", type: "duration" },
+                ],
+            })
+        );
         await timeout();
     });
 
-    test('other, now disabled, duration card should have a disabled overlay', () => {
-        assert.elementCount('.playerCardsInZone .card:eq(1) .cardDisabledOverlay', 1);
+    test("other, now disabled, duration card should have a disabled overlay", () => {
+        assert.elementCount(
+            ".playerCardsInZone .card:eq(1) .cardDisabledOverlay",
+            1
+        );
     });
 });
 
-describe('when has Disturbing Sensor and a missile in play and opponent has a missile in play', () => {
+describe("when has Disturbing Sensor and a missile in play and opponent has a missile in play", () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
-        dispatch('stateChanged', FakeState({
-            turn: 1,
-            currentPlayer: 'P1A',
-            phase: 'draw',
-            playerCardsInDeckCount: 1,
-            cardsInZone: [
-                { id: 'C1A', type: 'spaceShip', commonId: DisturbingSensor.CommonId },
-                { id: 'C2A', type: 'missile' }
-            ],
-            opponentCardsInZone: [
-                { id: 'C3A', type: 'missile' }
-            ]
-        }));
+        dispatch(
+            "stateChanged",
+            FakeState({
+                turn: 1,
+                currentPlayer: "P1A",
+                phase: "draw",
+                playerCardsInDeckCount: 1,
+                cardsInZone: [
+                    {
+                        id: "C1A",
+                        type: "spaceShip",
+                        commonId: DisturbingSensor.CommonId,
+                    },
+                    { id: "C2A", type: "missile" },
+                ],
+                opponentCardsInZone: [{ id: "C3A", type: "missile" }],
+            })
+        );
         await timeout();
     });
 
-    test('opponent missile card should have a disabled overlay', () => {
-        assert.elementCount('.opponentCardsInZone .card .cardDisabledOverlay', 1);
+    test("opponent missile card should have a disabled overlay", () => {
+        assert.elementCount(
+            ".opponentCardsInZone .card .cardDisabledOverlay",
+            1
+        );
     });
 
-    test('player missile card should NOT have a disabled overlay', () => {
-        assert.elementCount('.playerCardsInZone .cardDisabledOverlay', 0);
+    test("player missile card should NOT have a disabled overlay", () => {
+        assert.elementCount(".playerCardsInZone .cardDisabledOverlay", 0);
     });
 });

@@ -1,28 +1,31 @@
 const CARD_COLOR_TO_TYPE = {
-    'blue': 'spaceShip',
-    'violet': 'duration',
-    'orange': 'event',
-    'red': 'missile',
-    'green': 'defense'
+    blue: "spaceShip",
+    violet: "duration",
+    orange: "event",
+    red: "missile",
+    green: "defense",
 };
-const FakeTheSwarmDeck = require('./FakeTheSwarmDeck.js');
+const FakeTheSwarmDeck = require("./FakeTheSwarmDeck.js");
 
-module.exports = function CardDataAssembler({
-    rawCardDataRepository,
-}) {
-
+module.exports = function CardDataAssembler({ rawCardDataRepository }) {
     return {
         createLibrary,
         createSwarmDeck,
         createRegularDeck,
         createOneOfEach,
-        createFromCommonId
+        createFromCommonId,
     };
 
     function createLibrary() {
         return [
             ...rawCardDataRepository.get().map(CardData),
-            ...FakeTheSwarmDeck().reduce((acc,value) => acc.find((v) => v.commonId === value.commonId)? acc : acc.concat([value]),[])
+            ...FakeTheSwarmDeck().reduce(
+                (acc, value) =>
+                    acc.find((v) => v.commonId === value.commonId)
+                        ? acc
+                        : acc.concat([value]),
+                []
+            ),
         ];
     }
 
@@ -34,7 +37,9 @@ module.exports = function CardDataAssembler({
         const rawCardData = rawCardDataRepository.get();
         const cards = [];
         for (const cardJson of rawCardData) {
-            const copies = cardJson.number_copies ? parseInt(cardJson.number_copies) : 1;
+            const copies = cardJson.number_copies
+                ? parseInt(cardJson.number_copies)
+                : 1;
             for (let i = 0; i < copies; i++) {
                 const card = CardData(cardJson);
                 cards.push(card);
@@ -45,17 +50,18 @@ module.exports = function CardDataAssembler({
 
     function createOneOfEach() {
         const rawCardData = rawCardDataRepository.get();
-        return rawCardData.map(cardJson => CardData(cardJson));
+        return rawCardData.map((cardJson) => CardData(cardJson));
     }
 
     function createFromCommonId(commonId) {
         const unmappedCardData = createLibrary();
-        const cardData = unmappedCardData.find(c => c.commonId === commonId);
+        const cardData = unmappedCardData.find((c) => c.commonId === commonId);
         if (!cardData) {
-            console.error('Could not find card data for card with ID ' + commonId);
+            console.error(
+                "Could not find card data for card with ID " + commonId
+            );
             return {};
-        }
-        else {
+        } else {
             return cardData;
         }
     }
@@ -73,20 +79,22 @@ function CardData(cardJson) {
         cost: cardCost(cardJson.price),
         attack: parseInt(cardJson.attack, 10),
         defense: parseInt(cardJson.defense, 10),
-        paralyzed: false
+        paralyzed: false,
     };
 }
 
 function cardCost(cardJsonPrice) {
-    if(cardJsonPrice.toLowerCase() === 'x') {
+    if (cardJsonPrice.toLowerCase() === "x") {
         return 0;
-    }
-    else {
+    } else {
         return parseInt(cardJsonPrice, 10);
     }
 }
 
 function createUniqueCardId(cardCommonId) {
-    const uniqueId = Math.round(Date.now() * .1 * Math.random()).toString().substr(0, 5).padStart(5, '0');
+    const uniqueId = Math.round(Date.now() * 0.1 * Math.random())
+        .toString()
+        .substr(0, 5)
+        .padStart(5, "0");
     return `${cardCommonId}:${uniqueId}`;
 }

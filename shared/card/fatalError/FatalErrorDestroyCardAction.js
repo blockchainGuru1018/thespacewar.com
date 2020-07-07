@@ -1,6 +1,5 @@
 module.exports = class FatalErrorDestroyCardAction {
-
-    constructor({playerId}) {
+    constructor({ playerId }) {
         this._playerId = playerId;
     }
 
@@ -13,16 +12,18 @@ module.exports = class FatalErrorDestroyCardAction {
     }
 
     get name() {
-        return 'destroyAnyCard';
+        return "destroyAnyCard";
     }
 
     get text() {
-        return 'Select any card to destroy';
+        return "Select any card to destroy";
     }
 
     validTarget(target, actionPoints = 0) {
-        return this.canTargetFromCostPenaltyAbility(target, actionPoints)
-            && this._isEnemyNonStationCard(target);
+        return (
+            this.canTargetFromCostPenaltyAbility(target, actionPoints) &&
+            this._isEnemyNonStationCard(target)
+        );
     }
 
     canTargetFromCostPenaltyAbility(target, actionPoints) {

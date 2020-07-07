@@ -1,7 +1,6 @@
-const TYPE = require('../../shared/match/PlayerServiceProvider.js').TYPE;
+const TYPE = require("../../shared/match/PlayerServiceProvider.js").TYPE;
 
 function ClientPlayerServiceProvider(state, getters) {
-
     const ownUserId = state.ownUser.id;
 
     return {
@@ -9,7 +8,7 @@ function ClientPlayerServiceProvider(state, getters) {
         getStateServiceById,
         getRequirementServiceById,
         getCanThePlayerServiceById,
-        getRuleServiceById
+        getRuleServiceById,
     };
 
     function byTypeAndId(playerServiceType, playerId) {
@@ -35,16 +34,20 @@ function ClientPlayerServiceProvider(state, getters) {
 
     function nameForType(type, playerId) {
         if (type === TYPE.canThePlayer) {
-            return playerId === ownUserId ? 'canThePlayer' : 'canTheOpponent';
+            return playerId === ownUserId ? "canThePlayer" : "canTheOpponent";
         }
         if (type === TYPE.phase) {
-            return playerId === ownUserId ? 'playerPhase' : 'opponentPhase';
+            return playerId === ownUserId ? "playerPhase" : "opponentPhase";
         }
         return genericNameForType(type, playerId);
     }
 
     function genericNameForType(type, playerId) {
-        return (playerId === ownUserId ? 'player' : 'opponent') + capitalize(type) + 'Service';
+        return (
+            (playerId === ownUserId ? "player" : "opponent") +
+            capitalize(type) +
+            "Service"
+        );
     }
 }
 

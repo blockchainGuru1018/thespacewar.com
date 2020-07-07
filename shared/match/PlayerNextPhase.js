@@ -1,7 +1,7 @@
-const { PHASES } = require('../phases.js');
-const whatIsNextPhase = require('./whatIsNextPhase.js');
+const { PHASES } = require("../phases.js");
+const whatIsNextPhase = require("./whatIsNextPhase.js");
 const Commander = require("./commander/Commander.js");
-const CheatError = require('../../server/match/CheatError.js');
+const CheatError = require("../../server/match/CheatError.js");
 
 module.exports = function ({
     matchService,
@@ -12,27 +12,27 @@ module.exports = function ({
     playerGameTimer,
     playerDiscardPhase,
     addRequirementFromSpec,
-    opponentStateService
+    opponentStateService,
 }) {
-
     return {
         validateCanGoToNextPhase,
         next,
         canEndTurnForPlayer,
-        endTurnForPlayer
+        endTurnForPlayer,
     };
 
     function validateCanGoToNextPhase() {
         if (playerPhase.isPreparation() && hasNegativeActionPoints()) {
-            throw new CheatError('Cannot go to next phase with less than 0 action points');
+            throw new CheatError(
+                "Cannot go to next phase with less than 0 action points"
+            );
         }
     }
 
     function next() {
         if (playerPhase.isDraw()) {
             leaveDrawPhaseForPlayer();
-        }
-        else if (playerPhase.isDiscard()) {
+        } else if (playerPhase.isDiscard()) {
             playerDiscardPhase.leavePhase();
         }
 
@@ -49,47 +49,66 @@ module.exports = function ({
     function getNextPhase() {
         return whatIsNextPhase({
             hasDurationCardInPlay: playerStateService.hasDurationCardInPlay(),
-            currentPhase: playerStateService.getPhase()
+            currentPhase: playerStateService.getPhase(),
         });
     }
 
     function enterDrawPhaseForPlayer() {
-        if (playerStateService.deckIsEmpty() && !playerCommanders.has(Commander.NiciaSatu)) {
+        if (
+            playerStateService.deckIsEmpty() &&
+            !playerCommanders.has(Commander.NiciaSatu)
+        ) {
             penalizePlayerForEmptyDeck();
         }
 
-        const specAndCardTuples = getRequirementsSpecAndCardTuplesFromDurationCards('requirementsWhenEnterDrawPhase');
+        const specAndCardTuples = getRequirementsSpecAndCardTuplesFromDurationCards(
+            "requirementsWhenEnterDrawPhase"
+        );
         if (specAndCardTuples.length > 0) {
             for (const specAndCardTuple of specAndCardTuples) {
-                addRequirementFromSpec.forCardAndSpec(specAndCardTuple.card, specAndCardTuple.requirementsSpec);
+                addRequirementFromSpec.forCardAndSpec(
+                    specAndCardTuple.card,
+                    specAndCardTuple.requirementsSpec
+                );
             }
         }
     }
 
     function penalizePlayerForEmptyDeck() {
-        addRequirementFromSpec.forReasonAndSpec('emptyDeck', {
-            forPlayer: [{
-                type: 'damageStationCard',
-                common: true,
-                count: 0,
-                waiting: true
-            }],
-            forOpponent: [{
-                type: 'damageStationCard',
-                common: true,
-                count: 3
-            }]
+        addRequirementFromSpec.forReasonAndSpec("emptyDeck", {
+            forPlayer: [
+                {
+                    type: "damageStationCard",
+                    common: true,
+                    count: 0,
+                    waiting: true,
+                },
+            ],
+            forOpponent: [
+                {
+                    type: "damageStationCard",
+                    common: true,
+                    count: 3,
+                },
+            ],
         });
     }
 
     function leaveDrawPhaseForPlayer() {
         const specAndCardTuples = [
-            ...getRequirementsSpecAndCardTuplesFromDurationCards('requirementsWhenLeavingDrawPhase'),
-            ...getRequirementsSpecAndCardTuplesFromOpponentCards('requirementsWhenOpponentLeaveDrawPhase')
+            ...getRequirementsSpecAndCardTuplesFromDurationCards(
+                "requirementsWhenLeavingDrawPhase"
+            ),
+            ...getRequirementsSpecAndCardTuplesFromOpponentCards(
+                "requirementsWhenOpponentLeaveDrawPhase"
+            ),
         ];
         if (specAndCardTuples.length > 0) {
             for (const specAndCardTuple of specAndCardTuples) {
-                addRequirementFromSpec.forCardAndSpec(specAndCardTuple.card, specAndCardTuple.requirementsSpec);
+                addRequirementFromSpec.forCardAndSpec(
+                    specAndCardTuple.card,
+                    specAndCardTuple.requirementsSpec
+                );
             }
         }
     }
@@ -103,8 +122,7 @@ module.exports = function ({
 
         if (isLastPlayerOfTurn()) {
             matchService.goToNextTurn();
-        }
-        else {
+        } else {
             matchService.goToNextPlayer();
         }
 
@@ -120,10 +138,10 @@ module.exports = function ({
     function getRequirementsSpecAndCardTuplesFromDurationCards(key) {
         return playerStateService
             .getDurationCards()
-            .filter(cardData => canThePlayer.useThisDurationCard(cardData.id))
-            .map(cardData => playerStateService.createBehaviourCard(cardData))
-            .map(card => {
-                return { card, requirementsSpec: card[key] }
+            .filter((cardData) => canThePlayer.useThisDurationCard(cardData.id))
+            .map((cardData) => playerStateService.createBehaviourCard(cardData))
+            .map((card) => {
+                return { card, requirementsSpec: card[key] };
             })
             .filter(({ requirementsSpec }) => !!requirementsSpec);
     }
@@ -131,16 +149,18 @@ module.exports = function ({
     function getRequirementsSpecAndCardTuplesFromOpponentCards(key) {
         return opponentStateService
             .getMatchingBehaviourCards(withKey(key))
-            .map(card => {
-                return { card, requirementsSpec: card[key] }
+            .map((card) => {
+                return { card, requirementsSpec: card[key] };
             })
-            .filter(tuple => !!tuple.requirementsSpec)
+            .filter((tuple) => !!tuple.requirementsSpec)
             .filter(soToKeepApplicableRequirements(playerStateService))
             .map(opponentRequirementToPlayerRequirement);
     }
 
     function hasNegativeActionPoints() {
-        const actionPoints = playerStateService.getActionPointsForPlayer(getPlayerId());
+        const actionPoints = playerStateService.getActionPointsForPlayer(
+            getPlayerId()
+        );
         return actionPoints < 0;
     }
 
@@ -154,15 +174,17 @@ function opponentRequirementToPlayerRequirement({ card, requirementsSpec }) {
         card,
         requirementsSpec: {
             forPlayer: requirementsSpec.forOpponent,
-            forOpponent: requirementsSpec.forPlayer
-        }
+            forOpponent: requirementsSpec.forPlayer,
+        },
     };
 }
 
 function soToKeepApplicableRequirements(opponentStateService) {
-    return ({ requirementsSpec }) => !requirementsSpec.shouldApply || requirementsSpec.shouldApply({ opponentStateService });
+    return ({ requirementsSpec }) =>
+        !requirementsSpec.shouldApply ||
+        requirementsSpec.shouldApply({ opponentStateService });
 }
 
 function withKey(key) {
-    return card => !!card[key]
+    return (card) => !!card[key];
 }

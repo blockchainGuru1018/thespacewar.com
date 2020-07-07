@@ -5,10 +5,10 @@ function DiscardCardEvent({ turn, phase, cardId, cardCommonId }) {
         turn,
         phase,
         cardId,
-        cardCommonId
+        cardCommonId,
     };
 }
 
-DiscardCardEvent.Type = 'discardCard';
+DiscardCardEvent.Type = "discardCard";
 
 module.exports = DiscardCardEvent;

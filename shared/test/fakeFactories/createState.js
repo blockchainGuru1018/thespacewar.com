@@ -1,4 +1,4 @@
-const defaults = require('lodash/defaults');
+const defaults = require("lodash/defaults");
 const playerStateFactory = require("../../match/playerStateFactory.js");
 const MatchMode = require("../../match/MatchMode.js");
 
@@ -6,9 +6,9 @@ module.exports = function createState(options = {}) {
     defaults(options, {
         mode: MatchMode.game,
         turn: 1,
-        currentPlayer: 'P1A',
-        playerOrder: ['P1A', 'P2A'],
-        playerStateById: {}
+        currentPlayer: "P1A",
+        playerOrder: ["P1A", "P2A"],
+        playerStateById: {},
     });
 
     const playerStateIds = Object.keys(options.playerStateById);
@@ -16,7 +16,9 @@ module.exports = function createState(options = {}) {
         playerStateIds.push(options.playerOrder[1]);
     }
     for (const key of playerStateIds) {
-        options.playerStateById[key] = createPlayerState(options.playerStateById[key]);
+        options.playerStateById[key] = createPlayerState(
+            options.playerStateById[key]
+        );
     }
 
     for (const playerId of options.playerOrder) {

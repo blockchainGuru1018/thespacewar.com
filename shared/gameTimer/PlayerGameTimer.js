@@ -1,12 +1,8 @@
-module.exports = function ({
-    opponentClock,
-    playerClock
-}) {
-
+module.exports = function ({ opponentClock, playerClock }) {
     return {
         switchTo,
         hasEnded,
-        resetAll
+        resetAll,
     };
 
     function switchTo() {

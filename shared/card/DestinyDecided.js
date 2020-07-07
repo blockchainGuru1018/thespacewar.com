@@ -1,13 +1,12 @@
-const BaseCard = require('./BaseCard.js');
+const BaseCard = require("./BaseCard.js");
 
 class DestinyDecided extends BaseCard {
-
     constructor(deps) {
         super(deps);
     }
 
     static get CommonId() {
-        return '64';
+        return "64";
     }
 
     get preventsOpponentFromPlayingAnEventCard() {

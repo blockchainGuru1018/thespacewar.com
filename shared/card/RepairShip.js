@@ -1,5 +1,5 @@
-const phases = require('../phases.js');
-const BaseCard = require('./BaseCard.js');
+const phases = require("../phases.js");
+const BaseCard = require("./BaseCard.js");
 
 module.exports = class RepairShip extends BaseCard {
     constructor({ repairCapability, ...deps }) {
@@ -8,7 +8,7 @@ module.exports = class RepairShip extends BaseCard {
         this._repairCapability = 3;
     }
     static get CommonId() {
-        return '90';
+        return "90";
     }
 
     canAttack() {
@@ -21,29 +21,28 @@ module.exports = class RepairShip extends BaseCard {
         if (this._hasRepairedThisTurn()) return false;
         if (this._hasAttackedThisTurn()) return false;
 
-        return this._hasCardInSameZoneThatCanBeRepaired()
-            || this._canRepairFlippedStationCards();
+        return (
+            this._hasCardInSameZoneThatCanBeRepaired() ||
+            this._canRepairFlippedStationCards()
+        );
     }
 
     canRepairCard(card) {
-        return card.canBeRepaired()
-            && card.isInHomeZone() === this.isInHomeZone();
+        return (
+            card.canBeRepaired() && card.isInHomeZone() === this.isInHomeZone()
+        );
     }
 
     repairCard(otherCardOrStationCard) {
         if (otherCardOrStationCard.flipped) {
             otherCardOrStationCard.flipped = false;
-        }
-        else {
+        } else {
             this._repairZoneCard(otherCardOrStationCard);
         }
     }
 
     _repairZoneCard(otherCard) {
-        const {
-            paralyzed,
-            damage
-        } = this.simulateRepairingCard(otherCard);
+        const { paralyzed, damage } = this.simulateRepairingCard(otherCard);
 
         otherCard.paralyzed = paralyzed;
         otherCard.damage = damage;
@@ -52,30 +51,41 @@ module.exports = class RepairShip extends BaseCard {
     simulateRepairingCard(otherCard) {
         return {
             paralyzed: false,
-            damage: otherCard.paralyzed ? otherCard.damage : Math.max(0, otherCard.damage - this._repairCapability)
+            damage: otherCard.paralyzed
+                ? otherCard.damage
+                : Math.max(0, otherCard.damage - this._repairCapability),
         };
     }
 
     _hasRepairedThisTurn() {
         const currentTurn = this._matchService.getTurn();
-        const repairsThisTurn = this._queryEvents.getRepairsOnTurn(this.id, currentTurn);
+        const repairsThisTurn = this._queryEvents.getRepairsOnTurn(
+            this.id,
+            currentTurn
+        );
         return repairsThisTurn.length > 0;
     }
 
     _hasAttackedThisTurn() {
         const turn = this._matchService.getTurn();
-        const attacksOnTurn = this._queryEvents.getAttacksOnTurn(this.id, turn).length;
+        const attacksOnTurn = this._queryEvents.getAttacksOnTurn(this.id, turn)
+            .length;
         return attacksOnTurn > 0;
     }
 
     _hasCardInSameZoneThatCanBeRepaired() {
-        return this._playerStateService.hasMatchingCardInSameZone(this.id, card => {
-            return card.canBeRepaired()
-        });
+        return this._playerStateService.hasMatchingCardInSameZone(
+            this.id,
+            (card) => {
+                return card.canBeRepaired();
+            }
+        );
     }
 
     _canRepairFlippedStationCards() {
-        return this._playerStateService.hasFlippedStationCards()
-            && this._playerStateService.isCardInHomeZone(this.id);
+        return (
+            this._playerStateService.hasFlippedStationCards() &&
+            this._playerStateService.isCardInHomeZone(this.id)
+        );
     }
 };

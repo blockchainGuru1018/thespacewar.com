@@ -1,24 +1,25 @@
-const DEFAULT_CONFIG = require('../gameConfig.js');
+const DEFAULT_CONFIG = require("../gameConfig.js");
 
 const propertyMap = {
-    AMOUNT_OF_CARDS_IN_START_HAND: 'amountOfCardsInStartHand',
-    MILL_CARD_AMOUNT: 'millCardCount',
-    STATION_CARDS_AT_START: 'stationCardsAtStart',
-    MAX_STATION_CARDS: 'maxStationCards',
-    MAX_REPLACES: 'maxReplaces',
-    TIME_TO_COUNTER: 'timeToCounter',
-    ACCESS_KEY: 'accessKey',
-    NICIA_SATU_STARTS_WITH_ENERGY_SHIELD: 'niciaSatuStartsWithEnergyShield',
-    TIME_PER_PLAYER_IN_MINUTES: 'timePerPlayerInMinutes',
-    RECYCLE_AT_START_OF_GAME: 'recycleAtStartOfGame',
-    SECONDS_OF_WAIT_BETWEEN_ACTIONS_OF_AI_BOT: 'secondsOfWaitBetweenActionsOfAiBot', 
+    AMOUNT_OF_CARDS_IN_START_HAND: "amountOfCardsInStartHand",
+    MILL_CARD_AMOUNT: "millCardCount",
+    STATION_CARDS_AT_START: "stationCardsAtStart",
+    MAX_STATION_CARDS: "maxStationCards",
+    MAX_REPLACES: "maxReplaces",
+    TIME_TO_COUNTER: "timeToCounter",
+    ACCESS_KEY: "accessKey",
+    NICIA_SATU_STARTS_WITH_ENERGY_SHIELD: "niciaSatuStartsWithEnergyShield",
+    TIME_PER_PLAYER_IN_MINUTES: "timePerPlayerInMinutes",
+    RECYCLE_AT_START_OF_GAME: "recycleAtStartOfGame",
+    SECONDS_OF_WAIT_BETWEEN_ACTIONS_OF_AI_BOT:
+        "secondsOfWaitBetweenActionsOfAiBot",
 };
 
 const Defaults = convertConfig(DEFAULT_CONFIG);
 
 GameConfig.notLoaded = notLoaded;
 
-GameConfig.fromConfig = config => GameConfig(convertConfig(config));
+GameConfig.fromConfig = (config) => GameConfig(convertConfig(config));
 
 function GameConfig({
     amountOfCardsInStartHand = Defaults.amountOfCardsInStartHand,
@@ -31,9 +32,8 @@ function GameConfig({
     timePerPlayerInMinutes = Defaults.accessKey,
     niciaSatuStartsWithEnergyShield = Defaults.niciaSatuStartsWithEnergyShield,
     recycleAtStartOfGame = Defaults.recycleAtStartOfGame,
-    secondsOfWaitBetweenActionsOfAiBot = Defaults.secondsOfWaitBetweenActionsOfAiBot
+    secondsOfWaitBetweenActionsOfAiBot = Defaults.secondsOfWaitBetweenActionsOfAiBot,
 } = {}) {
-
     return {
         entity: () => ({ ...arguments[0] }),
         amountOfCardsInStartHand: () => amountOfCardsInStartHand,
@@ -46,7 +46,8 @@ function GameConfig({
         timePerPlayerInMinutes: () => timePerPlayerInMinutes,
         niciaSatuStartsWithEnergyShield: () => niciaSatuStartsWithEnergyShield,
         recycleAtStartOfGame: () => recycleAtStartOfGame,
-        secondsOfWaitBetweenActionsOfAiBot: () => Math.round(secondsOfWaitBetweenActionsOfAiBot * 1000),
+        secondsOfWaitBetweenActionsOfAiBot: () =>
+            Math.round(secondsOfWaitBetweenActionsOfAiBot * 1000),
     };
 }
 
@@ -63,4 +64,3 @@ function convertConfig(config) {
 }
 
 module.exports = GameConfig;
-

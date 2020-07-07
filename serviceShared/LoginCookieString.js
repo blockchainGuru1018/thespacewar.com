@@ -1,7 +1,6 @@
-const hashCookie = require('./hashCookie.js');
+const hashCookie = require("./hashCookie.js");
 
 class LoginCookieString {
-
     id(id) {
         this._id = id;
         return this;
@@ -23,7 +22,12 @@ class LoginCookieString {
     }
 
     generateHash() {
-        this._hash = hashCookie(this._id, this._username, this._country, this._rating);
+        this._hash = hashCookie(
+            this._id,
+            this._username,
+            this._country,
+            this._rating
+        );
         return this;
     }
 

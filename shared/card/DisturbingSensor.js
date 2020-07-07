@@ -1,13 +1,15 @@
-const BaseCard = require('./BaseCard.js');
-const PreventsOpponentMissilesFromAttacking = require('./mixins/PreventsOpponentMissilesFromAttacking.js');
-const PreventsOpponentMissilesFromMoving = require('./mixins/PreventsOpponentMissilesFromMoving.js');
-module.exports = class DisturbingSensor extends PreventsOpponentMissilesFromAttacking(PreventsOpponentMissilesFromMoving(BaseCard)) {
+const BaseCard = require("./BaseCard.js");
+const PreventsOpponentMissilesFromAttacking = require("./mixins/PreventsOpponentMissilesFromAttacking.js");
+const PreventsOpponentMissilesFromMoving = require("./mixins/PreventsOpponentMissilesFromMoving.js");
+module.exports = class DisturbingSensor extends PreventsOpponentMissilesFromAttacking(
+    PreventsOpponentMissilesFromMoving(BaseCard)
+) {
     constructor(deps) {
         super(deps);
     }
 
     static get CommonId() {
-        return '37';
+        return "37";
     }
 
     canAttack() {
@@ -20,10 +22,8 @@ module.exports = class DisturbingSensor extends PreventsOpponentMissilesFromAtta
             shouldApply({ opponentStateService }) {
                 return opponentStateService.getCardsOnHandCount() > 1;
             },
-            forOpponent: [
-                { type: 'discardCard', count: 1, cardCommonId }
-            ],
-            forPlayer: []
-        }
+            forOpponent: [{ type: "discardCard", count: 1, cardCommonId }],
+            forPlayer: [],
+        };
     }
 };

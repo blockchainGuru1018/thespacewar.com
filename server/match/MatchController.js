@@ -1,5 +1,4 @@
 module.exports = function (deps) {
-
     const matchRepository = deps.matchRepository;
     const socketRepository = deps.socketRepository;
     const logger = deps.logger;
@@ -9,13 +8,13 @@ module.exports = function (deps) {
         createWithBot,
         getOwnState,
         onAction,
-        _testMatchRestoration
+        _testMatchRestoration,
     };
 
     async function create(req, res) {
         const playerId = req.body.playerId;
         const opponentId = req.body.opponentId;
-        if (!playerId || !opponentId) throw new Error('Illegal operation');
+        if (!playerId || !opponentId) throw new Error("Illegal operation");
 
         matchRepository.clearOldMatches();
         const match = await matchRepository.create({ playerId, opponentId });
@@ -25,7 +24,7 @@ module.exports = function (deps) {
 
     async function createWithBot(req, res) {
         const playerId = req.params.playerId;
-        if (!playerId) throw new Error('Illegal operation');
+        if (!playerId) throw new Error("Illegal operation");
 
         matchRepository.clearOldMatches();
         const match = await matchRepository.createWithBot({ playerId });
@@ -47,10 +46,9 @@ module.exports = function (deps) {
 
         const match = await matchRepository.getById(matchId);
         if (match) {
-            logger.log(matchActionLogMessage(data), 'match');
+            logger.log(matchActionLogMessage(data), "match");
             match[data.action](userId, data.value);
-        }
-        else {
+        } else {
             sendMatchIsDeadMessageToUserSocketConnection({ userId, matchId });
         }
     }
@@ -59,7 +57,7 @@ module.exports = function (deps) {
         await matchRepository.storeAll();
 
         matchRepository._deleteAll();
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, 2000));
 
         await matchRepository.restoreAll();
     }
@@ -72,10 +70,16 @@ module.exports = function (deps) {
     function sendMatchIsDeadMessageToUserSocketConnection({ userId, matchId }) {
         const userConnection = socketRepository.getForUser(userId);
         try {
-            userConnection.emit('match', { matchId, playerId: userId, action: 'matchIsDead' });
-        }
-        catch(error) {
-            logger.log(`Disconnected user - Tried to emit to user that has disconnected (matchId:${matchId}, userId:${userId})`, 'match');
+            userConnection.emit("match", {
+                matchId,
+                playerId: userId,
+                action: "matchIsDead",
+            });
+        } catch (error) {
+            logger.log(
+                `Disconnected user - Tried to emit to user that has disconnected (matchId:${matchId}, userId:${userId})`,
+                "match"
+            );
         }
     }
 };

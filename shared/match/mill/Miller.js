@@ -1,5 +1,5 @@
 const Commander = require("../commander/Commander.js");
-const _canMill = require('./canMill.js');
+const _canMill = require("./canMill.js");
 
 module.exports = function ({
     queryPlayerRequirements,
@@ -7,12 +7,11 @@ module.exports = function ({
     playerCommanders,
     playerRuleService,
     opponentStateService,
-    opponentActionLog
+    opponentActionLog,
 }) {
-
     return {
         canMill,
-        mill
+        mill,
     };
 
     function canMill() {
@@ -20,8 +19,10 @@ module.exports = function ({
             isWaitingOnOpponentFinishingRequirement: queryPlayerRequirements.isWaitingOnOpponentFinishingRequirement(),
             opponentDeckIsEmpty: opponentDeckIsEmpty(),
             playerHasTheMiller: playerCommanders.has(Commander.TheMiller),
-            firstRequirementIsDrawCard: queryPlayerRequirements.firstRequirementIsOfType('drawCard'),
-            moreCardsCanBeDrawnForDrawPhase: playerRuleService.moreCardsCanBeDrawnForDrawPhase()
+            firstRequirementIsDrawCard: queryPlayerRequirements.firstRequirementIsOfType(
+                "drawCard"
+            ),
+            moreCardsCanBeDrawnForDrawPhase: playerRuleService.moreCardsCanBeDrawnForDrawPhase(),
         });
     }
 
@@ -30,7 +31,9 @@ module.exports = function ({
         playerStateService.registerMill({ byEvent });
 
         opponentActionLog.opponentMilledCardsFromYourDeck({
-            milledCardCommonIds: milledCards.map(cardData => cardData.commonId)
+            milledCardCommonIds: milledCards.map(
+                (cardData) => cardData.commonId
+            ),
         });
     }
 

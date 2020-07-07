@@ -1,5 +1,5 @@
-const BaseCard = require('./BaseCard.js');
-const EnergyShield = require('./EnergyShield.js');
+const BaseCard = require("./BaseCard.js");
+const EnergyShield = require("./EnergyShield.js");
 
 module.exports = class EmpMissile extends BaseCard {
     constructor(deps) {
@@ -7,7 +7,7 @@ module.exports = class EmpMissile extends BaseCard {
     }
 
     static get CommonId() {
-        return '7';
+        return "7";
     }
 
     hasSpecialAttackForCardsInZones() {
@@ -19,14 +19,17 @@ module.exports = class EmpMissile extends BaseCard {
         if (!this.canTargetCard(otherCard)) return false;
         if (!this.canAttack()) return false;
 
-        return otherCard.type === 'spaceShip' || otherCard.commonId === EnergyShield.CommonId;
+        return (
+            otherCard.type === "spaceShip" ||
+            otherCard.commonId === EnergyShield.CommonId
+        );
     }
 
     attackCard(defenderCard) {
         const {
             attackerDestroyed,
             defenderParalyzed,
-            defenderDestroyed
+            defenderDestroyed,
         } = this.simulateAttackingCard(defenderCard);
 
         defenderCard.destroyed = defenderDestroyed;
@@ -35,11 +38,13 @@ module.exports = class EmpMissile extends BaseCard {
     }
 
     simulateAttackingCard(defenderCard) {
-        const defenderIsEnergyShield = defenderCard.commonId === EnergyShield.CommonId;
+        const defenderIsEnergyShield =
+            defenderCard.commonId === EnergyShield.CommonId;
         return {
             attackerDestroyed: true,
             defenderDestroyed: defenderIsEnergyShield,
-            defenderParalyzed: defenderCard.type === 'spaceShip' && !defenderIsEnergyShield
+            defenderParalyzed:
+                defenderCard.type === "spaceShip" && !defenderIsEnergyShield,
         };
     }
 };

@@ -1,29 +1,28 @@
-const PlayerCardFactory = require('./card/PlayerCardFactory.js');
+const PlayerCardFactory = require("./card/PlayerCardFactory.js");
 
-module.exports = function PlayerCardServicesFactory({
-    playerServiceFactory
-}) {
-
+module.exports = function PlayerCardServicesFactory({ playerServiceFactory }) {
     const objectsByNameAndPlayerId = {};
 
     const api = {
         _cache: objectsByNameAndPlayerId,
-        playerCardFactory: cached(playerCardFactory)
+        playerCardFactory: cached(playerCardFactory),
     };
 
     return api;
 
     function playerCardFactory(playerId) {
         return PlayerCardFactory({
-            playerStateService: playerServiceFactory.playerStateService(playerId),
-            cardFactory: playerServiceFactory.cardFactory()
+            playerStateService: playerServiceFactory.playerStateService(
+                playerId
+            ),
+            cardFactory: playerServiceFactory.cardFactory(),
         });
     }
 
     function cached(constructor) {
         const name = constructor.name;
         return (playerIdOrUndefined) => {
-            const key = name + ':' + playerIdOrUndefined;
+            const key = name + ":" + playerIdOrUndefined;
             const existingCopy = objectsByNameAndPlayerId[key];
             if (existingCopy) return existingCopy;
 

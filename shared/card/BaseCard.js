@@ -1,8 +1,7 @@
-const simulateAttack = require('./simulateAttack.js');
-const phases = require('../phases.js');
+const simulateAttack = require("./simulateAttack.js");
+const phases = require("../phases.js");
 
 class BaseCard {
-
     constructor({
         card,
         playerId,
@@ -17,7 +16,7 @@ class BaseCard {
         playerPhase,
         addRequirementFromSpec,
         queryBoard,
-        alternativeConditions = {}
+        alternativeConditions = {},
     }) {
         this.playerId = playerId;
 
@@ -41,7 +40,7 @@ class BaseCard {
     }
 
     get commonId() {
-        return this._card.commonId
+        return this._card.commonId;
     }
 
     get CommonId() {
@@ -115,41 +114,53 @@ class BaseCard {
 
     canAttack() {
         if (this.paralyzed) return false;
-        if (!this.attack && !this.hasSpecialAttackForCardsInZones()) return false;
+        if (!this.attack && !this.hasSpecialAttackForCardsInZones())
+            return false;
         if (!this._canThePlayer.attackWithThisCard(this)) return false;
-        if (this.type === 'duration') return false;
+        if (this.type === "duration") return false;
         const isAttackPhase = this._getCurrentPhase() === phases.PHASES.attack;
         if (!isAttackPhase) return false;
 
         const turn = this._matchService.getTurn();
-        const attacksOnTurn = this._queryEvents.getAttacksOnTurn(this.id, turn).length;
+        const attacksOnTurn = this._queryEvents.getAttacksOnTurn(this.id, turn)
+            .length;
         if (attacksOnTurn >= this.numberOfAttacksPerTurn) return false;
-        if (!this.canMoveAndAttackOnSameTurn() && this._hasMovedThisTurn()) return false;
+        if (!this.canMoveAndAttackOnSameTurn() && this._hasMovedThisTurn())
+            return false;
 
         return true;
     }
 
-    canAttackStationCards() { //TODO Cleanup from changes to missiles, they can now "attackFromHomeZone" and should not be checked if has moved
+    canAttackStationCards() {
+        //TODO Cleanup from changes to missiles, they can now "attackFromHomeZone" and should not be checked if has moved
         if (!this.canAttack()) return false;
         if (!this.attack) return false;
         if (!this._canThePlayer.attackStationCards()) return false;
         const turn = this._matchService.getTurn();
         const isInHomeZone = this.isInHomeZone();
-        const isMissile = this.type === 'missile';
+        const isMissile = this.type === "missile";
 
-        const canAttackFromHomeZone = (isInHomeZone && this.canAttackCardsInOtherZone());
-        const hasMovedOnPreviousTurn = this._queryEvents.hasMovedOnPreviousTurn(this.id, turn);
-        const hasWaitedAndCanAttackFromOpponentZone = (hasMovedOnPreviousTurn && !isInHomeZone);
-        const isMissileAndCanAttackFromOpponentZone = (isMissile && !isInHomeZone);
+        const canAttackFromHomeZone =
+            isInHomeZone && this.canAttackCardsInOtherZone();
+        const hasMovedOnPreviousTurn = this._queryEvents.hasMovedOnPreviousTurn(
+            this.id,
+            turn
+        );
+        const hasWaitedAndCanAttackFromOpponentZone =
+            hasMovedOnPreviousTurn && !isInHomeZone;
+        const isMissileAndCanAttackFromOpponentZone =
+            isMissile && !isInHomeZone;
 
-        return canAttackFromHomeZone
-            || hasWaitedAndCanAttackFromOpponentZone
-            || isMissileAndCanAttackFromOpponentZone;
+        return (
+            canAttackFromHomeZone ||
+            hasWaitedAndCanAttackFromOpponentZone ||
+            isMissileAndCanAttackFromOpponentZone
+        );
     }
 
-    canAttackCard(otherCard) { //TODO rename "canTargetCardForAttack", also perhaps this belongs in a more higher level class?
-        return this.canTargetCard(otherCard)
-            && this.canAttack();
+    canAttackCard(otherCard) {
+        //TODO rename "canTargetCardForAttack", also perhaps this belongs in a more higher level class?
+        return this.canTargetCard(otherCard) && this.canAttack();
     }
 
     canTargetCardForSacrifice(otherCard) {
@@ -165,17 +176,20 @@ class BaseCard {
     }
 
     canMove() {
-        if (this.type === 'defense') return false;
-        if (this.type === 'duration') return false;
+        if (this.type === "defense") return false;
+        if (this.type === "duration") return false;
         if (this.paralyzed) return false;
 
-        if (this._getCurrentPhase() !== 'attack') return false;
+        if (this._getCurrentPhase() !== "attack") return false;
         if (!this._canThePlayer.moveThisCard(this)) return false;
 
         if (this._hasMovedThisTurn()) return false;
-        if (!this.canMoveAndAttackOnSameTurn() && this._hasAttackedThisTurn()) return false;
+        if (!this.canMoveAndAttackOnSameTurn() && this._hasAttackedThisTurn())
+            return false;
 
-        const putDownOnTurn = this._queryEvents.getTurnWhenCardWasPutDown(this.id);
+        const putDownOnTurn = this._queryEvents.getTurnWhenCardWasPutDown(
+            this.id
+        );
         const turn = this._matchService.getTurn();
         return putDownOnTurn !== turn || this.canMoveOnTurnWhenPutDown();
     }
@@ -183,30 +197,32 @@ class BaseCard {
     canBeRepaired() {
         if (this.isStationCard()) {
             return this.isFlipped();
-        }
-        else {
+        } else {
             return !!this.damage || this.paralyzed;
         }
     }
 
     canTargetCard(otherCard) {
         if (!otherCard.canBeTargeted()) return false;
-        if (otherCard.type === 'duration') return false;
+        if (otherCard.type === "duration") return false;
         if (otherCard.playerId === this.playerId) return false;
 
-        return this.canAttackCardsInOtherZone()
-            || this._matchService.cardsAreInSameZone(this, otherCard);
+        return (
+            this.canAttackCardsInOtherZone() ||
+            this._matchService.cardsAreInSameZone(this, otherCard)
+        );
     }
 
     canBeTargeted() {
         return true;
     }
 
-    attackCard(defenderCard) { //TODO Perhaps attack logic should be in an outside class?
+    attackCard(defenderCard) {
+        //TODO Perhaps attack logic should be in an outside class?
         const {
             attackerDestroyed,
             defenderDestroyed,
-            defenderDamage
+            defenderDamage,
         } = this.simulateAttackingCard(defenderCard);
 
         defenderCard.damage = defenderDamage;
@@ -215,7 +231,7 @@ class BaseCard {
     }
 
     simulateAttackingCard(defenderCard) {
-        return simulateAttack(this, defenderCard)
+        return simulateAttack(this, defenderCard);
     }
 
     canBeSacrificed() {
@@ -223,7 +239,7 @@ class BaseCard {
     }
 
     canAttackCardsInOtherZone() {
-        if (this.type === 'missile') {
+        if (this.type === "missile") {
             return this.canMove() && this.canMoveAndAttackOnSameTurn();
         }
         return false;
@@ -234,7 +250,7 @@ class BaseCard {
     }
 
     stopsStationAttack() {
-        return false
+        return false;
     }
 
     canOnlyHaveOneInHomeZone() {
@@ -242,8 +258,10 @@ class BaseCard {
     }
 
     isInHomeZone() {
-        return this.isStationCard()
-            || this._playerStateService.isCardInHomeZone(this.id);
+        return (
+            this.isStationCard() ||
+            this._playerStateService.isCardInHomeZone(this.id)
+        );
     }
 
     isFlippedStationCard() {
@@ -283,13 +301,15 @@ class BaseCard {
     }
 
     canBePlayed() {
-        return this._canGenerallyPlayCardsOrCanAlwaysPlayCard()
-            && this._ifHasControlOfOpponentTurnCanPlayCard()
-            && this._isEventCardAndCanPlayEventCards()
-            && this._canThePlayer.affordCard(this)
-            && !this._wouldOverstepMaxInPlayLimit()
-            && this._canBePlayedInThisPhase()
-            && !this._someCardIsPreventingThisCardToBePlayed();
+        return (
+            this._canGenerallyPlayCardsOrCanAlwaysPlayCard() &&
+            this._ifHasControlOfOpponentTurnCanPlayCard() &&
+            this._isEventCardAndCanPlayEventCards() &&
+            this._canThePlayer.affordCard(this) &&
+            !this._wouldOverstepMaxInPlayLimit() &&
+            this._canBePlayedInThisPhase() &&
+            !this._someCardIsPreventingThisCardToBePlayed()
+        );
     }
 
     _canBePlayedInThisPhase() {
@@ -305,8 +325,10 @@ class BaseCard {
     }
 
     _canGenerallyPlayCardsOrCanAlwaysPlayCard() {
-        return this._playerRuleService.canPutDownCardsInHomeZone()
-            || this.canBePutDownAnyTime();
+        return (
+            this._playerRuleService.canPutDownCardsInHomeZone() ||
+            this.canBePutDownAnyTime()
+        );
     }
 
     _ifHasControlOfOpponentTurnCanPlayCard() {
@@ -317,7 +339,7 @@ class BaseCard {
     }
 
     _isEventCardAndCanPlayEventCards() {
-        if (this.type === 'event') {
+        if (this.type === "event") {
             return this._playerRuleService.canPutDownEventCards();
         }
         return true;
@@ -342,12 +364,18 @@ class BaseCard {
 
     _hasAttackedThisTurn() {
         const currentTurn = this._matchService.getTurn();
-        const attacksOnTurn = this._queryEvents.getAttacksOnTurn(this.id, currentTurn).length;
+        const attacksOnTurn = this._queryEvents.getAttacksOnTurn(
+            this.id,
+            currentTurn
+        ).length;
         return attacksOnTurn > 0;
     }
 
     _getCurrentPhase() {
-        return this._alternativeConditions.phase || this._playerStateService.getPhase();
+        return (
+            this._alternativeConditions.phase ||
+            this._playerStateService.getPhase()
+        );
     }
 }
 

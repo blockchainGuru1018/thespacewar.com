@@ -1,11 +1,11 @@
-const sinon = require('sinon');
-require('./lib/addLegacyMethodsToSinon.js')(sinon);
-const assert = require('./lib/assert.js');
-const refute = require('./lib/refute.js');
-const timeoutPromise = require('./lib/timeoutPromise.js');
-const fakeClock = require('./lib/fakeClock.js');
-const defaults = require('lodash.defaults');
-const defaultsDeep = require('lodash.defaultsdeep');
+const sinon = require("sinon");
+require("./lib/addLegacyMethodsToSinon.js")(sinon);
+const assert = require("./lib/assert.js");
+const refute = require("./lib/refute.js");
+const timeoutPromise = require("./lib/timeoutPromise.js");
+const fakeClock = require("./lib/fakeClock.js");
+const defaults = require("lodash.defaults");
+const defaultsDeep = require("lodash.defaultsdeep");
 
 module.exports = {
     assert: assert,
@@ -15,5 +15,5 @@ module.exports = {
     fakeClock: fakeClock,
     timeoutPromise: timeoutPromise,
     defaults: defaults,
-    defaultsDeep: defaultsDeep
+    defaultsDeep: defaultsDeep,
 };

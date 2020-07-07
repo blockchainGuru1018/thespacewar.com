@@ -1,11 +1,7 @@
-module.exports = function ({
-    playerServiceProvider,
-    matchService
-}) {
-
+module.exports = function ({ playerServiceProvider, matchService }) {
     return {
-        getType: () => 'removeAllRequirements',
-        forPlayerWithData
+        getType: () => "removeAllRequirements",
+        forPlayerWithData,
     };
 
     function forPlayerWithData(playerId) {
@@ -16,8 +12,10 @@ module.exports = function ({
     }
 
     function removePlayerRequirements(playerId) {
-        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        playerStateService.update(playerState => {
+        const playerStateService = playerServiceProvider.getStateServiceById(
+            playerId
+        );
+        playerStateService.update((playerState) => {
             playerState.requirements = [];
         });
     }

@@ -60,7 +60,10 @@ describe("Destroy Duration Card", () => {
                         }),
                     ],
                     cardsInZone: [
-                        createCard({ id: "C1A", commonId: DestroyDurationCommonId }),
+                        createCard({
+                            id: "C1A",
+                            commonId: DestroyDurationCommonId,
+                        }),
                     ],
                 },
                 P2A: {
@@ -85,5 +88,3 @@ function catchError(callback) {
         return error;
     }
 }
-
-

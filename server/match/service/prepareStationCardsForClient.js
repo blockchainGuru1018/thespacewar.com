@@ -5,7 +5,7 @@ function prepareStationCardsForClient(stationCards) {
 function prepareStationCardForClient(stationCard) {
     const model = {
         id: stationCard.card.id,
-        place: stationCard.place
+        place: stationCard.place,
     };
     if (stationCard.flipped) {
         model.flipped = true;

@@ -1,8 +1,10 @@
-const CancelRequirementCommand = require('../match/command/CancelRequirementCommand.js');
+const CancelRequirementCommand = require("../match/command/CancelRequirementCommand.js");
 
-test('should match only requirements that are cancelable', () => {
+test("should match only requirements that are cancelable", () => {
     const requirementUpdater = { exists: () => true, resolve: jest.fn() };
-    const createPlayerRequirementUpdater = jest.fn().mockReturnValue(requirementUpdater);
+    const createPlayerRequirementUpdater = jest
+        .fn()
+        .mockReturnValue(requirementUpdater);
     const command = createCommand({ createPlayerRequirementUpdater });
 
     command();
@@ -11,7 +13,7 @@ test('should match only requirements that are cancelable', () => {
     expect(requirementUpdater.resolve).toBeCalled();
 });
 
-test('should match only requirements that are cancelable', () => {
+test("should match only requirements that are cancelable", () => {
     const requirementUpdater = { exists: () => false, resolve: jest.fn() };
     const createPlayerRequirementUpdater = () => requirementUpdater;
     const command = createCommand({ createPlayerRequirementUpdater });
@@ -19,21 +21,20 @@ test('should match only requirements that are cancelable', () => {
     const error = catchError(() => command());
 
     expect(error).toBeDefined();
-    expect(error.message).toBe('No cancelable requirement');
+    expect(error.message).toBe("No cancelable requirement");
     expect(requirementUpdater.resolve).not.toBeCalled();
 });
 
 function createCommand(options = {}) {
     return CancelRequirementCommand({
-        ...options
+        ...options,
     });
 }
 
 function catchError(callback) {
     try {
         callback();
-    }
-    catch (error) {
+    } catch (error) {
         return error;
     }
 }

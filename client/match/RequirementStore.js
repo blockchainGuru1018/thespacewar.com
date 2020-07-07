@@ -1,14 +1,9 @@
-module.exports = function ({
-    rootStore,
-    cardInfoRepository,
-    matchController
-}) {
-
+module.exports = function ({ rootStore, cardInfoRepository, matchController }) {
     return {
-        name: 'requirement',
+        name: "requirement",
         namespaced: true,
         state: {
-            selectedStationCardIdsForRequirement: []
+            selectedStationCardIdsForRequirement: [],
         },
         getters: {
             waitingForOtherPlayerToFinishRequirements,
@@ -27,13 +22,13 @@ module.exports = function ({
             attackerRequirement,
             requirementCardImageUrl,
             requirementIsCancelable,
-            _firstCardIdThatCanLookAtHandSizeStationRow
+            _firstCardIdThatCanLookAtHandSizeStationRow,
         },
         actions: {
             selectStationCardForRequirement,
             lookAtHandSizeStationRow,
-            cancelRequirement
-        }
+            cancelRequirement,
+        },
     };
 
     function waitingForOtherPlayerToFinishRequirements(state, getters) {
@@ -41,7 +36,7 @@ module.exports = function ({
     }
 
     function waitingRequirement(state, getters, rootState) {
-        return rootState.match.requirements.find(r => r.waiting);
+        return rootState.match.requirements.find((r) => r.waiting);
     }
 
     function firstRequirement(state, getters, rootState) {
@@ -52,44 +47,56 @@ module.exports = function ({
     }
 
     function firstRequirementIsDiscardCard(state, getters) {
-        return getters.firstRequirement
-            && getters.firstRequirement.type === 'discardCard';
+        return (
+            getters.firstRequirement &&
+            getters.firstRequirement.type === "discardCard"
+        );
     }
 
     function firstRequirementIsDamageStationCard(state, getters) {
-        return getters.firstRequirement
-            && getters.firstRequirement.type === 'damageStationCard';
+        return (
+            getters.firstRequirement &&
+            getters.firstRequirement.type === "damageStationCard"
+        );
     }
 
     function firstRequirementIsDamageShieldCard(state, getters) {
-        const isFirstRequirementIsDamageShieldCard = getters.firstRequirement
-        && getters.firstRequirement.type === 'damageShieldCard';
-        return isFirstRequirementIsDamageShieldCard
+        const isFirstRequirementIsDamageShieldCard =
+            getters.firstRequirement &&
+            getters.firstRequirement.type === "damageShieldCard";
+        return isFirstRequirementIsDamageShieldCard;
     }
 
     function firstRequirementIsDrawCard(state, getters) {
-        return getters.firstRequirement
-            && getters.firstRequirement.type === 'drawCard';
+        return (
+            getters.firstRequirement &&
+            getters.firstRequirement.type === "drawCard"
+        );
     }
 
     function firstRequirementIsFindCard(state, getters) {
-        return getters.firstRequirement
-            && getters.firstRequirement.type === 'findCard';
+        return (
+            getters.firstRequirement &&
+            getters.firstRequirement.type === "findCard"
+        );
     }
 
     function firstRequirementIsCounterCard(state, getters) {
-        return getters.firstRequirement
-            && getters.firstRequirement.type === 'counterCard';
+        return (
+            getters.firstRequirement &&
+            getters.firstRequirement.type === "counterCard"
+        );
     }
 
     function firstRequirementIsCounterAttack(state, getters) {
-        return getters.firstRequirement
-            && getters.firstRequirement.type === 'counterAttack';
+        return (
+            getters.firstRequirement &&
+            getters.firstRequirement.type === "counterAttack"
+        );
     }
 
     function countInFirstRequirement(state, getters) {
-        return getters.firstRequirement
-            && getters.firstRequirement.count;
+        return getters.firstRequirement && getters.firstRequirement.count;
     }
 
     function selectedCardsCount(state, getters) {
@@ -102,11 +109,11 @@ module.exports = function ({
         return getters.countInFirstRequirement - getters.selectedCardsCount;
     }
     function attackerRequirement(state, getters) {
-        return getters.firstRequirement.cardCommonId
+        return getters.firstRequirement.cardCommonId;
     }
     function requirementCardImageUrl(state, getters) {
         const firstRequirement = getters.firstRequirement;
-        if (!firstRequirement || !firstRequirement.cardCommonId) return '';
+        if (!firstRequirement || !firstRequirement.cardCommonId) return "";
         return cardInfoRepository.getImageUrl(firstRequirement.cardCommonId);
     }
 
@@ -114,8 +121,15 @@ module.exports = function ({
         return getters.firstRequirement.cancelable;
     }
 
-    function _firstCardIdThatCanLookAtHandSizeStationRow(state, getters, rootState, rootGetters) {
-        const cards = rootGetters['match/cardsThatCanLookAtHandSizeStationRow']();
+    function _firstCardIdThatCanLookAtHandSizeStationRow(
+        state,
+        getters,
+        rootState,
+        rootGetters
+    ) {
+        const cards = rootGetters[
+            "match/cardsThatCanLookAtHandSizeStationRow"
+        ]();
         const firstCard = cards[0];
         return firstCard.id;
     }
@@ -126,16 +140,19 @@ module.exports = function ({
             const targetIds = state.selectedStationCardIdsForRequirement.slice();
             state.selectedStationCardIdsForRequirement = [];
 
-            rootStore.dispatch('match/damageStationCards', targetIds);
+            rootStore.dispatch("match/damageStationCards", targetIds);
         }
     }
 
     function lookAtHandSizeStationRow({ getters }) {
-        const cardId = getters['_firstCardIdThatCanLookAtHandSizeStationRow'];
-        matchController.emit('lookAtStationRow', { stationRow: 'handSize', cardId });
+        const cardId = getters["_firstCardIdThatCanLookAtHandSizeStationRow"];
+        matchController.emit("lookAtStationRow", {
+            stationRow: "handSize",
+            cardId,
+        });
     }
 
     function cancelRequirement({}) {
-        matchController.emit('cancelRequirement');
+        matchController.emit("cancelRequirement");
     }
 };

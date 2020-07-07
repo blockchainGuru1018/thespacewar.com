@@ -1,16 +1,18 @@
-const Commander = require('./Commander.js');
-const FrankJohnson = require('./FrankJohnson.js');
+const Commander = require("./Commander.js");
+const FrankJohnson = require("./FrankJohnson.js");
 
 module.exports = function ({ playerStateService }) {
     return {
         has,
         get,
         select,
-        hasSelectedSomeCommander
+        hasSelectedSomeCommander,
     };
 
     function has(commanderType) {
-        return playerStateService.getPlayerState().commanders.includes(commanderType);
+        return playerStateService
+            .getPlayerState()
+            .commanders.includes(commanderType);
     }
 
     function get(commanderType) {
@@ -20,7 +22,7 @@ module.exports = function ({ playerStateService }) {
     }
 
     function select(commanderType) {
-        playerStateService.update(playerState => {
+        playerStateService.update((playerState) => {
             playerState.commanders = [commanderType];
         });
     }

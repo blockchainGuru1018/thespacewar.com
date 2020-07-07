@@ -2,11 +2,11 @@ module.exports = function ({
     card,
     playerStateService,
     repairCardPriority,
-    matchController
+    matchController,
 }) {
     return {
         canDoIt,
-        doIt
+        doIt,
     };
 
     function canDoIt() {
@@ -14,13 +14,18 @@ module.exports = function ({
     }
 
     function doIt() {
-        const repairableCards = playerStateService.getMatchingBehaviourCardsFromZoneOrStation(canRepairCard);
+        const repairableCards = playerStateService.getMatchingBehaviourCardsFromZoneOrStation(
+            canRepairCard
+        );
         const cardToRepairId = repairCardPriority(repairableCards);
         repairCard(cardToRepairId);
     }
 
     function repairCard(cardToRepairId) {
-        matchController.emit('repairCard', { repairerCardId: card.id, cardToRepairId });
+        matchController.emit("repairCard", {
+            repairerCardId: card.id,
+            cardToRepairId,
+        });
     }
 
     function canRepairCard(otherCard) {

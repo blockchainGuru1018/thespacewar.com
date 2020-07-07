@@ -1,8 +1,7 @@
-const info = require('./info/12.config.js');
-const BaseCard = require('./BaseCard.js');
+const info = require("./info/12.config.js");
+const BaseCard = require("./BaseCard.js");
 
 class Neutralization extends BaseCard {
-
     constructor({ addRequirementFromSpec, ...deps }) {
         super(deps);
         this._addRequirementFromSpec = addRequirementFromSpec;

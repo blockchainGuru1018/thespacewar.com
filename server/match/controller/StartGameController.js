@@ -3,15 +3,14 @@ function StartGameController({
     matchComService,
     playerServiceProvider,
     playerServiceFactory,
-    playerRequirementUpdaterFactory
+    playerRequirementUpdaterFactory,
 }) {
-
     return {
         start,
         selectPlayerToStart,
         selectCommander,
         selectStartingStationCard,
-        repairPotentiallyInconsistentState //TODO Move this to its own class
+        repairPotentiallyInconsistentState, //TODO Move this to its own class
     };
 
     function start(playerId, { useTheSwarmDeck = false } = {}) {
@@ -20,14 +19,16 @@ function StartGameController({
         if (matchService.allPlayersConnected()) {
             repairPlayersPotentiallyInconsistentState(playerIds);
             matchComService.emitCurrentStateToPlayers();
-        }
-        else {
+        } else {
             matchService.connectPlayer(playerId);
             if (matchService.allPlayersConnected()) {
                 resetPlayers(playerIds, useTheSwarmDeck);
 
-                const playerGameTimer = playerServiceFactory.playerGameTimer(playerId);
-                const timePerPlayer = matchService.getGameConfigEntity().timePerPlayerInMinutes;
+                const playerGameTimer = playerServiceFactory.playerGameTimer(
+                    playerId
+                );
+                const timePerPlayer = matchService.getGameConfigEntity()
+                    .timePerPlayerInMinutes;
                 playerGameTimer.resetAll(timePerPlayer);
 
                 matchComService.emitCurrentStateToPlayers();
@@ -43,9 +44,14 @@ function StartGameController({
     }
 
     function selectCommander(playerId, { commander }) {
-        if (matchService.getReadyPlayerIds().includes(playerId)) throw new Error('Cannot select commander when has registered as ready');
+        if (matchService.getReadyPlayerIds().includes(playerId))
+            throw new Error(
+                "Cannot select commander when has registered as ready"
+            );
 
-        const playerCommanders = playerServiceFactory.playerCommanders(playerId);
+        const playerCommanders = playerServiceFactory.playerCommanders(
+            playerId
+        );
         playerCommanders.select(commander);
     }
 
@@ -64,7 +70,9 @@ function StartGameController({
 
     function resetPlayers(playerIds, useTheSwarmDeck) {
         for (const playerId of playerIds) {
-            const playerStateService = playerServiceFactory.playerStateService(playerId);
+            const playerStateService = playerServiceFactory.playerStateService(
+                playerId
+            );
             playerStateService.reset(useTheSwarmDeck);
         }
     }
@@ -72,10 +80,16 @@ function StartGameController({
     function repairPotentiallyInconsistentState(playerId) {
         const opponentId = matchService.getOpponentId(playerId);
         repairRequirements({
-            playerStateService: playerServiceFactory.playerStateService(playerId),
+            playerStateService: playerServiceFactory.playerStateService(
+                playerId
+            ),
             playerRequirementUpdaterFactory,
-            playerRequirementService: playerServiceProvider.getRequirementServiceById(playerId),
-            opponentRequirementService: playerServiceProvider.getRequirementServiceById(opponentId)
+            playerRequirementService: playerServiceProvider.getRequirementServiceById(
+                playerId
+            ),
+            opponentRequirementService: playerServiceProvider.getRequirementServiceById(
+                opponentId
+            ),
         });
     }
 }
@@ -84,28 +98,44 @@ function repairRequirements({
     playerStateService,
     playerRequirementUpdaterFactory,
     playerRequirementService,
-    opponentRequirementService
+    opponentRequirementService,
 }) {
-    let playerWaitingRequirement = playerRequirementService.getFirstMatchingRequirement({ waiting: true });
-    let opponentWaitingRequirement = opponentRequirementService.getFirstMatchingRequirement({ waiting: true });
+    let playerWaitingRequirement = playerRequirementService.getFirstMatchingRequirement(
+        { waiting: true }
+    );
+    let opponentWaitingRequirement = opponentRequirementService.getFirstMatchingRequirement(
+        { waiting: true }
+    );
     while (!!playerWaitingRequirement !== !!opponentWaitingRequirement) {
         if (playerWaitingRequirement) {
-            playerRequirementService.removeFirstMatchingRequirement({ waiting: true });
-        }
-        else {
-            opponentRequirementService.removeFirstMatchingRequirement({ waiting: true });
+            playerRequirementService.removeFirstMatchingRequirement({
+                waiting: true,
+            });
+        } else {
+            opponentRequirementService.removeFirstMatchingRequirement({
+                waiting: true,
+            });
         }
 
-        playerWaitingRequirement = playerRequirementService.getFirstMatchingRequirement({ waiting: true });
-        opponentWaitingRequirement = opponentRequirementService.getFirstMatchingRequirement({ waiting: true });
+        playerWaitingRequirement = playerRequirementService.getFirstMatchingRequirement(
+            { waiting: true }
+        );
+        opponentWaitingRequirement = opponentRequirementService.getFirstMatchingRequirement(
+            { waiting: true }
+        );
     }
 
-    const discardCardRequirement = playerRequirementService.getFirstMatchingRequirement({ type: 'discardCard' });
+    const discardCardRequirement = playerRequirementService.getFirstMatchingRequirement(
+        { type: "discardCard" }
+    );
     if (discardCardRequirement && discardCardRequirement.count > 0) {
         const cardsOnHandCount = playerStateService.getCardsOnHandCount();
         if (cardsOnHandCount === 0) {
             const playerId = playerStateService.getPlayerId();
-            const requirementUpdater = playerRequirementUpdaterFactory.create(playerId, { type: 'discardCard' });
+            const requirementUpdater = playerRequirementUpdaterFactory.create(
+                playerId,
+                { type: "discardCard" }
+            );
             requirementUpdater.completeRequirement();
         }
     }

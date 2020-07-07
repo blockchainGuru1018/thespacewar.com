@@ -1,5 +1,5 @@
-const gameConfig = require('../shared/gameConfig.js');
-const serverRelativePath = '../server/server.js';
+const gameConfig = require("../shared/gameConfig.js");
+const serverRelativePath = "../server/server.js";
 let server = require(serverRelativePath);
 
 init();

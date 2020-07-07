@@ -1,5 +1,5 @@
-const {setupFakeLeaderLine} = require('./fakeLeaderLine.js');
-const jsdomDevtoolsFormatter = require('jsdom-devtools-formatter');
+const { setupFakeLeaderLine } = require("./fakeLeaderLine.js");
+const jsdomDevtoolsFormatter = require("jsdom-devtools-formatter");
 
 jsdomDevtoolsFormatter.install();
 

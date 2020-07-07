@@ -2,11 +2,10 @@ const methods = {
     describe,
     test,
     beforeEach,
-    afterEach
+    afterEach,
 };
 
 module.exports = function (bochaTests) {
-
     const testContext = {};
 
     const testTree = createTraversableTreeFromBochaTests(bochaTests);
@@ -19,14 +18,16 @@ module.exports = function (bochaTests) {
         while (stack.length > 0) {
             let piece = stack.pop();
 
-            if (piece.method === 'beforeEach' || piece.method === 'afterEach') {
+            if (piece.method === "beforeEach" || piece.method === "afterEach") {
                 callbacks.push(function () {
                     methods[piece.method](piece.fn);
                 });
-            }
-            else if (piece.method === 'describe') {
-                const subCallbacks = createFinalJestTests(piece.stack, depth + 1);
-                if (piece.name.startsWith('=>')) {
+            } else if (piece.method === "describe") {
+                const subCallbacks = createFinalJestTests(
+                    piece.stack,
+                    depth + 1
+                );
+                if (piece.name.startsWith("=>")) {
                     callbacks.push(function () {
                         methods[piece.method].only(piece.name, function () {
                             for (const subCallback of subCallbacks) {
@@ -34,8 +35,7 @@ module.exports = function (bochaTests) {
                             }
                         });
                     });
-                }
-                else {
+                } else {
                     callbacks.push(function () {
                         methods[piece.method](piece.name, function () {
                             for (const subCallback of subCallbacks) {
@@ -44,18 +44,22 @@ module.exports = function (bochaTests) {
                         });
                     });
                 }
-            }
-            else if (piece.method === 'test') {
-                while (piece && piece.method === 'test') {
+            } else if (piece.method === "test") {
+                while (piece && piece.method === "test") {
                     const pieceToUse = piece;
-                    if (piece.name.startsWith('=>')) {
+                    if (piece.name.startsWith("=>")) {
                         callbacks.push(function () {
-                            methods[pieceToUse.method].only(pieceToUse.name, pieceToUse.fn);
+                            methods[pieceToUse.method].only(
+                                pieceToUse.name,
+                                pieceToUse.fn
+                            );
                         });
-                    }
-                    else {
+                    } else {
                         callbacks.push(function () {
-                            methods[pieceToUse.method](pieceToUse.name, pieceToUse.fn);
+                            methods[pieceToUse.method](
+                                pieceToUse.name,
+                                pieceToUse.fn
+                            );
                         });
                     }
 
@@ -71,23 +75,32 @@ module.exports = function (bochaTests) {
         const stack = [];
 
         for (const key of Object.keys(config)) {
-            if (key === 'setUp') {
-                stack.push({ method: 'beforeEach', fn: config[key].bind(testContext) });
-            }
-            else if (key === 'tearDown') {
-                stack.push({ method: 'afterEach', fn: config[key].bind(testContext) });
-            }
-            else {
-                if (typeof config[key] === 'object') {
-                    const subStack = createTraversableTreeFromBochaTests(config[key]);
+            if (key === "setUp") {
+                stack.push({
+                    method: "beforeEach",
+                    fn: config[key].bind(testContext),
+                });
+            } else if (key === "tearDown") {
+                stack.push({
+                    method: "afterEach",
+                    fn: config[key].bind(testContext),
+                });
+            } else {
+                if (typeof config[key] === "object") {
+                    const subStack = createTraversableTreeFromBochaTests(
+                        config[key]
+                    );
                     stack.push({
-                        method: 'describe',
+                        method: "describe",
                         name: key,
-                        stack: subStack
+                        stack: subStack,
                     });
-                }
-                else if (typeof config[key] === 'function') {
-                    stack.push({ method: 'test', name: key, fn: config[key].bind(testContext) });
+                } else if (typeof config[key] === "function") {
+                    stack.push({
+                        method: "test",
+                        name: key,
+                        fn: config[key].bind(testContext),
+                    });
                 }
             }
         }
@@ -96,7 +109,7 @@ module.exports = function (bochaTests) {
     }
 
     function runTests(jestTestCallbacks) {
-        for(const callback of jestTestCallbacks) {
+        for (const callback of jestTestCallbacks) {
             callback();
         }
     }

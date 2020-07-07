@@ -4,10 +4,10 @@ function FatalErrorUsed({ turn, phase, targetCardCommonId }) {
         created: Date.now(),
         turn,
         phase,
-        targetCardCommonId
+        targetCardCommonId,
     };
 }
 
-FatalErrorUsed.Type = 'fatalErrorUsed';
+FatalErrorUsed.Type = "fatalErrorUsed";
 
 module.exports = FatalErrorUsed;

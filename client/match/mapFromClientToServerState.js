@@ -22,10 +22,12 @@ module.exports = function (clientState) {
                 stationCards: [
                     ...clientState.playerStation.drawCards,
                     ...clientState.playerStation.actionCards,
-                    ...clientState.playerStation.handSizeCards
+                    ...clientState.playerStation.handSizeCards,
                 ],
                 requirements: clientState.requirements,
-                cardsInDeck: new Array(clientState.playerCardsInDeckCount).fill({})
+                cardsInDeck: new Array(clientState.playerCardsInDeckCount).fill(
+                    {}
+                ),
             },
             [clientState.opponentUser.id]: {
                 clock: clientState.opponentClock,
@@ -39,11 +41,11 @@ module.exports = function (clientState) {
                 stationCards: [
                     ...clientState.opponentStation.drawCards,
                     ...clientState.opponentStation.actionCards,
-                    ...clientState.opponentStation.handSizeCards
+                    ...clientState.opponentStation.handSizeCards,
                 ],
-                requirements: clientState.opponentRequirements
-            }
-        }
+                requirements: clientState.opponentRequirements,
+            },
+        },
     };
 
     return state;

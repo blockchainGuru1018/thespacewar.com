@@ -1,10 +1,10 @@
-var assert = require('assert');
+var assert = require("assert");
 
 module.exports = {
     isObject: isObject,
     isArrayOrObject: isArrayOrObject,
     match: match,
-    deepEqual: deepEqual
+    deepEqual: deepEqual,
 };
 
 function isArrayOrObject(value) {
@@ -24,8 +24,7 @@ function match(object, matcher) {
     if (matcherType === "string") {
         matcher = matcher.toLowerCase();
         var notNull = typeof object === "string" || !!object;
-        return notNull &&
-            (String(object)).toLowerCase().indexOf(matcher) >= 0;
+        return notNull && String(object).toLowerCase().indexOf(matcher) >= 0;
     }
 
     if (matcherType === "number") {
@@ -55,12 +54,17 @@ function match(object, matcher) {
         for (var prop in matcher) {
             if (matcher.hasOwnProperty(prop)) {
                 var value = object[prop];
-                if (matcher[prop] === null || typeof matcher[prop] === 'undefined') {
+                if (
+                    matcher[prop] === null ||
+                    typeof matcher[prop] === "undefined"
+                ) {
                     if (value !== matcher[prop]) {
                         return false;
                     }
-                }
-                else if (typeof value === "undefined" || !match(value, matcher[prop])) {
+                } else if (
+                    typeof value === "undefined" ||
+                    !match(value, matcher[prop])
+                ) {
                     return false;
                 }
             }
@@ -68,7 +72,7 @@ function match(object, matcher) {
         return true;
     }
 
-    throw new Error('Expected ' + matcher + ' is not an actual');
+    throw new Error("Expected " + matcher + " is not an actual");
 }
 
 function arrayContains(array, subset, compare) {
@@ -76,7 +80,7 @@ function arrayContains(array, subset, compare) {
     for (var i = 0, l = array.length; i < l; ++i) {
         if (compare(array[i], subset[0])) {
             for (var j = 0, k = subset.length; j < k; ++j) {
-                if ((i + j) >= l) return false;
+                if (i + j >= l) return false;
                 if (!compare(array[i + j], subset[j])) return false;
             }
             return true;
@@ -89,8 +93,7 @@ function deepEqual(actual, expected) {
     try {
         assert.deepEqual(actual, expected);
         return true;
-    }
-    catch (error) {
+    } catch (error) {
         return false;
     }
 }

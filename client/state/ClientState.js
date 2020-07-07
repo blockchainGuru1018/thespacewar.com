@@ -1,15 +1,10 @@
-const MatchMode = require('../../shared/match/MatchMode.js');
+const MatchMode = require("../../shared/match/MatchMode.js");
 const Commander = require("../../shared/match/commander/Commander.js");
-const ClientStateChanger = require('./ClientStateChanger.js');
-const mapFromClientToServerState = require('../../client/match/mapFromClientToServerState.js');
-const GameConfig = require('../../shared/match/GameConfig.js');
+const ClientStateChanger = require("./ClientStateChanger.js");
+const mapFromClientToServerState = require("../../client/match/mapFromClientToServerState.js");
+const GameConfig = require("../../shared/match/GameConfig.js");
 
-function ClientState({
-    userRepository,
-    opponentUser,
-    matchId
-}) {
-
+function ClientState({ userRepository, opponentUser, matchId }) {
     const state = {
         mode: MatchMode.firstMode,
         readyPlayerIds: [],
@@ -20,7 +15,7 @@ function ClientState({
         opponentActionLogEntries: [],
         turn: 1,
         currentPlayer: null,
-        phase: '',
+        phase: "",
         events: [],
         requirements: [],
         matchId,
@@ -33,18 +28,18 @@ function ClientState({
         playerStation: {
             drawCards: [],
             actionCards: [],
-            handSizeCards: []
+            handSizeCards: [],
         },
         playerCardsInOpponentZone: [],
         playerCardsInDeckCount: 0,
         opponentCommanders: [],
-        opponentPhase: '',
+        opponentPhase: "",
         opponentCardCount: 0,
         opponentDiscardedCards: [],
         opponentStation: {
             drawCards: [],
             actionCards: [],
-            handSizeCards: []
+            handSizeCards: [],
         },
         opponentCardsInPlayerZone: [],
         opponentCardsInZone: [],
@@ -60,7 +55,7 @@ function ClientState({
         highlightCardIds: [],
         flashAttackedCardId: null,
         flashDiscardPile: false,
-        flashOpponentDiscardPile: false
+        flashOpponentDiscardPile: false,
     };
 
     let updateListener = () => {};
@@ -70,7 +65,7 @@ function ClientState({
         onUpdate,
         read: () => state,
         toServerState,
-        gameConfig
+        gameConfig,
     };
 
     async function update(clientState) {

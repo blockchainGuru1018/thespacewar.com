@@ -8,15 +8,15 @@ export default function NotificationBannerStore() {
 
     return {
         namespaced: true,
-        name: 'notificationBanner',
+        name: "notificationBanner",
         state: {
             wrapperVisible: false,
             bannerVisible: false,
-            notificationHtml: ''
+            notificationHtml: "",
         },
         actions: {
-            showForActionLogEntry
-        }
+            showForActionLogEntry,
+        },
     };
 
     async function showForActionLogEntry({ state }, entry) {
@@ -46,7 +46,7 @@ export default function NotificationBannerStore() {
 }
 
 function wait() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
         setTimeout(resolve);
     });
 }

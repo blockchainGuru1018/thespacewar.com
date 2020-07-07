@@ -1,32 +1,34 @@
-const RepairCardEvent = require('../event/RepairCardEvent.js');
+const RepairCardEvent = require("../event/RepairCardEvent.js");
 
 module.exports = function ({
     matchService,
     playerStateService,
-    opponentActionLog
+    opponentActionLog,
 }) {
-
     return {
-        cardOrStationCard
+        cardOrStationCard,
     };
 
     function cardOrStationCard(repairerCardId, cardToRepairId) {
-        const cardToRepair = playerStateService.createBehaviourCardById(cardToRepairId);
-        const repairerCard = playerStateService.createBehaviourCardById(repairerCardId);
+        const cardToRepair = playerStateService.createBehaviourCardById(
+            cardToRepairId
+        );
+        const repairerCard = playerStateService.createBehaviourCardById(
+            repairerCardId
+        );
         repairerCard.repairCard(cardToRepair);
 
         if (cardToRepair.isStationCard()) {
             playerStateService.unflipStationCard(cardToRepairId);
             opponentActionLog.opponentRepairedStationCard();
-        }
-        else {
-            playerStateService.updateCardById(cardToRepairId, card => {
+        } else {
+            playerStateService.updateCardById(cardToRepairId, (card) => {
                 Object.assign(card, cardToRepair.getCardData());
             });
             opponentActionLog.opponentRepairedCard({
                 repairedCardId: cardToRepairId,
-                repairedCardCommonId: cardToRepair.commonId
-            })
+                repairedCardCommonId: cardToRepair.commonId,
+            });
         }
 
         registerEvent(repairerCard, cardToRepair);
@@ -34,12 +36,14 @@ module.exports = function ({
 
     function registerEvent(repairerCard, cardToRepair) {
         const currentTurn = matchService.getTurn();
-        playerStateService.storeEvent(RepairCardEvent({
-            turn: currentTurn,
-            cardId: repairerCard.id,
-            cardCommonId: repairerCard.commonId,
-            repairedCardId: cardToRepair.id,
-            repairedCardCommonId: cardToRepair.commonId
-        }));
+        playerStateService.storeEvent(
+            RepairCardEvent({
+                turn: currentTurn,
+                cardId: repairerCard.id,
+                cardCommonId: repairerCard.commonId,
+                repairedCardId: cardToRepair.id,
+                repairedCardCommonId: cardToRepair.commonId,
+            })
+        );
     }
 };

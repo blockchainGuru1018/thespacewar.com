@@ -1,5 +1,5 @@
-const BaseCard = require('./BaseCard.js');
-const CanAttackTwice = require('./mixins/CanAttackTwice.js');
+const BaseCard = require("./BaseCard.js");
+const CanAttackTwice = require("./mixins/CanAttackTwice.js");
 
 module.exports = class TriggerHappyJoe extends CanAttackTwice(BaseCard) {
     constructor(deps) {
@@ -7,6 +7,6 @@ module.exports = class TriggerHappyJoe extends CanAttackTwice(BaseCard) {
     }
 
     static get CommonId() {
-        return '24';
+        return "24";
     }
 };

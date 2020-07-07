@@ -1,19 +1,15 @@
 let LogGame = require("../../serviceShared/LogGameCookie.js");
-const axios = require('axios');
-const UserBuilder = require('../../shared/user/UserBuilder.js');
+const axios = require("axios");
+const UserBuilder = require("../../shared/user/UserBuilder.js");
 const User = require("../../shared/user/User.js");
-const LoginCookie = require('../../serviceShared/LoginCookie.js');
-module.exports = function ({
-    userRepository,
-    gameConfig
-}) {
-
+const LoginCookie = require("../../serviceShared/LoginCookie.js");
+module.exports = function ({ userRepository, gameConfig }) {
     return {
         login,
         guestLogin,
         sendLogGame,
         testAccessKey,
-        getAll
+        getAll,
     };
 
     async function login(req, res) {
@@ -32,29 +28,44 @@ module.exports = function ({
     }
 
     async function sendLogGame(req, res) {
-        let logGame = await new LogGame.logGame(req.body.user_won, req.body.user_lost, req.body.length);
+        let logGame = await new LogGame.logGame(
+            req.body.user_won,
+            req.body.user_lost,
+            req.body.length
+        );
         const config = {
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
         };
-        axios.post('https://thespacewar.com/log-game', logGame.postData(), config).then(response => {
-            res.send(response.data)
-        }).then(error => {
-            res.send(error.statusText)
-        }).catch(error => {
-            res.send(error.todo);
-        });
+        axios
+            .post(
+                "https://thespacewar.com/log-game",
+                logGame.postData(),
+                config
+            )
+            .then((response) => {
+                res.send(response.data);
+            })
+            .then((error) => {
+                res.send(error.statusText);
+            })
+            .catch((error) => {
+                res.send(error.todo);
+            });
     }
 
     function verifyAccessKey(req) {
-        if (req.body.accessKey !== gameConfig.accessKey()) new Error('Wrong key');
+        if (req.body.accessKey !== gameConfig.accessKey())
+            new Error("Wrong key");
     }
 
     function verifyLoginCookie(req) {
-        const loginCookie = LoginCookie.loginCookieFromRawCookieStringOrNull(retrieveRawCookie(req));
+        const loginCookie = LoginCookie.loginCookieFromRawCookieStringOrNull(
+            retrieveRawCookie(req)
+        );
         if (!loginCookie.verify()) {
-            throw new Error('Unauthorized cookie');
+            throw new Error("Unauthorized cookie");
         }
     }
 
@@ -80,7 +91,7 @@ module.exports = function ({
     }
 
     function validGuestUsername(req) {
-        return validUsername(req.body.name)
+        return validUsername(req.body.name);
     }
 
     function validUsernameFromCookie(req) {
@@ -104,16 +115,17 @@ module.exports = function ({
     }
 
     function loginCookieFromRequest(req) {
-        return LoginCookie.loginCookieFromRawCookieStringOrNull(retrieveRawCookie(req));
+        return LoginCookie.loginCookieFromRawCookieStringOrNull(
+            retrieveRawCookie(req)
+        );
     }
 
     function retrieveRawCookie(req) {
         return req.cookies.loggedin;
     }
 
-
     function testAccessKey(req, res) {
-        res.json({valid: req.body.key === gameConfig.accessKey()});
+        res.json({ valid: req.body.key === gameConfig.accessKey() });
     }
 
     async function getAll(req, res) {

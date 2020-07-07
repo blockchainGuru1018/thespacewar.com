@@ -1,32 +1,32 @@
-const ActionPointsCalculator = require('../../shared/match/ActionPointsCalculator.js');
-const FindCardController = require('./controller/FindCardController.js');
-const DrawCardController = require('./controller/DrawCardController.js');
-const AttackController = require('./controller/AttackController.js');
-const DebugController = require('./DebugController.js');
-const MoveCardController = require('./controller/MoveCardController.js');
-const PutDownCardController = require('./controller/PutDownCardController.js');
-const DiscardCardController = require('./controller/DiscardCardController.js');
-const NextPhaseController = require('./controller/NextPhaseController.js');
-const StartGameController = require('./controller/StartGameController.js');
-const OverworkController = require('./controller/OverworkController.js');
-const PerfectPlanController = require('./controller/PerfectPlanController.js');
-const TriggerDormantEffect = require('./command/TriggerDormantEffect.js');
-const LookAtStationRowCommand = require('./command/LookAtStationRowCommand.js');
-const CancelRequirementCommand = require('./command/CancelRequirementCommand.js');
-const CheatController = require('./controller/CheatController.js');
-const MatchComService = require('./service/MatchComService.js');
-const PlayerRequirementUpdaterFactory = require('./PlayerRequirementUpdaterFactory.js');
-const StateChangeListener = require('../../shared/match/StateChangeListener.js');
-const PlayerServiceProvider = require('../../shared/match/PlayerServiceProvider.js');
-const PlayerOverworkFactory = require('../../shared/match/overwork/PlayerOverworkFactory.js');
-const ServiceFactoryFactory = require('../../shared/match/ServiceFactoryFactory.js');
-const LookAtStationRow = require('../../shared/match/card/actions/LookAtStationRow.js');
-const CardsThatCanLookAtHandSizeStationRow = require('../../shared/match/card/query/CardsThatCanLookAtHandSizeStationRow.js');
-const CardCanLookAtHandSizeStationRow = require('../../shared/match/card/query/CardCanLookAtHandSizeStationRow.js');
-const CreatePlayerRequirementUpdater = require('../../shared/match/requirement/CreatePlayerRequirementUpdater.js');
-const MatchMode = require('../../shared/match/MatchMode.js');
-const {PHASES} = require('../../shared/phases.js');
-const {inspect} = require('util');
+const ActionPointsCalculator = require("../../shared/match/ActionPointsCalculator.js");
+const FindCardController = require("./controller/FindCardController.js");
+const DrawCardController = require("./controller/DrawCardController.js");
+const AttackController = require("./controller/AttackController.js");
+const DebugController = require("./DebugController.js");
+const MoveCardController = require("./controller/MoveCardController.js");
+const PutDownCardController = require("./controller/PutDownCardController.js");
+const DiscardCardController = require("./controller/DiscardCardController.js");
+const NextPhaseController = require("./controller/NextPhaseController.js");
+const StartGameController = require("./controller/StartGameController.js");
+const OverworkController = require("./controller/OverworkController.js");
+const PerfectPlanController = require("./controller/PerfectPlanController.js");
+const TriggerDormantEffect = require("./command/TriggerDormantEffect.js");
+const LookAtStationRowCommand = require("./command/LookAtStationRowCommand.js");
+const CancelRequirementCommand = require("./command/CancelRequirementCommand.js");
+const CheatController = require("./controller/CheatController.js");
+const MatchComService = require("./service/MatchComService.js");
+const PlayerRequirementUpdaterFactory = require("./PlayerRequirementUpdaterFactory.js");
+const StateChangeListener = require("../../shared/match/StateChangeListener.js");
+const PlayerServiceProvider = require("../../shared/match/PlayerServiceProvider.js");
+const PlayerOverworkFactory = require("../../shared/match/overwork/PlayerOverworkFactory.js");
+const ServiceFactoryFactory = require("../../shared/match/ServiceFactoryFactory.js");
+const LookAtStationRow = require("../../shared/match/card/actions/LookAtStationRow.js");
+const CardsThatCanLookAtHandSizeStationRow = require("../../shared/match/card/query/CardsThatCanLookAtHandSizeStationRow.js");
+const CardCanLookAtHandSizeStationRow = require("../../shared/match/card/query/CardCanLookAtHandSizeStationRow.js");
+const CreatePlayerRequirementUpdater = require("../../shared/match/requirement/CreatePlayerRequirementUpdater.js");
+const MatchMode = require("../../shared/match/MatchMode.js");
+const { PHASES } = require("../../shared/phases.js");
+const { inspect } = require("util");
 
 module.exports = function ({
     players,
@@ -36,13 +36,13 @@ module.exports = function ({
     rawCardDataRepository,
     endMatch,
     gameConfig,
-    actionPointsCalculator = ActionPointsCalculator({cardInfoRepository}),
-    registerLogGame
+    actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository }),
+    registerLogGame,
 }) {
     const state = createMatchState({
         matchId,
-        playerIds: players.map(p => p.id),
-        firstPlayerId: randomItem(players.map(p => p.id))
+        playerIds: players.map((p) => p.id),
+        firstPlayerId: randomItem(players.map((p) => p.id)),
     });
 
     const serviceFactoryFactory = ServiceFactoryFactory({
@@ -54,7 +54,7 @@ module.exports = function ({
         actionPointsCalculator,
         endMatch,
         logger,
-        registerLogGame
+        registerLogGame,
     });
 
     const gameServiceFactory = serviceFactoryFactory.gameServiceFactory();
@@ -65,7 +65,11 @@ module.exports = function ({
 
     const matchService = playerServiceFactory.matchService();
     const playerServiceProvider = playerServiceFactory.playerServiceProvider();
-    const stateChangeListener = new StateChangeListener({playerServiceProvider, matchService, logger});
+    const stateChangeListener = new StateChangeListener({
+        playerServiceProvider,
+        matchService,
+        logger,
+    });
     const matchComService = new MatchComService({
         players,
         logger,
@@ -73,16 +77,20 @@ module.exports = function ({
         playerServiceProvider,
         playerServiceFactory,
         gameServiceFactory,
-        stateChangeListener
+        stateChangeListener,
     });
 
-    const playerRequirementUpdaterFactory = new PlayerRequirementUpdaterFactory({
-        playerServiceProvider,
-        matchService,
+    const playerRequirementUpdaterFactory = new PlayerRequirementUpdaterFactory(
+        {
+            playerServiceProvider,
+            matchService,
+            playerServiceFactory,
+            playerRequirementServicesFactory,
+        }
+    );
+    const playerOverworkFactory = PlayerOverworkFactory({
         playerServiceFactory,
-        playerRequirementServicesFactory
     });
-    const playerOverworkFactory = PlayerOverworkFactory({playerServiceFactory});
 
     const stateSerializer = gameServiceFactory.stateSerializer();
     const controllerDeps = {
@@ -102,7 +110,7 @@ module.exports = function ({
         playerRequirementServicesFactory,
         playerCardServicesFactory,
         gameActionTimeMachine: gameServiceFactory.gameActionTimeMachine(),
-        gameConfig
+        gameConfig,
     };
 
     const debugController = DebugController(controllerDeps);
@@ -126,12 +134,14 @@ module.exports = function ({
         toggleControlOfTurn: nextPhaseController.onToggleControlOfTurn,
         playerReady: nextPhaseController.playerReady,
         putDownCard: putDownCardController.onPutDownCard,
-        selectStartingStationCard: startGameController.selectStartingStationCard,
+        selectStartingStationCard:
+            startGameController.selectStartingStationCard,
         counterCard: putDownCardController.counterCard,
         cancelCounterCard: putDownCardController.cancelCounterCard,
         drawCard: drawCardController.onDrawCard,
         skipDrawCard: drawCardController.skipDrawCard,
-        discardOpponentTopTwoCards: drawCardController.onDiscardOpponentTopTwoCards,
+        discardOpponentTopTwoCards:
+            drawCardController.onDiscardOpponentTopTwoCards,
         discardCard: discardCardController.onDiscardCard,
         discardDurationCard,
         moveCard: moveCardController.onMoveCard,
@@ -144,16 +154,25 @@ module.exports = function ({
         damageStationCards: attackController.onDamageStationCard,
         damageShieldCards: attackController.onDamageShieldCard,
         selectCardForFindCardRequirement: findCardController.onSelectCard,
-        cancelRequirement: PlayerCommand(CancelRequirementCommand, controllerDeps),
+        cancelRequirement: PlayerCommand(
+            CancelRequirementCommand,
+            controllerDeps
+        ),
         overwork: overworkController.overwork,
         perfectPlan: perfectPlanController.perfectPlan,
-        triggerDormantEffect: PlayerCommand(TriggerDormantEffect, controllerDeps),
-        lookAtStationRow: PlayerCommand(LookAtStationRowCommand, controllerDeps),
+        triggerDormantEffect: PlayerCommand(
+            TriggerDormantEffect,
+            controllerDeps
+        ),
+        lookAtStationRow: PlayerCommand(
+            LookAtStationRowCommand,
+            controllerDeps
+        ),
         endLastStand,
         repairCard,
         retreat,
         restoreSavedMatch: debugController.onRestoreSavedMatch,
-        cheat: cheatController.onCheat
+        cheat: cheatController.onCheat,
     };
     return {
         get id() {
@@ -180,7 +199,7 @@ module.exports = function ({
         updatePlayer: matchComService.updatePlayer.bind(matchComService),
         timeAlive: debugController.timeAlive,
 
-        ...wrapApi({api, matchComService, stateChangeListener})
+        ...wrapApi({ api, matchComService, stateChangeListener }),
     };
 
     function refresh(playerId) {
@@ -189,24 +208,36 @@ module.exports = function ({
     }
 
     function discardDurationCard(playerId, cardId) {
-        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const playerStateService = playerServiceProvider.getStateServiceById(
+            playerId
+        );
 
         if (playerStateService.getPhase() !== PHASES.preparation) {
-            throw CheatError('Cannot discard duration cards after turn your has started');
+            throw CheatError(
+                "Cannot discard duration cards after turn your has started"
+            );
         }
         playerStateService.removeAndDiscardCardFromStationOrZone(cardId);
     }
 
-    function repairCard(playerId, {repairerCardId, cardToRepairId}) {
-        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+    function repairCard(playerId, { repairerCardId, cardToRepairId }) {
+        const playerStateService = playerServiceProvider.getStateServiceById(
+            playerId
+        );
         const cardFactory = playerServiceFactory.cardFactory();
 
         const repairerCardData = playerStateService.findCard(repairerCardId);
-        const repairerCard = cardFactory.createCardForPlayer(repairerCardData, playerId);
-        if (!repairerCard.canRepair()) throw CheatError('Cannot repair');
+        const repairerCard = cardFactory.createCardForPlayer(
+            repairerCardData,
+            playerId
+        );
+        if (!repairerCard.canRepair()) throw CheatError("Cannot repair");
 
-        const cardToRepair = playerStateService.createBehaviourCardById(cardToRepairId);
-        if (!repairerCard.canRepairCard(cardToRepair)) throw CheatError('Cannot repair');
+        const cardToRepair = playerStateService.createBehaviourCardById(
+            cardToRepairId
+        );
+        if (!repairerCard.canRepairCard(cardToRepair))
+            throw CheatError("Cannot repair");
 
         const repair = playerServiceFactory.repair(playerId);
         repair.cardOrStationCard(repairerCardId, cardToRepairId);
@@ -226,8 +257,10 @@ module.exports = function ({
 
     function logError(error) {
         const rawErrorMessage = JSON.stringify(inspect(error), null, 4);
-        const errorMessage = `(${new Date().toISOString()}) Error in action to match: ${error.message} - RAW ERROR: ${rawErrorMessage}`
-        logger.log(errorMessage, 'error');
+        const errorMessage = `(${new Date().toISOString()}) Error in action to match: ${
+            error.message
+        } - RAW ERROR: ${rawErrorMessage}`;
+        logger.log(errorMessage, "error");
     }
 
     function getPlayerState(playerId) {
@@ -248,15 +281,17 @@ module.exports = function ({
     }
 
     function restoreFromRestorableState(restorableStateJson) {
-        return gameServiceFactory.matchRestorer().restoreFromRestorableState({restorableStateJson});
+        return gameServiceFactory
+            .matchRestorer()
+            .restoreFromRestorableState({ restorableStateJson });
     }
 
     function toClientModel() {
         const players = matchComService.getPlayers();
         return {
-            playerIds: players.map(p => p.id),
-            id: matchService.matchId()
-        }
+            playerIds: players.map((p) => p.id),
+            id: matchService.matchId(),
+        };
     }
 
     function hasEnded() {
@@ -264,12 +299,11 @@ module.exports = function ({
     }
 };
 
-function wrapApi({api, matchComService, stateChangeListener}) {
+function wrapApi({ api, matchComService, stateChangeListener }) {
     const wrappedApi = {};
     for (const name of Object.keys(api)) {
-        if (typeof api[name] === 'function') {
+        if (typeof api[name] === "function") {
             wrappedApi[name] = (...args) => {
-
                 //WARNING: For some reason "callEnded" was not always setting its flag to false before the next call runs ".snapshot".
                 // So this was added and it fixed the bug. But it would be nice to know _why_ in the future!
                 matchComService.callStarted();
@@ -297,52 +331,75 @@ function wrapApi({api, matchComService, stateChangeListener}) {
 function CheatError(reason) {
     const error = new Error(reason);
     error.message = reason;
-    error.type = 'CheatDetected';
+    error.type = "CheatDetected";
     return error;
 }
 
 function PlayerCommand(Command, deps) {
     return (playerId, ...args) => {
         const playerServiceFactory = deps.playerServiceFactory;
-        const playerRequirementServicesFactory = deps.playerRequirementServicesFactory;
+        const playerRequirementServicesFactory =
+            deps.playerRequirementServicesFactory;
         const playerCardServicesFactory = deps.playerCardServicesFactory;
         const command = Command({
-            playerStateService: playerServiceFactory.playerStateService(playerId),
+            playerStateService: playerServiceFactory.playerStateService(
+                playerId
+            ),
             canThePlayer: playerServiceFactory.canThePlayer(playerId),
             lookAtStationRow: lookAtStationRow(playerId),
-            playerCardFactory: playerCardServicesFactory.playerCardFactory(playerId),
+            playerCardFactory: playerCardServicesFactory.playerCardFactory(
+                playerId
+            ),
             createPlayerRequirementUpdater: CreatePlayerRequirementUpdater({
-                playerStateService: playerServiceFactory.playerStateService(playerId),
-                playerRequirementService: playerServiceFactory.playerRequirementService(playerId),
-                opponentRequirementService: playerServiceFactory.playerRequirementService(playerServiceFactory.opponentId(playerId)),
-                addRequirementFromSpec: playerServiceFactory.addRequirementFromSpec(playerId),
-                cardFactory: playerServiceFactory.cardFactory()
-            })
+                playerStateService: playerServiceFactory.playerStateService(
+                    playerId
+                ),
+                playerRequirementService: playerServiceFactory.playerRequirementService(
+                    playerId
+                ),
+                opponentRequirementService: playerServiceFactory.playerRequirementService(
+                    playerServiceFactory.opponentId(playerId)
+                ),
+                addRequirementFromSpec: playerServiceFactory.addRequirementFromSpec(
+                    playerId
+                ),
+                cardFactory: playerServiceFactory.cardFactory(),
+            }),
         });
         return command(...args);
 
         function lookAtStationRow(playerId) {
             return LookAtStationRow({
-                cardsThatCanLookAtHandSizeStationRow: CardsThatCanLookAtHandSizeStationRow({
-                    playerStateService: playerServiceFactory.playerStateService(playerId),
-                }),
-                cardCanLookAtHandSizeStationRow: CardCanLookAtHandSizeStationRow({
-                    cardsThatCanLookAtHandSizeStationRow: CardsThatCanLookAtHandSizeStationRow({
-                        playerStateService: playerServiceFactory.playerStateService(playerId),
-                    }),
-                }),
-                addRequirementFromSpec: playerServiceFactory.addRequirementFromSpec(playerId),
-                canAddRequirementFromSpec: playerRequirementServicesFactory.canAddRequirementFromSpec(playerId)
+                cardsThatCanLookAtHandSizeStationRow: CardsThatCanLookAtHandSizeStationRow(
+                    {
+                        playerStateService: playerServiceFactory.playerStateService(
+                            playerId
+                        ),
+                    }
+                ),
+                cardCanLookAtHandSizeStationRow: CardCanLookAtHandSizeStationRow(
+                    {
+                        cardsThatCanLookAtHandSizeStationRow: CardsThatCanLookAtHandSizeStationRow(
+                            {
+                                playerStateService: playerServiceFactory.playerStateService(
+                                    playerId
+                                ),
+                            }
+                        ),
+                    }
+                ),
+                addRequirementFromSpec: playerServiceFactory.addRequirementFromSpec(
+                    playerId
+                ),
+                canAddRequirementFromSpec: playerRequirementServicesFactory.canAddRequirementFromSpec(
+                    playerId
+                ),
             });
         }
     };
 }
 
-function createMatchState({
-    firstPlayerId,
-    playerIds,
-    matchId
-}) {
+function createMatchState({ firstPlayerId, playerIds, matchId }) {
     return {
         matchId,
         mode: MatchMode.firstMode,
@@ -351,15 +408,15 @@ function createMatchState({
         currentPlayer: firstPlayerId,
         playerOrder: [
             firstPlayerId,
-            playerIds.find(id => id !== firstPlayerId)
+            playerIds.find((id) => id !== firstPlayerId),
         ],
         playersConnected: 0,
         readyPlayerIds: [],
         ended: false,
         retreatedPlayerId: null,
         lastStandInfo: null,
-        playerStateById: {}
-    }
+        playerStateById: {},
+    };
 }
 
 function randomItem(collection) {

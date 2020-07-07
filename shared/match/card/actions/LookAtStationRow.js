@@ -2,13 +2,12 @@ module.exports = function LookAtStationRow({
     cardsThatCanLookAtHandSizeStationRow,
     cardCanLookAtHandSizeStationRow,
     addRequirementFromSpec,
-    canAddRequirementFromSpec
+    canAddRequirementFromSpec,
 }) {
-
     return {
         canDoIt,
         cardCanDoIt,
-        doIt
+        doIt,
     };
 
     function canDoIt() {
@@ -20,9 +19,11 @@ module.exports = function LookAtStationRow({
     }
 
     function doIt(card, stationRow) {
-        if (stationRow === 'handSize') {
+        if (stationRow === "handSize") {
             const spec = card.info.requirementSpecsWhenLookAtHandSizeStationRow;
-            if (canAddRequirementFromSpec.forCardWithSpecAndTarget(card, spec)) {
+            if (
+                canAddRequirementFromSpec.forCardWithSpecAndTarget(card, spec)
+            ) {
                 addRequirementFromSpec.forCardAndSpec(card, spec);
             }
         }

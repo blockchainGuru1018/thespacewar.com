@@ -1,25 +1,24 @@
-const Player = require('../player/Player.js');
-const Match = require('./Match.js');
-const CardDataAssembler = require('../../shared/CardDataAssembler.js');
-const CardInfoRepository = require('../../shared/CardInfoRepository.js');
-const MatchRegisterLog = require('./service/MatchRegisterLog.js');
+const Player = require("../player/Player.js");
+const Match = require("./Match.js");
+const CardDataAssembler = require("../../shared/CardDataAssembler.js");
+const CardInfoRepository = require("../../shared/CardInfoRepository.js");
+const MatchRegisterLog = require("./service/MatchRegisterLog.js");
 
-const BotId = 'BOT';
+const BotId = "BOT";
 
 module.exports = function ({
     socketRepository,
     rawCardDataRepository,
     gameConfig,
     logger,
-    userRepository
+    userRepository,
 }) {
-
     const cardDataAssembler = CardDataAssembler({ rawCardDataRepository });
     const cardInfoRepository = CardInfoRepository({ cardDataAssembler });
 
     return {
         create,
-        createWithBot
+        createWithBot,
     };
 
     function create({ users, endMatch }) {
@@ -33,15 +32,13 @@ module.exports = function ({
             rawCardDataRepository,
             gameConfig,
             endMatch: () => endMatch(matchId),
-            registerLogGame: MatchRegisterLog({userRepository}).registerLogGame
+            registerLogGame: MatchRegisterLog({ userRepository })
+                .registerLogGame,
         });
     }
 
     function createWithBot({ user, endMatch }) {
-        const players = [
-            createPlayer(user),
-            createBotForPlayer(user)
-        ];
+        const players = [createPlayer(user), createBotForPlayer(user)];
         const matchId = createId();
         return Match({
             players,
@@ -51,7 +48,8 @@ module.exports = function ({
             rawCardDataRepository,
             gameConfig,
             endMatch: () => endMatch(matchId),
-            registerLogGame: MatchRegisterLog({userRepository}).registerLogGame
+            registerLogGame: MatchRegisterLog({ userRepository })
+                .registerLogGame,
         });
     }
 
@@ -59,19 +57,21 @@ module.exports = function ({
         return Player({
             id: user.id,
             name: user.name,
-            connection: socketRepository.getForUser(user.id)
+            connection: socketRepository.getForUser(user.id),
         });
     }
 
     function createBotForPlayer(playerUser) {
         return Player({
             id: BotId,
-            name: 'Mr.Roboto',
-            connection: socketRepository.getForUser(playerUser.id)
+            name: "Mr.Roboto",
+            connection: socketRepository.getForUser(playerUser.id),
         });
     }
 
     function createId() {
-        return Math.round((Math.random() * 1000000)).toString().padStart(7, '0');
+        return Math.round(Math.random() * 1000000)
+            .toString()
+            .padStart(7, "0");
     }
 };

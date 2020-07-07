@@ -1,36 +1,33 @@
-module.exports = function ({
-    rootStore
-}) {
-
+module.exports = function ({ rootStore }) {
     return {
         namespaced: true,
-        name: 'keyboardShortcuts',
+        name: "keyboardShortcuts",
         actions: {
             init,
-            destroy
-        }
+            destroy,
+        },
     };
 
     function init() {
-        window.addEventListener('keydown', onKeyDown);
+        window.addEventListener("keydown", onKeyDown);
     }
 
     function destroy() {
-        window.removeEventListener('keydown', onKeyDown);
+        window.removeEventListener("keydown", onKeyDown);
     }
 
     function onKeyDown(event) {
-        if (event.key === ' ') {
-            if (rootStore.getters['match/turnControl'].canToggleControlOfTurn()) {
-                rootStore.dispatch('match/toggleControlOfTurn');
+        if (event.key === " ") {
+            if (
+                rootStore.getters["match/turnControl"].canToggleControlOfTurn()
+            ) {
+                rootStore.dispatch("match/toggleControlOfTurn");
             }
-        }
-        else if (event.key === 'Escape') {
+        } else if (event.key === "Escape") {
             if (rootStore.state.escapeMenu.visible) {
-                rootStore.dispatch('escapeMenu/hide');
-            }
-            else {
-                rootStore.dispatch('escapeMenu/show');
+                rootStore.dispatch("escapeMenu/hide");
+            } else {
+                rootStore.dispatch("escapeMenu/show");
             }
         }
     }

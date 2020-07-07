@@ -1,6 +1,6 @@
 function AddCardToHandEvent({ cardId }) {
     return {
-        type: 'addCardToHand',
+        type: "addCardToHand",
         created: Date.now(),
         cardId,
     };

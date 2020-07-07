@@ -1,11 +1,10 @@
 class PlayerRequirementUpdater {
-
     constructor({
         cardFactory,
         playerRequirementService,
         opponentRequirementService,
         requirementMatchConditions,
-        addRequirementFromSpec
+        addRequirementFromSpec,
     }) {
         this._requirementMatchCondition = requirementMatchConditions;
 
@@ -32,61 +31,79 @@ class PlayerRequirementUpdater {
         }
     }
 
-    progressRequirementByCount(count = 1) { //TODO It is to unclear that this removes the requirement if has progressed the requirement so that it is "done"
+    progressRequirementByCount(count = 1) {
+        //TODO It is to unclear that this removes the requirement if has progressed the requirement so that it is "done"
         const requirement = this._get();
         if (requirement.count > count) {
-            this._update(requirement => {
+            this._update((requirement) => {
                 requirement.count -= count;
             });
-        }
-        else if (requirement.common) {
+        } else if (requirement.common) {
             if (this._opponentHasMatchingAndWaitingRequirement()) {
                 this._removeOpponentMatchingAndWaitingRequirement();
                 this.resolve();
-            }
-            else {
-                this._update(requirement => {
+            } else {
+                this._update((requirement) => {
                     requirement.count = 0;
                     requirement.waiting = true;
                 });
             }
-        }
-        else {
+        } else {
             this.resolve();
         }
     }
-    progressRequirementByActionPointsLeft(actionPointsConsumed = 1, isCardGroupsEmpty) { 
+    progressRequirementByActionPointsLeft(
+        actionPointsConsumed = 1,
+        isCardGroupsEmpty
+    ) {
         const requirement = this._get();
-        if(requirement){
-            if (requirement.actionPointsLimit.actionPointsLeft >= actionPointsConsumed) {
-                this._update(requirement => {
+        if (requirement) {
+            if (
+                requirement.actionPointsLimit.actionPointsLeft >=
+                actionPointsConsumed
+            ) {
+                this._update((requirement) => {
                     requirement.actionPointsLimit.actionPointsLeft -= actionPointsConsumed;
-                    requirement.cardGroups[0].cards = requirement.cardGroups[0].cards.filter(card =>card.cost <= requirement.actionPointsLimit.actionPointsLeft)
+                    requirement.cardGroups[0].cards = requirement.cardGroups[0].cards.filter(
+                        (card) =>
+                            card.cost <=
+                            requirement.actionPointsLimit.actionPointsLeft
+                    );
                 });
             }
-            if(requirement.actionPointsLimit.actionPointsLeft === 0 || isCardGroupsEmpty){
+            if (
+                requirement.actionPointsLimit.actionPointsLeft === 0 ||
+                isCardGroupsEmpty
+            ) {
                 this.completeRequirement();
             }
-    } 
+        }
     }
     resolve() {
         const requirement = this._get();
 
-        this._playerRequirementService.removeFirstMatchingRequirement(this._getMatchCondition());
+        this._playerRequirementService.removeFirstMatchingRequirement(
+            this._getMatchCondition()
+        );
 
         if (requirement.whenResolvedAddAlso) {
             for (const spec of requirement.whenResolvedAddAlso) {
-                const card = this._cardFactory.createCardForPlayer(spec._cardData, spec._playerId);
+                const card = this._cardFactory.createCardForPlayer(
+                    spec._cardData,
+                    spec._playerId
+                );
                 this._addRequirementFromSpec.forCardAndSpec(card, spec);
             }
         }
     }
 
     _opponentHasMatchingAndWaitingRequirement() {
-        const opponentWaitingRequirement = this._opponentRequirementService.getFirstMatchingRequirement({
-            ...this._getMatchCondition(),
-            waiting: true
-        });
+        const opponentWaitingRequirement = this._opponentRequirementService.getFirstMatchingRequirement(
+            {
+                ...this._getMatchCondition(),
+                waiting: true,
+            }
+        );
         return !!opponentWaitingRequirement;
     }
 
@@ -94,16 +111,21 @@ class PlayerRequirementUpdater {
         this._opponentRequirementService.removeFirstMatchingRequirement({
             ...this._getMatchCondition(),
             common: true,
-            waiting: true
+            waiting: true,
         });
     }
 
     _get() {
-        return this._playerRequirementService.getFirstMatchingRequirement(this._getMatchCondition());
+        return this._playerRequirementService.getFirstMatchingRequirement(
+            this._getMatchCondition()
+        );
     }
 
     _update(updateFn) {
-        this._playerRequirementService.updateFirstMatchingRequirement(this._getMatchCondition(), updateFn);
+        this._playerRequirementService.updateFirstMatchingRequirement(
+            this._getMatchCondition(),
+            updateFn
+        );
     }
 
     _getMatchCondition() {

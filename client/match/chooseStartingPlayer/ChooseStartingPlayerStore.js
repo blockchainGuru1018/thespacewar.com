@@ -1,29 +1,30 @@
 const MatchMode = require("../../../shared/match/MatchMode.js");
 
-module.exports = function ({
-    matchController
-}) {
-
+module.exports = function ({ matchController }) {
     return {
-        name: 'chooseStartingPlayer',
+        name: "chooseStartingPlayer",
         namespaced: true,
         state: {},
         getters: {
             visible,
             player,
-            opponent
+            opponent,
         },
         actions: {
-            selectPlayerToStart
-        }
+            selectPlayerToStart,
+        },
     };
 
     function visible(state, getters, rootState, rootGetters) {
-        const somePlayerHasRetreated = !rootGetters['match/playerRetreated'] && !rootGetters['match/opponentRetreated'];
+        const somePlayerHasRetreated =
+            !rootGetters["match/playerRetreated"] &&
+            !rootGetters["match/opponentRetreated"];
 
-        return rootState.match.mode === MatchMode.chooseStartingPlayer
-            && rootState.match.currentPlayer === rootState.match.ownUser.id
-            && somePlayerHasRetreated;
+        return (
+            rootState.match.mode === MatchMode.chooseStartingPlayer &&
+            rootState.match.currentPlayer === rootState.match.ownUser.id &&
+            somePlayerHasRetreated
+        );
     }
 
     function player(state, getters, rootState) {
@@ -37,6 +38,6 @@ module.exports = function ({
     }
 
     function selectPlayerToStart(actionContext, playerToStartId) {
-        matchController.emit('selectPlayerToStart', { playerToStartId });
+        matchController.emit("selectPlayerToStart", { playerToStartId });
     }
 };

@@ -1,4 +1,4 @@
-const CommonId = '31';
+const CommonId = "31";
 const DrawCardsCount = 2;
 
 module.exports = {
@@ -8,36 +8,34 @@ module.exports = {
             forOpponent: [],
             forPlayer: [
                 {
-                    type: 'drawCard',
+                    type: "drawCard",
                     count: DrawCardsCount,
-                    cardCommonId: CommonId
-                }
-            ]
+                    cardCommonId: CommonId,
+                },
+            ],
         },
         counter: {
             forOpponent: [],
             forPlayer: [
                 {
-                    type: 'counterCard',
+                    type: "counterCard",
                     count: 1,
-                    sources: [
-                        'opponentAny'
-                    ],
+                    sources: ["opponentAny"],
                     filter: {
-                        canBeCountered: true
-                    }
-                }
-            ]
-        }
+                        canBeCountered: true,
+                    },
+                },
+            ],
+        },
     },
     choicesWhenPutDownInHomeZone: [
         {
-            name: 'counter',
-            text: 'Counter a card costing 2 or less'
+            name: "counter",
+            text: "Counter a card costing 2 or less",
         },
         {
-            name: 'draw',
-            text: `Draw ${DrawCardsCount} cards`
-        }
-    ]
+            name: "draw",
+            text: `Draw ${DrawCardsCount} cards`,
+        },
+    ],
 };

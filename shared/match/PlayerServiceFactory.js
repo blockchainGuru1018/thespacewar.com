@@ -1,43 +1,43 @@
-const PlayerPhase = require('./PlayerPhase.js');
-const MatchService = require('./MatchService.js');
-const TurnControl = require('./TurnControl.js');
-const SourceFetcher = require('./requirement/SourceFetcher.js');
-const CanThePlayer = require('./CanThePlayer.js');
-const ServerQueryEvents = require('../../server/match/ServerQueryEvents.js');
-const EventRepository = require('../event/EventRepository2.js');
-const PlayerServiceProvider = require('./PlayerServiceProvider.js');
-const PlayerStateService = require('./PlayerStateService.js');
-const CardFactory = require('../card/CardFactory.js');
-const EventFactory = require('../event/EventFactory.js');
-const PlayerRequirementService = require('./requirement/PlayerRequirementService.js');
-const PlayerRequirementFactory = require('./requirement/PlayerRequirementFactory.js');
-const PlayerRuleService = require('./PlayerRuleService.js');
-const PlayerPerfectPlan = require('./perfectPlan/PlayerPerfectPlan.js');
-const QueryAttacks = require('./requirement/QueryAttacks.js');
-const OverworkEventFactory = require('./overwork/event/OverworkEventFactory.js');
-const PlayerOverwork = require('./overwork/PlayerOverwork.js');
-const MoveStationCard = require('./MoveStationCard.js');
-const AddRequirementFromSpec = require('./requirement/AddRequirementFromSpec.js');
-const StartGame = require('./StartGame.js');
-const ActionLog = require('./log/ActionLog.js');
-const SacrificeCard = require('./SacrificeCard.js');
-const Repair = require('./Repair.js');
-const Miller = require('./mill/Miller.js');
-const PlayerCommanders = require('./commander/PlayerCommanders.js');
-const Clock = require('../gameTimer/Clock.js');
-const PlayerGameTimer = require('../gameTimer/PlayerGameTimer.js');
-const PlayerPhaseControl = require('./PlayerPhaseControl.js');
-const PlayerNextPhase = require('./PlayerNextPhase.js');
-const PlayerDiscardPhase = require('./PlayerDiscardPhase.js');
-const PlayerStationAttacker = require('../PlayerStationAttacker.js');
-const PlayerLastStand = require('./PlayerLastStand.js');
-const PlayerDrawPhase = require('./PlayerDrawPhase.js');
-const CountCardsLeftToDrawForDrawPhase = require('./rules/CountCardsLeftToDrawForDrawPhase.js');
-const MoreCardsCanBeDrawnForDrawPhase = require('./rules/MoreCardsCanBeDrawnForDrawPhase.js');
-const QueryPlayerRequirements = require('./requirement/QueryPlayerRequirements.js');
-const PlayerActionPointsCalculator = require('./PlayerActionPointsCalculator.js');
-const PlayerDeck = require('./PlayerDeck.js');
-const QueryBoard = require('./QueryBoard.js');
+const PlayerPhase = require("./PlayerPhase.js");
+const MatchService = require("./MatchService.js");
+const TurnControl = require("./TurnControl.js");
+const SourceFetcher = require("./requirement/SourceFetcher.js");
+const CanThePlayer = require("./CanThePlayer.js");
+const ServerQueryEvents = require("../../server/match/ServerQueryEvents.js");
+const EventRepository = require("../event/EventRepository2.js");
+const PlayerServiceProvider = require("./PlayerServiceProvider.js");
+const PlayerStateService = require("./PlayerStateService.js");
+const CardFactory = require("../card/CardFactory.js");
+const EventFactory = require("../event/EventFactory.js");
+const PlayerRequirementService = require("./requirement/PlayerRequirementService.js");
+const PlayerRequirementFactory = require("./requirement/PlayerRequirementFactory.js");
+const PlayerRuleService = require("./PlayerRuleService.js");
+const PlayerPerfectPlan = require("./perfectPlan/PlayerPerfectPlan.js");
+const QueryAttacks = require("./requirement/QueryAttacks.js");
+const OverworkEventFactory = require("./overwork/event/OverworkEventFactory.js");
+const PlayerOverwork = require("./overwork/PlayerOverwork.js");
+const MoveStationCard = require("./MoveStationCard.js");
+const AddRequirementFromSpec = require("./requirement/AddRequirementFromSpec.js");
+const StartGame = require("./StartGame.js");
+const ActionLog = require("./log/ActionLog.js");
+const SacrificeCard = require("./SacrificeCard.js");
+const Repair = require("./Repair.js");
+const Miller = require("./mill/Miller.js");
+const PlayerCommanders = require("./commander/PlayerCommanders.js");
+const Clock = require("../gameTimer/Clock.js");
+const PlayerGameTimer = require("../gameTimer/PlayerGameTimer.js");
+const PlayerPhaseControl = require("./PlayerPhaseControl.js");
+const PlayerNextPhase = require("./PlayerNextPhase.js");
+const PlayerDiscardPhase = require("./PlayerDiscardPhase.js");
+const PlayerStationAttacker = require("../PlayerStationAttacker.js");
+const PlayerLastStand = require("./PlayerLastStand.js");
+const PlayerDrawPhase = require("./PlayerDrawPhase.js");
+const CountCardsLeftToDrawForDrawPhase = require("./rules/CountCardsLeftToDrawForDrawPhase.js");
+const MoreCardsCanBeDrawnForDrawPhase = require("./rules/MoreCardsCanBeDrawnForDrawPhase.js");
+const QueryPlayerRequirements = require("./requirement/QueryPlayerRequirements.js");
+const PlayerActionPointsCalculator = require("./PlayerActionPointsCalculator.js");
+const PlayerDeck = require("./PlayerDeck.js");
+const QueryBoard = require("./QueryBoard.js");
 const ServiceTypes = PlayerServiceProvider.TYPE;
 
 module.exports = function ({
@@ -47,9 +47,8 @@ module.exports = function ({
     gameConfig,
     actionPointsCalculator,
     gameServiceFactory,
-    userRepository
+    userRepository,
 }) {
-
     const objectsByNameAndPlayerId = {};
 
     let playerServiceProvider;
@@ -57,8 +56,12 @@ module.exports = function ({
     const api = {
         _cache: objectsByNameAndPlayerId,
         playerServiceProvider: () => playerServiceProvider,
-        countCardsLeftToDrawForDrawPhase: cached(countCardsLeftToDrawForDrawPhase),
-        moreCardsCanBeDrawnForDrawPhase: cached(moreCardsCanBeDrawnForDrawPhase),
+        countCardsLeftToDrawForDrawPhase: cached(
+            countCardsLeftToDrawForDrawPhase
+        ),
+        moreCardsCanBeDrawnForDrawPhase: cached(
+            moreCardsCanBeDrawnForDrawPhase
+        ),
         playerStationAttacker: cached(playerStationAttacker),
         playerPhaseControl: cached(playerPhaseControl),
         playerDiscardPhase: cached(playerDiscardPhase),
@@ -91,13 +94,15 @@ module.exports = function ({
         sourceFetcher: cached(sourceFetcher),
         eventRepository: cached(eventRepository),
         eventFactory: cached(eventFactory),
-        opponentId: cached(playerId => api.matchService().getOpponentId(playerId)),
+        opponentId: cached((playerId) =>
+            api.matchService().getOpponentId(playerId)
+        ),
         queryEvents: cached(queryEvents),
         sacrificeCard: cached(sacrificeCard),
         actionLog: cached(actionLog),
         playerActionPointsCalculator: cached(playerActionPointsCalculator),
         queryBoard: cached(queryBoard),
-        actionPointsCalculator: () => actionPointsCalculator
+        actionPointsCalculator: () => actionPointsCalculator,
     };
 
     playerServiceProvider = {
@@ -122,7 +127,7 @@ module.exports = function ({
                 return api.turnControl(playerId);
             }
 
-            throw new Error('Cannot find a player service for type: ' + type);
+            throw new Error("Cannot find a player service for type: " + type);
         },
         getStateServiceById(playerId) {
             return api.playerStateService(playerId);
@@ -135,7 +140,7 @@ module.exports = function ({
         },
         getRuleServiceById(playerId) {
             return api.playerRuleService(playerId);
-        }
+        },
     };
 
     return api;
@@ -143,7 +148,9 @@ module.exports = function ({
     function moreCardsCanBeDrawnForDrawPhase(playerId) {
         return MoreCardsCanBeDrawnForDrawPhase({
             playerPhase: api.playerPhase(playerId),
-            countCardsLeftToDrawForDrawPhase: api.countCardsLeftToDrawForDrawPhase(playerId)
+            countCardsLeftToDrawForDrawPhase: api.countCardsLeftToDrawForDrawPhase(
+                playerId
+            ),
         });
     }
 
@@ -151,7 +158,7 @@ module.exports = function ({
         return CountCardsLeftToDrawForDrawPhase({
             matchService: api.matchService(),
             queryEvents: api.queryEvents(playerId),
-            playerStateService: api.playerStateService(playerId)
+            playerStateService: api.playerStateService(playerId),
         });
     }
 
@@ -162,7 +169,9 @@ module.exports = function ({
             gameActionTimeMachine: gameServiceFactory.gameActionTimeMachine(),
             playerStateService: api.playerStateService(playerId),
             canThePlayer: api.canThePlayer(playerId),
-            opponentStateService: api.playerStateService(api.opponentId(playerId)),
+            opponentStateService: api.playerStateService(
+                api.opponentId(playerId)
+            ),
             opponentActionLog: api.actionLog(api.opponentId(playerId)),
         });
     }
@@ -188,30 +197,36 @@ module.exports = function ({
             playerGameTimer: api.playerGameTimer(playerId),
             playerDiscardPhase: api.playerDiscardPhase(playerId),
             addRequirementFromSpec: api.addRequirementFromSpec(playerId),
-            opponentStateService: api.playerStateService(api.opponentId(playerId)),
-            opponentRequirementService: api.playerRequirementService(api.opponentId(playerId))
+            opponentStateService: api.playerStateService(
+                api.opponentId(playerId)
+            ),
+            opponentRequirementService: api.playerRequirementService(
+                api.opponentId(playerId)
+            ),
         });
     }
 
     function playerDiscardPhase(playerId) {
         return PlayerDiscardPhase({
             playerRuleService: api.playerRuleService(playerId),
-            playerStateService: api.playerStateService(playerId)
+            playerStateService: api.playerStateService(playerId),
         });
     }
 
     function playerDrawPhase(playerId) {
         return PlayerDrawPhase({
             miller: api.miller(playerId),
-            moreCardsCanBeDrawnForDrawPhase: api.moreCardsCanBeDrawnForDrawPhase(playerId),
+            moreCardsCanBeDrawnForDrawPhase: api.moreCardsCanBeDrawnForDrawPhase(
+                playerId
+            ),
             playerDeck: api.playerDeck(playerId),
-            playerPhase: api.playerPhase(playerId)
+            playerPhase: api.playerPhase(playerId),
         });
     }
 
     function playerCommanders(playerId) {
         return PlayerCommanders({
-            playerStateService: api.playerStateService(playerId)
+            playerStateService: api.playerStateService(playerId),
         });
     }
 
@@ -221,8 +236,10 @@ module.exports = function ({
             playerStateService: api.playerStateService(playerId),
             playerCommanders: api.playerCommanders(playerId),
             playerRuleService: api.playerRuleService(playerId),
-            opponentStateService: api.playerStateService(api.opponentId(playerId)),
-            opponentActionLog: api.actionLog(api.opponentId(playerId))
+            opponentStateService: api.playerStateService(
+                api.opponentId(playerId)
+            ),
+            opponentActionLog: api.actionLog(api.opponentId(playerId)),
         });
     }
 
@@ -230,7 +247,7 @@ module.exports = function ({
         return Repair({
             matchService: api.matchService(),
             playerStateService: api.playerStateService(playerId),
-            opponentActionLog: api.actionLog(api.opponentId(playerId))
+            opponentActionLog: api.actionLog(api.opponentId(playerId)),
         });
     }
 
@@ -240,7 +257,7 @@ module.exports = function ({
             playerStateService: api.playerStateService(playerId),
             playerPhase: api.playerPhase(playerId),
             opponentActionLog: api.actionLog(api.opponentId(playerId)),
-            playerCommanders: api.playerCommanders(playerId)
+            playerCommanders: api.playerCommanders(playerId),
         });
     }
 
@@ -251,9 +268,11 @@ module.exports = function ({
             playerStateService: api.playerStateService(playerId),
             playerRequirementService: api.playerRequirementService(playerId),
             queryPlayerRequirements: api.queryPlayerRequirements(playerId),
-            opponentRequirementService: api.playerRequirementService(api.opponentId(playerId)),
+            opponentRequirementService: api.playerRequirementService(
+                api.opponentId(playerId)
+            ),
             opponentActionLog: api.actionLog(api.opponentId(playerId)),
-            playerCommanders: api.playerCommanders(playerId)
+            playerCommanders: api.playerCommanders(playerId),
         });
     }
 
@@ -264,17 +283,19 @@ module.exports = function ({
             playerStateService: api.playerStateService(playerId),
             queryPlayerRequirements: api.queryPlayerRequirements(playerId),
             playerRequirementService: api.playerRequirementService(playerId),
-            opponentRequirementService: api.playerRequirementService(api.opponentId(playerId)),
+            opponentRequirementService: api.playerRequirementService(
+                api.opponentId(playerId)
+            ),
             opponentActionLog: api.actionLog(api.opponentId(playerId)),
             playerCommanders: api.playerCommanders(playerId),
-            addRequirementFromSpec: api.addRequirementFromSpec(playerId)
+            addRequirementFromSpec: api.addRequirementFromSpec(playerId),
         });
     }
 
     function overworkEventFactory(playerId) {
         return OverworkEventFactory({
             matchService: api.matchService(),
-            playerStateService: api.playerStateService(playerId)
+            playerStateService: api.playerStateService(playerId),
         });
     }
 
@@ -282,12 +303,16 @@ module.exports = function ({
         return new PlayerPhase({
             matchService: api.matchService(),
             playerStateService: api.playerStateService(playerId),
-            opponentStateService: api.playerStateService(api.opponentId(playerId))
+            opponentStateService: api.playerStateService(
+                api.opponentId(playerId)
+            ),
         });
     }
 
     function eventRepository(playerId) {
-        return EventRepository({ playerStateService: api.playerStateService(playerId) });
+        return EventRepository({
+            playerStateService: api.playerStateService(playerId),
+        });
     }
 
     function eventFactory() {
@@ -298,7 +323,7 @@ module.exports = function ({
         return new CardFactory({
             matchService: api.matchService(),
             playerServiceProvider,
-            playerServiceFactory: api
+            playerServiceFactory: api,
         });
     }
 
@@ -308,9 +333,13 @@ module.exports = function ({
             playerStateService: api.playerStateService(playerId),
             opponentStateService: api.playerStateService(opponentId),
             playerRequirementService: api.playerRequirementService(playerId),
-            opponentRequirementService: api.playerRequirementService(opponentId),
+            opponentRequirementService: api.playerRequirementService(
+                opponentId
+            ),
             playerRequirementFactory: api.playerRequirementFactory(playerId),
-            opponentRequirementFactory: api.playerRequirementFactory(opponentId)
+            opponentRequirementFactory: api.playerRequirementFactory(
+                opponentId
+            ),
         });
     }
 
@@ -320,34 +349,44 @@ module.exports = function ({
             playerStateService: api.playerStateService(playerId),
             opponentStateService: api.playerStateService(opponentId),
             playerCommanders: api.playerCommanders(playerId),
-            moreCardsCanBeDrawnForDrawPhase: api.moreCardsCanBeDrawnForDrawPhase(playerId),
-            queryPlayerRequirements: api.queryPlayerRequirements(playerId)
+            moreCardsCanBeDrawnForDrawPhase: api.moreCardsCanBeDrawnForDrawPhase(
+                playerId
+            ),
+            queryPlayerRequirements: api.queryPlayerRequirements(playerId),
         });
     }
 
     function queryPlayerRequirements(playerId) {
         return QueryPlayerRequirements({
             playerStateService: api.playerStateService(playerId),
-            opponentStateService: api.playerStateService(api.opponentId(playerId)),
+            opponentStateService: api.playerStateService(
+                api.opponentId(playerId)
+            ),
             playerCommanders: api.playerCommanders(playerId),
-            moreCardsCanBeDrawnForDrawPhase: api.moreCardsCanBeDrawnForDrawPhase(playerId)
-        })
+            moreCardsCanBeDrawnForDrawPhase: api.moreCardsCanBeDrawnForDrawPhase(
+                playerId
+            ),
+        });
     }
 
     function playerRequirementFactory(playerId) {
         return PlayerRequirementFactory({
             sourceFetcher: api.sourceFetcher(playerId),
             queryAttacks: api.queryAttacks(playerId),
-            opponentStateService: api.playerStateService(api.opponentId(playerId)),
-            playerStateService: api.playerStateService(playerId)
+            opponentStateService: api.playerStateService(
+                api.opponentId(playerId)
+            ),
+            playerStateService: api.playerStateService(playerId),
         });
     }
 
     function sourceFetcher(playerId) {
         return SourceFetcher({
             playerStateService: api.playerStateService(playerId),
-            opponentStateService: api.playerStateService(api.opponentId(playerId)),
-            canThePlayer: api.canThePlayer(playerId)
+            opponentStateService: api.playerStateService(
+                api.opponentId(playerId)
+            ),
+            canThePlayer: api.canThePlayer(playerId),
         });
     }
 
@@ -355,13 +394,17 @@ module.exports = function ({
         return new CanThePlayer({
             matchService: api.matchService(),
             queryEvents: api.queryEvents(playerId),
-            opponentStateService: api.playerStateService(api.opponentId(playerId)),
+            opponentStateService: api.playerStateService(
+                api.opponentId(playerId)
+            ),
             playerStateService: api.playerStateService(playerId),
             turnControl: api.turnControl(playerId),
             playerPhase: api.playerPhase(playerId),
             lastStand: gameServiceFactory.lastStand(),
-            playerActionPointsCalculator: api.playerActionPointsCalculator(playerId),
-            gameConfig
+            playerActionPointsCalculator: api.playerActionPointsCalculator(
+                playerId
+            ),
+            gameConfig,
         });
     }
 
@@ -381,23 +424,30 @@ module.exports = function ({
             matchService: api.matchService(),
             lastStand: gameServiceFactory.lastStand(),
             playerStateService: api.playerStateService(playerId),
-            opponentStateService: api.playerStateService(api.opponentId(playerId)),
+            opponentStateService: api.playerStateService(
+                api.opponentId(playerId)
+            ),
             playerPhase: api.playerPhase(playerId),
             playerGameTimer: api.playerGameTimer(playerId),
             opponentPhase: api.playerPhase(api.opponentId(playerId)),
-            opponentActionLog: api.actionLog(api.opponentId(playerId))
+            opponentActionLog: api.actionLog(api.opponentId(playerId)),
         });
     }
 
     function queryEvents(playerId) {
-        return new ServerQueryEvents({ playerId, matchService: api.matchService() });
+        return new ServerQueryEvents({
+            playerId,
+            matchService: api.matchService(),
+        });
     }
 
     function sacrificeCard(playerId) {
         return SacrificeCard({
             playerStateService: api.playerStateService(playerId),
-            opponentStateService: api.playerStateService(api.opponentId(playerId)),
-            opponentActionLog: api.actionLog(api.opponentId(playerId))
+            opponentStateService: api.playerStateService(
+                api.opponentId(playerId)
+            ),
+            opponentActionLog: api.actionLog(api.opponentId(playerId)),
         });
     }
 
@@ -406,7 +456,7 @@ module.exports = function ({
             matchService: api.matchService(),
             playerStateService: api.playerStateService(playerId),
             cardInfoRepository: gameServiceFactory.cardInfoRepository(),
-            userRepository
+            userRepository,
         });
     }
 
@@ -422,8 +472,10 @@ module.exports = function ({
 
     function queryBoard(playerId) {
         return new QueryBoard({
-            opponentStateService: api.playerStateService(api.opponentId(playerId))
-        })
+            opponentStateService: api.playerStateService(
+                api.opponentId(playerId)
+            ),
+        });
     }
 
     function queryAttacks(playerId) {
@@ -433,8 +485,8 @@ module.exports = function ({
             playerTurnControl: api.turnControl(playerId),
             opponentStateService: api.playerStateService(opponentId),
             playerEventRepository: api.eventRepository(playerId),
-            opponentEventRepository: api.eventRepository(opponentId)
-        })
+            opponentEventRepository: api.eventRepository(opponentId),
+        });
     }
 
     function startGame(playerId) {
@@ -444,7 +496,9 @@ module.exports = function ({
             playerStateService: api.playerStateService(playerId),
             playerRequirementService: api.playerRequirementService(playerId),
             opponentStateService: api.playerStateService(opponentId),
-            opponentRequirementService: api.playerRequirementService(opponentId),
+            opponentRequirementService: api.playerRequirementService(
+                opponentId
+            ),
             playerPhase: api.playerPhase(playerId),
             opponentPhase: api.playerPhase(opponentId),
             playerRuleService: api.playerRuleService(playerId),
@@ -452,26 +506,26 @@ module.exports = function ({
             playerCommanders: api.playerCommanders(playerId),
             playerActionLog: api.actionLog(playerId),
             opponentActionLog: api.actionLog(opponentId),
-            gameConfig
+            gameConfig,
         });
     }
 
     function playerGameTimer(playerId) {
         return PlayerGameTimer({
             playerClock: api.clock(playerId),
-            opponentClock: api.clock(api.opponentId(playerId))
+            opponentClock: api.clock(api.opponentId(playerId)),
         });
     }
 
     function clock(playerId) {
         return Clock({
-            playerStateService: api.playerStateService(playerId)
+            playerStateService: api.playerStateService(playerId),
         });
     }
 
     function playerDeck(playerId) {
         return PlayerDeck({
-            playerStateService: api.playerStateService(playerId)
+            playerStateService: api.playerStateService(playerId),
         });
     }
 
@@ -485,7 +539,7 @@ module.exports = function ({
             actionPointsCalculator,
             eventFactory: api.eventFactory(),
             deckFactory: gameServiceFactory.deckFactory(),
-            logger
+            logger,
         });
     }
 
@@ -493,7 +547,9 @@ module.exports = function ({
         return new PlayerRuleService({
             matchService: api.matchService(),
             playerStateService: api.playerStateService(playerId),
-            opponentStateService: api.playerStateService(api.opponentId(playerId)),
+            opponentStateService: api.playerStateService(
+                api.opponentId(playerId)
+            ),
             queryPlayerRequirements: api.queryPlayerRequirements(playerId),
             playerRequirementService: api.playerRequirementService(playerId),
             canThePlayer: api.canThePlayer(playerId),
@@ -502,9 +558,13 @@ module.exports = function ({
             playerPhase: api.playerPhase(playerId),
             playerCommanders: api.playerCommanders(playerId),
             queryEvents: api.queryEvents(playerId),
-            countCardsLeftToDrawForDrawPhase: api.countCardsLeftToDrawForDrawPhase(playerId),
-            moreCardsCanBeDrawnForDrawPhase: api.moreCardsCanBeDrawnForDrawPhase(playerId),
-            gameConfig
+            countCardsLeftToDrawForDrawPhase: api.countCardsLeftToDrawForDrawPhase(
+                playerId
+            ),
+            moreCardsCanBeDrawnForDrawPhase: api.moreCardsCanBeDrawnForDrawPhase(
+                playerId
+            ),
+            gameConfig,
         });
     }
 
@@ -515,7 +575,7 @@ module.exports = function ({
     function cached(constructor) {
         const name = constructor.name;
         return (playerIdOrUndefined) => {
-            const key = name + ':' + playerIdOrUndefined;
+            const key = name + ":" + playerIdOrUndefined;
             const existingCopy = objectsByNameAndPlayerId[key];
             if (existingCopy) return existingCopy;
 

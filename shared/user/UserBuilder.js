@@ -1,5 +1,5 @@
-const User = require('./User.js');
-const GuestUser = require('./GuestUser.js');
+const User = require("./User.js");
+const GuestUser = require("./GuestUser.js");
 
 class UserBuilder {
     constructor() {
@@ -7,8 +7,8 @@ class UserBuilder {
     }
 
     _applyDefaultProperties() {
-        this._name = 'Unnamed';
-        this._country = 'sweden';
+        this._name = "Unnamed";
+        this._country = "sweden";
         this._rating = 0;
         this._isGuest = false;
     }
@@ -44,7 +44,9 @@ class UserBuilder {
     }
 
     _createId() {
-        return Math.round((Math.random() * 1000000)).toString().padStart(7, '0');
+        return Math.round(Math.random() * 1000000)
+            .toString()
+            .padStart(7, "0");
     }
 }
 

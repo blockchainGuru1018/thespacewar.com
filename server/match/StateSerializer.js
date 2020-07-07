@@ -1,8 +1,7 @@
 module.exports = function () {
-
     return {
         serialize,
-        parse
+        parse,
     };
 
     function serialize(state) {
@@ -15,7 +14,7 @@ module.exports = function () {
 
         restoredState.playerStateById = {
             [firstPlayer]: restoredState.playerStateById[firstPlayer],
-            [secondPlayer]: restoredState.playerStateById[secondPlayer]
+            [secondPlayer]: restoredState.playerStateById[secondPlayer],
         };
 
         return restoredState;

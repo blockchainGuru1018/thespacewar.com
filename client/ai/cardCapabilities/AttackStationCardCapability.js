@@ -5,7 +5,7 @@ module.exports = function AttackStationCardCapability({
 }) {
     return {
         canDoIt,
-        doIt
+        doIt,
     };
 
     function canDoIt() {
@@ -13,13 +13,16 @@ module.exports = function AttackStationCardCapability({
     }
 
     function doIt() {
-        matchController.emit('attackStationCard', {
+        matchController.emit("attackStationCard", {
             attackerCardId: card.id,
-            targetStationCardIds: getTargetStationCardIds(card.attack)
+            targetStationCardIds: getTargetStationCardIds(card.attack),
         });
     }
 
     function getTargetStationCardIds(count) {
-        return opponentStateService.getUnflippedStationCards().slice(0, count).map(s => s.id);
+        return opponentStateService
+            .getUnflippedStationCards()
+            .slice(0, count)
+            .map((s) => s.id);
     }
 };

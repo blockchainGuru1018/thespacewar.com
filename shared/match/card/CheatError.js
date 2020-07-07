@@ -1,10 +1,9 @@
 class CheatError extends Error {
-
     constructor(reason) {
         super(reason);
 
         this.message = reason;
-        this.type = 'CheatDetected';
+        this.type = "CheatDetected";
     }
 }
 

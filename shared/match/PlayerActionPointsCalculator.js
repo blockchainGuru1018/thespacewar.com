@@ -3,10 +3,10 @@ module.exports = function ({
     playerPhase,
     eventRepository,
     playerStateService,
-    matchService
+    matchService,
 }) {
     return {
-        calculate
+        calculate,
     };
 
     function calculate() {
@@ -14,7 +14,8 @@ module.exports = function ({
             phase: playerPhase.get(),
             events: eventRepository.getAll(),
             turn: matchService.getTurn(),
-            actionStationCardsCount: playerStateService.getActionStationCards().length
+            actionStationCardsCount: playerStateService.getActionStationCards()
+                .length,
         });
     }
 };

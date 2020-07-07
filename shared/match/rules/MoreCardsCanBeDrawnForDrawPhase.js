@@ -3,10 +3,9 @@
 // of cards left in your deck for example.
 module.exports = function MoreCardsCanBeDrawnForDrawPhase({
     playerPhase,
-    countCardsLeftToDrawForDrawPhase
+    countCardsLeftToDrawForDrawPhase,
 }) {
     return () => {
-        return playerPhase.isDraw()
-            && countCardsLeftToDrawForDrawPhase() > 0
+        return playerPhase.isDraw() && countCardsLeftToDrawForDrawPhase() > 0;
     };
 };

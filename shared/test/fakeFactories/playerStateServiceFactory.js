@@ -1,7 +1,7 @@
-const PlayerServiceProvider = require('../../match/PlayerServiceProvider.js');
-const CardFactory = require('../../card/CardFactory.js');
-const PlayerStateService = require('../../match/PlayerStateService.js');
-const MatchService = require('../../match/MatchService.js');
+const PlayerServiceProvider = require("../../match/PlayerServiceProvider.js");
+const CardFactory = require("../../card/CardFactory.js");
+const PlayerStateService = require("../../match/PlayerStateService.js");
+const MatchService = require("../../match/MatchService.js");
 const fakePlayerServiceFactory = require("./fakePlayerServiceFactory.js");
 
 const playerStateServiceFactory = {
@@ -20,9 +20,9 @@ const playerStateServiceFactory = {
             removeCardFromHomeZone() {},
             findCardFromAnySource() {},
             discardCard() {},
-            ...stubs
+            ...stubs,
         };
-    }
+    },
 };
 
 function fromIdAndState(playerId, state) {
@@ -32,10 +32,18 @@ function fromIdAndState(playerId, state) {
     const cardFactory = new CardFactory({
         matchService,
         playerServiceProvider,
-        playerServiceFactory: fakePlayerServiceFactory.withStubs()
+        playerServiceFactory: fakePlayerServiceFactory.withStubs(),
     });
-    const playerStateService = new PlayerStateService({ playerId, matchService, cardFactory });
-    playerServiceProvider.registerService(PlayerServiceProvider.TYPE.state, playerId, playerServiceProvider);
+    const playerStateService = new PlayerStateService({
+        playerId,
+        matchService,
+        cardFactory,
+    });
+    playerServiceProvider.registerService(
+        PlayerServiceProvider.TYPE.state,
+        playerId,
+        playerServiceProvider
+    );
     return playerStateService;
 }
 

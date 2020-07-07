@@ -1,9 +1,9 @@
 function DrawCardEvent({ turn, byEvent = false }) {
     return {
-        type: 'drawCard',
+        type: "drawCard",
         created: Date.now(),
         turn,
-        byEvent
+        byEvent,
     };
 }
 

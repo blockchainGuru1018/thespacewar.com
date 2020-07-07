@@ -1,40 +1,38 @@
 const localGameDataFacade = require("../utils/localGameDataFacade.js");
-const createBotUser = require('../../shared/user/createBotUser.js');
+const createBotUser = require("../../shared/user/createBotUser.js");
 
 module.exports = function ({
-                               matchRepository,
-                               userRepository,
-                               botUpdateListener,
-                               route,
-                               retrieveSession
-                           }) {
-
+    matchRepository,
+    userRepository,
+    botUpdateListener,
+    route,
+    retrieveSession,
+}) {
     return {
         namespaced: true,
-        name: 'lobby',
+        name: "lobby",
         state: {
-            loggingOut: false
+            loggingOut: false,
         },
         actions: {
             init,
             startGameWithUser,
             startGameWithBot,
             logout,
-            showProfileUserPlayer
-
-        }
+            showProfileUserPlayer,
+        },
     };
 
     async function init() {
         matchRepository.onMatchCreatedForPlayer(joinMatch);
     }
 
-    async function joinMatch({id: matchId, playerIds}) {
+    async function joinMatch({ id: matchId, playerIds }) {
         const ownUserId = userRepository.getOwnUser().id;
-        const opponentUserId = playerIds.find(id => id !== ownUserId);
+        const opponentUserId = playerIds.find((id) => id !== ownUserId);
         const users = userRepository.getAllLocal();
-        const opponentUser = users.find(u => u.id === opponentUserId);
-        route('match', {matchId, opponentUser});
+        const opponentUser = users.find((u) => u.id === opponentUserId);
+        route("match", { matchId, opponentUser });
     }
 
     async function startGameWithUser(actionContext, opponentUser) {
@@ -42,14 +40,17 @@ module.exports = function ({
         try {
             const playerId = userRepository.getOwnUser().id;
             const opponentId = opponentUser.id;
-            const match = await matchRepository.create({playerId, opponentId});
+            const match = await matchRepository.create({
+                playerId,
+                opponentId,
+            });
             matchId = match.id;
         } catch (error) {
-            alert('Could not create match: ' + error.message);
+            alert("Could not create match: " + error.message);
         }
 
         if (matchId) {
-            route('match', {matchId, opponentUser});
+            route("match", { matchId, opponentUser });
         }
     }
 
@@ -58,19 +59,23 @@ module.exports = function ({
 
         try {
             const playerId = userRepository.getOwnUser().id;
-            const match = await matchRepository.createWithBot({playerId});
+            const match = await matchRepository.createWithBot({ playerId });
             matchId = match.id;
         } catch (error) {
-            alert('Could not create match: ' + error.message);
+            alert("Could not create match: " + error.message);
         }
 
         if (matchId) {
             const botUser = createBotUser();
-            route('match', {
+            route("match", {
                 matchId,
-                opponentUser: botUser
+                opponentUser: botUser,
             });
-            botUpdateListener.start({matchId, botUser, playerUser: userRepository.getOwnUser()});
+            botUpdateListener.start({
+                matchId,
+                botUser,
+                playerUser: userRepository.getOwnUser(),
+            });
         }
     }
 
@@ -78,7 +83,7 @@ module.exports = function ({
         return retrieveSession.checkSession();
     }
 
-    function logout({state}) {
+    function logout({ state }) {
         localGameDataFacade.removeAll();
         state.loggingOut = true;
         setTimeout(() => {

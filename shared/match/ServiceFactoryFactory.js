@@ -1,9 +1,9 @@
-const GameServiceFactory = require('./GameServiceFactory.js');
-const PlayerServiceFactory = require('./PlayerServiceFactory.js');
-const PlayerRequirementServicesFactory = require('./PlayerRequirementServicesFactory.js');
-const PlayerCardServicesFactory = require('./PlayerCardServicesFactory.js');
-const ActionPointsCalculator = require('./ActionPointsCalculator.js');
-const CardFacadeContext = require('./card/CardFacadeContext.js');
+const GameServiceFactory = require("./GameServiceFactory.js");
+const PlayerServiceFactory = require("./PlayerServiceFactory.js");
+const PlayerRequirementServicesFactory = require("./PlayerRequirementServicesFactory.js");
+const PlayerCardServicesFactory = require("./PlayerCardServicesFactory.js");
+const ActionPointsCalculator = require("./ActionPointsCalculator.js");
+const CardFacadeContext = require("./card/CardFacadeContext.js");
 
 module.exports = function ({
     state,
@@ -14,16 +14,17 @@ module.exports = function ({
     endMatch,
     gameConfig,
     registerLogGame,
-    actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository })
+    actionPointsCalculator = ActionPointsCalculator({ cardInfoRepository }),
 }) {
-
     const objectsByNameAndPlayerId = {};
 
     const api = {
         _cache: objectsByNameAndPlayerId,
         gameServiceFactory: cached(gameServiceFactory),
         playerServiceFactory: cached(playerServiceFactory),
-        playerRequirementServicesFactory: cached(playerRequirementServicesFactory),
+        playerRequirementServicesFactory: cached(
+            playerRequirementServicesFactory
+        ),
         playerCardServicesFactory: cached(playerCardServicesFactory),
         cardFacadeContext: cached(cardFacadeContext),
     };
@@ -36,7 +37,7 @@ module.exports = function ({
             endMatch,
             rawCardDataRepository,
             gameConfig,
-            registerLogGame
+            registerLogGame,
         });
     }
 
@@ -49,34 +50,34 @@ module.exports = function ({
             gameConfig,
             gameServiceFactory: api.gameServiceFactory(),
             userRepository: {
-                getById: id => players.find(p => p.id === id)
-            }
+                getById: (id) => players.find((p) => p.id === id),
+            },
         });
     }
 
     function playerRequirementServicesFactory() {
         return PlayerRequirementServicesFactory({
             playerServiceFactory: api.playerServiceFactory(),
-            playerCardServicesFactory: api.playerCardServicesFactory()
+            playerCardServicesFactory: api.playerCardServicesFactory(),
         });
     }
 
     function playerCardServicesFactory() {
         return PlayerCardServicesFactory({
-            playerServiceFactory: api.playerServiceFactory()
+            playerServiceFactory: api.playerServiceFactory(),
         });
     }
 
     function cardFacadeContext() {
         return CardFacadeContext({
-            playerServiceFactory: api.playerServiceFactory()
+            playerServiceFactory: api.playerServiceFactory(),
         });
     }
 
     function cached(constructor) {
         const name = constructor.name;
         return (playerIdOrUndefined) => {
-            const key = name + ':' + playerIdOrUndefined;
+            const key = name + ":" + playerIdOrUndefined;
             const existingCopy = objectsByNameAndPlayerId[key];
             if (existingCopy) return existingCopy;
 

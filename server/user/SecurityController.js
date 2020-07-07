@@ -1,11 +1,7 @@
-module.exports = function SecurityMiddleware({
-    userRepository,
-    logger
-}) {
-
+module.exports = function SecurityMiddleware({ userRepository, logger }) {
     return {
         isAuthorized,
-        middleware
+        middleware,
     };
 
     function isAuthorized(secret, userId) {
@@ -17,13 +13,19 @@ module.exports = function SecurityMiddleware({
         if (requestPlayerId) {
             if (req.body.secret) {
                 if (!isAuthorized(req.body.secret, requestPlayerId)) {
-                    logger.logger.log('Unauthorized user making request to url: ' + req.url, 'authorization');
-                    next(new Error('Unauthorized access'));
+                    logger.logger.log(
+                        "Unauthorized user making request to url: " + req.url,
+                        "authorization"
+                    );
+                    next(new Error("Unauthorized access"));
                 }
-            }
-            else {
-                logger.logger.log('Unauthorized user making request to url without providing secret: ' + req.url, 'authorization');
-                next(new Error('Please provider client secret'));
+            } else {
+                logger.logger.log(
+                    "Unauthorized user making request to url without providing secret: " +
+                        req.url,
+                    "authorization"
+                );
+                next(new Error("Please provider client secret"));
             }
         }
 

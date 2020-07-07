@@ -1,5 +1,4 @@
 module.exports = function (deps) {
-
     const id = deps.id;
     const name = deps.name;
     const connection = deps.connection;
@@ -7,6 +6,6 @@ module.exports = function (deps) {
     return {
         id,
         name,
-        connection
+        connection,
     };
 };

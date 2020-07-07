@@ -1,5 +1,4 @@
 module.exports = function (originalDeck) {
-
     let deck = originalDeck.slice();
 
     return {
@@ -10,7 +9,9 @@ module.exports = function (originalDeck) {
         removeFirstCardOfType,
         removeCard,
         _getDeck: () => [...deck],
-        _restoreDeck: previousDeck => { deck = [...previousDeck] }
+        _restoreDeck: (previousDeck) => {
+            deck = [...previousDeck];
+        },
     };
 
     function draw(count = 1) {
@@ -34,7 +35,7 @@ module.exports = function (originalDeck) {
     }
 
     function removeCard(cardId) {
-        const cardIndex = deck.findIndex(c => c.id === cardId);
+        const cardIndex = deck.findIndex((c) => c.id === cardId);
         if (cardIndex < 0) return null;
 
         const [removedCard] = deck.splice(cardIndex, 1);
@@ -42,7 +43,7 @@ module.exports = function (originalDeck) {
     }
 
     function removeFirstCardOfType(cardCommonId) {
-        const cardIndex = deck.findIndex(c => c.commonId === cardCommonId);
+        const cardIndex = deck.findIndex((c) => c.commonId === cardCommonId);
         if (cardIndex < 0) return null;
 
         const [removedCard] = deck.splice(cardIndex, 1);

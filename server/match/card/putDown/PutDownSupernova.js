@@ -1,25 +1,25 @@
-const Supernova = require('../../../../shared/card/Supernova.js');
+const Supernova = require("../../../../shared/card/Supernova.js");
 
 const discardCardCount = Supernova.StationCardDestroyed;
 PutDownSupernova.CommonId = Supernova.CommonId;
 
-function PutDownSupernova({
-    playerServiceProvider,
-    matchService
-}) {
-
+function PutDownSupernova({ playerServiceProvider, matchService }) {
     return {
-        forPlayer
+        forPlayer,
     };
 
     function forPlayer(playerId, cardData) {
-        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const playerStateService = playerServiceProvider.getStateServiceById(
+            playerId
+        );
         const opponentId = matchService.getOpponentId(playerId);
-        const opponentStateService = playerServiceProvider.getStateServiceById(opponentId);
+        const opponentStateService = playerServiceProvider.getStateServiceById(
+            opponentId
+        );
 
         const opponentCardsInZones = [
             ...opponentStateService.getCardsInZone(),
-            ...opponentStateService.getCardsInOpponentZone()
+            ...opponentStateService.getCardsInOpponentZone(),
         ];
         for (const opponentCard of opponentCardsInZones) {
             opponentStateService.removeCard(opponentCard.id);
@@ -28,7 +28,7 @@ function PutDownSupernova({
 
         const playerCardsInZones = [
             ...playerStateService.getCardsInZone(),
-            ...playerStateService.getCardsInOpponentZone()
+            ...playerStateService.getCardsInOpponentZone(),
         ];
         for (const playerCard of playerCardsInZones) {
             playerStateService.removeCard(playerCard.id);
@@ -42,11 +42,13 @@ function PutDownSupernova({
     }
 
     function addRequirementsToPlayer({ playerId }) {
-        const playerRequirementService = playerServiceProvider.getRequirementServiceById(playerId);
+        const playerRequirementService = playerServiceProvider.getRequirementServiceById(
+            playerId
+        );
         playerRequirementService.addDamageStationCardRequirement({
             count: discardCardCount,
             common: true,
-            cardCommonId: Supernova.CommonId
+            cardCommonId: Supernova.CommonId,
         });
     }
 }

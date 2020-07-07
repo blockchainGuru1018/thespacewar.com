@@ -1,4 +1,4 @@
-const BaseCard = require('./BaseCard.js');
+const BaseCard = require("./BaseCard.js");
 const _DamageToShields = 2;
 module.exports = class ToxicGas extends BaseCard {
     constructor(deps) {
@@ -9,7 +9,7 @@ module.exports = class ToxicGas extends BaseCard {
         return _DamageToShields;
     }
     static get CommonId() {
-        return '79';
+        return "79";
     }
 
     get requirementsWhenEnterDrawPhase() {
@@ -17,12 +17,12 @@ module.exports = class ToxicGas extends BaseCard {
             forOpponent: [],
             forPlayer: [
                 {
-                    type: 'damageShieldsOrStationCard',
+                    type: "damageShieldsOrStationCard",
                     count: 1,
-                    cardCommonId: this.CommonId
-                }
-            ]
-        }
+                    cardCommonId: this.CommonId,
+                },
+            ],
+        };
     }
     canAttack() {
         return false;
@@ -37,7 +37,7 @@ module.exports = class ToxicGas extends BaseCard {
     attackCard(defenderCard) {
         const {
             defenderDestroyed,
-            defenderParalyzed
+            defenderParalyzed,
         } = this.simulateAttackingCard(defenderCard);
 
         defenderCard.destroyed = defenderDestroyed;
@@ -47,12 +47,13 @@ module.exports = class ToxicGas extends BaseCard {
 
     simulateAttackingCard(defenderCard) {
         const defenderCurrentDamage = defenderCard.damage;
-        const defenderTotalDefense = defenderCard.defense - defenderCurrentDamage;
+        const defenderTotalDefense =
+            defenderCard.defense - defenderCurrentDamage;
         const cardAttack = _DamageToShields;
         return {
             defenderDestroyed: cardAttack >= defenderTotalDefense,
             defenderDamage: defenderCurrentDamage + cardAttack,
-            defenderParalyzed: false
+            defenderParalyzed: false,
         };
     }
 };

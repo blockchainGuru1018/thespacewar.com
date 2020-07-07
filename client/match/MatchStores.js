@@ -1,32 +1,34 @@
 const STORES = [
-    require('./MatchStore.js'),
-    require('./RequirementStore.js'),
-    require('./PermissionStore.js'),
-    require('./CardStore.js'),
-    require('./KeyboardShortcutsStore.js'),
-    require('./findCard/FindCardStore.js'),
-    require('./counterCard/CounterCardStore.js'),
-    require('./counterAttack/CounterAttackStore.js'),
-    require('./loadingIndicator/LoadingIndicatorStore.js'),
-    require('../expandedCard/ExpandedCardStore.js'),
-    require('./chooseStartingPlayer/ChooseStartingPlayerStore.js'),
-    require('./escapeMenu/EscapeMenuStore.js'),
-    require('./ghost/GhostStore.js'),
-    require('./StartGameStore.js'),
-    require('./debug/DebugStore.js'),
-    require('./notificationBanner/NotificationBannerStore.js').default,
-    require('./infoMode/InfoModeStore.js').default,
-    require('./log/ActionLogStore.js').default,
+    require("./MatchStore.js"),
+    require("./RequirementStore.js"),
+    require("./PermissionStore.js"),
+    require("./CardStore.js"),
+    require("./KeyboardShortcutsStore.js"),
+    require("./findCard/FindCardStore.js"),
+    require("./counterCard/CounterCardStore.js"),
+    require("./counterAttack/CounterAttackStore.js"),
+    require("./loadingIndicator/LoadingIndicatorStore.js"),
+    require("../expandedCard/ExpandedCardStore.js"),
+    require("./chooseStartingPlayer/ChooseStartingPlayerStore.js"),
+    require("./escapeMenu/EscapeMenuStore.js"),
+    require("./ghost/GhostStore.js"),
+    require("./StartGameStore.js"),
+    require("./debug/DebugStore.js"),
+    require("./notificationBanner/NotificationBannerStore.js").default,
+    require("./infoMode/InfoModeStore.js").default,
+    require("./log/ActionLogStore.js").default,
 ];
 const LOGGING_ENABLED = false;
 
 module.exports = function (deps) {
-
     const rootStore = deps.rootStore;
     const matchId = deps.matchId;
     const matchControllerFactory = deps.matchControllerFactory;
 
-    const matchController = matchControllerFactory.create({ matchId, dispatch: createMatchDispatch(rootStore) });
+    const matchController = matchControllerFactory.create({
+        matchId,
+        dispatch: createMatchDispatch(rootStore),
+    });
     const stores = [];
 
     deps.rootDispatch = createRootDispatch(rootStore);
@@ -44,7 +46,7 @@ module.exports = function (deps) {
     initStores(stores, rootStore);
 
     return {
-        destroyAll
+        destroyAll,
     };
 
     function destroyAll() {
@@ -63,7 +65,8 @@ function initStores(stores, rootStore) {
 }
 
 function createMatchDispatch(rootStore) {
-    return (actionName, data) => rootStore.dispatch(`match/${actionName}`, data);
+    return (actionName, data) =>
+        rootStore.dispatch(`match/${actionName}`, data);
 }
 
 function createStore(Store, deps) {
@@ -74,10 +77,13 @@ function createStore(Store, deps) {
 
 function loggedActions(actions = {}) {
     const loggedActions = {};
-    Object.keys(actions).forEach(actionName => {
+    Object.keys(actions).forEach((actionName) => {
         loggedActions[actionName] = (...args) => {
             if (LOGGING_ENABLED) {
-                console.log(`[${new Date().toISOString()}] ACTION: ${actionName}`, { ...args });
+                console.log(
+                    `[${new Date().toISOString()}] ACTION: ${actionName}`,
+                    { ...args }
+                );
             }
             return actions[actionName](...args);
         };
@@ -105,24 +111,25 @@ function unregisterStoreModule(rootStore, storeName) {
 }
 
 function createRootGetFrom(rootStore) {
-    return (getterName, moduleName) => rootStore.getters[`${moduleName}/${getterName}`];
+    return (getterName, moduleName) =>
+        rootStore.getters[`${moduleName}/${getterName}`];
 }
 
 function createRootDispatch(rootStore) {
     return new Proxy(
-        { store: '' },
+        { store: "" },
         {
             get(target, property, reciever) {
                 if (!target.store) {
                     target.store = property;
                     return reciever;
-                }
-                else {
+                } else {
                     const storeName = target.store;
-                    target.store = '';
-                    return (...args) => rootStore.dispatch(`${storeName}/${property}`, ...args);
+                    target.store = "";
+                    return (...args) =>
+                        rootStore.dispatch(`${storeName}/${property}`, ...args);
                 }
-            }
+            },
         }
-    )
+    );
 }

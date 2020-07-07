@@ -1,8 +1,5 @@
-
 class QueryBoard {
-    constructor({
-        opponentStateService
-    }) {
+    constructor({ opponentStateService }) {
         this._opponentStateService = opponentStateService;
     }
 

@@ -2,7 +2,6 @@ const LoginCookie = require("../../serviceShared/LoginCookie.js");
 const User = require("../../shared/user/User.js");
 
 module.exports = function (deps) {
-
     const socketMaster = deps.socketMaster;
     const logger = deps.logger;
 
@@ -12,7 +11,7 @@ module.exports = function (deps) {
 
     return {
         getAll,
-        getById,//TODO Rename to getUserDataById
+        getById, //TODO Rename to getUserDataById
         getUser,
         addUserAndClearOldUsers,
         addGuestUser,
@@ -73,7 +72,9 @@ module.exports = function (deps) {
 
     function getUserCookieId(userId) {
         const rawCookie = rawCookieToUserId.get(userId);
-        const loginCookie = LoginCookie.loginCookieFromRawCookieStringOrNull(rawCookie);
+        const loginCookie = LoginCookie.loginCookieFromRawCookieStringOrNull(
+            rawCookie
+        );
         return loginCookie.id;
     }
 
@@ -93,7 +94,7 @@ module.exports = function (deps) {
     }
 
     function emitUserChange() {
-        socketMaster.emit('user/change', getUserDatas());
+        socketMaster.emit("user/change", getUserDatas());
     }
 
     function getUserDatas() {
@@ -103,11 +104,11 @@ module.exports = function (deps) {
     function clearOldUsers() {
         const users = getUserDatas();
         const usersToRemove = users
-            .map(userData => User.fromData(userData))
-            .filter(user => {
+            .map((userData) => User.fromData(userData))
+            .filter((user) => {
                 return user.timeAlive() > 24 * 60 * 60 * 1000;
             });
-        usersToRemove.forEach(user => {
+        usersToRemove.forEach((user) => {
             usersById.delete(user.id);
         });
     }

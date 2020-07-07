@@ -1,14 +1,13 @@
-module.exports = function ({
-    playerServiceProvider
-}) {
-
+module.exports = function ({ playerServiceProvider }) {
     return {
-        getType: () => 'getCardsInDeck',
-        forPlayerWithData
+        getType: () => "getCardsInDeck",
+        forPlayerWithData,
     };
 
     function forPlayerWithData(playerId) {
-        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const playerStateService = playerServiceProvider.getStateServiceById(
+            playerId
+        );
         const deck = playerStateService.getDeck();
         return deck.getAll();
     }

@@ -3,7 +3,7 @@ const LONG_PRESS_TIME = 400;
 let longpressTimeoutId;
 let longPressed = false;
 
-document.addEventListener('mouseup', event => {
+document.addEventListener("mouseup", (event) => {
     clearTimeout(longpressTimeoutId);
 
     if (longPressed) {
@@ -15,7 +15,7 @@ document.addEventListener('mouseup', event => {
 
 module.exports = {
     bind(element, { value }) {
-        element.addEventListener('mousedown', () => {
+        element.addEventListener("mousedown", () => {
             clearTimeout(longpressTimeoutId);
 
             longpressTimeoutId = setTimeout(() => {
@@ -23,5 +23,5 @@ module.exports = {
                 value();
             }, LONG_PRESS_TIME);
         });
-    }
+    },
 };

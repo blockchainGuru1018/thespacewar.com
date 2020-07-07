@@ -1,11 +1,12 @@
-const PlayerRequirementUpdater = require('./PlayerRequirementUpdater.js');
+const PlayerRequirementUpdater = require("./PlayerRequirementUpdater.js");
 
-module.exports = function CreatePlayerRequirementUpdater({ //TODO This should replace PlayerRequirementUpdaterFactory
+module.exports = function CreatePlayerRequirementUpdater({
+    //TODO This should replace PlayerRequirementUpdaterFactory
     playerStateService,
     playerRequirementService,
     opponentRequirementService,
     addRequirementFromSpec,
-    cardFactory
+    cardFactory,
 }) {
     return (requirementMatchConditions = {}) => {
         return new PlayerRequirementUpdater({
@@ -14,7 +15,7 @@ module.exports = function CreatePlayerRequirementUpdater({ //TODO This should re
             playerRequirementService,
             opponentRequirementService,
             addRequirementFromSpec,
-            cardFactory
+            cardFactory,
         });
     };
 };

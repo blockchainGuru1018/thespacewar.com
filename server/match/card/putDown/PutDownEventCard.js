@@ -1,13 +1,12 @@
-function PutDownEventCard({
-    playerServiceProvider,
-}) {
-
+function PutDownEventCard({ playerServiceProvider }) {
     return {
-        forPlayer
+        forPlayer,
     };
 
     function forPlayer(playerId, cardData) {
-        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
+        const playerStateService = playerServiceProvider.getStateServiceById(
+            playerId
+        );
         playerStateService.putDownEventCardInZone(cardData);
     }
 }

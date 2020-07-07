@@ -1,23 +1,22 @@
-const FakeCardDataAssembler = require('../../shared/test/testUtils/FakeCardDataAssembler.js');
+const FakeCardDataAssembler = require("../../shared/test/testUtils/FakeCardDataAssembler.js");
 const createCard = FakeCardDataAssembler.createCard;
-const getCardImageUrl = require('../utils/getCardImageUrl.js');
-const FakeState = require('../testUtils/FakeState.js');
-const FakeMatchController = require('../testUtils/FakeMatchController.js');
-const { createController } = require('../testUtils');
+const getCardImageUrl = require("../utils/getCardImageUrl.js");
+const FakeState = require("../testUtils/FakeState.js");
+const FakeMatchController = require("../testUtils/FakeMatchController.js");
+const { createController } = require("../testUtils");
 const {
     assert,
     refute,
     timeout,
     stub,
-    dom: {
-        click
-    }
-} = require('../testUtils/bocha-jest/bocha-jest.js');
+    dom: { click },
+} = require("../testUtils/bocha-jest/bocha-jest.js");
 
 let controller;
 let matchController;
 
-function setUpController(optionsAndPageDeps = {}) { //Has side effects to afford a convenient tear down
+function setUpController(optionsAndPageDeps = {}) {
+    //Has side effects to afford a convenient tear down
     matchController = FakeMatchController();
     controller = createController({ matchController, ...optionsAndPageDeps });
 
@@ -25,7 +24,7 @@ function setUpController(optionsAndPageDeps = {}) { //Has side effects to afford
 }
 
 beforeEach(() => {
-    getCardImageUrl.byCommonId = commonId => `/${commonId}`
+    getCardImageUrl.byCommonId = (commonId) => `/${commonId}`;
 });
 
 afterEach(() => {
@@ -34,45 +33,49 @@ afterEach(() => {
     controller = null;
 });
 
-describe('when has unflipped 2 station cards and click overwork', () => {
+describe("when has unflipped 2 station cards and click overwork", () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
-        dispatch('stateChanged', FakeState({
-            turn: 1,
-            currentPlayer: 'P1A',
-            phase: 'action',
-            stationCards: [
-                { place: 'action', id: 'C1A' },
-                { place: 'action', id: 'C2A' }
-            ]
-        }));
+        dispatch(
+            "stateChanged",
+            FakeState({
+                turn: 1,
+                currentPlayer: "P1A",
+                phase: "action",
+                stationCards: [
+                    { place: "action", id: "C1A" },
+                    { place: "action", id: "C2A" },
+                ],
+            })
+        );
         await timeout();
 
-        await click('.overwork');
+        await click(".overwork");
     });
 
-    test('should emit overwork', async () => {
-        assert.calledOnceWith(matchController.emit, 'overwork');
+    test("should emit overwork", async () => {
+        assert.calledOnceWith(matchController.emit, "overwork");
     });
 });
 
-describe('when has 1 unflipped station card', () => {
+describe("when has 1 unflipped station card", () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
         showPage();
-        dispatch('stateChanged', FakeState({
-            turn: 1,
-            currentPlayer: 'P1A',
-            phase: 'action',
-            stationCards: [
-                { place: 'action', id: 'C1A' },
-            ]
-        }));
+        dispatch(
+            "stateChanged",
+            FakeState({
+                turn: 1,
+                currentPlayer: "P1A",
+                phase: "action",
+                stationCards: [{ place: "action", id: "C1A" }],
+            })
+        );
         await timeout();
     });
 
-    test('should NOT see overwork button', async () => {
-        assert.elementCount('.overwork', 0);
+    test("should NOT see overwork button", async () => {
+        assert.elementCount(".overwork", 0);
     });
 });

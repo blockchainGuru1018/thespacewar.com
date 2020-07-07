@@ -1,15 +1,14 @@
-CounterAttackRequirementFactory.type = 'counterAttack';
+CounterAttackRequirementFactory.type = "counterAttack";
 
 function CounterAttackRequirementFactory({
     opponentStateService,
     playerStateService,
     requirementSpec,
     card,
-    queryAttacks
+    queryAttacks,
 }) {
-
     return {
-        create
+        create,
     };
 
     function create() {
@@ -18,26 +17,33 @@ function CounterAttackRequirementFactory({
             attacks: attacks(),
             count: requirementSpec.count,
             cardId: card.id,
-            cardCommonId: card.commonId
+            cardCommonId: card.commonId,
         };
     }
 
     function attacks() {
         const attackEvents = queryAttacks.canBeCountered();
-        return attackEvents.map(event => {
+        return attackEvents.map((event) => {
             const attack = {
-                attackerCardData: opponentStateService.findCardFromZonesAndDiscardPile(event.attackerCardId),
-                time: event.created
+                attackerCardData: opponentStateService.findCardFromZonesAndDiscardPile(
+                    event.attackerCardId
+                ),
+                time: event.created,
             };
 
             if (event.defenderCardId) {
-                attack.defenderCardsData = [playerStateService.findCardFromZonesAndDiscardPile(event.defenderCardId)];
-            }
-            else {
+                attack.defenderCardsData = [
+                    playerStateService.findCardFromZonesAndDiscardPile(
+                        event.defenderCardId
+                    ),
+                ];
+            } else {
                 attack.targetedStation = true;
-                attack.defenderCardsData = event.targetStationCardIds.map(cardId => {
-                    return playerStateService.findCardFromAnySource(cardId);
-                });
+                attack.defenderCardsData = event.targetStationCardIds.map(
+                    (cardId) => {
+                        return playerStateService.findCardFromAnySource(cardId);
+                    }
+                );
             }
 
             return attack;

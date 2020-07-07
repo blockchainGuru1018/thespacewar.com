@@ -1,26 +1,29 @@
-module.exports = function ({
-    matchService,
-    stateSerializer
-}) {
-
+module.exports = function ({ matchService, stateSerializer }) {
     return {
         getRestorableState,
-        restoreFromRestorableState
+        restoreFromRestorableState,
     };
 
     function getRestorableState() {
         return stateSerializer.serialize(matchService.getState());
     }
 
-    function restoreFromRestorableState({restorableStateJson, stateTreatmentMiddleware = [], keepActionLog = false}) {
+    function restoreFromRestorableState({
+        restorableStateJson,
+        stateTreatmentMiddleware = [],
+        keepActionLog = false,
+    }) {
         const restorableState = stateSerializer.parse(restorableStateJson);
         delete restorableState.playerOrder;
         delete restorableState.playersConnected;
 
         const state = matchService.getState();
         if (keepActionLog) {
-            for (const playerId of Object.keys(restorableState.playerStateById)) {
-                restorableState.playerStateById[playerId].actionLogEntries = state.playerStateById[playerId].actionLogEntries;
+            for (const playerId of Object.keys(
+                restorableState.playerStateById
+            )) {
+                restorableState.playerStateById[playerId].actionLogEntries =
+                    state.playerStateById[playerId].actionLogEntries;
             }
         }
 
@@ -28,7 +31,7 @@ module.exports = function ({
             state[key] = restorableState[key];
         }
 
-        stateTreatmentMiddleware.forEach(m => m(state))
+        stateTreatmentMiddleware.forEach((m) => m(state));
 
         matchService.setState(state);
     }

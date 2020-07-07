@@ -1,12 +1,11 @@
-const Deck = require('./Deck.js');
+const Deck = require("./Deck.js");
 
 module.exports = function (deps) {
-
     const cardDataAssembler = deps.cardDataAssembler;
 
     return {
         create,
-        createCardsForDeck
+        createCardsForDeck,
     };
 
     function create(cards) {
@@ -22,8 +21,7 @@ module.exports = function (deps) {
     function createDeck(useTheSwarmDeck) {
         if (useTheSwarmDeck) {
             return cardDataAssembler.createSwarmDeck();
-        }
-        else {
+        } else {
             return cardDataAssembler.createRegularDeck();
         }
     }

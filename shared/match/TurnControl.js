@@ -1,7 +1,6 @@
 const TakeControlEvent = require("../event/TurnControlEvent.js");
 
 module.exports = class TurnControl {
-
     constructor({
         matchService,
         playerStateService,
@@ -10,7 +9,7 @@ module.exports = class TurnControl {
         opponentStateService,
         opponentPhase,
         opponentActionLog,
-        lastStand
+        lastStand,
     }) {
         this._matchService = matchService;
         this._lastStand = lastStand;
@@ -27,14 +26,15 @@ module.exports = class TurnControl {
     toggleControlOfTurn() {
         if (this.canTakeControlOfTurn()) {
             this.takeControlOfOpponentsTurn();
-        }
-        else if (this.canReleaseControlOfTurn()) {
+        } else if (this.canReleaseControlOfTurn()) {
             this.releaseControlOfOpponentsTurn();
         }
     }
 
     takeControlOfOpponentsTurn() {
-        this._playerStateService.storeEvent(TakeControlEvent.takeControlOfOpponentsTurn());
+        this._playerStateService.storeEvent(
+            TakeControlEvent.takeControlOfOpponentsTurn()
+        );
 
         const playerId = this._playerId();
         this._matchService.setCurrentPlayer(playerId);
@@ -43,7 +43,9 @@ module.exports = class TurnControl {
     }
 
     releaseControlOfOpponentsTurn() {
-        this._playerStateService.storeEvent(TakeControlEvent.releaseControlOfOpponentsTurn());
+        this._playerStateService.storeEvent(
+            TakeControlEvent.releaseControlOfOpponentsTurn()
+        );
 
         const opponentId = this._opponentId();
         this._matchService.setCurrentPlayer(opponentId);
@@ -55,61 +57,80 @@ module.exports = class TurnControl {
     }
 
     canToggleControlOfTurn() {
-        return this.canTakeControlOfTurn()
-            || this.canReleaseControlOfTurn();
+        return this.canTakeControlOfTurn() || this.canReleaseControlOfTurn();
     }
 
     canTakeControlOfTurn() {
-        return !this._opponentPhase.isStart()
-            && !this._opponentPhase.isFirstDraw()
-            && this._playerPhase.isWait()
-            && this.opponentHasControlOfOwnTurn()
-            && !this._opponentHasCardThatPreventsPlayerPlayingEventCards()
-            && !this._playerHasCardThatPreventsPlayerPlayingEventCards();
+        return (
+            !this._opponentPhase.isStart() &&
+            !this._opponentPhase.isFirstDraw() &&
+            this._playerPhase.isWait() &&
+            this.opponentHasControlOfOwnTurn() &&
+            !this._opponentHasCardThatPreventsPlayerPlayingEventCards() &&
+            !this._playerHasCardThatPreventsPlayerPlayingEventCards()
+        );
     }
 
     canReleaseControlOfTurn() {
-        return this.playerHasControlOfOpponentsTurn()
-            && !this._lastStand.hasStarted();
+        return (
+            this.playerHasControlOfOpponentsTurn() &&
+            !this._lastStand.hasStarted()
+        );
     }
 
     playerHasControl() {
-        return this.playerHasControlOfOpponentsTurn()
-            || this.playerHasControlOfOwnTurn();
+        return (
+            this.playerHasControlOfOpponentsTurn() ||
+            this.playerHasControlOfOwnTurn()
+        );
     }
 
     opponentHasControl() {
-        return this.opponentHasControlOfPlayersTurn()
-            || this.opponentHasControlOfOwnTurn();
+        return (
+            this.opponentHasControlOfPlayersTurn() ||
+            this.opponentHasControlOfOwnTurn()
+        );
     }
 
     playerHasControlOfOwnTurn() {
-        return this._matchService.getCurrentPlayer() === this._playerId()
-            && !this._playerPhase.isWait();
+        return (
+            this._matchService.getCurrentPlayer() === this._playerId() &&
+            !this._playerPhase.isWait()
+        );
     }
 
     opponentHasControlOfOwnTurn() {
-        return this._matchService.getCurrentPlayer() === this._opponentId()
-            && !this._opponentPhase.isWait();
+        return (
+            this._matchService.getCurrentPlayer() === this._opponentId() &&
+            !this._opponentPhase.isWait()
+        );
     }
 
     playerHasControlOfOpponentsTurn() {
-        return this._matchService.getCurrentPlayer() === this._playerId()
-            && this._playerPhase.isWait();
+        return (
+            this._matchService.getCurrentPlayer() === this._playerId() &&
+            this._playerPhase.isWait()
+        );
     }
 
     opponentHasControlOfPlayersTurn() {
-        return this._matchService.getCurrentPlayer() !== this._playerId()
-            && !this._playerPhase.isWait();
+        return (
+            this._matchService.getCurrentPlayer() !== this._playerId() &&
+            !this._playerPhase.isWait()
+        );
     }
 
     _opponentHasCardThatPreventsPlayerPlayingEventCards() {
-        const cards = this._opponentStateService.getMatchingBehaviourCards(card => card.preventsOpponentFromPlayingAnEventCard);
+        const cards = this._opponentStateService.getMatchingBehaviourCards(
+            (card) => card.preventsOpponentFromPlayingAnEventCard
+        );
         return cards.length > 0;
     }
 
     _playerHasCardThatPreventsPlayerPlayingEventCards() {
-        const cards = this._playerStateService.getMatchingBehaviourCards(card => card.preventsOpponentFromPlayingAnEventCard);
+        const cards = this._playerStateService.getMatchingBehaviourCards(
+            (card) => card.preventsOpponentFromPlayingAnEventCard
+        );
         return cards.length > 0;
     }
 

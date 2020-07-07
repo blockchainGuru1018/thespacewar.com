@@ -1,6 +1,6 @@
-const BaseCard = require('./BaseCard.js');
+const BaseCard = require("./BaseCard.js");
 
-const Slow = require('./mixins/Slow');
+const Slow = require("./mixins/Slow");
 
 module.exports = class AlienMissile extends Slow(BaseCard) {
     constructor(deps) {
@@ -8,6 +8,6 @@ module.exports = class AlienMissile extends Slow(BaseCard) {
     }
 
     static get CommonId() {
-        return '83';
+        return "83";
     }
 };

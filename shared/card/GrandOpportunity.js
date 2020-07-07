@@ -1,8 +1,7 @@
-const BaseCard = require('./BaseCard.js');
+const BaseCard = require("./BaseCard.js");
 
 module.exports = class GrandOpportunity extends BaseCard {
-
     static get CommonId() {
-        return '20';
+        return "20";
     }
 };

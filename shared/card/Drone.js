@@ -1,5 +1,5 @@
-const info = require('./info/78.config.js');
-const BaseCard = require('./BaseCard.js');
+const info = require("./info/78.config.js");
+const BaseCard = require("./BaseCard.js");
 
 module.exports = class Drone extends BaseCard {
     constructor(deps) {
@@ -13,6 +13,4 @@ module.exports = class Drone extends BaseCard {
     static get CommonId() {
         return info.CommonId;
     }
-
-
 };

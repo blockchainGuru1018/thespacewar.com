@@ -1,5 +1,5 @@
-const info = require('./info/18.json');
-const BaseCard = require('./BaseCard.js');
+const info = require("./info/18.json");
+const BaseCard = require("./BaseCard.js");
 
 module.exports = class PerfectPlan extends BaseCard {
     constructor(deps) {

@@ -1,14 +1,14 @@
 module.exports = function (events) {
-
     const listenerByEvent = {};
 
     return {
         on,
-        emit
+        emit,
     };
 
     function on(event, callback) {
-        if (!events.includes(event)) throw new Error(`Event "${event}" is not permitted in emitter`);
+        if (!events.includes(event))
+            throw new Error(`Event "${event}" is not permitted in emitter`);
 
         listenerByEvent[event] = listenerByEvent[event] || [];
         listenerByEvent[event].push(callback);

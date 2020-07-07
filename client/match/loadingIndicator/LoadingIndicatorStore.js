@@ -1,15 +1,14 @@
 module.exports = function () {
-
     return {
         namespaced: true,
-        name: 'loadingIndicator',
+        name: "loadingIndicator",
         state: {
-            visible: false
+            visible: false,
         },
         actions: {
             show,
-            hide
-        }
+            hide,
+        },
     };
 
     function show({ state }) {

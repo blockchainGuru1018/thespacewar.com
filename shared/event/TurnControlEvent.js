@@ -6,7 +6,7 @@ function TurnControlEvent({ type }) {
 }
 
 TurnControlEvent.takeControlOfOpponentsTurn = (created = null) => {
-    const event = TurnControlEvent({ type: 'takeControlOfOpponentsTurn' });
+    const event = TurnControlEvent({ type: "takeControlOfOpponentsTurn" });
     if (created) {
         event.created = created;
     }
@@ -14,9 +14,10 @@ TurnControlEvent.takeControlOfOpponentsTurn = (created = null) => {
 };
 
 TurnControlEvent.releaseControlOfOpponentsTurn = (created = null) => {
-    const event = TurnControlEvent({ type: 'releaseControlOfOpponentsTurn' });
+    const event = TurnControlEvent({ type: "releaseControlOfOpponentsTurn" });
     if (created) {
-        event.created = typeof created === 'string' ? Date.parse(created) : created;
+        event.created =
+            typeof created === "string" ? Date.parse(created) : created;
     }
     return event;
 };
