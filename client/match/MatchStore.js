@@ -44,7 +44,7 @@ const {
 } = require('./phases.js');
 
 const FlashCardTime = 2000;
-const ClientLimitNotice = { note: 'not_allowed_on_client' };
+const ClientLimitNotice = {note: 'not_allowed_on_client'};
 
 module.exports = function (deps) {
 
@@ -54,7 +54,7 @@ module.exports = function (deps) {
     const opponentUser = deps.opponentUser;
     const matchId = deps.matchId;
     const cardInfoRepository = deps.cardInfoRepository;
-    const actionPointsCalculator = deps.actionPointsCalculator || ActionPointsCalculator({ cardInfoRepository });
+    const actionPointsCalculator = deps.actionPointsCalculator || ActionPointsCalculator({cardInfoRepository});
     const matchController = deps.matchController;
     const rawCardDataRepository = deps.rawCardDataRepository;
 
@@ -205,6 +205,7 @@ module.exports = function (deps) {
             askToDiscardOpponentTopTwoCards,
             overwork,
             perfectPlan,
+            checkLastTimeOfInactivityForPlayer,
             toggleControlOfTurn,
             skipDrawCard,
 
@@ -278,7 +279,7 @@ module.exports = function (deps) {
         return nextPhase || 'wait';
     }
 
-    function getTotalCardsOnHand(state){
+    function getTotalCardsOnHand(state) {
         return state.playerCardsOnHand;
     }
 
@@ -312,7 +313,7 @@ module.exports = function (deps) {
 
     function canSkipAttackPhaseWithPlayerCardsInPlay(state, getters) {
         const playerCardsInPlay = [...state.playerCardsInZone, ...state.playerCardsInOpponentZone]
-            .map(cardData => getters.createCard(cardData, { alternativeConditions: { phase: 'attack' } }))
+            .map(cardData => getters.createCard(cardData, {alternativeConditions: {phase: 'attack'}}))
             .map(card => {
                 return PlayerCardInPlay({
                     card,
@@ -369,7 +370,7 @@ module.exports = function (deps) {
     }
 
     function createCard(state, getters) {
-        return (cardData, { isOpponent = false, playerId = null, alternativeConditions } = {}) => {
+        return (cardData, {isOpponent = false, playerId = null, alternativeConditions} = {}) => {
             const id = playerId || (isOpponent ? state.opponentUser.id : state.ownUser.id);
             return getters.cardFactory.createCardForPlayer(cardData, id, alternativeConditions);
         };
@@ -586,7 +587,7 @@ module.exports = function (deps) {
     }
 
     function playerPhase(state, getters) {
-        return new PlayerPhase({ matchService: getters.matchService, playerStateService: getters.playerStateService });
+        return new PlayerPhase({matchService: getters.matchService, playerStateService: getters.playerStateService});
     }
 
     function opponentPhase(state, getters) {
@@ -703,7 +704,7 @@ module.exports = function (deps) {
         const opponentEventRepository = {
             getAll: () => state.opponentEvents
         };
-        return new QueryEvents({ eventRepository, opponentEventRepository, matchService: getters.matchService });
+        return new QueryEvents({eventRepository, opponentEventRepository, matchService: getters.matchService});
     }
 
     function queryOpponentEvents(state, getters) {
@@ -788,7 +789,7 @@ module.exports = function (deps) {
     }
 
     function cardDataAssembler() {
-        return CardDataAssembler({ rawCardDataRepository });
+        return CardDataAssembler({rawCardDataRepository});
     }
 
     function attackerCard(state, getters) {
@@ -883,12 +884,12 @@ module.exports = function (deps) {
             setTimeout(() => window.location.reload(), 3 * 60 * 1000);
         }
 
-        if (getters.gameOn && getters.playerClock.getTime() <= 0 && (!state.onLastChangeToWin| !state.timeRanOutVSBot) ) {
-            if(isOpponentBot){
-                dispatch('timeRanOutVSBot',true);
-            }else{
-                setTimeout(() => window.location.reload(), 3 * 60 * 1000 );
-                dispatch('onLastChangeToWin',true);
+        if (getters.gameOn && getters.playerClock.getTime() <= 0 && (!state.onLastChangeToWin | !state.timeRanOutVSBot)) {
+            if (isOpponentBot) {
+                dispatch('timeRanOutVSBot', true);
+            } else {
+                setTimeout(() => window.location.reload(), 3 * 60 * 1000);
+                dispatch('onLastChangeToWin', true);
             }
         }
 
@@ -1002,12 +1003,12 @@ module.exports = function (deps) {
         state.attackerCardId = card.id;
     }
 
-    function selectAsDefender({state, dispatch}, { card, fromRequirement = null}) {
+    function selectAsDefender({state, dispatch}, {card, fromRequirement = null}) {
         let attackerCardId = state.attackerCardId;
         const defenderCardId = card.id;
-        if(fromRequirement === 'damageShieldCard'){
+        if (fromRequirement === 'damageShieldCard') {
             attackerCardId = rootStore.getters['requirement/firstRequirement'].cardId
-             dispatch('damageShieldCards', [defenderCardId])
+            dispatch('damageShieldCards', [defenderCardId])
         }
         matchController.emit('attack', {attackerCardId, defenderCardId});
 
@@ -1070,11 +1071,15 @@ module.exports = function (deps) {
     }
 
     function damageShieldCards({}, targetIds) {
-        matchController.emit('damageShieldCards', { targetIds });
+        matchController.emit('damageShieldCards', {targetIds});
     }
 
     function retreat() {
         matchController.emit('retreat');
+    }
+
+    function checkLastTimeOfInactivityForPlayer() {
+        matchController.emit('checkLastTimeOfInactivityForPlayer');
     }
 
     function selectStationCardAsDefender({state, getters, dispatch}, {id}) {
@@ -1242,7 +1247,8 @@ module.exports = function (deps) {
         }, 300);
     }
 
-    function matchIsDead() {
+    function matchIsDead({dispatch}) {
+        dispatch('inactivity/stop',null, {root:true});
         endGame();
     }
 
@@ -1256,16 +1262,16 @@ module.exports = function (deps) {
 
         localGameDataFacade.setOngoingMatch(matchData);
     }
-    
-    function onLastChangeToWin({state}, value){
+
+    function onLastChangeToWin({state}, value) {
         state.onLastChangeToWin = value;
     }
-    
-    function timeRanOutVSBot({state}, value){
+
+    function timeRanOutVSBot({state}, value) {
         state.timeRanOutVSBot = value;
     }
 
-    function isOpponentBot(){
+    function isOpponentBot() {
         return opponentUser.id === 'BOT';
     }
 };

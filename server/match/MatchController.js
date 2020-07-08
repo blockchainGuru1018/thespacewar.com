@@ -48,8 +48,12 @@ module.exports = function (deps) {
         const match = await matchRepository.getById(matchId);
         if (match) {
             logger.log(matchActionLogMessage(data), 'match');
+            try{
             match[data.action](userId, data.value);
-            match.updateTimeOut(userId);
+
+            }catch (e) {
+                console.log(e);
+            }
         } else {
             sendMatchIsDeadMessageToUserSocketConnection({userId, matchId});
         }

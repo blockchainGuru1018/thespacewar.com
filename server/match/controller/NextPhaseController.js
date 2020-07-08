@@ -8,7 +8,6 @@ function NextPhaseCardController(deps) {
         matchComService,
         playerServiceProvider,
         playerServiceFactory,
-        updateTimeOut
     } = deps;
 
     return {
@@ -25,10 +24,8 @@ function NextPhaseCardController(deps) {
         const playerPhaseControl = playerServiceFactory.playerPhaseControl(playerId);
         playerPhaseControl.validateCanGoToNextPhase();
         playerPhaseControl.nextPhase();
-        updateTimeOut(playerId);
         matchComService.emitCurrentStateToPlayers();
     }
-
     //TODO: here should take also timeout
     function onToggleControlOfTurn(playerId) {
         const turnControl = playerServiceProvider.byTypeAndId(PlayerServiceProvider.TYPE.turnControl, playerId);

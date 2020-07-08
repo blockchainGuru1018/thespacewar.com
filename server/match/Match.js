@@ -21,7 +21,7 @@ const PlayerServiceProvider = require('../../shared/match/PlayerServiceProvider.
 const PlayerOverworkFactory = require('../../shared/match/overwork/PlayerOverworkFactory.js');
 const ServiceFactoryFactory = require('../../shared/match/ServiceFactoryFactory.js');
 const LookAtStationRow = require('../../shared/match/card/actions/LookAtStationRow.js');
-const TimeOutService = require('./service/TimeOutService.js');
+const PlayerInactivityService = require('./service/PlayerInactivityService.js');
 const CardsThatCanLookAtHandSizeStationRow = require('../../shared/match/card/query/CardsThatCanLookAtHandSizeStationRow.js');
 const CardCanLookAtHandSizeStationRow = require('../../shared/match/card/query/CardCanLookAtHandSizeStationRow.js');
 const CreatePlayerRequirementUpdater = require('../../shared/match/requirement/CreatePlayerRequirementUpdater.js');
@@ -77,7 +77,14 @@ module.exports = function ({
         gameServiceFactory,
         stateChangeListener
     });
-    const timeOutService = new TimeOutService({gameConfig,retreat});
+
+    const playerInactivityService = new PlayerInactivityService({
+        gameConfig,
+        matchService,
+        matchComService,
+        logger,
+        retreat,
+    });
 
     const playerRequirementUpdaterFactory = new PlayerRequirementUpdaterFactory({
         playerServiceProvider,
@@ -93,7 +100,6 @@ module.exports = function ({
         matchService,
         matchComService,
         restoreFromState,
-        updateTimeOut,
         playerServiceProvider,
         cardFactory: playerServiceFactory.cardFactory(),
         stateChangeListener,
@@ -156,6 +162,7 @@ module.exports = function ({
         endLastStand,
         repairCard,
         retreat,
+        // updateHeartBeat: playerInactivityService.checkAndUpdatePlayerHeartBeatCounter,
         restoreSavedMatch: debugController.onRestoreSavedMatch,
         cheat: cheatController.onCheat
     };
@@ -181,22 +188,15 @@ module.exports = function ({
         restoreFromRestorableState,
         toClientModel,
         hasEnded,
-        updateTimeOut,
-        getTimeOutForPlayer,
         saveMatch: debugController.onSaveMatch,
         updatePlayer: matchComService.updatePlayer.bind(matchComService),
         timeAlive: debugController.timeAlive,
+        checkLastTimeOfInactivityForPlayer: playerInactivityService.checkLastTimeOfInactivityForPlayer,
 
         ...wrapApi({api, matchComService, stateChangeListener})
     };
 
-    function updateTimeOut(playerId) {
-        const playerState = getPlayerState(playerId);
-        timeOutService.updateTimeOutForPlayer(playerId,playerState);
-    }
-    function getTimeOutForPlayer(playerId) {
-        return timeOutService.getForPlayer(playerId);
-    }
+
     function refresh(playerId) {
         startGameController.repairPotentiallyInconsistentState(playerId);
         matchComService.emitCurrentStateToPlayers();

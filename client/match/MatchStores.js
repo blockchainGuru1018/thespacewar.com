@@ -17,6 +17,7 @@ const STORES = [
     require('./notificationBanner/NotificationBannerStore.js').default,
     require('./infoMode/InfoModeStore.js').default,
     require('./log/ActionLogStore.js').default,
+    require('./PlayerInactivityStore.js')
 ];
 const LOGGING_ENABLED = false;
 
