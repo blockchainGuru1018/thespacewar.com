@@ -115,7 +115,7 @@ function PutDownCardController(deps) {
         const ruleService = playerServiceProvider.byTypeAndId(PlayerServiceProvider.TYPE.rule, playerId);
 
         const nameOfCardSource = playerStateService.nameOfCardSource(cardData.id);
-        if (nameOfCardSource === location) throw new CheatError('Card is already at location');
+        if (nameOfCardSource === location && choice !== 'putDownAsExtraStationCard') throw new CheatError('Card is already at location');
 
         if (location === 'zone') {
             const card = playerStateService.createBehaviourCard(cardData);
