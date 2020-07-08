@@ -3,7 +3,6 @@ const createCard = FakeCardDataAssembler.createCard;
 const PutDownCardEvent = require('../../../shared/PutDownCardEvent.js');
 const MoveCardEvent = require('../../../shared/event/MoveCardEvent.js');
 const RepairCardEvent = require('../../../shared/event/RepairCardEvent.js');
-const AttackEvent = require('../../../shared/event/AttackEvent.js');
 const getCardImageUrl = require('../../utils/getCardImageUrl.js');
 const FakeState = require('../../testUtils/FakeState.js');
 const FakeMatchController = require('../../testUtils/FakeMatchController.js');
@@ -409,7 +408,7 @@ describe('draw phase:', () => {
 
             await click('.drawPile-draw');
             dispatch('drawCards', { cards: [{ id: 'C1A' }], moreCardsCanBeDrawn: false });
-            await timeout();
+            await timeout(1000); // debounce time
         });
         test('should ask to draw card', () => {
             assert.calledOnceWith(matchController.emit, 'drawCard');
@@ -442,7 +441,7 @@ describe('draw phase:', () => {
 
             await click('.drawPile-draw');
             dispatch('drawCards', { cards: [{ id: 'C1A' }], moreCardsCanBeDrawn: true });
-            await timeout();
+            await timeout(1000); // debounce time
         });
         test('should ask to draw card', () => {
             assert.calledOnceWith(matchController.emit, 'drawCard');

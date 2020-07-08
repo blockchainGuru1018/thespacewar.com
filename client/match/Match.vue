@@ -421,6 +421,7 @@
     const OpponentCommanderCards = resolveModule(require('./commander/OpponentCommanderCards.vue'));
     const OpponentPreGameOverlay = resolveModule(require('./OpponentPreGameOverlay.vue'));
     const StationCardWrapper = resolveModule(require('./stationCard/StationCardWrapper.vue'));
+    const debounce = require('../utils/debounce.js');
     const { PHASES } = require('./phases.js');
 
     module.exports = {
@@ -731,7 +732,7 @@
                 }
             },
             playerDrawPileClick() {
-                this.askToDrawCard();
+              debounce(this.askToDrawCard,1000)
             },
             opponentDrawPileClick() {
                 this.askToDiscardOpponentTopTwoCards();
