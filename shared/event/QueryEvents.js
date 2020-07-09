@@ -1,6 +1,6 @@
 class QueryEvents {
 
-    constructor({ eventRepository, opponentEventRepository, matchService }) {
+    constructor({eventRepository, opponentEventRepository, matchService}) {
         this._eventRepository = eventRepository;
         this._opponentEventRepository = opponentEventRepository;
         this._matchService = matchService;
@@ -76,6 +76,30 @@ class QueryEvents {
         }
 
         return false;
+    }
+
+
+    getTimeWhenOpponentCardWasPutDownByCommonId(commonId) {
+        const events = this._opponentEventRepository.getAll().slice().reverse();
+        const putDownEventForThisCard = events.find(e => {
+            return e.type === 'putDownCard'
+                && e.cardCommonId === commonId;
+        });
+
+        if (putDownEventForThisCard) {
+            return putDownEventForThisCard.created;
+        }
+    }
+
+    getTimeWhenCardWasPutDownById(id) {
+        const events = this._eventRepository.getAll().slice().reverse();
+        const putDownEventForThisCard = events.find(e => {
+            return e.type === 'putDownCard'
+                && e.cardId === id;
+        });
+        if (putDownEventForThisCard) {
+            return putDownEventForThisCard.created;
+        }
     }
 
     putDownCardWithinTimeFrame(opponentCardId, millisecondsTimeFrame) {
@@ -173,7 +197,7 @@ class QueryEvents {
             }, 0);
     }
 
-    getCardDrawsOnTurn(turn, { byEvent = false } = {}) {
+    getCardDrawsOnTurn(turn, {byEvent = false} = {}) {
         const events = this._eventRepository.getAll();
         return events.filter(event => {
             return event.turn === turn

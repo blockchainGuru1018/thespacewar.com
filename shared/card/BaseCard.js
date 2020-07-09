@@ -4,24 +4,24 @@ const phases = require('../phases.js');
 class BaseCard {
 
     constructor({
-        card,
-        playerId,
-        matchInfoRepository,
-        queryEvents,
-        matchService,
-        playerStateService,
-        canThePlayer,
-        playerRuleService,
-        turnControl,
-        cardEffect,
-        playerPhase,
-        addRequirementFromSpec,
-        queryBoard,
-        alternativeConditions = {}
-    }) {
+                    card,
+                    playerId,
+                    matchInfoRepository,
+                    queryEvents,
+                    matchService,
+                    playerStateService,
+                    canThePlayer,
+                    playerRuleService,
+                    turnControl,
+                    cardEffect,
+                    playerPhase,
+                    addRequirementFromSpec,
+                    queryBoard,
+                    alternativeConditions = {}
+                }) {
         this.playerId = playerId;
 
-        this._card = { ...card };
+        this._card = {...card};
         this._matchInfoRepository = matchInfoRepository;
         this._queryEvents = queryEvents;
         this._matchService = matchService;
@@ -109,8 +109,8 @@ class BaseCard {
     }
 
     getCardData() {
-        const { flipped, ...cardData } = this._card;
-        return { ...cardData };
+        const {flipped, ...cardData} = this._card;
+        return {...cardData};
     }
 
     canAttack() {
@@ -183,8 +183,7 @@ class BaseCard {
     canBeRepaired() {
         if (this.isStationCard()) {
             return this.isFlipped();
-        }
-        else {
+        } else {
             return !!this.damage || this.paralyzed;
         }
     }
@@ -280,6 +279,13 @@ class BaseCard {
 
     canBePutDownAnyTime() {
         return false;
+    }
+
+    //TODO: better name to find out that this is the last card of same kind played
+    isTheLatestPlayedCardOfSameKind() {
+        const turnWhenOpponentCardWasPutDown = this._queryEvents.getTimeWhenOpponentCardWasPutDownByCommonId(this.commonId);
+        const turnCardWasPutDown = this._queryEvents.getTimeWhenCardWasPutDownById(this.id);
+        return turnWhenOpponentCardWasPutDown ? turnWhenOpponentCardWasPutDown < turnCardWasPutDown : true;
     }
 
     canBePlayed() {

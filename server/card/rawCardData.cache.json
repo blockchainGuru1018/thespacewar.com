@@ -237,7 +237,7 @@
             "defense": "5",
             "attack": "0",
             "number_copies": "3",
-            "author": "Igor Zhuravlov",
+            "author": "Marco A. Aguilar",
             "deck": "1"
         },
         {
@@ -457,5 +457,5 @@
             "deck": "1"
         }
     ],
-    "saveTime": 1589766557223
+    "saveTime": 1594310977977
 }

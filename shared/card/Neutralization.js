@@ -21,7 +21,7 @@ class Neutralization extends BaseCard {
     }
 
     canTriggerDormantEffect() {
-        return true;
+       return this.isTheLatestPlayedCardOfSameKind();
     }
 
     triggerDormantEffect() {
