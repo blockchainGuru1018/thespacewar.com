@@ -1,5 +1,5 @@
-const MatchMode = require("../../../shared/match/MatchMode.js");
 
+const MatchMode = require("../../../shared/match/MatchMode.js");
 module.exports = function ({
     matchController
 }) {

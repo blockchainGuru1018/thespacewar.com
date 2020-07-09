@@ -11,7 +11,8 @@ const propertyMap = {
     NICIA_SATU_STARTS_WITH_ENERGY_SHIELD: 'niciaSatuStartsWithEnergyShield',
     TIME_PER_PLAYER_IN_MINUTES: 'timePerPlayerInMinutes',
     RECYCLE_AT_START_OF_GAME: 'recycleAtStartOfGame',
-    SECONDS_OF_WAIT_BETWEEN_ACTIONS_OF_AI_BOT: 'secondsOfWaitBetweenActionsOfAiBot', 
+    SECONDS_OF_WAIT_BETWEEN_ACTIONS_OF_AI_BOT: 'secondsOfWaitBetweenActionsOfAiBot',
+    MINUTES_OF_INACTIVITY_RESULT_IN_AUTOLOSS: 'minutesOfInactivityResultInAutoLoss',
 };
 
 const Defaults = convertConfig(DEFAULT_CONFIG);
@@ -31,7 +32,8 @@ function GameConfig({
     timePerPlayerInMinutes = Defaults.accessKey,
     niciaSatuStartsWithEnergyShield = Defaults.niciaSatuStartsWithEnergyShield,
     recycleAtStartOfGame = Defaults.recycleAtStartOfGame,
-    secondsOfWaitBetweenActionsOfAiBot = Defaults.secondsOfWaitBetweenActionsOfAiBot
+    secondsOfWaitBetweenActionsOfAiBot = Defaults.secondsOfWaitBetweenActionsOfAiBot,
+    minutesOfInactivityResultInAutoLoss = Defaults.minutesOfInactivityResultInAutoLoss
 } = {}) {
 
     return {
@@ -47,6 +49,7 @@ function GameConfig({
         niciaSatuStartsWithEnergyShield: () => niciaSatuStartsWithEnergyShield,
         recycleAtStartOfGame: () => recycleAtStartOfGame,
         secondsOfWaitBetweenActionsOfAiBot: () => Math.round(secondsOfWaitBetweenActionsOfAiBot * 1000),
+        minutesOfInactivityResultInAutoLoss: () => Math.round(minutesOfInactivityResultInAutoLoss * 1000 * 60),
     };
 }
 

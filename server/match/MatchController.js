@@ -18,7 +18,7 @@ module.exports = function (deps) {
         if (!playerId || !opponentId) throw new Error('Illegal operation');
 
         matchRepository.clearOldMatches();
-        const match = await matchRepository.create({ playerId, opponentId });
+        const match = await matchRepository.create({playerId, opponentId});
 
         res.json(match);
     }
@@ -28,7 +28,7 @@ module.exports = function (deps) {
         if (!playerId) throw new Error('Illegal operation');
 
         matchRepository.clearOldMatches();
-        const match = await matchRepository.createWithBot({ playerId });
+        const match = await matchRepository.createWithBot({playerId});
 
         res.json(match);
     }
@@ -48,10 +48,14 @@ module.exports = function (deps) {
         const match = await matchRepository.getById(matchId);
         if (match) {
             logger.log(matchActionLogMessage(data), 'match');
+            try{
             match[data.action](userId, data.value);
-        }
-        else {
-            sendMatchIsDeadMessageToUserSocketConnection({ userId, matchId });
+
+            }catch (e) {
+                console.log(e);
+            }
+        } else {
+            sendMatchIsDeadMessageToUserSocketConnection({userId, matchId});
         }
     }
 
@@ -64,17 +68,16 @@ module.exports = function (deps) {
         await matchRepository.restoreAll();
     }
 
-    function matchActionLogMessage({ action, value, playerId }) {
+    function matchActionLogMessage({action, value, playerId}) {
         const actionValueJson = JSON.stringify(value, null, 4);
         return `[${new Date().toISOString()}] Match action: ${action} - To player: ${playerId} - With value: ${actionValueJson}`;
     }
 
-    function sendMatchIsDeadMessageToUserSocketConnection({ userId, matchId }) {
+    function sendMatchIsDeadMessageToUserSocketConnection({userId, matchId}) {
         const userConnection = socketRepository.getForUser(userId);
         try {
-            userConnection.emit('match', { matchId, playerId: userId, action: 'matchIsDead' });
-        }
-        catch(error) {
+            userConnection.emit('match', {matchId, playerId: userId, action: 'matchIsDead'});
+        } catch (error) {
             logger.log(`Disconnected user - Tried to emit to user that has disconnected (matchId:${matchId}, userId:${userId})`, 'match');
         }
     }

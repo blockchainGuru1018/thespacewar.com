@@ -23,7 +23,6 @@ module.exports = function ({
     function nextPhase() {
         if (playerNextPhase.canEndTurnForPlayer()) {
             playerNextPhase.endTurnForPlayer();
-
             opponentNextPhase.next();
         }
         else {

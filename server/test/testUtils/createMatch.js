@@ -14,7 +14,7 @@ module.exports = function createMatch(deps = {}, testCardData = []) {
     const rawCardDataRepository = { get: () => testCardData };
     const cardDataAssembler = CardDataAssembler({ rawCardDataRepository });
     defaults(deps, {
-        gameConfig: GameConfig({ amountOfCardsInStartHand: 7 }),
+        gameConfig: GameConfig({ amountOfCardsInStartHand: 7, minutesOfInactivityResultInAutoLoss:5 }),
         cardInfoRepository: CardInfoRepository({ cardDataAssembler }),
         rawCardDataRepository,
         players: [Player('P1A'), Player('P2A')],

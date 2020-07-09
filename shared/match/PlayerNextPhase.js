@@ -44,6 +44,7 @@ module.exports = function ({
                 enterDrawPhaseForPlayer();
             }
         }
+        playerStateService.storeEvent({type:`nextPhase-${playerPhase.get()}`, created:new Date()});
     }
 
     function getNextPhase() {

@@ -1,4 +1,4 @@
-const { stub } = require('./bocha-jest/bocha-jest.js');
+const {stub} = require('./bocha-jest/bocha-jest.js');
 
 module.exports = function FakeConnection(namesOfActionsToStub = [], stubFn = stub) {
     const stubMap = {};
@@ -8,7 +8,9 @@ module.exports = function FakeConnection(namesOfActionsToStub = [], stubFn = stu
     const listenersByActionName = {};
 
     return {
-        emit(_, { action, value }) {
+        connected: true,
+        disconnected: false,
+        emit(_, {action, value}) {
             if (stubMap[action]) {
                 stubMap[action](value);
             }
