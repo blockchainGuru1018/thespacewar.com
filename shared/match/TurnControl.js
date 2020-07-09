@@ -3,15 +3,15 @@ const TakeControlEvent = require("../event/TurnControlEvent.js");
 module.exports = class TurnControl {
 
     constructor({
-        matchService,
-        playerStateService,
-        playerPhase,
-        playerGameTimer,
-        opponentStateService,
-        opponentPhase,
-        opponentActionLog,
-        lastStand
-    }) {
+                    matchService,
+                    playerStateService,
+                    playerPhase,
+                    playerGameTimer,
+                    opponentStateService,
+                    opponentPhase,
+                    opponentActionLog,
+                    lastStand
+                }) {
         this._matchService = matchService;
         this._lastStand = lastStand;
 
@@ -27,8 +27,7 @@ module.exports = class TurnControl {
     toggleControlOfTurn() {
         if (this.canTakeControlOfTurn()) {
             this.takeControlOfOpponentsTurn();
-        }
-        else if (this.canReleaseControlOfTurn()) {
+        } else if (this.canReleaseControlOfTurn()) {
             this.releaseControlOfOpponentsTurn();
         }
     }
@@ -65,7 +64,8 @@ module.exports = class TurnControl {
             && this._playerPhase.isWait()
             && this.opponentHasControlOfOwnTurn()
             && !this._opponentHasCardThatPreventsPlayerPlayingEventCards()
-            && !this._playerHasCardThatPreventsPlayerPlayingEventCards();
+            && !this._playerHasCardThatPreventsPlayerPlayingEventCards()
+            && !this._isPlayingWithTheSwarmDeck();
     }
 
     canReleaseControlOfTurn() {
@@ -119,5 +119,13 @@ module.exports = class TurnControl {
 
     _opponentId() {
         return this._opponentStateService.getPlayerId();
+    }
+
+    _playerState() {
+        return this._matchService.getState().playerStateById[this._playerId()];
+    }
+
+    _isPlayingWithTheSwarmDeck() {
+        return 'The-Swarm' === this._playerState().deckName;
     }
 };

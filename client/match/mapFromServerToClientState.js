@@ -3,6 +3,7 @@ module.exports = function (serverState, clientPlayerId) {
     return {
         events: playerState.events,
         playerCardsInZone: playerState.cardsInZone,
-        playerCardsInOpponentZone: playerState.cardsInOpponentZone
+        playerCardsInOpponentZone: playerState.cardsInOpponentZone,
+        deckName: playerState.deckName
     };
 };

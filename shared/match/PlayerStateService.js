@@ -6,21 +6,21 @@ const AddCardToHandEvent = require('../event/AddCardToHandEvent.js');
 const PutDownCardEvent = require('../PutDownCardEvent.js');
 const RemoveStationCardEvent = require('../event/RemoveStationCardEvent.js');
 const MatchMode = require('./MatchMode.js');
-const { PHASES } = require('../phases.js');
+const {PHASES} = require('../phases.js');
 
 class PlayerStateService {
 
     constructor({
-        playerId,
-        matchService,
-        queryEvents,
-        actionPointsCalculator,
-        logger,
-        cardFactory,
-        eventFactory,
-        deckFactory,
-        gameConfig
-    }) {
+                    playerId,
+                    matchService,
+                    queryEvents,
+                    actionPointsCalculator,
+                    logger,
+                    cardFactory,
+                    eventFactory,
+                    deckFactory,
+                    gameConfig
+                }) {
         this._playerId = playerId;
         this._matchService = matchService;
         this._actionPointsCalculator = actionPointsCalculator;
@@ -28,14 +28,14 @@ class PlayerStateService {
         this._eventFactory = eventFactory;
         this._deckFactory = deckFactory;
         this._gameConfig = gameConfig;
-        this._logger = logger || { log: (...args) => console.log('PlayerStateService logger: ', ...args) };
+        this._logger = logger || {log: (...args) => console.log('PlayerStateService logger: ', ...args)};
         this._stateTouchListeners = [];
     }
 
     isBot() {
         const playerId = this.getPlayerId();
         return playerId === "BOT";
-      }
+    }
 
     reset(useTheSwarmDeck = false) {
         const playerId = this.getPlayerId();
@@ -61,14 +61,16 @@ class PlayerStateService {
             playerState.actionLogEntries = [];
             playerState.commanders = [];
             playerState.clock = {};
+            playerState.deckName = ''
         });
     }
 
     _initializeDeck(useTheSwarmDeck = false) {
         const cardsInDeck = this._deckFactory.createCardsForDeck(useTheSwarmDeck);
-
+        const deckName = useTheSwarmDeck ? 'The-Swarm' : 'Regular';
         this.update(playerState => {
             playerState.cardsInDeck = cardsInDeck;
+            playerState.deckName = deckName;
         });
     }
 
@@ -92,7 +94,7 @@ class PlayerStateService {
 
     selectStartingStationCard(cardId, location) {
         const cardData = this.removeCardFromHand(cardId);
-        this.addStationCard(cardData, location, { startingStation: true });
+        this.addStationCard(cardData, location, {startingStation: true});
     }
 
     isReadyForGame() {
@@ -406,6 +408,7 @@ class PlayerStateService {
         return null;
     }
 
+
     nameOfCardSource(cardId) {
         const playerState = this.getPlayerState();
 
@@ -439,9 +442,9 @@ class PlayerStateService {
         });
     }
 
-    addStationCard(cardData, location, { startingStation = false, putDownAsExtraStationCard = false } = {}) {
+    addStationCard(cardData, location, {startingStation = false, putDownAsExtraStationCard = false} = {}) {
         const stationLocation = location.split('-').pop();
-        const stationCard = { place: stationLocation, card: cardData };
+        const stationCard = {place: stationLocation, card: cardData};
         this.update(playerState => {
             playerState.stationCards.push(stationCard);
         });
@@ -461,17 +464,17 @@ class PlayerStateService {
         this.update(playerState => {
             playerState.cardsOnHand.push(cardData);
         });
-        this.storeEvent(AddCardToHandEvent({ cardId: cardData.id }));
+        this.storeEvent(AddCardToHandEvent({cardId: cardData.id}));
     }
 
-    putDownCardInZone(cardData, { grantedForFreeByEvent = false } = {}) {
+    putDownCardInZone(cardData, {grantedForFreeByEvent = false} = {}) {
         this.update(playerState => {
             playerState.cardsInZone.push(cardData);
         });
-        this.registerEventForPutDownCardInZone(cardData, { grantedForFreeByEvent });
+        this.registerEventForPutDownCardInZone(cardData, {grantedForFreeByEvent});
     }
 
-    registerEventForPutDownCardInZone(cardData, { grantedForFreeByEvent = false } = {}) {
+    registerEventForPutDownCardInZone(cardData, {grantedForFreeByEvent = false} = {}) {
         const currentTurn = this._matchService.getTurn();
         this.storeEvent(PutDownCardEvent({
             turn: currentTurn,
@@ -541,8 +544,7 @@ class PlayerStateService {
         const cardIsOnHandOrInStation = !!this.findCardFromHandOrStation(cardId);
         if (cardIsOnHandOrInStation) {
             this.registerCounterWithCardOnHandOrInStation(cardId);
-        }
-        else {
+        } else {
             this.registerCounterWithCardInZone(cardId);
         }
     }
@@ -551,9 +553,8 @@ class PlayerStateService {
         const cardData = this.removeCardFromStationOrHand(cardId);
         if (cardData.type === 'event') {
             this.registerEventForPutDownEventCardInZone(cardData);
-        }
-        else {
-            this.registerEventForPutDownCardInZone(cardData, { grantedForFreeByEvent: false });
+        } else {
+            this.registerEventForPutDownCardInZone(cardData, {grantedForFreeByEvent: false});
         }
 
         this.discardCard(cardData);
@@ -564,7 +565,7 @@ class PlayerStateService {
         this.discardCard(cardData);
     }
 
-    registerAttackCountered({ attackerCardId, defenderCardId = null, targetStationCardIds = null }) {
+    registerAttackCountered({attackerCardId, defenderCardId = null, targetStationCardIds = null}) {
         const cardData = this.findCard(attackerCardId);
         const turn = this._matchService.getTurn();
         const attackEvent = AttackEvent({
@@ -608,7 +609,7 @@ class PlayerStateService {
         }));
     }
 
-    drawCard({ byEvent = false } = {}) {
+    drawCard({byEvent = false} = {}) {
         const deck = this.getDeck();
         if (deck.getCardCount() === 0) {
             this._logger.log(`PLAYERID=${this._playerId} Cannot draw card, deck is empty`, 'playerStateService');
@@ -621,17 +622,17 @@ class PlayerStateService {
         }
 
         const turn = this._matchService.getTurn();
-        this.storeEvent(DrawCardEvent({ turn, byEvent }));
+        this.storeEvent(DrawCardEvent({turn, byEvent}));
     }
 
-    registerMill({ byEvent = false } = {}) {
+    registerMill({byEvent = false} = {}) {
         if (!byEvent) {
             const turn = this._matchService.getTurn();
-            this.storeEvent(new DrawCardEvent({ turn }));
+            this.storeEvent(new DrawCardEvent({turn}));
         }
     }
 
-    registerAttack({ attackerCardId, defenderCardId = null, targetStationCardIds = null }) {
+    registerAttack({attackerCardId, defenderCardId = null, targetStationCardIds = null}) {
         const cardData = this.findCard(attackerCardId);
         const turn = this._matchService.getTurn();
         const attackEvent = AttackEvent({
@@ -662,9 +663,8 @@ class PlayerStateService {
             });
 
             const turn = this._matchService.getTurn();
-            this.storeEvent(MoveCardEvent({ turn, cardId, cardCommonId: updatedCardCommonId }));
-        }
-        else {
+            this.storeEvent(MoveCardEvent({turn, cardId, cardCommonId: updatedCardCommonId}));
+        } else {
             throw new Error(`Failed to move card with ID: ${cardId}`);
         }
     }
@@ -700,8 +700,7 @@ class PlayerStateService {
         if (this.findStationCard(cardId)) {
             const removedStationCard = this.removeStationCard(cardId);
             return this._cardDataFromStationCard(removedStationCard);
-        }
-        else if (this.findCard(cardId)) {
+        } else if (this.findCard(cardId)) {
             return this.removeCard(cardId);
         }
         return null;
@@ -711,8 +710,7 @@ class PlayerStateService {
         if (this.findStationCard(cardId)) {
             const removedStationCard = this.removeStationCard(cardId);
             return this._cardDataFromStationCard(removedStationCard);
-        }
-        else if (this.findCardFromHand(cardId)) {
+        } else if (this.findCardFromHand(cardId)) {
             return this.removeCardFromHand(cardId);
         }
         return null;
@@ -722,11 +720,9 @@ class PlayerStateService {
         if (this.findStationCard(cardId)) {
             const removedStationCard = this.removeStationCard(cardId);
             return this._cardDataFromStationCard(removedStationCard);
-        }
-        else if (this.findCardFromHand(cardId)) {
+        } else if (this.findCardFromHand(cardId)) {
             return this.removeCardFromHand(cardId);
-        }
-        else if (this.getCardsInZone().find(c => c.id === cardId)) {
+        } else if (this.getCardsInZone().find(c => c.id === cardId)) {
             return this.removeCardFromHomeZone(cardId);
         }
         return null;
@@ -739,8 +735,7 @@ class PlayerStateService {
         if (cardIndexInHomeZone >= 0) {
             zoneName = 'cardsInZone';
             cardIndex = cardIndexInHomeZone;
-        }
-        else {
+        } else {
             const cardInOpponentZoneIndex = this.getCardsInOpponentZone().findIndex(c => c.id === cardId);
             if (cardInOpponentZoneIndex >= 0) {
                 zoneName = 'cardsInOpponentZone';
@@ -837,8 +832,7 @@ class PlayerStateService {
         let zoneName;
         if (playerState.cardsInZone.find(c => c.id === cardId)) {
             zoneName = 'cardsInZone';
-        }
-        else if (playerState.cardsInOpponentZone.find(c => c.id === cardId)) {
+        } else if (playerState.cardsInOpponentZone.find(c => c.id === cardId)) {
             zoneName = 'cardsInOpponentZone';
         }
 
@@ -874,11 +868,11 @@ class PlayerStateService {
         const proxy = new Proxy(playerState, {
             set(target, property, value) {
                 playerState[property] = value;
-                emit({ property, playerId });
+                emit({property, playerId});
                 return true;
             },
             get(target, property) {
-                emit({ property, playerId });
+                emit({property, playerId});
                 return target[property];
             }
         });
@@ -887,7 +881,7 @@ class PlayerStateService {
     }
 
     getPlayerState() {
-        return this._matchService.getPlayerState(this._playerId);
+            return this._matchService.getPlayerState(this._playerId);
     }
 
     listenForStateTouches(listener) {

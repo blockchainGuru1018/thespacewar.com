@@ -66,6 +66,24 @@ describe('when phase is wait and is NOT current player', () => {
     });
 });
 
+describe('when phase is wait and is NOT current and is playing with The Swarm Deck', () => {
+    beforeEach(async () => {
+        const { dispatch, showPage } = setUpController();
+        showPage();
+        dispatch('stateChanged', FakeState({
+            turn: 1,
+            currentPlayer: 'P2A',
+            deckName:'The-Swarm',
+            phase: 'wait'
+        }));
+        await timeout();
+    });
+
+    test('should not see Take Control button' , async () => {
+        assert.elementCount('.toggleControlOfTurn',0);
+    });
+});
+
 describe('when phase is action but is not current player', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();

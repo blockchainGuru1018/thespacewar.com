@@ -15,6 +15,7 @@ module.exports = function (clientState) {
                 actionLogEntries: clientState.actionLogEntries,
                 phase: clientState.phase,
                 events: clientState.events,
+                deckName:clientState.deckName,
                 cardsInZone: clientState.playerCardsInZone,
                 cardsInOpponentZone: clientState.playerCardsInOpponentZone,
                 cardsOnHand: clientState.playerCardsOnHand,

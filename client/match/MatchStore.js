@@ -91,6 +91,7 @@ module.exports = function (deps) {
                 actionCards: [],
                 handSizeCards: []
             },
+            deckName:'',
             playerCardsInOpponentZone: [],
             playerCardsInDeckCount: 0,
             opponentCommanders: [],
