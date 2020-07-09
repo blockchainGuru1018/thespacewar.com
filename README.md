@@ -196,3 +196,7 @@ Tests:
 - Tests are run before every commit, but only tests for files you have changed.
 - All tests are run before push.
 - Make sure to run the game locally and test it before calling it done!
+
+Policy for the /config.json file
+-
+Only Jim Westergren is allowed to change values of the constants in the /config.json file. If you want/need to change a value ask him first for approval.
