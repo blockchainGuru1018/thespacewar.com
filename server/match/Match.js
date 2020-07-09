@@ -162,7 +162,6 @@ module.exports = function ({
         endLastStand,
         repairCard,
         retreat,
-        // updateHeartBeat: playerInactivityService.checkAndUpdatePlayerHeartBeatCounter,
         restoreSavedMatch: debugController.onRestoreSavedMatch,
         cheat: cheatController.onCheat
     };

@@ -60,7 +60,7 @@ module.exports = function (deps) {
 
     let gameHasBegun = false;
     let endLastStandIntervalId = null;
-
+    let endGameTimeOut = null;
     persistOngoingMatch();
 
     return {
@@ -91,7 +91,7 @@ module.exports = function (deps) {
                 actionCards: [],
                 handSizeCards: []
             },
-            deckName:'',
+            deckName: '',
             playerCardsInOpponentZone: [],
             playerCardsInDeckCount: 0,
             opponentCommanders: [],
@@ -1150,6 +1150,16 @@ module.exports = function (deps) {
     }
 
     function deleteMatchLocalDataAndReturnToStart() {
+        if (!endGameTimeOut) {
+            endGameTimeOut = setTimeout(() => _closeGameViewAndGoToLobby(), 15 * 1000);
+        } else {
+            clearTimeout(endGameTimeOut);
+            _closeGameViewAndGoToLobby();
+        }
+    }
+
+    function _closeGameViewAndGoToLobby() {
+        matchController.emit('playerEndedMatch');
         localGameDataFacade.removeOngoingMatch();
         route('start');
     }
@@ -1249,7 +1259,7 @@ module.exports = function (deps) {
     }
 
     function matchIsDead({dispatch}) {
-        dispatch('inactivity/stop',null, {root:true});
+        dispatch('inactivity/stop', null, {root: true});
         endGame();
     }
 

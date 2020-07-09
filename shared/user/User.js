@@ -6,6 +6,7 @@ class User {
         this.country = country;
         this.id = id;
         this.inMatch = inMatch;
+        this.inMatchEndingScreen = false;
         this.isConnected = isConnected;
         this.created = created;
     }
@@ -27,6 +28,7 @@ class User {
             inMatch: this.inMatch,
             isConnected: this.isConnected,
             created: this.created,
+            inMatchEndingScreen: this.inMatchEndingScreen,
             allowedInLobby: this.allowedInLobby(),
         };
     }
@@ -37,6 +39,11 @@ class User {
 
     exitedMatch() {
         this.inMatch = false;
+        this.inMatchEndingScreen = true;
+    }
+
+    exitedMatchEndingScreen() {
+        this.inMatchEndingScreen = false;
     }
 
     connected() {
@@ -52,7 +59,7 @@ class User {
     }
 
     allowedInLobby() {
-        return true;
+        return true && !this.inMatchEndingScreen;
     }
 }
 

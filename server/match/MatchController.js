@@ -2,6 +2,7 @@ module.exports = function (deps) {
 
     const matchRepository = deps.matchRepository;
     const socketRepository = deps.socketRepository;
+    const userRepository = deps.userRepository;
     const logger = deps.logger;
 
     return {
@@ -48,14 +49,17 @@ module.exports = function (deps) {
         const match = await matchRepository.getById(matchId);
         if (match) {
             logger.log(matchActionLogMessage(data), 'match');
-            try{
-            match[data.action](userId, data.value);
-
-            }catch (e) {
+            try {
+                match[data.action](userId, data.value);
+            } catch (e) {
                 console.log(e);
             }
         } else {
             sendMatchIsDeadMessageToUserSocketConnection({userId, matchId});
+            userRepository.update(userId, user => {
+                user.exitedMatchEndingScreen();
+            });
+
         }
     }
 

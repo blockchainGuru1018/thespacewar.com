@@ -1,11 +1,17 @@
 <template>
-    <div v-if="ownUser" class="lobby">
+    <div
+        v-if="ownUser"
+        class="lobby"
+    >
         <div class="lobby-userAccountPageLinkDiv">
-            <a href="https://thespacewar.com/account" class="lobby-userAccountPageLink">&#8592; Back to Account</a>
+            <a
+                href="https://thespacewar.com/account"
+                class="lobby-userAccountPageLink"
+            >&#8592; Back to Account</a>
         </div>
         <div class="users-container">
             <div class="row">
-                <ProfileUserPlayer/>
+                <ProfileUserPlayer />
                 <div class="list-opponents">
                     <div class="users-header">
                         <div class="users-headerTitle">
@@ -14,18 +20,33 @@
                     </div>
                     <div class="users-wrapper">
                         <div class="users">
-                            <div tabindex="0" class="user" @click="startGameWithBot" @keydown.enter="startGameWithBot">
+                            <div
+                                tabindex="0"
+                                class="user"
+                                @click="startGameWithBot"
+                                @keydown.enter="startGameWithBot"
+                            >
                                 <span class="user-name">Mr.Roboto</span>
                             </div>
-                            <div v-if="availableUsers.length === 0" class="users-noUsersAvailable">
+                            <div
+                                v-if="availableUsers.length === 0"
+                                class="users-noUsersAvailable"
+                            >
                                 None available
                             </div>
                             <template v-else>
-                                <div v-for="user in availableUsers" :key="user.id" tabindex="0" class="user" @click="userClick(user)" @keydown.enter="userClick(user)">
+                                <div
+                                    v-for="user in availableUsers"
+                                    :key="user.id"
+                                    tabindex="0"
+                                    class="user"
+                                    @click="userClick(user)"
+                                    @keydown.enter="userClick(user)"
+                                >
                                     <span class="user-name">
                                         {{ user.name }}
                                     </span>
-                                    <Flag :country="user.country"/>
+                                    <Flag :country="user.country" />
                                     <span class="user-rating">
                                         {{ user.rating }}
                                     </span>
@@ -38,9 +59,7 @@
                         </div>
                     </div>
                 </div>
-
             </div>
-
         </div>
     </div>
 </template>
