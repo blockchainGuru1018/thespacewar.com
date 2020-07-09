@@ -1,6 +1,8 @@
 <template>
-    <div class="guideTextContainer" v-if="guideTextContainerVisible">
-
+    <div
+        v-if="guideTextContainerVisible"
+        class="guideTextContainer"
+    >
         <!-- WAITING FOR OPPONENT REQUIREMENT texts -->
         <div
             v-if="waitingForOtherPlayerToFinishRequirements"
@@ -21,7 +23,8 @@
         >
             <div
                 :style="cardStyle"
-                class="guideTextCardWrapper card" @click="showEnlargedCard"
+                class="guideTextCardWrapper card"
+                @click="showEnlargedCard"
             >
                 <div class="enlargeIcon enlargeIcon--small" />
             </div>
@@ -146,7 +149,7 @@
 
         <!-- WAIT PHASE and TURN CONTROL texts -->
         <div
-            v-else-if="turnControl.canToggleControlOfTurn()"
+            v-else-if="canToggleControlOfTurn"
             class="guideText-wrapper"
         >
             <div class="guideText">
@@ -169,16 +172,17 @@
     const Vuex = require('vuex');
     const resolveModuleWithPossibleDefault = require('../../../utils/resolveModuleWithPossibleDefault.js');
     const SkipDrawCard = resolveModuleWithPossibleDefault(require('../../hud/SkipDrawCard.vue'));
-    const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers('match');
-    const { mapGetters: mapPermissionGetters } = Vuex.createNamespacedHelpers('permission');
+    const {mapState, mapGetters, mapActions} = Vuex.createNamespacedHelpers('match');
+    const {mapGetters: mapPermissionGetters} = Vuex.createNamespacedHelpers('permission');
     const cardHelpers = Vuex.createNamespacedHelpers('card');
     const ghostHelpers = Vuex.createNamespacedHelpers('ghost');
     const requirementHelpers = Vuex.createNamespacedHelpers('requirement');
     const infoModeHelpers = Vuex.createNamespacedHelpers('infoMode');
     const MatchMode = require('../../../../shared/match/MatchMode.js');
     const LastStand = require('../../../../shared/match/LastStand.js');
-    const { PHASES } = require('../../phases.js');
+    const {PHASES} = require('../../phases.js');
     const FatalError = require('../../../../shared/card/FatalError.js');
+    import featureToggles from "../../../utils/featureToggles.js";
 
     export default {
         components: {
@@ -241,6 +245,14 @@
             ...infoModeHelpers.mapState({
                 infoModeVisible: 'visible'
             }),
+            canToggleControlOfTurn() {
+                if (featureToggles.isEnabled('the-swarm-cant-take-control')) {
+                    return this.turnControl.canToggleControlOfTurn() &&
+                        !this.turnControl.isPlayingWithTheSwarmDeck();
+                } else {
+                    return this.turnControl.canToggleControlOfTurn();
+                }
+            },
             guideTextContainerVisible() {
                 if (this.choosingStartingPlayer) return false;
                 if (this.activateEventCardGhostVisible) return false;
@@ -297,19 +309,15 @@
                 if (this.firstRequirementIsDiscardCard) {
                     const cardsToDiscard = this.countInFirstRequirement;
                     return `Discard ${cardsToDiscard} ${pluralize('card', cardsToDiscard)}`;
-                }
-                else if (this.firstRequirementIsDamageStationCard && this.cardsLeftToSelect > 0) {
+                } else if (this.firstRequirementIsDamageStationCard && this.cardsLeftToSelect > 0) {
                     return `Select ${this.cardsLeftToSelect} station ${pluralize('card',
                         this.cardsLeftToSelect)} to damage`;
-                }
-                else if (this.firstRequirementIsDamageShieldCard && this.cardsLeftToSelect > 0) {
+                } else if (this.firstRequirementIsDamageShieldCard && this.cardsLeftToSelect > 0) {
                     return `Select ${this.cardsLeftToSelect} shield ${pluralize('card',
                         this.cardsLeftToSelect)} to damage`;
-                }
-                else if (this.firstRequirementIsDrawCard) {
+                } else if (this.firstRequirementIsDrawCard) {
                     return this.drawCardOrMillText;
-                }
-                else {
+                } else {
                     return '';
                 }
             },
@@ -341,13 +349,11 @@
                     return {
                         backgroundImage: `url(${this.activeActionCardImageUrl})`
                     };
-                }
-                else if (this.requirementCardImageUrl) {
+                } else if (this.requirementCardImageUrl) {
                     return {
                         backgroundImage: `url(${this.requirementCardImageUrl})`
                     };
-                }
-                else {
+                } else {
                     return {
                         display: 'none'
                     };

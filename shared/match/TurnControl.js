@@ -64,8 +64,7 @@ module.exports = class TurnControl {
             && this._playerPhase.isWait()
             && this.opponentHasControlOfOwnTurn()
             && !this._opponentHasCardThatPreventsPlayerPlayingEventCards()
-            && !this._playerHasCardThatPreventsPlayerPlayingEventCards()
-            && !this._isPlayingWithTheSwarmDeck();
+            && !this._playerHasCardThatPreventsPlayerPlayingEventCards();
     }
 
     canReleaseControlOfTurn() {
@@ -125,7 +124,7 @@ module.exports = class TurnControl {
         return this._matchService.getState().playerStateById[this._playerId()];
     }
 
-    _isPlayingWithTheSwarmDeck() {
+    isPlayingWithTheSwarmDeck() {
         return 'The-Swarm' === this._playerState().deckName;
     }
 };

@@ -30,6 +30,15 @@ afterEach(() => {
     controller = null;
 });
 
+const mockLocalStorageResponse = (response) => {
+    Object.defineProperty(window, "localStorage", {
+        value: {
+            getItem: jest.fn(() => response),
+            setItem: jest.fn(() => true)
+        },
+        writable: true
+    });
+}
 describe('when phase is wait but is current player', () => {
     beforeEach(async () => {
         const { dispatch, showPage } = setUpController();
@@ -68,6 +77,7 @@ describe('when phase is wait and is NOT current player', () => {
 
 describe('when phase is wait and is NOT current and is playing with The Swarm Deck', () => {
     beforeEach(async () => {
+        mockLocalStorageResponse('true');
         const { dispatch, showPage } = setUpController();
         showPage();
         dispatch('stateChanged', FakeState({
