@@ -10,7 +10,9 @@ module.exports = class TheParalyzer extends BaseCard {
   }
 
   attackCard(defenderCard) {
-    defenderCard.paralyzed = true;
+    if (defenderCard.type === "spaceShip") {
+      defenderCard.paralyzed = true;
+    }
     super.attackCard(defenderCard);
   }
 };
