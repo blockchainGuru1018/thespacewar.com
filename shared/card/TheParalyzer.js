@@ -8,4 +8,9 @@ module.exports = class TheParalyzer extends BaseCard {
   static get CommonId() {
     return "85";
   }
+
+  attackCard(defenderCard) {
+    defenderCard.paralyzed = true;
+    super.attackCard(defenderCard);
+  }
 };
