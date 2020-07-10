@@ -993,7 +993,7 @@ module.exports = function (deps) {
   }
 
   function getCardsPendingForAction(state, getters) {
-    return [...state.playerCardsInZone]
+    return [...state.playerCardsInZone, ...state.playerCardsInOpponentZone]
       .map((cardData) => getters.createCard(cardData))
       .filter((card) => {
         const cardInPlay = PlayerCardInPlay({

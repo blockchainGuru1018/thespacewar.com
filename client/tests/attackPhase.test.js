@@ -83,4 +83,36 @@ describe("attack phase", () => {
       `You have a spaceship or missile that has not moved and/or attacked. Are you sure you want to end your turn?`
     );
   });
+
+  it("should see end turn modal confirmation when cards in opponent zone still can perform actions", async () => {
+    const { dispatch, showPage } = controller;
+    showPage();
+    dispatch(
+      "stateChanged",
+      FakeState({
+        turn: 1,
+        currentPlayer: "P1A",
+        phase: "attack",
+        events: [
+          PutDownCardEvent({
+            turn: 2,
+            location: "zone",
+            cardId: "C1A",
+            cardCommonId: "86",
+          }),
+        ],
+        cardsInOpponentZone: [createCard({ id: "C1A" })],
+        stationCards: [{ place: "draw" }],
+      })
+    );
+
+    await timeout();
+
+    await click(".nextPhaseButton-endTurn");
+    assert.elementCount(".confirmDialogHeader", 1);
+    assert.elementText(
+      ".confirmDialogContent",
+      `You have a spaceship or missile that has not moved and/or attacked. Are you sure you want to end your turn?`
+    );
+  });
 });
