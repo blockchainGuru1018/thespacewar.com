@@ -1,14 +1,14 @@
-const RepairShip = require('./RepairShip.js');
+const RepairShip = require("./RepairShip.js");
 
 module.exports = class BigRepairShop extends RepairShip {
-    constructor(deps) {
-        super({
-            ...deps,
-            repairCapability: 5
-        });
-    }
+  constructor(deps) {
+    super({
+      ...deps,
+      repairCapability: 5,
+    });
+  }
 
-    static get CommonId() {
-        return '30';
-    }
+  static get CommonId() {
+    return "30";
+  }
 };

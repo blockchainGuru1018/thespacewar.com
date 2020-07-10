@@ -1,24 +1,22 @@
-module.exports = function ({
-    playerServiceProvider,
-    matchService
-}) {
+module.exports = function ({ playerServiceProvider, matchService }) {
+  return {
+    getType: () => "removeAllRequirements",
+    forPlayerWithData,
+  };
 
-    return {
-        getType: () => 'removeAllRequirements',
-        forPlayerWithData
-    };
+  function forPlayerWithData(playerId) {
+    removePlayerRequirements(playerId);
 
-    function forPlayerWithData(playerId) {
-        removePlayerRequirements(playerId);
+    const opponentId = matchService.getOpponentId(playerId);
+    removePlayerRequirements(opponentId);
+  }
 
-        const opponentId = matchService.getOpponentId(playerId);
-        removePlayerRequirements(opponentId);
-    }
-
-    function removePlayerRequirements(playerId) {
-        const playerStateService = playerServiceProvider.getStateServiceById(playerId);
-        playerStateService.update(playerState => {
-            playerState.requirements = [];
-        });
-    }
+  function removePlayerRequirements(playerId) {
+    const playerStateService = playerServiceProvider.getStateServiceById(
+      playerId
+    );
+    playerStateService.update((playerState) => {
+      playerState.requirements = [];
+    });
+  }
 };

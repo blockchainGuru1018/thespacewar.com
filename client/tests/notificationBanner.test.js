@@ -1,64 +1,74 @@
-const getCardImageUrl = require('../utils/getCardImageUrl.js');
-const FakeState = require('../testUtils/FakeState.js');
-const { createController } = require('../testUtils');
+const getCardImageUrl = require("../utils/getCardImageUrl.js");
+const FakeState = require("../testUtils/FakeState.js");
+const { createController } = require("../testUtils");
 const {
-    assert,
-    sinon,
-    timeout,
-} = require('../testUtils/bocha-jest/bocha-jest.js');
+  assert,
+  sinon,
+  timeout,
+} = require("../testUtils/bocha-jest/bocha-jest.js");
 
 let controller;
 
 beforeEach(() => {
-    sinon.stub(getCardImageUrl, 'byCommonId').returns('/#');
+  sinon.stub(getCardImageUrl, "byCommonId").returns("/#");
 
-    controller = createController();
+  controller = createController();
 });
 
 afterEach(() => {
-    getCardImageUrl.byCommonId.restore && getCardImageUrl.byCommonId.restore();
+  getCardImageUrl.byCommonId.restore && getCardImageUrl.byCommonId.restore();
 
-    controller && controller.tearDown();
+  controller && controller.tearDown();
 });
 
-describe('show notification banner when...', () => {
-    test('attack was countered', async () => {
-        await triggerActionLogChangeWithEntry(LogEntry('counteredAttackOnCard', 'ABC'));
-        assert.elementCount('.notificationBanner', 1);
-        assert.elementText('.notificationBanner-header', 'ABC');
-    });
-    test('played card was countered', async () => {
-        await triggerActionLogChangeWithEntry(LogEntry('countered', 'DEF'));
-        assert.elementCount('.notificationBanner', 1);
-        assert.elementText('.notificationBanner-header', 'DEF');
-    });
+describe("show notification banner when...", () => {
+  test("attack was countered", async () => {
+    await triggerActionLogChangeWithEntry(
+      LogEntry("counteredAttackOnCard", "ABC")
+    );
+    assert.elementCount(".notificationBanner", 1);
+    assert.elementText(".notificationBanner-header", "ABC");
+  });
+  test("played card was countered", async () => {
+    await triggerActionLogChangeWithEntry(LogEntry("countered", "DEF"));
+    assert.elementCount(".notificationBanner", 1);
+    assert.elementText(".notificationBanner-header", "DEF");
+  });
 });
 
-test('when NO nothing has changed should NOT show notification', async () => {
-    const { dispatch, showPage } = controller;
-    showPage();
-    dispatch('stateChanged', FakeState({
-        phase: 'attack',
-        actionLogEntries: []
-    }));
-    await timeout();
-    assert.elementCount('.notificationBanner', 0);
+test("when NO nothing has changed should NOT show notification", async () => {
+  const { dispatch, showPage } = controller;
+  showPage();
+  dispatch(
+    "stateChanged",
+    FakeState({
+      phase: "attack",
+      actionLogEntries: [],
+    })
+  );
+  await timeout();
+  assert.elementCount(".notificationBanner", 0);
 });
 
 async function triggerActionLogChangeWithEntry(entry) {
-    const { dispatch, showPage } = controller;
-    showPage();
-    dispatch('stateChanged', FakeState({
-        phase: 'attack',
-        actionLogEntries: []
-    }));
-    dispatch('stateChanged', FakeState({
-        actionLogEntries: [entry],
-    }));
-    await timeout();
+  const { dispatch, showPage } = controller;
+  showPage();
+  dispatch(
+    "stateChanged",
+    FakeState({
+      phase: "attack",
+      actionLogEntries: [],
+    })
+  );
+  dispatch(
+    "stateChanged",
+    FakeState({
+      actionLogEntries: [entry],
+    })
+  );
+  await timeout();
 }
 
-function LogEntry(action, text = '') {
-    return { action, text }
+function LogEntry(action, text = "") {
+  return { action, text };
 }
-

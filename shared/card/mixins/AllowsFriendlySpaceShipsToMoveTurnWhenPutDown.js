@@ -1,5 +1,6 @@
-module.exports = superclass => class AllowsFriendlySpaceShipsToMoveTurnWhenPutDown extends superclass {
+module.exports = (superclass) =>
+  class AllowsFriendlySpaceShipsToMoveTurnWhenPutDown extends superclass {
     get allowsFriendlySpaceShipsToMoveTurnWhenPutDown() {
-        return true;
+      return true;
     }
-};
+  };

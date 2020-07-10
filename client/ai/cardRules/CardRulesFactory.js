@@ -1,23 +1,17 @@
-const ShouldPlayGoodKarma = require('./ShouldPlayGoodKarma.js');
+const ShouldPlayGoodKarma = require("./ShouldPlayGoodKarma.js");
 
-module.exports = function ({
-    BotId,
-    playerServiceFactory
-}) {
+module.exports = function ({ BotId, playerServiceFactory }) {
+  return {
+    createAll,
+  };
 
-    return {
-        createAll
-    };
+  function createAll() {
+    return [shouldPlayGoodKarma()];
+  }
 
-    function createAll() {
-        return [
-            shouldPlayGoodKarma()
-        ];
-    }
-
-    function shouldPlayGoodKarma() {
-        return ShouldPlayGoodKarma({
-            playerStateService: playerServiceFactory.playerStateService(BotId)
-        });
-    }
+  function shouldPlayGoodKarma() {
+    return ShouldPlayGoodKarma({
+      playerStateService: playerServiceFactory.playerStateService(BotId),
+    });
+  }
 };

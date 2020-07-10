@@ -1,60 +1,63 @@
-const ajax = require('../utils/ajax.js');
+const ajax = require("../utils/ajax.js");
 const localGameDataFacade = require("../utils/localGameDataFacade.js");
 
 module.exports = function (deps) {
+  const socket = deps.socket;
 
-    const socket = deps.socket;
+  let ownUser = null;
+  let cachedUsers = [];
 
-    let ownUser = null;
-    let cachedUsers = [];
+  if (isAlreadyLoggedIn()) {
+    //TODO Might be unnecessary if we still check this in LoadingStore
+    ownUser = localGameDataFacade.getOwnUser();
+  }
 
-    if (isAlreadyLoggedIn()) { //TODO Might be unnecessary if we still check this in LoadingStore
-        ownUser = localGameDataFacade.getOwnUser();
+  return {
+    storeOwnUser,
+    reconnectBot,
+    getOwnUser,
+    getAll,
+    getAllLocal,
+    onUsersChanged,
+  };
+
+  function storeOwnUser(user) {
+    ownUser = user;
+
+    if (user) {
+      socket.emit("registerConnection", {
+        secret: ajax.secret(),
+        userId: user.id,
+      });
     }
+  }
 
-    return {
-        storeOwnUser,
-        reconnectBot,
-        getOwnUser,
-        getAll,
-        getAllLocal,
-        onUsersChanged
-    };
+  function reconnectBot() {
+    socket.emit("reconnectBot", { secret: ajax.secret(), userId: ownUser.id });
+  }
 
-    function storeOwnUser(user) {
-        ownUser = user;
+  function getOwnUser() {
+    return ownUser;
+  }
 
-        if (!!user) {
-            socket.emit('registerConnection', { secret: ajax.secret(), userId: user.id });
-        }
-    }
+  async function getAll() {
+    const users = await ajax.get("/user");
+    cachedUsers = [...users];
+    return users;
+  }
 
-    function reconnectBot() {
-        socket.emit('reconnectBot', { secret: ajax.secret(), userId: ownUser.id });
-    }
+  function getAllLocal() {
+    return [...cachedUsers];
+  }
 
-    function getOwnUser() {
-        return ownUser;
-    }
+  function onUsersChanged(callback) {
+    socket.on("user/change", (users) => {
+      cachedUsers = [...users];
+      callback(users);
+    });
+  }
 
-    async function getAll() {
-        const users = await ajax.get('/user');
-        cachedUsers = [...users];
-        return users;
-    }
-
-    function getAllLocal() {
-        return [...cachedUsers];
-    }
-
-    function onUsersChanged(callback) {
-        socket.on('user/change', users => {
-            cachedUsers = [...users];
-            callback(users);
-        });
-    }
-
-    function isAlreadyLoggedIn() {
-        return !!localGameDataFacade.getOwnUser();
-    }
+  function isAlreadyLoggedIn() {
+    return !!localGameDataFacade.getOwnUser();
+  }
 };

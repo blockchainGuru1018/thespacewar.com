@@ -1,61 +1,57 @@
-FindCardRequirementFactory.type = 'findCard';
+FindCardRequirementFactory.type = "findCard";
 
-function FindCardRequirementFactory({
-    sourceFetcher,
-    requirementSpec,
-    card
-}) {
+function FindCardRequirementFactory({ sourceFetcher, requirementSpec, card }) {
+  return {
+    create,
+  };
 
-    return {
-        create
+  function create() {
+    const requirement = {
+      type: requirementSpec.type,
+      cardGroups: cardGroupsFromSpec(),
+      cardCommonId: card.commonId,
+      count: requirementSpec.count,
+      target: requirementSpec.target,
+      common: !!requirementSpec.common,
+      waiting: requirementSpec.count === 0 && requirementSpec.common,
+      cancelable: !!requirementSpec.cancelable,
+      submitOnEverySelect: !!requirementSpec.submitOnEverySelect,
     };
-
-    function create() {
-        const requirement = {
-            type: requirementSpec.type,
-            cardGroups: cardGroupsFromSpec(),
-            cardCommonId: card.commonId,
-            count: requirementSpec.count,
-            target: requirementSpec.target,
-            common: !!requirementSpec.common,
-            waiting: requirementSpec.count === 0 && requirementSpec.common,
-            cancelable: !!requirementSpec.cancelable,
-            submitOnEverySelect: !!requirementSpec.submitOnEverySelect
-        };
-        if (requirementSpec.dormantEffect) {
-            requirement.usedDormantEffect = {
-                cardId: card.id,
-                destroyCard: requirementSpec.dormantEffect.destroyTriggerCard
-            }
-        }
-        if (requirementSpec.actionPointsLimit) {
-            requirement.actionPointsLimit = {
-                actionPointsLeft: requirementSpec.actionPointsLimit.actionPointsLeft? requirementSpec.actionPointsLimit.actionPointsLeft : requirementSpec.actionPointsLimit
-            };
-        }
-
-        return requirement;
+    if (requirementSpec.dormantEffect) {
+      requirement.usedDormantEffect = {
+        cardId: card.id,
+        destroyCard: requirementSpec.dormantEffect.destroyTriggerCard,
+      };
+    }
+    if (requirementSpec.actionPointsLimit) {
+      requirement.actionPointsLimit = {
+        actionPointsLeft: requirementSpec.actionPointsLimit.actionPointsLeft
+          ? requirementSpec.actionPointsLimit.actionPointsLeft
+          : requirementSpec.actionPointsLimit,
+      };
     }
 
-    function cardGroupsFromSpec() {
-        if (requirementSpec.count > 0) {
-            return requirementSpec.sources.map(cardGroupFromSource);
-        }
-        else {
-            return [];
-        }
-    }
+    return requirement;
+  }
 
-    function cardGroupFromSource(source) {
-        const filters = {...requirementSpec.filter, excludeCardIds: [card.id]}
-        if (requirementSpec.actionPointsLimit) {
-            filters.actionPointsLeft = requirementSpec.actionPointsLimit
-        }
-        return {
-            source,
-            cards: sourceFetcher[source](filters)
-        };
+  function cardGroupsFromSpec() {
+    if (requirementSpec.count > 0) {
+      return requirementSpec.sources.map(cardGroupFromSource);
+    } else {
+      return [];
     }
+  }
+
+  function cardGroupFromSource(source) {
+    const filters = { ...requirementSpec.filter, excludeCardIds: [card.id] };
+    if (requirementSpec.actionPointsLimit) {
+      filters.actionPointsLeft = requirementSpec.actionPointsLimit;
+    }
+    return {
+      source,
+      cards: sourceFetcher[source](filters),
+    };
+  }
 }
 
 module.exports = FindCardRequirementFactory;

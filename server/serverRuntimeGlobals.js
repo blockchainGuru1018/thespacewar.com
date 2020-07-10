@@ -1,4 +1,3 @@
-
 module.exports = {
-    isRunningInTestEnvironment: false
+  isRunningInTestEnvironment: false,
 };

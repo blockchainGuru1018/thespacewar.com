@@ -18,7 +18,9 @@
     "build-prod": "cd ./client && npm run build-prod",
     "server": "concurrently -m -n \"npm run dev:client\" \"npm run dev:server\" \"npm run client\" \"npm run dev:login\" \"npm run dev:score\"",
     "install-all": "npm install && cd ./client && npm install && npm rebuild node-sass && cd .. & cd ./server && npm install && cd .. && cd ./shared && npm install && cd .. && cd ./shared && npm install && cd .. && cd ./serviceShared && npm install && cd .. && cd ./loginService && npm install && cd .. && cd ./scoreService && npm install && cd .. && cd ./client/testUtils/bocha-jest/bocha && npm install && cd ../../../../ && cd ./server/test/testUtils/bocha-jest/bocha && npm install && cd ../../../../../ && cd ./shared/test/testUtils/bocha-jest/bocha && npm install && cd ../../../../../ && cd client && npm run build",
-    "build-watch": "webpack --watch"
+    "build-watch": "webpack --watch",
+    "prettier": "./node_modules/.bin/prettier --write '**/*.js' '**/*.json' '**/*.vue'",
+    "lint": "./node_modules/.bin/eslint --fix '**/*.js' '**/*.json' '**/*.vue'"
   },
   "repository": {
     "type": "git",
@@ -33,8 +35,13 @@
   "devDependencies": {
     "@babel/preset-env": "^7.8.4",
     "concurrently": "^5.2.0",
+    "eslint": "^7.4.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-vue": "^7.0.0-alpha.9",
     "husky": "^4.2.3",
-    "jest": "^25.1.0"
+    "jest": "^25.1.0",
+    "prettier": "^2.0.5"
   },
   "husky": {
     "hooks": {

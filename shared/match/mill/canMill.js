@@ -1,14 +1,14 @@
 module.exports = function ({
-    isWaitingOnOpponentFinishingRequirement,
-    opponentDeckIsEmpty,
-    playerHasTheMiller,
-    firstRequirementIsDrawCard,
-    moreCardsCanBeDrawnForDrawPhase
+  isWaitingOnOpponentFinishingRequirement,
+  opponentDeckIsEmpty,
+  playerHasTheMiller,
+  firstRequirementIsDrawCard,
+  moreCardsCanBeDrawnForDrawPhase,
 }) {
-    if (isWaitingOnOpponentFinishingRequirement) return false;
-    if (opponentDeckIsEmpty) return false;
+  if (isWaitingOnOpponentFinishingRequirement) return false;
+  if (opponentDeckIsEmpty) return false;
 
-    if (!playerHasTheMiller) return false;
+  if (!playerHasTheMiller) return false;
 
-    return firstRequirementIsDrawCard || moreCardsCanBeDrawnForDrawPhase;
+  return firstRequirementIsDrawCard || moreCardsCanBeDrawnForDrawPhase;
 };

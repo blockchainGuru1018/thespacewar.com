@@ -1,15 +1,14 @@
 module.exports = function MatchInfoRepository(deps) {
+  return {
+    getTurn,
+    getPlayerPhase,
+  };
 
-    return {
-        getTurn,
-        getPlayerPhase
-    };
+  function getTurn() {
+    return deps.turn;
+  }
 
-    function getTurn() {
-        return deps.turn;
-    }
-
-    function getPlayerPhase(playerId) {
-        return deps.playerStateById[playerId].phase;
-    }
-}
+  function getPlayerPhase(playerId) {
+    return deps.playerStateById[playerId].phase;
+  }
+};

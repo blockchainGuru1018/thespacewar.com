@@ -1,1 +1,2279 @@
-{"state":{"matchId":"0161257","mode":"game","gameStartTime":1593733179662,"turn":4,"currentPlayer":"0618589","playerOrder":["BOT","0618589"],"playersConnected":4,"readyPlayerIds":["BOT","0618589"],"ended":false,"retreatedPlayerId":null,"lastStandInfo":null,"playerStateById":{"0618589":{"cardsInDeck":[{"id":"7:14022","commonId":"7","color":"red","type":"missile","name":"EMP Missile","description":"Destroys Energy Shield or paralyzes spaceship (turn the card and it cannot do anything until repaired).","cost":2,"attack":0,"defense":2,"paralyzed":false},{"id":"6:12903","commonId":"6","color":"red","type":"missile","name":"Fast Missile","description":"Fast (can move the first turn).","cost":2,"attack":2,"defense":1,"paralyzed":false},{"id":"31:68559","commonId":"31","color":"orange","type":"event","name":"Luck","description":"Counter target card costing 2 or less.\r\n[ OR ] Draw 2 cards.","cost":0,"attack":0,"defense":0,"paralyzed":false},{"id":"31:12628","commonId":"31","color":"orange","type":"event","name":"Luck","description":"Counter target card costing 2 or less.\r\n[ OR ] Draw 2 cards.","cost":0,"attack":0,"defense":0,"paralyzed":false},{"id":"64:14558","commonId":"64","color":"violet","type":"duration","name":"Destiny Decided","description":"You cannot play any card. The opponent can only play 1 card during their turn and this card cannot be an event (orange) card. ","cost":2,"attack":0,"defense":0,"paralyzed":false},{"id":"4:56595","commonId":"4","color":"blue","type":"spaceShip","name":"Titan","description":"Slow (each turn can either move or attack but not both)","cost":5,"attack":3,"defense":9,"paralyzed":false},{"id":"3:10411","commonId":"3","color":"blue","type":"spaceShip","name":"Stormfalcon","description":"Normal spaceship.","cost":4,"attack":5,"defense":3,"paralyzed":false},{"id":"19:14854","commonId":"19","color":"blue","type":"spaceShip","name":"Pursuiter","description":"Can after first turn be sacrificed instead of attacking to deal 4 damage to target in same zone (collision).","cost":1,"attack":2,"defense":1,"paralyzed":false},{"id":"24:40761","commonId":"24","color":"blue","type":"spaceShip","name":"Trigger-Happy Joe","description":"Can attack 2 times per turn.","cost":2,"attack":1,"defense":2,"paralyzed":false},{"id":"42:15595","commonId":"42","color":"orange","type":"event","name":"Discovery","description":"Draw 3 cards and the opponent draws 2 cards. [ OR ] Discard 1 card and the opponent discards 2 cards.","cost":0,"attack":0,"defense":0,"paralyzed":false},{"id":"56:44160","commonId":"56","color":"blue","type":"spaceShip","name":"The Liberator","description":"Normal spaceship.","cost":4,"attack":2,"defense":6,"paralyzed":false},{"id":"21:12498","commonId":"21","color":"green","type":"defense","name":"Energy Shield","description":"Protects base station. (You can only have one Energy Shield in play at the same time.)","cost":3,"attack":0,"defense":5,"paralyzed":false},{"id":"11:88245","commonId":"11","color":"violet","type":"duration","name":"Good Karma","description":"Draw 3 extra cards in your draw phase, then after your draw phase discard 1 card from your hand.","cost":2,"attack":0,"defense":0,"paralyzed":false},{"id":"22:10570","commonId":"22","color":"green","type":"defense","name":"Defense Cannon","description":"Normal cannon.\r\n(Defense cards cannot move)","cost":1,"attack":4,"defense":1,"paralyzed":false},{"id":"12:12850","commonId":"12","color":"violet","type":"duration","name":"Neutralization","description":"No other duration card has any effect.\r\nRemove from play to destroy another duration card.","cost":2,"attack":0,"defense":0,"paralyzed":false},{"id":"9:71293","commonId":"9","color":"violet","type":"duration","name":"Full Attack","description":"+1 attack value of your spaceships (not missiles or cannons).","cost":2,"attack":0,"defense":0,"paralyzed":false},{"id":"5:72106","commonId":"5","color":"red","type":"missile","name":"Explosive Missile","description":"Normal missile.","cost":2,"attack":4,"defense":2,"paralyzed":false},{"id":"11:23624","commonId":"11","color":"violet","type":"duration","name":"Good Karma","description":"Draw 3 extra cards in your draw phase, then after your draw phase discard 1 card from your hand.","cost":2,"attack":0,"defense":0,"paralyzed":false},{"id":"34:10230","commonId":"34","color":"violet","type":"duration","name":"Avoid","description":"Discard this card from table to counter card being played.","cost":2,"attack":0,"defense":0,"paralyzed":false},{"id":"32:49567","commonId":"32","color":"blue","type":"spaceShip","name":"Battlestar","description":"Normal spaceship.","cost":3,"attack":2,"defense":4,"paralyzed":false},{"id":"21:11226","commonId":"21","color":"green","type":"defense","name":"Energy Shield","description":"Protects base station. (You can only have one Energy Shield in play at the same time.)","cost":3,"attack":0,"defense":5,"paralyzed":false},{"id":"13:70286","commonId":"13","color":"violet","type":"duration","name":"Over Capacity","description":"You have no maximum hand size.\r\nIn your action phase you may look at and take to your hand bottom row station cards.","cost":1,"attack":0,"defense":0,"paralyzed":false},{"id":"42:71658","commonId":"42","color":"orange","type":"event","name":"Discovery","description":"Draw 3 cards and the opponent draws 2 cards. [ OR ] Discard 1 card and the opponent discards 2 cards.","cost":0,"attack":0,"defense":0,"paralyzed":false},{"id":"1:22765","commonId":"1","color":"blue","type":"spaceShip","name":"The Exterminator","description":"Slow (each turn can either move or attack but not both)","cost":5,"attack":5,"defense":7,"paralyzed":false},{"id":"15:15254","commonId":"15","color":"orange","type":"event","name":"Supernova","description":"All cards except station cards are destroyed. Each player receives 3 station damage.","cost":8,"attack":0,"defense":0,"paralyzed":false},{"id":"16:31430","commonId":"16","color":"orange","type":"event","name":"Target Missed","description":"Play this card directly during enemy attack from spaceship (not collision, missile or cannon) to make the attack fail.","cost":0,"attack":0,"defense":0,"paralyzed":false},{"id":"9:14238","commonId":"9","color":"violet","type":"duration","name":"Full Attack","description":"+1 attack value of your spaceships (not missiles or cannons).","cost":2,"attack":0,"defense":0,"paralyzed":false},{"id":"14:16668","commonId":"14","color":"orange","type":"event","name":"Excellent work","description":"Put down this card as an extra station card.\r\n[ OR ] Draw 3 cards.","cost":2,"attack":0,"defense":0,"paralyzed":false},{"id":"14:10350","commonId":"14","color":"orange","type":"event","name":"Excellent work","description":"Put down this card as an extra station card.\r\n[ OR ] Draw 3 cards.","cost":2,"attack":0,"defense":0,"paralyzed":false},{"id":"38:32115","commonId":"38","color":"orange","type":"event","name":"Fatal Error","description":"Destroy any card in play with action cost X.","cost":0,"attack":0,"defense":0,"paralyzed":false},{"id":"39:50471","commonId":"39","color":"blue","type":"spaceShip","name":"Deadly Sniper","description":"Long distance shooter.\r\n(Can after the first turn shoot targets in enemy zone from home zone)","cost":4,"attack":2,"defense":4,"paralyzed":false},{"id":"26:20191","commonId":"26","color":"blue","type":"spaceShip","name":"The Gladiator","description":"Normal spaceship.","cost":2,"attack":3,"defense":2,"paralyzed":false},{"id":"17:29919","commonId":"17","color":"orange","type":"event","name":"Missiles Launched","description":"Find 2 missile cards (red cards) from your draw or discard pile and play them without cost. Shuffle the draw pile if searched.","cost":5,"attack":0,"defense":0,"paralyzed":false},{"id":"20:70033","commonId":"20","color":"orange","type":"event","name":"Grand Opportunity","description":"Draw 5 cards and then discard 1 card from your hand.","cost":4,"attack":0,"defense":0,"paralyzed":false},{"id":"13:12805","commonId":"13","color":"violet","type":"duration","name":"Over Capacity","description":"You have no maximum hand size.\r\nIn your action phase you may look at and take to your hand bottom row station cards.","cost":1,"attack":0,"defense":0,"paralyzed":false},{"id":"31:11185","commonId":"31","color":"orange","type":"event","name":"Luck","description":"Counter target card costing 2 or less.\r\n[ OR ] Draw 2 cards.","cost":0,"attack":0,"defense":0,"paralyzed":false},{"id":"31:11418","commonId":"31","color":"orange","type":"event","name":"Luck","description":"Counter target card costing 2 or less.\r\n[ OR ] Draw 2 cards.","cost":0,"attack":0,"defense":0,"paralyzed":false},{"id":"27:14616","commonId":"27","color":"blue","type":"spaceShip","name":"The Shade","description":"The Shade can only be attacked if it has been attacking the last turn.","cost":4,"attack":4,"defense":3,"paralyzed":false},{"id":"67:12576","commonId":"67","color":"orange","type":"event","name":"Sabotage","description":"Opponent draws 1 card. See the cards from the opponents hand and then discard 1 card from hand or flipped station card.","cost":0,"attack":0,"defense":0,"paralyzed":false},{"id":"5:14265","commonId":"5","color":"red","type":"missile","name":"Explosive Missile","description":"Normal missile.","cost":2,"attack":4,"defense":2,"paralyzed":false},{"id":"16:13309","commonId":"16","color":"orange","type":"event","name":"Target Missed","description":"Play this card directly during enemy attack from spaceship (not collision, missile or cannon) to make the attack fail.","cost":0,"attack":0,"defense":0,"paralyzed":false},{"id":"37:57164","commonId":"37","color":"blue","type":"spaceShip","name":"Disturbing Sensor","description":"· Enemy missiles can't move or attack.\r\n· If opponent after draw phase has more   than 1 card in hand, he or she           discards a card.","cost":4,"attack":0,"defense":3,"paralyzed":false},{"id":"12:31283","commonId":"12","color":"violet","type":"duration","name":"Neutralization","description":"No other duration card has any effect.\r\nRemove from play to destroy another duration card.","cost":2,"attack":0,"defense":0,"paralyzed":false},{"id":"7:12287","commonId":"7","color":"red","type":"missile","name":"EMP Missile","description":"Destroys Energy Shield or paralyzes spaceship (turn the card and it cannot do anything until repaired).","cost":2,"attack":0,"defense":2,"paralyzed":false},{"id":"32:65333","commonId":"32","color":"blue","type":"spaceShip","name":"Battlestar","description":"Normal spaceship.","cost":3,"attack":2,"defense":4,"paralyzed":false},{"id":"18:12836","commonId":"18","color":"orange","type":"event","name":"Perfect Plan","description":"Search for a card from the draw pile, discard pile or station cards and put it into your hand. Shuffle the draw pile if searched.","cost":2,"attack":0,"defense":0,"paralyzed":false},{"id":"25:70943","commonId":"25","color":"blue","type":"spaceShip","name":"Thunderbolt","description":"Normal spaceship.","cost":2,"attack":2,"defense":3,"paralyzed":false},{"id":"14:60929","commonId":"14","color":"orange","type":"event","name":"Excellent work","description":"Put down this card as an extra station card.\r\n[ OR ] Draw 3 cards.","cost":2,"attack":0,"defense":0,"paralyzed":false}],"cardsOnHand":[{"id":"8:11190","commonId":"8","color":"red","type":"missile","name":"Nuclear Missile","description":"Slow (each turn can either move or attack but not both)","cost":2,"attack":10,"defense":3,"paralyzed":false},{"id":"15:27629","commonId":"15","color":"orange","type":"event","name":"Supernova","description":"All cards except station cards are destroyed. Each player receives 3 station damage.","cost":8,"attack":0,"defense":0,"paralyzed":false},{"id":"15:10473","commonId":"15","color":"orange","type":"event","name":"Supernova","description":"All cards except station cards are destroyed. Each player receives 3 station damage.","cost":8,"attack":0,"defense":0,"paralyzed":false},{"id":"38:61994","commonId":"38","color":"orange","type":"event","name":"Fatal Error","description":"Destroy any card in play with action cost X.","cost":0,"attack":0,"defense":0,"paralyzed":false}],"stationCards":[{"place":"draw","card":{"id":"30:39482","commonId":"30","color":"blue","type":"spaceShip","name":"Big Repair Ship","description":"Can instead of doing attack repair 1 station damage or 5 other damage.","cost":3,"attack":1,"defense":5,"paralyzed":false},"flipped":true},{"place":"action","card":{"id":"28:85215","commonId":"28","color":"blue","type":"spaceShip","name":"Hunter","description":"Fast (can move the first turn).","cost":3,"attack":3,"defense":2,"paralyzed":false},"flipped":true},{"place":"handSize","card":{"id":"67:15684","commonId":"67","color":"orange","type":"event","name":"Sabotage","description":"Opponent draws 1 card. See the cards from the opponents hand and then discard 1 card from hand or flipped station card.","cost":0,"attack":0,"defense":0,"paralyzed":false}},{"place":"action","card":{"id":"19:96474","commonId":"19","color":"blue","type":"spaceShip","name":"Pursuiter","description":"Can after first turn be sacrificed instead of attacking to deal 4 damage to target in same zone (collision).","cost":1,"attack":2,"defense":1,"paralyzed":false},"flipped":true},{"place":"action","card":{"id":"34:43047","commonId":"34","color":"violet","type":"duration","name":"Avoid","description":"Discard this card from table to counter card being played.","cost":2,"attack":0,"defense":0,"paralyzed":false}}],"cardsInZone":[],"cardsInOpponentZone":[],"discardedCards":[{"id":"15:14639","commonId":"15","color":"orange","type":"event","name":"Supernova","description":"All cards except station cards are destroyed. Each player receives 3 station damage.","cost":8,"attack":0,"defense":0,"paralyzed":false},{"id":"15:76029","commonId":"15","color":"orange","type":"event","name":"Supernova","description":"All cards except station cards are destroyed. Each player receives 3 station damage.","cost":8,"attack":0,"defense":0,"paralyzed":false},{"id":"15:62301","commonId":"15","color":"orange","type":"event","name":"Supernova","description":"All cards except station cards are destroyed. Each player receives 3 station damage.","cost":8,"attack":0,"defense":0,"paralyzed":false},{"id":"15:65583","commonId":"15","color":"orange","type":"event","name":"Supernova","description":"All cards except station cards are destroyed. Each player receives 3 station damage.","cost":8,"attack":0,"defense":0,"paralyzed":false},{"id":"15:15469","commonId":"15","color":"orange","type":"event","name":"Supernova","description":"All cards except station cards are destroyed. Each player receives 3 station damage.","cost":8,"attack":0,"defense":0,"paralyzed":false},{"id":"15:42357","commonId":"15","color":"orange","type":"event","name":"Supernova","description":"All cards except station cards are destroyed. Each player receives 3 station damage.","cost":8,"attack":0,"defense":0,"paralyzed":false},{"id":"18:31501","commonId":"18","color":"orange","type":"event","name":"Perfect Plan","description":"Search for a card from the draw pile, discard pile or station cards and put it into your hand. Shuffle the draw pile if searched.","cost":2,"attack":0,"defense":0,"paralyzed":false},{"id":"15:66950","commonId":"15","color":"orange","type":"event","name":"Supernova","description":"All cards except station cards are destroyed. Each player receives 3 station damage.","cost":8,"attack":0,"defense":0,"paralyzed":false},{"id":"16:10359","commonId":"16","color":"orange","type":"event","name":"Target Missed","description":"Play this card directly during enemy attack from spaceship (not collision, missile or cannon) to make the attack fail.","cost":0,"attack":0,"defense":0,"paralyzed":false},{"id":"2:13402","commonId":"2","color":"blue","type":"spaceShip","name":"The Dark Destroyer","description":"Destroy any card when this enters play.\r\nSlow (each turn can either move or attack but not both).","cost":8,"attack":7,"defense":10,"paralyzed":false},{"id":"15:67455","commonId":"15","color":"orange","type":"event","name":"Supernova","description":"All cards except station cards are destroyed. Each player receives 3 station damage.","cost":8,"attack":0,"defense":0,"paralyzed":false},{"id":"29:15609","commonId":"29","color":"blue","type":"spaceShip","name":"Small Repair Ship","description":"Can instead of doing attack repair 1 station damage or 3 other damage.\r\nFast (can move the first turn).","cost":2,"attack":1,"defense":3,"paralyzed":false},{"id":"21:64242","commonId":"21","color":"green","type":"defense","name":"Energy Shield","description":"Protects base station. (You can only have one Energy Shield in play at the same time.)","cost":3,"attack":0,"defense":5,"paralyzed":false,"damage":0,"destroyed":false}],"phase":"action","actionPoints":0,"events":[{"type":"addCardToHand","created":1593733185858,"cardId":"30:39482"},{"type":"drawCard","created":1593733185859,"turn":1,"byEvent":true},{"type":"putDownCard","created":1593733191096,"turn":1,"location":"station-draw","cardId":"30:39482","cardCommonId":"30","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":true},{"type":"putDownCard","created":1593733195184,"turn":1,"location":"station-action","cardId":"28:85215","cardCommonId":"28","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":true},{"type":"putDownCard","created":1593733197473,"turn":1,"location":"station-handSize","cardId":"67:15684","cardCommonId":"67","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":true},{"type":"putDownCard","created":1593733200958,"turn":1,"location":"station-action","cardId":"19:96474","cardCommonId":"19","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":true},{"type":"cheatAddActionPoints","count":11},{"type":"addCardToHand","created":1593733235232,"cardId":"15:15469"},{"type":"addCardToHand","created":1593733235232,"cardId":"15:76029"},{"type":"addCardToHand","created":1593733235232,"cardId":"15:14639"},{"type":"addCardToHand","created":1593733235232,"cardId":"15:62301"},{"type":"addCardToHand","created":1593733235232,"cardId":"15:65583"},{"type":"addCardToHand","created":1593733235233,"cardId":"15:27629"},{"type":"addCardToHand","created":1593733235233,"cardId":"15:42357"},{"type":"addCardToHand","created":1593733235233,"cardId":"15:66950"},{"type":"addCardToHand","created":1593733235233,"cardId":"15:67455"},{"type":"addCardToHand","created":1593733235233,"cardId":"15:10473"},{"type":"putDownCard","created":1593733244788,"turn":1,"location":"zone","cardId":"21:64242","cardCommonId":"21","putDownAsExtraStationCard":false,"grantedForFreeByEvent":true,"startingStation":false},{"type":"addCardToHand","created":1593733254781,"cardId":"16:10359"},{"type":"drawCard","created":1593733254781,"turn":1,"byEvent":false},{"type":"discardCard","created":1593733292545,"turn":1,"phase":"discard","cardId":"15:14639","cardCommonId":"15"},{"type":"discardCard","created":1593733294856,"turn":1,"phase":"discard","cardId":"15:76029","cardCommonId":"15"},{"type":"discardCard","created":1593733300328,"turn":1,"phase":"discard","cardId":"15:62301","cardCommonId":"15"},{"type":"discardCard","created":1593733302578,"turn":1,"phase":"discard","cardId":"15:65583","cardCommonId":"15"},{"type":"discardCard","created":1593733304764,"turn":1,"phase":"discard","cardId":"15:15469","cardCommonId":"15"},{"type":"discardCard","created":1593733307033,"turn":1,"phase":"discard","cardId":"15:42357","cardCommonId":"15"},{"type":"discardCard","created":1593733309171,"turn":1,"phase":"discard","cardId":"18:31501","cardCommonId":"18"},{"type":"discardCard","created":1593733310855,"turn":1,"phase":"discard","cardId":"15:66950","cardCommonId":"15"},{"type":"discardCard","created":1593733313959,"turn":1,"phase":"discard","cardId":"16:10359","cardCommonId":"16"},{"type":"discardCard","created":1593733316961,"turn":1,"phase":"discard","cardId":"2:13402","cardCommonId":"2"},{"type":"discardCard","created":1593733320048,"turn":1,"phase":"discard","cardId":"15:67455","cardCommonId":"15"},{"type":"addCardToHand","created":1593733333848,"cardId":"29:15609"},{"type":"drawCard","created":1593733333848,"turn":2,"byEvent":false},{"type":"discardCard","created":1593733344363,"turn":2,"phase":"discard","cardId":"29:15609","cardCommonId":"29"},{"type":"discardCard","created":1593733351045,"turn":3,"phase":"wait","cardId":"21:64242","cardCommonId":"21"},{"type":"addCardToHand","created":1593733364530,"cardId":"34:43047"},{"type":"drawCard","created":1593733364530,"turn":3,"byEvent":false},{"type":"putDownCard","created":1593733367952,"turn":3,"location":"station-action","cardId":"34:43047","cardCommonId":"34","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":false},{"type":"addCardToHand","created":1593733387132,"cardId":"38:61994"},{"type":"drawCard","created":1593733387132,"turn":4,"byEvent":false}],"requirements":[],"actionLogEntries":[{"action":"receivedCardFromCommander","cardCommonId":"21","text":"You received *Energy Shield# from your commander"},{"action":"played","text":"Mr.Roboto played **Small Repair Ship##","cardIds":["29:15611"],"cardCommonIds":["29"]},{"action":"expandedStation","text":"Mr.Roboto expanded station by *1 station card#","count":1},{"action":"moved","commonCardId":"29","text":"Mr.Roboto moved *Small Repair Ship#"},{"action":"damagedInAttack","cardCommonId":"21","text":"*Energy Shield# took 1 damage","defenderCardId":"21:64242"},{"action":"played","text":"Mr.Roboto played **Battlestar##","cardIds":["32:42443"],"cardCommonIds":["32"]},{"action":"expandedStation","text":"Mr.Roboto expanded station by *1 station card#","count":1},{"action":"damagedInAttack","cardCommonId":"21","text":"*Energy Shield# took 1 damage","defenderCardId":"21:64242"},{"action":"expandedStation","text":"Mr.Roboto expanded station by *1 station card#","count":1},{"action":"moved","commonCardId":"32","text":"Mr.Roboto moved *Battlestar#"},{"action":"damagedInAttack","cardCommonId":"21","text":"*Energy Shield# took 1 damage","defenderCardId":"21:64242"},{"action":"destroyed","cardCommonId":"21","text":"*Energy Shield# was discarded"},{"action":"expandedStation","text":"Mr.Roboto expanded station by *1 station card#","count":1},{"action":"stationCardsDamaged","text":"*1 station card# was damaged"},{"action":"stationCardsDamaged","text":"*2 station cards# were damaged"}],"commanders":["NiciaSatu"],"clock":{"events":[{"type":"stop","time":1593733179756},{"type":"start","time":1593733184712},{"type":"stop","time":1593733244790},{"type":"start","time":1593733252269},{"type":"stop","time":1593733320079},{"type":"start","time":1593733326721},{"type":"stop","time":1593733344395},{"type":"start","time":1593733351881},{"type":"stop","time":1593733377491},{"type":"start","time":1593733384943}],"duration":1200000,"startTime":1593733179756}},"BOT":{"cardsInDeck":[{"id":"24:16229","commonId":"24","color":"blue","type":"spaceShip","name":"Trigger-Happy Joe","description":"Can attack 2 times per turn.","cost":2,"attack":1,"defense":2,"paralyzed":false},{"id":"27:78851","commonId":"27","color":"blue","type":"spaceShip","name":"The Shade","description":"The Shade can only be attacked if it has been attacking the last turn.","cost":4,"attack":4,"defense":3,"paralyzed":false},{"id":"31:96345","commonId":"31","color":"orange","type":"event","name":"Luck","description":"Counter target card costing 2 or less.\r\n[ OR ] Draw 2 cards.","cost":0,"attack":0,"defense":0,"paralyzed":false},{"id":"21:93547","commonId":"21","color":"green","type":"defense","name":"Energy Shield","description":"Protects base station. (You can only have one Energy Shield in play at the same time.)","cost":3,"attack":0,"defense":5,"paralyzed":false},{"id":"5:51987","commonId":"5","color":"red","type":"missile","name":"Explosive Missile","description":"Normal missile.","cost":2,"attack":4,"defense":2,"paralyzed":false},{"id":"42:94996","commonId":"42","color":"orange","type":"event","name":"Discovery","description":"Draw 3 cards and the opponent draws 2 cards. [ OR ] Discard 1 card and the opponent discards 2 cards.","cost":0,"attack":0,"defense":0,"paralyzed":false},{"id":"12:11806","commonId":"12","color":"violet","type":"duration","name":"Neutralization","description":"No other duration card has any effect.\r\nRemove from play to destroy another duration card.","cost":2,"attack":0,"defense":0,"paralyzed":false},{"id":"11:65562","commonId":"11","color":"violet","type":"duration","name":"Good Karma","description":"Draw 3 extra cards in your draw phase, then after your draw phase discard 1 card from your hand.","cost":2,"attack":0,"defense":0,"paralyzed":false},{"id":"11:58122","commonId":"11","color":"violet","type":"duration","name":"Good Karma","description":"Draw 3 extra cards in your draw phase, then after your draw phase discard 1 card from your hand.","cost":2,"attack":0,"defense":0,"paralyzed":false},{"id":"4:71859","commonId":"4","color":"blue","type":"spaceShip","name":"Titan","description":"Slow (each turn can either move or attack but not both)","cost":5,"attack":3,"defense":9,"paralyzed":false},{"id":"42:97055","commonId":"42","color":"orange","type":"event","name":"Discovery","description":"Draw 3 cards and the opponent draws 2 cards. [ OR ] Discard 1 card and the opponent discards 2 cards.","cost":0,"attack":0,"defense":0,"paralyzed":false},{"id":"15:14077","commonId":"15","color":"orange","type":"event","name":"Supernova","description":"All cards except station cards are destroyed. Each player receives 3 station damage.","cost":8,"attack":0,"defense":0,"paralyzed":false},{"id":"12:47909","commonId":"12","color":"violet","type":"duration","name":"Neutralization","description":"No other duration card has any effect.\r\nRemove from play to destroy another duration card.","cost":2,"attack":0,"defense":0,"paralyzed":false},{"id":"9:11346","commonId":"9","color":"violet","type":"duration","name":"Full Attack","description":"+1 attack value of your spaceships (not missiles or cannons).","cost":2,"attack":0,"defense":0,"paralyzed":false},{"id":"16:13551","commonId":"16","color":"orange","type":"event","name":"Target Missed","description":"Play this card directly during enemy attack from spaceship (not collision, missile or cannon) to make the attack fail.","cost":0,"attack":0,"defense":0,"paralyzed":false},{"id":"30:10757","commonId":"30","color":"blue","type":"spaceShip","name":"Big Repair Ship","description":"Can instead of doing attack repair 1 station damage or 5 other damage.","cost":3,"attack":1,"defense":5,"paralyzed":false},{"id":"22:10865","commonId":"22","color":"green","type":"defense","name":"Defense Cannon","description":"Normal cannon.\r\n(Defense cards cannot move)","cost":1,"attack":4,"defense":1,"paralyzed":false},{"id":"14:41300","commonId":"14","color":"orange","type":"event","name":"Excellent work","description":"Put down this card as an extra station card.\r\n[ OR ] Draw 3 cards.","cost":2,"attack":0,"defense":0,"paralyzed":false},{"id":"3:35141","commonId":"3","color":"blue","type":"spaceShip","name":"Stormfalcon","description":"Normal spaceship.","cost":4,"attack":5,"defense":3,"paralyzed":false},{"id":"14:78004","commonId":"14","color":"orange","type":"event","name":"Excellent work","description":"Put down this card as an extra station card.\r\n[ OR ] Draw 3 cards.","cost":2,"attack":0,"defense":0,"paralyzed":false},{"id":"67:10134","commonId":"67","color":"orange","type":"event","name":"Sabotage","description":"Opponent draws 1 card. See the cards from the opponents hand and then discard 1 card from hand or flipped station card.","cost":0,"attack":0,"defense":0,"paralyzed":false},{"id":"32:44990","commonId":"32","color":"blue","type":"spaceShip","name":"Battlestar","description":"Normal spaceship.","cost":3,"attack":2,"defense":4,"paralyzed":false},{"id":"31:21405","commonId":"31","color":"orange","type":"event","name":"Luck","description":"Counter target card costing 2 or less.\r\n[ OR ] Draw 2 cards.","cost":0,"attack":0,"defense":0,"paralyzed":false},{"id":"14:89931","commonId":"14","color":"orange","type":"event","name":"Excellent work","description":"Put down this card as an extra station card.\r\n[ OR ] Draw 3 cards.","cost":2,"attack":0,"defense":0,"paralyzed":false},{"id":"2:20197","commonId":"2","color":"blue","type":"spaceShip","name":"The Dark Destroyer","description":"Destroy any card when this enters play.\r\nSlow (each turn can either move or attack but not both).","cost":8,"attack":7,"defense":10,"paralyzed":false},{"id":"26:96735","commonId":"26","color":"blue","type":"spaceShip","name":"The Gladiator","description":"Normal spaceship.","cost":2,"attack":3,"defense":2,"paralyzed":false},{"id":"8:14776","commonId":"8","color":"red","type":"missile","name":"Nuclear Missile","description":"Slow (each turn can either move or attack but not both)","cost":2,"attack":10,"defense":3,"paralyzed":false},{"id":"39:13904","commonId":"39","color":"blue","type":"spaceShip","name":"Deadly Sniper","description":"Long distance shooter.\r\n(Can after the first turn shoot targets in enemy zone from home zone)","cost":4,"attack":2,"defense":4,"paralyzed":false},{"id":"31:86428","commonId":"31","color":"orange","type":"event","name":"Luck","description":"Counter target card costing 2 or less.\r\n[ OR ] Draw 2 cards.","cost":0,"attack":0,"defense":0,"paralyzed":false},{"id":"6:10365","commonId":"6","color":"red","type":"missile","name":"Fast Missile","description":"Fast (can move the first turn).","cost":2,"attack":2,"defense":1,"paralyzed":false},{"id":"20:82234","commonId":"20","color":"orange","type":"event","name":"Grand Opportunity","description":"Draw 5 cards and then discard 1 card from your hand.","cost":4,"attack":0,"defense":0,"paralyzed":false},{"id":"1:11357","commonId":"1","color":"blue","type":"spaceShip","name":"The Exterminator","description":"Slow (each turn can either move or attack but not both)","cost":5,"attack":5,"defense":7,"paralyzed":false},{"id":"28:36105","commonId":"28","color":"blue","type":"spaceShip","name":"Hunter","description":"Fast (can move the first turn).","cost":3,"attack":3,"defense":2,"paralyzed":false},{"id":"19:12424","commonId":"19","color":"blue","type":"spaceShip","name":"Pursuiter","description":"Can after first turn be sacrificed instead of attacking to deal 4 damage to target in same zone (collision).","cost":1,"attack":2,"defense":1,"paralyzed":false},{"id":"56:67377","commonId":"56","color":"blue","type":"spaceShip","name":"The Liberator","description":"Normal spaceship.","cost":4,"attack":2,"defense":6,"paralyzed":false},{"id":"64:15559","commonId":"64","color":"violet","type":"duration","name":"Destiny Decided","description":"You cannot play any card. The opponent can only play 1 card during their turn and this card cannot be an event (orange) card. ","cost":2,"attack":0,"defense":0,"paralyzed":false},{"id":"38:30994","commonId":"38","color":"orange","type":"event","name":"Fatal Error","description":"Destroy any card in play with action cost X.","cost":0,"attack":0,"defense":0,"paralyzed":false},{"id":"67:51025","commonId":"67","color":"orange","type":"event","name":"Sabotage","description":"Opponent draws 1 card. See the cards from the opponents hand and then discard 1 card from hand or flipped station card.","cost":0,"attack":0,"defense":0,"paralyzed":false},{"id":"37:76147","commonId":"37","color":"blue","type":"spaceShip","name":"Disturbing Sensor","description":"· Enemy missiles can't move or attack.\r\n· If opponent after draw phase has more   than 1 card in hand, he or she           discards a card.","cost":4,"attack":0,"defense":3,"paralyzed":false},{"id":"7:10221","commonId":"7","color":"red","type":"missile","name":"EMP Missile","description":"Destroys Energy Shield or paralyzes spaceship (turn the card and it cannot do anything until repaired).","cost":2,"attack":0,"defense":2,"paralyzed":false},{"id":"5:11754","commonId":"5","color":"red","type":"missile","name":"Explosive Missile","description":"Normal missile.","cost":2,"attack":4,"defense":2,"paralyzed":false},{"id":"31:14520","commonId":"31","color":"orange","type":"event","name":"Luck","description":"Counter target card costing 2 or less.\r\n[ OR ] Draw 2 cards.","cost":0,"attack":0,"defense":0,"paralyzed":false},{"id":"7:46437","commonId":"7","color":"red","type":"missile","name":"EMP Missile","description":"Destroys Energy Shield or paralyzes spaceship (turn the card and it cannot do anything until repaired).","cost":2,"attack":0,"defense":2,"paralyzed":false},{"id":"18:78355","commonId":"18","color":"orange","type":"event","name":"Perfect Plan","description":"Search for a card from the draw pile, discard pile or station cards and put it into your hand. Shuffle the draw pile if searched.","cost":2,"attack":0,"defense":0,"paralyzed":false},{"id":"19:41792","commonId":"19","color":"blue","type":"spaceShip","name":"Pursuiter","description":"Can after first turn be sacrificed instead of attacking to deal 4 damage to target in same zone (collision).","cost":1,"attack":2,"defense":1,"paralyzed":false},{"id":"16:22358","commonId":"16","color":"orange","type":"event","name":"Target Missed","description":"Play this card directly during enemy attack from spaceship (not collision, missile or cannon) to make the attack fail.","cost":0,"attack":0,"defense":0,"paralyzed":false},{"id":"25:15750","commonId":"25","color":"blue","type":"spaceShip","name":"Thunderbolt","description":"Normal spaceship.","cost":2,"attack":2,"defense":3,"paralyzed":false},{"id":"21:89587","commonId":"21","color":"green","type":"defense","name":"Energy Shield","description":"Protects base station. (You can only have one Energy Shield in play at the same time.)","cost":3,"attack":0,"defense":5,"paralyzed":false},{"id":"34:12709","commonId":"34","color":"violet","type":"duration","name":"Avoid","description":"Discard this card from table to counter card being played.","cost":2,"attack":0,"defense":0,"paralyzed":false}],"cardsOnHand":[{"id":"13:15692","commonId":"13","color":"violet","type":"duration","name":"Over Capacity","description":"You have no maximum hand size.\r\nIn your action phase you may look at and take to your hand bottom row station cards.","cost":1,"attack":0,"defense":0,"paralyzed":false},{"id":"16:12319","commonId":"16","color":"orange","type":"event","name":"Target Missed","description":"Play this card directly during enemy attack from spaceship (not collision, missile or cannon) to make the attack fail.","cost":0,"attack":0,"defense":0,"paralyzed":false}],"stationCards":[{"place":"draw","card":{"id":"18:14535","commonId":"18","color":"orange","type":"event","name":"Perfect Plan","description":"Search for a card from the draw pile, discard pile or station cards and put it into your hand. Shuffle the draw pile if searched.","cost":2,"attack":0,"defense":0,"paralyzed":false}},{"place":"action","card":{"id":"38:59899","commonId":"38","color":"orange","type":"event","name":"Fatal Error","description":"Destroy any card in play with action cost X.","cost":0,"attack":0,"defense":0,"paralyzed":false}},{"place":"handSize","card":{"id":"21:13165","commonId":"21","color":"green","type":"defense","name":"Energy Shield","description":"Protects base station. (You can only have one Energy Shield in play at the same time.)","cost":3,"attack":0,"defense":5,"paralyzed":false}},{"place":"action","card":{"id":"34:10987","commonId":"34","color":"violet","type":"duration","name":"Avoid","description":"Discard this card from table to counter card being played.","cost":2,"attack":0,"defense":0,"paralyzed":false}},{"place":"action","card":{"id":"9:85822","commonId":"9","color":"violet","type":"duration","name":"Full Attack","description":"+1 attack value of your spaceships (not missiles or cannons).","cost":2,"attack":0,"defense":0,"paralyzed":false}},{"place":"draw","card":{"id":"13:14686","commonId":"13","color":"violet","type":"duration","name":"Over Capacity","description":"You have no maximum hand size.\r\nIn your action phase you may look at and take to your hand bottom row station cards.","cost":1,"attack":0,"defense":0,"paralyzed":false}},{"place":"action","card":{"id":"17:10751","commonId":"17","color":"orange","type":"event","name":"Missiles Launched","description":"Find 2 missile cards (red cards) from your draw or discard pile and play them without cost. Shuffle the draw pile if searched.","cost":5,"attack":0,"defense":0,"paralyzed":false}}],"cardsInZone":[],"cardsInOpponentZone":[{"id":"29:15611","commonId":"29","color":"blue","type":"spaceShip","name":"Small Repair Ship","description":"Can instead of doing attack repair 1 station damage or 3 other damage.\r\nFast (can move the first turn).","cost":2,"attack":1,"defense":3,"paralyzed":false,"destroyed":false},{"id":"32:42443","commonId":"32","color":"blue","type":"spaceShip","name":"Battlestar","description":"Normal spaceship.","cost":3,"attack":2,"defense":4,"paralyzed":false,"destroyed":false}],"discardedCards":[],"phase":"wait","actionPoints":0,"events":[{"type":"putDownCard","created":1593733181430,"turn":1,"location":"draw","cardId":"18:14535","cardCommonId":"18","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":true},{"type":"putDownCard","created":1593733182260,"turn":1,"location":"action","cardId":"38:59899","cardCommonId":"38","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":true},{"type":"putDownCard","created":1593733183082,"turn":1,"location":"handSize","cardId":"21:13165","cardCommonId":"21","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":true},{"type":"addCardToHand","created":1593733245661,"cardId":"32:42443"},{"type":"drawCard","created":1593733245661,"turn":1,"byEvent":false},{"type":"putDownCard","created":1593733247304,"turn":1,"location":"zone","cardId":"29:15611","cardCommonId":"29","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":false},{"type":"putDownCard","created":1593733248128,"turn":1,"location":"station-action","cardId":"34:10987","cardCommonId":"34","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":false},{"type":"moveCard","created":1593733250605,"turn":1,"cardId":"29:15611","cardCommonId":"29"},{"type":"attack","created":1593733251444,"turn":1,"attackerCardId":"29:15611","cardCommonId":"29","countered":false,"defenderCardId":"21:64242"},{"type":"addCardToHand","created":1593733320967,"cardId":"13:14686"},{"type":"drawCard","created":1593733320967,"turn":2,"byEvent":false},{"type":"putDownCard","created":1593733322603,"turn":2,"location":"zone","cardId":"32:42443","cardCommonId":"32","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":false},{"type":"putDownCard","created":1593733323429,"turn":2,"location":"station-action","cardId":"9:85822","cardCommonId":"9","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":false},{"type":"attack","created":1593733325896,"turn":2,"attackerCardId":"29:15611","cardCommonId":"29","countered":false,"defenderCardId":"21:64242"},{"type":"addCardToHand","created":1593733345261,"cardId":"13:15692"},{"type":"drawCard","created":1593733345261,"turn":3,"byEvent":false},{"type":"putDownCard","created":1593733346900,"turn":3,"location":"station-draw","cardId":"13:14686","cardCommonId":"13","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":false},{"type":"moveCard","created":1593733349373,"turn":3,"cardId":"32:42443","cardCommonId":"32"},{"type":"attack","created":1593733350212,"turn":3,"attackerCardId":"29:15611","cardCommonId":"29","countered":false,"defenderCardId":"21:64242"},{"type":"attack","created":1593733351045,"turn":3,"attackerCardId":"32:42443","cardCommonId":"32","countered":false,"defenderCardId":"21:64242"},{"type":"addCardToHand","created":1593733378351,"cardId":"17:10751"},{"type":"drawCard","created":1593733378351,"turn":4,"byEvent":false},{"type":"addCardToHand","created":1593733379169,"cardId":"16:12319"},{"type":"drawCard","created":1593733379169,"turn":4,"byEvent":false},{"type":"putDownCard","created":1593733380809,"turn":4,"location":"station-action","cardId":"17:10751","cardCommonId":"17","putDownAsExtraStationCard":false,"grantedForFreeByEvent":false,"startingStation":false},{"type":"attack","created":1593733383278,"turn":4,"attackerCardId":"29:15611","cardCommonId":"29","countered":false,"targetStationCardIds":["30:39482"]},{"type":"attack","created":1593733384112,"turn":4,"attackerCardId":"32:42443","cardCommonId":"32","countered":false,"targetStationCardIds":["28:85215","19:96474"]}],"requirements":[],"actionLogEntries":[{"action":"receivedCardFromCommander","cardCommonId":"21","text":"august-name received *Energy Shield# from their commander"},{"action":"expandedStation","text":"august-name expanded station by *1 station card#","count":1}],"commanders":["FrankJohnson"],"clock":{"events":[{"type":"stop","time":1593733179756},{"type":"start","time":1593733244790},{"type":"stop","time":1593733252269},{"type":"start","time":1593733320079},{"type":"stop","time":1593733326721},{"type":"start","time":1593733344395},{"type":"stop","time":1593733351881},{"type":"start","time":1593733377491},{"type":"stop","time":1593733384943}],"duration":1200000,"startTime":1593733179756}}}},"saverPlayerId":"0618589","saveTime":1593733401502}
+{
+  "state": {
+    "matchId": "0161257",
+    "mode": "game",
+    "gameStartTime": 1593733179662,
+    "turn": 4,
+    "currentPlayer": "0618589",
+    "playerOrder": ["BOT", "0618589"],
+    "playersConnected": 4,
+    "readyPlayerIds": ["BOT", "0618589"],
+    "ended": false,
+    "retreatedPlayerId": null,
+    "lastStandInfo": null,
+    "playerStateById": {
+      "0618589": {
+        "cardsInDeck": [
+          {
+            "id": "7:14022",
+            "commonId": "7",
+            "color": "red",
+            "type": "missile",
+            "name": "EMP Missile",
+            "description": "Destroys Energy Shield or paralyzes spaceship (turn the card and it cannot do anything until repaired).",
+            "cost": 2,
+            "attack": 0,
+            "defense": 2,
+            "paralyzed": false
+          },
+          {
+            "id": "6:12903",
+            "commonId": "6",
+            "color": "red",
+            "type": "missile",
+            "name": "Fast Missile",
+            "description": "Fast (can move the first turn).",
+            "cost": 2,
+            "attack": 2,
+            "defense": 1,
+            "paralyzed": false
+          },
+          {
+            "id": "31:68559",
+            "commonId": "31",
+            "color": "orange",
+            "type": "event",
+            "name": "Luck",
+            "description": "Counter target card costing 2 or less.\r\n[ OR ] Draw 2 cards.",
+            "cost": 0,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "31:12628",
+            "commonId": "31",
+            "color": "orange",
+            "type": "event",
+            "name": "Luck",
+            "description": "Counter target card costing 2 or less.\r\n[ OR ] Draw 2 cards.",
+            "cost": 0,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "64:14558",
+            "commonId": "64",
+            "color": "violet",
+            "type": "duration",
+            "name": "Destiny Decided",
+            "description": "You cannot play any card. The opponent can only play 1 card during their turn and this card cannot be an event (orange) card. ",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "4:56595",
+            "commonId": "4",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "Titan",
+            "description": "Slow (each turn can either move or attack but not both)",
+            "cost": 5,
+            "attack": 3,
+            "defense": 9,
+            "paralyzed": false
+          },
+          {
+            "id": "3:10411",
+            "commonId": "3",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "Stormfalcon",
+            "description": "Normal spaceship.",
+            "cost": 4,
+            "attack": 5,
+            "defense": 3,
+            "paralyzed": false
+          },
+          {
+            "id": "19:14854",
+            "commonId": "19",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "Pursuiter",
+            "description": "Can after first turn be sacrificed instead of attacking to deal 4 damage to target in same zone (collision).",
+            "cost": 1,
+            "attack": 2,
+            "defense": 1,
+            "paralyzed": false
+          },
+          {
+            "id": "24:40761",
+            "commonId": "24",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "Trigger-Happy Joe",
+            "description": "Can attack 2 times per turn.",
+            "cost": 2,
+            "attack": 1,
+            "defense": 2,
+            "paralyzed": false
+          },
+          {
+            "id": "42:15595",
+            "commonId": "42",
+            "color": "orange",
+            "type": "event",
+            "name": "Discovery",
+            "description": "Draw 3 cards and the opponent draws 2 cards. [ OR ] Discard 1 card and the opponent discards 2 cards.",
+            "cost": 0,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "56:44160",
+            "commonId": "56",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "The Liberator",
+            "description": "Normal spaceship.",
+            "cost": 4,
+            "attack": 2,
+            "defense": 6,
+            "paralyzed": false
+          },
+          {
+            "id": "21:12498",
+            "commonId": "21",
+            "color": "green",
+            "type": "defense",
+            "name": "Energy Shield",
+            "description": "Protects base station. (You can only have one Energy Shield in play at the same time.)",
+            "cost": 3,
+            "attack": 0,
+            "defense": 5,
+            "paralyzed": false
+          },
+          {
+            "id": "11:88245",
+            "commonId": "11",
+            "color": "violet",
+            "type": "duration",
+            "name": "Good Karma",
+            "description": "Draw 3 extra cards in your draw phase, then after your draw phase discard 1 card from your hand.",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "22:10570",
+            "commonId": "22",
+            "color": "green",
+            "type": "defense",
+            "name": "Defense Cannon",
+            "description": "Normal cannon.\r\n(Defense cards cannot move)",
+            "cost": 1,
+            "attack": 4,
+            "defense": 1,
+            "paralyzed": false
+          },
+          {
+            "id": "12:12850",
+            "commonId": "12",
+            "color": "violet",
+            "type": "duration",
+            "name": "Neutralization",
+            "description": "No other duration card has any effect.\r\nRemove from play to destroy another duration card.",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "9:71293",
+            "commonId": "9",
+            "color": "violet",
+            "type": "duration",
+            "name": "Full Attack",
+            "description": "+1 attack value of your spaceships (not missiles or cannons).",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "5:72106",
+            "commonId": "5",
+            "color": "red",
+            "type": "missile",
+            "name": "Explosive Missile",
+            "description": "Normal missile.",
+            "cost": 2,
+            "attack": 4,
+            "defense": 2,
+            "paralyzed": false
+          },
+          {
+            "id": "11:23624",
+            "commonId": "11",
+            "color": "violet",
+            "type": "duration",
+            "name": "Good Karma",
+            "description": "Draw 3 extra cards in your draw phase, then after your draw phase discard 1 card from your hand.",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "34:10230",
+            "commonId": "34",
+            "color": "violet",
+            "type": "duration",
+            "name": "Avoid",
+            "description": "Discard this card from table to counter card being played.",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "32:49567",
+            "commonId": "32",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "Battlestar",
+            "description": "Normal spaceship.",
+            "cost": 3,
+            "attack": 2,
+            "defense": 4,
+            "paralyzed": false
+          },
+          {
+            "id": "21:11226",
+            "commonId": "21",
+            "color": "green",
+            "type": "defense",
+            "name": "Energy Shield",
+            "description": "Protects base station. (You can only have one Energy Shield in play at the same time.)",
+            "cost": 3,
+            "attack": 0,
+            "defense": 5,
+            "paralyzed": false
+          },
+          {
+            "id": "13:70286",
+            "commonId": "13",
+            "color": "violet",
+            "type": "duration",
+            "name": "Over Capacity",
+            "description": "You have no maximum hand size.\r\nIn your action phase you may look at and take to your hand bottom row station cards.",
+            "cost": 1,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "42:71658",
+            "commonId": "42",
+            "color": "orange",
+            "type": "event",
+            "name": "Discovery",
+            "description": "Draw 3 cards and the opponent draws 2 cards. [ OR ] Discard 1 card and the opponent discards 2 cards.",
+            "cost": 0,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "1:22765",
+            "commonId": "1",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "The Exterminator",
+            "description": "Slow (each turn can either move or attack but not both)",
+            "cost": 5,
+            "attack": 5,
+            "defense": 7,
+            "paralyzed": false
+          },
+          {
+            "id": "15:15254",
+            "commonId": "15",
+            "color": "orange",
+            "type": "event",
+            "name": "Supernova",
+            "description": "All cards except station cards are destroyed. Each player receives 3 station damage.",
+            "cost": 8,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "16:31430",
+            "commonId": "16",
+            "color": "orange",
+            "type": "event",
+            "name": "Target Missed",
+            "description": "Play this card directly during enemy attack from spaceship (not collision, missile or cannon) to make the attack fail.",
+            "cost": 0,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "9:14238",
+            "commonId": "9",
+            "color": "violet",
+            "type": "duration",
+            "name": "Full Attack",
+            "description": "+1 attack value of your spaceships (not missiles or cannons).",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "14:16668",
+            "commonId": "14",
+            "color": "orange",
+            "type": "event",
+            "name": "Excellent work",
+            "description": "Put down this card as an extra station card.\r\n[ OR ] Draw 3 cards.",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "14:10350",
+            "commonId": "14",
+            "color": "orange",
+            "type": "event",
+            "name": "Excellent work",
+            "description": "Put down this card as an extra station card.\r\n[ OR ] Draw 3 cards.",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "38:32115",
+            "commonId": "38",
+            "color": "orange",
+            "type": "event",
+            "name": "Fatal Error",
+            "description": "Destroy any card in play with action cost X.",
+            "cost": 0,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "39:50471",
+            "commonId": "39",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "Deadly Sniper",
+            "description": "Long distance shooter.\r\n(Can after the first turn shoot targets in enemy zone from home zone)",
+            "cost": 4,
+            "attack": 2,
+            "defense": 4,
+            "paralyzed": false
+          },
+          {
+            "id": "26:20191",
+            "commonId": "26",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "The Gladiator",
+            "description": "Normal spaceship.",
+            "cost": 2,
+            "attack": 3,
+            "defense": 2,
+            "paralyzed": false
+          },
+          {
+            "id": "17:29919",
+            "commonId": "17",
+            "color": "orange",
+            "type": "event",
+            "name": "Missiles Launched",
+            "description": "Find 2 missile cards (red cards) from your draw or discard pile and play them without cost. Shuffle the draw pile if searched.",
+            "cost": 5,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "20:70033",
+            "commonId": "20",
+            "color": "orange",
+            "type": "event",
+            "name": "Grand Opportunity",
+            "description": "Draw 5 cards and then discard 1 card from your hand.",
+            "cost": 4,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "13:12805",
+            "commonId": "13",
+            "color": "violet",
+            "type": "duration",
+            "name": "Over Capacity",
+            "description": "You have no maximum hand size.\r\nIn your action phase you may look at and take to your hand bottom row station cards.",
+            "cost": 1,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "31:11185",
+            "commonId": "31",
+            "color": "orange",
+            "type": "event",
+            "name": "Luck",
+            "description": "Counter target card costing 2 or less.\r\n[ OR ] Draw 2 cards.",
+            "cost": 0,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "31:11418",
+            "commonId": "31",
+            "color": "orange",
+            "type": "event",
+            "name": "Luck",
+            "description": "Counter target card costing 2 or less.\r\n[ OR ] Draw 2 cards.",
+            "cost": 0,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "27:14616",
+            "commonId": "27",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "The Shade",
+            "description": "The Shade can only be attacked if it has been attacking the last turn.",
+            "cost": 4,
+            "attack": 4,
+            "defense": 3,
+            "paralyzed": false
+          },
+          {
+            "id": "67:12576",
+            "commonId": "67",
+            "color": "orange",
+            "type": "event",
+            "name": "Sabotage",
+            "description": "Opponent draws 1 card. See the cards from the opponents hand and then discard 1 card from hand or flipped station card.",
+            "cost": 0,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "5:14265",
+            "commonId": "5",
+            "color": "red",
+            "type": "missile",
+            "name": "Explosive Missile",
+            "description": "Normal missile.",
+            "cost": 2,
+            "attack": 4,
+            "defense": 2,
+            "paralyzed": false
+          },
+          {
+            "id": "16:13309",
+            "commonId": "16",
+            "color": "orange",
+            "type": "event",
+            "name": "Target Missed",
+            "description": "Play this card directly during enemy attack from spaceship (not collision, missile or cannon) to make the attack fail.",
+            "cost": 0,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "37:57164",
+            "commonId": "37",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "Disturbing Sensor",
+            "description": "· Enemy missiles can't move or attack.\r\n· If opponent after draw phase has more   than 1 card in hand, he or she           discards a card.",
+            "cost": 4,
+            "attack": 0,
+            "defense": 3,
+            "paralyzed": false
+          },
+          {
+            "id": "12:31283",
+            "commonId": "12",
+            "color": "violet",
+            "type": "duration",
+            "name": "Neutralization",
+            "description": "No other duration card has any effect.\r\nRemove from play to destroy another duration card.",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "7:12287",
+            "commonId": "7",
+            "color": "red",
+            "type": "missile",
+            "name": "EMP Missile",
+            "description": "Destroys Energy Shield or paralyzes spaceship (turn the card and it cannot do anything until repaired).",
+            "cost": 2,
+            "attack": 0,
+            "defense": 2,
+            "paralyzed": false
+          },
+          {
+            "id": "32:65333",
+            "commonId": "32",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "Battlestar",
+            "description": "Normal spaceship.",
+            "cost": 3,
+            "attack": 2,
+            "defense": 4,
+            "paralyzed": false
+          },
+          {
+            "id": "18:12836",
+            "commonId": "18",
+            "color": "orange",
+            "type": "event",
+            "name": "Perfect Plan",
+            "description": "Search for a card from the draw pile, discard pile or station cards and put it into your hand. Shuffle the draw pile if searched.",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "25:70943",
+            "commonId": "25",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "Thunderbolt",
+            "description": "Normal spaceship.",
+            "cost": 2,
+            "attack": 2,
+            "defense": 3,
+            "paralyzed": false
+          },
+          {
+            "id": "14:60929",
+            "commonId": "14",
+            "color": "orange",
+            "type": "event",
+            "name": "Excellent work",
+            "description": "Put down this card as an extra station card.\r\n[ OR ] Draw 3 cards.",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          }
+        ],
+        "cardsOnHand": [
+          {
+            "id": "8:11190",
+            "commonId": "8",
+            "color": "red",
+            "type": "missile",
+            "name": "Nuclear Missile",
+            "description": "Slow (each turn can either move or attack but not both)",
+            "cost": 2,
+            "attack": 10,
+            "defense": 3,
+            "paralyzed": false
+          },
+          {
+            "id": "15:27629",
+            "commonId": "15",
+            "color": "orange",
+            "type": "event",
+            "name": "Supernova",
+            "description": "All cards except station cards are destroyed. Each player receives 3 station damage.",
+            "cost": 8,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "15:10473",
+            "commonId": "15",
+            "color": "orange",
+            "type": "event",
+            "name": "Supernova",
+            "description": "All cards except station cards are destroyed. Each player receives 3 station damage.",
+            "cost": 8,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "38:61994",
+            "commonId": "38",
+            "color": "orange",
+            "type": "event",
+            "name": "Fatal Error",
+            "description": "Destroy any card in play with action cost X.",
+            "cost": 0,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          }
+        ],
+        "stationCards": [
+          {
+            "place": "draw",
+            "card": {
+              "id": "30:39482",
+              "commonId": "30",
+              "color": "blue",
+              "type": "spaceShip",
+              "name": "Big Repair Ship",
+              "description": "Can instead of doing attack repair 1 station damage or 5 other damage.",
+              "cost": 3,
+              "attack": 1,
+              "defense": 5,
+              "paralyzed": false
+            },
+            "flipped": true
+          },
+          {
+            "place": "action",
+            "card": {
+              "id": "28:85215",
+              "commonId": "28",
+              "color": "blue",
+              "type": "spaceShip",
+              "name": "Hunter",
+              "description": "Fast (can move the first turn).",
+              "cost": 3,
+              "attack": 3,
+              "defense": 2,
+              "paralyzed": false
+            },
+            "flipped": true
+          },
+          {
+            "place": "handSize",
+            "card": {
+              "id": "67:15684",
+              "commonId": "67",
+              "color": "orange",
+              "type": "event",
+              "name": "Sabotage",
+              "description": "Opponent draws 1 card. See the cards from the opponents hand and then discard 1 card from hand or flipped station card.",
+              "cost": 0,
+              "attack": 0,
+              "defense": 0,
+              "paralyzed": false
+            }
+          },
+          {
+            "place": "action",
+            "card": {
+              "id": "19:96474",
+              "commonId": "19",
+              "color": "blue",
+              "type": "spaceShip",
+              "name": "Pursuiter",
+              "description": "Can after first turn be sacrificed instead of attacking to deal 4 damage to target in same zone (collision).",
+              "cost": 1,
+              "attack": 2,
+              "defense": 1,
+              "paralyzed": false
+            },
+            "flipped": true
+          },
+          {
+            "place": "action",
+            "card": {
+              "id": "34:43047",
+              "commonId": "34",
+              "color": "violet",
+              "type": "duration",
+              "name": "Avoid",
+              "description": "Discard this card from table to counter card being played.",
+              "cost": 2,
+              "attack": 0,
+              "defense": 0,
+              "paralyzed": false
+            }
+          }
+        ],
+        "cardsInZone": [],
+        "cardsInOpponentZone": [],
+        "discardedCards": [
+          {
+            "id": "15:14639",
+            "commonId": "15",
+            "color": "orange",
+            "type": "event",
+            "name": "Supernova",
+            "description": "All cards except station cards are destroyed. Each player receives 3 station damage.",
+            "cost": 8,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "15:76029",
+            "commonId": "15",
+            "color": "orange",
+            "type": "event",
+            "name": "Supernova",
+            "description": "All cards except station cards are destroyed. Each player receives 3 station damage.",
+            "cost": 8,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "15:62301",
+            "commonId": "15",
+            "color": "orange",
+            "type": "event",
+            "name": "Supernova",
+            "description": "All cards except station cards are destroyed. Each player receives 3 station damage.",
+            "cost": 8,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "15:65583",
+            "commonId": "15",
+            "color": "orange",
+            "type": "event",
+            "name": "Supernova",
+            "description": "All cards except station cards are destroyed. Each player receives 3 station damage.",
+            "cost": 8,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "15:15469",
+            "commonId": "15",
+            "color": "orange",
+            "type": "event",
+            "name": "Supernova",
+            "description": "All cards except station cards are destroyed. Each player receives 3 station damage.",
+            "cost": 8,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "15:42357",
+            "commonId": "15",
+            "color": "orange",
+            "type": "event",
+            "name": "Supernova",
+            "description": "All cards except station cards are destroyed. Each player receives 3 station damage.",
+            "cost": 8,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "18:31501",
+            "commonId": "18",
+            "color": "orange",
+            "type": "event",
+            "name": "Perfect Plan",
+            "description": "Search for a card from the draw pile, discard pile or station cards and put it into your hand. Shuffle the draw pile if searched.",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "15:66950",
+            "commonId": "15",
+            "color": "orange",
+            "type": "event",
+            "name": "Supernova",
+            "description": "All cards except station cards are destroyed. Each player receives 3 station damage.",
+            "cost": 8,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "16:10359",
+            "commonId": "16",
+            "color": "orange",
+            "type": "event",
+            "name": "Target Missed",
+            "description": "Play this card directly during enemy attack from spaceship (not collision, missile or cannon) to make the attack fail.",
+            "cost": 0,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "2:13402",
+            "commonId": "2",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "The Dark Destroyer",
+            "description": "Destroy any card when this enters play.\r\nSlow (each turn can either move or attack but not both).",
+            "cost": 8,
+            "attack": 7,
+            "defense": 10,
+            "paralyzed": false
+          },
+          {
+            "id": "15:67455",
+            "commonId": "15",
+            "color": "orange",
+            "type": "event",
+            "name": "Supernova",
+            "description": "All cards except station cards are destroyed. Each player receives 3 station damage.",
+            "cost": 8,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "29:15609",
+            "commonId": "29",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "Small Repair Ship",
+            "description": "Can instead of doing attack repair 1 station damage or 3 other damage.\r\nFast (can move the first turn).",
+            "cost": 2,
+            "attack": 1,
+            "defense": 3,
+            "paralyzed": false
+          },
+          {
+            "id": "21:64242",
+            "commonId": "21",
+            "color": "green",
+            "type": "defense",
+            "name": "Energy Shield",
+            "description": "Protects base station. (You can only have one Energy Shield in play at the same time.)",
+            "cost": 3,
+            "attack": 0,
+            "defense": 5,
+            "paralyzed": false,
+            "damage": 0,
+            "destroyed": false
+          }
+        ],
+        "phase": "action",
+        "actionPoints": 0,
+        "events": [
+          {
+            "type": "addCardToHand",
+            "created": 1593733185858,
+            "cardId": "30:39482"
+          },
+          {
+            "type": "drawCard",
+            "created": 1593733185859,
+            "turn": 1,
+            "byEvent": true
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593733191096,
+            "turn": 1,
+            "location": "station-draw",
+            "cardId": "30:39482",
+            "cardCommonId": "30",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": true
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593733195184,
+            "turn": 1,
+            "location": "station-action",
+            "cardId": "28:85215",
+            "cardCommonId": "28",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": true
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593733197473,
+            "turn": 1,
+            "location": "station-handSize",
+            "cardId": "67:15684",
+            "cardCommonId": "67",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": true
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593733200958,
+            "turn": 1,
+            "location": "station-action",
+            "cardId": "19:96474",
+            "cardCommonId": "19",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": true
+          },
+          { "type": "cheatAddActionPoints", "count": 11 },
+          {
+            "type": "addCardToHand",
+            "created": 1593733235232,
+            "cardId": "15:15469"
+          },
+          {
+            "type": "addCardToHand",
+            "created": 1593733235232,
+            "cardId": "15:76029"
+          },
+          {
+            "type": "addCardToHand",
+            "created": 1593733235232,
+            "cardId": "15:14639"
+          },
+          {
+            "type": "addCardToHand",
+            "created": 1593733235232,
+            "cardId": "15:62301"
+          },
+          {
+            "type": "addCardToHand",
+            "created": 1593733235232,
+            "cardId": "15:65583"
+          },
+          {
+            "type": "addCardToHand",
+            "created": 1593733235233,
+            "cardId": "15:27629"
+          },
+          {
+            "type": "addCardToHand",
+            "created": 1593733235233,
+            "cardId": "15:42357"
+          },
+          {
+            "type": "addCardToHand",
+            "created": 1593733235233,
+            "cardId": "15:66950"
+          },
+          {
+            "type": "addCardToHand",
+            "created": 1593733235233,
+            "cardId": "15:67455"
+          },
+          {
+            "type": "addCardToHand",
+            "created": 1593733235233,
+            "cardId": "15:10473"
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593733244788,
+            "turn": 1,
+            "location": "zone",
+            "cardId": "21:64242",
+            "cardCommonId": "21",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": true,
+            "startingStation": false
+          },
+          {
+            "type": "addCardToHand",
+            "created": 1593733254781,
+            "cardId": "16:10359"
+          },
+          {
+            "type": "drawCard",
+            "created": 1593733254781,
+            "turn": 1,
+            "byEvent": false
+          },
+          {
+            "type": "discardCard",
+            "created": 1593733292545,
+            "turn": 1,
+            "phase": "discard",
+            "cardId": "15:14639",
+            "cardCommonId": "15"
+          },
+          {
+            "type": "discardCard",
+            "created": 1593733294856,
+            "turn": 1,
+            "phase": "discard",
+            "cardId": "15:76029",
+            "cardCommonId": "15"
+          },
+          {
+            "type": "discardCard",
+            "created": 1593733300328,
+            "turn": 1,
+            "phase": "discard",
+            "cardId": "15:62301",
+            "cardCommonId": "15"
+          },
+          {
+            "type": "discardCard",
+            "created": 1593733302578,
+            "turn": 1,
+            "phase": "discard",
+            "cardId": "15:65583",
+            "cardCommonId": "15"
+          },
+          {
+            "type": "discardCard",
+            "created": 1593733304764,
+            "turn": 1,
+            "phase": "discard",
+            "cardId": "15:15469",
+            "cardCommonId": "15"
+          },
+          {
+            "type": "discardCard",
+            "created": 1593733307033,
+            "turn": 1,
+            "phase": "discard",
+            "cardId": "15:42357",
+            "cardCommonId": "15"
+          },
+          {
+            "type": "discardCard",
+            "created": 1593733309171,
+            "turn": 1,
+            "phase": "discard",
+            "cardId": "18:31501",
+            "cardCommonId": "18"
+          },
+          {
+            "type": "discardCard",
+            "created": 1593733310855,
+            "turn": 1,
+            "phase": "discard",
+            "cardId": "15:66950",
+            "cardCommonId": "15"
+          },
+          {
+            "type": "discardCard",
+            "created": 1593733313959,
+            "turn": 1,
+            "phase": "discard",
+            "cardId": "16:10359",
+            "cardCommonId": "16"
+          },
+          {
+            "type": "discardCard",
+            "created": 1593733316961,
+            "turn": 1,
+            "phase": "discard",
+            "cardId": "2:13402",
+            "cardCommonId": "2"
+          },
+          {
+            "type": "discardCard",
+            "created": 1593733320048,
+            "turn": 1,
+            "phase": "discard",
+            "cardId": "15:67455",
+            "cardCommonId": "15"
+          },
+          {
+            "type": "addCardToHand",
+            "created": 1593733333848,
+            "cardId": "29:15609"
+          },
+          {
+            "type": "drawCard",
+            "created": 1593733333848,
+            "turn": 2,
+            "byEvent": false
+          },
+          {
+            "type": "discardCard",
+            "created": 1593733344363,
+            "turn": 2,
+            "phase": "discard",
+            "cardId": "29:15609",
+            "cardCommonId": "29"
+          },
+          {
+            "type": "discardCard",
+            "created": 1593733351045,
+            "turn": 3,
+            "phase": "wait",
+            "cardId": "21:64242",
+            "cardCommonId": "21"
+          },
+          {
+            "type": "addCardToHand",
+            "created": 1593733364530,
+            "cardId": "34:43047"
+          },
+          {
+            "type": "drawCard",
+            "created": 1593733364530,
+            "turn": 3,
+            "byEvent": false
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593733367952,
+            "turn": 3,
+            "location": "station-action",
+            "cardId": "34:43047",
+            "cardCommonId": "34",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": false
+          },
+          {
+            "type": "addCardToHand",
+            "created": 1593733387132,
+            "cardId": "38:61994"
+          },
+          {
+            "type": "drawCard",
+            "created": 1593733387132,
+            "turn": 4,
+            "byEvent": false
+          }
+        ],
+        "requirements": [],
+        "actionLogEntries": [
+          {
+            "action": "receivedCardFromCommander",
+            "cardCommonId": "21",
+            "text": "You received *Energy Shield# from your commander"
+          },
+          {
+            "action": "played",
+            "text": "Mr.Roboto played **Small Repair Ship##",
+            "cardIds": ["29:15611"],
+            "cardCommonIds": ["29"]
+          },
+          {
+            "action": "expandedStation",
+            "text": "Mr.Roboto expanded station by *1 station card#",
+            "count": 1
+          },
+          {
+            "action": "moved",
+            "commonCardId": "29",
+            "text": "Mr.Roboto moved *Small Repair Ship#"
+          },
+          {
+            "action": "damagedInAttack",
+            "cardCommonId": "21",
+            "text": "*Energy Shield# took 1 damage",
+            "defenderCardId": "21:64242"
+          },
+          {
+            "action": "played",
+            "text": "Mr.Roboto played **Battlestar##",
+            "cardIds": ["32:42443"],
+            "cardCommonIds": ["32"]
+          },
+          {
+            "action": "expandedStation",
+            "text": "Mr.Roboto expanded station by *1 station card#",
+            "count": 1
+          },
+          {
+            "action": "damagedInAttack",
+            "cardCommonId": "21",
+            "text": "*Energy Shield# took 1 damage",
+            "defenderCardId": "21:64242"
+          },
+          {
+            "action": "expandedStation",
+            "text": "Mr.Roboto expanded station by *1 station card#",
+            "count": 1
+          },
+          {
+            "action": "moved",
+            "commonCardId": "32",
+            "text": "Mr.Roboto moved *Battlestar#"
+          },
+          {
+            "action": "damagedInAttack",
+            "cardCommonId": "21",
+            "text": "*Energy Shield# took 1 damage",
+            "defenderCardId": "21:64242"
+          },
+          {
+            "action": "destroyed",
+            "cardCommonId": "21",
+            "text": "*Energy Shield# was discarded"
+          },
+          {
+            "action": "expandedStation",
+            "text": "Mr.Roboto expanded station by *1 station card#",
+            "count": 1
+          },
+          {
+            "action": "stationCardsDamaged",
+            "text": "*1 station card# was damaged"
+          },
+          {
+            "action": "stationCardsDamaged",
+            "text": "*2 station cards# were damaged"
+          }
+        ],
+        "commanders": ["NiciaSatu"],
+        "clock": {
+          "events": [
+            { "type": "stop", "time": 1593733179756 },
+            { "type": "start", "time": 1593733184712 },
+            { "type": "stop", "time": 1593733244790 },
+            { "type": "start", "time": 1593733252269 },
+            { "type": "stop", "time": 1593733320079 },
+            { "type": "start", "time": 1593733326721 },
+            { "type": "stop", "time": 1593733344395 },
+            { "type": "start", "time": 1593733351881 },
+            { "type": "stop", "time": 1593733377491 },
+            { "type": "start", "time": 1593733384943 }
+          ],
+          "duration": 1200000,
+          "startTime": 1593733179756
+        }
+      },
+      "BOT": {
+        "cardsInDeck": [
+          {
+            "id": "24:16229",
+            "commonId": "24",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "Trigger-Happy Joe",
+            "description": "Can attack 2 times per turn.",
+            "cost": 2,
+            "attack": 1,
+            "defense": 2,
+            "paralyzed": false
+          },
+          {
+            "id": "27:78851",
+            "commonId": "27",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "The Shade",
+            "description": "The Shade can only be attacked if it has been attacking the last turn.",
+            "cost": 4,
+            "attack": 4,
+            "defense": 3,
+            "paralyzed": false
+          },
+          {
+            "id": "31:96345",
+            "commonId": "31",
+            "color": "orange",
+            "type": "event",
+            "name": "Luck",
+            "description": "Counter target card costing 2 or less.\r\n[ OR ] Draw 2 cards.",
+            "cost": 0,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "21:93547",
+            "commonId": "21",
+            "color": "green",
+            "type": "defense",
+            "name": "Energy Shield",
+            "description": "Protects base station. (You can only have one Energy Shield in play at the same time.)",
+            "cost": 3,
+            "attack": 0,
+            "defense": 5,
+            "paralyzed": false
+          },
+          {
+            "id": "5:51987",
+            "commonId": "5",
+            "color": "red",
+            "type": "missile",
+            "name": "Explosive Missile",
+            "description": "Normal missile.",
+            "cost": 2,
+            "attack": 4,
+            "defense": 2,
+            "paralyzed": false
+          },
+          {
+            "id": "42:94996",
+            "commonId": "42",
+            "color": "orange",
+            "type": "event",
+            "name": "Discovery",
+            "description": "Draw 3 cards and the opponent draws 2 cards. [ OR ] Discard 1 card and the opponent discards 2 cards.",
+            "cost": 0,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "12:11806",
+            "commonId": "12",
+            "color": "violet",
+            "type": "duration",
+            "name": "Neutralization",
+            "description": "No other duration card has any effect.\r\nRemove from play to destroy another duration card.",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "11:65562",
+            "commonId": "11",
+            "color": "violet",
+            "type": "duration",
+            "name": "Good Karma",
+            "description": "Draw 3 extra cards in your draw phase, then after your draw phase discard 1 card from your hand.",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "11:58122",
+            "commonId": "11",
+            "color": "violet",
+            "type": "duration",
+            "name": "Good Karma",
+            "description": "Draw 3 extra cards in your draw phase, then after your draw phase discard 1 card from your hand.",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "4:71859",
+            "commonId": "4",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "Titan",
+            "description": "Slow (each turn can either move or attack but not both)",
+            "cost": 5,
+            "attack": 3,
+            "defense": 9,
+            "paralyzed": false
+          },
+          {
+            "id": "42:97055",
+            "commonId": "42",
+            "color": "orange",
+            "type": "event",
+            "name": "Discovery",
+            "description": "Draw 3 cards and the opponent draws 2 cards. [ OR ] Discard 1 card and the opponent discards 2 cards.",
+            "cost": 0,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "15:14077",
+            "commonId": "15",
+            "color": "orange",
+            "type": "event",
+            "name": "Supernova",
+            "description": "All cards except station cards are destroyed. Each player receives 3 station damage.",
+            "cost": 8,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "12:47909",
+            "commonId": "12",
+            "color": "violet",
+            "type": "duration",
+            "name": "Neutralization",
+            "description": "No other duration card has any effect.\r\nRemove from play to destroy another duration card.",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "9:11346",
+            "commonId": "9",
+            "color": "violet",
+            "type": "duration",
+            "name": "Full Attack",
+            "description": "+1 attack value of your spaceships (not missiles or cannons).",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "16:13551",
+            "commonId": "16",
+            "color": "orange",
+            "type": "event",
+            "name": "Target Missed",
+            "description": "Play this card directly during enemy attack from spaceship (not collision, missile or cannon) to make the attack fail.",
+            "cost": 0,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "30:10757",
+            "commonId": "30",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "Big Repair Ship",
+            "description": "Can instead of doing attack repair 1 station damage or 5 other damage.",
+            "cost": 3,
+            "attack": 1,
+            "defense": 5,
+            "paralyzed": false
+          },
+          {
+            "id": "22:10865",
+            "commonId": "22",
+            "color": "green",
+            "type": "defense",
+            "name": "Defense Cannon",
+            "description": "Normal cannon.\r\n(Defense cards cannot move)",
+            "cost": 1,
+            "attack": 4,
+            "defense": 1,
+            "paralyzed": false
+          },
+          {
+            "id": "14:41300",
+            "commonId": "14",
+            "color": "orange",
+            "type": "event",
+            "name": "Excellent work",
+            "description": "Put down this card as an extra station card.\r\n[ OR ] Draw 3 cards.",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "3:35141",
+            "commonId": "3",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "Stormfalcon",
+            "description": "Normal spaceship.",
+            "cost": 4,
+            "attack": 5,
+            "defense": 3,
+            "paralyzed": false
+          },
+          {
+            "id": "14:78004",
+            "commonId": "14",
+            "color": "orange",
+            "type": "event",
+            "name": "Excellent work",
+            "description": "Put down this card as an extra station card.\r\n[ OR ] Draw 3 cards.",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "67:10134",
+            "commonId": "67",
+            "color": "orange",
+            "type": "event",
+            "name": "Sabotage",
+            "description": "Opponent draws 1 card. See the cards from the opponents hand and then discard 1 card from hand or flipped station card.",
+            "cost": 0,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "32:44990",
+            "commonId": "32",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "Battlestar",
+            "description": "Normal spaceship.",
+            "cost": 3,
+            "attack": 2,
+            "defense": 4,
+            "paralyzed": false
+          },
+          {
+            "id": "31:21405",
+            "commonId": "31",
+            "color": "orange",
+            "type": "event",
+            "name": "Luck",
+            "description": "Counter target card costing 2 or less.\r\n[ OR ] Draw 2 cards.",
+            "cost": 0,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "14:89931",
+            "commonId": "14",
+            "color": "orange",
+            "type": "event",
+            "name": "Excellent work",
+            "description": "Put down this card as an extra station card.\r\n[ OR ] Draw 3 cards.",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "2:20197",
+            "commonId": "2",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "The Dark Destroyer",
+            "description": "Destroy any card when this enters play.\r\nSlow (each turn can either move or attack but not both).",
+            "cost": 8,
+            "attack": 7,
+            "defense": 10,
+            "paralyzed": false
+          },
+          {
+            "id": "26:96735",
+            "commonId": "26",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "The Gladiator",
+            "description": "Normal spaceship.",
+            "cost": 2,
+            "attack": 3,
+            "defense": 2,
+            "paralyzed": false
+          },
+          {
+            "id": "8:14776",
+            "commonId": "8",
+            "color": "red",
+            "type": "missile",
+            "name": "Nuclear Missile",
+            "description": "Slow (each turn can either move or attack but not both)",
+            "cost": 2,
+            "attack": 10,
+            "defense": 3,
+            "paralyzed": false
+          },
+          {
+            "id": "39:13904",
+            "commonId": "39",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "Deadly Sniper",
+            "description": "Long distance shooter.\r\n(Can after the first turn shoot targets in enemy zone from home zone)",
+            "cost": 4,
+            "attack": 2,
+            "defense": 4,
+            "paralyzed": false
+          },
+          {
+            "id": "31:86428",
+            "commonId": "31",
+            "color": "orange",
+            "type": "event",
+            "name": "Luck",
+            "description": "Counter target card costing 2 or less.\r\n[ OR ] Draw 2 cards.",
+            "cost": 0,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "6:10365",
+            "commonId": "6",
+            "color": "red",
+            "type": "missile",
+            "name": "Fast Missile",
+            "description": "Fast (can move the first turn).",
+            "cost": 2,
+            "attack": 2,
+            "defense": 1,
+            "paralyzed": false
+          },
+          {
+            "id": "20:82234",
+            "commonId": "20",
+            "color": "orange",
+            "type": "event",
+            "name": "Grand Opportunity",
+            "description": "Draw 5 cards and then discard 1 card from your hand.",
+            "cost": 4,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "1:11357",
+            "commonId": "1",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "The Exterminator",
+            "description": "Slow (each turn can either move or attack but not both)",
+            "cost": 5,
+            "attack": 5,
+            "defense": 7,
+            "paralyzed": false
+          },
+          {
+            "id": "28:36105",
+            "commonId": "28",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "Hunter",
+            "description": "Fast (can move the first turn).",
+            "cost": 3,
+            "attack": 3,
+            "defense": 2,
+            "paralyzed": false
+          },
+          {
+            "id": "19:12424",
+            "commonId": "19",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "Pursuiter",
+            "description": "Can after first turn be sacrificed instead of attacking to deal 4 damage to target in same zone (collision).",
+            "cost": 1,
+            "attack": 2,
+            "defense": 1,
+            "paralyzed": false
+          },
+          {
+            "id": "56:67377",
+            "commonId": "56",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "The Liberator",
+            "description": "Normal spaceship.",
+            "cost": 4,
+            "attack": 2,
+            "defense": 6,
+            "paralyzed": false
+          },
+          {
+            "id": "64:15559",
+            "commonId": "64",
+            "color": "violet",
+            "type": "duration",
+            "name": "Destiny Decided",
+            "description": "You cannot play any card. The opponent can only play 1 card during their turn and this card cannot be an event (orange) card. ",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "38:30994",
+            "commonId": "38",
+            "color": "orange",
+            "type": "event",
+            "name": "Fatal Error",
+            "description": "Destroy any card in play with action cost X.",
+            "cost": 0,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "67:51025",
+            "commonId": "67",
+            "color": "orange",
+            "type": "event",
+            "name": "Sabotage",
+            "description": "Opponent draws 1 card. See the cards from the opponents hand and then discard 1 card from hand or flipped station card.",
+            "cost": 0,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "37:76147",
+            "commonId": "37",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "Disturbing Sensor",
+            "description": "· Enemy missiles can't move or attack.\r\n· If opponent after draw phase has more   than 1 card in hand, he or she           discards a card.",
+            "cost": 4,
+            "attack": 0,
+            "defense": 3,
+            "paralyzed": false
+          },
+          {
+            "id": "7:10221",
+            "commonId": "7",
+            "color": "red",
+            "type": "missile",
+            "name": "EMP Missile",
+            "description": "Destroys Energy Shield or paralyzes spaceship (turn the card and it cannot do anything until repaired).",
+            "cost": 2,
+            "attack": 0,
+            "defense": 2,
+            "paralyzed": false
+          },
+          {
+            "id": "5:11754",
+            "commonId": "5",
+            "color": "red",
+            "type": "missile",
+            "name": "Explosive Missile",
+            "description": "Normal missile.",
+            "cost": 2,
+            "attack": 4,
+            "defense": 2,
+            "paralyzed": false
+          },
+          {
+            "id": "31:14520",
+            "commonId": "31",
+            "color": "orange",
+            "type": "event",
+            "name": "Luck",
+            "description": "Counter target card costing 2 or less.\r\n[ OR ] Draw 2 cards.",
+            "cost": 0,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "7:46437",
+            "commonId": "7",
+            "color": "red",
+            "type": "missile",
+            "name": "EMP Missile",
+            "description": "Destroys Energy Shield or paralyzes spaceship (turn the card and it cannot do anything until repaired).",
+            "cost": 2,
+            "attack": 0,
+            "defense": 2,
+            "paralyzed": false
+          },
+          {
+            "id": "18:78355",
+            "commonId": "18",
+            "color": "orange",
+            "type": "event",
+            "name": "Perfect Plan",
+            "description": "Search for a card from the draw pile, discard pile or station cards and put it into your hand. Shuffle the draw pile if searched.",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "19:41792",
+            "commonId": "19",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "Pursuiter",
+            "description": "Can after first turn be sacrificed instead of attacking to deal 4 damage to target in same zone (collision).",
+            "cost": 1,
+            "attack": 2,
+            "defense": 1,
+            "paralyzed": false
+          },
+          {
+            "id": "16:22358",
+            "commonId": "16",
+            "color": "orange",
+            "type": "event",
+            "name": "Target Missed",
+            "description": "Play this card directly during enemy attack from spaceship (not collision, missile or cannon) to make the attack fail.",
+            "cost": 0,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "25:15750",
+            "commonId": "25",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "Thunderbolt",
+            "description": "Normal spaceship.",
+            "cost": 2,
+            "attack": 2,
+            "defense": 3,
+            "paralyzed": false
+          },
+          {
+            "id": "21:89587",
+            "commonId": "21",
+            "color": "green",
+            "type": "defense",
+            "name": "Energy Shield",
+            "description": "Protects base station. (You can only have one Energy Shield in play at the same time.)",
+            "cost": 3,
+            "attack": 0,
+            "defense": 5,
+            "paralyzed": false
+          },
+          {
+            "id": "34:12709",
+            "commonId": "34",
+            "color": "violet",
+            "type": "duration",
+            "name": "Avoid",
+            "description": "Discard this card from table to counter card being played.",
+            "cost": 2,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          }
+        ],
+        "cardsOnHand": [
+          {
+            "id": "13:15692",
+            "commonId": "13",
+            "color": "violet",
+            "type": "duration",
+            "name": "Over Capacity",
+            "description": "You have no maximum hand size.\r\nIn your action phase you may look at and take to your hand bottom row station cards.",
+            "cost": 1,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          },
+          {
+            "id": "16:12319",
+            "commonId": "16",
+            "color": "orange",
+            "type": "event",
+            "name": "Target Missed",
+            "description": "Play this card directly during enemy attack from spaceship (not collision, missile or cannon) to make the attack fail.",
+            "cost": 0,
+            "attack": 0,
+            "defense": 0,
+            "paralyzed": false
+          }
+        ],
+        "stationCards": [
+          {
+            "place": "draw",
+            "card": {
+              "id": "18:14535",
+              "commonId": "18",
+              "color": "orange",
+              "type": "event",
+              "name": "Perfect Plan",
+              "description": "Search for a card from the draw pile, discard pile or station cards and put it into your hand. Shuffle the draw pile if searched.",
+              "cost": 2,
+              "attack": 0,
+              "defense": 0,
+              "paralyzed": false
+            }
+          },
+          {
+            "place": "action",
+            "card": {
+              "id": "38:59899",
+              "commonId": "38",
+              "color": "orange",
+              "type": "event",
+              "name": "Fatal Error",
+              "description": "Destroy any card in play with action cost X.",
+              "cost": 0,
+              "attack": 0,
+              "defense": 0,
+              "paralyzed": false
+            }
+          },
+          {
+            "place": "handSize",
+            "card": {
+              "id": "21:13165",
+              "commonId": "21",
+              "color": "green",
+              "type": "defense",
+              "name": "Energy Shield",
+              "description": "Protects base station. (You can only have one Energy Shield in play at the same time.)",
+              "cost": 3,
+              "attack": 0,
+              "defense": 5,
+              "paralyzed": false
+            }
+          },
+          {
+            "place": "action",
+            "card": {
+              "id": "34:10987",
+              "commonId": "34",
+              "color": "violet",
+              "type": "duration",
+              "name": "Avoid",
+              "description": "Discard this card from table to counter card being played.",
+              "cost": 2,
+              "attack": 0,
+              "defense": 0,
+              "paralyzed": false
+            }
+          },
+          {
+            "place": "action",
+            "card": {
+              "id": "9:85822",
+              "commonId": "9",
+              "color": "violet",
+              "type": "duration",
+              "name": "Full Attack",
+              "description": "+1 attack value of your spaceships (not missiles or cannons).",
+              "cost": 2,
+              "attack": 0,
+              "defense": 0,
+              "paralyzed": false
+            }
+          },
+          {
+            "place": "draw",
+            "card": {
+              "id": "13:14686",
+              "commonId": "13",
+              "color": "violet",
+              "type": "duration",
+              "name": "Over Capacity",
+              "description": "You have no maximum hand size.\r\nIn your action phase you may look at and take to your hand bottom row station cards.",
+              "cost": 1,
+              "attack": 0,
+              "defense": 0,
+              "paralyzed": false
+            }
+          },
+          {
+            "place": "action",
+            "card": {
+              "id": "17:10751",
+              "commonId": "17",
+              "color": "orange",
+              "type": "event",
+              "name": "Missiles Launched",
+              "description": "Find 2 missile cards (red cards) from your draw or discard pile and play them without cost. Shuffle the draw pile if searched.",
+              "cost": 5,
+              "attack": 0,
+              "defense": 0,
+              "paralyzed": false
+            }
+          }
+        ],
+        "cardsInZone": [],
+        "cardsInOpponentZone": [
+          {
+            "id": "29:15611",
+            "commonId": "29",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "Small Repair Ship",
+            "description": "Can instead of doing attack repair 1 station damage or 3 other damage.\r\nFast (can move the first turn).",
+            "cost": 2,
+            "attack": 1,
+            "defense": 3,
+            "paralyzed": false,
+            "destroyed": false
+          },
+          {
+            "id": "32:42443",
+            "commonId": "32",
+            "color": "blue",
+            "type": "spaceShip",
+            "name": "Battlestar",
+            "description": "Normal spaceship.",
+            "cost": 3,
+            "attack": 2,
+            "defense": 4,
+            "paralyzed": false,
+            "destroyed": false
+          }
+        ],
+        "discardedCards": [],
+        "phase": "wait",
+        "actionPoints": 0,
+        "events": [
+          {
+            "type": "putDownCard",
+            "created": 1593733181430,
+            "turn": 1,
+            "location": "draw",
+            "cardId": "18:14535",
+            "cardCommonId": "18",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": true
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593733182260,
+            "turn": 1,
+            "location": "action",
+            "cardId": "38:59899",
+            "cardCommonId": "38",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": true
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593733183082,
+            "turn": 1,
+            "location": "handSize",
+            "cardId": "21:13165",
+            "cardCommonId": "21",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": true
+          },
+          {
+            "type": "addCardToHand",
+            "created": 1593733245661,
+            "cardId": "32:42443"
+          },
+          {
+            "type": "drawCard",
+            "created": 1593733245661,
+            "turn": 1,
+            "byEvent": false
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593733247304,
+            "turn": 1,
+            "location": "zone",
+            "cardId": "29:15611",
+            "cardCommonId": "29",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": false
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593733248128,
+            "turn": 1,
+            "location": "station-action",
+            "cardId": "34:10987",
+            "cardCommonId": "34",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": false
+          },
+          {
+            "type": "moveCard",
+            "created": 1593733250605,
+            "turn": 1,
+            "cardId": "29:15611",
+            "cardCommonId": "29"
+          },
+          {
+            "type": "attack",
+            "created": 1593733251444,
+            "turn": 1,
+            "attackerCardId": "29:15611",
+            "cardCommonId": "29",
+            "countered": false,
+            "defenderCardId": "21:64242"
+          },
+          {
+            "type": "addCardToHand",
+            "created": 1593733320967,
+            "cardId": "13:14686"
+          },
+          {
+            "type": "drawCard",
+            "created": 1593733320967,
+            "turn": 2,
+            "byEvent": false
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593733322603,
+            "turn": 2,
+            "location": "zone",
+            "cardId": "32:42443",
+            "cardCommonId": "32",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": false
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593733323429,
+            "turn": 2,
+            "location": "station-action",
+            "cardId": "9:85822",
+            "cardCommonId": "9",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": false
+          },
+          {
+            "type": "attack",
+            "created": 1593733325896,
+            "turn": 2,
+            "attackerCardId": "29:15611",
+            "cardCommonId": "29",
+            "countered": false,
+            "defenderCardId": "21:64242"
+          },
+          {
+            "type": "addCardToHand",
+            "created": 1593733345261,
+            "cardId": "13:15692"
+          },
+          {
+            "type": "drawCard",
+            "created": 1593733345261,
+            "turn": 3,
+            "byEvent": false
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593733346900,
+            "turn": 3,
+            "location": "station-draw",
+            "cardId": "13:14686",
+            "cardCommonId": "13",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": false
+          },
+          {
+            "type": "moveCard",
+            "created": 1593733349373,
+            "turn": 3,
+            "cardId": "32:42443",
+            "cardCommonId": "32"
+          },
+          {
+            "type": "attack",
+            "created": 1593733350212,
+            "turn": 3,
+            "attackerCardId": "29:15611",
+            "cardCommonId": "29",
+            "countered": false,
+            "defenderCardId": "21:64242"
+          },
+          {
+            "type": "attack",
+            "created": 1593733351045,
+            "turn": 3,
+            "attackerCardId": "32:42443",
+            "cardCommonId": "32",
+            "countered": false,
+            "defenderCardId": "21:64242"
+          },
+          {
+            "type": "addCardToHand",
+            "created": 1593733378351,
+            "cardId": "17:10751"
+          },
+          {
+            "type": "drawCard",
+            "created": 1593733378351,
+            "turn": 4,
+            "byEvent": false
+          },
+          {
+            "type": "addCardToHand",
+            "created": 1593733379169,
+            "cardId": "16:12319"
+          },
+          {
+            "type": "drawCard",
+            "created": 1593733379169,
+            "turn": 4,
+            "byEvent": false
+          },
+          {
+            "type": "putDownCard",
+            "created": 1593733380809,
+            "turn": 4,
+            "location": "station-action",
+            "cardId": "17:10751",
+            "cardCommonId": "17",
+            "putDownAsExtraStationCard": false,
+            "grantedForFreeByEvent": false,
+            "startingStation": false
+          },
+          {
+            "type": "attack",
+            "created": 1593733383278,
+            "turn": 4,
+            "attackerCardId": "29:15611",
+            "cardCommonId": "29",
+            "countered": false,
+            "targetStationCardIds": ["30:39482"]
+          },
+          {
+            "type": "attack",
+            "created": 1593733384112,
+            "turn": 4,
+            "attackerCardId": "32:42443",
+            "cardCommonId": "32",
+            "countered": false,
+            "targetStationCardIds": ["28:85215", "19:96474"]
+          }
+        ],
+        "requirements": [],
+        "actionLogEntries": [
+          {
+            "action": "receivedCardFromCommander",
+            "cardCommonId": "21",
+            "text": "august-name received *Energy Shield# from their commander"
+          },
+          {
+            "action": "expandedStation",
+            "text": "august-name expanded station by *1 station card#",
+            "count": 1
+          }
+        ],
+        "commanders": ["FrankJohnson"],
+        "clock": {
+          "events": [
+            { "type": "stop", "time": 1593733179756 },
+            { "type": "start", "time": 1593733244790 },
+            { "type": "stop", "time": 1593733252269 },
+            { "type": "start", "time": 1593733320079 },
+            { "type": "stop", "time": 1593733326721 },
+            { "type": "start", "time": 1593733344395 },
+            { "type": "stop", "time": 1593733351881 },
+            { "type": "start", "time": 1593733377491 },
+            { "type": "stop", "time": 1593733384943 }
+          ],
+          "duration": 1200000,
+          "startTime": 1593733179756
+        }
+      }
+    }
+  },
+  "saverPlayerId": "0618589",
+  "saveTime": 1593733401502
+}

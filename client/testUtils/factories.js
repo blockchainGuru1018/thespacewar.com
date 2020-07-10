@@ -1,10 +1,10 @@
 module.exports = {
-    unflippedStationCard
+  unflippedStationCard,
 };
 
 function unflippedStationCard(id, place) {
-    return {
-        id,
-        place
-    };
+  return {
+    id,
+    place,
+  };
 }

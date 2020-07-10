@@ -1,18 +1,16 @@
 <template>
-    <ToggleInfoModeButton
-        @toggleInfoMode="toggle"
-    />
+  <ToggleInfoModeButton @toggleInfoMode="toggle" />
 </template>
 <script>
-    import ToggleInfoModeButton from "./ToggleInfoModeButton.vue";
-    import Vuex from 'vuex';
+import ToggleInfoModeButton from "./ToggleInfoModeButton.vue";
+import Vuex from "vuex";
 
-    const infoModeHelpers = Vuex.createNamespacedHelpers('infoMode');
+const infoModeHelpers = Vuex.createNamespacedHelpers("infoMode");
 
-    export default {
-        components: { ToggleInfoModeButton },
-        methods: {
-            ...infoModeHelpers.mapActions(['toggle'])
-        }
-    }
+export default {
+  components: { ToggleInfoModeButton },
+  methods: {
+    ...infoModeHelpers.mapActions(["toggle"]),
+  },
+};
 </script>

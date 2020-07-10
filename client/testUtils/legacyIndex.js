@@ -1,10 +1,11 @@
-const MatchTestController = require('./MatchTestController.js');
+const MatchTestController = require("./MatchTestController.js");
 
 module.exports = {
-    createControllerBoundToTestContext: testContext => createController.bind(testContext)
-}
+  createControllerBoundToTestContext: (testContext) =>
+    createController.bind(testContext),
+};
 
 function createController(options = {}) {
-    this.controller = MatchTestController(options);
-    return { dispatch: this.controller.dispatch };
+  this.controller = MatchTestController(options);
+  return { dispatch: this.controller.dispatch };
 }

@@ -14,7 +14,6 @@ describe("Can NOT enter last stand", () => {
   });
 });
 
-
 function createPLayerLastStand({ isBot = () => false } = {}) {
   return PlayerLastStand({
     playerId: "",

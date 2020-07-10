@@ -1,11 +1,11 @@
-const ajax = require('../utils/ajax.js');
+const ajax = require("../utils/ajax.js");
 
 module.exports = function () {
-    return {
-        getConfiguration
-    };
+  return {
+    getConfiguration,
+  };
 
-    async function getConfiguration() {
-        return await ajax.get('/config');
-    }
+  async function getConfiguration() {
+    return await ajax.get("/config");
+  }
 };

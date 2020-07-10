@@ -1,16 +1,16 @@
 module.exports = function () {
-    let data = null;
+  let data = null;
 
-    return {
-        putIn,
-        takeOutAll
-    };
+  return {
+    putIn,
+    takeOutAll,
+  };
 
-    function putIn(newData) {
-        data = newData;
-    }
+  function putIn(newData) {
+    data = newData;
+  }
 
-    function takeOutAll() {
-        return data;
-    }
-}
+  function takeOutAll() {
+    return data;
+  }
+};

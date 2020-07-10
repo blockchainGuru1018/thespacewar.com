@@ -1,5 +1,5 @@
-const Vuex = require('vuex');
+const Vuex = require("vuex");
 
 module.exports = function () {
-    return new Vuex.Store({});
-}
+  return new Vuex.Store({});
+};

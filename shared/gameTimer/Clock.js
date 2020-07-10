@@ -1,107 +1,106 @@
 const NullState = {
-    startTime: 0,
-    duration: 0,
-    events: []
+  startTime: 0,
+  duration: 0,
+  events: [],
 };
 
 function Clock({ playerStateService }) {
+  return {
+    reset,
+    start,
+    stop,
+    getTime,
+  };
 
-    return {
-        reset,
-        start,
-        stop,
-        getTime
-    };
+  function reset(duration) {
+    const startTime = Date.now();
 
-    function reset(duration) {
-        const startTime = Date.now();
+    playerStateService.update((playerState) => {
+      playerState.clock.events = [];
+      playerState.clock.duration = duration;
+      playerState.clock.startTime = startTime;
+    });
 
-        playerStateService.update(playerState => {
-            playerState.clock.events = [];
-            playerState.clock.duration = duration;
-            playerState.clock.startTime = startTime;
-        });
+    stop();
+  }
 
-        stop();
+  function start() {
+    if (latestEventType() === "start") return;
+
+    pushEvent({
+      type: "start",
+      time: Date.now(),
+    });
+  }
+
+  function stop() {
+    if (latestEventType() === "stop") return;
+
+    pushEvent({
+      type: "stop",
+      time: Date.now(),
+    });
+  }
+
+  function getTime() {
+    const { startTime, duration } = state();
+    if (startTime === 0) return duration;
+
+    const now = Date.now();
+    const elapsedTimeIfNotInterrupted = now - startTime;
+    return (
+      duration -
+      (elapsedTimeIfNotInterrupted - totalElapsedInterruptionTime(now))
+    );
+  }
+
+  function latestEventType() {
+    const events = state().events;
+    if (events.length === 0) {
+      return "start";
     }
 
-    function start() {
-        if (latestEventType() === 'start') return;
+    return events[events.length - 1].type;
+  }
 
-        pushEvent({
-            type: 'start',
-            time: Date.now()
-        });
+  function pushEvent(event) {
+    playerStateService.update((playerState) => {
+      playerState.clock.events.push(event);
+    });
+  }
+
+  function totalElapsedInterruptionTime(now) {
+    const events = state().events;
+
+    let interruptionTime = 0;
+    let lastStop = null;
+    for (const event of events) {
+      if (lastStop === null && event.type === "stop") {
+        lastStop = event;
+      } else if (event.type === "start") {
+        interruptionTime += event.time - lastStop.time;
+        lastStop = null;
+      }
     }
 
-    function stop() {
-        if (latestEventType() === 'stop') return;
-
-        pushEvent({
-            type: 'stop',
-            time: Date.now()
-        });
+    if (lastStop !== null) {
+      interruptionTime += now - lastStop.time;
     }
 
-    function getTime() {
-        const { startTime, duration } = state();
-        if (startTime === 0) return duration;
+    return interruptionTime;
+  }
 
-        const now = Date.now();
-        const elapsedTimeIfNotInterrupted = now - startTime;
-        return duration - (elapsedTimeIfNotInterrupted - totalElapsedInterruptionTime(now));
+  function state() {
+    if (clockInitialized()) {
+      return playerStateService.getPlayerState().clock;
     }
+    return NullState;
+  }
 
-    function latestEventType() {
-        const events = state().events;
-        if (events.length === 0) {
-            return 'start';
-        }
-
-        return events[events.length - 1].type;
-    }
-
-    function pushEvent(event) {
-        playerStateService.update(playerState => {
-            playerState.clock.events.push(event);
-        });
-    }
-
-    function totalElapsedInterruptionTime(now) {
-        const events = state().events;
-
-        let interruptionTime = 0;
-        let lastStop = null;
-        for (const event of events) {
-            if (lastStop === null && event.type === 'stop') {
-                lastStop = event;
-            }
-            else if (event.type === 'start') {
-                interruptionTime += event.time - lastStop.time;
-                lastStop = null;
-            }
-        }
-
-        if (lastStop !== null) {
-            interruptionTime += now - lastStop.time;
-        }
-
-        return interruptionTime;
-    }
-
-    function state() {
-        if (clockInitialized()) {
-            return playerStateService.getPlayerState().clock;
-        }
-        return NullState;
-    }
-
-    function clockInitialized() {
-        const playerState = playerStateService.getPlayerState();
-        return !!playerState.clock &&
-            !!playerState.clock.events;
-
-    }
+  function clockInitialized() {
+    const playerState = playerStateService.getPlayerState();
+    return !!playerState.clock && !!playerState.clock.events;
+  }
 }
 
 module.exports = Clock;

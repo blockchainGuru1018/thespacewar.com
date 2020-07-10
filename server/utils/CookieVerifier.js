@@ -1,15 +1,17 @@
-const LoginCookie = require('../../serviceShared/LoginCookie.js');
+const LoginCookie = require("../../serviceShared/LoginCookie.js");
 
 class CookieVerifier {
-    constructor(sessionCookie) {
-        this.sessionCookie = sessionCookie;
-    }
+  constructor(sessionCookie) {
+    this.sessionCookie = sessionCookie;
+  }
 
-    isLoggedIn() {
-        const loginCookie = LoginCookie.loginCookieFromRawCookieStringOrNull(this.sessionCookie);
+  isLoggedIn() {
+    const loginCookie = LoginCookie.loginCookieFromRawCookieStringOrNull(
+      this.sessionCookie
+    );
 
-        return loginCookie.verify();
-    }
+    return loginCookie.verify();
+  }
 }
 
 module.exports = CookieVerifier;

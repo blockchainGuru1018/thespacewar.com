@@ -1,9 +1,9 @@
 module.exports = function ClientPlayerDeck(cardCount) {
-    return {
-        hasMore
-    };
+  return {
+    hasMore,
+  };
 
-    function hasMore() {
-        return cardCount > 0;
-    }
+  function hasMore() {
+    return cardCount > 0;
+  }
 };

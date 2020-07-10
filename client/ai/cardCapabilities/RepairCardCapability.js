@@ -1,29 +1,34 @@
 module.exports = function ({
-    card,
-    playerStateService,
-    repairCardPriority,
-    matchController
+  card,
+  playerStateService,
+  repairCardPriority,
+  matchController,
 }) {
-    return {
-        canDoIt,
-        doIt
-    };
+  return {
+    canDoIt,
+    doIt,
+  };
 
-    function canDoIt() {
-        return card.canRepair();
-    }
+  function canDoIt() {
+    return card.canRepair();
+  }
 
-    function doIt() {
-        const repairableCards = playerStateService.getMatchingBehaviourCardsFromZoneOrStation(canRepairCard);
-        const cardToRepairId = repairCardPriority(repairableCards);
-        repairCard(cardToRepairId);
-    }
+  function doIt() {
+    const repairableCards = playerStateService.getMatchingBehaviourCardsFromZoneOrStation(
+      canRepairCard
+    );
+    const cardToRepairId = repairCardPriority(repairableCards);
+    repairCard(cardToRepairId);
+  }
 
-    function repairCard(cardToRepairId) {
-        matchController.emit('repairCard', { repairerCardId: card.id, cardToRepairId });
-    }
+  function repairCard(cardToRepairId) {
+    matchController.emit("repairCard", {
+      repairerCardId: card.id,
+      cardToRepairId,
+    });
+  }
 
-    function canRepairCard(otherCard) {
-        return card.canRepairCard(otherCard);
-    }
+  function canRepairCard(otherCard) {
+    return card.canRepairCard(otherCard);
+  }
 };

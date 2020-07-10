@@ -1,11 +1,11 @@
 module.exports = {
-    setupFakeLeaderLine
+  setupFakeLeaderLine,
 };
 
 function setupFakeLeaderLine() {
-    window.LeaderLine = FakeLeaderLine;
+  window.LeaderLine = FakeLeaderLine;
 }
 
 function FakeLeaderLine() {
-    return { remove() {} };
+  return { remove() {} };
 }

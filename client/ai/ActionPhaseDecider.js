@@ -1,38 +1,37 @@
-const { PHASES } = require('../../shared/phases.js');
+const { PHASES } = require("../../shared/phases.js");
 
 module.exports = function ({
-    playerStateService,
-    matchController,
-    playCardCapability,
-    decideRowForStationCard,
-    decideCardToPlaceAsStationCard,
-    playerRuleService
+  playerStateService,
+  matchController,
+  playCardCapability,
+  decideRowForStationCard,
+  decideCardToPlaceAsStationCard,
+  playerRuleService,
 }) {
+  return {
+    decide,
+  };
 
-    return {
-        decide
-    };
-
-    function decide() {
-        if (playCardCapability.canDoIt()) {
-            playCardCapability.doIt();
-        }
-        else if (shouldPutDownStationCard()) {
-            const stationRow = decideRowForStationCard();
-            const location = 'station-' + stationRow;
-            const cardId = decideCardToPlaceAsStationCard();
-            matchController.emit('putDownCard', { cardId, location });
-        }
-        else {
-            matchController.emit('nextPhase', { currentPhase: PHASES.action });
-        }
+  function decide() {
+    if (playCardCapability.canDoIt()) {
+      playCardCapability.doIt();
+    } else if (shouldPutDownStationCard()) {
+      const stationRow = decideRowForStationCard();
+      const location = "station-" + stationRow;
+      const cardId = decideCardToPlaceAsStationCard();
+      matchController.emit("putDownCard", { cardId, location });
+    } else {
+      matchController.emit("nextPhase", { currentPhase: PHASES.action });
     }
+  }
 
-    function shouldPutDownStationCard() {
-        const cardsOnHand = playerStateService.getCardsOnHand();
+  function shouldPutDownStationCard() {
+    const cardsOnHand = playerStateService.getCardsOnHand();
 
-        return playerRuleService.canPutDownStationCards()
-            && playerRuleService.canPutDownMoreStationCardsThisTurn()
-            && cardsOnHand.length;
-    }
+    return (
+      playerRuleService.canPutDownStationCards() &&
+      playerRuleService.canPutDownMoreStationCardsThisTurn() &&
+      cardsOnHand.length
+    );
+  }
 };
