@@ -43,6 +43,7 @@ const classes = [
   require("./ToxicGas.js"),
   require("./Revive.js"),
   require("./TheParalyzer.js"),
+  require("./Carrier.js"),
 ];
 
 module.exports = classes;

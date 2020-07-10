@@ -141,6 +141,7 @@ function SourceFetcher({
   function cardFilter(filter = {}, triggerCard = null) {
     return (card) => {
       if (!cardFulfillsTypeFilter(card, filter)) return false;
+      if (!cardFulfillsCommonIdFilter(card, filter)) return false;
       if (!cardFulfillsCanBeCounteredFilter(triggerCard, card, filter))
         return false;
       if (!cardFulfillsExcludeCardIds(card, filter)) return false;
@@ -170,6 +171,11 @@ function SourceFetcher({
   function cardFulfillsTypeFilter(card, filter) {
     const hasTypeFilter = "type" in filter;
     return !hasTypeFilter || filter.type.includes(card.type);
+  }
+
+  function cardFulfillsCommonIdFilter(card, filter) {
+    const hasCommonIdFilter = "commonId" in filter;
+    return !hasCommonIdFilter || filter.commonId.includes(card.commonId);
   }
 
   function cardFulfillsExcludeCardIds(card, filter) {

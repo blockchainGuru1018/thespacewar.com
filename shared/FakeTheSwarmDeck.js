@@ -293,4 +293,16 @@ module.exports = () => [
     defense: 5,
     paralyzed: false,
   },
+  {
+    id: 26,
+    commonId: 77,
+    color: "blue",
+    type: "spaceShip",
+    name: "Carrier",
+    description: "Can after first turn send out 3 Drone from anywhere.",
+    cost: 7,
+    attack: 0,
+    defense: 6,
+    paralyzed: false,
+  },
 ];
