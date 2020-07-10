@@ -6,7 +6,7 @@ module.exports = {
     forPlayer: [
       {
         type: "findCard",
-        count: 2,
+        count: 3,
         sources: [
           "deck",
           "discardPile",
@@ -21,5 +21,6 @@ module.exports = {
         },
       },
     ],
+    forOpponent: [],
   },
 };
