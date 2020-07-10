@@ -173,7 +173,6 @@ const MatchMode = require("../../../../shared/match/MatchMode.js");
 const LastStand = require("../../../../shared/match/LastStand.js");
 const { PHASES } = require("../../phases.js");
 const FatalError = require("../../../../shared/card/FatalError.js");
-import featureToggles from "../../../utils/featureToggles.js";
 
 export default {
   components: {
@@ -231,14 +230,10 @@ export default {
       infoModeVisible: "visible",
     }),
     canToggleControlOfTurn() {
-      if (featureToggles.isEnabled("the-swarm-cant-take-control")) {
-        return (
-          this.turnControl.canToggleControlOfTurn() &&
-          !this.turnControl.isPlayingWithTheSwarmDeck()
-        );
-      } else {
-        return this.turnControl.canToggleControlOfTurn();
-      }
+      return (
+        this.turnControl.canToggleControlOfTurn() &&
+        !this.turnControl.isPlayingWithTheSwarmDeck()
+      );
     },
     guideTextContainerVisible() {
       if (this.choosingStartingPlayer) return false;
