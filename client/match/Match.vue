@@ -815,7 +815,7 @@ module.exports = {
       };
     },
     playerDrawPileClick() {
-      debounce(this.askToDrawCard, 1000);
+      debounce(this.askToDrawCard, 50);
     },
     opponentDrawPileClick() {
       this.askToDiscardOpponentTopTwoCards();
