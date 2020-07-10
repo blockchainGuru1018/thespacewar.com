@@ -281,4 +281,16 @@ module.exports = () => [
     defense: 0,
     paralyzed: false,
   },
+  {
+    id: 24,
+    commonId: 85,
+    color: "blue",
+    type: "spaceShip",
+    name: "The Paralyzer",
+    description: "If shooting a spaceship the target gets paralyzed.",
+    cost: 6,
+    attack: 2,
+    defense: 5,
+    paralyzed: false,
+  },
 ];

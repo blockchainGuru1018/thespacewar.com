@@ -42,6 +42,7 @@ const classes = [
   require("./DestroyDuration.js"),
   require("./ToxicGas.js"),
   require("./Revive.js"),
+  require("./TheParalyzer.js"),
 ];
 
 module.exports = classes;
