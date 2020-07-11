@@ -2,7 +2,7 @@ const CommonId = "77";
 
 module.exports = {
   CommonId,
-  requirementSpecsWhenPutDownInHomeZone: {
+  dormantEffectRequirementSpec: {
     forPlayer: [
       {
         type: "findCard",

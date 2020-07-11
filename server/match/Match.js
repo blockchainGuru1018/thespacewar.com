@@ -338,6 +338,7 @@ function PlayerCommand(Command, deps) {
       deps.playerRequirementServicesFactory;
     const playerCardServicesFactory = deps.playerCardServicesFactory;
     const command = Command({
+      matchService: deps.matchService,
       playerStateService: playerServiceFactory.playerStateService(playerId),
       canThePlayer: playerServiceFactory.canThePlayer(playerId),
       lookAtStationRow: lookAtStationRow(playerId),

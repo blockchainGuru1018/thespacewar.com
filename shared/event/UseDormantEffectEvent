@@ -1,0 +1,9 @@
+function UseDormantEffectEvent({ turn, cardId }) {
+  return {
+    type: "useDormantEffect",
+    created: Date.now(),
+    turn,
+    cardId,
+  };
+}
+module.exports = UseDormantEffectEvent;

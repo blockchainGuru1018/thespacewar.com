@@ -126,6 +126,16 @@ class QueryEvents {
     }
   }
 
+  getTurnWhenCardDormantEffectWasUsed(id) {
+    const events = this._eventRepository.getAll().slice().reverse();
+    const putDownEventForThisCard = events.find((e) => {
+      return e.type === "useDormantEffect" && e.cardId === id;
+    });
+    if (putDownEventForThisCard) {
+      return putDownEventForThisCard.turn;
+    }
+  }
+
   getTimeWhenCardWasPutDownById(id) {
     const events = this._eventRepository.getAll().slice().reverse();
     const putDownEventForThisCard = events.find((e) => {
