@@ -6,7 +6,7 @@ module.exports = class Carrier extends BaseCard {
     super(deps);
   }
 
-  static get commonId() {
+  static get CommonId() {
     return info.CommonId;
   }
 

@@ -283,7 +283,7 @@ module.exports = () => [
   },
   {
     id: 24,
-    commonId: 85,
+    commonId: "85",
     color: "blue",
     type: "spaceShip",
     name: "The Paralyzer",
@@ -295,7 +295,7 @@ module.exports = () => [
   },
   {
     id: 26,
-    commonId: 77,
+    commonId: "77",
     color: "blue",
     type: "spaceShip",
     name: "Carrier",
