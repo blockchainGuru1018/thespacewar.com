@@ -16,6 +16,7 @@ function FindCardRequirementFactory({ sourceFetcher, requirementSpec, card }) {
       waiting: requirementSpec.count === 0 && requirementSpec.common,
       cancelable: !!requirementSpec.cancelable,
       submitOnEverySelect: !!requirementSpec.submitOnEverySelect,
+      cardId: card.id,
     };
     if (requirementSpec.dormantEffect) {
       requirement.usedDormantEffect = {

@@ -15,7 +15,7 @@ module.exports = {
           "handSizeStationCards",
           "hand",
         ],
-        target: "homeZone",
+        target: "currentCardZone",
         filter: {
           commonId: ["78"],
         },

@@ -37,13 +37,14 @@ module.exports = function ({
     if (destroyCardFromUseOfDormantEffect(requirement)) {
       logUseOfDormantEffect(playerId, requirement.usedDormantEffect.cardId);
     }
-
     if (requirement.target === "homeZone") {
       moveCardsToHomeZone(cardGroups, playerId);
     } else if (requirement.target === "hand") {
       moveCardsToHand(cardGroups, playerId);
     } else if (requirement.target === "opponentDiscardPile") {
       moveCardsToOpponentDiscardPile(cardGroups, playerId);
+    } else if (requirement.target === "currentCardZone") {
+      moveCardsToCurrentCardLocation(cardGroups, playerId, requirement);
     }
 
     if (destroyCardFromUseOfDormantEffect(requirement)) {
@@ -151,6 +152,48 @@ module.exports = function ({
         const cardData = removeCardFromSource(cardId, group.source, playerId);
         playerStateService.addCardToHand(cardData);
       }
+    }
+  }
+  function moveCardsToOpponentZone(cardGroups, playerId) {
+    const playerStateService = playerServiceProvider.getStateServiceById(
+      playerId
+    );
+
+    const cardIds = [];
+    const cardCommonIds = [];
+    for (const group of cardGroups) {
+      for (const cardId of group.cardIds) {
+        const cardData = removeCardFromSource(cardId, group.source, playerId);
+        playerStateService.putDownCardInOpponentZone(cardData, {
+          grantedForFreeByEvent: true,
+        });
+
+        cardIds.push(cardData.id);
+        cardCommonIds.push(cardData.commonId);
+      }
+    }
+
+    for (const group of cardGroups) {
+      for (const cardId of group.cardIds) {
+        gameActionTimeMachine.saveStateForCardId(cardId);
+      }
+    }
+
+    const opponentId = matchService.getOpponentId(playerId);
+    const opponentActionLog = playerServiceFactory.actionLog(opponentId);
+    opponentActionLog.opponentPlayedCards({ cardIds, cardCommonIds });
+  }
+
+  function moveCardsToCurrentCardLocation(cardGroups, playerId, requirement) {
+    const playerStateService = playerServiceProvider.getStateServiceById(
+      playerId
+    );
+    const zone = playerStateService.nameOfCardSource(requirement.cardId);
+    if (zone === "zone") {
+      moveCardsToHomeZone(cardGroups, playerId);
+    }
+    if (zone === "opponentZone") {
+      moveCardsToOpponentZone(cardGroups, playerId);
     }
   }
 

@@ -463,6 +463,11 @@ class PlayerStateService {
     const cardOnHand = playerState.cardsOnHand.find((c) => c.id === cardId);
     if (cardOnHand) return "hand";
 
+    const cardInOpponentZone = playerState.cardsInOpponentZone.find(
+      (c) => c.id === cardId
+    );
+    if (cardInOpponentZone) return "opponentZone";
+
     return "other";
   }
 
@@ -517,11 +522,36 @@ class PlayerStateService {
     this.storeEvent(AddCardToHandEvent({ cardId: cardData.id }));
   }
 
+  putDownCardInOpponentZone(cardData, { grantedForFreeByEvent = false } = {}) {
+    this.update((playerState) => {
+      playerState.cardsInOpponentZone.push(cardData);
+    });
+    this.registerEventForPutDownCardInOpponentZone(cardData, {
+      grantedForFreeByEvent,
+    });
+  }
+
   putDownCardInZone(cardData, { grantedForFreeByEvent = false } = {}) {
     this.update((playerState) => {
       playerState.cardsInZone.push(cardData);
     });
     this.registerEventForPutDownCardInZone(cardData, { grantedForFreeByEvent });
+  }
+
+  registerEventForPutDownCardInOpponentZone(
+    cardData,
+    { grantedForFreeByEvent = false } = {}
+  ) {
+    const currentTurn = this._matchService.getTurn();
+    this.storeEvent(
+      PutDownCardEvent({
+        turn: currentTurn,
+        location: "opponentZone",
+        cardId: cardData.id,
+        cardCommonId: cardData.commonId,
+        grantedForFreeByEvent,
+      })
+    );
   }
 
   registerEventForPutDownCardInZone(

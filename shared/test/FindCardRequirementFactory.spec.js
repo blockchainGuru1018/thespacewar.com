@@ -53,17 +53,17 @@ test("can create a requirement with a limit of actions points", () => {
   });
 });
 
-test("can create a requirement for Drones cards", () => {
+test("can create a requirement for cardCommonId ", () => {
   const testHelper = TestHelper(
     createState({
       playerStateById: {
         P1A: {
           discardedCards: [
-            createCard({ id: "1", cost: 6, commonId: 78 }),
-            createCard({ id: "2", cost: 7 }),
+            createCard({ id: "1", commonId: 78 }),
+            createCard({ id: "2" }),
           ],
-          cardsOnHand: [createCard({ id: "3", cost: 3, commonId: 78 })],
-          cardsInDeck: [createCard({ id: "4", cost: 3, commonId: 78 })],
+          cardsOnHand: [createCard({ id: "3", commonId: 78 })],
+          cardsInDeck: [createCard({ id: "4", commonId: 78 })],
           stationCards: [
             stationCard("draw", "5", 78),
             stationCard("action", "6", 78),
@@ -83,7 +83,14 @@ test("can create a requirement for Drones cards", () => {
       filter: {
         commonId: [78],
       },
-      sources: ["discardPile"],
+      sources: [
+        "discardPile",
+        "deck",
+        "hand",
+        "actionStationCards",
+        "drawStationCards",
+        "handSizeStationCards",
+      ],
       target: "zone",
       submitOnEverySelect: false,
     },
@@ -96,6 +103,26 @@ test("can create a requirement for Drones cards", () => {
       {
         source: "discardPile",
         cards: [expect.objectContaining({ id: "1", commonId: 78 })],
+      },
+      {
+        source: "deck",
+        cards: [expect.objectContaining({ id: "4", commonId: 78 })],
+      },
+      {
+        source: "hand",
+        cards: [expect.objectContaining({ id: "3", commonId: 78 })],
+      },
+      {
+        source: "actionStationCards",
+        cards: [expect.objectContaining({ id: "6", commonId: 78 })],
+      },
+      {
+        source: "drawStationCards",
+        cards: [expect.objectContaining({ id: "5", commonId: 78 })],
+      },
+      {
+        source: "handSizeStationCards",
+        cards: [expect.objectContaining({ id: "7", commonId: 78 })],
       },
     ]),
     cardCommonId: 77,

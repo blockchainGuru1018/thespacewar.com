@@ -29,7 +29,7 @@ function SourceFetcher({
     actionStationCards: shuffleOutput(actionStationCards),
     drawStationCards: shuffleOutput(drawStationCards),
     handSizeStationCards: shuffleOutput(handSizeStationCards),
-    hand: () => [],
+    hand: shuffleOutput(hand),
     opponentDeck: () => [],
     opponentDiscardPile: () => [],
     opponentDrawStationCards: shuffleOutput(opponentDrawStationCards),
@@ -39,6 +39,14 @@ function SourceFetcher({
     opponentAny: shuffleOutput(opponentAny),
     opponentCardsInZone,
   };
+
+  function hand(specFilter) {
+    return playerStateService
+      .getCardsOnHand()
+      .map((cardData) => playerStateService.createBehaviourCard(cardData))
+      .filter(cardFilter(specFilter))
+      .map((card) => card.getCardData());
+  }
 
   function deck(specFilter) {
     return playerStateService
