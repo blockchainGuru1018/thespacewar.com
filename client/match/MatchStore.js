@@ -977,8 +977,9 @@ module.exports = function (deps) {
     }
   }
 
-  function goToNextPhase({ state, getters }) {
+  function goToNextPhase({ state, getters }, { currentPhase = null } = {}) {
     const phasesUntilAction = getters.numberOfPhasesUntilNextPhaseWithAction;
+    state.phase = currentPhase ? currentPhase : state.phase;
     for (let i = 0; i < phasesUntilAction; i++) {
       matchController.emit("nextPhase", { currentPhase: state.phase });
       state.phase = getters.nextPhase;
@@ -1067,10 +1068,13 @@ module.exports = function (deps) {
   }
 
   //TODO Should NOT take "cards" as a parameter. This should be emitted and received by a StateChanged event
-  function drawCards({ state, dispatch }, { cards = [], moreCardsCanBeDrawn }) {
+  function drawCards(
+    { state, dispatch },
+    { cards = [], moreCardsCanBeDrawn, currentPhase }
+  ) {
     state.playerCardsOnHand.push(...cards);
     if (!moreCardsCanBeDrawn) {
-      dispatch("goToNextPhase");
+      dispatch("goToNextPhase", { currentPhase });
     }
   }
 
