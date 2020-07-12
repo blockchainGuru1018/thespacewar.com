@@ -12,7 +12,8 @@
           "actionStationCards",
           "handSizeStationCards"
         ],
-        "target": "hand"
+        "target": "hand",
+        "submitOnEverySelect": true
       }
     ]
   }

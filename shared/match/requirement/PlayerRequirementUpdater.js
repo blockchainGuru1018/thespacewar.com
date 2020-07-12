@@ -29,6 +29,15 @@ class PlayerRequirementUpdater {
     for (let i = 0; i < count; i++) {
       this.progressRequirementByCount();
     }
+    if (requirement.actionPointsLimit) {
+      const actionPointsLeft = requirement.actionPointsLimit.actionPointsLeft;
+      for (let i = 0; i < actionPointsLeft; i++) {
+        this.progressRequirementByActionPointsLeft(1, true);
+      }
+    }
+    this._playerRequirementService.removeFirstMatchingRequirement({
+      type: requirement.type,
+    });
   }
 
   progressRequirementByCount(count = 1) {
@@ -67,6 +76,9 @@ class PlayerRequirementUpdater {
             (card) =>
               card.cost <= requirement.actionPointsLimit.actionPointsLeft
           );
+          if (requirement.cardGroups[0].cards.length === 0) {
+            this.completeRequirement();
+          }
         });
       }
       if (

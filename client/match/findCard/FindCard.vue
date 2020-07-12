@@ -90,12 +90,21 @@ const nameBySource = {
 };
 
 module.exports = {
+  data() {
+    return {
+      updater: 0,
+    };
+  },
   computed: {
     ...findCardHelpers.mapState(["selectedCardInfos"]),
     ...findCardHelpers.mapGetters(["requirement", "filteredRequirement"]),
     ...matchHelpers.mapGetters(["actionPoints2"]),
-    ...requirementHelpers.mapGetters(["requirementIsCancelable"]),
+    ...requirementHelpers.mapGetters([
+      "requirementIsCancelable",
+      "firstRequirementIsFindCard",
+    ]),
     cardsToSelect() {
+      this.updater++;
       return this.requirement.submitOnEverySelect
         ? this.requirement.count
         : this.requirement.count - this.selectedCardInfos.length;
@@ -148,6 +157,13 @@ module.exports = {
     },
     getCardGroupTitle(group) {
       return nameBySource[group.source];
+    },
+  },
+  watch: {
+    firstRequirementIsFindCard(_old, _new) {
+      if (_new && !_old) {
+        this.updater++;
+      }
     },
   },
   components: {
