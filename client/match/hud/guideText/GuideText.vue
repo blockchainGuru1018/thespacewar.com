@@ -46,11 +46,11 @@
           Move 
           {{ startingStationCardsToPutDownCount }}
           {{ startingStationCardsToPutDownCount === 1 ? "card" : "cards" }}
-           from your hand to the station cards area to the right
+           from your hand to the station cards area
         </div>
         <div class="guideText-subText">
-          Suggestion: choose cards with high cost<br>
-          You lose when all your station cards are damaged
+          Suggestion: choose cards with high cost.<br>
+          You lose when all your station cards are damaged.
         </div>
       </div>
       <div
