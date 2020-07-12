@@ -43,11 +43,13 @@
         class="guideText-wrapper"
       >
         <div class="guideText">
-          Expand your space station with
+          Move 
           {{ startingStationCardsToPutDownCount }}
           {{ startingStationCardsToPutDownCount === 1 ? "card" : "cards" }}
+           from your hand to the station cards area to the right
         </div>
         <div class="guideText-subText">
+          Suggestion: choose cards with high cost<br>
           You lose when all your station cards are damaged
         </div>
       </div>
@@ -55,7 +57,7 @@
         v-else-if="playerIsReady"
         class="guideText-waitingForOtherPlayer guideText guideText--small"
       >
-        Waiting for other player
+        Waiting for the opponent
       </div>
     </template>
     <div
