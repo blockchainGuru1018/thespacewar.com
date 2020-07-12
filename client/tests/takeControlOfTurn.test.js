@@ -55,7 +55,6 @@ describe("when phase is wait but is current player", () => {
 
   test("guide text should mention that you have taken control", async () => {
     assert.elementText(".guideText", "Put down any 0-cost card");
-    assert.elementText(".toggleControlOfTurn", "Release control");
   });
 });
 
@@ -76,7 +75,6 @@ describe("when phase is wait and is NOT current player", () => {
 
   test("guide text should mention that it is the opponents turn", async () => {
     assert.elementText(".guideText", "Enemy turn");
-    assert.elementText(".toggleControlOfTurn", "Take control");
   });
 });
 

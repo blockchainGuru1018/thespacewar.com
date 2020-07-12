@@ -136,19 +136,9 @@
     </template>
 
     <!-- WAIT PHASE and TURN CONTROL texts -->
-    <div v-else-if="canToggleControlOfTurn" class="guideText-wrapper">
+    <div v-else-if="phase === PHASES.wait" class="guideText-wrapper">
       <div class="guideText">
         {{ textOnWaitPhase }}
-      </div>
-      <div class="guideText-subText">
-        <button
-          class="toggleControlOfTurn darkButton"
-          title="Or press space to toggle control"
-          @click="toggleControlOfTurn"
-          @keydown.space.stop.prevent="toggleControlOfTurn"
-        >
-          {{ turnControlButtonText }}
-        </button>
       </div>
     </div>
   </div>
@@ -229,12 +219,6 @@ export default {
     ...infoModeHelpers.mapState({
       infoModeVisible: "visible",
     }),
-    canToggleControlOfTurn() {
-      return (
-        this.turnControl.canToggleControlOfTurn() &&
-        !this.turnControl.isPlayingWithTheSwarmDeck()
-      );
-    },
     guideTextContainerVisible() {
       if (this.choosingStartingPlayer) return false;
       if (this.activateEventCardGhostVisible) return false;
@@ -345,12 +329,6 @@ export default {
         return "Put down any 0-cost card";
       }
       return "Enemy turn";
-    },
-    turnControlButtonText() {
-      if (this.playerHasControlOfOpponentsTurn) {
-        return "Release control";
-      }
-      return "Take control";
     },
     cardStyle() {
       if (this.activeActionCardImageUrl) {

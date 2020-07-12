@@ -67,7 +67,8 @@ module.exports = class TurnControl {
       this._playerPhase.isWait() &&
       this.opponentHasControlOfOwnTurn() &&
       !this._opponentHasCardThatPreventsPlayerPlayingEventCards() &&
-      !this._playerHasCardThatPreventsPlayerPlayingEventCards()
+      !this._playerHasCardThatPreventsPlayerPlayingEventCards() &&
+      !this.isPlayingWithTheSwarmDeck()
     );
   }
 
