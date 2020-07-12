@@ -7,8 +7,10 @@
 ./client-test/node_modules
 ./client-test/build
 ./server/node_modules
-
+./server/match/save/*
 node_modules
 .env
 
 .history
+
+!./server/match/save/.gitkeep
