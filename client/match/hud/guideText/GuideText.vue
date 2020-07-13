@@ -43,13 +43,13 @@
         class="guideText-wrapper"
       >
         <div class="guideText">
-          Move 
+          Move
           {{ startingStationCardsToPutDownCount }}
           {{ startingStationCardsToPutDownCount === 1 ? "card" : "cards" }}
-           from your hand to the station cards area
+          from your hand to the station cards area
         </div>
         <div class="guideText-subText">
-          Suggestion: choose cards with high cost.<br>
+          Suggestion: choose cards with high cost.<br />
           You lose when all your station cards are damaged.
         </div>
       </div>
@@ -422,9 +422,9 @@ function pluralize(word, count) {
   flex: 0 0 auto;
 }
 .hidden {
-  visibility: "hidden";
+  visibility: hidden;
 }
 .visible {
-  visibility: "visible";
+  visibility: visible;
 }
 </style>
