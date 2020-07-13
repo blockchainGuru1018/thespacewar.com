@@ -47,6 +47,7 @@ describe("when phase is wait but is current player", () => {
       FakeState({
         turn: 1,
         currentPlayer: "P1A",
+        cardsOnHand: [{ id: "C1A", cost: 0 }],
         phase: "wait",
       })
     );
@@ -55,6 +56,7 @@ describe("when phase is wait but is current player", () => {
 
   test("guide text should mention that you have taken control", async () => {
     assert.elementText(".guideText", "Put down any 0-cost card");
+    assert.elementText(".toggleControlOfTurn", "Release control");
   });
 });
 
@@ -67,6 +69,7 @@ describe("when phase is wait and is NOT current player", () => {
       FakeState({
         turn: 1,
         currentPlayer: "P2A",
+        cardsOnHand: [{ id: "C1A", cost: 0 }],
         phase: "wait",
       })
     );
@@ -75,10 +78,11 @@ describe("when phase is wait and is NOT current player", () => {
 
   test("guide text should mention that it is the opponents turn", async () => {
     assert.elementText(".guideText", "Enemy turn");
+    assert.elementText(".toggleControlOfTurn", "Take control");
   });
 });
 
-describe("when phase is wait and is NOT current and is playing with The Swarm Deck", () => {
+describe("when phase is wait and is NOT current and player have not zero cost cards", () => {
   beforeEach(async () => {
     mockLocalStorageResponse("true");
     const { dispatch, showPage } = setUpController();
@@ -88,7 +92,6 @@ describe("when phase is wait and is NOT current and is playing with The Swarm De
       FakeState({
         turn: 1,
         currentPlayer: "P2A",
-        deckName: "The-Swarm",
         phase: "wait",
       })
     );
@@ -96,7 +99,8 @@ describe("when phase is wait and is NOT current and is playing with The Swarm De
   });
 
   test("should not see Take Control button", async () => {
-    assert.elementCount(".toggleControlOfTurn", 0);
+    assert.elementCount(".toggleControlOfTurn", 1);
+    assert.elementHasClass(".toggleControlOfTurn", "hidden");
   });
 });
 

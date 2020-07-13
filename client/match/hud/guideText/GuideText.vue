@@ -127,7 +127,7 @@
       Discard
       {{
         amountOfCardsToDiscard +
-        (amountOfCardsToDiscard === 1 ? " card" : " cards")
+          (amountOfCardsToDiscard === 1 ? " card" : " cards")
       }}
       to continue
     </div>
@@ -141,6 +141,17 @@
     <div v-else-if="phase === PHASES.wait" class="guideText-wrapper">
       <div class="guideText">
         {{ textOnWaitPhase }}
+      </div>
+      <div class="guideText-subText">
+        <button
+          :class="turnControl.hasZeroCostCardsToPlay() ? 'visible' : 'hidden'"
+          class="toggleControlOfTurn darkButton"
+          title="Or press space to toggle control"
+          @click="toggleControlOfTurn"
+          @keydown.space.stop.prevent="toggleControlOfTurn"
+        >
+          {{ turnControlButtonText }}
+        </button>
       </div>
     </div>
   </div>
@@ -221,6 +232,9 @@ export default {
     ...infoModeHelpers.mapState({
       infoModeVisible: "visible",
     }),
+    canToggleControlOfTurn() {
+      return this.turnControl.canToggleControlOfTurn();
+    },
     guideTextContainerVisible() {
       if (this.choosingStartingPlayer) return false;
       if (this.activateEventCardGhostVisible) return false;
@@ -332,6 +346,12 @@ export default {
       }
       return "Enemy turn";
     },
+    turnControlButtonText() {
+      if (this.playerHasControlOfOpponentsTurn) {
+        return "Release control";
+      }
+      return "Take control";
+    },
     cardStyle() {
       if (this.activeActionCardImageUrl) {
         return {
@@ -400,5 +420,11 @@ function pluralize(word, count) {
   top: 4px;
   margin-right: 15px;
   flex: 0 0 auto;
+}
+.hidden {
+  visibility: "hidden";
+}
+.visible {
+  visibility: "visible";
 }
 </style>

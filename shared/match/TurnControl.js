@@ -60,6 +60,15 @@ module.exports = class TurnControl {
     return this.canTakeControlOfTurn() || this.canReleaseControlOfTurn();
   }
 
+  hasZeroCostCardsToPlay() {
+    return (
+      [
+        ...this._playerStateService.getCardsOnHand(),
+        ...this._playerStateService.getFlippedStationCards(),
+      ].filter((card) => card.cost === 0).length > 0
+    );
+  }
+
   canTakeControlOfTurn() {
     return (
       !this._opponentPhase.isStart() &&
@@ -67,8 +76,7 @@ module.exports = class TurnControl {
       this._playerPhase.isWait() &&
       this.opponentHasControlOfOwnTurn() &&
       !this._opponentHasCardThatPreventsPlayerPlayingEventCards() &&
-      !this._playerHasCardThatPreventsPlayerPlayingEventCards() &&
-      !this.isPlayingWithTheSwarmDeck()
+      !this._playerHasCardThatPreventsPlayerPlayingEventCards()
     );
   }
 

@@ -12,6 +12,7 @@ module.exports = {
           turn: 1,
           playerStateById: {
             P1A: {
+              cardsOnHand: [{ id: "C1A", cost: 0 }],
               phase: "wait",
             },
             P2A: {
