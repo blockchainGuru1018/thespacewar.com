@@ -21,6 +21,7 @@ module.exports = class FatalError extends BaseCard {
   }
 
   useAgainst(targetCard) {
+    this._card.cost = targetCard.cost;
     this._playerStateService.putDownEventCardInZone(this.getCardData());
     this._playerStateService.storeEvent(
       FatalErrorUsedEvent({
