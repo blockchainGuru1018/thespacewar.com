@@ -64,7 +64,7 @@ module.exports = class TurnControl {
     return (
       [
         ...this._playerStateService.getCardsOnHand(),
-        ...this._playerStateService.getFlippedStationCards(),
+        ...this._playerStateService.getFlippedStationCards().map((c) => c.card),
       ].filter((card) => card.cost === 0).length > 0
     );
   }
