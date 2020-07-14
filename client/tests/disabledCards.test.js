@@ -61,6 +61,52 @@ describe("when has duration card Neutralization and other duration card", () => 
   });
 });
 
+describe("when bot player has Neutralization card the latest one should be the only effective", () => {
+  beforeEach(async () => {
+    const { dispatch, showPage } = setUpController();
+    showPage();
+    dispatch(
+      "stateChanged",
+      FakeState({
+        turn: 2,
+        currentPlayer: "P2A",
+        phase: "draw",
+        playerCardsInDeckCount: 1,
+        opponentCardsInZone: [
+          { id: "C1A", type: "duration", commonId: Neutralization.CommonId },
+        ],
+        opponentEvents: [
+          {
+            type: "putDownCard",
+            created: new Date("2020-06-24T11:05:00.135Z"),
+            location: "zone",
+            cardId: "C1A",
+            cardCommonId: Neutralization.CommonId,
+          },
+        ],
+        events: [
+          {
+            type: "putDownCard",
+            created: new Date("2020-06-24T11:15:00.135Z"),
+            location: "zone",
+            cardId: "C2A",
+            cardCommonId: Neutralization.CommonId,
+          },
+        ],
+        cardsInZone: [
+          { id: "C2A", type: "duration", commonId: Neutralization.CommonId },
+        ],
+      })
+    );
+
+    await timeout();
+  });
+
+  test("the first Neutralization card on board  should  be disabled", () => {
+    assert.elementCount(".opponentCardsInZone .card .cardDisabledOverlay", 1);
+  });
+});
+
 describe("when has Disturbing Sensor and a missile in play and opponent has a missile in play", () => {
   beforeEach(async () => {
     const { dispatch, showPage } = setUpController();

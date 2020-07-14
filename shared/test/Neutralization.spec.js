@@ -32,7 +32,7 @@ describe("USE Dormant Effect of Neutralization", () => {
     expect(neutralization.canTriggerDormantEffect()).toBeTruthy();
   });
 
-  it("Should no be able to USE when its wast the first neutralization card putted down on the board", () => {
+  it("Should no be able to USE when its was the first neutralization card putted down on the board", () => {
     const opponentPutDownNeutralizationTimestamp = new Date(
       "2020-06-24T11:07:00.135Z"
     );

@@ -53,9 +53,13 @@ class CanThePlayer {
   }
 
   useThisDurationCard(cardId) {
-    const cardData = this._findCardFromOpponentOrPlayer(cardId);
-    if (cardData && cardData.commonId === Neutralization.CommonId) return true;
+    const latestNeutralizationPuttedDown = this._isTheLatestNeutralizationCardPuttedDown(
+      cardId
+    );
 
+    if (latestNeutralizationPuttedDown) {
+      return true;
+    }
     const noPlayerHasNeutralizationInPlay =
       !this._playerStateService.hasDurationCardOfType(
         Neutralization.CommonId
@@ -65,6 +69,15 @@ class CanThePlayer {
       );
 
     return noPlayerHasNeutralizationInPlay;
+  }
+
+  _isTheLatestNeutralizationCardPuttedDown(cardId) {
+    const cardData = this._findCardFromOpponentOrPlayer(cardId);
+    if (cardData && cardData.commonId === Neutralization.CommonId) {
+      this._playerStateService
+        .createBehaviourCardById(cardId)
+        .isTheLatestPlayedCardOfSameKind();
+    }
   }
 
   moveThisCard(card) {
