@@ -330,7 +330,7 @@ module.exports = () => [
     paralyzed: false,
   },
   {
-    id: 26,
+    id: 25,
     commonId: "77",
     color: "blue",
     type: "spaceShip",
@@ -339,6 +339,18 @@ module.exports = () => [
     cost: 7,
     attack: 0,
     defense: 6,
+    paralyzed: false,
+  },
+  {
+    id: 26,
+    commonId: "94",
+    color: "orange",
+    type: "event",
+    name: "Sacrifice",
+    description: "Both players need to sacrifice a card in play (if they have)",
+    cost: 1,
+    attack: 0,
+    defense: 0,
     paralyzed: false,
   },
 ];

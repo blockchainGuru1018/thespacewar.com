@@ -44,6 +44,7 @@ const classes = [
   require("./Revive.js"),
   require("./TheParalyzer.js"),
   require("./Carrier.js"),
+  require("./Sacrifice.js"),
 ];
 
 module.exports = classes;

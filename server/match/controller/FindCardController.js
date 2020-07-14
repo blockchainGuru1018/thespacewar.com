@@ -45,6 +45,8 @@ module.exports = function ({
       moveCardsToOpponentDiscardPile(cardGroups, playerId);
     } else if (requirement.target === "currentCardZone") {
       moveCardsToCurrentCardLocation(cardGroups, playerId, requirement);
+    } else if (requirement.target === "discardPile") {
+      moveCardsToDiscardPile(cardGroups, playerId);
     }
 
     if (destroyCardFromUseOfDormantEffect(requirement)) {
@@ -217,6 +219,24 @@ module.exports = function ({
 
     const opponentActionLog = playerServiceFactory.actionLog(opponentId);
     opponentActionLog.cardsDiscarded({ cardCommonIds });
+  }
+
+  function moveCardsToDiscardPile(cardGroups, playerId) {
+    const playerStateService = playerServiceProvider.getStateServiceById(
+      playerId
+    );
+
+    const cardCommonIds = [];
+    for (const group of cardGroups) {
+      for (const cardId of group.cardIds) {
+        const cardData = removeCardFromSource(cardId, group.source, playerId);
+        cardCommonIds.push(cardData.commonId);
+        playerStateService.discardCard(cardData);
+      }
+    }
+
+    const playerActionLog = playerServiceFactory.actionLog(playerId);
+    playerActionLog.cardsDiscarded({ cardCommonIds });
   }
 
   function removeCardFromSource(cardId, source, playerId) {
