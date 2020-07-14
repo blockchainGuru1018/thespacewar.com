@@ -242,8 +242,10 @@ class PlayerStateService {
       .filter((c) => c.canBePlayed())
       .filter(matcher);
     const matchingCardsAmongFlippedStationCards = this.getFlippedStationCards()
-      .map((c) => this.createBehaviourCard(c))
-      .filter((c) => c.canBePlayed())
+      .map((c) => this.createBehaviourCard(c.card))
+      .filter((c) => {
+        return c.canBePlayed();
+      })
       .filter(matcher);
     return [...matchingCardsOnHand, ...matchingCardsAmongFlippedStationCards];
   }
