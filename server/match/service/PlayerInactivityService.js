@@ -7,7 +7,9 @@ module.exports = function PlayerInactivityService({
   retreat,
   logger,
 }) {
-  const maxMinuteOfInactivity = gameConfig.minutesOfInactivityResultInAutoLoss();
+  const maxMinuteOfInactivity = matchComService.getPlayerIds().includes("BOT")
+    ? gameConfig.minutesOfInactivityResultInAutoLossVsBot()
+    : gameConfig.minutesOfInactivityResultInAutoLoss();
 
   return {
     checkLastTimeOfInactivityForPlayer,

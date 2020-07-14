@@ -15,6 +15,8 @@ const propertyMap = {
     "secondsOfWaitBetweenActionsOfAiBot",
   MINUTES_OF_INACTIVITY_RESULT_IN_AUTOLOSS:
     "minutesOfInactivityResultInAutoLoss",
+  MINUTES_OF_INACTIVITY_RESULT_IN_AUTOLOSS_VS_BOT:
+    "minutesOfInactivityResultInAutoLossVsBot",
 };
 
 const Defaults = convertConfig(DEFAULT_CONFIG);
@@ -36,6 +38,7 @@ function GameConfig({
   recycleAtStartOfGame = Defaults.recycleAtStartOfGame,
   secondsOfWaitBetweenActionsOfAiBot = Defaults.secondsOfWaitBetweenActionsOfAiBot,
   minutesOfInactivityResultInAutoLoss = Defaults.minutesOfInactivityResultInAutoLoss,
+  minutesOfInactivityResultInAutoLossVsBot = Defaults.minutesOfInactivityResultInAutoLossVsBot,
 } = {}) {
   return {
     entity: () => ({ ...arguments[0] }),
@@ -53,6 +56,8 @@ function GameConfig({
       Math.round(secondsOfWaitBetweenActionsOfAiBot * 1000),
     minutesOfInactivityResultInAutoLoss: () =>
       Math.round(minutesOfInactivityResultInAutoLoss * 1000 * 60),
+    minutesOfInactivityResultInAutoLossVsBot: () =>
+      Math.round(minutesOfInactivityResultInAutoLossVsBot * 1000 * 60),
   };
 }
 

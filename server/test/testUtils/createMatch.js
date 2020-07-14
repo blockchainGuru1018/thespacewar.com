@@ -15,6 +15,7 @@ module.exports = function createMatch(deps = {}, testCardData = []) {
     gameConfig: GameConfig({
       amountOfCardsInStartHand: 7,
       minutesOfInactivityResultInAutoLoss: 5,
+      minutesOfInactivityResultInAutoLossVsBot: 10,
     }),
     cardInfoRepository: CardInfoRepository({ cardDataAssembler }),
     rawCardDataRepository,

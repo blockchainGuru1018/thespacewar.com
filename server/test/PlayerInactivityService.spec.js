@@ -43,6 +43,25 @@ describe("Player timeout", () => {
     firstPlayerAsserter.playerIsDefeated("P1A");
   });
 
+  it("should force to retreat using the player vs bot inactivity period", () => {
+    const { match, firstPlayerAsserter } = setupIntegrationTest(
+      {
+        playerStateById: {
+          P1A: {
+            phase: "action",
+            events: [{ created: new Date("2020-06-24T10:55:00.135Z") }],
+          },
+          BOT: {
+            phase: "wait",
+          },
+        },
+      },
+      { playerId: "P1A", opponentId: "BOT" }
+    );
+    match.checkLastTimeOfInactivityForPlayer("P1A");
+    firstPlayerAsserter.playerIsDefeated("P1A");
+  });
+
   it(
     "should not force retreat if next turn the last event of the player its more " +
       "than the inactivity period because of the other player its delayed time",
