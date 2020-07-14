@@ -78,6 +78,14 @@ class PlayerRuleService {
   }
 
   canPutDownStationCards() {
+    if (
+      !this._matchService.isGameOn() &&
+      !this._playerStateService.isFirstPlayer() &&
+      this._playerStateService.getStationCardCount() === 0 &&
+      this._playerStateService.getCardsOnHandCount() <=
+        this._gameConfig.amountOfCardsInStartHand()
+    )
+      return false;
     if (this.canPutDownMoreStartingStationCards()) return true;
 
     if (this.hasReachedMaximumStationCardCapacity()) return false;
