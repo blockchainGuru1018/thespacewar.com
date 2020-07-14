@@ -31,11 +31,11 @@
         </span>
         <select v-model="cheatCommonId">
           <option
-            v-for="option in cardOptions"
-            :key="option.value"
-            :value="option.value"
+            v-for="(cardData, key) in cardOptions"
+            :key="key"
+            :value="cardData.value"
           >
-            {{ option.text }}
+            {{ cardData.text }}
           </option>
         </select>
       </label>
@@ -103,6 +103,7 @@ module.exports = {
     cardOptions() {
       const allCards = this.cardDataAssembler.createLibrary();
       return allCards.map((cardData) => {
+        cardData.id = cardData.id = Math.round(Math.random() * 10000);
         return { value: cardData.commonId, text: cardData.name };
       });
     },

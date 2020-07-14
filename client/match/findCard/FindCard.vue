@@ -87,6 +87,7 @@ const nameBySource = {
   opponentActionStationCards: "Opponent station cards (action points)",
   opponentHandSizeStationCards: "Opponent station cards (max cards)",
   opponentHand: "Opponent cards on hand",
+  hand: "Cards on hand",
 };
 
 module.exports = {
