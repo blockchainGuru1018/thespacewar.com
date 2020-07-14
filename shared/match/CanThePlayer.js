@@ -74,10 +74,11 @@ class CanThePlayer {
   _isTheLatestNeutralizationCardPuttedDown(cardId) {
     const cardData = this._findCardFromOpponentOrPlayer(cardId);
     if (cardData && cardData.commonId === Neutralization.CommonId) {
-      this._playerStateService
+      return this._playerStateService
         .createBehaviourCardById(cardId)
         .isTheLatestPlayedCardOfSameKind();
     }
+    return false;
   }
 
   moveThisCard(card) {

@@ -103,7 +103,7 @@ describe("when bot player has Neutralization card the latest one should be the o
   });
 
   test("the first Neutralization card on board  should  be disabled", () => {
-    assert.elementCount(".opponentCardsInZone .card .cardDisabledOverlay", 1);
+    assert.elementCount(".cardDisabledOverlay", 1);
   });
 });
 
