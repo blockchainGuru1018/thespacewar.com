@@ -12,8 +12,11 @@ module.exports = function ({
   };
 
   function start() {
+    const started = playerStateService.isBot()
+      ? Date.now() - 14500
+      : Date.now();
     matchService.update((state) => {
-      state.lastStandInfo = { playerId, started: Date.now() };
+      state.lastStandInfo = { playerId, started: started };
     });
 
     if (playerTurnControl.opponentHasControlOfPlayersTurn()) {
@@ -24,7 +27,8 @@ module.exports = function ({
   }
 
   function canStart() {
-    if (playerStateService.isBot()) return false;
+    if (playerStateService.isBot() && !canAvoidStationCardAttack())
+      return false;
     const allStationCardsAreDamaged =
       playerStateService.getUnflippedStationCardsCount() === 0;
     return allStationCardsAreDamaged && canAvoidStationCardAttack();
