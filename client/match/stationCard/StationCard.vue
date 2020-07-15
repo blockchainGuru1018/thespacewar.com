@@ -9,7 +9,13 @@
     ]"
     title="Right click or long press over any card to expand it"
   >
-    <div v-longpress="cardLongpress" :class="classes" :style="cardStyle">
+    <div
+      v-longpress="cardLongpress"
+      :class="classes"
+      :style="cardStyle"
+      @mousedown.right="cardLongpress"
+      @contextmenu.prevent="(e) => e.preventDefault()"
+    >
       <div v-if="!isHoldingCard" class="actionOverlays">
         <portal-target :name="`stationCard-actionOverlays--${stationRow}Row`" />
 
