@@ -7,7 +7,7 @@
           stationCard.flipped && !isOpponentStationCard,
       },
     ]"
-    title="Long press over any card to expand it"
+    title="Right click or long press over any card to expand it"
   >
     <div v-longpress="cardLongpress" :class="classes" :style="cardStyle">
       <div v-if="!isHoldingCard" class="actionOverlays">
