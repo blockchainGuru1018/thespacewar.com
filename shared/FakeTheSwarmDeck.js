@@ -485,4 +485,17 @@ module.exports = () => [
     defense: 0,
     paralyzed: false,
   },
+  {
+    id: 123,
+    commonId: "93",
+    color: "blue",
+    type: "spaceShip",
+    name: "Drone Leader",
+    description:
+      "Attack value of X is equal to the number of Drone you have in play.",
+    defense: 5,
+    attack: 0,
+    cost: 4,
+    paralyzed: false,
+  },
 ];

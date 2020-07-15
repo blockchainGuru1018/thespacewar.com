@@ -45,6 +45,7 @@ const classes = [
   require("./TheParalyzer.js"),
   require("./Carrier.js"),
   require("./Sacrifice.js"),
+  require("./DroneLeader.js"),
 ];
 
 module.exports = classes;
