@@ -6,6 +6,7 @@ const queryEventsFactory = {
       getRepairsOnTurn: () => [],
       getAttacksOnTurn: () => [],
       playerCardWasInHandAfterOpponentCardWasPlayed: () => false,
+      wasGrantedByFreeEventOnPreviousTurn: () => false,
       ...stubs,
     };
   },

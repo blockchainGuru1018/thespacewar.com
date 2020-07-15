@@ -13,6 +13,15 @@ class QueryEvents {
     );
   }
 
+  wasGrantedByFreeEventOnPreviousTurn(cardId, currentTurn) {
+    try {
+      const lastPutDownEventForCard = this.getPutDownEventForCard(cardId);
+      return lastPutDownEventForCard.turn < currentTurn;
+    } catch (e) {
+      return false;
+    }
+  }
+
   hasMovedOnTurn(cardId, turn) {
     return this.getMovesOnTurn(cardId, turn).length > 0;
   }
@@ -193,6 +202,10 @@ class QueryEvents {
   }
 
   getTurnWhenCardWasPutDown(cardId) {
+    return this.getPutDownEventForCard(cardId).turn;
+  }
+
+  getPutDownEventForCard(cardId) {
     const eventsInReverse = this._eventRepository.getAll().slice().reverse();
     const lastPutDownEventForCard = eventsInReverse.find((e) => {
       return e.type === "putDownCard" && e.cardId === cardId;
@@ -201,7 +214,7 @@ class QueryEvents {
       throw new Error(
         `Asking when card (${cardId}) was put down. But card has not been put down.`
       );
-    return lastPutDownEventForCard.turn;
+    return lastPutDownEventForCard;
   }
 
   getAttacksOnTurn(cardId, turn) {

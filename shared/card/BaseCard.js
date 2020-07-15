@@ -145,8 +145,14 @@ class BaseCard {
       this.id,
       turn
     );
+
+    const wasGrantedByFreeEventOnPreviousTurn = this._queryEvents.wasGrantedByFreeEventOnPreviousTurn(
+      this.id,
+      turn
+    );
     const hasWaitedAndCanAttackFromOpponentZone =
-      hasMovedOnPreviousTurn && !isInHomeZone;
+      (hasMovedOnPreviousTurn || wasGrantedByFreeEventOnPreviousTurn) &&
+      !isInHomeZone;
     const isMissileAndCanAttackFromOpponentZone = isMissile && !isInHomeZone;
 
     return (
