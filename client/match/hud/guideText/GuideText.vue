@@ -118,7 +118,7 @@
       v-else-if="phase === PHASES.preparation"
       class="guideText-discardDurationCards guideText guideText--small"
     >
-      Discard any duration card you don't want to pay for
+      {{ discardDurationCardsText }}
     </div>
     <div
       v-else-if="inDiscardPhaseAndMustDiscardCard"
@@ -351,6 +351,13 @@ export default {
         return "Release control";
       }
       return "Take control";
+    },
+    discardDurationCardsText() {
+      if (this.actionPoints2 >= 0) {
+        return "Discard any duration card you don't want to pay for";
+      } else {
+        return "You cannot afford to keep the duration card(s), click to discard it";
+      }
     },
     cardStyle() {
       if (this.activeActionCardImageUrl) {
