@@ -119,6 +119,8 @@
                 :data-cardId="opponentTopDiscardCard.id"
                 :style="getCardImageStyle(opponentTopDiscardCard)"
                 class="card card--turnedAround card--expandable"
+                @mousedown.right="() => expandCard(opponentTopDiscardCard)"
+                @contextmenu.prevent="(e) => e.preventDefault()"
               />
             </div>
 
@@ -220,6 +222,8 @@
                 :data-cardId="playerTopDiscardCard.id"
                 :style="getCardImageStyle(playerTopDiscardCard)"
                 class="card card--expandable"
+                @mousedown.right="() => expandCard(opponentTopDiscardCard)"
+                @contextmenu.prevent="(e) => e.preventDefault()"
               />
               <CardGhost
                 v-if="discardPileCardGhostVisible"

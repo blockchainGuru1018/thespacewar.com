@@ -6,6 +6,8 @@
     :data-type="card.type || ''"
     :class="classes"
     :title="title"
+    @mousedown.right="cardLongpress"
+    @contextmenu.prevent="(e) => e.preventDefault()"
   >
     <div :class="['indicatorOverlays', { 'flash-red': flashCard }]">
       <div

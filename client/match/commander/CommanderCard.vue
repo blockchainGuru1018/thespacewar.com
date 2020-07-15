@@ -4,6 +4,8 @@
     :class="classes"
     :style="style"
     title="Long press over any card to expand it"
+    @mousedown.right="() => longpress(commander)"
+    @contextmenu.prevent="(e) => e.preventDefault()"
     @click="$emit('select')"
   />
 </template>

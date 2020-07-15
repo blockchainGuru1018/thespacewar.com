@@ -6,6 +6,8 @@
     tabindex="0"
     @keydown.esc="hideExpandedCard"
     @click.self="hideExpandedCard"
+    @mouseup.right="hideExpandedCard"
+    @contextmenu.prevent="(e) => e.preventDefault()"
   >
     <img
       :src="cardImageUrl"
