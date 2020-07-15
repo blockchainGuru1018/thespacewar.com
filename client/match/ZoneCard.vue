@@ -265,9 +265,9 @@ module.exports = {
       }
 
       if (title.length === 0) {
-        return "Long press over any card to expand it";
+        return "Right click or long press over any card to expand it";
       } else {
-        return title + "\nLong press over any card to expand it";
+        return title + "\nRight click or long press over any card to expand it";
       }
     },
     flashCard() {
