@@ -38,12 +38,12 @@ class PlayerStateService {
     return playerId === "BOT";
   }
 
-  reset(useTheSwarmDeck = false) {
+  reset(deckId) {
     const playerId = this.getPlayerId();
     this._matchService.connectPlayer(playerId); //TODO This is already done in StartGame.js. Why is it also done here?
 
     this._resetState();
-    this._initializeDeck(useTheSwarmDeck);
+    this._initializeDeck(deckId);
     this._drawStartingCards();
   }
 
@@ -66,9 +66,9 @@ class PlayerStateService {
     });
   }
 
-  _initializeDeck(useTheSwarmDeck = false) {
-    const cardsInDeck = this._deckFactory.createCardsForDeck(useTheSwarmDeck);
-    const deckName = useTheSwarmDeck ? "The-Swarm" : "Regular";
+  _initializeDeck(deckId) {
+    const cardsInDeck = this._deckFactory.createCardsForDeckById(deckId);
+    const deckName = deckId === 2 ? "The-Swarm" : "Regular";
     this.update((playerState) => {
       playerState.cardsInDeck = cardsInDeck;
       playerState.deckName = deckName;
