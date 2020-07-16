@@ -17,24 +17,30 @@ module.exports = function CardDataAssembler({ rawCardDataRepository }) {
   };
 
   function createLibrary() {
+    const deckData = rawCardDataRepository.get();
     return [
-      ...rawCardDataRepository.get().map(CardData),
-      ...FakeTheSwarmDeck().reduce(
-        (acc, value) =>
-          acc.find((v) => v.commonId === value.commonId)
-            ? acc
-            : acc.concat([value]),
-        []
-      ),
+      ...deckData.regular.map(CardData),
+      ...deckData.theSwarm.map(CardData),
     ];
   }
 
   function createSwarmDeck() {
-    return FakeTheSwarmDeck();
+    const rawCardData = rawCardDataRepository.get().theSwarm;
+    const cards = [];
+    for (const cardJson of rawCardData) {
+      const copies = cardJson.number_copies
+        ? parseInt(cardJson.number_copies)
+        : 1;
+      for (let i = 0; i < copies; i++) {
+        const card = CardData(cardJson);
+        cards.push(card);
+      }
+    }
+    return cards;
   }
 
   function createRegularDeck() {
-    const rawCardData = rawCardDataRepository.get();
+    const rawCardData = rawCardDataRepository.get().regular;
     const cards = [];
     for (const cardJson of rawCardData) {
       const copies = cardJson.number_copies

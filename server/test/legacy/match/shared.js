@@ -145,7 +145,7 @@ function discardCardsAsPlayer(cardIds, playerId, match) {
   }
 }
 
-function createMatch(deps = {}, testCardData = []) {
+function createMatch(deps = {}, testCardData = { theSwarm: [], regular: [] }) {
   if (deps.players && deps.players.length === 1) {
     deps.players.push(Player("P2A"));
   }

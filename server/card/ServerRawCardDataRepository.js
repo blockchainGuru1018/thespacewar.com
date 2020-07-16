@@ -8,10 +8,18 @@ module.exports = function () {
 };
 
 async function getCardData() {
-  const url = "https://admin.thespacewar.com/services/api/cards?deck=1";
-  console.info("Getting fresh cards JSON from:", url);
-  const response = await axios.get(url);
-  return response.data;
+  const urlRegularDeck = `https://admin.thespacewar.com/services/api/cards?deck=1`;
+  const urlTheSwarm = `https://admin.thespacewar.com/services/api/cards?deck=2`;
+  return {
+    regular: await getDecksData(urlRegularDeck),
+    theSwarm: await getDecksData(urlTheSwarm),
+  };
+}
+
+async function getDecksData(deckUrl) {
+  console.info("Getting fresh cards JSON from:", deckUrl);
+  const result = await axios.get(deckUrl);
+  return result.data;
 }
 
 function Cache() {
