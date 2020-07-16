@@ -62,7 +62,6 @@
         });
 
         $("input:radio").each(function (index, element) {
-            console.log(this);
             const activeDeck = JSON.parse(localStorage.getItem("active-deck"));
             $(this).prop("checked", this.getAttribute("value") === activeDeck);
         });
