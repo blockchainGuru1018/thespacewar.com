@@ -5,7 +5,6 @@ const CARD_COLOR_TO_TYPE = {
   red: "missile",
   green: "defense",
 };
-const FakeTheSwarmDeck = require("./FakeTheSwarmDeck.js");
 
 module.exports = function CardDataAssembler({ rawCardDataRepository }) {
   return {

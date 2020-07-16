@@ -68,6 +68,6 @@ module.exports = function (deps) {
     }
   }
   function getActiveDeck() {
-    return +JSON.parse(localStorage.getItem("active-deck"));
+    return JSON.parse(localStorage.getItem("active-deck"));
   }
 };

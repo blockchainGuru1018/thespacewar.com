@@ -13,7 +13,7 @@ function StartGameController({
     repairPotentiallyInconsistentState, //TODO Move this to its own class
   };
 
-  function start(playerId, { deckId = 1 } = {}) {
+  function start(playerId, { deckId = "Regular" } = {}) {
     const playerIds = matchService.getPlayerIds();
 
     if (matchService.allPlayersConnected()) {

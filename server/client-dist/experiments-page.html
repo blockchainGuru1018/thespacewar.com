@@ -32,14 +32,14 @@
     <div class="alert alert-primary" role="alert">
         <div class="form-check">
             <input class="form-check-input" onclick="handleDeckOption(this)" type="radio" name="active-Deck"
-                   id="regularDeck" value="1">
+                   id="regularDeck" value="Regular">
             <label class="form-check-label" for="regularDeck">
                 Regular Deck
             </label>
         </div>
         <div class="form-check">
             <input class="form-check-input" onclick="handleDeckOption(this)" type="radio" name="active-Deck"
-                   id="theSwarm" value="2">
+                   id="theSwarm" value="The-Swarm">
             <label class="form-check-label" for="theSwarm">
                 The Swarm Deck
             </label>
@@ -62,7 +62,6 @@
         });
 
         $("input:radio").each(function (index, element) {
-            console.log(this);
             const activeDeck = JSON.parse(localStorage.getItem("active-deck"));
             $(this).prop("checked", this.getAttribute("value") === activeDeck);
         });

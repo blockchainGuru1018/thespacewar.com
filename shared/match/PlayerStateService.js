@@ -68,10 +68,8 @@ class PlayerStateService {
 
   _initializeDeck(deckId) {
     const cardsInDeck = this._deckFactory.createCardsForDeckById(deckId);
-    const deckName = deckId === 2 ? "The-Swarm" : "Regular";
     this.update((playerState) => {
       playerState.cardsInDeck = cardsInDeck;
-      playerState.deckName = deckName;
     });
   }
 

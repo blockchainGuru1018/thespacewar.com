@@ -596,7 +596,7 @@
                 "name": "Freezing cold",
                 "price": "2",
                 "type_card": "violet",
-                "detail": "All cards cost 3 more to play.",
+                "detail": "Both players: cards cost 3 more actions to play.",
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "3",
@@ -632,7 +632,7 @@
                 "name": "Collision Skill",
                 "price": "3",
                 "type_card": "violet",
-                "detail": "Your spaceships can now do collision with 3 damage.",
+                "detail": "Your spaceships can now do collision (your spaceship are destroyed in the attack) with 3 damage.",
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "2",
@@ -677,5 +677,5 @@
             }
         ]
     },
-    "saveTime": 1594863541461
+    "saveTime": 1595023646430
 }
