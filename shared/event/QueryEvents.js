@@ -16,7 +16,10 @@ class QueryEvents {
   wasGrantedByFreeEventOnPreviousTurn(cardId, currentTurn) {
     try {
       const lastPutDownEventForCard = this.getPutDownEventForCard(cardId);
-      return lastPutDownEventForCard.turn < currentTurn;
+      return (
+        lastPutDownEventForCard.grantedForFreeByEvent &&
+        lastPutDownEventForCard.turn < currentTurn
+      );
     } catch (e) {
       return false;
     }

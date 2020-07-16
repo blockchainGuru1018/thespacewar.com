@@ -115,4 +115,43 @@ describe("attack phase", () => {
       `You have a spaceship or missile that has not moved and/or attacked. Are you sure you want to end your turn?`
     );
   });
+
+  it(
+    "should not display warning for not attacking if there are no cards in the enemy zone and the spaceship " +
+      "has entered the enemy zone this turn",
+    async () => {
+      const { dispatch, showPage } = controller;
+      showPage();
+      dispatch(
+        "stateChanged",
+        FakeState({
+          turn: 2,
+          currentPlayer: "P1A",
+          phase: "attack",
+          events: [
+            PutDownCardEvent({
+              turn: 1,
+              location: "zone",
+              cardId: "C1A",
+              cardCommonId: "86",
+            }),
+            {
+              cardId: "C1A",
+              created: 1594868820759,
+              turn: 2,
+              type: "moveCard",
+            },
+          ],
+          cardsInOpponentZone: [createCard({ id: "C1A", attack: 2 })],
+          stationCards: [{ place: "draw" }],
+          opponentStationCards: [{ place: "draw", flipped: false }],
+        })
+      );
+
+      await timeout();
+
+      await click(".nextPhaseButton-endTurn");
+      assert.elementCount(".confirmDialogHeader", 0);
+    }
+  );
 });
