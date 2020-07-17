@@ -24,6 +24,7 @@ module.exports = {
           card: { id: "C1A", attack: 1, type: "spaceShip" },
           cardEffect: {
             attackBoostForCardType: (type) => (type === "spaceShip" ? 1 : 0),
+            costCardIncrement: () => 0,
           },
         });
       },
@@ -57,6 +58,7 @@ module.exports = {
           card: { id: "C1A", attack: 1, type: "spaceShip" },
           cardEffect: {
             cardTypeCanMoveOnTurnPutDown: (type) => type === "spaceShip",
+            costCardIncrement: () => 0,
           },
           playerStateService: playerStateServiceFactory.withStubs({
             getPhase: () => "attack",

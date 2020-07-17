@@ -498,4 +498,17 @@ module.exports = () => [
     cost: 4,
     paralyzed: false,
   },
+  {
+    id: 124,
+    commonId: "89",
+    color: "blue",
+    type: "duration",
+    name: "Freezing Cold",
+    description:
+      "Attack value of X is equal to the number of Drone you have in play.",
+    defense: 0,
+    attack: 0,
+    cost: 2,
+    paralyzed: false,
+  },
 ];

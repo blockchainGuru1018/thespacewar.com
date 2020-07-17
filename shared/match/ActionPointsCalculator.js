@@ -19,6 +19,7 @@ module.exports = function ({ cardInfoRepository }) {
     for (let event of eventsThisTurn) {
       if (event.type === "putDownCard") {
         if (shouldReducePointsByCostOfCard(event)) {
+          console.log(event);
           const cardCost = getCostOfCard(event.cardCommonId);
           actionPoints -= cardCost;
         }

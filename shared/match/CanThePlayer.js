@@ -157,7 +157,10 @@ class CanThePlayer {
   }
 
   affordCard(card) {
-    return this._playerActionPointsCalculator.calculate() >= card.cost;
+    return (
+      this._playerActionPointsCalculator.calculate() >=
+      card.cost + card.costIncrease
+    );
   }
 
   _isLastStand() {

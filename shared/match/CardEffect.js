@@ -2,6 +2,7 @@ module.exports = function ({ canThePlayer, playerStateService }) {
   return {
     attackBoostForCardType,
     cardTypeCanMoveOnTurnPutDown,
+    costCardIncrement,
   };
 
   function attackBoostForCardType(type) {
@@ -10,6 +11,17 @@ module.exports = function ({ canThePlayer, playerStateService }) {
     return sum(attackBoostForEachDurationCard());
   }
 
+  function costCardIncrement() {
+    return sum(costCardIncrementForEachDurationCard());
+  }
+
+  function costCardIncrementForEachDurationCard() {
+    return playerStateService
+      .getMatchingBehaviourCardsInBoard(
+        (card) => card.allCardsCostIncrementEffect
+      )
+      .map((c) => c.allCardsCostIncrementEffect);
+  }
   function cardTypeCanMoveOnTurnPutDown(type) {
     if (type !== "spaceShip") return false;
 

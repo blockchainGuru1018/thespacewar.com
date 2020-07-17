@@ -170,7 +170,8 @@ function PutDownCardController(deps) {
       }
 
       const playerActionPoints = playerStateService.getActionPointsForPlayer();
-      const canAffordCard = playerActionPoints >= cardData.cost;
+      const canAffordCard =
+        playerActionPoints >= card.cost + (cardData.costIncrease || 0);
       if (!canAffordCard) {
         throw new CheatError("Cannot afford card");
       }

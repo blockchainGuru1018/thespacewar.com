@@ -67,6 +67,10 @@ class BaseCard {
     return this._cardEffect.attackBoostForCardType(this.type);
   }
 
+  get costIncrease() {
+    return this._cardEffect.costCardIncrement() || 0;
+  }
+
   get defense() {
     return this._card.defense;
   }
