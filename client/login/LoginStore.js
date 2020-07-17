@@ -11,6 +11,7 @@ module.exports = function ({ route, userRepository, botUpdateListener }) {
       username: "",
       enteredWrongAccessKey: false,
       hasAccess: false,
+      _isAuthenticating: false
     },
     getters: {
       checkIfHasPreviousSession,
@@ -36,10 +37,17 @@ module.exports = function ({ route, userRepository, botUpdateListener }) {
       state.hasAccess = true;
       dispatch("testAccessKey", storedAccessKey);
     }
+
+    window.addEventListener('focus', async () => {
+      if(!state._isAuthenticating) {
+        const loggedInToHome = await isLoggedInToHome();
+        if(!loggedInToHome) window.location.reload();
+      }
+    });
   }
 
   async function login({ dispatch }) {
-    const ownUser = await ajax.jsonPostEmptyWithSecret("/login");
+    const ownUser = await ajax.jsonPostEmptyWithSecret("/login"); //Note: This creates a NEW login on the Node server (game)
     localGameDataFacade.setOwnUser(ownUser);
     dispatch("user/storeOwnUser", ownUser, { root: true });
   }
@@ -54,7 +62,9 @@ module.exports = function ({ route, userRepository, botUpdateListener }) {
     dispatch("user/storeOwnUser", ownUser, { root: true });
   }
 
-  async function authenticateUserSession({ dispatch, getters }) {
+  async function authenticateUserSession({ state, dispatch, getters }) {
+    state._isAuthenticating = true;
+
     const [loggedInToHome, loggedInToGame] = await Promise.all([
       isLoggedInToHome(),
       isLoggedInToGame(),
@@ -66,7 +76,7 @@ module.exports = function ({ route, userRepository, botUpdateListener }) {
         dispatch("_resetLocallyStoredUserData");
       }
     } else if (loggedInToGame) {
-      // User is logged in to the PHP server AND the Node server
+      // User is logged in to the PHP server (home) AND the Node server (game)
       if (localGameDataFacade.guestModeOn()) {
         // When the user has logged in as GUEST, and THEN wants to login as a REAL USER, we need to REMOVE THE GUEST DATA.
         dispatch("_resetLocallyStoredUserData");
@@ -76,9 +86,11 @@ module.exports = function ({ route, userRepository, botUpdateListener }) {
         dispatch("_restorePreviousSession");
       }
     } else {
-      // The user is logged in to the PHP server, but is NOT logged in to the Node server, need to login as a NEW USER (new user in Node server, NOT new user in PHP server).
+      // The user is logged in to the PHP server (home), but is NOT logged in to the Node server (game), need to login as a NEW USER (new user in Node server (game), NOT new user in PHP server (home)).
       dispatch("_reinitializeUserSession");
     }
+
+    state._isAuthenticating = false;
   }
 
   async function isLoggedInToHome() {

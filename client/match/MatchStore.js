@@ -1263,6 +1263,7 @@ module.exports = function (deps) {
   }
 
   function endGame() {
+    dispatch("inactivity/stop", null, { root: true });
     clearInterval(endLastStandIntervalId);
     deleteMatchLocalDataAndReturnToStart();
   }
@@ -1386,8 +1387,7 @@ module.exports = function (deps) {
     }, 300);
   }
 
-  function matchIsDead({ dispatch }) {
-    dispatch("inactivity/stop", null, { root: true });
+  function matchIsDead() {
     endGame();
   }
 

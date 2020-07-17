@@ -52,9 +52,3 @@ Use ESLint. We don't want to talk about formatting. When we have a discussion ar
 
 # TODO (2020-07-06)
 - Add ESLint --fix to pre-commit hook
-- Add common rules to ESLint in the root directory
-
-# TODO Friday
-- Check up on ESLint progress
-- Answer questions on some recent pains
-- Create a new card from scratch, together
