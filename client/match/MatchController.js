@@ -19,7 +19,7 @@ module.exports = function (deps) {
 
   function start() {
     socket.on("match", onSocketMatchEvent);
-    emit("start", { deckId: getActiveDeck() });
+    emit("start", { deckId: getActiveDeck() || "Regular" });
 
     document.addEventListener("visibilitychange", onVisibilityChange);
   }
