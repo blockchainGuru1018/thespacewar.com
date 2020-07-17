@@ -5,24 +5,27 @@ module.exports = function (deps) {
 
   return {
     create,
-    createCardsForDeck,
+    createCardsForDeckById,
   };
 
   function create(cards) {
     return Deck(cards);
   }
 
-  function createCardsForDeck(useTheSwarmDeck = false) {
-    const deck = createDeck(useTheSwarmDeck);
+  function createCardsForDeckById(deckId) {
+    const deck = createDeckById(deckId);
     shuffle(deck);
     return deck;
   }
 
-  function createDeck(useTheSwarmDeck) {
-    if (useTheSwarmDeck) {
-      return cardDataAssembler.createSwarmDeck();
-    } else {
-      return cardDataAssembler.createRegularDeck();
+  function createDeckById(deckId) {
+    switch (deckId) {
+      case "Regular":
+        return cardDataAssembler.createRegularDeck();
+      case "The-Swarm":
+        return cardDataAssembler.createSwarmDeck();
+      default:
+        throw new Error("Invalid Deck ID");
     }
   }
 };

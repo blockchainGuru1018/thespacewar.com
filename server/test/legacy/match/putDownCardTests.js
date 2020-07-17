@@ -1671,9 +1671,13 @@ module.exports = {
     async setUp() {
       this.firstPlayerConnection = FakeConnection2(["stateChanged"]);
       const players = [Player("P1A", this.firstPlayerConnection)];
-      this.match = createMatch({ players }, [
-        { id: MissilesLaunched.CommonId, price: "1" },
-      ]);
+      this.match = createMatch(
+        { players },
+        {
+          regular: [{ id: MissilesLaunched.CommonId, price: "1" }],
+          theSwarm: [],
+        }
+      );
       this.match.restoreFromState(
         createState({
           turn: 1,

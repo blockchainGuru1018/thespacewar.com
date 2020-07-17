@@ -5,7 +5,10 @@ const CardDataAssembler = require("../../../shared/CardDataAssembler.js");
 const CardInfoRepository = require("../../../shared/CardInfoRepository.js");
 const Match = require("../../match/Match.js");
 
-module.exports = function createMatch(deps = {}, testCardData = []) {
+module.exports = function createMatch(
+  deps = {},
+  testCardData = { theSwarm: [], regular: [] }
+) {
   if (deps.players && deps.players.length === 1) {
     deps.players.push(Player("P2A"));
   }

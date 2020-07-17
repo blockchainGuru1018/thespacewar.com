@@ -3,7 +3,6 @@
     <div class="loading-backdropLetterBoxWrapper">
       <div class="background" />
     </div>
-    <ToggleSwarmDeckButton :class="showSwarmDeckButton" />
     <div v-if="!loadingDone" class="loading-bar">
       <div :style="progressStyle" class="loading-barProgress" />
     </div>
@@ -44,14 +43,6 @@ module.exports = {
       return {
         width: `${progress}%`,
       };
-    },
-    showSwarmDeckButton() {
-      const classes = ["wrapper-hide"];
-      if (this.loadingDone) {
-        classes.push("view-wrapper--visible");
-      }
-
-      return classes;
     },
     viewClasses() {
       const classes = ["view-wrapper"];

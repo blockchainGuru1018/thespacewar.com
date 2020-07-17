@@ -30,12 +30,27 @@
     </div>
 
     <div class="alert alert-primary" role="alert">
-        <div class="form-group form-check">
-            <input type="checkbox" onclick="handleClick(this)" data-feature="the-swarm-toggle" class="form-check-input"
-                   id="the-swarm">
-            <label class="form-check-label" for="the-swarm"><strong> The swarm deck</strong> (this will display in the
-                main menu the toggler for use the swarm deck)</label>
+        <div class="form-check">
+            <input class="form-check-input" onclick="handleDeckOption(this)" type="radio" name="active-Deck"
+                   id="regularDeck" value="Regular">
+            <label class="form-check-label" for="regularDeck">
+                Regular Deck
+            </label>
         </div>
+        <div class="form-check">
+            <input class="form-check-input" onclick="handleDeckOption(this)" type="radio" name="active-Deck"
+                   id="theSwarm" value="The-Swarm">
+            <label class="form-check-label" for="theSwarm">
+                The Swarm Deck
+            </label>
+        </div>
+
+        <!--        <div class="form-group form-check">-->
+        <!--            <input type="checkbox" onclick="handleClick(this)" data-feature="the-swarm-toggle" class="form-check-input"-->
+        <!--                   id="the-swarm">-->
+        <!--            <label class="form-check-label" for="the-swarm"><strong> The swarm deck</strong> (this will display in the-->
+        <!--                main menu the toggler for use the swarm deck)</label>-->
+        <!--        </div>-->
     </div>
 </div>
 </body>
@@ -45,7 +60,17 @@
         $("input:checkbox").each(function (index, element) {
             $(this).prop("checked", localStorage.getItem(`ft-${this.getAttribute("data-feature")}`) === 'true');
         });
+
+        $("input:radio").each(function (index, element) {
+            const activeDeck = JSON.parse(localStorage.getItem("active-deck"));
+            $(this).prop("checked", this.getAttribute("value") === activeDeck);
+        });
     });
+
+    function handleDeckOption(option) {
+        console.log(option.value)
+        localStorage.setItem("active-deck", JSON.stringify(option.value));
+    }
 
     handleClick = (cb) => {
         localStorage.setItem(`ft-${cb.getAttribute("data-feature")}`, cb.checked);
