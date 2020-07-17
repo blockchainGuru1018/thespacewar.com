@@ -17,6 +17,7 @@ function createCard(Constructor, options = {}) {
     cardEffect: {
       attackBoostForCardType: () => 0,
       cardTypeCanMoveOnTurnPutDown: () => false,
+      costCardIncrement: () => 0,
     },
     playerRuleService: playerRuleServiceFactory.withStubs(),
     turnControl: { playerHasControlOfOpponentsTurn: () => false },
