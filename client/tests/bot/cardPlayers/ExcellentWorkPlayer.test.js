@@ -13,9 +13,10 @@ test("should play Excellent Work to station row decided by decider", () => {
     decideRowForStationCard: () => "action",
   });
 
-  player.play({ id: "C1A" });
+  player.play({ id: "C1A", cost: 2 });
 
   expect(matchController.emit).toBeCalledWith("putDownCard", {
+    cardCost: 2,
     cardId: "C1A",
     location: "station-action",
     choice: "putDownAsExtraStationCard",
@@ -32,9 +33,10 @@ test('when can NOT put down station card should play Excellent Work with choice 
     },
   });
 
-  player.play({ id: "C1A" });
+  player.play({ id: "C1A", cost: 2 });
 
   expect(matchController.emit).toBeCalledWith("putDownCard", {
+    cardCost: 2,
     cardId: "C1A",
     location: "zone",
     choice: "draw",

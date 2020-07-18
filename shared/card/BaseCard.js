@@ -67,7 +67,7 @@ class BaseCard {
     return this._cardEffect.attackBoostForCardType(this.type);
   }
 
-  get costIncrease() {
+  get costInflation() {
     return this._cardEffect.costCardIncrement() || 0;
   }
 

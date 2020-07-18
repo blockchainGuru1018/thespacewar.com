@@ -118,7 +118,7 @@ describe("Discovery:", () => {
             { place: "draw", id: "C2A" },
           ],
           events: [
-            PutDownCardEvent({
+            PutDownCardEvent.forTest({
               cardId: "C1A",
               cardCommonId: DiscoveryCommonId,
               location: "zone",
@@ -171,7 +171,7 @@ describe("Discovery:", () => {
             { place: "draw", id: "C2A" },
           ],
           events: [
-            PutDownCardEvent({
+            PutDownCardEvent.forTest({
               cardId: "C1A",
               cardCommonId: DiscoveryCommonId,
               location: "zone",
@@ -226,10 +226,12 @@ describe("Discovery:", () => {
       await click('.cardChoiceDialog-choice:contains("draw")');
     });
     test('should emit "putDownCard"', () => {
+      // assert.calledOnce(matchController.emit);
       assert.calledOnceWith(matchController.emit, "putDownCard", {
         location: "zone",
         cardId: "C1A",
         choice: "draw",
+        cardCost: 0,
       });
     });
     test("should NOT show choice dialog", () => {
@@ -282,6 +284,7 @@ describe("Discovery:", () => {
         location: "zone",
         cardId: "C1A",
         choice: "discard",
+        cardCost: 0,
       });
     });
     test("should NOT show choice dialog", () => {

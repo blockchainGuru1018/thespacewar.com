@@ -22,11 +22,18 @@ module.exports = {
 
     const actionPoints = calculator.calculate({
       events: [
-        { type: "putDownCard", cardCommonId: "C1A", turn: 1, location: "zone" },
+        {
+          type: "putDownCard",
+          cardCost: 1,
+          cardCommonId: "C1A",
+          turn: 1,
+          location: "zone",
+        },
         {
           type: "putDownCard",
           cardCommonId: "C2A",
           turn: 1,
+          cardCost: 1,
           location: "station-action",
         },
       ],
@@ -47,11 +54,18 @@ module.exports = {
 
     const actionPoints = calculator.calculate({
       events: [
-        { type: "putDownCard", cardCommonId: "C1A", turn: 1, location: "zone" },
+        {
+          type: "putDownCard",
+          cardCost: 1,
+          cardCommonId: "C1A",
+          turn: 1,
+          location: "zone",
+        },
         {
           type: "putDownCard",
           cardCommonId: "C2A",
           turn: 1,
+          cardCost: 1,
           location: "station-action",
         },
       ],
@@ -71,12 +85,33 @@ module.exports = {
 
     const actionPoints = calculator.calculate({
       events: [
-        DiscardCardEvent({ turn: 1, cardCommonId: "C1A", phase: "action" }),
-        DiscardCardEvent({ turn: 1, cardCommonId: "C1A", phase: "action" }),
-        DiscardCardEvent({ turn: 1, cardCommonId: "C1A", phase: "action" }),
-        PutDownCardEvent({ turn: 1, location: "zone", cardCommonId: "C1A" }),
-        PutDownCardEvent({
+        DiscardCardEvent({
           turn: 1,
+          cardCost: 1,
+          cardCommonId: "C1A",
+          phase: "action",
+        }),
+        DiscardCardEvent({
+          turn: 1,
+          cardCost: 1,
+          cardCommonId: "C1A",
+          phase: "action",
+        }),
+        DiscardCardEvent({
+          turn: 1,
+          cardCost: 1,
+          cardCommonId: "C1A",
+          phase: "action",
+        }),
+        PutDownCardEvent.forTest({
+          turn: 1,
+          cardCost: 1,
+          location: "zone",
+          cardCommonId: "C1A",
+        }),
+        PutDownCardEvent.forTest({
+          turn: 1,
+          cardCost: 1,
           location: "station-action",
           cardCommonId: "C1A",
         }),
@@ -97,9 +132,15 @@ module.exports = {
 
     const actionPoints = calculator.calculate({
       events: [
-        PutDownCardEvent({ turn: 1, location: "zone", cardCommonId: "C1A" }),
         PutDownCardEvent({
           turn: 1,
+          cardCost: 0,
+          location: "zone",
+          cardCommonId: "C1A",
+        }),
+        PutDownCardEvent({
+          turn: 1,
+          cardCost: 0,
           location: "station-action",
           cardCommonId: "C1A",
         }),
@@ -120,8 +161,18 @@ module.exports = {
 
     const actionPoints = calculator.calculate({
       events: [
-        DiscardCardEvent({ turn: 1, phase: "action", cardCommonId: "C1A" }),
-        PutDownCardEvent({ turn: 1, location: "zone", cardCommonId: "C1A" }),
+        DiscardCardEvent({
+          turn: 1,
+          phase: "action",
+          cardCost: 1,
+          cardCommonId: "C1A",
+        }),
+        PutDownCardEvent.forTest({
+          turn: 1,
+          location: "zone",
+          cardCommonId: "C1A",
+          cardCost: 0,
+        }),
       ],
       turn: 1,
       phase: "discard",
@@ -139,12 +190,18 @@ module.exports = {
 
     const actionPoints = calculator.calculate({
       events: [
-        PutDownCardEvent({
+        PutDownCardEvent.forTest({
           turn: 1,
           location: "station-action",
+          cardCost: 1,
           cardCommonId: "C1A",
         }),
-        PutDownCardEvent({ turn: 1, location: "zone", cardCommonId: "C1A" }),
+        PutDownCardEvent.forTest({
+          turn: 1,
+          cardCost: 1,
+          location: "zone",
+          cardCommonId: "C1A",
+        }),
       ],
       turn: 1,
       phase: "action",
@@ -162,7 +219,7 @@ module.exports = {
 
     const actionPoints = calculator.calculate({
       events: [
-        PutDownCardEvent({
+        PutDownCardEvent.forTest({
           turn: 1,
           location: "zone",
           cardCommonId: "C1A",
@@ -226,7 +283,11 @@ module.exports = {
 
       const actionPoints = calculator.calculate({
         events: [
-          PutDownCardEvent({ turn: 1, location: "zone", cardCommonId: "C1A" }),
+          PutDownCardEvent.forTest({
+            turn: 1,
+            location: "zone",
+            cardCommonId: "C1A",
+          }),
         ],
         turn: 2,
         phase: "action",
@@ -244,7 +305,7 @@ module.exports = {
 
       const actionPoints = calculator.calculate({
         events: [
-          PutDownCardEvent({
+          PutDownCardEvent.forTest({
             turn: 1,
             location: "station-draw",
             cardCommonId: "C1A",
@@ -266,7 +327,7 @@ module.exports = {
 
       const actionPoints = calculator.calculate({
         events: [
-          PutDownCardEvent({
+          PutDownCardEvent.forTest({
             turn: 1,
             location: "zone",
             cardId: "C1A:1",
@@ -294,7 +355,7 @@ module.exports = {
 
       const actionPoints = calculator.calculate({
         events: [
-          PutDownCardEvent({
+          PutDownCardEvent.forTest({
             turn: 1,
             location: "zone",
             cardId: "C1A",
@@ -359,6 +420,7 @@ module.exports = {
         {
           type: "putDownCard",
           turn: 1,
+          cardCost: 1,
           cardCommonId: "C1A",
           putDownAsExtraStationCard: true,
           location: "station-draw",
@@ -382,6 +444,7 @@ module.exports = {
       events: [
         {
           type: "putDownCard",
+          cardCost: 1,
           turn: 1,
           cardCommonId: "C1A",
           putDownAsExtraStationCard: true,
@@ -422,6 +485,7 @@ module.exports = {
       events: [
         {
           type: "putDownCard",
+          cardCost: 1,
           turn: 1,
           cardCommonId: "C1A",
           startingStation: true,

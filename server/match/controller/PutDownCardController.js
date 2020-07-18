@@ -35,6 +35,7 @@ function PutDownCardController(deps) {
   };
 
   function onPutDownCard(playerId, { location, cardId, choice }) {
+    console.log(playerId);
     const playerStateService = playerServiceProvider.getStateServiceById(
       playerId
     );
@@ -261,6 +262,7 @@ function PutDownCardController(deps) {
     );
     playerStateService.addStationCard(cardData, location, {
       putDownAsExtraStationCard: choice === "putDownAsExtraStationCard",
+      cardCost: 2,
     });
   }
 
