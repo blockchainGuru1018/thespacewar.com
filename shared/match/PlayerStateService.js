@@ -215,14 +215,14 @@ class PlayerStateService {
   getMatchingBehaviourCardsInBoard(matcher) {
     const opponentId = this._matchService.getOpponentId(this._playerId);
     const opponentState = this._matchService.getPlayerState(opponentId);
-let opponentCards=[];
-    if(opponentState){
-opponentCards=opponentState.cardsInZone;
+    let opponentCards = [];
+    if (opponentState) {
+      opponentCards = opponentState.cardsInZone;
     }
     //TODO This now returns behaviour cards, to have it return card data would be a hassle. Perhaps the responsibility to create cards could lie within playerStateService?
     return [
       ...this.getMatchingBehaviourCardsInZone(matcher),
-      ...[...this.getCardsInOpponentZone(),...opponentCards ]
+      ...[...this.getCardsInOpponentZone(), ...opponentCards]
         .map((c) => this.createBehaviourCard(c))
         .filter(matcher),
     ];
@@ -542,6 +542,7 @@ opponentCards=opponentState.cardsInZone;
         turn: currentTurn,
         location,
         cardId: cardData.id,
+        cardCost: cardData.cost + cardData.costInflation,
         cardCommonId: cardData.commonId,
         putDownAsExtraStationCard,
         startingStation,
@@ -599,6 +600,7 @@ opponentCards=opponentState.cardsInZone;
         turn: currentTurn,
         location: "zone",
         cardId: cardData.id,
+        cardCost: cardData.cost,
         cardCommonId: cardData.commonId,
         grantedForFreeByEvent,
       })
@@ -624,6 +626,7 @@ opponentCards=opponentState.cardsInZone;
         turn: currentTurn,
         location: "zone",
         cardId: cardData.id,
+        cardCost: cardData.cost + cardData.costIncrease,
         cardCommonId: cardData.commonId,
       })
     );

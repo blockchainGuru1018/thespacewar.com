@@ -68,8 +68,12 @@ describe("action phase", () => {
         currentPlayer: "P1A",
         phase: "action",
         events: [
-          PutDownCardEvent({ turn: 2, location: "zone" }),
-          PutDownCardEvent({ turn: 2, location: "station-action" }),
+          PutDownCardEvent.forTest({ turn: 2, location: "zone", cardCost: 3 }),
+          PutDownCardEvent.forTest({
+            turn: 2,
+            location: "station-action",
+            cardCost: 3,
+          }),
         ],
         stationCards: [
           { place: "action" },
@@ -95,8 +99,12 @@ describe("action phase", () => {
         currentPlayer: "P1A",
         phase: "action",
         events: [
-          PutDownCardEvent({ turn: 2, location: "zone" }),
-          PutDownCardEvent({ turn: 2, location: "station-action" }),
+          PutDownCardEvent.forTest({ turn: 2, location: "zone", cardCost: 3 }),
+          PutDownCardEvent.forTest({
+            turn: 2,
+            location: "station-action",
+            cardCost: 3,
+          }),
         ],
         stationCards: [
           { place: "action" },
@@ -122,8 +130,8 @@ describe("action phase", () => {
         currentPlayer: "P1A",
         phase: "action",
         events: [
-          PutDownCardEvent({ turn: 2, location: "zone" }),
-          PutDownCardEvent({ turn: 2, location: "station-action" }),
+          PutDownCardEvent.forTest({ turn: 2, location: "zone", cardCost: 3 }),
+          PutDownCardEvent.forTest({ turn: 2, location: "station-action" }),
         ],
         stationCards: [
           { place: "action" },
@@ -154,7 +162,7 @@ describe("action phase", () => {
         turn: 2,
         currentPlayer: "P1A",
         phase: "action",
-        events: [PutDownCardEvent({ turn: 2, location: "zone" })],
+        events: [PutDownCardEvent.forTest({ turn: 2, location: "zone" })],
         stationCards: [{ place: "action" }],
         cardsOnHand: [createCard({ id: "C2A" }), createCard({ id: "C3A" })],
       })
@@ -178,7 +186,9 @@ describe("action phase", () => {
         turn: 2,
         currentPlayer: "P1A",
         phase: "action",
-        events: [PutDownCardEvent({ turn: 2, location: "station-action" })],
+        events: [
+          PutDownCardEvent.forTest({ turn: 2, location: "station-action" }),
+        ],
         stationCards: [{ place: "action" }],
         cardsOnHand: [createCard({ id: "C2A" }), createCard({ id: "C3A" })],
       })

@@ -159,7 +159,7 @@ class CanThePlayer {
   affordCard(card) {
     return (
       this._playerActionPointsCalculator.calculate() >=
-      card.cost + card.costIncrease
+      card.cost + (card.costInflation || 0)
     );
   }
 

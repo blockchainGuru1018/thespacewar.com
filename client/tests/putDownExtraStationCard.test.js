@@ -62,7 +62,7 @@ describe("when has already put down station card this turn and holding Excellent
           },
         ],
         events: [
-          PutDownCardEvent({
+          PutDownCardEvent.forTest({
             turn: 1,
             location: "station-action",
             cardId: "C1A",
@@ -104,7 +104,7 @@ describe("when has already put down station card this turn and holding Excellent
           },
         ],
         events: [
-          PutDownCardEvent({
+          PutDownCardEvent.forTest({
             turn: 1,
             location: "station-action",
             cardId: "C1A",
@@ -201,7 +201,12 @@ describe('have put down Excellent work and selected "Put down as extra station c
         currentPlayer: "P1A",
         phase: "action",
         cardsOnHand: [
-          { id: "C1A", type: "event", commonId: ExcellentWork.CommonId },
+          {
+            id: "C1A",
+            type: "event",
+            cost: 2,
+            commonId: ExcellentWork.CommonId,
+          },
         ],
         stationCards: [{ id: "C2A", place: "action" }],
       })
@@ -217,6 +222,7 @@ describe('have put down Excellent work and selected "Put down as extra station c
 
   test("should emit putDownCard", () => {
     assert.calledWith(matchController.emit, "putDownCard", {
+      cardCost: 2,
       location: "station-draw",
       cardId: "C1A",
       choice: "putDownAsExtraStationCard",

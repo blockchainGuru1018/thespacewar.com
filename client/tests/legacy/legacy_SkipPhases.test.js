@@ -117,7 +117,7 @@ describe("skip phases with NO actions:", () => {
           phase: "action",
           cardsInZone: [createCard({ id: "C1A", commonId: CommonShipId })],
           events: [
-            PutDownCardEvent({
+            PutDownCardEvent.forTest({
               turn: 1,
               cardId: "C1A",
               location: "zone",
@@ -147,7 +147,7 @@ describe("skip phases with NO actions:", () => {
             createCard({ id: "C1A", commonId: CommonShipId }),
           ],
           events: [
-            PutDownCardEvent({
+            PutDownCardEvent.forTest({
               turn: 1,
               cardId: "C1A",
               location: "zone",
@@ -182,7 +182,7 @@ describe("skip phases with NO actions:", () => {
             createCard({ id: "C1A", commonId: CommonShipId }),
           ],
           events: [
-            PutDownCardEvent({
+            PutDownCardEvent.forTest({
               turn: 1,
               cardId: "C1A",
               location: "zone",
@@ -215,7 +215,7 @@ describe("skip phases with NO actions:", () => {
           phase: "action",
           cardsInZone: [createCard({ id: "C1A", commonId: FastMissileId })],
           events: [
-            PutDownCardEvent({
+            PutDownCardEvent.forTest({
               turn: 1,
               cardId: "C1A",
               location: "zone",
