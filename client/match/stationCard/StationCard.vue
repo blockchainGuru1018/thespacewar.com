@@ -16,9 +16,21 @@
       @mousedown.right="cardLongpress"
       @contextmenu.prevent="(e) => e.preventDefault()"
     >
+      <!--      TODO: get better css here-->
       <div v-if="!isHoldingCard" class="actionOverlays">
         <portal-target :name="`stationCard-actionOverlays--${stationRow}Row`" />
-
+        <div
+          v-if="
+            stationCard.flipped &&
+              !isOpponentStationCard &&
+            createCard(stationCard.card).costInflation !== 0
+          "
+          :class="['card-attackBoostIndicatorWrapper']"
+        >
+          <div class="card-stationCostInflationWrapper">
+            +{{ createCard(stationCard.card).costInflation }}
+          </div>
+        </div>
         <div
           v-if="canPlayCard"
           class="movable moveToZone"
