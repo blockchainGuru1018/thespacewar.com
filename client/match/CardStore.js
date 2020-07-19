@@ -284,7 +284,6 @@ module.exports = function (deps) {
         choiceData,
       });
     } else {
-      console.log(cardData);
       await dispatch("putDownCard", { location: "zone", choice, cardData });
     }
 
@@ -494,17 +493,18 @@ module.exports = function (deps) {
   }
 
   async function putDownCard(
-    { dispatch },
+    { dispatch, rootGetters },
     { cardData, choice = null, location }
   ) {
     dispatch("_removeCardLocal", cardData.id);
     dispatch("_addPutDownCardEvent", { location, cardData });
     dispatch("_putDownCardLocal", { location, cardData });
-    console.log("todo aca");
+    const card = rootGetters["match/createCard"](cardData);
+
     putDownCardRemote({
       location,
       cardId: cardData.id,
-      cardCost: cardData.cost,
+      cardCost: cardData.cost + (card.costInflation || 0),
       choice,
     });
   }
@@ -560,8 +560,6 @@ module.exports = function (deps) {
     const matchState = rootState.match;
     const eventFactory = rootGetters["match/eventFactory"];
     const card = rootGetters["match/createCard"](cardData);
-    console.log(card.costInflation);
-    console.log(card.cost);
 
     card.eventSpecsWhenPutDownInHomeZone
       .map(eventFactory.fromSpec)

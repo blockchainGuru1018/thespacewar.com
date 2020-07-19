@@ -37,12 +37,14 @@ function PutDownCardController(deps) {
   };
 
   function onPutDownCard(playerId, { location, cardId, choice }) {
-    console.log(playerId);
     const playerStateService = playerServiceProvider.getStateServiceById(
       playerId
     );
     const cardData = playerStateService.findCardFromAnySource(cardId);
     if (!cardData) throw new CheatError(`Cannot find card`);
+
+    const behaviorCard = playerStateService.createBehaviourCard(cardData);
+    cardData.costInflation = behaviorCard.costInflation || 0;
 
     checkIfCanPutDownCard({ playerId, location, cardData, choice });
 
@@ -177,7 +179,7 @@ function PutDownCardController(deps) {
 
       const playerActionPoints = playerStateService.getActionPointsForPlayer();
       const canAffordCard =
-        playerActionPoints >= card.cost + (cardData.costIncrease || 0);
+        playerActionPoints >= card.cost + (cardData.costInflation || 0);
       if (!canAffordCard) {
         throw new CheatError("Cannot afford card");
       }

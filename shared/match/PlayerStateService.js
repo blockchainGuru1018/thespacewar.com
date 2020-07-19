@@ -542,7 +542,7 @@ class PlayerStateService {
         turn: currentTurn,
         location,
         cardId: cardData.id,
-        cardCost: cardData.cost + cardData.costInflation,
+        cardCost: cardData.cost + (cardData.costInflation || 0),
         cardCommonId: cardData.commonId,
         putDownAsExtraStationCard,
         startingStation,
@@ -579,6 +579,7 @@ class PlayerStateService {
     { grantedForFreeByEvent = false } = {}
   ) {
     const currentTurn = this._matchService.getTurn();
+    console.log(cardData);
     this.storeEvent(
       PutDownCardEvent({
         turn: currentTurn,
@@ -600,7 +601,7 @@ class PlayerStateService {
         turn: currentTurn,
         location: "zone",
         cardId: cardData.id,
-        cardCost: cardData.cost,
+        cardCost: cardData.cost + (cardData.costInflation || 0),
         cardCommonId: cardData.commonId,
         grantedForFreeByEvent,
       })
@@ -626,7 +627,7 @@ class PlayerStateService {
         turn: currentTurn,
         location: "zone",
         cardId: cardData.id,
-        cardCost: cardData.cost + cardData.costIncrease,
+        cardCost: cardData.cost + (cardData.costInflation || 0),
         cardCommonId: cardData.commonId,
       })
     );
