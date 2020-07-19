@@ -92,7 +92,7 @@ describe("when opponent use Fatal Error to destroy a card", () => {
       cardCommonId: "31",
       cardGroups: [
         {
-          cards: [{ commonId: "38", cost: 2, id: "C1A" }],
+          cards: [{ commonId: "38", cost: 2, id: "C1A", costInflation: 0 }],
           source: "opponentAny",
         },
       ],
