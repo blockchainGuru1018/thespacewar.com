@@ -558,11 +558,11 @@
             {
                 "id": "86",
                 "name": "Destroy Duration",
-                "price": "2",
-                "type_card": "blue",
-                "detail": "After first turn: Sacrifice instead of attacking to destroy a duration card.",
-                "defense": "2",
-                "attack": "2",
+                "price": "1",
+                "type_card": "orange",
+                "detail": "Destroy a duration card [ OR ] Draw 2 cards.",
+                "defense": "0",
+                "attack": "0",
                 "number_copies": "2",
                 "author": "",
                 "deck": "2"
@@ -677,5 +677,5 @@
             }
         ]
     },
-    "saveTime": 1595023646430
+    "saveTime": 1595193673827
 }
