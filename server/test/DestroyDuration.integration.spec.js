@@ -1,36 +1,22 @@
 const FakeCardDataAssembler = require("../../shared/test/testUtils/FakeCardDataAssembler.js");
 const createCard = FakeCardDataAssembler.createCard;
 const DestroyDuration = require("../../shared/card/DestroyDuration.js");
-const PutDownCardEvent = require("../../shared/PutDownCardEvent.js");
 const setupIntegrationTest = require("./testUtils/setupIntegrationTest.js");
 
 const DestroyDurationCommonId = DestroyDuration.CommonId;
 
-const SameCostAsFatalError = 0; //Can be whatever, just has to be consistent in test
-
 describe("Destroy Duration Card", () => {
-  it("Should be able to sacrifice after first turn and if have not attacked yet", () => {
-    const {
-      match,
-      secondPlayerAsserter,
-      firstPlayerAsserter,
-    } = setupIntegrationTest({
+  it("When select draw should have requirements for drawing 2 cards", () => {
+    const { match, firstPlayerAsserter } = setupIntegrationTest({
       turn: 2,
       playerStateById: {
         P1A: {
-          phase: "attack",
-          events: [
-            PutDownCardEvent.forTest({
-              turn: 1,
-              location: "zone",
-              cardId: "C1A",
-            }),
-          ],
-          cardsInZone: [
+          phase: "action",
+          cardsInDeck: [createCard({ id: "C2A" }), createCard({ id: "C3A" })],
+          cardsOnHand: [
             createCard({
               commonId: DestroyDurationCommonId,
               id: "C1A",
-              type: "spaceShip",
             }),
           ],
         },
@@ -39,28 +25,31 @@ describe("Destroy Duration Card", () => {
         },
       },
     });
+    match.putDownCard("P1A", {
+      location: "zone",
+      cardId: "C1A",
+      choice: "draw",
+    });
 
-    match.sacrifice("P1A", { cardId: "C1A", targetCardId: "C2A" });
-
-    secondPlayerAsserter.hasDiscardedCard("C2A");
-    firstPlayerAsserter.hasDiscardedCard("C1A");
+    firstPlayerAsserter.hasRequirement({
+      cardCommonId: DestroyDurationCommonId,
+      count: 2,
+      type: "drawCard",
+    });
   });
 
-  it("Should not be able to sacrifice on first turn", () => {
-    const { match } = setupIntegrationTest({
-      turn: 1,
+  it("When select destroy should have requirements find 1 card in the opponent cards in play", () => {
+    const { match, firstPlayerAsserter } = setupIntegrationTest({
+      turn: 2,
       playerStateById: {
         P1A: {
-          phase: "attack",
-          events: [
-            PutDownCardEvent.forTest({
-              turn: 1,
-              location: "zone",
-              cardId: "C1A",
+          phase: "action",
+          cardsInDeck: [createCard({ id: "C2A" }), createCard({ id: "C3A" })],
+          cardsOnHand: [
+            createCard({
+              commonId: DestroyDurationCommonId,
+              id: "C1A",
             }),
-          ],
-          cardsInZone: [
-            createCard({ id: "C1A", commonId: DestroyDurationCommonId }),
           ],
         },
         P2A: {
@@ -68,20 +57,28 @@ describe("Destroy Duration Card", () => {
         },
       },
     });
+    match.putDownCard("P1A", {
+      location: "zone",
+      cardId: "C1A",
+      choice: "destroy",
+    });
 
-    const error = catchError(() =>
-      match.sacrifice("P1A", { cardId: "C1A", targetCardId: "C2A" })
-    );
-
-    expect(error).toBeTruthy();
-    expect(error.message).toBe("Cannot sacrifice");
+    firstPlayerAsserter.hasRequirement({
+      cancelable: false,
+      cardCommonId: "86",
+      cardGroups: [
+        {
+          cards: [{ cost: 0, id: "C2A", type: "duration" }],
+          source: "opponentCardsInZone",
+        },
+      ],
+      cardId: "C1A",
+      common: false,
+      count: 1,
+      submitOnEverySelect: false,
+      target: "opponentDiscardPile",
+      type: "findCard",
+      waiting: false,
+    });
   });
 });
-
-function catchError(callback) {
-  try {
-    callback();
-  } catch (error) {
-    return error;
-  }
-}

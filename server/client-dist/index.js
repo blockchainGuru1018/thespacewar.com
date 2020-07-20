@@ -333,7 +333,7 @@ eval("\n\nconst BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nconst BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nconst CanBeSacrified = __webpack_require__(/*! ./mixins/CanBeSacrificed.js */ \"../shared/card/mixins/CanBeSacrificed.js\");\n\nmodule.exports = class DestroyDuration extends CanBeSacrified(BaseCard) {\n  constructor(deps) {\n    super(deps);\n  }\n\n  static get CommonId() {\n    return \"86\";\n  }\n\n  canTargetCardForSacrifice(otherCard) {\n    if (otherCard.type !== \"duration\") return false;\n    if (otherCard.playerId === this.playerId) return false;\n    return true;\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/DestroyDuration.js?");
+eval("\n\nconst BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nconst info = __webpack_require__(/*! ./info/86.config */ \"../shared/card/info/86.config.js\");\n\nmodule.exports = class DestroyDuration extends BaseCard {\n  constructor(deps) {\n    super(deps);\n  }\n\n  static get CommonId() {\n    return \"86\";\n  }\n\n  static get Info() {\n    return info;\n  }\n\n  get choicesWhenPutDownInHomeZone() {\n    return info.choicesWhenPutDownInHomeZone;\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/DestroyDuration.js?");
 
 /***/ }),
 
@@ -1004,6 +1004,18 @@ eval("\n\nconst CommonId = \"78\";\nmodule.exports = {\n  CommonId,\n  requireme
 
 "use strict";
 eval("\n\nconst CommonId = \"84\";\nmodule.exports = {\n  CommonId,\n  requirementSpecsWhenPutDownInHomeZone: {\n    forOpponent: [],\n    forPlayer: [{\n      type: \"drawCard\",\n      count: 1,\n      cardCommonId: CommonId\n    }]\n  }\n};\n\n//# sourceURL=webpack:///../shared/card/info/84.config.js?");
+
+/***/ }),
+
+/***/ "../shared/card/info/86.config.js":
+/*!****************************************!*\
+  !*** ../shared/card/info/86.config.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\nconst CommonId = \"86\";\nconst DrawCardsCount = 2;\nmodule.exports = {\n  CommonId,\n  choiceToRequirementSpec: {\n    draw: {\n      forOpponent: [],\n      forPlayer: [{\n        type: \"drawCard\",\n        count: DrawCardsCount,\n        cardCommonId: CommonId\n      }]\n    },\n    destroy: {\n      forOpponent: [],\n      forPlayer: [{\n        type: \"findCard\",\n        count: 1,\n        sources: [\"opponentCardsInZone\"],\n        target: \"opponentDiscardPile\",\n        filter: {\n          type: \"duration\"\n        }\n      }]\n    }\n  },\n  choicesWhenPutDownInHomeZone: [{\n    name: \"destroy\",\n    text: \"Destroy any duration card\"\n  }, {\n    name: \"draw\",\n    text: `Draw ${DrawCardsCount} cards`\n  }]\n};\n\n//# sourceURL=webpack:///../shared/card/info/86.config.js?");
 
 /***/ }),
 
