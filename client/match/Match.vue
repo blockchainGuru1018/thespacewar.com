@@ -696,7 +696,7 @@ module.exports = {
     },
     opponentStationStyle() {
       return {
-        opacity: this.selectingStartingStationCards ? 0 : 1,
+        opacity: 1,
       };
     },
     millCardCount() {
