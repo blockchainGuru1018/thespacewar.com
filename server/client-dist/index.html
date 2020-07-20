@@ -69,6 +69,25 @@
     <link rel="shortcut icon" href="https://images.thespacewar.com/favicon.ico" type="image/x-icon" />
     <script src="/socket.io/socket.io.js"></script>
     <script src="/libraries/leader-line.js"></script>
+    <script type="text/javascript">
+    var viewport_meta = document.getElementById('viewport-meta');
+    var viewport_set = function()
+    {
+      if ( screen.width >= 1440 )
+        viewport_meta.setAttribute( 'content', 'width=device-width, user-scalable=no, initial-scale=0.7, maximum-scale=0.7, minimum-scale=0.7' );
+      if ( screen.width < 1440 && screen.width >= 1280 )
+        viewport_meta.setAttribute( 'content', 'width=device-width, user-scalable=no, initial-scale=0.65, maximum-scale=0.65, minimum-scale=0.65' );
+      if ( screen.width < 1280 && screen.width >= 1024 )
+        viewport_meta.setAttribute( 'content', 'width=device-width, user-scalable=no, initial-scale=0.6, maximum-scale=0.6, minimum-scale=0.6' );
+      if ( screen.width < 1024 && screen.width >= 800 )
+        viewport_meta.setAttribute( 'content', 'width=device-width, user-scalable=no, initial-scale=0.5, maximum-scale=0.5, minimum-scale=0.5' );
+    }
+    viewport_set();
+    window.onresize = function()
+    {
+    	viewport_set();
+    }
+    </script>
 </head>
 <body>
 <script src="index.js"></script>
