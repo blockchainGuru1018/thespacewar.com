@@ -58,11 +58,9 @@ module.exports = {
   right: 0;
   bottom: 0;
   z-index: 2;
-  background: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: opacity 0.25s ease-out;
 }
 
 .opponentPreGameOverlay-status {
