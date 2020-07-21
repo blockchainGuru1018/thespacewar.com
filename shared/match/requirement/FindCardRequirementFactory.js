@@ -50,7 +50,10 @@ function FindCardRequirementFactory({ sourceFetcher, requirementSpec, card }) {
     }
     return {
       source,
-      cards: sourceFetcher[source](filters),
+      cards:
+        source === "currentCardZone"
+          ? sourceFetcher[source](filters, card.id)
+          : sourceFetcher[source](filters),
     };
   }
 }

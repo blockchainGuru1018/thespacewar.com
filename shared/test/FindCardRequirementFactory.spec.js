@@ -135,6 +135,56 @@ test("can create a requirement for cardCommonId ", () => {
   });
 });
 
+test("can create a find requirement from current card zone", () => {
+  const testHelper = TestHelper(
+    createState({
+      playerStateById: {
+        P1A: {
+          discardedCards: [createCard({ id: "1" }), createCard({ id: "2" })],
+          cardsInZone: [
+            createCard({ id: "3", type: "duration" }),
+            createCard({ id: "4", type: "duration" }),
+          ],
+        },
+      },
+    })
+  );
+  const findCardRequirementFactory = FindCardRequirementFactory({
+    sourceFetcher: testHelper.sourceFetcher("P1A"),
+    card: { id: "3", commonId: 77 },
+    requirementSpec: {
+      type: "findCard",
+      count: 2,
+      filter: {
+        type: "duration",
+      },
+      sources: ["currentCardZone"],
+      target: "currentCardZone",
+      submitOnEverySelect: false,
+    },
+  });
+
+  const result = findCardRequirementFactory.create();
+
+  expect(result).toEqual({
+    type: "findCard",
+    cardGroups: expect.arrayContaining([
+      {
+        source: "currentCardZone",
+        cards: [expect.objectContaining({ id: "4", type: "duration" })],
+      },
+    ]),
+    cardCommonId: 77,
+    count: 2,
+    cardId: "3",
+    target: "currentCardZone",
+    common: false,
+    waiting: false,
+    cancelable: false,
+    submitOnEverySelect: false,
+  });
+});
+
 function stationCard(place, id, commonId) {
   return {
     place: place,

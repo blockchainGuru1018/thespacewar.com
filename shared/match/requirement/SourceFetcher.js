@@ -74,6 +74,15 @@ function SourceFetcher({
       .map((card) => card.getCardData());
   }
 
+  function currentCardZone(specFilter, cardId) {
+    const zone = playerStateService.nameOfCardSource(cardId);
+    if (zone === "zone") {
+      return cardsInZone(specFilter);
+    } else if (zone === "opponentZone") {
+      return cardsInOpponentZone(specFilter);
+    }
+  }
+
   function drawStationCards(specFilter) {
     return playerStateService
       .getDrawStationCards()
