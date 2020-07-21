@@ -1,6 +1,11 @@
 FindCardRequirementFactory.type = "findCard";
 
-function FindCardRequirementFactory({ sourceFetcher, requirementSpec, card }) {
+function FindCardRequirementFactory({
+  sourceFetcher,
+  requirementSpec,
+  playerStateService,
+  card,
+}) {
   return {
     create,
   };
@@ -44,16 +49,23 @@ function FindCardRequirementFactory({ sourceFetcher, requirementSpec, card }) {
   }
 
   function cardGroupFromSource(source) {
+    let auxSource = source;
     const filters = { ...requirementSpec.filter, excludeCardIds: [card.id] };
     if (requirementSpec.actionPointsLimit) {
       filters.actionPointsLeft = requirementSpec.actionPointsLimit;
     }
+    if (source === "currentCardZone") {
+      const zone = playerStateService.nameOfCardSource(card.id);
+      if (zone === "zone") {
+        auxSource = "cardsInZone";
+      } else if (zone === "opponentZone") {
+        auxSource = "cardsInOpponentZone";
+      }
+    }
+
     return {
-      source,
-      cards:
-        source === "currentCardZone"
-          ? sourceFetcher[source](filters, card.id)
-          : sourceFetcher[source](filters),
+      source: auxSource,
+      cards: sourceFetcher[auxSource](filters),
     };
   }
 }

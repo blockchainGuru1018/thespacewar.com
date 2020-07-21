@@ -162,6 +162,9 @@ test("can create a find requirement from current card zone", () => {
       target: "currentCardZone",
       submitOnEverySelect: false,
     },
+    playerStateService: {
+      nameOfCardSource: () => "zone",
+    },
   });
 
   const result = findCardRequirementFactory.create();
@@ -170,7 +173,7 @@ test("can create a find requirement from current card zone", () => {
     type: "findCard",
     cardGroups: expect.arrayContaining([
       {
-        source: "currentCardZone",
+        source: "cardsInZone",
         cards: [expect.objectContaining({ id: "4", type: "duration" })],
       },
     ]),

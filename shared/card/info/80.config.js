@@ -5,6 +5,7 @@ module.exports = {
   dormantEffectRequirementSpec: {
     forPlayer: [
       {
+        cardCommonId: CommonId,
         type: "findCard",
         count: 2,
         sources: ["currentCardZone"],
@@ -12,20 +13,27 @@ module.exports = {
         filter: {
           type: "spaceShip",
         },
-        whenResolvedAddAlso: {
-          forPlayer: [
-            {
-              type: "findCard",
-              count: 1,
-              sources: ["deck"],
-              target: "currentCardZone",
-              filter: {
-                type: "spaceShip",
+        submitOnEverySelect: true,
+        cancelable: false,
+        ifAddedAddAlso: [
+          {
+            forPlayer: [
+              {
+                type: "findCard",
+                count: 1,
+                sources: ["deck"],
+                target: "currentCardZone",
+                filter: {
+                  type: "spaceShip",
+                },
+                submitOnEverySelect: true,
+                cancelable: false,
+                dormantEffect: { destroyTriggerCard: true },
               },
-            },
-          ],
-          forOpponent: [],
-        },
+            ],
+            forOpponent: [],
+          },
+        ],
       },
     ],
     forOpponent: [],

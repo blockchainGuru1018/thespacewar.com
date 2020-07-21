@@ -21,7 +21,9 @@ module.exports = class Carrier extends BaseCard {
     const turn = this._matchService.getTurn();
 
     return (
-      turnWhenCardWasPutDown < turn && lastTurnWhenDormantEffectWasUsed !== turn
+      turnWhenCardWasPutDown < turn &&
+      lastTurnWhenDormantEffectWasUsed !== turn &&
+      !this.paralyzed
     );
   }
 

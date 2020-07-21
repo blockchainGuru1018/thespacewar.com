@@ -26,6 +26,7 @@ module.exports = class Fusion extends BaseCard {
       (card) => card.type === "spaceShip"
     );
     return (
+      !this.paralyzed &&
       existTwoOrMoreSpaceShipsInSameZone &&
       itsNotSameTurnWhenWasPuttedDown &&
       haveNotAttackedThisTurn
@@ -34,6 +35,6 @@ module.exports = class Fusion extends BaseCard {
 
   triggerDormantEffect() {
     const spec = Fusion.info.dormantEffectRequirementSpec;
-    // this._addRequirementFromSpec.forCardAndSpec(this, spec);
+    this._addRequirementFromSpec.forCardAndSpec(this, spec);
   }
 };
