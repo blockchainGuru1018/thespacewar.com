@@ -25,6 +25,7 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
     playerHasControlOfTurn,
     hasPutDownCardEvent,
     hasEventBeforeOtherEvent,
+    hasActionPoints,
   };
 
   function send() {
@@ -238,6 +239,10 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
       indexOfFirstEvent < indexOfSecondEvent,
       "Two events are not registered in the correct order"
     );
+  }
+
+  function hasActionPoints(amount) {
+    assert.equals(gameMatch._actionPointForPlayer(playerId), amount);
   }
 
   function getLastChangedState() {

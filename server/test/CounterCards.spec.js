@@ -4,8 +4,9 @@ const Luck = require("../../shared/card/Luck.js");
 const {
   createCard,
 } = require("../../shared/test/testUtils/FakeCardDataAssembler.js");
+const { match } = require("./testUtils/bocha-jest/bocha/lib/assert.js");
 
-describe("when opponent use Fatal Error to destroy a card", () => {
+describe("when use Fatal Error to destroy a card", () => {
   it(" with cost higher than 2 and player counters that with Luck and has NOTHING to counter", () => {
     const { match, secondPlayerAsserter } = setupIntegrationTest({
       playerOrder: ["P1A", "P2A"],
@@ -52,7 +53,11 @@ describe("when opponent use Fatal Error to destroy a card", () => {
     });
   });
   it(" with cost equal 2 and player counters that with Luck and CAN be counter", () => {
-    const { match, secondPlayerAsserter } = setupIntegrationTest({
+    const {
+      match,
+      secondPlayerAsserter,
+      firstPlayerAsserter,
+    } = setupIntegrationTest({
       playerOrder: ["P1A", "P2A"],
       turn: 3,
       currentPlayer: "P1A",
@@ -62,7 +67,7 @@ describe("when opponent use Fatal Error to destroy a card", () => {
           cardsOnHand: [
             createCard({ id: "C1A", commonId: FatalError.CommonId }),
           ],
-          stationCards: [stationCard("S1A"), stationCard("S2A")],
+          stationCards: [stationCard("S1A", "action")],
         },
         P2A: {
           cardsOnHand: [
@@ -88,6 +93,7 @@ describe("when opponent use Fatal Error to destroy a card", () => {
       cardId: "C3A",
       choice: "counter",
     });
+
     secondPlayerAsserter.hasRequirement({
       cardCommonId: "31",
       cardGroups: [
@@ -101,7 +107,51 @@ describe("when opponent use Fatal Error to destroy a card", () => {
       type: "counterCard",
     });
   });
+  it(" witwefwefwer", () => {
+    const {
+      match,
+      secondPlayerAsserter,
+      firstPlayerAsserter,
+    } = setupIntegrationTest({
+      playerOrder: ["P1A", "P2A"],
+      turn: 3,
+      currentPlayer: "P1A",
+      playerStateById: {
+        P1A: {
+          phase: "action",
+          cardsOnHand: [
+            createCard({ id: "C1A", commonId: FatalError.CommonId }),
+          ],
+          stationCards: [stationCard("S1A", "action")],
+        },
+        P2A: {
+          cardsOnHand: [
+            createCard({
+              id: "C3A",
+              commonId: Luck.CommonId,
+              type: "event",
+            }),
+          ],
+          cardsInZone: [createCard({ id: "C2A", cost: 2 })],
+        },
+      },
+    });
 
+    match.putDownCard("P1A", {
+      location: "zone",
+      cardId: "C1A",
+      choice: "C2A",
+    });
+    match.toggleControlOfTurn("P2A");
+    match.putDownCard("P2A", {
+      location: "zone",
+      cardId: "C3A",
+      choice: "counter",
+    });
+    match.counterCard("P2A", { cardId: "C3A", targetCardId: "C1A" });
+
+    firstPlayerAsserter.hasActionPoints(0);
+  });
   function stationCard(id = "some_id", place = "action") {
     return {
       place,
