@@ -30,6 +30,7 @@ function SourceFetcher({
     drawStationCards: shuffleOutput(drawStationCards),
     handSizeStationCards: shuffleOutput(handSizeStationCards),
     hand: shuffleOutput(hand),
+    currentCardZone,
     cardsInOpponentZone,
     cardsInZone,
     opponentDeck: () => [],
@@ -61,6 +62,13 @@ function SourceFetcher({
   function discardPile(specFilter) {
     return playerStateService
       .getDiscardedCards()
+      .map((cardData) => playerStateService.createBehaviourCard(cardData))
+      .filter(cardFilter(specFilter))
+      .map((card) => card.getCardData());
+  }
+  function currentCardZone(specFilter) {
+    return playerStateService
+      .get()
       .map((cardData) => playerStateService.createBehaviourCard(cardData))
       .filter(cardFilter(specFilter))
       .map((card) => card.getCardData());
