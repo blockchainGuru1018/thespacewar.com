@@ -46,6 +46,7 @@ const classes = [
   require("./Carrier.js"),
   require("./Sacrifice.js"),
   require("./DroneLeader.js"),
+  require("./Fusion.js"),
 ];
 
 module.exports = classes;
