@@ -194,7 +194,7 @@ module.exports = function ({
     timeAlive: debugController.timeAlive,
     checkLastTimeOfInactivityForPlayer:
       playerInactivityService.checkLastTimeOfInactivityForPlayer,
-
+    _actionPointForPlayer,
     ...wrapApi({ api, matchComService, stateChangeListener }),
   };
 
@@ -292,6 +292,12 @@ module.exports = function ({
 
   function hasEnded() {
     return state.ended;
+  }
+
+  function _actionPointForPlayer(playerId) {
+    return playerServiceFactory
+      .playerActionPointsCalculator(playerId)
+      .calculate();
   }
 };
 

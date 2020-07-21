@@ -300,6 +300,17 @@ class QueryEvents {
     );
     return replaces.length;
   }
+
+  costOfFatalErrorUsed(cardId) {
+    return this._eventRepository
+      .getAll()
+      .slice()
+      .reverse()
+      .filter(
+        (event) =>
+          event.type === "FatalErrorUsedEvent" && event.cardId === cardId
+      )[0];
+  }
 }
 
 function findLastIndex(collection, selector) {

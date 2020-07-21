@@ -28,10 +28,16 @@ module.exports = class FatalError extends BaseCard {
         turn: this._matchService.getTurn(),
         phase: this._playerPhase.get(),
         targetCardCommonId: targetCard.commonId,
+        targetCardCost: targetCard.cost,
+        cardId: this.id,
       })
     );
   }
 
+  get cost() {
+    const costForCounter = this._queryEvents.costOfFatalErrorUsed(this.id);
+    return costForCounter ? costForCounter.targetCardCost : this._card.cost;
+  }
   _canBePlayedInThisPhase() {
     return this._playerPhase.isAction();
   }

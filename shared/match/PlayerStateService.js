@@ -678,7 +678,7 @@ class PlayerStateService {
     return attackEvent;
   }
 
-  counterCard(cardId) {
+  counterCard(cardId, costOfCounteredCard) {
     //TODO This should _always_ be called after has countered card and restored state to before that card was played. What could be a more descriptive name for this method?
     const cardData = this.removeCardFromAnySource(cardId);
     this.discardCard(cardData);
@@ -686,6 +686,7 @@ class PlayerStateService {
       type: "counterCard",
       turn: this._matchService.getTurn(),
       counteredCardCommonId: cardData.commonId,
+      costOfCounteredCard,
     });
   }
 

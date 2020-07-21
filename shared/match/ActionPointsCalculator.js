@@ -28,7 +28,9 @@ module.exports = function ({ cardInfoRepository }) {
         }
       } else if (event.type === "counterCard") {
         const cardCost = getCostOfCard(event.counteredCardCommonId);
-        actionPoints -= cardCost;
+        actionPoints -= event.costOfCounteredCard
+          ? event.costOfCounteredCard
+          : cardCost;
       } else if (event.type === "removeStationCard") {
         if (event.phase === "action" && event.location === "station-action") {
           actionPoints += 2;

@@ -3,6 +3,7 @@ const CardApplier = require("../card/CardApplier.js");
 const CardCanBePlayedChecker = require("../card/CardCanBePlayedChecker.js");
 const PlayerServiceProvider = require("../../../shared/match/PlayerServiceProvider.js");
 const ExcellentWork = require("../../../shared/card/ExcellentWork.js");
+const { card } = require("../../../shared/event/AttackEvent.js");
 
 function PutDownCardController(deps) {
   const {
@@ -15,6 +16,7 @@ function PutDownCardController(deps) {
     playerServiceFactory,
     playerRequirementServicesFactory,
     CardFacade,
+    queryEvents,
   } = deps;
 
   const cardApplier = CardApplier({
@@ -85,7 +87,7 @@ function PutDownCardController(deps) {
     const targetCard = opponentStateService.createBehaviourCardById(
       targetCardId
     );
-
+    const costOfCounterCardBeforeRevertState = targetCard.cost;
     gameActionTimeMachine.revertStateToBeforeCardWasPutDown(targetCardId);
 
     const turnControl = playerServiceFactory.turnControl(playerId);
@@ -94,7 +96,10 @@ function PutDownCardController(deps) {
       opponentTurnControl.releaseControlOfOpponentsTurn();
     }
 
-    opponentStateService.counterCard(targetCardId);
+    opponentStateService.counterCard(
+      targetCardId,
+      costOfCounterCardBeforeRevertState
+    );
 
     playerStateService.useToCounter(cardId);
 
