@@ -130,7 +130,7 @@
           Repair
         </div>
         <div
-          v-if="canBeSacrificed"
+          v-if="canBeSacrificed || canSelectForSacrificeRequirement"
           class="sacrifice actionOverlay"
           @click="sacrifice(card.id)"
         >
@@ -190,9 +190,10 @@ const Vuex = require("vuex");
 const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers(
   "match"
 );
-const { mapGetters: mapRequirementGetters } = Vuex.createNamespacedHelpers(
-  "requirement"
-);
+const {
+  mapGetters: mapRequirementGetters,
+  mapActions: mapRequirementActions,
+} = Vuex.createNamespacedHelpers("requirement");
 const {
   mapState: mapCardState,
   mapGetters: mapCardGetters,
@@ -242,6 +243,7 @@ module.exports = {
       "canSelectCardsForActiveAction",
       "canDiscardActivateDurationCards",
       "canSelectShieldCardsForRequirement",
+      "canSelectForSacrificeRequirement",
     ]),
     ...mapCardState([
       "transientPlayerCardsInHomeZone",
@@ -484,6 +486,7 @@ module.exports = {
       "triggerDormantEffect",
     ]),
     ...expandedCardHelpers.mapActions(["expandCard"]),
+    ...mapRequirementActions(["selectCardForSacrificeForRequirement"]),
     moveClick() {
       this.moveCard(this.card);
     },
@@ -507,7 +510,13 @@ module.exports = {
       this.discardDurationCard(this.card);
     },
     sacrifice() {
-      this.startSacrifice(this.card.id);
+      if (this.canSelectForSacrificeRequirement) {
+        this.selectCardForSacrificeForRequirement({
+          card: this.card,
+        });
+      } else {
+        this.startSacrifice(this.card.id);
+      }
     },
     cardLongpress() {
       this.expandCard(this.card);

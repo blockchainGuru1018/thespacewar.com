@@ -237,6 +237,7 @@ module.exports = function (deps) {
       selectForRepair,
       damageStationCards, //todo rename to "damageStationCardsForRequirement",
       damageShieldCards,
+      sacrificeCardForRequirement,
       onActionLogChange,
       onOpponentActionLogChange,
       triggerCardAttackedEffect,
@@ -1171,6 +1172,9 @@ module.exports = function (deps) {
 
   function damageShieldCards({}, targetIds) {
     matchController.emit("damageShieldCards", { targetIds });
+  }
+  function sacrificeCardForRequirement({}, targetIds) {
+    matchController.emit("sacrificeCardForRequirement", { targetIds });
   }
 
   function retreat() {

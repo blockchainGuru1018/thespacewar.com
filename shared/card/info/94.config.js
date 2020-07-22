@@ -5,22 +5,22 @@ module.exports = {
   requirementSpecsWhenPutDownInHomeZone: {
     forOpponent: [
       {
-        type: "findCard",
+        type: "sacrifice",
         count: 1,
         sources: ["cardsInZone", "cardsInOpponentZone"],
-        target: "discardPile",
         submitOnEverySelect: true,
         cancelable: false,
+        common: true,
       },
     ],
     forPlayer: [
       {
-        type: "findCard",
+        type: "sacrifice",
         count: 1,
         sources: ["cardsInZone", "cardsInOpponentZone"],
-        target: "discardPile",
         submitOnEverySelect: true,
         cancelable: false,
+        common: true,
       },
     ],
   },

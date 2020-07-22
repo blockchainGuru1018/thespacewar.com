@@ -1,5 +1,6 @@
 const ActionPointsCalculator = require("../../shared/match/ActionPointsCalculator.js");
 const FindCardController = require("./controller/FindCardController.js");
+const SacrificeCardForRequirementController = require("./controller/SacrificeCardForRequirementController.js");
 const DrawCardController = require("./controller/DrawCardController.js");
 const AttackController = require("./controller/AttackController.js");
 const DebugController = require("./DebugController.js");
@@ -121,6 +122,9 @@ module.exports = function ({
   const cheatController = CheatController(controllerDeps);
   const drawCardController = DrawCardController(controllerDeps);
   const findCardController = FindCardController(controllerDeps);
+  const sacrificeCardForRequirementController = SacrificeCardForRequirementController(
+    controllerDeps
+  );
   const attackController = AttackController(controllerDeps);
   const moveCardController = MoveCardController(controllerDeps);
   const putDownCardController = PutDownCardController(controllerDeps);
@@ -156,6 +160,8 @@ module.exports = function ({
     damageStationCards: attackController.onDamageStationCard,
     damageShieldCards: attackController.onDamageShieldCard,
     selectCardForFindCardRequirement: findCardController.onSelectCard,
+    sacrificeCardForRequirement:
+      sacrificeCardForRequirementController.onSelectCard,
     cancelRequirement: PlayerCommand(CancelRequirementCommand, controllerDeps),
     overwork: overworkController.overwork,
     perfectPlan: perfectPlanController.perfectPlan,

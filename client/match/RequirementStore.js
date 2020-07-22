@@ -4,6 +4,7 @@ module.exports = function ({ rootStore, cardInfoRepository, matchController }) {
     namespaced: true,
     state: {
       selectedStationCardIdsForRequirement: [],
+      selectedCardForSacrificeForRequirement: [],
     },
     getters: {
       waitingForOtherPlayerToFinishRequirements,
@@ -16,6 +17,7 @@ module.exports = function ({ rootStore, cardInfoRepository, matchController }) {
       firstRequirementIsFindCard,
       firstRequirementIsCounterCard,
       firstRequirementIsCounterAttack,
+      firstRequirementIsSelectForSacrifice,
       countInFirstRequirement,
       selectedCardsCount,
       cardsLeftToSelect,
@@ -26,6 +28,7 @@ module.exports = function ({ rootStore, cardInfoRepository, matchController }) {
     },
     actions: {
       selectStationCardForRequirement,
+      selectCardForSacrificeForRequirement,
       lookAtHandSizeStationRow,
       cancelRequirement,
     },
@@ -93,6 +96,12 @@ module.exports = function ({ rootStore, cardInfoRepository, matchController }) {
     );
   }
 
+  function firstRequirementIsSelectForSacrifice(state, getters) {
+    return (
+      getters.firstRequirement && getters.firstRequirement.type === "sacrifice"
+    );
+  }
+
   function countInFirstRequirement(state, getters) {
     return getters.firstRequirement && getters.firstRequirement.count;
   }
@@ -138,6 +147,13 @@ module.exports = function ({ rootStore, cardInfoRepository, matchController }) {
 
       rootStore.dispatch("match/damageStationCards", targetIds);
     }
+  }
+  function selectCardForSacrificeForRequirement({ state, getters }, payload) {
+    state.selectedCardForSacrificeForRequirement.push(payload.card.id);
+    const targetIds = state.selectedCardForSacrificeForRequirement.slice();
+    state.selectedCardForSacrificeForRequirement = [];
+
+    rootStore.dispatch("match/sacrificeCardForRequirement", targetIds);
   }
 
   function lookAtHandSizeStationRow({ getters }) {

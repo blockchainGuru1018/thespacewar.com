@@ -216,6 +216,7 @@ export default {
       "firstRequirementIsDiscardCard",
       "firstRequirementIsDamageStationCard",
       "firstRequirementIsDamageShieldCard",
+      "firstRequirementIsSelectForSacrifice",
       "firstRequirementIsDrawCard",
       "cardsLeftToSelect",
       "countInFirstRequirement",
@@ -321,6 +322,14 @@ export default {
           "card",
           this.cardsLeftToSelect
         )} to damage`;
+      } else if (
+        this.firstRequirementIsSelectForSacrifice &&
+        this.cardsLeftToSelect > 0
+      ) {
+        return `Select ${this.cardsLeftToSelect} ${pluralize(
+          "card",
+          this.cardsLeftToSelect
+        )} to sacrifice`;
       } else if (this.firstRequirementIsDrawCard) {
         return this.drawCardOrMillText;
       } else {

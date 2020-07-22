@@ -24,6 +24,7 @@ module.exports = function (deps) {
       canSelectShieldCardsForRequirement,
       canSelectCardsForActiveAction,
       canPutDownStationCardInHomeZone,
+      canSelectForSacrificeRequirement,
       canIssueOverwork: canIssueOverworkGetter,
       canDrawCards,
       canPassDrawPhase,
@@ -195,5 +196,16 @@ module.exports = function (deps) {
 
   function canMill(state, getters, rootState, rootGetters) {
     return rootGetters["match/miller"].canMill();
+  }
+
+  function canSelectForSacrificeRequirement(state, getters) {
+    if (getters.waitingForOtherPlayerToFinishRequirements) return false;
+    const selectForSacrificeRequirement = getFrom(
+      "firstRequirementIsSelectForSacrifice",
+      "requirement"
+    );
+    const cardsLeftToSelect = getFrom("cardsLeftToSelect", "requirement");
+
+    return selectForSacrificeRequirement && cardsLeftToSelect > 0;
   }
 };
