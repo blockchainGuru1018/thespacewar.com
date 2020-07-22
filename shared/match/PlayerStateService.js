@@ -62,13 +62,14 @@ class PlayerStateService {
       playerState.actionLogEntries = [];
       playerState.commanders = [];
       playerState.clock = {};
-      playerState.deckName = "";
+      playerState.currentDeck = "";
     });
   }
 
   _initializeDeck(deckId) {
     const cardsInDeck = this._deckFactory.createCardsForDeckById(deckId);
     this.update((playerState) => {
+      playerState.currentDeck = deckId;
       playerState.cardsInDeck = cardsInDeck;
     });
   }
@@ -138,6 +139,10 @@ class PlayerStateService {
 
   getCardsInPlay() {
     return [].concat(this.getCardsInOpponentZone(), this.getCardsInZone());
+  }
+
+  getCurrentCommander() {
+    return this.getPlayerState().commanders[0];
   }
 
   getCardsInPlayForPlayersCount() {

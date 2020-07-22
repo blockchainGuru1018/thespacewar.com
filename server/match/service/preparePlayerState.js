@@ -22,7 +22,7 @@ const whitelist = [
   "events",
   "requirements",
   "phase",
-  "deckName",
+  "currentDeck",
   "actionLogEntries",
   "commanders",
   "clock",

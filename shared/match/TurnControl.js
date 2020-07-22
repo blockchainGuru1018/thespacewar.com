@@ -152,8 +152,4 @@ module.exports = class TurnControl {
   _playerState() {
     return this._matchService.getState().playerStateById[this._playerId()];
   }
-
-  isPlayingWithTheSwarmDeck() {
-    return "The-Swarm" === this._playerState().deckName;
-  }
 };

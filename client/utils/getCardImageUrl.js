@@ -7,8 +7,9 @@ const CommanderToImageUrl = {
   [Commander.GeneralJackson]: "https://images.thespacewar.com/commander-4.png",
   [Commander.DrStein]: "https://images.thespacewar.com/commander-5.png",
   [Commander.TheMiller]: "https://images.thespacewar.com/commander-6.png",
+  [Commander.Zuuls]: "https://images.thespacewar.com/commander-7.png",
+  [Commander.Crakux]: "https://images.thespacewar.com/commander-8.png",
 };
-
 module.exports = {
   byCommonId(cardCommonId) {
     return "https://images.thespacewar.com/card-" + cardCommonId + ".jpg";
