@@ -49,6 +49,8 @@ function PlayerRequirementService({
       return addDamageStationCardRequirement(requirement);
     } else if (type === "findCard") {
       return addFindCardRequirement(requirement);
+    } else if (type === "sacrifice") {
+      return addSacrificeCardForRequirement(requirement);
     } else if (type === "counterCard") {
       return addCounterCardRequirement(requirement);
     } else if (type === "counterAttack") {
@@ -155,6 +157,11 @@ function PlayerRequirementService({
     if (card) {
       requirement.cardId = card.id;
     }
+    addRequirement(requirement);
+    return requirement;
+  }
+
+  function addSacrificeCardForRequirement(requirement) {
     addRequirement(requirement);
     return requirement;
   }

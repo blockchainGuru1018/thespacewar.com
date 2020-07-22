@@ -12,4 +12,9 @@ module.exports = class DestroyDuration extends BaseCard {
   static get Info() {
     return info;
   }
+  canBePlayed() {
+    if (this._playerStateService.getCardsInPlayForPlayersCount() > 0)
+      return super.canBePlayed();
+    else return false;
+  }
 };

@@ -1,4 +1,5 @@
 const FindCardRequirementFactory = require("./FindCardRequirementFactory.js");
+const SacrificeCardForRequirementFactory = require("./SacrificeCardForRequirementFactory.js");
 const CounterCardRequirementFactory = require("./CounterCardRequirementFactory.js");
 const CounterAttackRequirementFactory = require("./CounterAttackRequirementFactory.js");
 
@@ -10,6 +11,7 @@ module.exports = function ({
 }) {
   const factories = [
     FindCardRequirementFactory,
+    SacrificeCardForRequirementFactory,
     CounterCardRequirementFactory,
     CounterAttackRequirementFactory,
   ];

@@ -136,6 +136,25 @@ class PlayerStateService {
     return this.getPlayerState().cardsInZone;
   }
 
+  getCardsInPlay() {
+    return [].concat(this.getCardsInOpponentZone(), this.getCardsInZone());
+  }
+
+  getCardsInPlayForPlayersCount() {
+    const playerState = this._matchService.getPlayerState(
+      this._matchService.getFirstPlayerId()
+    );
+    const opponentState = this._matchService.getPlayerState(
+      this._matchService.getLastPlayerId()
+    );
+    return [].concat(
+      playerState.cardsInOpponentZone,
+      playerState.cardsInZone,
+      opponentState.cardsInOpponentZone,
+      opponentState.cardsInZone
+    ).length;
+  }
+
   hasDurationCardInPlay() {
     return this.getDurationCards().length > 0;
   }

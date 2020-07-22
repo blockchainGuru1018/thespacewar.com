@@ -15,6 +15,7 @@ module.exports = function ({
   actionPhaseDecider,
   discardPhaseDecider,
   decideCardToDiscard,
+  decideCardToSacrifice,
   attackPhaseDecider,
   matchController,
 }) {
@@ -122,6 +123,11 @@ module.exports = function ({
       matchController.emit("discardCard", decideCardToDiscard());
     } else if (hasRequirementOfType("damageStationCard")) {
       damageOpponentStationCards();
+    } else if (hasRequirementOfType("sacrifice")) {
+      matchController.emit(
+        "sacrificeCardForRequirement",
+        decideCardToSacrifice()
+      );
     }
   }
 };

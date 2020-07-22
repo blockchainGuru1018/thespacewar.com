@@ -8,6 +8,7 @@ const ActionPhaseDecider = require("./ActionPhaseDecider.js");
 const DiscardPhaseDecider = require("./DiscardPhaseDecider.js");
 const AttackPhaseDecider = require("./AttackPhaseDecider.js");
 const DecideCardToDiscard = require("./DecideCardToDiscard.js");
+const DecideCardToSacrifice = require("./DecideCardToSacrifice.js");
 const DecideRowForStationCard = require("./DecideRowForStationCard.js");
 const DecideCardToPlaceAsStationCard = require("./DecideCardToPlaceAsStationCard.js");
 const PlayCardCapability = require("./cardCapabilities/PlayCardCapability.js");
@@ -80,6 +81,7 @@ module.exports = function ({
         opponentUserId
       ),
       decideCardToDiscard: decideCardToDiscard(),
+      decideCardToSacrifice: decideCardToSacrifice(),
       drawPhaseDecider: drawPhaseDecider(),
       preparationPhaseDecider: preparationPhaseDecider(),
       actionPhaseDecider: actionPhaseDecider(),
@@ -159,6 +161,12 @@ module.exports = function ({
 
   function decideCardToDiscard() {
     return DecideCardToDiscard({
+      playerStateService: playerServiceFactory.playerStateService(BotId),
+    });
+  }
+
+  function decideCardToSacrifice() {
+    return DecideCardToSacrifice({
       playerStateService: playerServiceFactory.playerStateService(BotId),
     });
   }
