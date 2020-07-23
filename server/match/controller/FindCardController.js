@@ -254,6 +254,8 @@ module.exports = function ({
     } else if (sourceIsStationCard(source)) {
       const stationCard = playerStateService.removeStationCard(cardId);
       return stationCard.card;
+    } else if (source === "cardsInOpponentZone") {
+      return playerStateService.removeCardFromOpponentZone(cardId);
     }
   }
 

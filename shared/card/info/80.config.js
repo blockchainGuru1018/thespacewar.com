@@ -19,6 +19,7 @@ module.exports = {
           {
             forPlayer: [
               {
+                cardCommonId: CommonId,
                 type: "findCard",
                 count: 1,
                 sources: ["deck"],

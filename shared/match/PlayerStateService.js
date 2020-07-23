@@ -915,6 +915,22 @@ class PlayerStateService {
     return removedCard;
   }
 
+  removeCardFromOpponentZone(cardId) {
+    let removedCard = null;
+
+    const cardIndex = this.getCardsInOpponentZone().findIndex(
+      (c) => c.id === cardId
+    );
+    if (cardIndex >= 0) {
+      this.update((playerState) => {
+        removedCard = playerState.cardsInOpponentZone[cardIndex];
+        playerState["cardsInOpponentZone"].splice(cardIndex, 1);
+      });
+    }
+
+    return removedCard;
+  }
+
   removeStationCard(cardId) {
     const stationCard = this.findStationCard(cardId);
     this.update((playerState) => {
