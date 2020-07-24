@@ -24,10 +24,10 @@
 }
 
 .card.card--enlarged {
-  $ratio: $cardWidth / $cardHeight;
+  $ratio: calc(#{$cardWidth} / #{$cardHeight});
 
   background-size: contain;
-  width: 80vh * $ratio;
+  width: calc(80vh * #{$ratio});
   height: 80vh;
   position: absolute;
   top: 50%;

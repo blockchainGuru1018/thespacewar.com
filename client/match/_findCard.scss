@@ -44,7 +44,7 @@
 }
 
 .findCard-requirementCard {
-  width: $cardWidth / 6;
+  width: var(--cardWidth) / 6;
   height: $cardHeight / 6;
   margin-right: 25px;
 }

@@ -1,5 +1,21 @@
-$cardWidth: 652px;
-$cardHeight: 916px;
+:root {
+  --card-width: 652px;
+  --card-height: 916px;
+
+  --player-cards-on-hand-offset: 0px;
+}
+
+@media (max-width: 1280px) {
+  :root {
+    --card-width: 326px;
+    --card-height: 458px;
+
+    --player-cards-on-hand-offset: 50px;
+  }
+}
+
+$cardWidth: var(--card-width);
+$cardHeight: var(--card-height);
 
 $actualCardWidth: 287px;
 $actualCardHeight: 400px;
@@ -14,7 +30,7 @@ $opponentDiscardAndDrawPileScale: .9;
 $opponentStationScale: .68;
 $playerStationScale: .68;
 
-$scaledCardWidth: calc(#{$cardWidth} * .2);
+$scaledCardWidth: calc(#{var(--card-width)} * .2);
 $scaledCardHeight: calc(#{$cardHeight} * .2);
 
 $playerCardOnHandWidth: $scaledCardWidth;
@@ -42,8 +58,8 @@ $opponentDrawPileCardHeight: calc(#{$scaledCardHeight} * #{$opponentDiscardAndDr
 $commanderCardWidth: calc(#{$cardWidth} / 2.8);
 $commanderCardHeight: calc(#{$cardHeight} / 2.8);
 
-$cardHoverWidth: $cardWidth / 2.8;
-$cardHoverHeight: $cardHeight / 2.8;
+$cardHoverWidth: calc(#{$cardWidth} / 2.8);
+$cardHoverHeight: calc(#{$cardHeight} / 2.8);
 
 $cardGhostZIndex: 2;
 $cardGhostWidth: $scaledCardWidth;
