@@ -207,6 +207,13 @@ class PlayerStateService {
     return targetZone.map((c) => this.createBehaviourCard(c)).some(matcher);
   }
 
+  getMatchingCardInSameZone(sameZoneAsCardId, matcher) {
+    const targetZone = this.isCardInHomeZone(sameZoneAsCardId)
+      ? this.getCardsInZone()
+      : this.getCardsInOpponentZone();
+    return targetZone.map((c) => this.createBehaviourCard(c)).filter(matcher);
+  }
+
   getMatchingBehaviourCards(matcher) {
     //TODO This now returns behaviour cards, to have it return card data would be a hassle. Perhaps the responsibility to create cards could lie within playerStateService?
     return [

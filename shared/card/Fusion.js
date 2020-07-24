@@ -21,10 +21,11 @@ module.exports = class Fusion extends BaseCard {
     const currentTurn = this._matchService.getTurn();
     const itsNotSameTurnWhenWasPuttedDown = turnCardWasPutDown < currentTurn;
     const haveNotAttackedThisTurn = !this._hasAttackedThisTurn();
-    const existTwoOrMoreSpaceShipsInSameZone = this._playerStateService.hasMatchingCardInSameZone(
-      this.id,
-      (card) => card.type === "spaceShip"
-    );
+    const existTwoOrMoreSpaceShipsInSameZone =
+      this._playerStateService.getMatchingCardInSameZone(
+        this.id,
+        (card) => card.type === "spaceShip"
+      ).length >= 2;
     return (
       !this.paralyzed &&
       existTwoOrMoreSpaceShipsInSameZone &&

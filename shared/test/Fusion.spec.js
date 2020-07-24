@@ -8,11 +8,11 @@ describe("Fusion should not be able to trigger dormant effect", () => {
         getAttacksOnTurn: () => [1],
       },
       playerStateService: {
-        hasMatchingCardInSameZone: (id, matcher) =>
+        getMatchingCardInSameZone: (id, matcher) =>
           [
             { id: "C1A", type: "spaceShip" },
             { id: "C2A", type: "spaceShip" },
-          ].some(matcher),
+          ].filter(matcher),
       },
       matchService: {
         getTurn: () => 1,
@@ -28,11 +28,11 @@ describe("Fusion should not be able to trigger dormant effect", () => {
         getAttacksOnTurn: () => [1],
       },
       playerStateService: {
-        hasMatchingCardInSameZone: (id, matcher) =>
+        getMatchingCardInSameZone: (id, matcher) =>
           [
             { id: "C1A", type: "spaceShip" },
             { id: "C2A", type: "spaceShip" },
-          ].some(matcher),
+          ].filter(matcher),
       },
       matchService: {
         getTurn: () => 2,
@@ -48,11 +48,11 @@ describe("Fusion should not be able to trigger dormant effect", () => {
         getAttacksOnTurn: () => [1],
       },
       playerStateService: {
-        hasMatchingCardInSameZone: (id, matcher) =>
+        getMatchingCardInSameZone: (id, matcher) =>
           [
             { id: "C1A", type: "spaceShip" },
             { id: "C2A", type: "event" },
-          ].some(matcher),
+          ].filter(matcher),
       },
       matchService: {
         getTurn: () => 2,
@@ -63,18 +63,18 @@ describe("Fusion should not be able to trigger dormant effect", () => {
 });
 
 describe("Fusion should be able to trigger dormant effect", () => {
-  it("after first turn if have not attacked and exist 2 friendly spaceShips in the same Home Zone", () => {
+  it("after first turn if have not attacked and exist 2 friendly spaceShips in the same  Zone", () => {
     const card = new createCard(Fusion, {
       queryEvents: {
         getTurnWhenCardWasPutDown: () => 1,
         getAttacksOnTurn: () => [],
       },
       playerStateService: {
-        hasMatchingCardInSameZone: (id, matcher) =>
+        getMatchingCardInSameZone: (id, matcher) =>
           [
             { id: "C1A", type: "spaceShip" },
             { id: "C2A", type: "spaceShip" },
-          ].some(matcher),
+          ].filter(matcher),
       },
       matchService: {
         getTurn: () => 2,
