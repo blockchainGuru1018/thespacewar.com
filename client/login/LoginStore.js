@@ -1,3 +1,5 @@
+import { LoginSession } from "./LoginSession";
+
 const ajax = require("../utils/ajax.js");
 const localGameDataFacade = require("../utils/localGameDataFacade.js");
 const createBotUser = require("../../shared/user/createBotUser.js");
@@ -69,26 +71,17 @@ module.exports = function ({ route, userRepository, botUpdateListener }) {
       isLoggedInToGame(),
     ]);
 
-    if (!loggedInToHome) {
-      // NOT logged in to PHP server
-      if (!localGameDataFacade.guestModeOn()) {
-        dispatch("_resetLocallyStoredUserData");
-      }
-    } else if (loggedInToGame) {
-      // User is logged in to the PHP server (home) AND the Node server (game)
-      if (localGameDataFacade.guestModeOn()) {
-        // When the user has logged in as GUEST, and THEN wants to login as a REAL USER, we need to REMOVE THE GUEST DATA.
-        dispatch("_resetLocallyStoredUserData");
-        await dispatch("login");
-      } else if (getters["checkIfHasPreviousSession"]) {
-        // If the user is already in a match, we need to resume that match
-        dispatch("_restorePreviousSession");
-      }
-    } else {
-      // The user is logged in to the PHP server (home), but is NOT logged in to the Node server (game), need to login as a NEW USER (new user in Node server (game), NOT new user in PHP server (home)).
-      dispatch("_resetLocallyStoredUserData");
-      await dispatch("login");
-    }
+    const loginSession = LoginSession({
+      resetLocallyStoredUserData: () => dispatch("_resetLocallyStoredUserData"),
+      login: () => dispatch("login"),
+      restoreOngoingMatch: () => dispatch("_restorePreviousSession"),
+    });
+    await loginSession.checkAll({
+      loggedInToHome,
+      loggedInToGame,
+      guestModeOn: localGameDataFacade.guestModeOn(),
+      hasOngoingMatch: getters["checkIfHasPreviousSession"],
+    });
 
     state._isAuthenticating = false;
   }
