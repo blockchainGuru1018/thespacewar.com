@@ -11,6 +11,7 @@ const ClientPlayerStateService = require("./ClientPlayerStateService");
 const QueryPlayerRequirements = require("../../shared/match/requirement/QueryPlayerRequirements.js");
 const PlayerRequirementService = require("../../shared/match/requirement/PlayerRequirementService.js");
 const PlayerPerfectPlan = require("../../shared/match/perfectPlan/PlayerPerfectPlan.js");
+const FindAcidMissile = require("../../shared/match/commander/FindAcidMissile.js");
 const CardFactory = require("../../shared/card/CardFactory.js");
 const ClientPlayerServiceProvider = require("./ClientPlayerServiceProvider.js");
 const EventFactory = require("../../shared/event/EventFactory.js");
@@ -159,6 +160,7 @@ module.exports = function (deps) {
       moveStationCard,
       lastStand,
       playerPerfectPlan,
+      playerFindAcidMissile,
       playerRuleService,
       opponentRuleService,
       calculateMoreCardsCanBeDrawnForDrawPhase,
@@ -204,6 +206,7 @@ module.exports = function (deps) {
       askToDiscardOpponentTopTwoCards,
       overwork,
       perfectPlan,
+      findAcidMissile,
       checkLastTimeOfInactivityForPlayer,
       toggleControlOfTurn,
       skipDrawCard,
@@ -503,6 +506,19 @@ module.exports = function (deps) {
       playerCommanders: getters.playerCommanders,
       opponentActionLog: ClientLimitNotice,
       addRequirementFromSpec: ClientLimitNotice,
+    });
+  }
+
+  function playerFindAcidMissile(state, getters) {
+    return new FindAcidMissile({
+      playerPhase: getters.playerPhase,
+      playerStateService: getters.playerStateService,
+      playerActionPointsCalculator: getters.playerActionPointsCalculator,
+      matchService: getters.matchService,
+      opponentActionLog: ClientLimitNotice,
+      addRequirementFromSpec: ClientLimitNotice,
+      playerRequirementFactory: ClientLimitNotice,
+      playerRequirementService: ClientLimitNotice,
     });
   }
 
@@ -914,7 +930,9 @@ module.exports = function (deps) {
   function perfectPlan() {
     matchController.emit("perfectPlan");
   }
-
+  function findAcidMissile() {
+    matchController.emit("findAcidMissile");
+  }
   function toggleControlOfTurn() {
     matchController.emit("toggleControlOfTurn");
   }

@@ -16,6 +16,7 @@ const PlayerPerfectPlan = require("./perfectPlan/PlayerPerfectPlan.js");
 const QueryAttacks = require("./requirement/QueryAttacks.js");
 const OverworkEventFactory = require("./overwork/event/OverworkEventFactory.js");
 const PlayerOverwork = require("./overwork/PlayerOverwork.js");
+const FindAcidMissile = require("./commander/FindAcidMissile.js");
 const MoveStationCard = require("./MoveStationCard.js");
 const AddRequirementFromSpec = require("./requirement/AddRequirementFromSpec.js");
 const StartGame = require("./StartGame.js");
@@ -69,6 +70,7 @@ module.exports = function ({
     moveStationCard: cached(moveStationCard),
     playerOverwork: cached(playerOverwork),
     playerPerfectPlan: cached(playerPerfectPlan),
+    findAcidMissile: cached(findAcidMissile),
     overworkEventFactory: cached(overworkEventFactory),
     cardFactory: cached(cardFactory),
     matchService: cached(matchService),
@@ -263,6 +265,19 @@ module.exports = function ({
       ),
       opponentActionLog: api.actionLog(api.opponentId(playerId)),
       playerCommanders: api.playerCommanders(playerId),
+    });
+  }
+
+  function findAcidMissile(playerId) {
+    return new FindAcidMissile({
+      playerStateService: api.playerStateService(playerId),
+      playerPhase: api.playerPhase(playerId),
+      playerActionPointsCalculator: api.playerActionPointsCalculator(playerId),
+      addRequirementFromSpec: api.addRequirementFromSpec(playerId),
+      opponentActionLog: api.actionLog(api.opponentId(playerId)),
+      playerRequirementFactory: api.playerRequirementFactory(playerId),
+      playerRequirementService: api.playerRequirementService(playerId),
+      matchService: api.matchService(playerId),
     });
   }
 

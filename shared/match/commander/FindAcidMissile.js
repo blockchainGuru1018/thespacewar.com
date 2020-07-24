@@ -1,21 +1,21 @@
 const Commander = require("../commander/Commander.js");
 const AcidProjectile = require("../../../shared/card/AcidProjectile.js");
 const findAcidMissileRequirement = {
-  forOpponent: [],
-  forPlayer: [
-    {
-      type: "findCard",
-      count: 2,
-      actionPointsLimit: 6,
-      sources: ["discardPile"],
-      target: "homeZone",
-      filter: {
-        commonId: AcidProjectile.CommonId,
-      },
-      submitOnEverySelect: true,
-      cancelable: true,
-    },
+  type: "findCard",
+  count: 1,
+  sources: [
+    "deck",
+    "discardPile",
+    "drawStationCards",
+    "actionStationCards",
+    "handSizeStationCards",
   ],
+  target: "homeZone",
+  filter: {
+    commonId: AcidProjectile.CommonId,
+  },
+  submitOnEverySelect: true,
+  cancelable: true,
 };
 
 class FindAcidMissile {
@@ -23,12 +23,20 @@ class FindAcidMissile {
     playerStateService,
     playerPhase,
     playerActionPointsCalculator,
+    opponentActionLog,
     addRequirementFromSpec,
+    playerRequirementFactory,
+    playerRequirementService,
+    matchService,
   }) {
     this._playerStateService = playerStateService;
     this._playerPhase = playerPhase;
     this._playerActionPointsCalculator = playerActionPointsCalculator;
     this._addRequirementFromSpec = addRequirementFromSpec;
+    this._opponentActionLog = opponentActionLog;
+    this._playerRequirementFactory = playerRequirementFactory;
+    this._playerRequirementService = playerRequirementService;
+    this._matchService = matchService;
   }
 
   canIssueFindAcidMissile() {
@@ -42,15 +50,26 @@ class FindAcidMissile {
   _isUsingStauxCommander() {
     return this._playerStateService.getCurrentCommander() === Commander.Staux;
   }
+
   _canAffordFindAcidMissile() {
     return this._playerActionPointsCalculator.calculate() >= 2;
   }
+  _createAndStoreEvent() {
+    const turn = this._matchService.getTurn();
+    const event = { turn, type: "stauxFindAcidMissile" };
+    this._playerStateService.storeEvent(event);
+  }
 
   findAcidMissile() {
-    this._addRequirementFromSpec.forReasonAndSpec(
-      "StauxFindMissile",
+    const requirement = this._playerRequirementFactory.createForCardAndSpec(
+      {},
       findAcidMissileRequirement
     );
+    delete requirement.card;
+
+    this._playerRequirementService.addFindCardRequirement(requirement);
+    this._createAndStoreEvent();
+    this._opponentActionLog.opponentIssuedFindAcidMissile();
   }
 }
 

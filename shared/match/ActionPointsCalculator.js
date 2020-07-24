@@ -40,6 +40,8 @@ module.exports = function ({ cardInfoRepository }) {
       } else if (event.type === "fatalErrorUsed") {
         const costOfTargetCard = getCostOfCard(event.targetCardCommonId);
         actionPoints -= costOfTargetCard;
+      } else if (event.type === "stauxFindAcidMissile") {
+        actionPoints -= 2;
       }
     }
 

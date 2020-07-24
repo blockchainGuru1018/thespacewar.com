@@ -53,6 +53,7 @@ module.exports = function ({
     opponentExpandedStation,
     opponentIssuedOverwork,
     opponentIssuedPerfectPlan,
+    opponentIssuedFindAcidMissile,
     opponentTriggeredCard,
     opponentMilledCardsFromYourDeck,
     opponentMovedStationCard,
@@ -219,6 +220,13 @@ module.exports = function ({
     log({
       action: "issuedOverwork",
       text: `${opponentName()} issued overwork`,
+    });
+  }
+
+  function opponentIssuedFindAcidMissile() {
+    log({
+      action: "issuedFindAcidMissile",
+      text: `${opponentName()} issued findAcidMissile`,
     });
   }
 

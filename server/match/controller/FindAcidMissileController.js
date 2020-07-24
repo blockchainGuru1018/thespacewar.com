@@ -4,7 +4,7 @@ module.exports = function ({ playerServiceFactory }) {
   };
 
   function findAcidMissile(playerId) {
-    const playerFindAcipMissile = playerServiceFactory.findAccidMissile(
+    const playerFindAcipMissile = playerServiceFactory.findAcidMissile(
       playerId
     );
     if (!playerFindAcipMissile.canIssueFindAcidMissile())
