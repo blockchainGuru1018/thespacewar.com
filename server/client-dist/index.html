@@ -64,6 +64,10 @@
                 scrollbar-width: thin;
             }
         }
+
+        @media (max-width: 900px) {
+            html {scale:0.8}
+        }
     </style>
     <link href="https://fonts.googleapis.com/css?family=Space+Mono" rel="stylesheet">
     <link rel="shortcut icon" href="https://images.thespacewar.com/favicon.ico" type="image/x-icon" />
@@ -72,7 +76,7 @@
     <script type="text/javascript">
     var viewport_meta = document.getElementById('viewport-meta');
     var viewport_set = function()
-    {  
+    {
       var screen_width = document.documentElement.clientWidth;
       if ( screen_width >= 1440 )
         viewport_meta.setAttribute( 'content', 'width=device-width, user-scalable=no, initial-scale=0.7, maximum-scale=0.7, minimum-scale=0.7' );
@@ -85,7 +89,7 @@
     }
     viewport_set();
     window.addEventListener("resize", viewport_set);
-    
+
     </script>
 </head>
 <body>
