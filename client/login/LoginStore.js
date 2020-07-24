@@ -11,7 +11,7 @@ module.exports = function ({ route, userRepository, botUpdateListener }) {
       username: "",
       enteredWrongAccessKey: false,
       hasAccess: false,
-      _isAuthenticating: false
+      _isAuthenticating: false,
     },
     getters: {
       checkIfHasPreviousSession,
@@ -26,7 +26,6 @@ module.exports = function ({ route, userRepository, botUpdateListener }) {
       authenticateUserSession,
       _resetLocallyStoredUserData,
       _restorePreviousSession,
-      _reinitializeUserSession,
       _loadOwnUser,
     },
   };
@@ -38,10 +37,10 @@ module.exports = function ({ route, userRepository, botUpdateListener }) {
       dispatch("testAccessKey", storedAccessKey);
     }
 
-    window.addEventListener('focus', async () => {
-      if(!state._isAuthenticating) {
+    window.addEventListener("focus", async () => {
+      if (!state._isAuthenticating) {
         const loggedInToHome = await isLoggedInToHome();
-        if(!loggedInToHome) window.location.reload();
+        if (!loggedInToHome) window.location.reload();
       }
     });
   }
@@ -87,7 +86,8 @@ module.exports = function ({ route, userRepository, botUpdateListener }) {
       }
     } else {
       // The user is logged in to the PHP server (home), but is NOT logged in to the Node server (game), need to login as a NEW USER (new user in Node server (game), NOT new user in PHP server (home)).
-      dispatch("_reinitializeUserSession");
+      dispatch("_resetLocallyStoredUserData");
+      await dispatch("login");
     }
 
     state._isAuthenticating = false;
@@ -120,11 +120,6 @@ module.exports = function ({ route, userRepository, botUpdateListener }) {
     if (ownUser) {
       dispatch("user/storeOwnUser", ownUser, { root: true });
     }
-  }
-
-  function _reinitializeUserSession({ dispatch }) {
-    dispatch("_resetLocallyStoredUserData");
-    dispatch("login");
   }
 
   function _resetLocallyStoredUserData({ dispatch }) {
