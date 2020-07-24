@@ -1,3 +1,5 @@
+import { restore } from "sinon";
+
 export function LoginSession({
   resetLocallyStoredUserData,
   login,
@@ -14,7 +16,9 @@ export function LoginSession({
     hasOngoingMatch,
   }) {
     if (!loggedInToHome) {
-      if (!guestModeOn) {
+      if (guestModeOn) {
+        restoreOngoingMatch();
+      } else {
         resetLocallyStoredUserData();
       }
     } else if (loggedInToGame) {

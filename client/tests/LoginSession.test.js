@@ -44,15 +44,30 @@ describe("User NOT logged in to Home", () => {
 });
 
 describe("User in Guest mode", () => {
-  describe(`They should keep their Guest account`, () => {
-    test("when NOT logged in to Home and guest mode IS ON, should NOT reset local user", async () => {
-      const resetLocallyStoredUserData = jest.fn();
-      const session = createLoginSession({ resetLocallyStoredUserData });
+  test(`They should keep their Guest account`, async () => {
+    const resetLocallyStoredUserData = jest.fn();
+    const session = createLoginSession({ resetLocallyStoredUserData });
 
-      await session.checkAll({ loggedInToHome: false, guestModeOn: true });
-
-      expect(resetLocallyStoredUserData).not.toHaveBeenCalled();
+    await session.checkAll({
+      loggedInToHome: false,
+      loggedInToGame: true,
+      guestModeOn: true,
     });
+
+    expect(resetLocallyStoredUserData).not.toHaveBeenCalled();
+  });
+
+  test(`They should be put back into their game`, async () => {
+    const restoreOngoingMatch = jest.fn();
+    const session = createLoginSession({ restoreOngoingMatch });
+
+    await session.checkAll({
+      loggedInToHome: false,
+      loggedInToGame: true,
+      guestModeOn: true,
+    });
+
+    expect(restoreOngoingMatch).toHaveBeenCalled();
   });
 
   describe("They should lose their Guest account after they have logged in to Home", () => {
@@ -116,6 +131,7 @@ function createLoginSession(deps = {}) {
   return LoginSession({
     login: () => {},
     resetLocallyStoredUserData: () => {},
+    restoreOngoingMatch: () => {},
     ...deps,
   });
 }
