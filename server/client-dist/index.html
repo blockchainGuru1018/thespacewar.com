@@ -16,7 +16,6 @@
 
         body {
             margin: 0;
-            background: black;
         }
 
         .match-wrapper {
@@ -64,10 +63,6 @@
                 scrollbar-width: thin;
             }
         }
-
-        @media (max-width: 900px) {
-            html {scale:0.8}
-        }
     </style>
     <link href="https://fonts.googleapis.com/css?family=Space+Mono" rel="stylesheet">
     <link rel="shortcut icon" href="https://images.thespacewar.com/favicon.ico" type="image/x-icon" />
@@ -80,12 +75,12 @@
       var screen_width = document.documentElement.clientWidth;
       if ( screen_width >= 1440 )
         viewport_meta.setAttribute( 'content', 'width=device-width, user-scalable=no, initial-scale=0.7, maximum-scale=0.7, minimum-scale=0.7' );
-      if ( screen_width < 1440 && screen_width >= 1280 )
+      else if ( screen_width < 1440 && screen_width >= 1280 )
         viewport_meta.setAttribute( 'content', 'width=device-width, user-scalable=no, initial-scale=0.65, maximum-scale=0.65, minimum-scale=0.65' );
-      if ( screen_width < 1280 && screen_width >= 1024 )
+      else if ( screen_width < 1280 && screen_width >= 1024 )
         viewport_meta.setAttribute( 'content', 'width=device-width, user-scalable=no, initial-scale=0.6, maximum-scale=0.6, minimum-scale=0.6' );
-      if ( screen_width < 1024 && screen_width >= 800 )
-        viewport_meta.setAttribute( 'content', 'width=device-width, user-scalable=no, initial-scale=0.5, maximum-scale=0.5, minimum-scale=0.5' );
+      else if ( screen_width < 1024 )
+        viewport_meta.setAttribute( 'content', 'width=device-width, user-scalable=no, initial-scale=0.15, maximum-scale=0.15, minimum-scale=0.15' );
     }
     viewport_set();
     window.addEventListener("resize", viewport_set);
