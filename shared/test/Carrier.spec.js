@@ -1,7 +1,7 @@
 const Carrier = require("../card/Carrier.js");
 const Avoid = require("../card/Avoid.js");
+const { PHASES } = require("../../shared/phases.js");
 const { createCard } = require("./testUtils/shared.js");
-
 describe("Can use dormant effect of Carrier", () => {
   it("when current turn its next turn carrier was putted down", () => {
     const card = new createCard(Carrier, {
@@ -12,6 +12,9 @@ describe("Can use dormant effect of Carrier", () => {
       queryEvents: {
         getTurnWhenCardDormantEffectWasUsed: () => null,
         getTurnWhenCardWasPutDown: () => 1,
+      },
+      playerStateService: {
+        getPhase: () => PHASES.attack,
       },
       matchService: {
         getTurn: () => 2,
@@ -32,6 +35,9 @@ describe("Cannot use dormant effect of Carrier", () => {
         getTurnWhenCardDormantEffectWasUsed: () => null,
         getTurnWhenCardWasPutDown: () => 1,
       },
+      playerStateService: {
+        getPhase: () => PHASES.attack,
+      },
       matchService: {
         getTurn: () => 1,
       },
@@ -48,6 +54,9 @@ describe("Cannot use dormant effect of Carrier", () => {
       queryEvents: {
         getTurnWhenCardDormantEffectWasUsed: () => 2,
         getTurnWhenCardWasPutDown: () => 1,
+      },
+      playerStateService: {
+        getPhase: () => PHASES.attack,
       },
       matchService: {
         getTurn: () => 2,

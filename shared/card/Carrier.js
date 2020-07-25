@@ -1,5 +1,6 @@
 const BaseCard = require("./BaseCard.js");
 const info = require("./info/77.config.js");
+const { PHASES } = require("../phases.js");
 
 module.exports = class Carrier extends BaseCard {
   constructor({ addRequirementFromSpec, ...deps }) {
@@ -19,10 +20,11 @@ module.exports = class Carrier extends BaseCard {
       this.id
     );
     const turn = this._matchService.getTurn();
-
+    const isAttackPhase = this._playerStateService.getPhase() === PHASES.attack;
     return (
       turnWhenCardWasPutDown < turn &&
       lastTurnWhenDormantEffectWasUsed !== turn &&
+      isAttackPhase &&
       !this.paralyzed
     );
   }
