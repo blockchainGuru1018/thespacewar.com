@@ -40,7 +40,11 @@
       <GuideText @showEnlargedCard="showEnlargedCard" />
 
       <div
-        v-if="overworkContainerVisible || perfectPlanContainerVisible || findAcidProjectileContainerVisible"
+        v-if="
+          overworkContainerVisible ||
+            perfectPlanContainerVisible ||
+            findAcidProjectileContainerVisible
+        "
         class="overworkContainer"
       >
         <button
@@ -62,12 +66,12 @@
         </button>
 
         <button
-                v-if="findAcidProjectileContainerVisible"
-                title="Your opponent may flip 2 of your station cards & you may select any card to put in your hand"
-                class="perfectPlan darkButton"
-                @click="findAcidMissile"
+          v-if="findAcidProjectileContainerVisible"
+          title="Your opponent may flip 2 of your station cards & you may select any card to put in your hand"
+          class="perfectPlan darkButton"
+          @click="findAcidMissile"
         >
-          Find Acid Missile
+          Find Acid Projectile
         </button>
       </div>
     </portal>
@@ -341,7 +345,12 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["goToNextPhase", "overwork", "perfectPlan", "findAcidMissile"]),
+    ...mapActions([
+      "goToNextPhase",
+      "overwork",
+      "perfectPlan",
+      "findAcidMissile",
+    ]),
     ...startGameHelpers.mapActions(["playerReady"]),
     ...escapeMenuHelpers.mapActions(["selectView"]),
     readyClick() {

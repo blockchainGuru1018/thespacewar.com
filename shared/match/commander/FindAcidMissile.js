@@ -9,6 +9,7 @@ const findAcidMissileRequirement = {
     "drawStationCards",
     "actionStationCards",
     "handSizeStationCards",
+    "hand",
   ],
   target: "homeZone",
   filter: {
