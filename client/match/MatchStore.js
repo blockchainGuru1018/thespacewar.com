@@ -12,6 +12,7 @@ const QueryPlayerRequirements = require("../../shared/match/requirement/QueryPla
 const PlayerRequirementService = require("../../shared/match/requirement/PlayerRequirementService.js");
 const PlayerPerfectPlan = require("../../shared/match/perfectPlan/PlayerPerfectPlan.js");
 const FindAcidMissile = require("../../shared/match/commander/FindAcidMissile.js");
+const FindDronesForZuuls = require("../../shared/match/commander/FindDronesForZuuls.js");
 const CardFactory = require("../../shared/card/CardFactory.js");
 const ClientPlayerServiceProvider = require("./ClientPlayerServiceProvider.js");
 const EventFactory = require("../../shared/event/EventFactory.js");
@@ -161,6 +162,7 @@ module.exports = function (deps) {
       lastStand,
       playerPerfectPlan,
       playerFindAcidMissile,
+      playerFindDronesForZuuls,
       playerRuleService,
       opponentRuleService,
       calculateMoreCardsCanBeDrawnForDrawPhase,
@@ -207,6 +209,7 @@ module.exports = function (deps) {
       overwork,
       perfectPlan,
       findAcidMissile,
+      findDronesForZuuls,
       checkLastTimeOfInactivityForPlayer,
       toggleControlOfTurn,
       skipDrawCard,
@@ -522,6 +525,15 @@ module.exports = function (deps) {
     });
   }
 
+  function playerFindDronesForZuuls(state, getters) {
+    return new FindDronesForZuuls({
+      matchService: getters.matchService,
+      playerStateService: getters.playerStateService,
+      playerPhase: getters.playerPhase,
+      opponentActionLog: ClientLimitNotice,
+    });
+  }
+
   function playerRuleService(state, getters) {
     return new PlayerRuleService({
       matchService: getters.matchService,
@@ -638,6 +650,7 @@ module.exports = function (deps) {
       opponentStateService: getters.opponentStateService,
       opponentPhase: getters.opponentPhase,
       opponentActionLog: ClientLimitNotice,
+      playerActionLog: ClientLimitNotice,
     });
   }
 
@@ -933,6 +946,9 @@ module.exports = function (deps) {
   function findAcidMissile() {
     matchController.emit("findAcidMissile");
   }
+  function findDronesForZuuls() {
+    matchController.emit("findDronesForZuuls");
+  }
   function toggleControlOfTurn() {
     matchController.emit("toggleControlOfTurn");
   }
@@ -1009,6 +1025,12 @@ module.exports = function (deps) {
     state.phase = nextPhaseWithAction;
     if (nextPhaseWithAction === PHASES.wait) {
       state.currentPlayer = null;
+    }
+
+    if (nextPhaseWithAction === PHASES.action) {
+      if (getters.playerFindDronesForZuuls.canIssueFindDronesForZuuls()) {
+        matchController.emit("findDronesForZuuls");
+      }
     }
   }
 

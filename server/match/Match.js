@@ -12,6 +12,7 @@ const StartGameController = require("./controller/StartGameController.js");
 const OverworkController = require("./controller/OverworkController.js");
 const PerfectPlanController = require("./controller/PerfectPlanController.js");
 const FindAcidMissileController = require("./controller/FindAcidMissileController.js");
+const FindDronesForZuulsController = require("./controller/FindDronesForZuulsController.js");
 const TriggerDormantEffect = require("./command/TriggerDormantEffect.js");
 const LookAtStationRowCommand = require("./command/LookAtStationRowCommand.js");
 const CancelRequirementCommand = require("./command/CancelRequirementCommand.js");
@@ -135,6 +136,7 @@ module.exports = function ({
   const overworkController = OverworkController(controllerDeps);
   const perfectPlanController = PerfectPlanController(controllerDeps);
   const findAcidMissileController = FindAcidMissileController(controllerDeps);
+  const findDronesForZuuls = FindDronesForZuulsController(controllerDeps);
   const api = {
     selectPlayerToStart: startGameController.selectPlayerToStart,
     selectCommander: startGameController.selectCommander,
@@ -169,6 +171,7 @@ module.exports = function ({
     triggerDormantEffect: PlayerCommand(TriggerDormantEffect, controllerDeps),
     lookAtStationRow: PlayerCommand(LookAtStationRowCommand, controllerDeps),
     findAcidMissile: findAcidMissileController.findAcidMissile,
+    findDronesForZuuls: findDronesForZuuls.findDronesForZuuls,
     endLastStand,
     repairCard,
     retreat,
