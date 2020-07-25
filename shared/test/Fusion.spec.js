@@ -1,5 +1,7 @@
-const Fusion = require("../card/Fusion");
 const { createCard } = require("./testUtils/shared.js");
+const Fusion = require("../card/Fusion");
+const { PHASES } = require("../../shared/phases.js");
+
 describe("Fusion should not be able to trigger dormant effect", () => {
   it("Should be not be able when its first turn", () => {
     const card = new createCard(Fusion, {
@@ -13,6 +15,27 @@ describe("Fusion should not be able to trigger dormant effect", () => {
             { id: "C1A", type: "spaceShip" },
             { id: "C2A", type: "spaceShip" },
           ].filter(matcher),
+        getPhase: () => PHASES.attack,
+      },
+      matchService: {
+        getTurn: () => 1,
+      },
+    });
+    expect(card.canTriggerDormantEffect()).toBeFalsy();
+  });
+  it("Should be not be able when if its not Attack Phase", () => {
+    const card = new createCard(Fusion, {
+      queryEvents: {
+        getTurnWhenCardWasPutDown: () => 1,
+        getAttacksOnTurn: () => [1],
+      },
+      playerStateService: {
+        getMatchingCardInSameZone: (id, matcher) =>
+          [
+            { id: "C1A", type: "spaceShip" },
+            { id: "C2A", type: "spaceShip" },
+          ].filter(matcher),
+        getPhase: () => PHASES.action,
       },
       matchService: {
         getTurn: () => 1,
@@ -33,6 +56,7 @@ describe("Fusion should not be able to trigger dormant effect", () => {
             { id: "C1A", type: "spaceShip" },
             { id: "C2A", type: "spaceShip" },
           ].filter(matcher),
+        getPhase: () => PHASES.attack,
       },
       matchService: {
         getTurn: () => 2,
@@ -53,6 +77,7 @@ describe("Fusion should not be able to trigger dormant effect", () => {
             { id: "C1A", type: "spaceShip" },
             { id: "C2A", type: "event" },
           ].filter(matcher),
+        getPhase: () => PHASES.attack,
       },
       matchService: {
         getTurn: () => 2,
@@ -75,6 +100,7 @@ describe("Fusion should be able to trigger dormant effect", () => {
             { id: "C1A", type: "spaceShip" },
             { id: "C2A", type: "spaceShip" },
           ].filter(matcher),
+        getPhase: () => PHASES.attack,
       },
       matchService: {
         getTurn: () => 2,

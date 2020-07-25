@@ -1,6 +1,6 @@
 const BaseCard = require("./BaseCard.js");
 const info = require("./info/80.config.js");
-
+const { PHASES } = require("../phases.js");
 module.exports = class Fusion extends BaseCard {
   constructor(deps) {
     super(deps);
@@ -30,7 +30,8 @@ module.exports = class Fusion extends BaseCard {
       !this.paralyzed &&
       existTwoOrMoreSpaceShipsInSameZone &&
       itsNotSameTurnWhenWasPuttedDown &&
-      haveNotAttackedThisTurn
+      haveNotAttackedThisTurn &&
+      this._playerStateService.getPhase() === PHASES.attack
     );
   }
 
