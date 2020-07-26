@@ -13,6 +13,7 @@ const OverworkController = require("./controller/OverworkController.js");
 const PerfectPlanController = require("./controller/PerfectPlanController.js");
 const FindAcidProjectile = require("./controller/FindAcidProjectileController.js");
 const FindDronesForZuulsController = require("./controller/FindDronesForZuulsController.js");
+const NaaloxDormantEffectController = require("./controller/NaaloxDormantEffectController.js");
 const TriggerDormantEffect = require("./command/TriggerDormantEffect.js");
 const LookAtStationRowCommand = require("./command/LookAtStationRowCommand.js");
 const CancelRequirementCommand = require("./command/CancelRequirementCommand.js");
@@ -134,8 +135,13 @@ module.exports = function ({
   const startGameController = StartGameController(controllerDeps);
   const overworkController = OverworkController(controllerDeps);
   const perfectPlanController = PerfectPlanController(controllerDeps);
-  const findAcidProjectile = FindAcidProjectile(controllerDeps);
-  const findDronesForZuuls = FindDronesForZuulsController(controllerDeps);
+  const findAcidProjectileController = FindAcidProjectile(controllerDeps);
+  const findDronesForZuulsController = FindDronesForZuulsController(
+    controllerDeps
+  );
+  const naaloxDormantEffectController = NaaloxDormantEffectController(
+    controllerDeps
+  );
   const api = {
     selectPlayerToStart: startGameController.selectPlayerToStart,
     selectCommander: startGameController.selectCommander,
@@ -169,8 +175,11 @@ module.exports = function ({
     perfectPlan: perfectPlanController.perfectPlan,
     triggerDormantEffect: PlayerCommand(TriggerDormantEffect, controllerDeps),
     lookAtStationRow: PlayerCommand(LookAtStationRowCommand, controllerDeps),
-    findAcidProjectile: findAcidProjectile.findAcidProjectile,
-    findDronesForZuuls: findDronesForZuuls.findDronesForZuuls,
+    findAcidProjectile: findAcidProjectileController.findAcidProjectile,
+    findDronesForZuuls: findDronesForZuulsController.findDronesForZuuls,
+    naaloxRepairStationCard:
+      naaloxDormantEffectController.naaloxRepairStationCard,
+    naaloxReviveDrone: naaloxDormantEffectController.naaloxReviveDrone,
     endLastStand,
     repairCard,
     retreat,

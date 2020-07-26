@@ -43,7 +43,8 @@
         v-if="
           overworkContainerVisible ||
             perfectPlanContainerVisible ||
-            findAcidProjectileContainerVisible
+            findAcidProjectileContainerVisible ||
+          naaloxDormantEffectsContainerVisible
         "
         class="overworkContainer"
       >
@@ -67,11 +68,27 @@
 
         <button
           v-if="findAcidProjectileContainerVisible"
-          title="Your opponent may flip 2 of your station cards & you may select any card to put in your hand"
+          title="You can search from anywhere an acid projectile"
           class="perfectPlan darkButton"
           @click="findAcidProjectile"
         >
           Find Acid Projectile
+        </button>
+        <button
+          v-if="this.playerNaaloxDormantEffect.canIssueReviveDrone()"
+          title="You can bring back a drone from your discard pile"
+          class="perfectPlan darkButton"
+          @click="naaloxReviveDrone"
+        >
+          Revive Drone
+        </button>
+        <button
+          v-if="this.playerNaaloxDormantEffect.canIssueRepairStation()"
+          title="You can fix a damaged station card"
+          class="perfectPlan darkButton"
+          @click="naaloxRepairStationCard"
+        >
+          Repair Station Card
         </button>
       </div>
     </portal>
@@ -221,6 +238,7 @@ export default {
       "gameOn",
       "playerPerfectPlan",
       "playerFindAcidProjectile",
+      "playerNaaloxDormantEffect",
       "playerRuleService",
       "playerDrawPhase",
       "getCardsPendingForAction",
@@ -258,6 +276,12 @@ export default {
     },
     findAcidProjectileContainerVisible() {
       return this.playerFindAcidProjectile.canIssueFindAcidProjectile();
+    },
+    naaloxDormantEffectsContainerVisible() {
+      return (
+        this.playerNaaloxDormantEffect.canIssueReviveDrone() ||
+        this.playerNaaloxDormantEffect.canIssueRepairStation()
+      );
     },
     gameHasEnded() {
       return this.hasWonGame || this.hasLostGame;
@@ -350,6 +374,8 @@ export default {
       "overwork",
       "perfectPlan",
       "findAcidProjectile",
+      "naaloxReviveDrone",
+      "naaloxRepairStationCard",
     ]),
     ...startGameHelpers.mapActions(["playerReady"]),
     ...escapeMenuHelpers.mapActions(["selectView"]),

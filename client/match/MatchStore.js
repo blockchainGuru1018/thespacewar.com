@@ -13,6 +13,7 @@ const PlayerRequirementService = require("../../shared/match/requirement/PlayerR
 const PlayerPerfectPlan = require("../../shared/match/perfectPlan/PlayerPerfectPlan.js");
 const FindAcidProjectile = require("../../shared/match/commander/FindAcidProjectile.js");
 const FindDronesForZuuls = require("../../shared/match/commander/FindDronesForZuuls.js");
+const NaaloxDormantEffect = require("../../shared/match/commander/NaaloxDormantEffect");
 const CardFactory = require("../../shared/card/CardFactory.js");
 const ClientPlayerServiceProvider = require("./ClientPlayerServiceProvider.js");
 const EventFactory = require("../../shared/event/EventFactory.js");
@@ -163,6 +164,7 @@ module.exports = function (deps) {
       playerPerfectPlan,
       playerFindAcidProjectile,
       playerFindDronesForZuuls,
+      playerNaaloxDormantEffect,
       playerRuleService,
       opponentRuleService,
       calculateMoreCardsCanBeDrawnForDrawPhase,
@@ -210,6 +212,8 @@ module.exports = function (deps) {
       perfectPlan,
       findAcidProjectile,
       findDronesForZuuls,
+      naaloxReviveDrone,
+      naaloxRepairStationCard,
       checkLastTimeOfInactivityForPlayer,
       toggleControlOfTurn,
       skipDrawCard,
@@ -531,6 +535,18 @@ module.exports = function (deps) {
       playerStateService: getters.playerStateService,
       playerPhase: getters.playerPhase,
       opponentActionLog: ClientLimitNotice,
+      playerActionLog: ClientLimitNotice,
+    });
+  }
+  function playerNaaloxDormantEffect(state, getters) {
+    return new NaaloxDormantEffect({
+      matchService: getters.matchService,
+      playerStateService: getters.playerStateService,
+      playerPhase: getters.playerPhase,
+      playerActionPointsCalculator: getters.playerActionPointsCalculator,
+      opponentActionLog: ClientLimitNotice,
+      playerRequirementFactory: ClientLimitNotice,
+      playerActionLog: ClientLimitNotice,
     });
   }
 
@@ -943,12 +959,23 @@ module.exports = function (deps) {
   function perfectPlan() {
     matchController.emit("perfectPlan");
   }
+
   function findAcidProjectile() {
     matchController.emit("findAcidProjectile");
   }
+
   function findDronesForZuuls() {
     matchController.emit("findDronesForZuuls");
   }
+
+  function naaloxRepairStationCard() {
+    matchController.emit("naaloxRepairStationCard");
+  }
+
+  function naaloxReviveDrone() {
+    matchController.emit("naaloxReviveDrone");
+  }
+
   function toggleControlOfTurn() {
     matchController.emit("toggleControlOfTurn");
   }

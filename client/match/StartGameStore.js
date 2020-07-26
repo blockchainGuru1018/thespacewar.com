@@ -12,7 +12,7 @@ const commandersRows = {
     { name: "Zuuls", value: Commander.Zuuls },
     { name: "Crakux", value: Commander.Crakux },
     { name: "Staux", value: Commander.Staux },
-    { name: "General Jackson", value: Commander.GeneralJackson },
+    { name: "Naalox", value: Commander.Naalox },
   ],
 };
 module.exports = function ({ matchController }) {

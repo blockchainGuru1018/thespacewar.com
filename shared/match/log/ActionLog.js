@@ -61,6 +61,8 @@ module.exports = function ({
     opponentReleasedControlOfTurn,
     opponentReceivedCardFromCommander,
     receivedCardFromCommander,
+    opponentIssuedNaaloxReviveDrone,
+    opponentIssuedNaaloxRepairStation,
   };
 
   function queryLatest() {
@@ -230,6 +232,19 @@ module.exports = function ({
     });
   }
 
+  function opponentIssuedNaaloxReviveDrone(cardCommonId) {
+    log({
+      action: "issuedNaaloxReviveDrone",
+      text: `${opponentName()} issued revive ${cardInfoText(cardCommonId)}`,
+      cardCommonId: cardCommonId,
+    });
+  }
+  function opponentIssuedNaaloxRepairStation() {
+    log({
+      action: "issuedNaaloxRepairStation",
+      text: `${opponentName()} issued repair station`,
+    });
+  }
   function opponentIssuedPerfectPlan() {
     log({
       action: "issuedPerfectPlan",

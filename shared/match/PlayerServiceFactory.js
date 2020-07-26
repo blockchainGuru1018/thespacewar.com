@@ -18,6 +18,7 @@ const OverworkEventFactory = require("./overwork/event/OverworkEventFactory.js")
 const PlayerOverwork = require("./overwork/PlayerOverwork.js");
 const FindAcidProjectile = require("./commander/FindAcidProjectile.js");
 const FindDronesForZuuls = require("./commander/FindDronesForZuuls.js");
+const NaaloxDormantEffect = require("./commander/NaaloxDormantEffect");
 const MoveStationCard = require("./MoveStationCard.js");
 const AddRequirementFromSpec = require("./requirement/AddRequirementFromSpec.js");
 const StartGame = require("./StartGame.js");
@@ -73,6 +74,7 @@ module.exports = function ({
     playerPerfectPlan: cached(playerPerfectPlan),
     findAcidProjectile: cached(findAcidProjectile),
     findDronesForZuuls: cached(findDronesForZuuls),
+    naaloxDormantEffect: cached(naaloxDormantEffect),
     overworkEventFactory: cached(overworkEventFactory),
     cardFactory: cached(cardFactory),
     matchService: cached(matchService),
@@ -294,6 +296,19 @@ module.exports = function ({
       matchService: api.matchService(playerId),
     });
   }
+
+  function naaloxDormantEffect(playerId) {
+    return new NaaloxDormantEffect({
+      playerStateService: api.playerStateService(playerId),
+      playerActionPointsCalculator: api.playerActionPointsCalculator(playerId),
+      addRequirementFromSpec: api.addRequirementFromSpec(playerId),
+      playerPhase: api.playerPhase(playerId),
+      matchService: api.matchService(playerId),
+      opponentActionLog: api.actionLog(api.opponentId(playerId)),
+      playerActionLog: api.actionLog(playerId),
+    });
+  }
+
   function playerPerfectPlan(playerId) {
     return PlayerPerfectPlan({
       playerPhase: api.playerPhase(playerId),
