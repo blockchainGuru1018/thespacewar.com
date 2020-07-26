@@ -69,7 +69,7 @@
           v-if="findAcidProjectileContainerVisible"
           title="Your opponent may flip 2 of your station cards & you may select any card to put in your hand"
           class="perfectPlan darkButton"
-          @click="findAcidMissile"
+          @click="findAcidProjectile"
         >
           Find Acid Projectile
         </button>
@@ -220,7 +220,7 @@ export default {
       "turnControl",
       "gameOn",
       "playerPerfectPlan",
-      "playerFindAcidMissile",
+      "playerFindAcidProjectile",
       "playerRuleService",
       "playerDrawPhase",
       "getCardsPendingForAction",
@@ -257,7 +257,7 @@ export default {
       return this.playerPerfectPlan.canIssuePerfectPlan() && !this.holdingCard;
     },
     findAcidProjectileContainerVisible() {
-      return this.playerFindAcidMissile.canIssueFindAcidMissile();
+      return this.playerFindAcidProjectile.canIssueFindAcidProjectile();
     },
     gameHasEnded() {
       return this.hasWonGame || this.hasLostGame;
@@ -349,7 +349,7 @@ export default {
       "goToNextPhase",
       "overwork",
       "perfectPlan",
-      "findAcidMissile",
+      "findAcidProjectile",
     ]),
     ...startGameHelpers.mapActions(["playerReady"]),
     ...escapeMenuHelpers.mapActions(["selectView"]),

@@ -15,11 +15,9 @@ const findAcidMissileRequirement = {
   filter: {
     commonId: AcidProjectile.CommonId,
   },
-  submitOnEverySelect: true,
-  cancelable: true,
 };
 
-class FindAcidMissile {
+class FindAcidProjectile {
   constructor({
     playerStateService,
     playerPhase,
@@ -40,11 +38,12 @@ class FindAcidMissile {
     this._matchService = matchService;
   }
 
-  canIssueFindAcidMissile() {
+  canIssueFindAcidProjectile() {
     return (
       this._isUsingStauxCommander() &&
       this._playerPhase.isAction() &&
-      this._canAffordFindAcidMissile()
+      this._canAffordFindAcidProjectile() &&
+      this._hasNotIssuedFindAcidProjectileThisTurn()
     );
   }
 
@@ -52,16 +51,28 @@ class FindAcidMissile {
     return this._playerStateService.getCurrentCommander() === Commander.Staux;
   }
 
-  _canAffordFindAcidMissile() {
+  _canAffordFindAcidProjectile() {
     return this._playerActionPointsCalculator.calculate() >= 2;
   }
+
   _createAndStoreEvent() {
     const turn = this._matchService.getTurn();
-    const event = { turn, type: "stauxFindAcidMissile" };
+    const event = { turn, type: "stauxFindAcidProjectile" };
     this._playerStateService.storeEvent(event);
   }
 
-  findAcidMissile() {
+  _hasNotIssuedFindAcidProjectileThisTurn() {
+    return (
+      this._playerStateService
+        .getEvents()
+        .filter(
+          (e) =>
+            e.type === "stauxFindAcidProjectile" &&
+            e.turn === this._matchService.getTurn()
+        ).length === 0
+    );
+  }
+  findAcidProjectile() {
     const requirement = this._playerRequirementFactory.createForCardAndSpec(
       {},
       findAcidMissileRequirement
@@ -70,8 +81,8 @@ class FindAcidMissile {
 
     this._playerRequirementService.addFindCardRequirement(requirement);
     this._createAndStoreEvent();
-    this._opponentActionLog.opponentIssuedFindAcidMissile();
+    this._opponentActionLog.opponentIssuedFindAcidProjectile();
   }
 }
 
-module.exports = FindAcidMissile;
+module.exports = FindAcidProjectile;

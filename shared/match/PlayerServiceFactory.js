@@ -16,7 +16,7 @@ const PlayerPerfectPlan = require("./perfectPlan/PlayerPerfectPlan.js");
 const QueryAttacks = require("./requirement/QueryAttacks.js");
 const OverworkEventFactory = require("./overwork/event/OverworkEventFactory.js");
 const PlayerOverwork = require("./overwork/PlayerOverwork.js");
-const FindAcidMissile = require("./commander/FindAcidMissile.js");
+const FindAcidProjectile = require("./commander/FindAcidProjectile.js");
 const FindDronesForZuuls = require("./commander/FindDronesForZuuls.js");
 const MoveStationCard = require("./MoveStationCard.js");
 const AddRequirementFromSpec = require("./requirement/AddRequirementFromSpec.js");
@@ -71,7 +71,7 @@ module.exports = function ({
     moveStationCard: cached(moveStationCard),
     playerOverwork: cached(playerOverwork),
     playerPerfectPlan: cached(playerPerfectPlan),
-    findAcidMissile: cached(findAcidMissile),
+    findAcidProjectile: cached(findAcidProjectile),
     findDronesForZuuls: cached(findDronesForZuuls),
     overworkEventFactory: cached(overworkEventFactory),
     cardFactory: cached(cardFactory),
@@ -270,8 +270,8 @@ module.exports = function ({
     });
   }
 
-  function findAcidMissile(playerId) {
-    return new FindAcidMissile({
+  function findAcidProjectile(playerId) {
+    return new FindAcidProjectile({
       playerStateService: api.playerStateService(playerId),
       playerPhase: api.playerPhase(playerId),
       playerActionPointsCalculator: api.playerActionPointsCalculator(playerId),

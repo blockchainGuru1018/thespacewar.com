@@ -11,7 +11,7 @@ const ClientPlayerStateService = require("./ClientPlayerStateService");
 const QueryPlayerRequirements = require("../../shared/match/requirement/QueryPlayerRequirements.js");
 const PlayerRequirementService = require("../../shared/match/requirement/PlayerRequirementService.js");
 const PlayerPerfectPlan = require("../../shared/match/perfectPlan/PlayerPerfectPlan.js");
-const FindAcidMissile = require("../../shared/match/commander/FindAcidMissile.js");
+const FindAcidProjectile = require("../../shared/match/commander/FindAcidProjectile.js");
 const FindDronesForZuuls = require("../../shared/match/commander/FindDronesForZuuls.js");
 const CardFactory = require("../../shared/card/CardFactory.js");
 const ClientPlayerServiceProvider = require("./ClientPlayerServiceProvider.js");
@@ -161,7 +161,7 @@ module.exports = function (deps) {
       moveStationCard,
       lastStand,
       playerPerfectPlan,
-      playerFindAcidMissile,
+      playerFindAcidProjectile,
       playerFindDronesForZuuls,
       playerRuleService,
       opponentRuleService,
@@ -208,7 +208,7 @@ module.exports = function (deps) {
       askToDiscardOpponentTopTwoCards,
       overwork,
       perfectPlan,
-      findAcidMissile,
+      findAcidProjectile,
       findDronesForZuuls,
       checkLastTimeOfInactivityForPlayer,
       toggleControlOfTurn,
@@ -512,8 +512,8 @@ module.exports = function (deps) {
     });
   }
 
-  function playerFindAcidMissile(state, getters) {
-    return new FindAcidMissile({
+  function playerFindAcidProjectile(state, getters) {
+    return new FindAcidProjectile({
       playerPhase: getters.playerPhase,
       playerStateService: getters.playerStateService,
       playerActionPointsCalculator: getters.playerActionPointsCalculator,
@@ -943,8 +943,8 @@ module.exports = function (deps) {
   function perfectPlan() {
     matchController.emit("perfectPlan");
   }
-  function findAcidMissile() {
-    matchController.emit("findAcidMissile");
+  function findAcidProjectile() {
+    matchController.emit("findAcidProjectile");
   }
   function findDronesForZuuls() {
     matchController.emit("findDronesForZuuls");

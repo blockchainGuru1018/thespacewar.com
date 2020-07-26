@@ -16,7 +16,6 @@ module.exports = {
           "hand",
         ],
         target: "currentCardZone",
-        submitOnEverySelect: true,
         filter: {
           commonId: ["78"],
         },

@@ -11,7 +11,7 @@ const NextPhaseController = require("./controller/NextPhaseController.js");
 const StartGameController = require("./controller/StartGameController.js");
 const OverworkController = require("./controller/OverworkController.js");
 const PerfectPlanController = require("./controller/PerfectPlanController.js");
-const FindAcidMissileController = require("./controller/FindAcidMissileController.js");
+const FindAcidProjectile = require("./controller/FindAcidProjectileController.js");
 const FindDronesForZuulsController = require("./controller/FindDronesForZuulsController.js");
 const TriggerDormantEffect = require("./command/TriggerDormantEffect.js");
 const LookAtStationRowCommand = require("./command/LookAtStationRowCommand.js");
@@ -20,7 +20,6 @@ const CheatController = require("./controller/CheatController.js");
 const MatchComService = require("./service/MatchComService.js");
 const PlayerRequirementUpdaterFactory = require("./PlayerRequirementUpdaterFactory.js");
 const StateChangeListener = require("../../shared/match/StateChangeListener.js");
-const PlayerServiceProvider = require("../../shared/match/PlayerServiceProvider.js");
 const PlayerOverworkFactory = require("../../shared/match/overwork/PlayerOverworkFactory.js");
 const ServiceFactoryFactory = require("../../shared/match/ServiceFactoryFactory.js");
 const LookAtStationRow = require("../../shared/match/card/actions/LookAtStationRow.js");
@@ -135,7 +134,7 @@ module.exports = function ({
   const startGameController = StartGameController(controllerDeps);
   const overworkController = OverworkController(controllerDeps);
   const perfectPlanController = PerfectPlanController(controllerDeps);
-  const findAcidMissileController = FindAcidMissileController(controllerDeps);
+  const findAcidProjectile = FindAcidProjectile(controllerDeps);
   const findDronesForZuuls = FindDronesForZuulsController(controllerDeps);
   const api = {
     selectPlayerToStart: startGameController.selectPlayerToStart,
@@ -170,7 +169,7 @@ module.exports = function ({
     perfectPlan: perfectPlanController.perfectPlan,
     triggerDormantEffect: PlayerCommand(TriggerDormantEffect, controllerDeps),
     lookAtStationRow: PlayerCommand(LookAtStationRowCommand, controllerDeps),
-    findAcidMissile: findAcidMissileController.findAcidMissile,
+    findAcidProjectile: findAcidProjectile.findAcidProjectile,
     findDronesForZuuls: findDronesForZuuls.findDronesForZuuls,
     endLastStand,
     repairCard,
