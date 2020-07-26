@@ -13,7 +13,6 @@ module.exports = {
         filter: {
           type: "spaceShip",
         },
-        submitOnEverySelect: true,
         cancelable: false,
         ifAddedAddAlso: [
           {
@@ -27,7 +26,6 @@ module.exports = {
                 filter: {
                   type: "spaceShip",
                 },
-                submitOnEverySelect: true,
                 cancelable: false,
                 dormantEffect: { destroyTriggerCard: true },
               },
