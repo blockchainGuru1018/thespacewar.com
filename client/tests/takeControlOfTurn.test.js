@@ -195,3 +195,36 @@ describe("when has taken control of the turn and is holding a card costing more 
     assert.elementCount(".playerCardsInZone .card-ghost--deactivatedZone", 1);
   });
 });
+
+describe("when is holding a card costing 0 and some card its adding costInflation", () => {
+  beforeEach(async () => {
+    const { dispatch, showPage } = setUpController();
+    showPage();
+    dispatch(
+      "stateChanged",
+      FakeState({
+        turn: 1,
+        currentPlayer: "P2A",
+        phase: "wait",
+        cardsOnHand: [{ id: "C1A", cost: 0 }],
+        cardsInZone: [
+          {
+            id: "C2A",
+            cost: 1,
+            commonId: "89",
+            allCardsCostIncrementEffect: 3,
+          },
+        ],
+      })
+    );
+    await timeout();
+  });
+
+  test("should not see take Control Button", () => {
+    assert.elementHasClass(".toggleControlOfTurn", "hidden");
+  });
+
+  test("should see text indicating the amount of cost inflation", () => {
+    assert.elementText(".guideText", "All cards cost 3 more actions to play.");
+  });
+});

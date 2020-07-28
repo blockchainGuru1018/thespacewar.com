@@ -202,6 +202,7 @@ module.exports = function (deps) {
       opponentMaxStationCardCount,
       gameConfig,
       cardDataAssembler,
+      cardCostInflation,
     },
     actions: {
       // remote
@@ -291,6 +292,16 @@ module.exports = function (deps) {
 
   function getTotalCardsOnHand(state) {
     return state.playerCardsOnHand;
+  }
+
+  function cardCostInflation(state, getters) {
+    return (
+      getters.playerStateService
+        .getMatchingBehaviourCardsInBoard(
+          (card) => card.allCardsCostIncrementEffect
+        )
+        .map((c) => c.allCardsCostIncrementEffect) || 0
+    );
   }
 
   function nextPhaseWithAction(state, getters) {

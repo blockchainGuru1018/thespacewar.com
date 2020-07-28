@@ -127,7 +127,7 @@
       Discard
       {{
         amountOfCardsToDiscard +
-          (amountOfCardsToDiscard === 1 ? " card" : " cards")
+        (amountOfCardsToDiscard === 1 ? " card" : " cards")
       }}
       to continue
     </div>
@@ -208,6 +208,7 @@ export default {
       "isOwnTurn",
       "playerRuleService",
       "lastStand",
+      "cardCostInflation",
     ]),
     ...requirementHelpers.mapGetters([
       "waitingForOtherPlayerToFinishRequirements",
@@ -353,12 +354,17 @@ export default {
       if (this.playerHasControlOfOpponentsTurn) {
         return "Put down any 0-cost card";
       }
+      if (this.cardCostInflation > 0) {
+        return `All cards cost ${this.cardCostInflation} more actions to play.`;
+      }
+
       return "Enemy turn";
     },
     turnControlButtonText() {
       if (this.playerHasControlOfOpponentsTurn) {
         return "Release control";
       }
+
       return "Take control";
     },
     discardDurationCardsText() {
