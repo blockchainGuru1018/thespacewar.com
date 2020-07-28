@@ -13,7 +13,7 @@ test("should play Excellent Work to station row decided by decider", () => {
     decideRowForStationCard: () => "action",
   });
 
-  player.play({ id: "C1A", cost: 2 });
+  player.play(createFakeBehaviourCard({ id: "C1A", baseCost: 2 }));
 
   expect(matchController.emit).toBeCalledWith("putDownCard", {
     cardCost: 2,
@@ -33,7 +33,7 @@ test('when can NOT put down station card should play Excellent Work with choice 
     },
   });
 
-  player.play({ id: "C1A", cost: 2 });
+  player.play(createFakeBehaviourCard({ id: "C1A", baseCost: 2 }));
 
   expect(matchController.emit).toBeCalledWith("putDownCard", {
     cardCost: 2,
@@ -50,4 +50,12 @@ function createPlayer(stubs) {
     },
     ...stubs,
   });
+}
+
+function createFakeBehaviourCard(options = {}) {
+  return {
+    baseCost: 0,
+    costWithInflation: options.baseCost || 0,
+    ...options,
+  };
 }

@@ -53,6 +53,7 @@ module.exports = function ({
     opponentExpandedStation,
     opponentIssuedOverwork,
     opponentIssuedPerfectPlan,
+    opponentIssuedFindAcidProjectile,
     opponentTriggeredCard,
     opponentMilledCardsFromYourDeck,
     opponentMovedStationCard,
@@ -60,6 +61,8 @@ module.exports = function ({
     opponentReleasedControlOfTurn,
     opponentReceivedCardFromCommander,
     receivedCardFromCommander,
+    opponentIssuedNaaloxReviveDrone,
+    opponentIssuedNaaloxRepairStation,
   };
 
   function queryLatest() {
@@ -222,6 +225,26 @@ module.exports = function ({
     });
   }
 
+  function opponentIssuedFindAcidProjectile() {
+    log({
+      action: "issuedFindAcidMissile",
+      text: `${opponentName()} issued find Acid Projectile`,
+    });
+  }
+
+  function opponentIssuedNaaloxReviveDrone(cardCommonId) {
+    log({
+      action: "issuedNaaloxReviveDrone",
+      text: `${opponentName()} issued revive ${cardInfoText(cardCommonId)}`,
+      cardCommonId: cardCommonId,
+    });
+  }
+  function opponentIssuedNaaloxRepairStation() {
+    log({
+      action: "issuedNaaloxRepairStation",
+      text: `${opponentName()} issued repair station`,
+    });
+  }
   function opponentIssuedPerfectPlan() {
     log({
       action: "issuedPerfectPlan",

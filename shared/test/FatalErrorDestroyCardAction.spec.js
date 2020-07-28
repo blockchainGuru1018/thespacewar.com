@@ -1,3 +1,4 @@
+const defaults = require("lodash/defaults");
 const FakeCardDataAssembler = require("./testUtils/FakeCardDataAssembler.js");
 const FatalErrorDestroyCardAction = require("../card/fatalError/FatalErrorDestroyCardAction.js");
 
@@ -56,7 +57,7 @@ test("Can NOT target card that costs 2 when has 1 action point", () => {
     toggleCostPenaltyAbility: true,
     toggleEqualCostAbility: false,
   });
-  const target = opponentNonStationCard({ cost: 2 });
+  const target = opponentNonStationCard({ costWithInflation: 2 });
   const actionPoints = 1;
 
   const canSelect = fatalErrorAction.validTarget(target, actionPoints);
@@ -71,7 +72,7 @@ test("Can target card that costs 2 when has 2 action points", () => {
     toggleCostPenaltyAbility: true,
     toggleEqualCostAbility: false,
   });
-  const target = opponentNonStationCard({ cost: 2 });
+  const target = opponentNonStationCard({ costWithInflation: 2 });
   const actionPoints = 2;
 
   const canSelect = fatalErrorAction.validTarget(target, actionPoints);
@@ -86,7 +87,7 @@ test("Can target card that costs 1 when has 2 action points", () => {
     toggleCostPenaltyAbility: true,
     toggleEqualCostAbility: false,
   });
-  const target = opponentNonStationCard({ cost: 1 });
+  const target = opponentNonStationCard({ costWithInflation: 1 });
   const actionPoints = 2;
 
   const canSelect = fatalErrorAction.validTarget(target, actionPoints);
@@ -142,5 +143,9 @@ function ownFlippedStationCard() {
 }
 
 function Target(options = {}) {
-  return FakeCardDataAssembler.createCard(options);
+  const cardData = FakeCardDataAssembler.createCard(options);
+  return defaults(options, {
+    baseCost: cardData.cost,
+    costWithInflation: cardData.cost,
+  });
 }

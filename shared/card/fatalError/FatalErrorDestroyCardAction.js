@@ -27,7 +27,7 @@ module.exports = class FatalErrorDestroyCardAction {
   }
 
   canTargetFromCostPenaltyAbility(target, actionPoints) {
-    return target.cost <= actionPoints;
+    return target.costWithInflation <= actionPoints;
   }
 
   _isEnemyNonStationCard(target) {

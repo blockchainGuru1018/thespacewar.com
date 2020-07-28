@@ -562,7 +562,7 @@ module.exports = {
 
     assert.equals(actionPoints, 2);
   },
-  "when has fatal error used event should retract action points for event"() {
+  "when has fatal error used event should retract action points for event, based on cost stored on event"() {
     const calculator = ActionPointCalculator({
       cardInfoRepository: FakeCardInfoRepository([
         { commonId: "C1A", cost: 1 },
@@ -575,14 +575,15 @@ module.exports = {
           turn: 1,
           phase: "action",
           targetCardCommonId: "C1A",
+          targetCardCost: 4,
         }),
       ],
       turn: 1,
       phase: "action",
-      actionStationCardsCount: 1,
+      actionStationCardsCount: 2,
     });
 
-    assert.equals(actionPoints, 1);
+    assert.equals(actionPoints, 0);
   },
 };
 

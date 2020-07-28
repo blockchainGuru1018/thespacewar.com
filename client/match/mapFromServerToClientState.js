@@ -4,6 +4,6 @@ module.exports = function (serverState, clientPlayerId) {
     events: playerState.events,
     playerCardsInZone: playerState.cardsInZone,
     playerCardsInOpponentZone: playerState.cardsInOpponentZone,
-    deckName: playerState.deckName,
+    currentDeck: playerState.currentDeck,
   };
 };

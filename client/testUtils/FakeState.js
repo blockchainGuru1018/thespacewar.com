@@ -34,6 +34,7 @@ module.exports = function FakeState(options = {}) {
     requirements: [],
     phase: "wait",
     turn: 1,
+    currentDeck:"Regular",
     currentPlayer: "P2A",
     opponentRetreated: false,
     retreatedPlayerId: null,

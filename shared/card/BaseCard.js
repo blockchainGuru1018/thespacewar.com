@@ -56,7 +56,15 @@ class BaseCard {
   }
 
   get cost() {
+    throw new Error("CHANGE THIS!");
+  }
+
+  get baseCost() {
     return this._card.cost;
+  }
+
+  get costWithInflation() {
+    return this.baseCost + this.costInflation;
   }
 
   get attack() {
@@ -351,7 +359,7 @@ class BaseCard {
 
   _ifHasControlOfOpponentTurnCanPlayCard() {
     if (this._turnControl.playerHasControlOfOpponentsTurn()) {
-      return this.cost === 0;
+      return this.costWithInflation === 0;
     }
     return true;
   }

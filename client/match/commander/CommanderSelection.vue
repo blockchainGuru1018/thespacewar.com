@@ -7,7 +7,7 @@
     </div>
     <div class="commanderSelection-cards">
       <div
-        v-for="(row, index) in rows"
+        v-for="(row, index) in commandersOptionsRows"
         :key="index"
         class="commanderSelection-cardsRow"
       >
@@ -31,26 +31,13 @@ const resolveModule = require("../../utils/resolveModuleWithPossibleDefault.js")
 const CommanderCard = resolveModule(require("./CommanderCard.vue"));
 const Commander = require("../../../shared/match/commander/Commander.js");
 
-const commanderOptions = [
-  { name: "Frank Johnson", value: Commander.FrankJohnson },
-  { name: "Keve Bakins", value: Commander.KeveBakins },
-  { name: "Nicia Satu", value: Commander.NiciaSatu },
-  { name: "General Jackson", value: Commander.GeneralJackson },
-  { name: "Dr.Stein", value: Commander.DrStein },
-  { name: "The Miller", value: Commander.TheMiller },
-];
 
 module.exports = {
-  data() {
-    return {
-      rows: [
-        { commanderOptions: commanderOptions.slice(0, 3) },
-        { commanderOptions: commanderOptions.slice(3) },
-      ],
-    };
-  },
   computed: {
-    ...startGameHelpers.mapGetters(["canSelectCommander"]),
+    ...startGameHelpers.mapGetters([
+      "canSelectCommander",
+      "commandersOptionsRows",
+    ]),
     hidden: {
       get() {
         return this.$store.state.startGame.commanderSelectionHidden;

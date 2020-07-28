@@ -162,10 +162,14 @@ module.exports = {
       return (
         !this.isOpponentStationCard &&
         this.stationCard.flipped &&
-        this.actionPoints2 >= this.stationCard.card.cost &&
+        this.actionPoints2 >=
+          this.behaviourCardInStationCard.costWithInflation &&
         this.canPutDownStationCardInHomeZone &&
-        this.createCard(this.stationCard.card).canBePlayed()
+        this.behaviourCardInStationCard.canBePlayed()
       );
+    },
+    behaviourCardInStationCard() {
+      return this.createCard(this.stationCard.card);
     },
     canMoveCardToOtherStationRow() {
       if (this.isOpponentStationCard) return false;

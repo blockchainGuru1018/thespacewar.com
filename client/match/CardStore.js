@@ -472,7 +472,7 @@ module.exports = function (deps) {
   }
 
   async function putDownCardAsExtraStationCard(
-    { dispatch },
+    { dispatch,rootGetters },
     { cardData, location }
   ) {
     const choice = "putDownAsExtraStationCard";
@@ -484,10 +484,11 @@ module.exports = function (deps) {
       putDownAsExtraStationCard: true,
     });
     dispatch("_putDownCardLocal", { location, cardData });
+    const card = rootGetters["match/createCard"](cardData);
     putDownCardRemote({
       location,
       cardId: cardData.id,
-      cardCost: cardData.cost,
+      cardCost: card.costWithInflation,
       choice,
     });
   }
@@ -504,7 +505,7 @@ module.exports = function (deps) {
     putDownCardRemote({
       location,
       cardId: cardData.id,
-      cardCost: cardData.cost + (card.costInflation || 0),
+      cardCost: card.costWithInflation,
       choice,
     });
   }
@@ -574,7 +575,7 @@ module.exports = function (deps) {
         cardId: cardData.id,
         cardCommonId: cardData.commonId,
         putDownAsExtraStationCard,
-        cardCost: card.cost + card.costInflation,
+        cardCost: card.costWithInflation,
       })
     );
   }

@@ -1,6 +1,6 @@
 const BaseCard = require("./BaseCard.js");
 const info = require("./info/80.config.js");
-
+const { PHASES } = require("../phases.js");
 module.exports = class Fusion extends BaseCard {
   constructor(deps) {
     super(deps);
@@ -18,18 +18,22 @@ module.exports = class Fusion extends BaseCard {
     const turnCardWasPutDown = this._queryEvents.getTurnWhenCardWasPutDown(
       this.id
     );
-    const currentTurn = this._matchService.getTurn();
-    const itsNotSameTurnWhenWasPuttedDown = turnCardWasPutDown < currentTurn;
+
+    const itsNotSameTurnWhenWasPuttedDown =
+      turnCardWasPutDown < this._matchService.getTurn();
     const haveNotAttackedThisTurn = !this._hasAttackedThisTurn();
-    const existTwoOrMoreSpaceShipsInSameZone = this._playerStateService.hasMatchingCardInSameZone(
-      this.id,
-      (card) => card.type === "spaceShip"
-    );
+
+    const existTwoOrMoreSpaceShipsInSameZone =
+      this._playerStateService
+        .getMatchingCardInSameZone(this.id, (card) => card.type === "spaceShip")
+        .filter((card) => card.id !== this.id).length >= 2;
+    const isAttackPhase = this._playerStateService.getPhase() === PHASES.attack;
     return (
       !this.paralyzed &&
       existTwoOrMoreSpaceShipsInSameZone &&
       itsNotSameTurnWhenWasPuttedDown &&
-      haveNotAttackedThisTurn
+      haveNotAttackedThisTurn &&
+      isAttackPhase
     );
   }
 

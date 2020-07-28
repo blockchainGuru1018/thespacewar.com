@@ -38,7 +38,7 @@ function PlayerCardCapability({
   }
 
   function CheapestFirst() {
-    return (a, b) => a.cost - b.cost;
+    return (a, b) => a.costWithInflation - b.costWithInflation;
   }
 
   function playCard(card) {

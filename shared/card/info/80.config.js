@@ -13,12 +13,12 @@ module.exports = {
         filter: {
           type: "spaceShip",
         },
-        submitOnEverySelect: true,
         cancelable: false,
         ifAddedAddAlso: [
           {
             forPlayer: [
               {
+                cardCommonId: CommonId,
                 type: "findCard",
                 count: 1,
                 sources: ["deck"],
@@ -26,7 +26,6 @@ module.exports = {
                 filter: {
                   type: "spaceShip",
                 },
-                submitOnEverySelect: true,
                 cancelable: false,
                 dormantEffect: { destroyTriggerCard: true },
               },

@@ -5,7 +5,7 @@ module.exports = FakeCardDataAssembler;
 FakeCardDataAssembler.createCard = function (options = {}) {
   return defaults(options, {
     id: "DEFAULT_TEST_CARD_ID",
-    cost: 0,
+    cost: 0
   });
 };
 

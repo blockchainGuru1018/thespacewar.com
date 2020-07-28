@@ -62,13 +62,14 @@ class PlayerStateService {
       playerState.actionLogEntries = [];
       playerState.commanders = [];
       playerState.clock = {};
-      playerState.deckName = "";
+      playerState.currentDeck = "";
     });
   }
 
   _initializeDeck(deckId) {
     const cardsInDeck = this._deckFactory.createCardsForDeckById(deckId);
     this.update((playerState) => {
+      playerState.currentDeck = deckId;
       playerState.cardsInDeck = cardsInDeck;
     });
   }
@@ -140,6 +141,10 @@ class PlayerStateService {
     return [].concat(this.getCardsInOpponentZone(), this.getCardsInZone());
   }
 
+  getCurrentCommander() {
+    return this.getPlayerState().commanders[0];
+  }
+
   getCardsInPlayForPlayersCount() {
     const playerState = this._matchService.getPlayerState(
       this._matchService.getFirstPlayerId()
@@ -200,6 +205,13 @@ class PlayerStateService {
       ? this.getCardsInZone()
       : this.getCardsInOpponentZone();
     return targetZone.map((c) => this.createBehaviourCard(c)).some(matcher);
+  }
+
+  getMatchingCardInSameZone(sameZoneAsCardId, matcher) {
+    const targetZone = this.isCardInHomeZone(sameZoneAsCardId)
+      ? this.getCardsInZone()
+      : this.getCardsInOpponentZone();
+    return targetZone.map((c) => this.createBehaviourCard(c)).filter(matcher);
   }
 
   getMatchingBehaviourCards(matcher) {
@@ -542,7 +554,7 @@ class PlayerStateService {
         turn: currentTurn,
         location,
         cardId: cardData.id,
-        cardCost: cardData.cost + (cardData.costInflation || 0),
+        cardCost: cardData.costWithInflation,
         cardCommonId: cardData.commonId,
         putDownAsExtraStationCard,
         startingStation,
@@ -579,7 +591,6 @@ class PlayerStateService {
     { grantedForFreeByEvent = false } = {}
   ) {
     const currentTurn = this._matchService.getTurn();
-    console.log(cardData);
     this.storeEvent(
       PutDownCardEvent({
         turn: currentTurn,
@@ -596,12 +607,13 @@ class PlayerStateService {
     { grantedForFreeByEvent = false } = {}
   ) {
     const currentTurn = this._matchService.getTurn();
+    const card = this.createBehaviourCard(cardData);
     this.storeEvent(
       PutDownCardEvent({
         turn: currentTurn,
         location: "zone",
         cardId: cardData.id,
-        cardCost: cardData.cost + (cardData.costInflation || 0),
+        cardCost: card.costWithInflation,
         cardCommonId: cardData.commonId,
         grantedForFreeByEvent,
       })
@@ -627,7 +639,7 @@ class PlayerStateService {
         turn: currentTurn,
         location: "zone",
         cardId: cardData.id,
-        cardCost: cardData.cost + (cardData.costInflation || 0),
+        cardCost: cardData.costWithInflation,
         cardCommonId: cardData.commonId,
       })
     );
@@ -924,6 +936,22 @@ class PlayerStateService {
       this.update((playerState) => {
         removedCard = playerState.cardsInZone[cardIndex];
         playerState["cardsInZone"].splice(cardIndex, 1);
+      });
+    }
+
+    return removedCard;
+  }
+
+  removeCardFromOpponentZone(cardId) {
+    let removedCard = null;
+
+    const cardIndex = this.getCardsInOpponentZone().findIndex(
+      (c) => c.id === cardId
+    );
+    if (cardIndex >= 0) {
+      this.update((playerState) => {
+        removedCard = playerState.cardsInOpponentZone[cardIndex];
+        playerState["cardsInOpponentZone"].splice(cardIndex, 1);
       });
     }
 

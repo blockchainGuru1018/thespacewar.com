@@ -40,7 +40,12 @@
       <GuideText @showEnlargedCard="showEnlargedCard" />
 
       <div
-        v-if="overworkContainerVisible || perfectPlanContainerVisible"
+        v-if="
+          overworkContainerVisible ||
+            perfectPlanContainerVisible ||
+            findAcidProjectileContainerVisible ||
+          naaloxDormantEffectsContainerVisible
+        "
         class="overworkContainer"
       >
         <button
@@ -59,6 +64,31 @@
           @click="perfectPlan"
         >
           Perfect Plan
+        </button>
+
+        <button
+          v-if="findAcidProjectileContainerVisible"
+          title="You can search from anywhere an acid projectile"
+          class="perfectPlan darkButton"
+          @click="findAcidProjectile"
+        >
+          Find Acid Projectile
+        </button>
+        <button
+          v-if="this.playerNaaloxDormantEffect.canIssueReviveDrone()"
+          title="You can bring back a drone from your discard pile"
+          class="perfectPlan darkButton"
+          @click="naaloxReviveDrone"
+        >
+          Revive Drone
+        </button>
+        <button
+          v-if="this.playerNaaloxDormantEffect.canIssueRepairStation()"
+          title="You can fix a damaged station card"
+          class="perfectPlan darkButton"
+          @click="naaloxRepairStationCard"
+        >
+          Repair Station Card
         </button>
       </div>
     </portal>
@@ -207,6 +237,8 @@ export default {
       "turnControl",
       "gameOn",
       "playerPerfectPlan",
+      "playerFindAcidProjectile",
+      "playerNaaloxDormantEffect",
       "playerRuleService",
       "playerDrawPhase",
       "getCardsPendingForAction",
@@ -241,6 +273,15 @@ export default {
     },
     perfectPlanContainerVisible() {
       return this.playerPerfectPlan.canIssuePerfectPlan() && !this.holdingCard;
+    },
+    findAcidProjectileContainerVisible() {
+      return this.playerFindAcidProjectile.canIssueFindAcidProjectile();
+    },
+    naaloxDormantEffectsContainerVisible() {
+      return (
+        this.playerNaaloxDormantEffect.canIssueReviveDrone() ||
+        this.playerNaaloxDormantEffect.canIssueRepairStation()
+      );
     },
     gameHasEnded() {
       return this.hasWonGame || this.hasLostGame;
@@ -328,7 +369,14 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["goToNextPhase", "overwork", "perfectPlan"]),
+    ...mapActions([
+      "goToNextPhase",
+      "overwork",
+      "perfectPlan",
+      "findAcidProjectile",
+      "naaloxReviveDrone",
+      "naaloxRepairStationCard",
+    ]),
     ...startGameHelpers.mapActions(["playerReady"]),
     ...escapeMenuHelpers.mapActions(["selectView"]),
     readyClick() {

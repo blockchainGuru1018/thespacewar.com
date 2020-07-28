@@ -21,7 +21,10 @@ module.exports = {
         playerCardWasInHandAfterOpponentCardWasPlayed: () => false,
       },
     });
-    assert(card.canCounterCard({ id: "C2A", cost: 0 }));
+
+    assert(
+      card.canCounterCard(createFakeBehaviourCard({ id: "C2A", baseCost: 0 }))
+    );
   },
   "can counter cards costing 2 or less": {
     "can counter card costing 2"() {
@@ -38,3 +41,11 @@ module.exports = {
     },
   },
 };
+
+function createFakeBehaviourCard(options = {}) {
+  return {
+    baseCost: 0,
+    costWithInflation: options.baseCost || 0,
+    ...options,
+  };
+}

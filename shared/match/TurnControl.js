@@ -61,12 +61,16 @@ module.exports = class TurnControl {
   }
 
   hasZeroCostCardsToPlay() {
-    return (
-      [
-        ...this._playerStateService.getCardsOnHand(),
-        ...this._playerStateService.getFlippedStationCards().map((c) => c.card),
-      ].filter((card) => card.cost === 0).length > 0
-    );
+    const zeroCostCards = [
+      ...this._playerStateService.getCardsOnHand(),
+      ...this._playerStateService.getFlippedStationCards().map((c) => c.card),
+    ]
+      .map((cardData) =>
+        this._playerStateService.createBehaviourCardById(cardData.id)
+      )
+      .filter((card) => card.costWithInflation === 0);
+
+    return zeroCostCards.length > 0;
   }
 
   canTakeControlOfTurn() {
@@ -151,9 +155,5 @@ module.exports = class TurnControl {
 
   _playerState() {
     return this._matchService.getState().playerStateById[this._playerId()];
-  }
-
-  isPlayingWithTheSwarmDeck() {
-    return "The-Swarm" === this._playerState().deckName;
   }
 };

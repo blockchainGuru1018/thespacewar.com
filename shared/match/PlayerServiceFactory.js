@@ -16,6 +16,9 @@ const PlayerPerfectPlan = require("./perfectPlan/PlayerPerfectPlan.js");
 const QueryAttacks = require("./requirement/QueryAttacks.js");
 const OverworkEventFactory = require("./overwork/event/OverworkEventFactory.js");
 const PlayerOverwork = require("./overwork/PlayerOverwork.js");
+const FindAcidProjectile = require("./commander/FindAcidProjectile.js");
+const FindDronesForZuuls = require("./commander/FindDronesForZuuls.js");
+const NaaloxDormantEffect = require("./commander/NaaloxDormantEffect");
 const MoveStationCard = require("./MoveStationCard.js");
 const AddRequirementFromSpec = require("./requirement/AddRequirementFromSpec.js");
 const StartGame = require("./StartGame.js");
@@ -69,6 +72,9 @@ module.exports = function ({
     moveStationCard: cached(moveStationCard),
     playerOverwork: cached(playerOverwork),
     playerPerfectPlan: cached(playerPerfectPlan),
+    findAcidProjectile: cached(findAcidProjectile),
+    findDronesForZuuls: cached(findDronesForZuuls),
+    naaloxDormantEffect: cached(naaloxDormantEffect),
     overworkEventFactory: cached(overworkEventFactory),
     cardFactory: cached(cardFactory),
     matchService: cached(matchService),
@@ -263,6 +269,43 @@ module.exports = function ({
       ),
       opponentActionLog: api.actionLog(api.opponentId(playerId)),
       playerCommanders: api.playerCommanders(playerId),
+    });
+  }
+
+  function findAcidProjectile(playerId) {
+    return new FindAcidProjectile({
+      playerStateService: api.playerStateService(playerId),
+      playerPhase: api.playerPhase(playerId),
+      playerActionPointsCalculator: api.playerActionPointsCalculator(playerId),
+      addRequirementFromSpec: api.addRequirementFromSpec(playerId),
+      opponentActionLog: api.actionLog(api.opponentId(playerId)),
+      playerRequirementFactory: api.playerRequirementFactory(playerId),
+      playerRequirementService: api.playerRequirementService(playerId),
+      matchService: api.matchService(playerId),
+    });
+  }
+
+  function findDronesForZuuls(playerId) {
+    return new FindDronesForZuuls({
+      playerStateService: api.playerStateService(playerId),
+      playerPhase: api.playerPhase(playerId),
+      playerActionPointsCalculator: api.playerActionPointsCalculator(playerId),
+      addRequirementFromSpec: api.addRequirementFromSpec(playerId),
+      opponentActionLog: api.actionLog(api.opponentId(playerId)),
+      playerActionLog: api.actionLog(playerId),
+      matchService: api.matchService(playerId),
+    });
+  }
+
+  function naaloxDormantEffect(playerId) {
+    return new NaaloxDormantEffect({
+      playerStateService: api.playerStateService(playerId),
+      playerActionPointsCalculator: api.playerActionPointsCalculator(playerId),
+      addRequirementFromSpec: api.addRequirementFromSpec(playerId),
+      playerPhase: api.playerPhase(playerId),
+      matchService: api.matchService(playerId),
+      opponentActionLog: api.actionLog(api.opponentId(playerId)),
+      playerActionLog: api.actionLog(playerId),
     });
   }
 

@@ -11,6 +11,9 @@ const NextPhaseController = require("./controller/NextPhaseController.js");
 const StartGameController = require("./controller/StartGameController.js");
 const OverworkController = require("./controller/OverworkController.js");
 const PerfectPlanController = require("./controller/PerfectPlanController.js");
+const FindAcidProjectile = require("./controller/FindAcidProjectileController.js");
+const FindDronesForZuulsController = require("./controller/FindDronesForZuulsController.js");
+const NaaloxDormantEffectController = require("./controller/NaaloxDormantEffectController.js");
 const TriggerDormantEffect = require("./command/TriggerDormantEffect.js");
 const LookAtStationRowCommand = require("./command/LookAtStationRowCommand.js");
 const CancelRequirementCommand = require("./command/CancelRequirementCommand.js");
@@ -18,7 +21,6 @@ const CheatController = require("./controller/CheatController.js");
 const MatchComService = require("./service/MatchComService.js");
 const PlayerRequirementUpdaterFactory = require("./PlayerRequirementUpdaterFactory.js");
 const StateChangeListener = require("../../shared/match/StateChangeListener.js");
-const PlayerServiceProvider = require("../../shared/match/PlayerServiceProvider.js");
 const PlayerOverworkFactory = require("../../shared/match/overwork/PlayerOverworkFactory.js");
 const ServiceFactoryFactory = require("../../shared/match/ServiceFactoryFactory.js");
 const LookAtStationRow = require("../../shared/match/card/actions/LookAtStationRow.js");
@@ -133,7 +135,13 @@ module.exports = function ({
   const startGameController = StartGameController(controllerDeps);
   const overworkController = OverworkController(controllerDeps);
   const perfectPlanController = PerfectPlanController(controllerDeps);
-
+  const findAcidProjectileController = FindAcidProjectile(controllerDeps);
+  const findDronesForZuulsController = FindDronesForZuulsController(
+    controllerDeps
+  );
+  const naaloxDormantEffectController = NaaloxDormantEffectController(
+    controllerDeps
+  );
   const api = {
     selectPlayerToStart: startGameController.selectPlayerToStart,
     selectCommander: startGameController.selectCommander,
@@ -167,6 +175,11 @@ module.exports = function ({
     perfectPlan: perfectPlanController.perfectPlan,
     triggerDormantEffect: PlayerCommand(TriggerDormantEffect, controllerDeps),
     lookAtStationRow: PlayerCommand(LookAtStationRowCommand, controllerDeps),
+    findAcidProjectile: findAcidProjectileController.findAcidProjectile,
+    findDronesForZuuls: findDronesForZuulsController.findDronesForZuuls,
+    naaloxRepairStationCard:
+      naaloxDormantEffectController.naaloxRepairStationCard,
+    naaloxReviveDrone: naaloxDormantEffectController.naaloxReviveDrone,
     endLastStand,
     repairCard,
     retreat,

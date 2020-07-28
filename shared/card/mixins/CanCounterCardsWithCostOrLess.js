@@ -2,7 +2,7 @@ module.exports = (canCounterCardsWithCostOrLess, superclass) =>
   class extends superclass {
     canCounterCard(cardToCounter) {
       return (
-        cardToCounter.cost <= canCounterCardsWithCostOrLess &&
+        cardToCounter.baseCost <= canCounterCardsWithCostOrLess &&
         !this._queryEvents.playerCardWasInHandAfterOpponentCardWasPlayed(
           this,
           cardToCounter

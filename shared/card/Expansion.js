@@ -19,7 +19,7 @@ module.exports = class Expansion extends BaseCard {
       {
         type: "freeExtraStationCardGranted",
         count: 2,
-        cardCost: this.cost + this.costInflation,
+        cardCost: this.costWithInflation,
       },
     ];
   }

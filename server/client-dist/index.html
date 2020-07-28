@@ -16,7 +16,6 @@
 
         body {
             margin: 0;
-            background: black;
         }
 
         .match-wrapper {
@@ -52,7 +51,7 @@
             background: transparent;
         }
         ::-webkit-scrollbar-track {
-            background: rgba(0,0,0,1);
+            background: rgba(0,0,0,1); 
         }
         ::-webkit-scrollbar-thumb{
             background: rgb(80,80,80);
@@ -73,20 +72,19 @@
     var viewport_meta = document.getElementById('viewport-meta');
     var viewport_set = function()
     {
-      if ( screen.width >= 1440 )
+      var screen_width = document.documentElement.clientWidth;
+      if ( screen_width >= 1440 )
         viewport_meta.setAttribute( 'content', 'width=device-width, user-scalable=no, initial-scale=0.7, maximum-scale=0.7, minimum-scale=0.7' );
-      if ( screen.width < 1440 && screen.width >= 1280 )
+      else if ( screen_width < 1440 && screen_width >= 1280 )
         viewport_meta.setAttribute( 'content', 'width=device-width, user-scalable=no, initial-scale=0.65, maximum-scale=0.65, minimum-scale=0.65' );
-      if ( screen.width < 1280 && screen.width >= 1024 )
+      else if ( screen_width < 1280 && screen_width >= 1024 )
         viewport_meta.setAttribute( 'content', 'width=device-width, user-scalable=no, initial-scale=0.6, maximum-scale=0.6, minimum-scale=0.6' );
-      if ( screen.width < 1024 && screen.width >= 800 )
+      else if ( screen_width < 1024 )
         viewport_meta.setAttribute( 'content', 'width=device-width, user-scalable=no, initial-scale=0.5, maximum-scale=0.5, minimum-scale=0.5' );
     }
     viewport_set();
-    window.onresize = function()
-    {
-    	viewport_set();
-    }
+    window.addEventListener("resize", viewport_set);
+
     </script>
 </head>
 <body>

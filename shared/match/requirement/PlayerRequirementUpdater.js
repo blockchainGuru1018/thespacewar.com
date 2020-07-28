@@ -73,8 +73,8 @@ class PlayerRequirementUpdater {
         this._update((requirement) => {
           requirement.actionPointsLimit.actionPointsLeft -= actionPointsConsumed;
           requirement.cardGroups[0].cards = requirement.cardGroups[0].cards.filter(
-            (card) =>
-              card.cost <= requirement.actionPointsLimit.actionPointsLeft
+            (cardData) =>
+              cardData.cost <= requirement.actionPointsLimit.actionPointsLeft
           );
           if (requirement.cardGroups[0].cards.length === 0) {
             this.completeRequirement();

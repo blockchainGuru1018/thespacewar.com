@@ -30,7 +30,7 @@ module.exports = function ({ cardInfoRepository }) {
         const cardCost = getCostOfCard(event.counteredCardCommonId);
         actionPoints -= event.costOfCounteredCard
           ? event.costOfCounteredCard
-          : cardCost;
+          : cardCost; // TODO Shouldn't this always be set: event.costOfCounteredCard ?
       } else if (event.type === "removeStationCard") {
         if (event.phase === "action" && event.location === "station-action") {
           actionPoints += 2;
@@ -38,8 +38,9 @@ module.exports = function ({ cardInfoRepository }) {
       } else if (event.type === "overwork") {
         actionPoints += 2;
       } else if (event.type === "fatalErrorUsed") {
-        const costOfTargetCard = getCostOfCard(event.targetCardCommonId);
-        actionPoints -= costOfTargetCard;
+        actionPoints -= event.targetCardCost;
+      } else if (event.type === "stauxFindAcidProjectile") {
+        actionPoints -= 2;
       }
     }
 

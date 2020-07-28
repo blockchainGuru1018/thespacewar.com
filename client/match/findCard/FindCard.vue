@@ -13,7 +13,10 @@
       <template>
         <div class="findCard">
           <div class="findCard-header">
-            <div class="findCard-requirementCard">
+            <div
+              v-if="requirement.cardCommonId"
+              class="findCard-requirementCard"
+            >
               <img
                 :src="getCardImageUrl({ commonId: requirement.cardCommonId })"
               />

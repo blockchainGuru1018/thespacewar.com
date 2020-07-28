@@ -1,3 +1,20 @@
+const Commander = require("../../shared/match/commander/Commander.js");
+const commandersRows = {
+  Regular: [
+    { name: "Frank Johnson", value: Commander.FrankJohnson },
+    { name: "Keve Bakins", value: Commander.KeveBakins },
+    { name: "Nicia Satu", value: Commander.NiciaSatu },
+    { name: "General Jackson", value: Commander.GeneralJackson },
+    { name: "Dr.Stein", value: Commander.DrStein },
+    { name: "The Miller", value: Commander.TheMiller },
+  ],
+  TheSwarm: [
+    { name: "Zuuls", value: Commander.Zuuls },
+    { name: "Crakux", value: Commander.Crakux },
+    { name: "Staux", value: Commander.Staux },
+    { name: "Naalox", value: Commander.Naalox },
+  ],
+};
 module.exports = function ({ matchController }) {
   return {
     namespaced: true,
@@ -10,6 +27,8 @@ module.exports = function ({ matchController }) {
       playerHasRegisteredAsReady,
       commanderCardsVisible,
       canSelectCommander,
+      commandersOptionsRows,
+      commandersOptions,
       readyButtonVisible,
       _doneSelectingStationCards,
     },
@@ -51,6 +70,27 @@ module.exports = function ({ matchController }) {
   function playerReady({ state }) {
     state.localPlayerHasRegisteredAsReady = true;
     matchController.emit("playerReady");
+  }
+
+  //TODO: split on 2 parts
+  function commandersOptionsRows(state, getters) {
+    return [
+      {
+        commanderOptions: getters.commandersOptions.slice(
+          0,
+          getters.commandersOptions.length / 2
+        ),
+      },
+      {
+        commanderOptions: getters.commandersOptions.slice(
+          getters.commandersOptions.length / 2
+        ),
+      },
+    ];
+  }
+
+  function commandersOptions(state, getters, rootState) {
+    return commandersRows[rootState.match.currentDeck || "Regular"];
   }
 
   function selectCommander({ rootState }, commander) {

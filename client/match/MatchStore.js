@@ -11,6 +11,9 @@ const ClientPlayerStateService = require("./ClientPlayerStateService");
 const QueryPlayerRequirements = require("../../shared/match/requirement/QueryPlayerRequirements.js");
 const PlayerRequirementService = require("../../shared/match/requirement/PlayerRequirementService.js");
 const PlayerPerfectPlan = require("../../shared/match/perfectPlan/PlayerPerfectPlan.js");
+const FindAcidProjectile = require("../../shared/match/commander/FindAcidProjectile.js");
+const FindDronesForZuuls = require("../../shared/match/commander/FindDronesForZuuls.js");
+const NaaloxDormantEffect = require("../../shared/match/commander/NaaloxDormantEffect");
 const CardFactory = require("../../shared/card/CardFactory.js");
 const ClientPlayerServiceProvider = require("./ClientPlayerServiceProvider.js");
 const EventFactory = require("../../shared/event/EventFactory.js");
@@ -89,7 +92,7 @@ module.exports = function (deps) {
         actionCards: [],
         handSizeCards: [],
       },
-      deckName: "",
+      currentDeck: "",
       playerCardsInOpponentZone: [],
       playerCardsInDeckCount: 0,
       opponentCommanders: [],
@@ -159,6 +162,9 @@ module.exports = function (deps) {
       moveStationCard,
       lastStand,
       playerPerfectPlan,
+      playerFindAcidProjectile,
+      playerFindDronesForZuuls,
+      playerNaaloxDormantEffect,
       playerRuleService,
       opponentRuleService,
       calculateMoreCardsCanBeDrawnForDrawPhase,
@@ -204,6 +210,10 @@ module.exports = function (deps) {
       askToDiscardOpponentTopTwoCards,
       overwork,
       perfectPlan,
+      findAcidProjectile,
+      findDronesForZuuls,
+      naaloxReviveDrone,
+      naaloxRepairStationCard,
       checkLastTimeOfInactivityForPlayer,
       toggleControlOfTurn,
       skipDrawCard,
@@ -506,6 +516,40 @@ module.exports = function (deps) {
     });
   }
 
+  function playerFindAcidProjectile(state, getters) {
+    return new FindAcidProjectile({
+      playerPhase: getters.playerPhase,
+      playerStateService: getters.playerStateService,
+      playerActionPointsCalculator: getters.playerActionPointsCalculator,
+      matchService: getters.matchService,
+      opponentActionLog: ClientLimitNotice,
+      addRequirementFromSpec: ClientLimitNotice,
+      playerRequirementFactory: ClientLimitNotice,
+      playerRequirementService: ClientLimitNotice,
+    });
+  }
+
+  function playerFindDronesForZuuls(state, getters) {
+    return new FindDronesForZuuls({
+      matchService: getters.matchService,
+      playerStateService: getters.playerStateService,
+      playerPhase: getters.playerPhase,
+      opponentActionLog: ClientLimitNotice,
+      playerActionLog: ClientLimitNotice,
+    });
+  }
+  function playerNaaloxDormantEffect(state, getters) {
+    return new NaaloxDormantEffect({
+      matchService: getters.matchService,
+      playerStateService: getters.playerStateService,
+      playerPhase: getters.playerPhase,
+      playerActionPointsCalculator: getters.playerActionPointsCalculator,
+      opponentActionLog: ClientLimitNotice,
+      playerRequirementFactory: ClientLimitNotice,
+      playerActionLog: ClientLimitNotice,
+    });
+  }
+
   function playerRuleService(state, getters) {
     return new PlayerRuleService({
       matchService: getters.matchService,
@@ -622,6 +666,7 @@ module.exports = function (deps) {
       opponentStateService: getters.opponentStateService,
       opponentPhase: getters.opponentPhase,
       opponentActionLog: ClientLimitNotice,
+      playerActionLog: ClientLimitNotice,
     });
   }
 
@@ -915,6 +960,22 @@ module.exports = function (deps) {
     matchController.emit("perfectPlan");
   }
 
+  function findAcidProjectile() {
+    matchController.emit("findAcidProjectile");
+  }
+
+  function findDronesForZuuls() {
+    matchController.emit("findDronesForZuuls");
+  }
+
+  function naaloxRepairStationCard() {
+    matchController.emit("naaloxRepairStationCard");
+  }
+
+  function naaloxReviveDrone() {
+    matchController.emit("naaloxReviveDrone");
+  }
+
   function toggleControlOfTurn() {
     matchController.emit("toggleControlOfTurn");
   }
@@ -991,6 +1052,12 @@ module.exports = function (deps) {
     state.phase = nextPhaseWithAction;
     if (nextPhaseWithAction === PHASES.wait) {
       state.currentPlayer = null;
+    }
+
+    if (nextPhaseWithAction === PHASES.action) {
+      if (getters.playerFindDronesForZuuls.canIssueFindDronesForZuuls()) {
+        matchController.emit("findDronesForZuuls");
+      }
     }
   }
 

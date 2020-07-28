@@ -90,7 +90,7 @@ function PutDownCardController(deps) {
     const targetCard = opponentStateService.createBehaviourCardById(
       targetCardId
     );
-    const costOfCounterCardBeforeRevertState = targetCard.cost;
+    const costOfCounterCardBeforeRevertState = targetCard.costWithInflation;
     gameActionTimeMachine.revertStateToBeforeCardWasPutDown(targetCardId);
 
     const turnControl = playerServiceFactory.turnControl(playerId);
@@ -178,8 +178,7 @@ function PutDownCardController(deps) {
       }
 
       const playerActionPoints = playerStateService.getActionPointsForPlayer();
-      const canAffordCard =
-        playerActionPoints >= card.cost + (cardData.costInflation || 0);
+      const canAffordCard = playerActionPoints >= card.costWithInflation;
       if (!canAffordCard) {
         throw new CheatError("Cannot afford card");
       }

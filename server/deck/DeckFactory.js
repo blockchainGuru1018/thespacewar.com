@@ -22,7 +22,7 @@ module.exports = function (deps) {
     switch (deckId) {
       case "Regular":
         return cardDataAssembler.createRegularDeck();
-      case "The-Swarm":
+      case "TheSwarm":
         return cardDataAssembler.createSwarmDeck();
       default:
         throw new Error("Invalid Deck ID");

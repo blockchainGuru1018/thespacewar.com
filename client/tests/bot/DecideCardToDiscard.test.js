@@ -82,5 +82,21 @@ test("if has NO cards should throw an error", () => {
 });
 
 function createDecider(stubs = {}) {
-  return DecideCardToDiscard({ types: [], ...stubs });
+  return DecideCardToDiscard({
+    types: [],
+    ...stubs,
+
+    playerStateService: {
+      createBehaviourCard: (cardData) => createFakeBehaviourCardFromCardData(cardData),
+      ...stubs.playerStateService,
+    },
+  });
+}
+
+function createFakeBehaviourCardFromCardData(options = {}) {
+  return {
+    baseCost: 0,
+    costWithInflation: options.cost || 0,
+    ...options,
+  };
 }
