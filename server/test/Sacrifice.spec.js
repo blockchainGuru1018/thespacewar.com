@@ -22,6 +22,7 @@ describe("When playing Sacrifice should add a requirement with card 'in play' fo
           cardsInOpponentZone: [
             createCard({ id: "C1A", type: "spaceShip", attack: 1 }),
           ],
+          stationCards: [stationCard("S1A"), stationCard("S2A")],
           events: [
             PutDownCardEvent({
               cardId: "C1A",
@@ -56,38 +57,20 @@ describe("When playing Sacrifice should add a requirement with card 'in play' fo
     });
 
     firstPlayerAsserter.hasRequirement({
-      cancelable: false,
       cardCommonId: "94",
-      cardGroups: [
-        {
-          cards: [{ attack: 1, cost: 0, id: "C1A", type: "spaceShip" }],
-          source: "cardsInOpponentZone",
-        },
-      ],
       cardId: "C3A",
-      common: false,
+      common: true,
       count: 1,
-      submitOnEverySelect: true,
-      target: "discardPile",
-      type: "findCard",
+      type: "sacrifice",
       waiting: false,
     });
 
     secondPlayerAsserter.hasRequirement({
-      cancelable: false,
       cardCommonId: "94",
-      cardGroups: [
-        {
-          cards: [{ attack: 1, cost: 0, id: "C2A", type: "spaceShip" }],
-          source: "cardsInZone",
-        },
-      ],
       cardId: "C3A",
-      common: false,
+      common: true,
       count: 1,
-      submitOnEverySelect: true,
-      target: "discardPile",
-      type: "findCard",
+      type: "sacrifice",
       waiting: false,
     });
   });
@@ -128,35 +111,29 @@ describe("When playing Sacrifice should add a requirement with card 'in play' fo
       cardId: "C3A",
     });
 
-    firstPlayerAsserter.hasRequirement({
-      cancelable: false,
-      cardCommonId: "94",
-      cardGroups: [],
-      cardId: "C3A",
-      common: false,
-      count: 0,
-      submitOnEverySelect: true,
-      target: "discardPile",
-      type: "findCard",
-      waiting: false,
-    });
+    // firstPlayerAsserter.hasRequirement({
+    //   cardCommonId: "94",
+    //   cardId: "C3A",
+    //   common: true,
+    //   count: 0,
+    //   type: "sacrifice",
+    //   waiting: true,
+    // });
 
     secondPlayerAsserter.hasRequirement({
-      cancelable: false,
       cardCommonId: "94",
-      cardGroups: [
-        {
-          cards: [{ attack: 1, cost: 0, id: "C2A", type: "spaceShip" }],
-          source: "cardsInZone",
-        },
-      ],
       cardId: "C3A",
-      common: false,
+      common: true,
       count: 1,
-      submitOnEverySelect: true,
-      target: "discardPile",
-      type: "findCard",
+      type: "sacrifice",
       waiting: false,
     });
   });
 });
+
+function stationCard(id = "some_id", place = "action") {
+  return {
+    place,
+    card: createCard({ id }),
+  };
+}
