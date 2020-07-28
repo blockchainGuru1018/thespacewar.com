@@ -554,7 +554,7 @@ class PlayerStateService {
         turn: currentTurn,
         location,
         cardId: cardData.id,
-        cardCost: cardData.costWithInflation,
+        cardCost: cardData.costToPlay,
         cardCommonId: cardData.commonId,
         putDownAsExtraStationCard,
         startingStation,
@@ -613,7 +613,7 @@ class PlayerStateService {
         turn: currentTurn,
         location: "zone",
         cardId: cardData.id,
-        cardCost: card.costWithInflation,
+        cardCost: card.costToPlay,
         cardCommonId: cardData.commonId,
         grantedForFreeByEvent,
       })
@@ -639,7 +639,7 @@ class PlayerStateService {
         turn: currentTurn,
         location: "zone",
         cardId: cardData.id,
-        cardCost: cardData.costWithInflation,
+        cardCost: cardData.costToPlay,
         cardCommonId: cardData.commonId,
       })
     );

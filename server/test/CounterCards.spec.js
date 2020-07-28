@@ -98,7 +98,7 @@ describe("when use Fatal Error to destroy a card", () => {
       cardCommonId: "31",
       cardGroups: [
         {
-          cards: [{ commonId: "38", cost: 2, id: "C1A", costInflation: 0 }],
+          cards: [{ commonId: "38", cost: 2, id: "C1A" }],
           source: "opponentAny",
         },
       ],
@@ -107,7 +107,7 @@ describe("when use Fatal Error to destroy a card", () => {
       type: "counterCard",
     });
   });
-  it(" witwefwefwer", () => {
+  it(" witwefwefwer", () => { // TODO Seems like someone forgot to add a name to the test..
     const {
       match,
       secondPlayerAsserter,

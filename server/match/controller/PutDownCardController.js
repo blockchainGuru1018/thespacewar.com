@@ -3,7 +3,6 @@ const CardApplier = require("../card/CardApplier.js");
 const CardCanBePlayedChecker = require("../card/CardCanBePlayedChecker.js");
 const PlayerServiceProvider = require("../../../shared/match/PlayerServiceProvider.js");
 const ExcellentWork = require("../../../shared/card/ExcellentWork.js");
-const { card } = require("../../../shared/event/AttackEvent.js");
 
 function PutDownCardController(deps) {
   const {
@@ -42,9 +41,6 @@ function PutDownCardController(deps) {
     );
     const cardData = playerStateService.findCardFromAnySource(cardId);
     if (!cardData) throw new CheatError(`Cannot find card`);
-
-    const behaviorCard = playerStateService.createBehaviourCard(cardData);
-    cardData.costInflation = behaviorCard.costInflation || 0;
 
     checkIfCanPutDownCard({ playerId, location, cardData, choice });
 
@@ -90,7 +86,7 @@ function PutDownCardController(deps) {
     const targetCard = opponentStateService.createBehaviourCardById(
       targetCardId
     );
-    const costOfCounterCardBeforeRevertState = targetCard.costWithInflation;
+    const costOfCounterCardBeforeRevertState = targetCard.costToPlay;
     gameActionTimeMachine.revertStateToBeforeCardWasPutDown(targetCardId);
 
     const turnControl = playerServiceFactory.turnControl(playerId);
@@ -178,7 +174,7 @@ function PutDownCardController(deps) {
       }
 
       const playerActionPoints = playerStateService.getActionPointsForPlayer();
-      const canAffordCard = playerActionPoints >= card.costWithInflation;
+      const canAffordCard = playerActionPoints >= card.costToPlay;
       if (!canAffordCard) {
         throw new CheatError("Cannot afford card");
       }
@@ -268,7 +264,6 @@ function PutDownCardController(deps) {
     );
     playerStateService.addStationCard(cardData, location, {
       putDownAsExtraStationCard: choice === "putDownAsExtraStationCard",
-      cardCost: 2,
     });
   }
 
