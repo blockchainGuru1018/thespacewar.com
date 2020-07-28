@@ -57,7 +57,7 @@ test("Can NOT target card that costs 2 when has 1 action point", () => {
     toggleCostPenaltyAbility: true,
     toggleEqualCostAbility: false,
   });
-  const target = opponentNonStationCard({ costWithInflation: 2 });
+  const target = opponentNonStationCard({ costToPlay: 2 });
   const actionPoints = 1;
 
   const canSelect = fatalErrorAction.validTarget(target, actionPoints);
@@ -72,7 +72,7 @@ test("Can target card that costs 2 when has 2 action points", () => {
     toggleCostPenaltyAbility: true,
     toggleEqualCostAbility: false,
   });
-  const target = opponentNonStationCard({ costWithInflation: 2 });
+  const target = opponentNonStationCard({ costToPlay: 2 });
   const actionPoints = 2;
 
   const canSelect = fatalErrorAction.validTarget(target, actionPoints);
@@ -87,7 +87,7 @@ test("Can target card that costs 1 when has 2 action points", () => {
     toggleCostPenaltyAbility: true,
     toggleEqualCostAbility: false,
   });
-  const target = opponentNonStationCard({ costWithInflation: 1 });
+  const target = opponentNonStationCard({ costToPlay: 1 });
   const actionPoints = 2;
 
   const canSelect = fatalErrorAction.validTarget(target, actionPoints);
@@ -146,6 +146,6 @@ function Target(options = {}) {
   const cardData = FakeCardDataAssembler.createCard(options);
   return defaults(options, {
     baseCost: cardData.cost,
-    costWithInflation: cardData.cost,
+    costToPlay: cardData.cost,
   });
 }

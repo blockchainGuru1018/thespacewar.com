@@ -68,7 +68,7 @@ module.exports = class TurnControl {
       .map((cardData) =>
         this._playerStateService.createBehaviourCardById(cardData.id)
       )
-      .filter((card) => card.costWithInflation === 0);
+      .filter((card) => card.costToPlay === 0);
 
     return zeroCostCards.length > 0;
   }

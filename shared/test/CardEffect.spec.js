@@ -21,6 +21,6 @@ describe("Card Effect", () => {
 
     expect(cardEffect.costCardIncrement()).toBe(3);
     expect(cardtoPutDown.baseCost).toBe(1);
-    expect(cardtoPutDown.costWithInflation).toBe(4);
+    expect(cardtoPutDown.costToPlay).toBe(4);
   });
 });

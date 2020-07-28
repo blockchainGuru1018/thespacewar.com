@@ -24,7 +24,7 @@ module.exports = function ({
 
   function playToDrawExtraCards(card) {
     matchController.emit("putDownCard", {
-      cardCost: card.costWithInflation,
+      cardCost: card.costToPlay,
       cardId: card.id,
       location: "zone",
       choice: "draw",
@@ -33,7 +33,7 @@ module.exports = function ({
 
   function playAsExtraStationCard(card) {
     matchController.emit("putDownCard", {
-      cardCost: card.costWithInflation,
+      cardCost: card.costToPlay,
       cardId: card.id,
       location: stationLocation(),
       choice: "putDownAsExtraStationCard",

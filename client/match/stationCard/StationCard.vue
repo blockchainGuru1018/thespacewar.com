@@ -163,7 +163,7 @@ module.exports = {
         !this.isOpponentStationCard &&
         this.stationCard.flipped &&
         this.actionPoints2 >=
-          this.behaviourCardInStationCard.costWithInflation &&
+          this.behaviourCardInStationCard.costToPlay &&
         this.canPutDownStationCardInHomeZone &&
         this.behaviourCardInStationCard.canBePlayed()
       );

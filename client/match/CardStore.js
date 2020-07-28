@@ -488,7 +488,7 @@ module.exports = function (deps) {
     putDownCardRemote({
       location,
       cardId: cardData.id,
-      cardCost: card.costWithInflation,
+      cardCost: card.costToPlay,
       choice,
     });
   }
@@ -505,7 +505,7 @@ module.exports = function (deps) {
     putDownCardRemote({
       location,
       cardId: cardData.id,
-      cardCost: card.costWithInflation,
+      cardCost: card.costToPlay,
       choice,
     });
   }
@@ -575,7 +575,7 @@ module.exports = function (deps) {
         cardId: cardData.id,
         cardCommonId: cardData.commonId,
         putDownAsExtraStationCard,
-        cardCost: card.costWithInflation,
+        cardCost: card.costToPlay,
       })
     );
   }

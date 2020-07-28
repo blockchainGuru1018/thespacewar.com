@@ -42,8 +42,8 @@ test("when has spaceShip and defense card and both are a playableType, should pl
   const capability = createCapability({
     playerStateService: {
       getMatchingPlayableBehaviourCards: MatcherAgainstCards([
-        { id: "C1A", type: "spaceShip", costWithInflation: 2 },
-        { id: "C2A", type: "defense", costWithInflation: 1 },
+        { id: "C1A", type: "spaceShip", costToPlay: 2 },
+        { id: "C2A", type: "defense", costToPlay: 1 },
       ]),
     },
     playableTypes: ["spaceShip", "defense"],

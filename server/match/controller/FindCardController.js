@@ -67,7 +67,7 @@ module.exports = function ({
         cardId
       );
       if (behaviourCardOrNull) {
-        return acc + behaviourCardOrNull.costWithInflation;
+        return acc + behaviourCardOrNull.costToPlay;
       } else {
         return acc;
       }

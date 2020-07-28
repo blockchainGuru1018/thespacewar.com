@@ -63,7 +63,7 @@ class BaseCard {
     return this._card.cost;
   }
 
-  get costWithInflation() {
+  get costToPlay() {
     return this.baseCost + this.costInflation;
   }
 
@@ -359,7 +359,7 @@ class BaseCard {
 
   _ifHasControlOfOpponentTurnCanPlayCard() {
     if (this._turnControl.playerHasControlOfOpponentsTurn()) {
-      return this.costWithInflation === 0;
+      return this.costToPlay === 0;
     }
     return true;
   }

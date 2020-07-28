@@ -96,7 +96,7 @@ function createDecider(stubs = {}) {
 function createFakeBehaviourCardFromCardData(options = {}) {
   return {
     baseCost: 0,
-    costWithInflation: options.cost || 0,
+    costToPlay: options.cost || 0,
     ...options,
   };
 }

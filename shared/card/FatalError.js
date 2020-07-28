@@ -28,7 +28,7 @@ module.exports = class FatalError extends BaseCard {
         turn: this._matchService.getTurn(),
         phase: this._playerPhase.get(),
         targetCardCommonId: targetCard.commonId,
-        targetCardCost: targetCard.costWithInflation,
+        targetCardCost: targetCard.costToPlay,
         cardId: this.id,
       })
     );

@@ -55,7 +55,7 @@ function createPlayer(stubs) {
 function createFakeBehaviourCard(options = {}) {
   return {
     baseCost: 0,
-    costWithInflation: options.baseCost || 0,
+    costToPlay: options.baseCost || 0,
     ...options,
   };
 }
