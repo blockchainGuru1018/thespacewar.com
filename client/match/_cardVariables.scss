@@ -1,5 +1,87 @@
-$cardWidth: 652px;
-$cardHeight: 916px;
+:root {
+  --card-width: 652px;
+  --card-height: 916px;
+
+//   --opponentStationScale: 0.68;
+//   --playerStationScale: 0.68;
+    // --opponentStationScale: 0.66;
+    // --playerStationScale:  calc(var(--card-height) / (100vh + 24 + 18));
+  --player-cards-on-hand-offset: 0px;
+  --playerStationCardWidth: var(--card-width);
+  --playerStationCardHeight: var(--card-height);
+  --opponentStationScale: 1; //calc(#{$cardWidth} / 100vh + 24px + 18px);
+  --playerStationScale: 1; // #{$cardHeight} / calc(100vh + 24px + 18px);
+  --davolin : strip-unit(calc(100vh + 42));
+  --z-position: 0px;
+  }
+@function strip-unit($number) {
+  @if type-of($number) == 'number' and not unitless($number) {
+    @return $number / ($number * 0 + 1);
+  }
+
+  @return $number;
+}
+
+@media (min-width: 1920px) {
+  :root {
+    --player-cards-on-hand-offset: 0px;
+  }
+}
+@media (max-width: 1920px) and (min-width: 1366px) {
+  :root {
+    --player-cards-on-hand-offset: -50px;
+  }
+}
+@media (max-width: 1366px) and (min-width: 1280px) {
+  :root {
+    --player-cards-on-hand-offset: 50px;
+  }
+}
+@media (max-width: 1280px) and (min-width: 1024px) {
+  :root {
+    --player-cards-on-hand-offset: 50px;
+    --opponentStationScale: 0.2;
+    --playerStationScale: 0.2;
+  }
+}
+@media (max-width: 1024px) and (min-width: 736px) {
+  :root {
+    --player-cards-on-hand-offset: 50px;
+  }
+}
+@media (max-width: 736px) and (min-width: 568) {
+  :root {
+    --player-cards-on-hand-offset: 50px;
+  }
+}
+@media (max-width: 568) {
+  :root {
+    --player-cards-on-hand-offset: 50px;
+  }
+}
+
+// 1920 x 1080 -> 19:6
+// 1366 x 768 -> 16:9
+// 1280 x 800 -> 16:9
+// 1024 x 768 -> 4:3
+// 736 x 414
+// 568 x 320
+
+// 800x1280
+// 768x1024
+//   else if ( screen_width < 1440 && screen_width >= 1280 )
+//     viewport_meta.setAttribute( 'content', 'width=device-width, user-scalable=no, initial-scale=0.65, maximum-scale=0.65, minimum-scale=0.65' );
+//   else if ( screen_width < 1280 && screen_width >= 1024 )
+//     viewport_meta.setAttribute( 'content', 'width=device-width, user-scalable=no, initial-scale=0.6, maximum-scale=0.6, minimum-scale=0.6' );
+//   else if ( screen_width < 1024 )
+//     viewport_meta.setAttribute( 'content', 'width=device-width, user-scalable=no, initial-scale=0.5, maximum-scale=0.5, minimum-scale=0.5' );
+// }
+
+$cardWidth: var(--card-width);
+$cardHeight: var(--card-height);
+
+$opponentStationScale: var(--opponentStationScale);
+$playerStationScale: var(--playerStationScale);
 
 $actualCardWidth: 287px;
 $actualCardHeight: 400px;
@@ -8,19 +90,16 @@ $expandedCardHeight: $actualCardHeight * 1.32;
 $cardOnHandBlowUpWidth: $actualCardWidth * 1.2;
 $cardOnHandBlowUpHeight: $actualCardHeight * 1.2;
 
-$opponentHandScale: .65;
-$opponentDiscardAndDrawPileScale: .9;
+$opponentHandScale: 0.65;
+$opponentDiscardAndDrawPileScale: 0.9;
 
-$opponentStationScale: .68;
-$playerStationScale: .68;
-
-$scaledCardWidth: calc(#{$cardWidth} * .2);
-$scaledCardHeight: calc(#{$cardHeight} * .2);
+$scaledCardWidth: calc(#{var(--card-width)} * 0.2);
+$scaledCardHeight: calc(#{$cardHeight} * 0.2);
 
 $playerCardOnHandWidth: $scaledCardWidth;
 $playerCardOnHandHeight: $scaledCardHeight;
-$playerStationCardWidth: calc(#{$scaledCardWidth} * #{$playerStationScale});
-$playerStationCardHeight: calc(#{$scaledCardHeight} * #{$playerStationScale});
+$playerStationCardWidth: var(--playerStationCardWidth);
+$playerStationCardHeight: var(--playerStationCardHeight);
 $playerDiscardPileCardWidth: $scaledCardWidth;
 $playerDiscardPileCardHeight: $scaledCardHeight;
 $playerDrawPileCardWidth: $scaledCardWidth;
@@ -33,17 +112,30 @@ $opponentZoneCardHeight: $scaledCardHeight;
 $opponentCardOnHandWidth: calc(#{$scaledCardWidth} * #{$opponentHandScale});
 $opponentCardOnHandHeight: calc(#{$scaledCardHeight} * #{$opponentHandScale});
 $opponentStationCardWidth: calc(#{$scaledCardWidth} * #{$opponentStationScale});
-$opponentStationCardHeight: calc(#{$scaledCardHeight} * #{$opponentStationScale});
-$opponentDiscardPileCardWidth: calc(#{$scaledCardWidth} * #{$opponentDiscardAndDrawPileScale});
-$opponentDiscardPileCardHeight: calc(#{$scaledCardHeight} * #{$opponentDiscardAndDrawPileScale});
-$opponentDrawPileCardWidth: calc(#{$scaledCardWidth} * #{$opponentDiscardAndDrawPileScale});
-$opponentDrawPileCardHeight: calc(#{$scaledCardHeight} * #{$opponentDiscardAndDrawPileScale});
+
+// $opponentStationCardHeight: calc(
+//   #{$scaledCardHeight} * #{$opponentStationScale}
+// );
+$opponentStationCardWidth :calc(#{$cardWidth} / calc(100vh + 24px + 18px));
+$opponentStationCardHeight: calc(#{$cardHeight} / calc(100vh + 24px + 18px));
+$opponentDiscardPileCardWidth: calc(
+  #{$scaledCardWidth} * #{$opponentDiscardAndDrawPileScale}
+);
+$opponentDiscardPileCardHeight: calc(
+  #{$scaledCardHeight} * #{$opponentDiscardAndDrawPileScale}
+);
+$opponentDrawPileCardWidth: calc(
+  #{$scaledCardWidth} * #{$opponentDiscardAndDrawPileScale}
+);
+$opponentDrawPileCardHeight: calc(
+  #{$scaledCardHeight} * #{$opponentDiscardAndDrawPileScale}
+);
 
 $commanderCardWidth: calc(#{$cardWidth} / 2.8);
 $commanderCardHeight: calc(#{$cardHeight} / 2.8);
 
-$cardHoverWidth: $cardWidth / 2.8;
-$cardHoverHeight: $cardHeight / 2.8;
+$cardHoverWidth: calc(#{$cardWidth} / 2.8);
+$cardHoverHeight: calc(#{$cardHeight} / 2.8);
 
 $cardGhostZIndex: 2;
 $cardGhostWidth: $scaledCardWidth;
