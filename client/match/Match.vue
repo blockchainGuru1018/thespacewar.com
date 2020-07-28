@@ -22,6 +22,7 @@
       <div class="field">
         <div class="field-opponent">
           <div
+            ref="opponentStationCardsContainer"
             :style="opponentStationStyle"
             class="field-opponentStation opponentStationCards field-station field-section"
           >
@@ -45,7 +46,7 @@
               />
               <StationCardWrapper :transparent="true" />
             </div>
-            <div class="field-stationRow">
+            <div class="field-stationRow opponentStation-handSizeRow">
               <station-card
                 v-for="card in opponentStation.handSizeCards"
                 :key="card.id"
@@ -292,6 +293,7 @@
             </div>
           </div>
           <div
+            ref="playerStationCardsContainer"
             class="playerStationCards field-playerStation field-station field-section"
           >
             <div class="stationCardLabel">
@@ -860,6 +862,34 @@ module.exports = {
         y: event.clientY,
       };
     },
+    playerCardsCollideWithTimer() {
+      // playerStation-handSizeRow
+      // opponentStation-handSizeRow
+      const rect1 = (
+        document.getElementsByClassName("playerStationCards")[0] || {}
+      ).getBoundingClientRect();
+      const rect2 = (
+        document.getElementsByClassName("matchHeader-playerBanner")[0] || {}
+      ).getBoundingClientRect();
+      const areOverlapping = !(
+        rect1.right < rect2.left ||
+        rect1.left > rect2.right ||
+        rect1.bottom < rect2.top ||
+        rect1.top > rect2.bottom
+      );
+
+      if (areOverlapping) {
+        const root = document.documentElement;
+        let ZPosition = parseInt(
+          getComputedStyle(document.documentElement)
+            .getPropertyValue("--z-position")
+            .replace("px", "")
+        );
+        ZPosition = Math.max(-50, Math.min(10, ZPosition - 1));
+        root.style.setProperty("--z-position", ZPosition + "px");
+        setTimeout(this.playerCardsCollideWithTimer, 0);
+      }
+    },
   },
   mounted() {
     this.$store.dispatch("audio/background");
@@ -891,6 +921,7 @@ module.exports = {
       passive: false,
     });
     document.addEventListener("touchend", this.documentTouchend);
+    this.playerCardsCollideWithTimer();
   },
   destroyed() {
     document.removeEventListener("mousemove", this.mousemove);

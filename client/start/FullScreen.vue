@@ -181,21 +181,53 @@ export default {
       showButton: "expand",
     };
   },
+  computed: {
+    is_touch_device() {
+      const prefixes = " -webkit- -moz- -o- -ms- ".split(" ");
+
+      const mq = function (query) {
+        return window.matchMedia(query).matches;
+      };
+
+      if (
+        "ontouchstart" in window ||
+        (window.DocumentTouch && document instanceof DocumentTouch)
+      ) {
+        return true;
+      }
+
+      // include the 'heartz' as a way to have a non matching MQ to help terminate the join
+      // https://git.io/vznFH
+      var query = ["(", prefixes.join("touch-enabled),("), "heartz", ")"].join(
+        ""
+      );
+      return mq(query);
+    },
+  },
   mounted() {
     this.enableFullscreen();
     this.watchFullScreen();
   },
   methods: {
     async enableFullscreen() {
-      this.showButton = "reduce";
+      if (this.is_touch_device) {
+        document.documentElement.style.setProperty("--z-position", "-100px");
+        this.showButton = "reduce";
+      } else {
+        this.showButton = "reduce";
 
-      if (!window.runningInTestHarness) {
-        //Note 2020-06-24: Making this code depend on the test because of the difficulty of mocking the documentElement property
-        await window.document.documentElement.requestFullscreen();
+        if (!window.runningInTestHarness) {
+          //Note 2020-06-24: Making this code depend on the test because of the difficulty of mocking the documentElement property
+          await window.document.documentElement.requestFullscreen();
+        }
       }
     },
     disableFullscreen() {
-      document.exitFullscreen();
+      if (this.is_touch_device) {
+        document.documentElement.style.setProperty("--z-position", "0px");
+      } else {
+        document.exitFullscreen();
+      }
       this.showButton = "expand";
     },
     watchFullScreen() {

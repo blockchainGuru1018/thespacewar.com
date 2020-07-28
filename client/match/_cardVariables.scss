@@ -14,43 +14,62 @@
 
 // 800x1280
 // 768x1024
-@media (min-width: 1920px) {
-  :root {
-    --player-cards-on-hand-offset: 0px;
-  }
+
+@media only screen and (min-device-width: 320px) 
+                   and (max-device-width: 767px) 
+                   and (orientation: portrait) {
+.opponentStationCards{
+  padding-bottom: 3rem;
 }
-@media (max-width: 1920px) and (min-width: 1366px) {
-  :root {
-    --player-cards-on-hand-offset: -50px;
-  }
-}
-@media (max-width: 1366px) and (min-width: 1280px) {
-  :root {
-    --player-cards-on-hand-offset: 50px;
-  }
-}
-@media (max-width: 1280px) and (min-width: 1024px) {
-  :root {
-    --player-cards-on-hand-offset: 50px;
-  }
-}
-@media (max-width: 1024px) and (min-width: 736px) {
-  :root {
-    --player-cards-on-hand-offset: 50px;
-  }
-}
-@media (max-width: 736px) and (min-width: 568) {
-  :root {
-    --player-cards-on-hand-offset: 50px;
-  }
-}
-@media (max-width: 568) {
-  :root {
-    --player-cards-on-hand-offset: 50px;
-  }
+.match-wrapper {
+  transform: rotate(-90deg);
+    transform-origin: left top;
+    width: 100vh;
+    height: 100vw;
+    overflow-x: hidden;
+    position: absolute;
+    top: 100%;
+    left: 0;
 }
 
+.matchHeader-banner {
+  display: grid;
+  height: auto;
+}
+.matchHeader-bannerName {
+  display: grid;
+  margin: auto;
+}
 
+.matchHeader-bannerBarsWrapper {
+  display: grid;
+}
+.matchHeader-bannerClockText{
+  margin: auto;
+}
+}
+
+@media only screen and (min-device-width: 320px) 
+                    and (max-device-width: 767px) 
+                    and (orientation: landscape) {
+
+.matchHeader-banner {
+  display: grid;
+  height: auto;
+}
+.matchHeader-bannerName {
+  display: grid;
+  margin: auto;
+}
+
+.matchHeader-bannerBarsWrapper {
+  display: grid;
+}
+.matchHeader-bannerClockText{
+  margin: auto;
+}
+
+}
 $cardWidth: var(--card-width);
 $cardHeight: var(--card-height);
 
