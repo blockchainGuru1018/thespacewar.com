@@ -21,23 +21,24 @@ module.exports = class FatalError extends BaseCard {
   }
 
   useAgainst(targetCard) {
-    this._card.cost = targetCard.cost;
+    this._card.cost = targetCard.baseCost;
     this._playerStateService.putDownEventCardInZone(this.getCardData());
     this._playerStateService.storeEvent(
       FatalErrorUsedEvent({
         turn: this._matchService.getTurn(),
         phase: this._playerPhase.get(),
         targetCardCommonId: targetCard.commonId,
-        targetCardCost: targetCard.cost,
+        targetCardCost: targetCard.costToPlay,
         cardId: this.id,
       })
     );
   }
 
-  get cost() {
+  get baseCost() {
     const costForCounter = this._queryEvents.costOfFatalErrorUsed(this.id);
     return costForCounter ? costForCounter.targetCardCost : this._card.cost;
   }
+
   _canBePlayedInThisPhase() {
     return this._playerPhase.isAction();
   }

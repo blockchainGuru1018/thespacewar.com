@@ -458,6 +458,7 @@ module.exports = function (deps) {
             }
           }
         },
+
         onFinish: (targetCardIds) =>
           dispatch("putDownCard", {
             location,
@@ -471,7 +472,7 @@ module.exports = function (deps) {
   }
 
   async function putDownCardAsExtraStationCard(
-    { dispatch },
+    { dispatch,rootGetters },
     { cardData, location }
   ) {
     const choice = "putDownAsExtraStationCard";
@@ -483,17 +484,30 @@ module.exports = function (deps) {
       putDownAsExtraStationCard: true,
     });
     dispatch("_putDownCardLocal", { location, cardData });
-    putDownCardRemote({ location, cardId: cardData.id, choice });
+    const card = rootGetters["match/createCard"](cardData);
+    putDownCardRemote({
+      location,
+      cardId: cardData.id,
+      cardCost: card.costToPlay,
+      choice,
+    });
   }
 
   async function putDownCard(
-    { dispatch },
+    { dispatch, rootGetters },
     { cardData, choice = null, location }
   ) {
     dispatch("_removeCardLocal", cardData.id);
     dispatch("_addPutDownCardEvent", { location, cardData });
     dispatch("_putDownCardLocal", { location, cardData });
-    putDownCardRemote({ location, cardId: cardData.id, choice });
+    const card = rootGetters["match/createCard"](cardData);
+
+    putDownCardRemote({
+      location,
+      cardId: cardData.id,
+      cardCost: card.costToPlay,
+      choice,
+    });
   }
 
   async function _removeCardLocal({ rootState, commit }, cardId) {
@@ -546,7 +560,6 @@ module.exports = function (deps) {
   ) {
     const matchState = rootState.match;
     const eventFactory = rootGetters["match/eventFactory"];
-
     const card = rootGetters["match/createCard"](cardData);
 
     card.eventSpecsWhenPutDownInHomeZone
@@ -562,6 +575,7 @@ module.exports = function (deps) {
         cardId: cardData.id,
         cardCommonId: cardData.commonId,
         putDownAsExtraStationCard,
+        cardCost: card.costToPlay,
       })
     );
   }
@@ -571,8 +585,8 @@ module.exports = function (deps) {
     dispatch("cancelHoldingCard");
   }
 
-  function putDownCardRemote({ location, cardId, choice }) {
-    matchController.emit("putDownCard", { location, cardId, choice });
+  function putDownCardRemote({ location, cardId, choice, cardCost }) {
+    matchController.emit("putDownCard", { location, cardId, cardCost, choice });
   }
 
   function discardHoldingCard({ state, dispatch }) {

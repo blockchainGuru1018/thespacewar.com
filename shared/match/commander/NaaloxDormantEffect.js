@@ -131,7 +131,9 @@ class NaaloxDormantEffect {
   }
 
   _canAffordTriggerDormantEffect() {
-    return this._playerActionPointsCalculator.calculate() >= NaaloxDormantEffect.Cost;
+    return (
+      this._playerActionPointsCalculator.calculate() >= NaaloxDormantEffect.Cost
+    );
   }
 
   _hasNotBeenUsedTwiceThisTurn() {

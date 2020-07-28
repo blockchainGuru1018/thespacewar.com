@@ -11,6 +11,7 @@ module.exports = function DecideCardToDiscard({
     const cards = playerStateService
       .getCardsOnHand()
       .slice()
+      .map((cardData) => playerStateService.createBehaviourCard(cardData))
       .sort(CardCostComparer())
       .sort(CardTypeComparer(types));
 

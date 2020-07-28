@@ -224,6 +224,22 @@ class PlayerStateService {
     ];
   }
 
+  getMatchingBehaviourCardsInBoard(matcher) {
+    const opponentId = this._matchService.getOpponentId(this._playerId);
+    const opponentState = this._matchService.getPlayerState(opponentId);
+    let opponentCards = [];
+    if (opponentState) {
+      opponentCards = opponentState.cardsInZone;
+    }
+    //TODO This now returns behaviour cards, to have it return card data would be a hassle. Perhaps the responsibility to create cards could lie within playerStateService?
+    return [
+      ...this.getMatchingBehaviourCardsInZone(matcher),
+      ...[...this.getCardsInOpponentZone(), ...opponentCards]
+        .map((c) => this.createBehaviourCard(c))
+        .filter(matcher),
+    ];
+  }
+
   getMatchingBehaviourCardsInZone(matcher) {
     return this.getCardsInZone()
       .map((c) => this.createBehaviourCard(c))
@@ -538,6 +554,7 @@ class PlayerStateService {
         turn: currentTurn,
         location,
         cardId: cardData.id,
+        cardCost: cardData.costWithInflation,
         cardCommonId: cardData.commonId,
         putDownAsExtraStationCard,
         startingStation,
@@ -590,11 +607,13 @@ class PlayerStateService {
     { grantedForFreeByEvent = false } = {}
   ) {
     const currentTurn = this._matchService.getTurn();
+    const card = this.createBehaviourCard(cardData);
     this.storeEvent(
       PutDownCardEvent({
         turn: currentTurn,
         location: "zone",
         cardId: cardData.id,
+        cardCost: card.costWithInflation,
         cardCommonId: cardData.commonId,
         grantedForFreeByEvent,
       })
@@ -620,6 +639,7 @@ class PlayerStateService {
         turn: currentTurn,
         location: "zone",
         cardId: cardData.id,
+        cardCost: cardData.costWithInflation,
         cardCommonId: cardData.commonId,
       })
     );

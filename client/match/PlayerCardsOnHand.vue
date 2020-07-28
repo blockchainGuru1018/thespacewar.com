@@ -21,7 +21,16 @@
       @click.stop="playerCardClick(card)"
       @mouseenter="mouseEnterCardAtIndex(index)"
       @mouseleave="mouseLeaveCardAtIndex(index)"
-    />
+    >
+      <div
+        v-if="createCard(card).costInflation !== 0"
+        :class="['card-attackBoostIndicatorWrapper']"
+      >
+        <div class="card-costInflationWrapper" :style="damageTextStyle">
+          +{{ createCard(card).costInflation }}
+        </div>
+      </div>
+    </div>
     <div
       v-for="{ card, index } in playerVisibleCardsOnHandNotIncludingHoldingCard"
       :key="card.id"
@@ -55,9 +64,21 @@ module.exports = {
   },
   computed: {
     ...matchHelpers.mapState(["playerCardsOnHand"]),
-    ...matchHelpers.mapGetters(["canThePlayer"]),
+    ...matchHelpers.mapGetters(["canThePlayer", "createCard"]),
     ...mapCardState(["hiddenCardIdsOnHand"]),
     ...mapPermissionGetters(["canMoveCardsFromHand"]),
+    damageTextIconStyle() {
+      const fontSize = Math.round(this.cardWidth * 0.25);
+      return {
+        width: fontSize + "px",
+      };
+    },
+    damageTextStyle() {
+      const fontSize = Math.round(this.cardWidth * 0.25);
+      return {
+        fontSize: fontSize + "px",
+      };
+    },
     style() {
       const style = {};
       if (this.choosingStartingPlayer) {
@@ -66,8 +87,12 @@ module.exports = {
       return style;
     },
     playerVisibleCardsOnHand() {
-      return this.playerCardsOnHand.filter(
-        (card) => !this.hiddenCardIdsOnHand.some((id) => id === card.id)
+      return (
+        this.playerCardsOnHand
+          // .map((cardData) => this.createCard(cardData))
+          .filter(
+            (card) => !this.hiddenCardIdsOnHand.some((id) => id === card.id)
+          )
       );
     },
     playerVisibleCardsOnHandNotIncludingHoldingCard() {

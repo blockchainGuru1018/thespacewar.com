@@ -46,6 +46,7 @@ const classes = [
   require("./Carrier.js"),
   require("./Sacrifice.js"),
   require("./DroneLeader.js"),
+  require("./FreezingCold.js"),
   require("./Fusion.js"),
 ];
 

@@ -15,6 +15,12 @@ module.exports = class Expansion extends BaseCard {
   }
 
   get eventSpecsWhenPutDownInHomeZone() {
-    return [{ type: "freeExtraStationCardGranted", count: 2 }];
+    return [
+      {
+        type: "freeExtraStationCardGranted",
+        count: 2,
+        cardCost: this.costToPlay,
+      },
+    ];
   }
 };

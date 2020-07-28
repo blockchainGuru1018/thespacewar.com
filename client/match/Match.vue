@@ -759,7 +759,7 @@ module.exports = {
       return !this.hiddenStationCardIds.some((id) => id === stationCard.id);
     },
     canAffordCard(card) {
-      return this.actionPoints2 >= card.cost;
+      return this.actionPoints2 >= card.costToPlay;
     },
     playerCardDrag(cardData) {
       this.startHoldingCard({ cardData, dragging: true });

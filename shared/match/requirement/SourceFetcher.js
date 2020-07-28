@@ -223,7 +223,7 @@ function SourceFetcher({
 
   function cardFulfillsActionPointsLeft(card, filter) {
     const hasActionPointsLeft = "actionPointsLeft" in filter;
-    return !hasActionPointsLeft || card.cost <= filter.actionPointsLeft;
+    return !hasActionPointsLeft || card.baseCost <= filter.actionPointsLeft;
   }
 
   function cardFromStationCard(stationCard) {

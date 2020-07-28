@@ -61,12 +61,16 @@ module.exports = class TurnControl {
   }
 
   hasZeroCostCardsToPlay() {
-    return (
-      [
-        ...this._playerStateService.getCardsOnHand(),
-        ...this._playerStateService.getFlippedStationCards().map((c) => c.card),
-      ].filter((card) => card.cost === 0).length > 0
-    );
+    const zeroCostCards = [
+      ...this._playerStateService.getCardsOnHand(),
+      ...this._playerStateService.getFlippedStationCards().map((c) => c.card),
+    ]
+      .map((cardData) =>
+        this._playerStateService.createBehaviourCardById(cardData.id)
+      )
+      .filter((card) => card.costToPlay === 0);
+
+    return zeroCostCards.length > 0;
   }
 
   canTakeControlOfTurn() {

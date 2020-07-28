@@ -56,7 +56,15 @@ class BaseCard {
   }
 
   get cost() {
+    throw new Error("CHANGE THIS!");
+  }
+
+  get baseCost() {
     return this._card.cost;
+  }
+
+  get costToPlay() {
+    return this.baseCost + this.costInflation;
   }
 
   get attack() {
@@ -65,6 +73,10 @@ class BaseCard {
 
   get attackBoost() {
     return this._cardEffect.attackBoostForCardType(this.type);
+  }
+
+  get costInflation() {
+    return this._cardEffect.costCardIncrement() || 0;
   }
 
   get defense() {
@@ -347,7 +359,7 @@ class BaseCard {
 
   _ifHasControlOfOpponentTurnCanPlayCard() {
     if (this._turnControl.playerHasControlOfOpponentsTurn()) {
-      return this.cost === 0;
+      return this.costToPlay === 0;
     }
     return true;
   }

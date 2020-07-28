@@ -43,6 +43,9 @@ function PutDownCardController(deps) {
     const cardData = playerStateService.findCardFromAnySource(cardId);
     if (!cardData) throw new CheatError(`Cannot find card`);
 
+    const behaviorCard = playerStateService.createBehaviourCard(cardData);
+    cardData.costInflation = behaviorCard.costInflation || 0;
+
     checkIfCanPutDownCard({ playerId, location, cardData, choice });
 
     gameActionTimeMachine.saveStateForCardId(cardId);
@@ -87,7 +90,7 @@ function PutDownCardController(deps) {
     const targetCard = opponentStateService.createBehaviourCardById(
       targetCardId
     );
-    const costOfCounterCardBeforeRevertState = targetCard.cost;
+    const costOfCounterCardBeforeRevertState = targetCard.costWithInflation;
     gameActionTimeMachine.revertStateToBeforeCardWasPutDown(targetCardId);
 
     const turnControl = playerServiceFactory.turnControl(playerId);
@@ -175,7 +178,7 @@ function PutDownCardController(deps) {
       }
 
       const playerActionPoints = playerStateService.getActionPointsForPlayer();
-      const canAffordCard = playerActionPoints >= cardData.cost;
+      const canAffordCard = playerActionPoints >= card.costWithInflation;
       if (!canAffordCard) {
         throw new CheatError("Cannot afford card");
       }
@@ -265,6 +268,7 @@ function PutDownCardController(deps) {
     );
     playerStateService.addStationCard(cardData, location, {
       putDownAsExtraStationCard: choice === "putDownAsExtraStationCard",
+      cardCost: 2,
     });
   }
 

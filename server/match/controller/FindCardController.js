@@ -62,12 +62,16 @@ module.exports = function ({
       (acc, cardGroup) => acc.concat(cardGroup.cardIds),
       []
     );
-    const totalCost = allCardInGroups.reduce(
-      (acc, cardId) =>
-        acc + (playerStateService.findCardFromAnySource(cardId) || {}).cost ||
-        0,
-      0
-    );
+    const totalCost = allCardInGroups.reduce((acc, cardId) => {
+      const behaviourCardOrNull = playerStateService.createBehaviourCardById(
+        cardId
+      );
+      if (behaviourCardOrNull) {
+        return acc + behaviourCardOrNull.costToPlay;
+      } else {
+        return acc;
+      }
+    }, 0);
     return totalCost;
   }
 
@@ -156,6 +160,7 @@ module.exports = function ({
       }
     }
   }
+
   function moveCardsToOpponentZone(cardGroups, playerId) {
     const playerStateService = playerServiceProvider.getStateServiceById(
       playerId
