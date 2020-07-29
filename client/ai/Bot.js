@@ -65,8 +65,15 @@ module.exports = function ({
         location,
       });
     } else if (!playerCommanders.hasSelectedSomeCommander()) {
+      let commander = Commander.FrankJohnson;
+
+      if (playerStateService.getPlayerState().currentDeck === "TheSwarm") {
+        const swarmCommander = [Commander.Crakux, Commander.Zuuls];
+        commander = swarmCommander[Math.floor(Math.random() * 2)];
+      }
+
       matchController.emit("selectCommander", {
-        commander: Commander.FrankJohnson,
+        commander: commander,
       });
     } else if (!playerStateService.isReadyForGame()) {
       matchController.emit("playerReady");
