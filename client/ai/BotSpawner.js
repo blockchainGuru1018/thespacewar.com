@@ -110,6 +110,7 @@ module.exports = function ({
     return ActionPhaseDecider({
       matchController,
       playerStateService,
+      playerServiceFactory,
       playerRuleService: playerServiceFactory.playerRuleService(BotId),
       decideRowForStationCard: decideRowForStationCard(),
       decideCardToPlaceAsStationCard: DecideCardToPlaceAsStationCard({

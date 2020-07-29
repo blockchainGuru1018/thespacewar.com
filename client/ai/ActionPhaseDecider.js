@@ -7,6 +7,7 @@ module.exports = function ({
   decideRowForStationCard,
   decideCardToPlaceAsStationCard,
   playerRuleService,
+  playerServiceFactory,
 }) {
   return {
     decide,
@@ -21,6 +22,13 @@ module.exports = function ({
       const cardId = decideCardToPlaceAsStationCard();
       matchController.emit("putDownCard", { cardId, location });
     } else {
+      if (
+        playerServiceFactory
+          .findDronesForZuuls("BOT")
+          .canIssueFindDronesForZuuls()
+      ) {
+        matchController.emit("findDronesForZuuls");
+      }
       matchController.emit("nextPhase", { currentPhase: PHASES.action });
     }
   }

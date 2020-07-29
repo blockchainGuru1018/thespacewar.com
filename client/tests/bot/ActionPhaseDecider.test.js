@@ -25,6 +25,11 @@ test("When can NOT place station card, should NOT place station card", () => {
       canPutDownStationCards: () => true,
       canPutDownMoreStationCardsThisTurn: () => false,
     },
+    playerServiceFactory: {
+      findDronesForZuuls: () => ({
+        canIssueFindDronesForZuuls: () => false,
+      }),
+    },
   });
 
   decider.decide();
@@ -45,6 +50,11 @@ test("When can place station cards, should place _certain_ card in _some_ place"
     playerRuleService: {
       canPutDownStationCards: () => true,
       canPutDownMoreStationCardsThisTurn: () => true,
+    },
+    playerServiceFactory: {
+      findDronesForZuuls: () => ({
+        canIssueFindDronesForZuuls: () => false,
+      }),
     },
     decideRowForStationCard: () => "_some_place_",
     decideCardToPlaceAsStationCard: () => "_certain_card_",
@@ -69,6 +79,11 @@ test("When can NOT place station cards in general but can place station cards th
       canPutDownStationCards: () => false,
       canPutDownMoreStationCardsThisTurn: () => true,
     },
+    playerServiceFactory: {
+      findDronesForZuuls: () => ({
+        canIssueFindDronesForZuuls: () => false,
+      }),
+    },
     decideRowForStationCard: () => "_some_place_",
     decideCardToPlaceAsStationCard: () => "_certain_card_",
   });
@@ -79,6 +94,35 @@ test("When can NOT place station cards in general but can place station cards th
     "putDownCard",
     expect.any(Object)
   );
+});
+
+test("When playing with Zuuls should emit 'findDronesForZuuls' in the first ACTION phase", () => {
+  const matchController = createMatchController();
+  const decider = createDecider({
+    matchController,
+    playerStateService: fakePlayerStateServiceFactory.withStubs({
+      getCardsOnHand: () => [createCard()],
+    }),
+    playerRuleService: {
+      canPutDownStationCards: () => false,
+      canPutDownMoreStationCardsThisTurn: () => true,
+    },
+    playerServiceFactory: {
+      findDronesForZuuls: () => ({
+        canIssueFindDronesForZuuls: () => true,
+      }),
+    },
+    decideRowForStationCard: () => "_some_place_",
+    decideCardToPlaceAsStationCard: () => "_certain_card_",
+  });
+
+  decider.decide();
+
+  expect(matchController.emit).not.toBeCalledWith(
+    "putDownCard",
+    expect.any(Object)
+  );
+  expect(matchController.emit).toHaveBeenCalledWith("findDronesForZuuls");
 });
 
 function createDecider(stubs = {}) {
