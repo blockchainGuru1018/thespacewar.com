@@ -41,6 +41,8 @@ module.exports = function ({ cardInfoRepository }) {
         actionPoints -= event.targetCardCost;
       } else if (event.type === "stauxFindAcidProjectile") {
         actionPoints -= 2;
+      } else if (event.type === "naaloxDormantEffect") {
+        actionPoints -= 2;
       }
     }
 
