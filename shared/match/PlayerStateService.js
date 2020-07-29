@@ -580,10 +580,11 @@ class PlayerStateService {
   }
 
   putDownCardInZone(cardData, { grantedForFreeByEvent = false } = {}) {
+    this.registerEventForPutDownCardInZone(cardData, { grantedForFreeByEvent });
+
     this.update((playerState) => {
       playerState.cardsInZone.push(cardData);
     });
-    this.registerEventForPutDownCardInZone(cardData, { grantedForFreeByEvent });
   }
 
   registerEventForPutDownCardInOpponentZone(
