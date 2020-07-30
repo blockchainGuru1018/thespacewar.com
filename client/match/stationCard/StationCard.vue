@@ -27,12 +27,15 @@
           "
           :class="['card-attackBoostIndicatorWrapper']"
         >
-          <div class="card-stationCostInflationWrapper">
+          <div
+            v-if="!canBeSelectedForRepair"
+            class="card-stationCostInflationWrapper"
+          >
             +{{ createCard(stationCard.card).costInflation }}
           </div>
         </div>
         <div
-          v-if="canPlayCard"
+          v-if="canPlayCard && !canBeSelectedForRepair"
           class="movable moveToZone"
           @click.stop="
             putDownCardOrShowChoiceOrAction({
@@ -110,6 +113,7 @@ module.exports = {
       "phase",
       "selectedDefendingStationCards",
       "repairerCardId",
+      "repairerCommander",
     ]),
     ...mapRequirementState(["selectedStationCardIdsForRequirement"]),
     ...mapGetters([
@@ -162,8 +166,7 @@ module.exports = {
       return (
         !this.isOpponentStationCard &&
         this.stationCard.flipped &&
-        this.actionPoints2 >=
-          this.behaviourCardInStationCard.costToPlay &&
+        this.actionPoints2 >= this.behaviourCardInStationCard.costToPlay &&
         this.canPutDownStationCardInHomeZone &&
         this.behaviourCardInStationCard.canBePlayed()
       );
@@ -203,7 +206,7 @@ module.exports = {
     },
     canBeSelectedForRepair() {
       if (!this.stationCard.card) return false;
-      if (!this.repairerCardId) return false;
+      if (!this.repairerCardId && !this.repairerCommander) return false;
 
       return this.createCard(this.stationCard.card).canBeRepaired();
     },

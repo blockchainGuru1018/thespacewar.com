@@ -209,6 +209,7 @@ export default {
       "playerRuleService",
       "lastStand",
       "cardCostInflation",
+      "repairerCommanderSelected",
     ]),
     ...requirementHelpers.mapGetters([
       "waitingForOtherPlayerToFinishRequirements",
@@ -333,6 +334,8 @@ export default {
         )} to sacrifice`;
       } else if (this.firstRequirementIsDrawCard) {
         return this.drawCardOrMillText;
+      } else if (this.repairerCommanderSelected) {
+        return "Select 1 station card to repair";
       } else {
         return "";
       }
