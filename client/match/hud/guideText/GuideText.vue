@@ -144,9 +144,16 @@
       </div>
       <div class="guideText-subText">
         <button
-          :class="turnControl.hasZeroCostCardsToPlay() ? 'visible' : 'hidden'"
+          :class="[
+            turnControl.hasZeroCostCardsToPlay() ? 'visible' : 'hidden',
+            flickerControlButton && !isHoveringTakeControl
+              ? 'animate-flicker'
+              : '',
+          ]"
           class="toggleControlOfTurn darkButton"
           title="Or press space to toggle control"
+          @mouseover="isHoveringTakeControl = true"
+          @mouseout="isHoveringTakeControl = false"
           @click="toggleControlOfTurn"
           @keydown.space.stop.prevent="toggleControlOfTurn"
         >
@@ -185,6 +192,7 @@ export default {
     return {
       lastStandRemainingSeconds: Math.round(LastStand.LastStandLength / 1000),
       lastStandUpdateIntervalId: null,
+      isHoveringTakeControl: false,
     };
   },
   computed: {
@@ -210,6 +218,7 @@ export default {
       "lastStand",
       "cardCostInflation",
       "repairerCommanderSelected",
+      "flickerControlButton",
     ]),
     ...requirementHelpers.mapGetters([
       "waitingForOtherPlayerToFinishRequirements",
@@ -451,5 +460,56 @@ function pluralize(word, count) {
 }
 .visible {
   visibility: visible;
+}
+@keyframes flickerAnimation {
+  0% {
+    color: white;
+  }
+  50% {
+    color: green;
+  }
+  100% {
+    color: white;
+  }
+}
+@-o-keyframes flickerAnimation {
+  0% {
+    color: white;
+  }
+  50% {
+    color: green;
+  }
+  100% {
+    color: white;
+  }
+}
+@-moz-keyframes flickerAnimation {
+  0% {
+    color: white;
+  }
+  50% {
+    color: green;
+  }
+  100% {
+    color: white;
+  }
+}
+@-webkit-keyframes flickerAnimation {
+  0% {
+    color: white;
+  }
+  50% {
+    color: green;
+  }
+  100% {
+    color: white;
+  }
+}
+
+.animate-flicker {
+  -webkit-animation: flickerAnimation 1s infinite;
+  -moz-animation: flickerAnimation 1s infinite;
+  -o-animation: flickerAnimation 1s infinite;
+  animation: flickerAnimation 1s infinite;
 }
 </style>

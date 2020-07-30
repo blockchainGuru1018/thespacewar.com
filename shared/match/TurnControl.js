@@ -1,4 +1,5 @@
 const TakeControlEvent = require("../event/TurnControlEvent.js");
+const TargetMissed = require("../card/TargetMissed");
 
 module.exports = class TurnControl {
   constructor({
@@ -60,8 +61,16 @@ module.exports = class TurnControl {
     return this.canTakeControlOfTurn() || this.canReleaseControlOfTurn();
   }
 
-  hasZeroCostCardsToPlay() {
-    const zeroCostCards = [
+  hasTargetMissed() {
+    const hasTargetMissed =
+      this._getZeroCostCards().filter(
+        (card) => card.commonId === TargetMissed.CommonId
+      ).length > 0;
+    return hasTargetMissed;
+  }
+
+  _getZeroCostCards() {
+    return [
       ...this._playerStateService.getCardsOnHand(),
       ...this._playerStateService.getFlippedStationCards().map((c) => c.card),
     ]
@@ -69,8 +78,10 @@ module.exports = class TurnControl {
         this._playerStateService.createBehaviourCardById(cardData.id)
       )
       .filter((card) => card.costToPlay === 0);
+  }
 
-    return zeroCostCards.length > 0;
+  hasZeroCostCardsToPlay() {
+    return this._getZeroCostCards().length > 0;
   }
 
   canTakeControlOfTurn() {

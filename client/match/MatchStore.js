@@ -122,6 +122,7 @@ module.exports = function (deps) {
       flashOpponentDiscardPile: false,
       onLastChangeToWin: false,
       timeRanOutVSBot: false,
+      takeControlButtonFlick: false,
     },
     getters: {
       isFirstPlayer,
@@ -205,6 +206,7 @@ module.exports = function (deps) {
       cardDataAssembler,
       cardCostInflation,
       repairerCommanderSelected,
+      flickerControlButton,
     },
     actions: {
       // remote
@@ -1183,7 +1185,7 @@ module.exports = function (deps) {
   }
 
   function opponentAttackedCard(
-    { state },
+    { state, getters },
     {
       attackerCardId,
       defenderCardId,
@@ -1223,8 +1225,16 @@ module.exports = function (deps) {
       );
       attackerCardZone.splice(attackerCardIndex, 1);
     }
+    state.takeControlButtonFlick = getters.turnControl.hasTargetMissed();
+
+    setTimeout(() => {
+      state.takeControlButtonFlick = false;
+    }, getters.gameConfig.timeToCounter());
   }
 
+  function flickerControlButton(state) {
+    return state.takeControlButtonFlick;
+  }
   function cancelAttack({ dispatch }) {
     dispatch("endAttack");
   }
