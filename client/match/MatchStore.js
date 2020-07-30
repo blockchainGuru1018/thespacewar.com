@@ -112,6 +112,7 @@ module.exports = function (deps) {
       attackerCardId: null,
       selectedDefendingStationCards: [],
       repairerCardId: null,
+      repairerCommander: null,
       ended: false,
       retreatedPlayerId: null,
       shake: false,
@@ -203,6 +204,7 @@ module.exports = function (deps) {
       gameConfig,
       cardDataAssembler,
       cardCostInflation,
+      repairerCommanderSelected,
     },
     actions: {
       // remote
@@ -214,7 +216,6 @@ module.exports = function (deps) {
       findAcidProjectile,
       findDronesForZuuls,
       naaloxReviveDrone,
-      naaloxRepairStationCard,
       checkLastTimeOfInactivityForPlayer,
       toggleControlOfTurn,
       skipDrawCard,
@@ -244,6 +245,7 @@ module.exports = function (deps) {
       cancelAttack,
       endAttack,
       selectAsRepairer,
+      selectNaaloxAsRepairCommander,
       cancelRepair,
       selectForRepair,
       damageStationCards, //todo rename to "damageStationCardsForRequirement",
@@ -549,6 +551,7 @@ module.exports = function (deps) {
       playerActionLog: ClientLimitNotice,
     });
   }
+
   function playerNaaloxDormantEffect(state, getters) {
     return new NaaloxDormantEffect({
       matchService: getters.matchService,
@@ -979,10 +982,12 @@ module.exports = function (deps) {
     matchController.emit("findDronesForZuuls");
   }
 
-  function naaloxRepairStationCard() {
-    matchController.emit("naaloxRepairStationCard");
+  function selectNaaloxAsRepairCommander({ state }) {
+    state.repairerCommander = Commander.Naalox;
   }
-
+  function repairerCommanderSelected(state) {
+    return state.repairerCommander;
+  }
   function naaloxReviveDrone() {
     matchController.emit("naaloxReviveDrone");
   }
@@ -1233,15 +1238,25 @@ module.exports = function (deps) {
     state.repairerCardId = repairerCardId;
   }
 
+  function selectAsRepairerCommander({ state }, repairerCommander) {
+    console.log(repairerCommander);
+    state.repairerCommander = repairerCommander;
+  }
+
   function cancelRepair({ state }) {
     state.repairerCardId = null;
   }
 
-  function selectForRepair({ state }, cardToRepairId) {
+  function selectForRepair({ state, getters }, cardToRepairId) {
     const repairerCardId = state.repairerCardId;
+    const repairerCommander = state.repairerCommander;
     state.repairerCardId = null;
-
-    matchController.emit("repairCard", { repairerCardId, cardToRepairId });
+    state.repairerCommander = null;
+    if (repairerCommander) {
+      matchController.emit("naaloxRepairStationCard", { cardToRepairId });
+    } else {
+      matchController.emit("repairCard", { repairerCardId, cardToRepairId });
+    }
   }
 
   function damageStationCards({}, targetIds) {
@@ -1251,6 +1266,7 @@ module.exports = function (deps) {
   function damageShieldCards({}, targetIds) {
     matchController.emit("damageShieldCards", { targetIds });
   }
+
   function sacrificeCardForRequirement({}, targetIds) {
     matchController.emit("sacrificeCardForRequirement", { targetIds });
   }

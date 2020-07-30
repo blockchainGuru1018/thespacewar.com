@@ -14,13 +14,13 @@ module.exports = function ({ playerServiceFactory }) {
     playerNaaloxDormantEffect.naaloxReviveDrone();
   }
 
-  function naaloxRepairStationCard(playerId) {
+  function naaloxRepairStationCard(playerId, { cardToRepairId }) {
     const playerNaaloxDormantEffect = playerServiceFactory.naaloxDormantEffect(
       playerId
     );
     if (!playerNaaloxDormantEffect.canIssueRepairStation())
       throw new Error("Cannot issue naalox repair  station");
 
-    playerNaaloxDormantEffect.naaloxRepairStationCard();
+    playerNaaloxDormantEffect.naaloxRepairStationCard(cardToRepairId);
   }
 };

@@ -53,6 +53,7 @@ class NaaloxDormantEffect {
     matchService,
     opponentActionLog,
     playerActionLog,
+    repair,
   }) {
     this._playerStateService = playerStateService;
     this._playerActionPointsCalculator = playerActionPointsCalculator;
@@ -84,10 +85,10 @@ class NaaloxDormantEffect {
   }
 
   naaloxReviveDrone() {
-    console.log("revive drones");
     const droneCardsFromDiscardPile = this._playerStateService
       .getDiscardedCards()
       .filter((card) => card.commonId === Drone.CommonId);
+
     if (droneCardsFromDiscardPile.length > 0) {
       const droneCard = droneCardsFromDiscardPile[0];
       this._playerStateService.removeCardFromDiscardPile(droneCard.id);
@@ -95,16 +96,22 @@ class NaaloxDormantEffect {
       this._playerStateService.putDownCardInZone(droneCard, {
         grantedForFreeByEvent: true,
       });
+
       this._opponentActionLog.opponentIssuedNaaloxReviveDrone(Drone.CommonId);
       this._playerActionLog.receivedCardFromCommander(Drone.CommonId);
       this._createAndStoreEvent();
     }
   }
 
-  naaloxRepairStationCard() {
-    console.log("repair station card ");
-    this._opponentActionLog.opponentIssuedNaaloxRepairStation();
-    this._createAndStoreEvent();
+  naaloxRepairStationCard(cardToRepairId) {
+    const cardToRepair = this._playerStateService.createBehaviourCardById(
+      cardToRepairId
+    );
+    if (cardToRepair && cardToRepair.isStationCard()) {
+      this._playerStateService.unflipStationCard(cardToRepairId);
+      this._opponentActionLog.opponentIssuedNaaloxRepairStation();
+      this._createAndStoreEvent();
+    }
   }
 
   _meetCommonRequirements() {

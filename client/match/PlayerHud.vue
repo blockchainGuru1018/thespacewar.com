@@ -86,7 +86,7 @@
           v-if="this.playerNaaloxDormantEffect.canIssueRepairStation()"
           title="You can fix a damaged station card"
           class="perfectPlan darkButton"
-          @click="naaloxRepairStationCard"
+          @click="selectNaaloxAsRepairCommander"
         >
           Repair Station Card
         </button>
@@ -242,6 +242,7 @@ export default {
       "playerRuleService",
       "playerDrawPhase",
       "getCardsPendingForAction",
+      "repairerCommanderSelected",
     ]),
     ...requirementHelpers.mapGetters([
       "waitingForOtherPlayerToFinishRequirements",
@@ -279,8 +280,9 @@ export default {
     },
     naaloxDormantEffectsContainerVisible() {
       return (
-        this.playerNaaloxDormantEffect.canIssueReviveDrone() ||
-        this.playerNaaloxDormantEffect.canIssueRepairStation()
+        (this.playerNaaloxDormantEffect.canIssueReviveDrone() ||
+          this.playerNaaloxDormantEffect.canIssueRepairStation()) &&
+        !this.repairerCommanderSelected
       );
     },
     gameHasEnded() {
@@ -375,7 +377,7 @@ export default {
       "perfectPlan",
       "findAcidProjectile",
       "naaloxReviveDrone",
-      "naaloxRepairStationCard",
+      "selectNaaloxAsRepairCommander",
     ]),
     ...startGameHelpers.mapActions(["playerReady"]),
     ...escapeMenuHelpers.mapActions(["selectView"]),
