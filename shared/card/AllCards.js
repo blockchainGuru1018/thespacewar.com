@@ -48,6 +48,7 @@ const classes = [
   require("./DroneLeader.js"),
   require("./FreezingCold.js"),
   require("./Fusion.js"),
+  require("./Scout.js"),
 ];
 
 module.exports = classes;
