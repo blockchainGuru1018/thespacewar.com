@@ -1190,7 +1190,7 @@ module.exports = function (deps) {
   function opponentPutDownCardInZone({ state, getters }, { cardData }) {
     if (
       cardData.cost <= 2 &&
-      state.playerCardsOnHand.filter((c) => c.commonId === Luck.CommonId)
+      state.playerCardsOnHand.some((c) => c.commonId === Luck.CommonId)
     ) {
       state.takeControlButtonFlick = true;
       setTimeout(() => {

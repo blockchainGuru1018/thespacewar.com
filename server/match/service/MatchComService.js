@@ -64,7 +64,6 @@ class MatchComService {
 
   emitToPlayer(playerId, action, value) {
     const playerConnection = this.getPlayerConnection(playerId);
-    console.log("emitting", action);
     if (LOG_ALL_EMITS) {
       this._logger.log(
         "DEBUG_LOG_NOT_AN_ERROR!",
