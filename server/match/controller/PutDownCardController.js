@@ -234,6 +234,11 @@ function PutDownCardController(deps) {
       );
       addRequirementFromSpec.forCardPutDownInHomeZone(cardData);
     }
+    const opponentId = matchService.getOpponentId(playerId);
+
+    matchComService.emitToPlayer(opponentId, "opponentPutDownCardInZone", {
+      cardData,
+    });
 
     const turnControl = playerServiceFactory.turnControl(playerId);
     if (turnControl.playerHasControlOfOpponentsTurn()) {

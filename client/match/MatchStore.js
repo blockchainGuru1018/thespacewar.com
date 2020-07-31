@@ -40,7 +40,7 @@ const LookAtStationRow = require("../../shared/match/card/actions/LookAtStationR
 const PlayerActionPointsCalculator = require("../../shared/match/PlayerActionPointsCalculator.js");
 const QueryBoard = require("../../shared/match/QueryBoard.js");
 const ClientPlayerDeck = require("../card/ClientPlayerDeck.js");
-
+const Luck = require("../../shared/card/Luck");
 const { COMMON_PHASE_ORDER, PHASES } = require("./phases.js");
 
 const FlashCardTime = 2000;
@@ -242,6 +242,7 @@ module.exports = function (deps) {
       selectAsAttacker,
       selectAsDefender,
       opponentAttackedCard,
+      opponentPutDownCardInZone,
       registerAttack,
       removePlayerCard,
       cancelAttack,
@@ -987,9 +988,11 @@ module.exports = function (deps) {
   function selectNaaloxAsRepairCommander({ state }) {
     state.repairerCommander = Commander.Naalox;
   }
+
   function repairerCommanderSelected(state) {
     return state.repairerCommander;
   }
+
   function naaloxReviveDrone() {
     matchController.emit("naaloxReviveDrone");
   }
@@ -1184,6 +1187,18 @@ module.exports = function (deps) {
     dispatch("triggerCardAttackedEffect", defenderCardId);
   }
 
+  function opponentPutDownCardInZone({ state, getters }, { cardData }) {
+    if (
+      cardData.cost <= 2 &&
+      state.playerCardsOnHand.filter((c) => c.commonId === Luck.CommonId)
+    ) {
+      state.takeControlButtonFlick = true;
+      setTimeout(() => {
+        state.takeControlButtonFlick = false;
+      }, getters.gameConfig.timeToCounter());
+    }
+  }
+
   function opponentAttackedCard(
     { state, getters },
     {
@@ -1235,6 +1250,7 @@ module.exports = function (deps) {
   function flickerControlButton(state) {
     return state.takeControlButtonFlick;
   }
+
   function cancelAttack({ dispatch }) {
     dispatch("endAttack");
   }
