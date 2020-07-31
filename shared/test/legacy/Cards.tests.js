@@ -25,6 +25,7 @@ module.exports = {
           cardEffect: {
             attackBoostForCardType: (type) => (type === "spaceShip" ? 1 : 0),
             costCardIncrement: () => 0,
+            attackBoostForCollision: () => 0,
           },
         });
       },

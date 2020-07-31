@@ -6,17 +6,10 @@ module.exports = class Drone extends BaseCard {
     super(deps);
   }
 
-  get attack() {
-    return this._card.attack + this.attackBoost;
-  }
-
-  get attackBoost() {
+  get attackBoostFromCommander() {
     const isPlayingWithCrakux =
       this._playerStateService.getCurrentCommander() === Commander.Crakux;
-    return (
-      this._cardEffect.attackBoostForCardType(this.type) +
-      (isPlayingWithCrakux ? 1 : 0)
-    );
+    return isPlayingWithCrakux ? 1 : 0;
   }
 
   static get Info() {

@@ -137,6 +137,13 @@
           Sacrifice
         </div>
         <div
+          v-if="canAttack && canCollide"
+          class="sacrifice actionOverlay"
+          @click="readyToAttackWithCollision()"
+        >
+          Collision
+        </div>
+        <div
           v-if="canTriggerDormantEffect"
           class="triggerDormantEffect actionOverlay"
           @click="triggerDormantEffect(card.id)"
@@ -215,6 +222,7 @@ module.exports = {
   data() {
     return {
       cardWidth: 0,
+      forceUpdateAttackBoost: 0,
     };
   },
   computed: {
@@ -227,6 +235,7 @@ module.exports = {
       "repairerCardId",
       "flashAttackedCardId",
       "highlightCardIds",
+      "usingCollision",
     ]),
     ...mapGetters([
       "allOpponentStationCards",
@@ -255,6 +264,7 @@ module.exports = {
     ...mapCardGetters(["activeActionCard"]),
     ...mapRequirementGetters(["attackerRequirement"]),
     behaviourCard() {
+      this.forceUpdateAttackBoost;
       return this.createCard(this.card, { playerId: this.ownerId });
     },
     title() {
@@ -432,7 +442,6 @@ module.exports = {
         }).simulateAttackingCard(this.behaviourCard);
       } else {
         if (!this.attackerCardId) return null;
-
         return this.attackerCard.simulateAttackingCard(this.behaviourCard);
       }
     },
@@ -468,7 +477,11 @@ module.exports = {
       };
     },
     attackBoost() {
+      this.forceUpdateAttackBoost;
       return this.behaviourCard.attackBoost;
+    },
+    canCollide() {
+      return this.behaviourCard.canCollide;
     },
   },
   methods: {
@@ -491,7 +504,13 @@ module.exports = {
       this.moveCard(this.card);
     },
     readyToAttackClick() {
+      this.card.usingCollision = false;
       this.selectAsAttacker(this.card);
+    },
+    readyToAttackWithCollision() {
+      this.card.usingCollision = true;
+      this.selectAsAttacker(this.card);
+      this.forceUpdateAttackBoost++;
     },
     readyToDefenseClick() {
       if (
@@ -532,6 +551,12 @@ module.exports = {
     } else {
       this.cardWidth = this.$refs.card.offsetWidth;
     }
+  },
+  watch: {
+    usingCollision(_new, _old) {
+      if (_new === null && _old) this.card.usingCollision = null;
+      this.forceUpdateAttackBoost++;
+    },
   },
   directives: {
     clickOutside: vClickOutside.directive,

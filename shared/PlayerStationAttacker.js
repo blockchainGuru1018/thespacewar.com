@@ -16,12 +16,13 @@ module.exports = function ({
 
   function validateAttackOnStationCards(
     playerId,
-    { attackerCardId, targetStationCardIds }
+    { attackerCardId, targetStationCardIds, usingCollision }
   ) {
     const cannotAttackStationCards = canThePlayer.attackStationCards();
     if (!cannotAttackStationCards)
       throw new CheatError("Cannot attack station cards");
     const attackerCardData = playerStateService.findCard(attackerCardId);
+    attackerCardData.usingCollision = usingCollision;
     const opponentStationCards = opponentStateService.getStationCards();
     const unflippedOpponentStationCardsCount = opponentStateService.getUnflippedStationCardsCount();
     if (

@@ -18,6 +18,8 @@ function createCard(Constructor, options = {}) {
       attackBoostForCardType: () => 0,
       cardTypeCanMoveOnTurnPutDown: () => false,
       costCardIncrement: () => 0,
+      attackBoostForCollision: () => 0,
+      ...(options.cardEffect || {}),
     },
     playerRuleService: playerRuleServiceFactory.withStubs(),
     turnControl: { playerHasControlOfOpponentsTurn: () => false },

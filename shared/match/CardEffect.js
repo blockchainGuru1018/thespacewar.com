@@ -3,12 +3,14 @@ module.exports = function ({ canThePlayer, playerStateService }) {
     attackBoostForCardType,
     cardTypeCanMoveOnTurnPutDown,
     costCardIncrement,
+    canCollideForDurationCard,
+    attackBoostForCollision,
   };
 
-  function attackBoostForCardType(type) {
+  function attackBoostForCardType(type, usingCollision = false) {
     if (type !== "spaceShip") return 0;
 
-    return sum(attackBoostForEachDurationCard());
+    return sum(attackBoostForEachDurationCard(usingCollision));
   }
 
   function costCardIncrement() {
@@ -48,5 +50,29 @@ module.exports = function ({ canThePlayer, playerStateService }) {
 
   function sum(list) {
     return list.reduce((acc, v) => acc + v, 0);
+  }
+
+  function attackBoostForCollision(usingCollision) {
+    const cardsWithCollideForDurationCard = getCardsForCollideForDurationCard();
+    if (cardsWithCollideForDurationCard.length > 0 && usingCollision) {
+      return cardsWithCollideForDurationCard[0].attackBonus;
+    } else {
+      return 0;
+    }
+  }
+
+  function getCardsForCollideForDurationCard() {
+    return playerStateService
+      .getDurationBehaviourCards()
+      .filter((c) => c.canCollide);
+  }
+  function canCollideForDurationCard() {
+    return (
+      (
+        playerStateService
+          .getDurationBehaviourCards()
+          .filter((c) => c.canCollide) || []
+      ).length > 0
+    );
   }
 };

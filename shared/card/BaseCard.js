@@ -72,7 +72,25 @@ class BaseCard {
   }
 
   get attackBoost() {
+    return (
+      this.attackBoostForCardType +
+      this._cardEffect.attackBoostForCollision(this._card.usingCollision) +
+      this.attackBoostFromCommander
+    );
+  }
+
+  get attackBoostForCardType() {
     return this._cardEffect.attackBoostForCardType(this.type);
+  }
+
+  get attackBoostFromCommander() {
+    return 0;
+  }
+
+  get canCollide() {
+    return (
+      this.type === "spaceShip" && this._cardEffect.canCollideForDurationCard()
+    );
   }
 
   get costInflation() {

@@ -49,6 +49,7 @@ const classes = [
   require("./FreezingCold.js"),
   require("./Fusion.js"),
   require("./Scout.js"),
+  require("./CollisionSkill.js"),
 ];
 
 module.exports = classes;

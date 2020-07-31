@@ -25,8 +25,16 @@ function AttackController(deps) {
     onSacrifice,
   };
 
-  function onAttack(playerId, { attackerCardId, defenderCardId }) {
-    validateAttack({ playerId, attackerCardId, defenderCardId });
+  function onAttack(
+    playerId,
+    { attackerCardId, defenderCardId, usingCollision = false }
+  ) {
+    validateAttack({
+      playerId,
+      attackerCardId,
+      defenderCardId,
+      usingCollision,
+    });
 
     const stateBeforeAttack = stateSerializer.serialize(
       matchService.getState()
@@ -45,7 +53,7 @@ function AttackController(deps) {
     const attackerCard = playerStateService.createBehaviourCardById(
       attackerCardId
     );
-
+    attackerCard._card.usingCollision = usingCollision;
     const damageBefore = defenderCard.damage;
     attackerCard.attackCard(defenderCard);
     const damageAfter = defenderCard.damage;
@@ -195,7 +203,12 @@ function AttackController(deps) {
     playerRequirementUpdater.progressRequirementByCount(count);
   }
 
-  function validateAttack({ playerId, attackerCardId, defenderCardId }) {
+  function validateAttack({
+    playerId,
+    attackerCardId,
+    defenderCardId,
+    usingCollision,
+  }) {
     const canThePlayer = playerServiceProvider.byTypeAndId(
       PlayerServiceProvider.TYPE.canThePlayer,
       playerId
@@ -229,11 +242,13 @@ function AttackController(deps) {
     );
     if (!attackerCard.canAttackCard(defenderCard))
       throw new CheatError("Cannot attack that card");
+    if (!attackerCard.canCollide && usingCollision)
+      throw new CheatError("Cannot collide");
   }
 
   function onAttackStationCards(
     playerId,
-    { attackerCardId, targetStationCardIds }
+    { attackerCardId, targetStationCardIds, usingCollision }
   ) {
     const playerStationAttacker = playerServiceFactory.playerStationAttacker(
       playerId
@@ -241,10 +256,12 @@ function AttackController(deps) {
     playerStationAttacker.validateAttackOnStationCards(playerId, {
       attackerCardId,
       targetStationCardIds,
+      usingCollision,
     });
     playerStationAttacker.attackStationCards({
       attackerCardId,
       targetStationCardIds,
+      usingCollision,
     });
   }
 

@@ -123,6 +123,7 @@ module.exports = function (deps) {
       onLastChangeToWin: false,
       timeRanOutVSBot: false,
       takeControlButtonFlick: false,
+      usingCollision: null,
     },
     getters: {
       isFirstPlayer,
@@ -1169,6 +1170,7 @@ module.exports = function (deps) {
 
   function selectAsAttacker({ state }, card) {
     state.attackerCardId = card.id;
+    state.usingCollision = !!card.usingCollision;
   }
 
   function selectAsDefender(
@@ -1176,12 +1178,17 @@ module.exports = function (deps) {
     { card, fromRequirement = null }
   ) {
     let attackerCardId = state.attackerCardId;
+    let usingCollision = state.usingCollision;
     const defenderCardId = card.id;
     if (fromRequirement === "damageShieldCard") {
       attackerCardId = rootStore.getters["requirement/firstRequirement"].cardId;
       dispatch("damageShieldCards", [defenderCardId]);
     }
-    matchController.emit("attack", { attackerCardId, defenderCardId });
+    matchController.emit("attack", {
+      attackerCardId,
+      defenderCardId,
+      usingCollision,
+    });
 
     dispatch("registerAttack", { attackerCardId, defenderCardId });
     dispatch("triggerCardAttackedEffect", defenderCardId);
@@ -1257,6 +1264,7 @@ module.exports = function (deps) {
 
   function endAttack({ state }) {
     state.attackerCardId = null;
+    state.usingCollision = null;
     state.selectedDefendingStationCards = [];
   }
 
@@ -1314,6 +1322,7 @@ module.exports = function (deps) {
       matchController.emit("attackStationCard", {
         attackerCardId,
         targetStationCardIds,
+        usingCollision: state.usingCollision,
       });
       dispatch("registerAttack", { attackerCardId, targetStationCardIds });
       dispatch("shakeTheScreen");
