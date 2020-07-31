@@ -90,7 +90,9 @@ module.exports = function ({ matchController }) {
   }
 
   function commandersOptions(state, getters, rootState) {
-    return commandersRows[rootState.match.currentDeck || "Regular"];
+    return (
+      commandersRows[rootState.match.currentDeck] || commandersRows["Regular"]
+    );
   }
 
   function selectCommander({ rootState }, commander) {

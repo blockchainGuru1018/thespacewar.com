@@ -24,12 +24,13 @@ module.exports = function (deps) {
         return cardDataAssembler.createRegularDeck();
       case "TheSwarm":
         return cardDataAssembler.createSwarmDeck();
+      case "UnitedStart":
+        return cardDataAssembler.createUnitedStart();
       default:
         throw new Error("Invalid Deck ID");
     }
   }
 };
-
 function shuffle(array) {
   let currentIndex = array.length;
   let temporaryValue;

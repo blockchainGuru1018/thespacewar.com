@@ -11,6 +11,7 @@ module.exports = function CardDataAssembler({ rawCardDataRepository }) {
     createLibrary,
     createSwarmDeck,
     createRegularDeck,
+    createUnitedStart,
     createOneOfEach,
     createFromCommonId,
   };
@@ -20,11 +21,27 @@ module.exports = function CardDataAssembler({ rawCardDataRepository }) {
     return [
       ...deckData.regular.map(CardData),
       ...deckData.theSwarm.map(CardData),
+      ...(deckData.unitedStart || []).map(CardData),
     ];
   }
 
   function createSwarmDeck() {
     const rawCardData = rawCardDataRepository.get().theSwarm;
+    const cards = [];
+    for (const cardJson of rawCardData) {
+      const copies = cardJson.number_copies
+        ? parseInt(cardJson.number_copies)
+        : 1;
+      for (let i = 0; i < copies; i++) {
+        const card = CardData(cardJson);
+        cards.push(card);
+      }
+    }
+    return cards;
+  }
+
+  function createUnitedStart() {
+    const rawCardData = rawCardDataRepository.get().unitedStart;
     const cards = [];
     for (const cardJson of rawCardData) {
       const copies = cardJson.number_copies
