@@ -1,6 +1,8 @@
 const getCardImageUrl = require("../utils/getCardImageUrl.js");
 const FakeState = require("../testUtils/FakeState.js");
 const FakeMatchController = require("../testUtils/FakeMatchController.js");
+const PutDownCardEvent = require("../../shared/PutDownCardEvent.js");
+const Luck = require("../../shared/card/Luck.js");
 const { createController } = require("../testUtils");
 const {
   assert,
@@ -38,6 +40,7 @@ const mockLocalStorageResponse = (response) => {
     writable: true,
   });
 };
+
 describe("when phase is wait but is current player", () => {
   beforeEach(async () => {
     const { dispatch, showPage } = setUpController();
@@ -228,3 +231,30 @@ describe("when is holding a card costing 0 and some card its adding costInflatio
     assert.elementText(".guideText", "All cards cost 3 more actions to play.");
   });
 });
+
+// describe("when it is your draw phase, but is able to counter", () => {
+//   beforeEach(async () => {
+//     const { dispatch, showPage } = setUpController();
+//     showPage();
+//     dispatch(
+//       "stateChanged",
+//       FakeState({
+//         turn: 1,
+//         currentPlayer: "P1A",
+//         cardsOnHand: [{ id: "C1A", cost: 0, commonId: Luck.CommonId }],
+//         phase: "draw",
+//         opponentEvents: [
+//           PutDownCardEvent.forTest({
+//             cost: 1,
+//             location: "zone",
+//           }),
+//         ],
+//       })
+//     );
+//     await timeout();
+//   });
+//
+//   test("should show counter alert", async () => {
+//     assert.elementCount(".counterAlert", 1);
+//   });
+// });

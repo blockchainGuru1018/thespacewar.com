@@ -207,6 +207,9 @@ module.exports = function (deps) {
       cardCostInflation,
       repairerCommanderSelected,
       flickerControlButton,
+      // playerHasCardThatCanCounter(state, getters) {
+      //   return getters.queryBoard.playerHasCardThatCanCounter();
+      // },
     },
     actions: {
       // remote
@@ -1240,8 +1243,8 @@ module.exports = function (deps) {
       );
       attackerCardZone.splice(attackerCardIndex, 1);
     }
-    state.takeControlButtonFlick = getters.turnControl.hasTargetMissed();
 
+    state.takeControlButtonFlick = getters.turnControl.hasTargetMissed();
     setTimeout(() => {
       state.takeControlButtonFlick = false;
     }, getters.gameConfig.timeToCounter());
