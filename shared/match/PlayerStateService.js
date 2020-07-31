@@ -635,12 +635,13 @@ class PlayerStateService {
 
   registerEventForPutDownEventCardInZone(cardData) {
     const currentTurn = this._matchService.getTurn();
+    const card = this.createBehaviourCard(cardData);
     this.storeEvent(
       PutDownCardEvent({
         turn: currentTurn,
         location: "zone",
         cardId: cardData.id,
-        cardCost: cardData.costToPlay,
+        cardCost: card.costToPlay,
         cardCommonId: cardData.commonId,
       })
     );
