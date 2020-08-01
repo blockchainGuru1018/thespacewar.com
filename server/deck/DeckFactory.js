@@ -24,8 +24,8 @@ module.exports = function (deps) {
         return cardDataAssembler.createRegularDeck();
       case "TheSwarm":
         return cardDataAssembler.createSwarmDeck();
-      case "UnitedStart":
-        return cardDataAssembler.createUnitedStart();
+      case "UnitedStars":
+        return cardDataAssembler.createUnitedStars();
       default:
         throw new Error("Invalid Deck ID");
     }
