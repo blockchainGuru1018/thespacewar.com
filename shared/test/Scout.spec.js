@@ -2,15 +2,14 @@ const Scout = require("../card/Scout.js");
 const { createCard } = require("./testUtils/shared.js");
 const { PHASES } = require("../phases");
 describe("Can use dormant effect", () => {
-  it("when have not attacked and its not first turn taht card was put down", () => {
+  it("when have not attacked ", () => {
     const card = new createCard(Scout, {
       queryEvents: {
         getTurnWhenCardDormantEffectWasUsed: () => null,
-        getTurnWhenCardWasPutDown: () => 1,
         getAttacksOnTurn: () => [],
       },
       matchService: {
-        getTurn: () => 2,
+        getTurn: () => 1,
       },
       playerStateService: {
         getPhase: () => PHASES.attack,
@@ -25,7 +24,6 @@ describe("Can not use dormant effect", () => {
     const card = new createCard(Scout, {
       queryEvents: {
         getTurnWhenCardDormantEffectWasUsed: () => 2,
-        getTurnWhenCardWasPutDown: () => 1,
         getAttacksOnTurn: () => [],
       },
       matchService: {
@@ -42,7 +40,6 @@ describe("Can not use dormant effect", () => {
     const card = new createCard(Scout, {
       queryEvents: {
         getTurnWhenCardDormantEffectWasUsed: () => 1,
-        getTurnWhenCardWasPutDown: () => 1,
         getAttacksOnTurn: () => [1],
       },
       matchService: {

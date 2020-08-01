@@ -10,11 +10,11 @@ module.exports = function () {
 async function getCardData() {
   const urlRegularDeck = `https://admin.thespacewar.com/services/api/cards?deck=1`;
   const urlTheSwarm = `https://admin.thespacewar.com/services/api/cards?deck=2`;
-  const urlUnitedStart = `https://admin.thespacewar.com/services/api/cards?deck=united_start`;
+  const urlUnitedStars = `https://admin.thespacewar.com/services/api/cards?deck=3`;
   return {
     regular: await getDecksData(urlRegularDeck),
     theSwarm: await getDecksData(urlTheSwarm),
-    unitedStart: await getDecksData(urlUnitedStart),
+    unitedStars: await getDecksData(urlUnitedStars),
   };
 }
 
