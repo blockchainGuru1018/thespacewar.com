@@ -244,6 +244,7 @@ module.exports = function (deps) {
       opponentMovedCard,
       drawCards,
       selectAsAttacker,
+      selectAsAttackerWithCollision,
       selectAsDefender,
       opponentAttackedCard,
       opponentPutDownCardInZone,
@@ -268,6 +269,11 @@ module.exports = function (deps) {
       matchIsDead,
       onLastChangeToWin,
       timeRanOutVSBot,
+    },
+    mutations: {
+      updateUsingCollision(state, payload) {
+        state.usingCollision = payload;
+      },
     },
   };
 
@@ -1173,7 +1179,10 @@ module.exports = function (deps) {
 
   function selectAsAttacker({ state }, card) {
     state.attackerCardId = card.id;
-    state.usingCollision = !!card.usingCollision;
+  }
+  function selectAsAttackerWithCollision({ state, commit }, card) {
+    state.attackerCardId = card.id;
+    commit("updateUsingCollision", true);
   }
 
   function selectAsDefender(
@@ -1313,6 +1322,7 @@ module.exports = function (deps) {
 
   function selectStationCardAsDefender({ state, getters, dispatch }, { id }) {
     const attackerCard = getters.attackerCard;
+    attackerCard._card.usingCollision = state.usingCollision;
     const targetStationCardIds = state.selectedDefendingStationCards;
     targetStationCardIds.push(id);
 

@@ -793,6 +793,7 @@ class PlayerStateService {
     attackerCardId,
     defenderCardId = null,
     targetStationCardIds = null,
+    usingCollision,
   }) {
     const cardData = this.findCard(attackerCardId);
     const turn = this._matchService.getTurn();

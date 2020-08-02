@@ -12,4 +12,19 @@ describe("Drone ", () => {
     });
     expect(card.attack).toBe(2);
   });
+  it("should have a +1 attack boost from Crakux and +3 from Collision skill", () => {
+    const card = new createCard(Drone, {
+      card: {
+        attack: 1,
+      },
+      cardEffect: {
+        attackBoostForCollision: () => 3,
+        attackBoostForCardType: () => 0,
+      },
+      playerStateService: {
+        getCurrentCommander: () => Commander.Crakux,
+      },
+    });
+    expect(card.attack).toBe(5);
+  });
 });

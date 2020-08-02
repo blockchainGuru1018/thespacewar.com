@@ -53,9 +53,9 @@ function AttackController(deps) {
     const attackerCard = playerStateService.createBehaviourCardById(
       attackerCardId
     );
-    attackerCard._card.usingCollision = usingCollision;
     const damageBefore = defenderCard.damage;
-    attackerCard.attackCard(defenderCard);
+    attackerCard.usingCollision = usingCollision;
+    attackerCard.attackCard({ defenderCard, usingCollision });
     const damageAfter = defenderCard.damage;
 
     const defenderCardWasDestroyed = defenderCard.destroyed;

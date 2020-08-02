@@ -249,21 +249,23 @@ class BaseCard {
     return true;
   }
 
-  attackCard(defenderCard) {
+  attackCard({ defenderCard, usingCollision = false }) {
+    this._card.usingCollision = usingCollision;
     //TODO Perhaps attack logic should be in an outside class?
     const {
       attackerDestroyed,
       defenderDestroyed,
       defenderDamage,
-    } = this.simulateAttackingCard(defenderCard);
+    } = this.simulateAttackingCard({ defenderCard, usingCollision });
 
     defenderCard.damage = defenderDamage;
     defenderCard.destroyed = defenderDestroyed;
     this.destroyed = attackerDestroyed;
   }
 
-  simulateAttackingCard(defenderCard) {
-    return simulateAttack(this, defenderCard);
+  simulateAttackingCard({ defenderCard, usingCollision = false }) {
+    this._card.usingCollision = usingCollision;
+    return simulateAttack({ attackerCard: this, defenderCard, usingCollision });
   }
 
   canBeSacrificed() {

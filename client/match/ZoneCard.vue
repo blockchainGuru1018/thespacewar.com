@@ -184,7 +184,7 @@
             ⇒
             {{
               behaviourCard.defense -
-              predictedResultsIfTargetForSacrifice.damage
+                predictedResultsIfTargetForSacrifice.damage
             }}
           </div>
         </template>
@@ -223,6 +223,7 @@ module.exports = {
     return {
       cardWidth: 0,
       forceUpdateAttackBoost: 0,
+      meUsingCollision: null,
     };
   },
   computed: {
@@ -265,7 +266,12 @@ module.exports = {
     ...mapRequirementGetters(["attackerRequirement"]),
     behaviourCard() {
       this.forceUpdateAttackBoost;
-      return this.createCard(this.card, { playerId: this.ownerId });
+      return this.createCard(
+        { ...this.card, usingCollision: this.meUsingCollision },
+        {
+          playerId: this.ownerId,
+        }
+      );
     },
     title() {
       let title = `${this.card.name}\n`;
@@ -436,13 +442,21 @@ module.exports = {
       return this.checkIfCanBeSelectedForAction(options);
     },
     predictedResultsIfAttacked() {
+      this.forceUpdateAttackBoost;
       if (this.canSelectShieldCardsForRequirement) {
         return this.createCard({
           commonId: this.attackerRequirement,
-        }).simulateAttackingCard(this.behaviourCard);
+          usingCollision: this.usingCollision,
+        }).simulateAttackingCard({
+          defenderCard: this.behaviourCard,
+          usingCollision: this.usingCollision,
+        });
       } else {
         if (!this.attackerCardId) return null;
-        return this.attackerCard.simulateAttackingCard(this.behaviourCard);
+        return this.attackerCard.simulateAttackingCard({
+          defenderCard: this.behaviourCard,
+          usingCollision: this.usingCollision,
+        });
       }
     },
     predictedResultsIfRepaired() {
@@ -487,6 +501,7 @@ module.exports = {
   methods: {
     ...mapActions([
       "selectAsAttacker",
+      "selectAsAttackerWithCollision",
       "selectAsDefender",
       "moveCard",
       "discardDurationCard",
@@ -504,12 +519,11 @@ module.exports = {
       this.moveCard(this.card);
     },
     readyToAttackClick() {
-      this.card.usingCollision = false;
       this.selectAsAttacker(this.card);
     },
     readyToAttackWithCollision() {
-      this.card.usingCollision = true;
-      this.selectAsAttacker(this.card);
+      this.meUsingCollision = true;
+      this.selectAsAttackerWithCollision(this.card);
       this.forceUpdateAttackBoost++;
     },
     readyToDefenseClick() {
@@ -554,7 +568,7 @@ module.exports = {
   },
   watch: {
     usingCollision(_new, _old) {
-      if (_new === null && _old) this.card.usingCollision = null;
+      if (_old && _new === null) this.meUsingCollision = _new;
       this.forceUpdateAttackBoost++;
     },
   },

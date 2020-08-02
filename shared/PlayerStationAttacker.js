@@ -50,7 +50,11 @@ module.exports = function ({
     }
   }
 
-  function attackStationCards({ attackerCardId, targetStationCardIds }) {
+  function attackStationCards({
+    attackerCardId,
+    targetStationCardIds,
+    usingCollision,
+  }) {
     const targetStationCards = opponentStateService
       .getStationCards()
       .filter((s) => targetStationCardIds.includes(s.card.id));
