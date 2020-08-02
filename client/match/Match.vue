@@ -20,7 +20,7 @@
       ]"
     >
       <div class="field">
-        <div class="field-opponent">
+        <div class="field-opponent" style="--aspect-ratio: (16/9) * 2;">
           <div
             ref="opponentStationCardsContainer"
             :style="opponentStationStyle"
@@ -174,7 +174,7 @@
             tag="div"
           />
         </div>
-        <div class="field-player">
+        <div class="field-player" style="--aspect-ratio: (16/9) * 2;">
           <div class="field-piles field-section">
             <div class="field-commandersAndDrawPile">
               <PlayerCommanderCards />
@@ -885,7 +885,7 @@ module.exports = {
             .getPropertyValue("--z-position")
             .replace("px", "")
         );
-        ZPosition = Math.max(-50, Math.min(10, ZPosition - 1));
+        ZPosition = Math.max(-250, Math.min(10, ZPosition - 1));
         root.style.setProperty("--z-position", ZPosition + "px");
         setTimeout(this.playerCardsCollideWithTimer, 0);
       }
