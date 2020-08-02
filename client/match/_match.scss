@@ -18,6 +18,7 @@
   width: 100%;
   height: 100%;
   overflow: auto;
+  perspective: 100px;
 }
 
 .match-overlay {
@@ -33,9 +34,11 @@
 
 .field {
   flex: 1 0;
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  transform: translateZ(var(--z-position));
 }
 
 .field-dividerWrapper {
@@ -83,8 +86,8 @@
 .field-opponent {
   flex: 0 1 46%;
   width: 100%;
-  padding-top: 60px; //To accommodate for opponent cards on hand and the opponents "player banner" in the top left corner
-  padding-right: 15%;
+  // padding-top: 60px; //To accommodate for opponent cards on hand and the opponents "player banner" in the top left corner
+  // padding-right: 15%;
   box-sizing: border-box;
 }
 

@@ -16,7 +16,7 @@
   width: $playerCardOnHandWidth;
   height: $playerCardOnHandHeight;
   position: absolute;
-  bottom: 0;
+  bottom: var(--player-cards-on-hand-offset);
   transition: bottom .2s ease-out, width .2s ease-out, height .2s ease-out;
   box-sizing: content-box;
 

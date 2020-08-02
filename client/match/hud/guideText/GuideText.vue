@@ -448,13 +448,14 @@ function pluralize(word, count) {
 @import "../../cardVariables";
 
 .guideTextCardWrapper {
-  width: $cardWidth * 0.1;
-  height: $cardHeight * 0.1;
+  width: calc(#{$cardWidth} * 0.1);
+  height: calc(#{$cardHeight} * 0.1);
   position: relative;
   top: 4px;
   margin-right: 15px;
   flex: 0 0 auto;
 }
+
 .hidden {
   visibility: hidden;
 }

@@ -69,21 +69,18 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="/libraries/leader-line.js"></script>
     <script type="text/javascript">
-    var viewport_meta = document.getElementById('viewport-meta');
-    var viewport_set = function()
-    {
-      var screen_width = document.documentElement.clientWidth;
-      if ( screen_width >= 1440 )
-        viewport_meta.setAttribute( 'content', 'width=device-width, user-scalable=no, initial-scale=0.7, maximum-scale=0.7, minimum-scale=0.7' );
-      else if ( screen_width < 1440 && screen_width >= 1280 )
-        viewport_meta.setAttribute( 'content', 'width=device-width, user-scalable=no, initial-scale=0.65, maximum-scale=0.65, minimum-scale=0.65' );
-      else if ( screen_width < 1280 && screen_width >= 1024 )
-        viewport_meta.setAttribute( 'content', 'width=device-width, user-scalable=no, initial-scale=0.6, maximum-scale=0.6, minimum-scale=0.6' );
-      else if ( screen_width < 1024 )
-        viewport_meta.setAttribute( 'content', 'width=device-width, user-scalable=no, initial-scale=0.5, maximum-scale=0.5, minimum-scale=0.5' );
+    
+    var root = document.documentElement;
+    var scroll = function (event){
+      var zoomStep = 1;
+      var e = window.event || event;
+      var delta = Math.max(-1, Math.min(1, e.wheelDelta || -e.detail));
+      var ZPosition =  parseInt(getComputedStyle(document.documentElement).getPropertyValue('--z-position').replace('px',''));
+      ZPosition = Math.max(-50, Math.min(10, ZPosition + (zoomStep * delta)));
+      root.style.setProperty('--z-position', ZPosition + 'px');
+      e.stopPropagation();
     }
-    viewport_set();
-    window.addEventListener("resize", viewport_set);
+    // window.addEventListener("mousewheel",scroll, true);
 
     </script>
 </head>

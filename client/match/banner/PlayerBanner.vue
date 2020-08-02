@@ -187,6 +187,9 @@ function range(count) {
     border: 2px solid $bannerOpponentBorderColor;
     background: $bannerOpponentBackgroundColor;
   }
+  &:hover {
+    z-index: 4;
+  }
 }
 
 .matchHeader-reverse {
