@@ -1,32 +1,62 @@
+const TargetMissed = require("../card/TargetMissed");
+
 class QueryBoard {
-  constructor({opponentStateService}) { // TODO Add playerStateService as a dependency
+  constructor({
+    opponentStateService,
+    playerStateService,
+    canThePlayer,
+    queryAttacks,
+  }) {
     this._opponentStateService = opponentStateService;
-    // this._playerStateService = playerStateService;
+    this._playerStateService = playerStateService;
+    this._canThePlayer = canThePlayer;
+    this._queryAttacks = queryAttacks;
   }
 
   opponentHasCardInPlay(matcher) {
     return this._opponentStateService.hasMatchingCardInSomeZone(matcher);
   }
 
-  // playerHasCardThatCanCounter() {
-  //   const playerCards = this._playerStateService
-  //     .getCardsOnHand()
-  //     .map((cardData) =>
-  //       this._playerStateService.createBehaviourCard(cardData)
-  //     );
-  //   const opponentCardDatas = this._opponentStateService.findCardFromZonesAndDiscardPile();
-  //   for (const playerCard of playerCards) {
-  //     if (playerCard.canCounterCard(opponentCard)) {
-  //       for (const opponentCard of opponentCardDatas) {
-  //         return canThePlayer.counterCard(opponentCard);
-  //       }
-  //     } else if (playerCard.canCounterAttacks) {
-  //       return queryAttacks.canBeCountered().lenght > 0;
-  //     }
-  //   }
-  //
-  //   return false;
-  // }
-}
+  playerHasCardThatCanCounter() {
+    const playerCards = this._playerStateService
+      .getCardsOnHand()
+      .map((cardData) =>
+        this._playerStateService.createBehaviourCard(cardData)
+      );
 
+    const discardAndInGameOpponentCards = [
+      ...this._opponentStateService.getCardsInZone(),
+      ...this._opponentStateService.getDiscardedCards(),
+    ].map((cardData) =>
+      this._opponentStateService.createBehaviourCard(cardData)
+    );
+
+    for (const playerCard of playerCards) {
+      for (const opponentCard of discardAndInGameOpponentCards) {
+        if (playerCard.canCounterCard(opponentCard)) {
+          return this._canThePlayer.cardItsOnTheTimeIntervalToCounter(
+            opponentCard.getCardData().id
+          );
+        }
+      }
+    }
+    return false;
+  }
+
+  playerHasCardThatCanCounterAttack() {
+    return (
+      this._queryAttacks.attackEventOnTheTimeIntervalToCounter() &&
+      this._haveTargetMissedOnHand()
+    );
+  }
+
+  _haveTargetMissedOnHand() {
+    return [
+      ...this._playerStateService.getCardsOnHand(),
+      ...this._playerStateService
+        .getFlippedStationCards()
+        .map((stationCard) => stationCard.card),
+    ].some((card) => card.commonId === TargetMissed.CommonId);
+  }
+}
 module.exports = QueryBoard;

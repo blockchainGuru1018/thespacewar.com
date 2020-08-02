@@ -156,10 +156,16 @@ class CanThePlayer {
     );
   }
 
-  affordCard(card) {
-    return (
-      this._playerActionPointsCalculator.calculate() >= card.costToPlay
+  cardItsOnTheTimeIntervalToCounter(cardId) {
+    return this._queryEvents.putDownCardWithinTimeFrame(
+      cardId,
+      this._gameConfig.timeToCounter() +
+        ExtraTimeToCounterWhenOpponentEndedTurnQuickly
     );
+  }
+
+  affordCard(card) {
+    return this._playerActionPointsCalculator.calculate() >= card.costToPlay;
   }
 
   _isLastStand() {

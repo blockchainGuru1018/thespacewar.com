@@ -12,8 +12,13 @@ class ServerQueryEvents extends QueryEvents {
     const opponentEventRepository = {
       getAll: () => matchService.getPlayerState(opponentId).events,
     };
-
-    super({ eventRepository, opponentEventRepository, matchService });
+    const getCurrentTime = () => Date.now();
+    super({
+      eventRepository,
+      opponentEventRepository,
+      matchService,
+      getCurrentTime,
+    });
   }
 }
 
