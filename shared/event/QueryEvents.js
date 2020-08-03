@@ -1,8 +1,14 @@
 class QueryEvents {
-  constructor({ eventRepository, opponentEventRepository, matchService }) {
+  constructor({
+    eventRepository,
+    opponentEventRepository,
+    matchService,
+    getCurrentTime,
+  }) {
     this._eventRepository = eventRepository;
     this._opponentEventRepository = opponentEventRepository;
     this._matchService = matchService;
+    this._getCurrentTime = getCurrentTime;
   }
 
   hasMovedOnPreviousTurn(cardId, currentTurn) {
@@ -162,7 +168,8 @@ class QueryEvents {
     const timeWhenOpponentCardWasPutDown = this.getTimeWhenOpponentCardWasPutDown(
       opponentCardId
     );
-    const timeSincePutDown = Date.now() - timeWhenOpponentCardWasPutDown;
+    const timeSincePutDown =
+      this._getCurrentTime() - timeWhenOpponentCardWasPutDown;
     return timeSincePutDown >= 0 && timeSincePutDown <= millisecondsTimeFrame;
   }
 
@@ -219,7 +226,6 @@ class QueryEvents {
       );
     return lastPutDownEventForCard;
   }
-
   getAttacksOnTurn(cardId, turn) {
     const events = this._eventRepository.getAll();
     return events.filter((event) => {
@@ -252,7 +258,6 @@ class QueryEvents {
       );
     });
   }
-
   countRegularStationCardsPutDownOnTurn(turn) {
     return this._eventRepository.getAll().filter((e) => {
       return (

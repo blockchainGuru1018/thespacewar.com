@@ -10,6 +10,7 @@ module.exports = function ({
 }) {
   return {
     canBeCountered,
+    attackEventOnTheTimeIntervalToCounter,
   };
 
   function canBeCountered() {
@@ -18,9 +19,35 @@ module.exports = function ({
     );
   }
 
+  function attackEventOnTheTimeIntervalToCounter() {
+    //TODO: Repeated logic but we refactor after test dont worries
+    return getOpponentEventAttacksNotCountered().some((event) => {
+      return (
+        timeSinceEvent(event) <=
+        gameConfig.timeToCounter() +
+          ExtraTimeToCounterWhenOpponentEndedTurnQuickly
+      );
+    });
+  }
+
   function getCardAttacksSinceLastTookControlWithinTimeFrame(
     millisecondsTimeFrame
   ) {
+    return getOpponentEventAttacksNotCountered().filter((event) => {
+      if (playerTurnControl.playerHasControlOfOwnTurn()) {
+        return (
+          timeSinceEvent(event) <=
+          millisecondsTimeFrame + ExtraTimeToCounterWhenOpponentEndedTurnQuickly
+        );
+      } else {
+        return playerLastTookControlWithinTimeFrameSinceAttackOnPlayer(
+          event,
+          millisecondsTimeFrame
+        );
+      }
+    });
+  }
+  function getOpponentEventAttacksNotCountered() {
     return opponentEventRepository
       .getAll()
       .slice()
@@ -32,23 +59,8 @@ module.exports = function ({
           opponentStateService.findCardFromAnySource(event.attackerCardId)
             .type === "spaceShip"
         );
-      })
-      .filter((event) => {
-        if (playerTurnControl.playerHasControlOfOwnTurn()) {
-          return (
-            timeSinceEvent(event) <=
-            millisecondsTimeFrame +
-              ExtraTimeToCounterWhenOpponentEndedTurnQuickly
-          );
-        } else {
-          return playerLastTookControlWithinTimeFrameSinceAttackOnPlayer(
-            event,
-            millisecondsTimeFrame
-          );
-        }
       });
   }
-
   function playerLastTookControlWithinTimeFrameSinceAttackOnPlayer(
     attackOnPlayer,
     millisecondsTimeFrame

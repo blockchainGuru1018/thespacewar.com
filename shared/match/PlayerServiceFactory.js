@@ -486,6 +486,9 @@ module.exports = function ({
   function queryBoard(playerId) {
     return new QueryBoard({
       opponentStateService: api.playerStateService(api.opponentId(playerId)),
+      playerStateService: api.playerStateService(playerId),
+      canThePlayer: api.canThePlayer(playerId),
+      queryAttacks: api.queryAttacks(playerId),
     });
   }
 

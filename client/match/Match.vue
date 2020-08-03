@@ -22,6 +22,7 @@
     >
       <div class="field">
         <div class="field-opponent" style="--aspect-ratio: (16/9) * 2;">
+          <div><!-- NEEDED TO KEEP ASPECT-RATIO--></div>
           <div
             ref="opponentStationCardsContainer"
             :style="opponentStationStyle"
@@ -176,6 +177,7 @@
           />
         </div>
         <div class="field-player" style="--aspect-ratio: (16/9) * 2;">
+          <div><!-- NEEDED TO KEEP ASPECT-RATIO--></div>
           <div class="field-piles field-section">
             <div class="field-commandersAndDrawPile">
               <PlayerCommanderCards />
@@ -956,37 +958,39 @@ module.exports = {
 <style lang="scss">
 @import "index";
 
-    .match-backgroundWrapper{
-      /*background: url(https://uploads.staticjw.com/ba/banta/game-bg-2500x1666-optimized.jpg) no-repeat center center;*/
-      //background-image: url(https://uploads.staticjw.com/ba/banta/game-bg-2500x1080-2-optimized.jpg);
-      background: linear-gradient(rgba(0,0,0,.25), rgba(0,0,0,.25)), url("https://uploads.staticjw.com/ba/banta/game-bg-2500x1080-2-optimized.jpg");
-      background-color: #000;
+.match-backgroundWrapper {
+  /*background: url(https://uploads.staticjw.com/ba/banta/game-bg-2500x1666-optimized.jpg) no-repeat center center;*/
+  //background-image: url(https://uploads.staticjw.com/ba/banta/game-bg-2500x1080-2-optimized.jpg);
+  background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)),
+    url("https://uploads.staticjw.com/ba/banta/game-bg-2500x1080-2-optimized.jpg");
+  background-color: #000;
 
-      background-size: auto 100%;
-      animation-name: bghorizontal;
-      animation-duration: 360s;
-      animation-iteration-count: infinite;
+  background-size: auto 100%;
+  animation-name: bghorizontal;
+  animation-duration: 360s;
+  animation-iteration-count: infinite;
 
-      .grid-bg{
-        position: absolute;
-        top: 0px;
-        left: 0px;
-        width: 100%;
-        height: 100%;
-        background: url(https://uploads.staticjw.com/ba/banta/grid-bg-game.png) no-repeat center center;
-        background-size: cover;
-      }
-    }
+  .grid-bg {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background: url(https://uploads.staticjw.com/ba/banta/grid-bg-game.png)
+      no-repeat center center;
+    background-size: cover;
+  }
+}
 
-    @keyframes bghorizontal {
-      0% {
-        background-position: 0 0;
-      }
-      50% {
-        background-position: calc(((100% * 2500) / 1080) - 120%) 0;
-      }
-      100% {
-        background-position: 0 0;
-      }
-    }
+@keyframes bghorizontal {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: calc(((100% * 2500) / 1080) - 120%) 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
 </style>

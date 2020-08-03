@@ -105,8 +105,11 @@
 
     <!-- PHASE texts -->
     <div v-else-if="phase === PHASES.draw" class="guideText-wrapper">
-      <div class="guideText-drawPhaseText guideText">
-        Your turn
+      <div
+        :class="playerHasCardThatCanCounter ? 'animate-flicker' : ''"
+        class="guideText-drawPhaseText guideText"
+      >
+        {{ playerHasCardThatCanCounter ? "Counter" : "Your turn" }}
       </div>
       <div
         class="guideText-drawPhaseSubText guideText-drawCard guideText-subText"
@@ -146,7 +149,7 @@
         <button
           :class="[
             turnControl.hasZeroCostCardsToPlay() ? 'visible' : 'hidden',
-            flickerControlButton && !isHoveringTakeControl
+            playerHasCardThatCanCounter && !isHoveringTakeControl
               ? 'animate-flicker'
               : '',
           ]"
@@ -218,7 +221,7 @@ export default {
       "lastStand",
       "cardCostInflation",
       "repairerCommanderSelected",
-      "flickerControlButton",
+      "playerHasCardThatCanCounter",
     ]),
     ...requirementHelpers.mapGetters([
       "waitingForOtherPlayerToFinishRequirements",
@@ -402,6 +405,9 @@ export default {
       }
     },
     drawCardOrMillText() {
+      if (this.playerHasCardThatCanCounter) {
+        return "";
+      }
       const count = this.firstRequirementIsDrawCard
         ? this.countInFirstRequirement
         : this.playerRuleService.countCardsLeftToDrawForDrawPhase();

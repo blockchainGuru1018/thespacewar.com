@@ -39,6 +39,7 @@ const MoreCardsCanBeDrawnForDrawPhase = require("../../shared/match/rules/MoreCa
 const LookAtStationRow = require("../../shared/match/card/actions/LookAtStationRow.js");
 const PlayerActionPointsCalculator = require("../../shared/match/PlayerActionPointsCalculator.js");
 const QueryBoard = require("../../shared/match/QueryBoard.js");
+const QueryAttacks = require("../../shared/match/requirement/QueryAttacks.js");
 const ClientPlayerDeck = require("../card/ClientPlayerDeck.js");
 const Luck = require("../../shared/card/Luck");
 const { COMMON_PHASE_ORDER, PHASES } = require("./phases.js");
@@ -68,6 +69,7 @@ module.exports = function (deps) {
     namespaced: true,
     name: "match",
     state: {
+      timeNow: Date.now(),
       mode: MatchMode.firstMode,
       readyPlayerIds: [],
       lastStandInfo: null,
@@ -122,7 +124,6 @@ module.exports = function (deps) {
       flashOpponentDiscardPile: false,
       onLastChangeToWin: false,
       timeRanOutVSBot: false,
-      takeControlButtonFlick: false,
       usingCollision: null,
     },
     getters: {
@@ -207,12 +208,11 @@ module.exports = function (deps) {
       cardDataAssembler,
       cardCostInflation,
       repairerCommanderSelected,
-      flickerControlButton,
-      // playerHasCardThatCanCounter(state, getters) {
-      //   return getters.queryBoard.playerHasCardThatCanCounter();
-      // },
+      playerHasCardThatCanCounter,
+      queryAttacks,
     },
     actions: {
+      init,
       // remote
       askToDrawCard,
       passDrawPhase,
@@ -247,7 +247,6 @@ module.exports = function (deps) {
       selectAsAttackerWithCollision,
       selectAsDefender,
       opponentAttackedCard,
-      opponentPutDownCardInZone,
       registerAttack,
       removePlayerCard,
       cancelAttack,
@@ -277,6 +276,11 @@ module.exports = function (deps) {
     },
   };
 
+  function init({ state }) {
+    setInterval(() => {
+      state.timeNow = Date.now();
+    }, 250);
+  }
   function isFirstPlayer(state) {
     return state.playerOrder[0] === state.ownUser.id;
   }
@@ -420,6 +424,12 @@ module.exports = function (deps) {
       events: state.events,
       actionStationCardsCount: state.playerStation.actionCards.length,
     });
+  }
+  function playerHasCardThatCanCounter(state, getters) {
+    return (
+      getters.queryBoard.playerHasCardThatCanCounter() ||
+      getters.queryBoard.playerHasCardThatCanCounterAttack()
+    );
   }
 
   function createCard(state, getters) {
@@ -681,6 +691,9 @@ module.exports = function (deps) {
   function queryBoard(state, getters) {
     return new QueryBoard({
       opponentStateService: getters.opponentStateService,
+      playerStateService: getters.playerStateService,
+      canThePlayer: getters.canThePlayer,
+      queryAttacks: getters.queryAttacks,
     });
   }
 
@@ -824,6 +837,23 @@ module.exports = function (deps) {
       eventRepository,
       opponentEventRepository,
       matchService: getters.matchService,
+      getCurrentTime: () => state.timeNow,
+    });
+  }
+
+  function queryAttacks(state, getters) {
+    const eventRepository = {
+      getAll: () => state.events,
+    };
+    const opponentEventRepository = {
+      getAll: () => state.opponentEvents,
+    };
+    return QueryAttacks({
+      gameConfig: getters.gameConfig,
+      playerTurnControl: getters.turnControl,
+      playerEventRepository: eventRepository,
+      opponentEventRepository: opponentEventRepository,
+      opponentStateService: getters.opponentStateService,
     });
   }
 
@@ -836,6 +866,7 @@ module.exports = function (deps) {
         getAll: () => state.events,
       },
       matchService: getters.matchService,
+      getCurrentTime: () => state.timeNow,
     });
   }
 
@@ -1206,18 +1237,6 @@ module.exports = function (deps) {
     dispatch("triggerCardAttackedEffect", defenderCardId);
   }
 
-  function opponentPutDownCardInZone({ state, getters }, { cardData }) {
-    if (
-      cardData.cost <= 2 &&
-      state.playerCardsOnHand.some((c) => c.commonId === Luck.CommonId)
-    ) {
-      state.takeControlButtonFlick = true;
-      setTimeout(() => {
-        state.takeControlButtonFlick = false;
-      }, getters.gameConfig.timeToCounter());
-    }
-  }
-
   function opponentAttackedCard(
     { state, getters },
     {
@@ -1259,15 +1278,6 @@ module.exports = function (deps) {
       );
       attackerCardZone.splice(attackerCardIndex, 1);
     }
-
-    state.takeControlButtonFlick = getters.turnControl.hasTargetMissed();
-    setTimeout(() => {
-      state.takeControlButtonFlick = false;
-    }, getters.gameConfig.timeToCounter());
-  }
-
-  function flickerControlButton(state) {
-    return state.takeControlButtonFlick;
   }
 
   function cancelAttack({ dispatch }) {
