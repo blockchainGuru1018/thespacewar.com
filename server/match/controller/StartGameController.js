@@ -15,14 +15,13 @@ function StartGameController({
 
   function start(playerId, { deckId = "Regular" } = {}) {
     const playerIds = matchService.getPlayerIds();
-
     if (matchService.allPlayersConnected()) {
       repairPlayersPotentiallyInconsistentState(playerIds);
       matchComService.emitCurrentStateToPlayers();
     } else {
-      matchService.connectPlayer(playerId);
+      matchService.connectPlayer(playerId, deckId);
       if (matchService.allPlayersConnected()) {
-        resetPlayers(playerIds, deckId);
+        resetPlayers(playerIds);
 
         const playerGameTimer = playerServiceFactory.playerGameTimer(playerId);
         const timePerPlayer = matchService.getGameConfigEntity()
@@ -62,11 +61,13 @@ function StartGameController({
     }
   }
 
-  function resetPlayers(playerIds, deckId) {
+  function resetPlayers(playerIds) {
     for (const playerId of playerIds) {
       const playerStateService = playerServiceFactory.playerStateService(
         playerId
       );
+      const playerMatchService = playerServiceFactory.matchService(playerId);
+      const deckId = playerMatchService.getState().deckIdByPlayerId[playerId];
       playerStateService.reset(deckId);
     }
   }

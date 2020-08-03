@@ -427,6 +427,7 @@ function createMatchState({ firstPlayerId, playerIds, matchId }) {
     retreatedPlayerId: null,
     lastStandInfo: null,
     playerStateById: {},
+    deckIdByPlayerId: {},
   };
 }
 

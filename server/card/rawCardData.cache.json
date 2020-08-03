@@ -464,11 +464,11 @@
                 "name": "Carrier",
                 "price": "7",
                 "type_card": "blue",
-                "detail": "Can after first turn send out 3 Drone from anywhere. ",
+                "detail": "Can after first turn send out 3 Drones from anywhere. ",
                 "defense": "6",
                 "attack": "0",
                 "number_copies": "3",
-                "author": "",
+                "author": "Mohamed Ali",
                 "deck": "2"
             },
             {
@@ -528,7 +528,7 @@
                 "defense": "1",
                 "attack": "5",
                 "number_copies": "3",
-                "author": "",
+                "author": "Alex Golke",
                 "deck": "2"
             },
             {
@@ -563,7 +563,7 @@
                 "detail": "Destroy a duration card [ OR ] Draw 2 cards.",
                 "defense": "0",
                 "attack": "0",
-                "number_copies": "2",
+                "number_copies": "3",
                 "author": "",
                 "deck": "2"
             },
@@ -599,8 +599,8 @@
                 "detail": "Cards cost 3 more actions to play (affects both players).",
                 "defense": "0",
                 "attack": "0",
-                "number_copies": "3",
-                "author": "",
+                "number_copies": "2",
+                "author": "Sergey Nivens",
                 "deck": "2"
             },
             {
@@ -1027,5 +1027,5 @@
             }
         ]
     },
-    "saveTime": 1596425278921
+    "saveTime": 1596494634957
 }
