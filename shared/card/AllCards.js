@@ -50,6 +50,7 @@ const classes = [
   require("./Fusion.js"),
   require("./Scout.js"),
   require("./CollisionSkill.js"),
+  require("./DejaVu.js"),
 ];
 
 module.exports = classes;
