@@ -3,12 +3,14 @@
     <div class="match-overlay" />
     <div class="match-backgroundWrapper">
       <!--            <ParticlesJS></ParticlesJS>-->
-      <div class="grid-bg" />
-      <!--<img
+      <div v-show="bg === 'background_new'" class="grid-bg" />
+
+      <div v-show="bg === 'background_new'" class="match-backgroundOverlay" />
+      <img
+        v-show="bg === 'background_old'"
         class="match-background"
         src="https://images.thespacewar.com/game-background.jpg"
-      />-->
-      <div class="match-backgroundOverlay" />
+      />
     </div>
     <div
       ref="match"
@@ -474,6 +476,7 @@ module.exports = {
       mousePosition: { x: 0, y: 0 },
       touchPosition: { x: 0, y: 0 },
       PHASES,
+      bg: null,
     };
   },
   computed: {
@@ -893,8 +896,13 @@ module.exports = {
         setTimeout(this.playerCardsCollideWithTimer, 0);
       }
     },
+    validateBG() {
+      this.bg = localStorage.getItem("background") || "background_old";
+      localStorage.setItem("background", this.bg);
+    },
   },
   mounted() {
+    this.validateBG();
     this.$store.dispatch("audio/background");
 
     document.addEventListener("mousemove", this.mousemove);

@@ -59,6 +59,22 @@
         <!--                main menu the toggler for use the swarm deck)</label>-->
         <!--        </div>-->
     </div>
+    <form class="alert alert-primary" role="alert" id="form-bg">
+        <div class="form-check">
+            <input class="form-check-input" onclick="backgroundOption(this)" type="radio" name="active-Deck"
+                   id="background_old" value="background_old">
+            <label class="form-check-label" for="background_old">
+                Background Old
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" onclick="backgroundOption(this)" type="radio" name="active-Deck"
+                   id="background_new" value="background_new">
+            <label class="form-check-label" for="background_new">
+                Background New
+            </label>
+        </div>
+    </form>
 </div>
 </body>
 
@@ -82,5 +98,19 @@
     handleClick = (cb) => {
         localStorage.setItem(`ft-${cb.getAttribute("data-feature")}`, cb.checked);
     }
+
+    // Background 
+    $(document).ready(function () {
+        $('#form-bg input:radio').each(function(index, element){
+            var op = localStorage.getItem("background");  
+            $(this).prop("checked", this.getAttribute("value") == op);
+        })
+        
+    });
+    function backgroundOption(option){
+        localStorage.setItem("background", option.value);
+    }
+
+    // --------------
 </script>
 </html>
