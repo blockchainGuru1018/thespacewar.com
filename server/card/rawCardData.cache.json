@@ -540,7 +540,7 @@
                 "defense": "1",
                 "attack": "1",
                 "number_copies": "3",
-                "author": "",
+                "author": "James Thew",
                 "deck": "2"
             },
             {
@@ -1027,5 +1027,5 @@
             }
         ]
     },
-    "saveTime": 1596494634957
+    "saveTime": 1596564693890
 }

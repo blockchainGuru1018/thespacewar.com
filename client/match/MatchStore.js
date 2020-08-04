@@ -854,6 +854,7 @@ module.exports = function (deps) {
       playerEventRepository: eventRepository,
       opponentEventRepository: opponentEventRepository,
       opponentStateService: getters.opponentStateService,
+      getCurrentTime: () => state.timeNow,
     });
   }
 

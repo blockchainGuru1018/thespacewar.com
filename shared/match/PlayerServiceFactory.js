@@ -500,6 +500,7 @@ module.exports = function ({
       opponentStateService: api.playerStateService(opponentId),
       playerEventRepository: api.eventRepository(playerId),
       opponentEventRepository: api.eventRepository(opponentId),
+      getCurrentTime: () => Date.now(),
     });
   }
 

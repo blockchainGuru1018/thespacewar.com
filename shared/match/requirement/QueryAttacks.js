@@ -7,6 +7,7 @@ module.exports = function ({
   playerEventRepository,
   opponentEventRepository,
   opponentStateService,
+  getCurrentTime,
 }) {
   return {
     canBeCountered,
@@ -89,7 +90,7 @@ module.exports = function ({
   }
 
   function timeSinceEvent(event) {
-    return Date.now() - event.created;
+    return getCurrentTime() - event.created;
   }
 
   function findLastIndex(collection, selector) {
