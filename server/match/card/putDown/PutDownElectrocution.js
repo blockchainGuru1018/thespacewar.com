@@ -22,12 +22,7 @@ function PutDownElectrocution({ playerServiceProvider, matchService }) {
     ];
 
     for (const opponentCard of opponentCardsInZones) {
-      if (opponentCard.type === "defense" || opponentCard.type === "missile") {
-        opponentStateService.removeCard(opponentCard.id);
-        opponentStateService.discardCard(opponentCard);
-      } else if (opponentCard.type === "spaceShip") {
-        opponentCard.paralyzed = true;
-      }
+      applyElectrocutionEffect(opponentCard, opponentStateService);
     }
 
     const playerCardsInZones = [
@@ -36,15 +31,19 @@ function PutDownElectrocution({ playerServiceProvider, matchService }) {
     ];
 
     for (const playerCard of playerCardsInZones) {
-      if (playerCard.type === "defense" || playerCard.type === "missile") {
-        playerStateService.removeCard(playerCard.id);
-        playerStateService.discardCard(playerCard);
-      } else if (playerCard.type === "spaceShip") {
-        playerCard.paralyzed = true;
-      }
+      applyElectrocutionEffect(playerCard, playerStateService);
     }
 
     playerStateService.putDownEventCardInZone(cardData);
+  }
+
+  function applyElectrocutionEffect(card, stateService) {
+    if (card.type === "defense" || card.type === "missile") {
+      stateService.removeCard(card.id);
+      stateService.discardCard(card);
+    } else if (card.type === "spaceShip") {
+      card.paralyzed = true;
+    }
   }
 }
 
