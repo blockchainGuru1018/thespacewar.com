@@ -3,6 +3,7 @@ const FakeState = require("../testUtils/FakeState.js");
 const FakeMatchController = require("../testUtils/FakeMatchController.js");
 const Neutralization = require("../../shared/card/Neutralization.js");
 const DisturbingSensor = require("../../shared/card/DisturbingSensor.js");
+const GreatDisturbance = require("../../shared/card/GreatDisturbance.js");
 const { createController } = require("../testUtils");
 const {
   assert,
@@ -133,6 +134,36 @@ describe("when has Disturbing Sensor and a missile in play and opponent has a mi
   });
 
   test("player missile card should NOT have a disabled overlay", () => {
+    assert.elementCount(".playerCardsInZone .cardDisabledOverlay", 0);
+  });
+});
+
+describe("when has Great Disturbance in play and opponent has a other Duration card", () => {
+  beforeEach(async () => {
+    const { dispatch, showPage } = setUpController();
+    showPage();
+    dispatch(
+      "stateChanged",
+      FakeState({
+        turn: 1,
+        currentPlayer: "P1A",
+        phase: "draw",
+        playerCardsInDeckCount: 1,
+        cardsInZone: [
+          { id: "C1A", type: "duration", commonId: GreatDisturbance.CommonId },
+          { id: "C2A", type: "duration" },
+        ],
+        opponentCardsInZone: [{ id: "C3A", type: "duration" }],
+      })
+    );
+    await timeout();
+  });
+
+  test("opponent duration cards should have a disabled overlay", () => {
+    assert.elementCount(".opponentCardsInZone .card .cardDisabledOverlay", 1);
+  });
+
+  test("player duration cards should NOT have a disabled overlay", () => {
     assert.elementCount(".playerCardsInZone .cardDisabledOverlay", 0);
   });
 });

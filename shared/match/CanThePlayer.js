@@ -1,3 +1,5 @@
+const GreatDisturbance = require("../card/GreatDisturbance");
+
 const Neutralization = require("../card/Neutralization.js");
 const LastStand = require("./LastStand.js");
 
@@ -68,7 +70,11 @@ class CanThePlayer {
         Neutralization.CommonId
       );
 
-    return noPlayerHasNeutralizationInPlay;
+    const opponentDontHaveGreatDisturbance = !this._opponentStateService.hasDurationCardOfType(
+      GreatDisturbance.CommonId
+    );
+
+    return noPlayerHasNeutralizationInPlay && opponentDontHaveGreatDisturbance;
   }
 
   _isTheLatestNeutralizationCardPuttedDown(cardId) {

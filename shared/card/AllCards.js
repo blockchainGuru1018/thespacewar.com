@@ -51,6 +51,7 @@ const classes = [
   require("./Scout.js"),
   require("./CollisionSkill.js"),
   require("./DejaVu.js"),
+  require("./GreatDisturbance.js"),
 ];
 
 module.exports = classes;
