@@ -13,6 +13,7 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
     hasDiscardedCard,
     refuteHasDiscardedCard,
     hasCardInZone,
+    hasParalyzedCardAtHomeZone,
     refuteHasCardInZone,
     countMatchingAttacks,
     hasRequirement,
@@ -126,6 +127,19 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
         return `There is NO station card with ID "${cardId}" in row "${rowName}" among stationCards "${json(
           state.stationCards
         )}"`;
+      }
+    );
+  }
+  function hasParalyzedCardAtHomeZone(cardId) {
+    assertArrayOnStateHasSome(
+      "cardsInZone",
+      (cardInZoneCard) => {
+        return (
+          cardInZoneCard.id === cardId && cardInZoneCard.paralyzed === true
+        );
+      },
+      () => {
+        return `There is NO paralized card with ID "${cardId}"`;
       }
     );
   }

@@ -52,6 +52,7 @@ const classes = [
   require("./CollisionSkill.js"),
   require("./DejaVu.js"),
   require("./GreatDisturbance.js"),
+  require("./Electrocution.js"),
 ];
 
 module.exports = classes;

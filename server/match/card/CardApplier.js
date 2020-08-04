@@ -10,6 +10,7 @@ const Commands = [
   require("./putDown/PutDownLuck.js"),
   require("./putDown/PutDownTheDarkDestroyer.js"),
   require("./putDown/PutDownDestroyDuration.js"),
+  require("./putDown/PutDownElectrocution.js"),
 ];
 
 module.exports = function CardApplier(deps) {
