@@ -47,6 +47,7 @@ module.exports = function ({
       }
     });
   }
+
   function getOpponentEventAttacksNotCountered() {
     return opponentEventRepository
       .getAll()
@@ -61,6 +62,7 @@ module.exports = function ({
         );
       });
   }
+
   function playerLastTookControlWithinTimeFrameSinceAttackOnPlayer(
     attackOnPlayer,
     millisecondsTimeFrame

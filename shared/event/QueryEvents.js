@@ -136,7 +136,11 @@ class QueryEvents {
   getTimeWhenOpponentCardWasPutDownByCommonId(commonId) {
     const events = this._opponentEventRepository.getAll().slice().reverse();
     const putDownEventForThisCard = events.find((e) => {
-      return e.type === "putDownCard" && e.cardCommonId === commonId;
+      return (
+        e.type === "putDownCard" &&
+        e.cardCommonId === commonId &&
+        !e.grantedForFreeByEvent
+      );
     });
 
     if (putDownEventForThisCard) {
