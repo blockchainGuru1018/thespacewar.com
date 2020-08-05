@@ -167,3 +167,42 @@ describe("when has Great Disturbance in play and opponent has a other Duration c
     assert.elementCount(".playerCardsInZone .cardDisabledOverlay", 0);
   });
 });
+
+describe("when has Great Disturbance in play and play Great Disturbance later", () => {
+    beforeEach(async () => {
+        const { dispatch, showPage } = setUpController();
+        showPage();
+        dispatch(
+            "stateChanged",
+            FakeState({
+                turn: 1,
+                currentPlayer: "P1A",
+                phase: "draw",
+                playerCardsInDeckCount: 1,
+                events:[
+                    {type:"putDownCard",cardId:"C1A" ,cardCommonId:GreatDisturbance.CommonId, created: 1 }
+                ],
+                cardsInZone: [
+                    { id: "C1A", type: "duration", commonId: GreatDisturbance.CommonId },
+                    { id: "C2A", type: "duration" },
+                ],
+                opponentEvents:[ {type:"putDownCard",cardId:"C4A" ,cardCommonId:GreatDisturbance.CommonId, created: 2 }],
+                opponentCardsInZone: [
+                    { id: "C3A", type: "duration" },
+                    { id: "C4A", type: "duration", commonId: GreatDisturbance.CommonId }],
+            })
+        );
+        await timeout();
+    });
+
+    test("lasted player that played GreatDisturbance should be the winning", () => {
+        assert.elementCount(".opponentCardsInZone .card .cardDisabledOverlay", 0);
+    });
+
+    test("first player that played GreatDisturbance should have duration disabled", () => {
+        assert.elementCount(".playerCardsInZone .cardDisabledOverlay", 2);
+    });
+});
+
+
+

@@ -55,8 +55,9 @@ class CanThePlayer {
   }
 
   useThisDurationCard(cardId) {
-    const latestNeutralizationPuttedDown = this._isTheLatestNeutralizationCardPuttedDown(
-      cardId
+    const latestNeutralizationPuttedDown = this._isTheLatestCardPuttedDown(
+      cardId,
+      Neutralization.CommonId
     );
 
     if (latestNeutralizationPuttedDown) {
@@ -70,16 +71,41 @@ class CanThePlayer {
         Neutralization.CommonId
       );
 
+    const latestGreatDisturbancePutDown = this._isTheLatestCardPuttedDown(
+      cardId,
+      GreatDisturbance.CommonId
+    );
+
+    if (latestGreatDisturbancePutDown) {
+      return true;
+    }
+
     const opponentDontHaveGreatDisturbance = !this._opponentStateService.hasDurationCardOfType(
       GreatDisturbance.CommonId
     );
 
+    if (!opponentDontHaveGreatDisturbance) {
+      const playerGreatDisturbanceCards = this._playerStateService.getCardWithCommonIdInAnyZone(
+        GreatDisturbance.CommonId
+      );
+
+      for (const playerGreatDisturbance of playerGreatDisturbanceCards) {
+        const isTheLatestGreatDisturbancePlayed = this._isTheLatestCardPuttedDown(
+          playerGreatDisturbance.id,
+          GreatDisturbance.CommonId
+        );
+        if (isTheLatestGreatDisturbancePlayed) {
+          return true;
+        }
+      }
+    }
+
     return noPlayerHasNeutralizationInPlay && opponentDontHaveGreatDisturbance;
   }
 
-  _isTheLatestNeutralizationCardPuttedDown(cardId) {
+  _isTheLatestCardPuttedDown(cardId, commonId) {
     const cardData = this._findCardFromOpponentOrPlayer(cardId);
-    if (cardData && cardData.commonId === Neutralization.CommonId) {
+    if (cardData && cardData.commonId === commonId) {
       return this._playerStateService
         .createBehaviourCardById(cardId)
         .isTheLatestPlayedCardOfSameKind();

@@ -181,10 +181,13 @@ class PlayerStateService {
   }
 
   hasCardOfTypeInZone(cardCommonId) {
-    //TODO "type" is misleading, perhaps call is "hasCardWithCommonIdInAnyZone"
+    //TODO "type" is misleading, perhaps call is "getCardWithCommonIdInAnyZone"
     return this.getCardsInZone().some((c) => c.commonId === cardCommonId);
   }
 
+  getCardWithCommonIdInAnyZone(cardCommonId) {
+    return this.getCardsInZone().filter((c) => c.commonId === cardCommonId);
+  }
   hasMatchingCardInSomeZone(matcher) {
     return (
       this.hasMatchingCardInHomeZone(matcher) ||
