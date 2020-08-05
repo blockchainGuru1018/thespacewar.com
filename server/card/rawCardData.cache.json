@@ -581,14 +581,14 @@
             },
             {
                 "id": "88",
-                "name": "Revive",
+                "name": "Revive Procedure",
                 "price": "3",
                 "type_card": "orange",
                 "detail": "Bring back 1 or 2 cards from your discard to your hand. The total sum of the action cost of the card(s) chosen cannot be more than 6.",
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "2",
-                "author": "",
+                "author": "Jukka Nieminen",
                 "deck": "2"
             },
             {
@@ -1027,5 +1027,5 @@
             }
         ]
     },
-    "saveTime": 1596576912141
+    "saveTime": 1596642850775
 }

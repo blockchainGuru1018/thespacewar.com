@@ -472,7 +472,7 @@ module.exports = function (deps) {
   }
 
   async function putDownCardAsExtraStationCard(
-    { dispatch,rootGetters },
+    { dispatch, rootGetters },
     { cardData, location }
   ) {
     const choice = "putDownAsExtraStationCard";

@@ -53,6 +53,7 @@ const classes = [
   require("./DejaVu.js"),
   require("./GreatDisturbance.js"),
   require("./Electrocution.js"),
+  require("./ResourceShip.js"),
 ];
 
 module.exports = classes;
