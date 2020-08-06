@@ -34,20 +34,22 @@ module.exports = class ToxicGas extends BaseCard {
     return otherCard.stopsStationAttack();
   }
 
-  attackCard(defenderCard) {
-    const { defenderDestroyed, defenderParalyzed } = this.simulateAttackingCard(
-      defenderCard
-    );
+  attackCard({ defenderCard }) {
+    const {
+      defenderDestroyed,
+      defenderParalyzed,
+      defenderDamage,
+    } = this.simulateAttackingCard({ defenderCard });
 
     defenderCard.destroyed = defenderDestroyed;
     defenderCard.paralyzed = defenderParalyzed;
-    defenderCard.damage = _DamageToShields;
+    defenderCard.damage = defenderDamage;
   }
 
-  simulateAttackingCard(defenderCard) {
+  simulateAttackingCard({ defenderCard }) {
     const defenderCurrentDamage = defenderCard.damage;
     const defenderTotalDefense = defenderCard.defense - defenderCurrentDamage;
-    const cardAttack = _DamageToShields;
+    const cardAttack = ToxicGas.DamageToShields;
     return {
       defenderDestroyed: cardAttack >= defenderTotalDefense,
       defenderDamage: defenderCurrentDamage + cardAttack,

@@ -552,7 +552,7 @@
                 "defense": "5",
                 "attack": "2",
                 "number_copies": "3",
-                "author": "",
+                "author": "Luca Oleastri",
                 "deck": "2"
             },
             {
@@ -564,7 +564,7 @@
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "3",
-                "author": "",
+                "author": "Victor Habbick",
                 "deck": "2"
             },
             {
@@ -612,7 +612,7 @@
                 "defense": "2",
                 "attack": "0",
                 "number_copies": "2",
-                "author": "",
+                "author": "Aliaksandr Kukharski",
                 "deck": "2"
             },
             {
@@ -624,7 +624,7 @@
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "1",
-                "author": "",
+                "author": "Kiyoshi T. Segundo",
                 "deck": "2"
             },
             {
@@ -648,7 +648,7 @@
                 "defense": "5",
                 "attack": "X",
                 "number_copies": "3",
-                "author": "",
+                "author": "Mohamed Ali",
                 "deck": "2"
             },
             {
@@ -1027,5 +1027,5 @@
             }
         ]
     },
-    "saveTime": 1596642850775
+    "saveTime": 1596672607154
 }
