@@ -1,6 +1,6 @@
 <template>
   <div class="selectDeck-container">
-    Current Deck:
+    Deck:
     <select
       id="currentDeck"
       v-model="selectedDeck"
@@ -8,8 +8,8 @@
       name="currentDeck"
       @change="onChange($event)"
     >
-      <option :value="'Regular'">Regular</option>
-      <option :value="'TheSwarm'">The Swarm</option>
+      <option :value="'Regular'">Regular (advanced play)</option>
+      <option :value="'TheSwarm'" default>The Swarm (easy play)</option>
     </select>
   </div>
 </template>
@@ -18,12 +18,12 @@
 export default {
   data: function () {
     return {
-      selectedDeck: "Regular",
+      selectedDeck: "TheSwarm",
     };
   },
   mounted() {
     this.selectedDeck =
-      JSON.parse(localStorage.getItem("active-deck")) || "Regular";
+      JSON.parse(localStorage.getItem("active-deck")) || "TheSwarm";
   },
   methods: {
     onChange(event) {
