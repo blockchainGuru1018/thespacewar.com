@@ -4,11 +4,12 @@
       <a
         href="https://thespacewar.com/account"
         class="lobby-userAccountPageLink"
-        >&#8592; Back to Account</a
+      >&#8592; Back to Account</a
       >
     </div>
     <div class="users-container">
       <div class="row">
+        <SelectDeck v-if="selectDeckIsEnable" />
         <ProfileUserPlayer />
         <div class="list-opponents">
           <div class="users-header">
@@ -64,7 +65,11 @@
 <script>
 import Flag from "./Flag.vue";
 import ProfileUserPlayer from "./ProfileUserPlayer.vue";
-
+import SelectDeck from "./SelectDeck.vue";
+import featureToggles from "../utils/featureToggles.js";
+export default {
+  components: { SelectDeck },
+};
 const Vuex = require("vuex");
 const { mapActions } = Vuex.createNamespacedHelpers("lobby");
 const userHelpers = Vuex.createNamespacedHelpers("user");
@@ -89,6 +94,9 @@ module.exports = {
         .filter((u) => u.allowedInLobby)
         .filter((u) => !u.inMatch);
     },
+    selectDeckIsEnable() {
+      return featureToggles.isEnabled("selectDeck");
+    },
   },
   methods: {
     ...mapActions([
@@ -100,7 +108,7 @@ module.exports = {
       this.startGameWithUser(user);
     },
   },
-  components: { Flag, ProfileUserPlayer },
+  components: { Flag, ProfileUserPlayer, SelectDeck },
 };
 </script>
 <style scoped lang="scss">

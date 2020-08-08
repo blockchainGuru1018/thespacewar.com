@@ -497,14 +497,14 @@
             },
             {
                 "id": "80",
-                "name": "Fusion",
+                "name": "Fusion Ship",
                 "price": "2",
                 "type_card": "blue",
                 "detail": "After first turn: Replace this and 2 other spaceships in same zone by one spaceship from your draw pile.",
                 "defense": "3",
                 "attack": "1",
                 "number_copies": "2",
-                "author": "",
+                "author": "Luca Oleastri",
                 "deck": "2"
             },
             {
@@ -636,7 +636,7 @@
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "2",
-                "author": "",
+                "author": "Jukka Nieminen",
                 "deck": "2"
             },
             {
@@ -660,19 +660,19 @@
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "3",
-                "author": "",
+                "author": "Gabriel Stiernström",
                 "deck": "2"
             },
             {
                 "id": "95",
-                "name": "Fast",
+                "name": "Nitro",
                 "price": "1",
                 "type_card": "violet",
                 "detail": "Your spaceships are fast (they can move the first turn they enter play).",
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "2",
-                "author": "",
+                "author": "Aliaksandr Kukharski",
                 "deck": "2"
             }
         ],
@@ -1027,5 +1027,5 @@
             }
         ]
     },
-    "saveTime": 1596672607154
+    "saveTime": 1596903943666
 }

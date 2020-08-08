@@ -1,5 +1,3 @@
-import featureToggles from "../utils/featureToggles.js";
-
 const ajax = require("../utils/ajax.js");
 
 module.exports = function (deps) {
