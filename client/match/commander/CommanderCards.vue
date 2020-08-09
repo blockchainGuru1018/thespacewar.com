@@ -25,5 +25,6 @@ module.exports = {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-left: 1rem;
 }
 </style>

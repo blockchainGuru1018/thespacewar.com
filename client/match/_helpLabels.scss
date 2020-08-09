@@ -32,17 +32,20 @@ $endOpacity: .6;
 
   .field-drawPile::before {
     content: "Draw pile";
+    margin-bottom: 1rem;
   }
 
   .field-discardPile::before {
     content: "Discard pile";
+    margin-bottom: 1rem;;
   }
 
   .commanderCards {
     position: relative;
-
+    margin-right: 1rem;;
     &::before {
       content: "Commander";
+      margin-bottom: 1rem;
     }
   }
 }

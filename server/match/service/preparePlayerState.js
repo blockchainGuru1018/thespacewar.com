@@ -26,6 +26,7 @@ const whitelist = [
   "actionLogEntries",
   "commanders",
   "clock",
+  "deckSize",
 ];
 
 module.exports = StatePreparer({ obscureHandlerByKey, whitelist }).prepare;

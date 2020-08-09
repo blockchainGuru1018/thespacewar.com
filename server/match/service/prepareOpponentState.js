@@ -20,6 +20,12 @@ const obscurerByKey = {
     },
     key: "opponentCardsInDeckCount",
   },
+  deckSize: {
+    obscure(deckSize) {
+      return deckSize;
+    },
+    key: "opponentDeckSize",
+  },
   events: {
     obscure: obscureOpponentEvents,
     key: "opponentEvents",
@@ -66,6 +72,8 @@ const whitelist = [
   "commanders",
   "clock",
   "requirements",
+  "opponentDeckSize",
+  "deckSize",
 ];
 
 const statePreparer = StatePreparer({

@@ -31,6 +31,11 @@ class PlayerStateService {
       log: (...args) => console.log("PlayerStateService logger: ", ...args),
     };
     this._stateTouchListeners = [];
+    this._deckSize = 0;
+  }
+
+  deckSize() {
+    return this._deckSize;
   }
 
   isBot() {
@@ -71,6 +76,7 @@ class PlayerStateService {
     this.update((playerState) => {
       playerState.currentDeck = deckId;
       playerState.cardsInDeck = cardsInDeck;
+      playerState.deckSize = cardsInDeck.length;
     });
   }
 
@@ -685,6 +691,11 @@ class PlayerStateService {
     });
 
     return drawnCards;
+  }
+
+  drawPileRatio() {
+    return 0;
+    // return (this.getDeck() || {}).getCardCount() / this.deckSize();
   }
 
   useToCounter(cardId) {

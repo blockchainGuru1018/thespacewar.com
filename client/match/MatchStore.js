@@ -125,6 +125,9 @@ module.exports = function (deps) {
       onLastChangeToWin: false,
       timeRanOutVSBot: false,
       usingCollision: null,
+      drawPileRatio: null,
+      deckSize: null,
+      opponentDeckSize: null,
     },
     getters: {
       isFirstPlayer,
@@ -276,7 +279,7 @@ module.exports = function (deps) {
     },
   };
 
-  function init({ state }) {
+  function init({ state, getters }) {
     setInterval(() => {
       state.timeNow = Date.now();
     }, 250);

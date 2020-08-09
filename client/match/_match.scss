@@ -1,3 +1,4 @@
+@use "sass:list";
 @import "miscVariables";
 @import "cardVariables";
 @import "icons";
@@ -10,6 +11,44 @@
 @import "cardsOnHand";
 @import "card";
 
+
+@mixin box-shadow($shadow...) {
+  -webkit-box-shadow: $shadow;
+     -moz-box-shadow: $shadow;       
+          box-shadow: $shadow;
+}
+$color_height:  1px 1px 1px rgba(202, 40, 40, 0.6),
+                1px 1px 1px rgba(202, 40, 40, 0.6),
+                1px 1px 1px rgba(20,20,20, 0.6),
+                1px 1px 1px rgba(202, 40, 40, 0.6),
+                1px 1px 1px rgba(202, 40, 40, 0.6),
+                1px 1px 1px rgba(20,20,20, 0.6),
+                1px 1px 1px rgba(202, 40, 40, 0.6),
+                1px 1px 1px rgba(202, 40, 40, 0.6),
+                1px 1px 1px rgba(20,20,20, 0.6),
+                1px 1px 1px rgba(202, 40, 40, 0.6),
+                1px 1px 1px rgba(202, 40, 40, 0.6),
+                1px 1px 1px rgba(20,20,20, 0.6),
+                1px 1px 1px rgba(202, 40, 40, 0.6),
+                1px 1px 1px rgba(202, 40, 40, 0.6),
+                1px 1px 1px rgba(20,20,20, 0.6);
+$opponent_color_height: -1px 0px 1px rgba(13,	59,	81, 0.6),
+                        -1px 0px 1px rgba(13,	59,	81, 0.6),
+                        -1px 0px 1px rgba(20,20,20, 0.6),
+                        -1px 0px 1px rgba(13,	59,	81, 0.6),
+                        -1px 0px 1px rgba(13,	59,	81, 0.6),
+                        -1px 0px 1px rgba(20,20,20, 0.6),
+                        -1px 0px 1px rgba(13,	59,	81, 0.6),
+                        -1px 0px 1px rgba(13,	59,	81, 0.6),
+                        -1px 0px 1px rgba(20,20,20, 0.6),
+                        -1px 0px 1px rgba(13,	59,	81, 0.6),
+                        -1px 0px 1px rgba(13,	59,	81, 0.6),
+                        -1px 0px 1px rgba(20,20,20, 0.6),
+                        -1px 0px 1px rgba(13,	59,	81, 0.6),
+                        -1px 0px 1px rgba(13,	59,	81, 0.6),
+                        -1px 0px 1px rgba(20,20,20, 0.6);
+
+                        
 .match {
   display: flex;
   flex-direction: column;
@@ -341,8 +380,8 @@
 
 .drawPile-cardCount {
   position: absolute;
-  right: 10px;
-  top: 0px;
+  left: 10px;
+  top: 5px;
 }
 
 .drawPile-cardCountText {
@@ -514,4 +553,85 @@ $shakeDelay: 0s;
   100% {
     transform: translate(1px, -2px) rotate(179deg);
   }
+
+  
+}
+.perspectiveParentLeft {
+    perspective:600px;
+    perspective-origin: right;
+    .perspectiveChild {
+      transform: rotateX(15deg) translateZ(10px);
+      transform-style: preserve-3d;
+      
+    }
+  }
+.perspectiveParentRight {
+    perspective:600px;
+    perspective-origin: left;
+    .perspectiveChild {
+      transform: rotateX(15deg) translateZ(10px);
+      transform-style: preserve-3d;
+      
+    }
+  }
+.perspectiveParentCenter {
+    perspective:600px;
+    perspective-origin: bottom;
+    .perspectiveChild {
+      transform: rotateX(15deg) translateZ(10px);
+      transform-style: preserve-3d;
+      
+    }
+  }
+
+.pile-3d{
+
+  // @function generateList($amount){
+  //   $newList: (); 
+  //   @for $i from 1 through $amount {
+  //     $newList: append($newList, nth($sizes_height,$i), 'comma');
+  //   }
+  //   $sizeShadow: 10px + $amount;
+  //   @return append($newList, $sizeShadow $sizeShadow 15px rgba(0,0,0,.9), 'comma');
+  // }
+
+// @for $i from 1 through 15 {
+//     &.partial-#{$i}{
+//       transform: translateX(calc(-1 * calc(#{$i / 15} * 15px))) translateY(calc(calc(#{$i / 15} * -15px)));
+      
+//       @include box-shadow( generateList($i));
+//     }
+//   }
+}
+
+.card-height{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+    
+  @for $i from 1 through 15 {
+    &.h-#{$i}{
+      transform: translateZ(calc(2px * #{$i}));
+      pointer-events: none;
+      @include box-shadow(nth($color_height,$i));
+    }
+  } 
+}
+
+.opponent-card-height{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+    
+  @for $i from 1 through 15 {
+    &.h-#{$i}{
+      transform: translateZ(calc(4px * #{$i}));
+      pointer-events: none;
+      @include box-shadow(nth($opponent_color_height,$i));
+    }
+  } 
 }

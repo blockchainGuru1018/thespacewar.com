@@ -107,7 +107,7 @@
               />
             </div>
           </div>
-          <div class="field-piles field-section">
+          <div class="field-piles field-section perspectiveParentRight">
             <div
               :class="[
                 'field-discardPile',
@@ -129,12 +129,27 @@
               />
             </div>
 
-            <div class="field-commandersAndDrawPile">
+            <div class="field-commandersAndDrawPile perspectiveChild">
               <OpponentCommanderCards />
               <div class="field-drawPile">
                 <portal-target name="opponentDrawPile" />
-                <div v-if="!opponentDeckIsEmpty" class="card card-faceDown">
-                  <div class="actionOverlays">
+                <div
+                  v-if="!opponentDeckIsEmpty"
+                  class="card card-faceDown pile-3d"
+                  :style="
+                    'transform: translateZ(calc(4px * ' +
+                    opponentCardPileHeight +
+                    '))'
+                  "
+                >
+                  <div
+                    class="actionOverlays"
+                    :style="
+                      'transform: translateZ(calc(4px * ' +
+                        opponentCardPileHeight +
+                      '))'
+                    "
+                  >
                     <div
                       v-if="canMill"
                       class="drawPile-discardTopTwo actionOverlay"
@@ -155,7 +170,19 @@
                   </div>
                 </div>
                 <div v-else class="card card-emptyDeck" />
-                <div class="drawPile-cardCount drawPile-cardCountText">
+                <div
+                  v-for="i in opponentCardPileHeight"
+                  :key="i"
+                  :class="'opponent-card-height h-' + i"
+                ></div>
+                <div
+                  class="drawPile-cardCount drawPile-cardCountText"
+                  :style="
+                    'transform: translateZ(calc(4px * ' +
+                      opponentCardPileHeight +
+                      '))'
+                  "
+                >
                   {{ opponentCardsInDeckCount }}
                 </div>
               </div>
@@ -180,15 +207,20 @@
         </div>
         <div class="field-player" style="--aspect-ratio: (16/9) * 2;">
           <div><!-- NEEDED TO KEEP ASPECT-RATIO--></div>
-          <div class="field-piles field-section">
+          <div class="field-piles field-section perspectiveParentLeft">
             <div class="field-commandersAndDrawPile">
-              <PlayerCommanderCards />
+              <PlayerCommanderCards class="perspectiveChild" />
 
-              <div class="field-drawPile">
+              <div class="field-drawPile perspectiveChild">
                 <portal-target name="playerDrawPile" />
                 <div
                   v-if="playerCardsInDeckCount > 0"
-                  class="card card-faceDown"
+                  class="card card-faceDown pile-3d"
+                  :style="
+                    'transform: translateZ(calc(2px * ' +
+                      playerCardPileHeight +
+                      '))'
+                  "
                 >
                   <div class="actionOverlays">
                     <div
@@ -211,13 +243,30 @@
                   </div>
                 </div>
                 <div v-else class="card card-emptyDeck" />
-                <div class="drawPile-cardCount drawPile-cardCountText">
+                <div
+                  class="drawPile-cardCount drawPile-cardCountText"
+                  :style="
+                    'transform: translateZ(calc(2px * ' +
+                      playerCardPileHeight +
+                      '))'
+                  "
+                >
                   {{ playerCardsInDeckCount }}
                 </div>
+                <div
+                  v-for="i in playerCardPileHeight"
+                  :key="i"
+                  :class="'card-height h-' + i"
+                ></div>
               </div>
             </div>
 
-            <div :class="['field-discardPile', { flash: flashDiscardPile }]">
+            <div
+              :class="[
+                'field-discardPile perspectiveChild',
+                { flash: flashDiscardPile },
+              ]"
+            >
               <div
                 v-if="!playerTopDiscardCard"
                 class="card card-placeholder card-emptyDeck"
@@ -299,14 +348,16 @@
           </div>
           <div
             ref="playerStationCardsContainer"
-            class="playerStationCards field-playerStation field-station field-section"
+            class="playerStationCards field-playerStation field-station field-section perspectiveParentRight"
           >
             <div class="stationCardLabel">
               <div class="stationCardLabelText">
                 Station cards
               </div>
             </div>
-            <div class="field-stationRow playerStation-drawRow">
+            <div
+              class="field-stationRow playerStation-drawRow perspectiveChild"
+            >
               <portal-target name="stationDrawRow" />
               <station-card
                 v-for="card in playerVisibleDrawStationCards"
@@ -324,7 +375,9 @@
                 />
               </StationCardWrapper>
             </div>
-            <div class="field-stationRow playerStation-actionRow">
+            <div
+              class="field-stationRow playerStation-actionRow perspectiveChild"
+            >
               <portal-target name="stationActionRow" />
               <station-card
                 v-for="card in playerVisibleActionStationCards"
@@ -342,7 +395,9 @@
                 />
               </StationCardWrapper>
             </div>
-            <div class="field-stationRow playerStation-handSizeRow">
+            <div
+              class="field-stationRow playerStation-handSizeRow perspectiveChild"
+            >
               <portal-target name="stationHandSizeRow" />
               <station-card
                 v-for="card in playerVisibleHandSizeStationCards"
@@ -501,6 +556,8 @@ module.exports = {
       "flashOpponentDiscardPile",
       "opponentCardsInDeckCount",
       "playerCardsInDeckCount",
+      "deckSize",
+      "opponentDeckSize",
     ]),
     ...mapGetters([
       "gameOn",
@@ -709,6 +766,30 @@ module.exports = {
     },
     millCardCount() {
       return this.gameConfig.millCardCount();
+    },
+    playerCardPileHeight() {
+      const _playerCardPileHeight = Math.round(
+        Math.max(
+          0,
+          Math.min(15, (this.playerCardsInDeckCount / this.deckSize) * 15)
+        )
+      );
+
+      if (Number.isNaN(_playerCardPileHeight)) return 1;
+      return _playerCardPileHeight;
+    },
+    opponentCardPileHeight() {
+      const _opponentCardPileHeight = Math.round(
+        Math.max(
+          0,
+          Math.min(
+            15,
+            (this.opponentCardsInDeckCount / this.opponentDeckSize) * 15
+          )
+        )
+      );
+      if (Number.isNaN(_opponentCardPileHeight)) return 1;
+      return _opponentCardPileHeight;
     },
   },
   watch: {
