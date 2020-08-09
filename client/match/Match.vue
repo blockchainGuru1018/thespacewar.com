@@ -1,7 +1,13 @@
 <template>
   <div ref="match-wrapper" :class="['match-wrapper', { shake: shake }]">
     <div class="match-overlay" />
-    <div class="match-backgroundWrapper">
+    <div
+      :class="
+        bg === 'background_new'
+          ? 'match-backgroundWrapper animated'
+          : 'match-backgroundWrapper'
+      "
+    >
       <!--            <ParticlesJS></ParticlesJS>-->
       <div v-show="bg === 'background_new'" class="grid-bg" />
 
@@ -138,16 +144,16 @@
                   class="card card-faceDown pile-3d"
                   :style="
                     'transform: translateZ(calc(4px * ' +
-                    opponentCardPileHeight +
-                    '))'
+                      opponentCardPileHeight +
+                      '))'
                   "
                 >
                   <div
                     class="actionOverlays"
                     :style="
                       'transform: translateZ(calc(4px * ' +
-                        opponentCardPileHeight +
-                      '))'
+                      opponentCardPileHeight +
+                        '))'
                     "
                   >
                     <div
@@ -179,8 +185,8 @@
                   class="drawPile-cardCount drawPile-cardCountText"
                   :style="
                     'transform: translateZ(calc(4px * ' +
-                      opponentCardPileHeight +
-                      '))'
+                    opponentCardPileHeight +
+                    '))'
                   "
                 >
                   {{ opponentCardsInDeckCount }}
@@ -218,8 +224,8 @@
                   class="card card-faceDown pile-3d"
                   :style="
                     'transform: translateZ(calc(2px * ' +
-                      playerCardPileHeight +
-                      '))'
+                    playerCardPileHeight +
+                    '))'
                   "
                 >
                   <div class="actionOverlays">
@@ -247,8 +253,8 @@
                   class="drawPile-cardCount drawPile-cardCountText"
                   :style="
                     'transform: translateZ(calc(2px * ' +
-                      playerCardPileHeight +
-                      '))'
+                    playerCardPileHeight +
+                    '))'
                   "
                 >
                   {{ playerCardsInDeckCount }}
@@ -1048,17 +1054,7 @@ module.exports = {
 @import "index";
 
 .match-backgroundWrapper {
-  /*background: url(https://uploads.staticjw.com/ba/banta/game-bg-2500x1666-optimized.jpg) no-repeat center center;*/
-  //background-image: url(https://uploads.staticjw.com/ba/banta/game-bg-2500x1080-2-optimized.jpg);
-  background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)),
-    url("https://uploads.staticjw.com/ba/banta/game-bg-2500x1080-2-optimized.jpg");
   background-color: #000;
-
-  background-size: auto 100%;
-  animation-name: bghorizontal;
-  animation-duration: 360s;
-  animation-iteration-count: infinite;
-
   .grid-bg {
     position: absolute;
     top: 0px;
@@ -1069,8 +1065,30 @@ module.exports = {
       no-repeat center center;
     background-size: cover;
   }
-}
+  &.animated {
+    /*background: url(https://uploads.staticjw.com/ba/banta/game-bg-2500x1666-optimized.jpg) no-repeat center center;*/
+    //background-image: url(https://uploads.staticjw.com/ba/banta/game-bg-2500x1080-2-optimized.jpg);
+    background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)),
+      url("https://uploads.staticjw.com/ba/banta/game-bg-2500x1080-2-optimized.jpg");
+    background-color: #000;
 
+    background-size: auto 100%;
+    animation-name: bghorizontal;
+    animation-duration: 360s;
+    animation-iteration-count: infinite;
+
+    .grid-bg {
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      width: 100%;
+      height: 100%;
+      background: url(https://uploads.staticjw.com/ba/banta/grid-bg-game.png)
+        no-repeat center center;
+      background-size: cover;
+    }
+  }
+}
 @keyframes bghorizontal {
   0% {
     background-position: 0 0;
