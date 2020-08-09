@@ -181,7 +181,8 @@ class BaseCard {
       turn
     );
     const hasWaitedAndCanAttackFromOpponentZone =
-      (hasMovedOnPreviousTurn || wasGrantedByFreeEventOnPreviousTurn) &&
+      (hasMovedOnPreviousTurn ||
+        (hasMovedOnPreviousTurn && wasGrantedByFreeEventOnPreviousTurn)) &&
       !isInHomeZone;
     const isMissileAndCanAttackFromOpponentZone = isMissile && !isInHomeZone;
 
