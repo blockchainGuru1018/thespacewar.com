@@ -23,7 +23,7 @@
           v-if="
             stationCard.flipped &&
               !isOpponentStationCard &&
-            createCard(stationCard.card).costInflation !== 0
+              createCard(stationCard.card).costInflation !== 0
           "
           :class="['card-attackBoostIndicatorWrapper']"
         >
@@ -142,7 +142,9 @@ module.exports = {
       if (this.selectedAsDefender) {
         classes.push("selectedAsDefender");
       }
-
+      if (this.canBeSelectedAsDefender) {
+        classes.push("possibleTargetBorder");
+      }
       if (this.stationCard.flipped) {
         classes.push("stationCard--flipped", "card--expandable");
       } else {
@@ -274,6 +276,10 @@ module.exports = {
 };
 </script>
 <style lang="scss">
+.possibleTargetBorder {
+  border: 2px solid #2ee62e;
+  border-radius: 7px;
+}
 .card {
   position: relative;
 }

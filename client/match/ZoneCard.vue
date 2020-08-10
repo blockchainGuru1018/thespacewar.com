@@ -57,7 +57,10 @@
         X
       </span>
     </div>
-    <div class="actionOverlays">
+    <div
+      class="actionOverlays"
+      :class="canBeSelectedAsDefender ? 'possibleTargetBorder' : ''"
+    >
       <div
         v-if="canBeSelectedAsDefender"
         class="attackable actionOverlay actionOverlay--turnedAround"
@@ -717,7 +720,10 @@ module.exports = {
     visibility: visible;
   }
 }
-
+.possibleTargetBorder {
+  border: 2px solid #2ee62e;
+  border-radius: 7px;
+}
 @keyframes fullOpacityOnIntentionalHover {
   0% {
     opacity: 0;
