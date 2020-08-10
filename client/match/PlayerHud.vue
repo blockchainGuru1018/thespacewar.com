@@ -26,14 +26,19 @@
           >
             {{ nextPhaseButtonText }}
           </button>
-          <button
-            v-else-if="endTurnButtonVisible"
-            :disabled="nextPhaseButtonDisabled"
-            class="playerHud-phaseText nextPhaseButton nextPhaseButton-endTurn nextPhaseButton-onTheLeft"
-            @click="nextPhaseClick"
-          >
-            End turn
-          </button>
+          <div v-else-if="endTurnButtonVisible">
+            <div class="guideText-phaseButton">
+              Click on your spaceship(s) or missile(s) <br />
+              and select move and/or attack.
+            </div>
+            <button
+              :disabled="nextPhaseButtonDisabled"
+              class="playerHud-phaseText nextPhaseButton nextPhaseButton-endTurn nextPhaseButton-onTheLeft"
+              @click="nextPhaseClick"
+            >
+              End turn
+            </button>
+          </div>
         </template>
       </div>
 
@@ -612,6 +617,12 @@ export default {
   flex-wrap: wrap;
   width: 100%;
   align-content: space-between;
+}
+
+.guideText-phaseButton {
+  font-size: 12px;
+  font-family: "Space mono", sans-serif;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .confirmBoxOption {
