@@ -1,18 +1,21 @@
 <template>
   <div>
     <portal to="stationDrawRow">
-      <span class="stationRowDescription descriptionText">
-        {{ drawRowText }}
+      <span class="stationRowDescription descriptionText" v-html="drawRowText">
       </span>
     </portal>
     <portal to="stationActionRow">
-      <span class="stationRowDescription descriptionText">
-        {{ actionRowText }}
+      <span
+        class="stationRowDescription descriptionText"
+        v-html="actionRowText"
+      >
       </span>
     </portal>
     <portal to="stationHandSizeRow">
-      <span class="stationRowDescription descriptionText">
-        {{ handSizeRowText }}
+      <span
+        class="stationRowDescription descriptionText"
+        v-html="handSizeRowText"
+      >
       </span>
     </portal>
   </div>
@@ -32,21 +35,24 @@ export default {
     ]),
     drawRowText() {
       const cardsToDrawInDrawPhase = this.cardsToDrawInDrawPhase;
-      return `Draw ${cardsToDrawInDrawPhase} ${pluralize(
+      return `<span> Draw <b style="color: rgba(180, 180, 180, 0.8) !important;"> ${cardsToDrawInDrawPhase} </b> ${pluralize(
         "card",
         cardsToDrawInDrawPhase
-      )} each turn`;
+      )} each turn </span>`;
     },
     actionRowText() {
       const actionPoints = this.actionPointsFromStationCards;
-      return `Start turn with ${actionPoints} action ${pluralize(
+      return `<span>Start turn with <b style="color: rgba(180, 180, 180, 0.8) !important;">${actionPoints} </b>action ${pluralize(
         "point",
         actionPoints
-      )}`;
+      )} </span>`;
     },
     handSizeRowText() {
       const maxHandSize = this.maxHandSize;
-      return `Max ${maxHandSize} ${pluralize("card", maxHandSize)} on hand`;
+      return `<span> Max <b style="color: rgba(180, 180, 180, 0.8) !important;">${maxHandSize}</b> ${pluralize(
+        "card",
+        maxHandSize
+      )} on hand </span>`;
     },
   },
 };
@@ -58,4 +64,8 @@ function pluralize(word, count) {
 
 <style lang="scss" scoped>
 @import "guiDescription";
+
+.focusedText {
+  color: rgba(180, 180, 180, 1) !important;
+}
 </style>
