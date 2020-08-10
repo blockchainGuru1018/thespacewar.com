@@ -7,7 +7,7 @@
           stationCard.flipped && !isOpponentStationCard,
       },
     ]"
-    title="Right click or long press over any card to expand it"
+    :title="cardTittle"
   >
     <div
       v-longpress="cardLongpress"
@@ -150,6 +150,21 @@ module.exports = {
       }
 
       return classes;
+    },
+    cardTittle() {
+      if (this.stationCard.flipped) {
+        return "Right click or long press over any card to expand it";
+      }
+      if (this.stationCard.place === "draw") {
+        return "In your draw phase, draw 1 card for each card in this station row.";
+      }
+      if (this.stationCard.place === "action") {
+        return "In your action phase, receive 2 actions for each card in this station row.";
+      }
+      if (this.stationCard.place === "handSize") {
+        return "In your discard phase, keep 3 cards for each card in this station row.";
+      }
+      return "";
     },
     cardStyle() {
       if (this.stationCard.flipped) {
