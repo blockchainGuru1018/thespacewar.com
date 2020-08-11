@@ -34,42 +34,49 @@
           <div
             ref="opponentStationCardsContainer"
             :style="opponentStationStyle"
-            class="field-opponentStation opponentStationCards field-station field-section"
+            class="field-opponentStation opponentStationCards field-station field-section perspectiveParentLeft"
           >
-            <div class="field-stationRow">
-              <station-card
-                v-for="card in opponentStation.drawCards"
-                :key="card.id"
-                :is-holding-card="!!holdingCard"
-                :is-opponent-station-card="true"
-                :station-card="card"
-              />
-              <StationCardWrapper :transparent="true" />
-            </div>
-            <div class="field-stationRow">
-              <station-card
-                v-for="card in opponentStation.actionCards"
-                :key="card.id"
-                :is-holding-card="!!holdingCard"
-                :is-opponent-station-card="true"
-                :station-card="card"
-              />
-              <StationCardWrapper :transparent="true" />
-            </div>
-            <div class="field-stationRow opponentStation-handSizeRow">
-              <station-card
-                v-for="card in opponentStation.handSizeCards"
-                :key="card.id"
-                :is-holding-card="!!holdingCard"
-                :is-opponent-station-card="true"
-                :station-card="card"
-              />
-              <StationCardWrapper :transparent="true" />
+            <div
+              class="perspectiveChild"
+              style="transform: rotateX(7deg) translateZ(10px);"
+            >
+              <div class="field-stationRow">
+                <station-card
+                  v-for="card in opponentStation.drawCards"
+                  :key="card.id"
+                  :is-holding-card="!!holdingCard"
+                  :is-opponent-station-card="true"
+                  :station-card="card"
+                />
+                <StationCardWrapper :transparent="true" />
+              </div>
+              <div class="field-stationRow">
+                <station-card
+                  v-for="card in opponentStation.actionCards"
+                  :key="card.id"
+                  :is-holding-card="!!holdingCard"
+                  :is-opponent-station-card="true"
+                  :station-card="card"
+                />
+                <StationCardWrapper :transparent="true" />
+              </div>
+              <div class="field-stationRow opponentStation-handSizeRow">
+                <station-card
+                  v-for="card in opponentStation.handSizeCards"
+                  :key="card.id"
+                  :is-holding-card="!!holdingCard"
+                  :is-opponent-station-card="true"
+                  :station-card="card"
+                />
+                <StationCardWrapper :transparent="true" />
+              </div>
             </div>
           </div>
-          <div class="field-zoneRows field-opponentZoneRows">
+          <div
+            class="field-zoneRows field-opponentZoneRows perspectiveParentCenter"
+          >
             <div
-              class="opponentCardsInZone field-opponentZoneRow field-zone field-section"
+              class="opponentCardsInZone field-opponentZoneRow field-zone field-section perspectiveChild"
             >
               >
               <template v-for="n in opponentCardsInZone.length">
@@ -95,7 +102,7 @@
               />
             </div>
             <div
-              class="playerCardsInOpponentZone field-opponentZoneRow field-zone field-section"
+              class="playerCardsInOpponentZone field-opponentZoneRow field-zone field-section perspectiveChild"
             >
               <template v-for="n in playerCardsInOpponentZone.length">
                 <zone-card
@@ -116,7 +123,7 @@
           <div class="field-piles field-section perspectiveParentRight">
             <div
               :class="[
-                'field-discardPile',
+                'field-discardPile perspectiveChild',
                 { flash: flashOpponentDiscardPile },
               ]"
             >
@@ -302,8 +309,12 @@
               </CardGhost>
             </div>
           </div>
-          <div class="field-zoneRows field-playerZoneRows">
-            <div class="opponentCardsInPlayerZone field-zone field-section">
+          <div
+            class="field-zoneRows field-playerZoneRows perspectiveParentCenter"
+          >
+            <div
+              class="opponentCardsInPlayerZone field-zone field-section perspectiveChild"
+            >
               <template v-for="n in opponentCardsInPlayerZone.length">
                 <zone-card
                   v-if="n <= opponentCardsInPlayerZone.length"
@@ -322,7 +333,7 @@
             </div>
 
             <div
-              class="playerCardsInZone field-playerZoneCards field-zone field-section"
+              class="playerCardsInZone field-playerZoneCards field-zone field-section perspectiveChild"
             >
               <template v-for="n in visiblePlayerCards.length">
                 <zone-card
