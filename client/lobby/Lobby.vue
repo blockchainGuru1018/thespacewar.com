@@ -9,7 +9,7 @@
     </div>
     <div class="users-container">
       <div class="row">
-        <SelectDeck v-if="selectDeckIsEnable" />
+        <SelectDeck />
         <ProfileUserPlayer />
         <div class="list-opponents">
           <div class="users-header">
@@ -93,9 +93,6 @@ module.exports = {
       return this.otherUsers
         .filter((u) => u.allowedInLobby)
         .filter((u) => !u.inMatch);
-    },
-    selectDeckIsEnable() {
-      return featureToggles.isEnabled("selectDeck");
     },
   },
   methods: {
