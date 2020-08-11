@@ -322,6 +322,7 @@ module.exports = function (deps) {
         .getMatchingBehaviourCardsInBoard(
           (card) => card.allCardsCostIncrementEffect
         )
+        .filter((card) => getters.canThePlayer.useThisCard(card))
         .map((c) => c.allCardsCostIncrementEffect) || 0
     );
   }

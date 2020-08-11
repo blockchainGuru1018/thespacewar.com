@@ -10,6 +10,7 @@ describe("Card Effect", () => {
           [{ allCardsCostIncrementEffect: 3 }].filter(matcher),
       },
       canThePlayer: {
+        useThisCard: () => true,
         useThisDurationCard: () => true,
       },
     });

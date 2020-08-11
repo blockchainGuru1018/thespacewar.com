@@ -22,6 +22,7 @@ module.exports = function ({ canThePlayer, playerStateService }) {
       .getMatchingBehaviourCardsInBoard(
         (card) => card.allCardsCostIncrementEffect
       )
+      .filter((card) => canThePlayer.useThisCard(card))
       .map((c) => c.allCardsCostIncrementEffect);
   }
   function cardTypeCanMoveOnTurnPutDown(type) {
