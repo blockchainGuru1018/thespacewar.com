@@ -1061,17 +1061,18 @@ module.exports = function (deps) {
     if (
       getters.gameOn &&
       getters.opponentClock.getTime() <= 0 &&
-      !isOpponentBot
+      !isOpponentBot()
     ) {
       setTimeout(() => window.location.reload(), 3 * 60 * 1000);
     }
 
     if (
-      getters.gameOn &&
-      getters.playerClock.getTime() <= 0 &&
-      !state.onLastChangeToWin | !state.timeRanOutVSBot
+      (getters.gameOn &&
+        getters.playerClock.getTime() <= 0 &&
+        !state.onLastChangeToWin) ||
+      !state.timeRanOutVSBot
     ) {
-      if (isOpponentBot) {
+      if (isOpponentBot()) {
         dispatch("timeRanOutVSBot", true);
       } else {
         setTimeout(() => window.location.reload(), 3 * 60 * 1000);
