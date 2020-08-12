@@ -27,8 +27,8 @@
 }
 
 .counterAttack-requirementCard {
-  width: $cardWidth / 6;
-  height: $cardHeight / 6;
+  width: calc(#{$cardWidth} / 6);
+  height: calc(#{$cardHeight} / 6);
   margin-right: 25px;
 }
 
@@ -63,8 +63,8 @@
 }
 
 .counterAttack-card {
-  width: $cardWidth / 3;
-  height: $cardHeight / 3;
+  width: calc(#{$cardWidth} / 3);
+  height: calc(#{$cardHeight} / 3);
   flex: 0 0 auto;
 
   &:first-child {
@@ -82,7 +82,7 @@
   flex-wrap: wrap;
 
   &--many .counterAttack-card {
-    width: $cardWidth / 6;
+    width: calc(#{$cardWidth} / 6);
     height: $cardHeight / 6;
   }
 }

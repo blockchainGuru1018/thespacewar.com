@@ -130,7 +130,7 @@
       Discard
       {{
         amountOfCardsToDiscard +
-        (amountOfCardsToDiscard === 1 ? " card" : " cards")
+          (amountOfCardsToDiscard === 1 ? " card" : " cards")
       }}
       to continue
     </div>
