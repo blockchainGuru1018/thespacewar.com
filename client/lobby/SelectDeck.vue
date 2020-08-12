@@ -10,16 +10,26 @@
     >
       <option :value="'Regular'">Regular (advanced play)</option>
       <option :value="'TheSwarm'" default>The Swarm (easy play)</option>
+      <option v-if="unitedStarsDeck" :value="'UnitedStars'"
+        >United Stars
+      </option>
     </select>
   </div>
 </template>
 
 <script>
+import featureToggles from "../utils/featureToggles.js";
+
 export default {
   data: function () {
     return {
       selectedDeck: "TheSwarm",
     };
+  },
+  computed: {
+    unitedStarsDeck() {
+      return featureToggles.isEnabled("unitedStarsDeck");
+    },
   },
   mounted() {
     this.selectedDeck =

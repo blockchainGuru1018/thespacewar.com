@@ -54,6 +54,7 @@ const classes = [
   require("./GreatDisturbance.js"),
   require("./Electrocution.js"),
   require("./ResourceShip.js"),
+  require("./MegaShield.js"),
 ];
 
 module.exports = classes;

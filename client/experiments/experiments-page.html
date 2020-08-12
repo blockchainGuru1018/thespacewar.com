@@ -31,33 +31,12 @@
 
     <div class="alert alert-primary" role="alert">
         <div class="form-check">
-            <input class="form-check-input" onclick="handleDeckOption(this)" type="radio" name="active-Deck"
-                   id="regularDeck" value="Regular">
-            <label class="form-check-label" for="regularDeck">
-                Regular Deck
-            </label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" onclick="handleDeckOption(this)" type="radio" name="active-Deck"
-                   id="theSwarm" value="TheSwarm">
-            <label class="form-check-label" for="theSwarm">
-                The Swarm Deck
-            </label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" onclick="handleDeckOption(this)" type="radio" name="active-Deck"
-                   id="unitedStars" value="UnitedStars">
+            <input class="form-check-input" onclick="handleClick(this)" type="checkbox" name="active-Deck"
+                   id="unitedStars" data-feature="unitedStarsDeck">
             <label class="form-check-label" for="unitedStars">
                 United Stars
             </label>
         </div>
-
-        <!--        <div class="form-group form-check">-->
-        <!--            <input type="checkbox" onclick="handleClick(this)" data-feature="the-swarm-toggle" class="form-check-input"-->
-        <!--                   id="the-swarm">-->
-        <!--            <label class="form-check-label" for="the-swarm"><strong> The swarm deck</strong> (this will display in the-->
-        <!--                main menu the toggler for use the swarm deck)</label>-->
-        <!--        </div>-->
     </div>
     <form class="alert alert-primary" role="alert" id="form-bg">
         <div class="form-check">

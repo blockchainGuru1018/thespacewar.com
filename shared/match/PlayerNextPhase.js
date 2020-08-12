@@ -115,6 +115,20 @@ module.exports = function ({
         );
       }
     }
+    triggerSelfRepairCards();
+  }
+
+  function triggerSelfRepairCards() {
+    playerStateService
+      .getPlayerState()
+      .cardsInZone.map((card) => playerStateService.createBehaviourCard(card))
+      .filter((card) => card.selfRepairAtDrawPhase > 0)
+      .forEach((selfRepairCard) => {
+        selfRepairCard.repairSelf();
+        playerStateService.updateCardById(selfRepairCard.id, (card) => {
+          Object.assign(card, selfRepairCard.getCardData());
+        });
+      });
   }
 
   function canEndTurnForPlayer() {

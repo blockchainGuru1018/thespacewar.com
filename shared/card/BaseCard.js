@@ -47,6 +47,10 @@ class BaseCard {
     return this.constructor.CommonId;
   }
 
+  get selfRepairAtDrawPhase() {
+    return 0;
+  }
+
   get name() {
     return this._card.name;
   }
