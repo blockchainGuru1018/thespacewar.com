@@ -1067,10 +1067,9 @@ module.exports = function (deps) {
     }
 
     if (
-      (getters.gameOn &&
-        getters.playerClock.getTime() <= 0 &&
-        !state.onLastChangeToWin) ||
-      !state.timeRanOutVSBot
+      getters.gameOn &&
+      getters.playerClock.getTime() <= 0 &&
+      (!state.onLastChangeToWin || !state.timeRanOutVSBot)
     ) {
       if (isOpponentBot()) {
         dispatch("timeRanOutVSBot", true);
