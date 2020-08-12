@@ -21,62 +21,70 @@
     <div
       ref="match"
       :class="[
-        'match',
+        'match perspectiveParentCenter',
         `currentPhase--${phase}`,
         {
           'match-selectingStartingStationCards': selectingStartingStationCards,
         },
       ]"
     >
-      <div class="field">
+      <div
+        :class="[
+          'field-dividerWrapper',
+          {
+            'field-dividerWrapper--placeholder': activateEventCardGhostVisible,
+          },
+        ]"
+      >
+        <div class="field-divider" />
+        <portal-target
+          class="field-dividerContent"
+          name="player-top"
+          tag="div"
+        />
+      </div>
+      <div class="field perspectiveChild">
         <div class="field-opponent" style="--aspect-ratio: (16/9) * 2;">
           <div><!-- NEEDED TO KEEP ASPECT-RATIO--></div>
           <div
             ref="opponentStationCardsContainer"
             :style="opponentStationStyle"
-            class="field-opponentStation opponentStationCards field-station field-section perspectiveParentLeft"
+            class="field-opponentStation opponentStationCards field-station field-section"
           >
-            <div
-              class="perspectiveChild"
-              style="transform: rotateX(7deg) translateZ(10px);"
-            >
-              <div class="field-stationRow">
-                <station-card
-                  v-for="card in opponentStation.drawCards"
-                  :key="card.id"
-                  :is-holding-card="!!holdingCard"
-                  :is-opponent-station-card="true"
-                  :station-card="card"
-                />
-                <StationCardWrapper :transparent="true" />
-              </div>
-              <div class="field-stationRow">
-                <station-card
-                  v-for="card in opponentStation.actionCards"
-                  :key="card.id"
-                  :is-holding-card="!!holdingCard"
-                  :is-opponent-station-card="true"
-                  :station-card="card"
-                />
-                <StationCardWrapper :transparent="true" />
-              </div>
-              <div class="field-stationRow opponentStation-handSizeRow">
-                <station-card
-                  v-for="card in opponentStation.handSizeCards"
-                  :key="card.id"
-                  :is-holding-card="!!holdingCard"
-                  :is-opponent-station-card="true"
-                  :station-card="card"
-                />
-                <StationCardWrapper :transparent="true" />
-              </div>
+            <div class="field-stationRow">
+              <station-card
+                v-for="card in opponentStation.drawCards"
+                :key="card.id"
+                :is-holding-card="!!holdingCard"
+                :is-opponent-station-card="true"
+                :station-card="card"
+              />
+              <StationCardWrapper :transparent="true" />
+            </div>
+            <div class="field-stationRow">
+              <station-card
+                v-for="card in opponentStation.actionCards"
+                :key="card.id"
+                :is-holding-card="!!holdingCard"
+                :is-opponent-station-card="true"
+                :station-card="card"
+              />
+              <StationCardWrapper :transparent="true" />
+            </div>
+            <div class="field-stationRow opponentStation-handSizeRow">
+              <station-card
+                v-for="card in opponentStation.handSizeCards"
+                :key="card.id"
+                :is-holding-card="!!holdingCard"
+                :is-opponent-station-card="true"
+                :station-card="card"
+              />
+              <StationCardWrapper :transparent="true" />
             </div>
           </div>
-          <div
-            class="field-zoneRows field-opponentZoneRows perspectiveParentCenter"
-          >
+          <div class="field-zoneRows field-opponentZoneRows">
             <div
-              class="opponentCardsInZone field-opponentZoneRow field-zone field-section perspectiveChild"
+              class="opponentCardsInZone field-opponentZoneRow field-zone field-section"
             >
               >
               <template v-for="n in opponentCardsInZone.length">
@@ -102,7 +110,7 @@
               />
             </div>
             <div
-              class="playerCardsInOpponentZone field-opponentZoneRow field-zone field-section perspectiveChild"
+              class="playerCardsInOpponentZone field-opponentZoneRow field-zone field-section"
             >
               <template v-for="n in playerCardsInOpponentZone.length">
                 <zone-card
@@ -120,10 +128,10 @@
               />
             </div>
           </div>
-          <div class="field-piles field-section perspectiveParentRight">
+          <div class="field-piles field-section">
             <div
               :class="[
-                'field-discardPile perspectiveChild',
+                'field-discardPile',
                 { flash: flashOpponentDiscardPile },
               ]"
             >
@@ -142,7 +150,7 @@
               />
             </div>
 
-            <div class="field-commandersAndDrawPile perspectiveChild">
+            <div class="field-commandersAndDrawPile">
               <OpponentCommanderCards />
               <div class="field-drawPile">
                 <portal-target name="opponentDrawPile" />
@@ -150,17 +158,17 @@
                   v-if="!opponentDeckIsEmpty"
                   class="card card-faceDown pile-3d"
                   :style="
-                    'transform: translateZ(calc(4px * ' +
-                      opponentCardPileHeight +
-                      '))'
+                    'transform: translateZ(calc(1px * ' +
+                    opponentCardPileHeight +
+                    '))'
                   "
                 >
                   <div
                     class="actionOverlays"
                     :style="
-                      'transform: translateZ(calc(4px * ' +
-                      opponentCardPileHeight +
-                        '))'
+                      'transform: translateZ(calc(1px * ' +
+                        opponentCardPileHeight +
+                      '))'
                     "
                   >
                     <div
@@ -191,9 +199,9 @@
                 <div
                   class="drawPile-cardCount drawPile-cardCountText"
                   :style="
-                    'transform: translateZ(calc(4px * ' +
-                    opponentCardPileHeight +
-                    '))'
+                    'transform: translateZ(calc(1px * ' +
+                      opponentCardPileHeight +
+                      '))'
                   "
                 >
                   {{ opponentCardsInDeckCount }}
@@ -203,36 +211,21 @@
           </div>
           <OpponentPreGameOverlay />
         </div>
-        <div
-          :class="[
-            'field-dividerWrapper',
-            {
-              'field-dividerWrapper--placeholder': activateEventCardGhostVisible,
-            },
-          ]"
-        >
-          <div class="field-divider" />
-          <portal-target
-            class="field-dividerContent"
-            name="player-top"
-            tag="div"
-          />
-        </div>
         <div class="field-player" style="--aspect-ratio: (16/9) * 2;">
           <div><!-- NEEDED TO KEEP ASPECT-RATIO--></div>
-          <div class="field-piles field-section perspectiveParentLeft">
+          <div class="field-piles field-section">
             <div class="field-commandersAndDrawPile">
-              <PlayerCommanderCards class="perspectiveChild" />
+              <PlayerCommanderCards class="" />
 
-              <div class="field-drawPile perspectiveChild">
+              <div class="field-drawPile">
                 <portal-target name="playerDrawPile" />
                 <div
                   v-if="playerCardsInDeckCount > 0"
                   class="card card-faceDown pile-3d"
                   :style="
-                    'transform: translateZ(calc(2px * ' +
-                    playerCardPileHeight +
-                    '))'
+                    'transform: translateZ(calc(1px * ' +
+                      playerCardPileHeight +
+                      '))'
                   "
                 >
                   <div class="actionOverlays">
@@ -259,9 +252,9 @@
                 <div
                   class="drawPile-cardCount drawPile-cardCountText"
                   :style="
-                    'transform: translateZ(calc(2px * ' +
-                    playerCardPileHeight +
-                    '))'
+                    'transform: translateZ(calc(1px * ' +
+                      playerCardPileHeight +
+                      '))'
                   "
                 >
                   {{ playerCardsInDeckCount }}
@@ -274,12 +267,7 @@
               </div>
             </div>
 
-            <div
-              :class="[
-                'field-discardPile perspectiveChild',
-                { flash: flashDiscardPile },
-              ]"
-            >
+            <div :class="['field-discardPile', { flash: flashDiscardPile }]">
               <div
                 v-if="!playerTopDiscardCard"
                 class="card card-placeholder card-emptyDeck"
@@ -309,12 +297,8 @@
               </CardGhost>
             </div>
           </div>
-          <div
-            class="field-zoneRows field-playerZoneRows perspectiveParentCenter"
-          >
-            <div
-              class="opponentCardsInPlayerZone field-zone field-section perspectiveChild"
-            >
+          <div class="field-zoneRows field-playerZoneRows">
+            <div class="opponentCardsInPlayerZone field-zone field-section">
               <template v-for="n in opponentCardsInPlayerZone.length">
                 <zone-card
                   v-if="n <= opponentCardsInPlayerZone.length"
@@ -333,7 +317,7 @@
             </div>
 
             <div
-              class="playerCardsInZone field-playerZoneCards field-zone field-section perspectiveChild"
+              class="playerCardsInZone field-playerZoneCards field-zone field-section"
             >
               <template v-for="n in visiblePlayerCards.length">
                 <zone-card
@@ -365,16 +349,14 @@
           </div>
           <div
             ref="playerStationCardsContainer"
-            class="playerStationCards field-playerStation field-station field-section perspectiveParentRight"
+            class="playerStationCards field-playerStation field-station field-section"
           >
             <div class="stationCardLabel">
               <div class="stationCardLabelText">
                 Station cards
               </div>
             </div>
-            <div
-              class="field-stationRow playerStation-drawRow perspectiveChild"
-            >
+            <div class="field-stationRow playerStation-drawRow">
               <portal-target name="stationDrawRow" />
               <station-card
                 v-for="card in playerVisibleDrawStationCards"
@@ -392,9 +374,7 @@
                 />
               </StationCardWrapper>
             </div>
-            <div
-              class="field-stationRow playerStation-actionRow perspectiveChild"
-            >
+            <div class="field-stationRow playerStation-actionRow">
               <portal-target name="stationActionRow" />
               <station-card
                 v-for="card in playerVisibleActionStationCards"
@@ -412,9 +392,7 @@
                 />
               </StationCardWrapper>
             </div>
-            <div
-              class="field-stationRow playerStation-handSizeRow perspectiveChild"
-            >
+            <div class="field-stationRow playerStation-handSizeRow">
               <portal-target name="stationHandSizeRow" />
               <station-card
                 v-for="card in playerVisibleHandSizeStationCards"
@@ -435,7 +413,6 @@
               </StationCardWrapper>
             </div>
           </div>
-          <PlayerHud />
         </div>
 
         <EventGhost
@@ -446,8 +423,6 @@
         >
           {{ playerZoneCardGhostText }}
         </EventGhost>
-
-        <CommanderSelection />
       </div>
       <div
         v-if="holdingCard"
@@ -469,6 +444,8 @@
       <EscapeMenu />
     </div>
 
+    <CommanderSelection />
+    <PlayerHud />
     <MatchHeader />
 
     <div class="cardsOnHand">
@@ -970,7 +947,7 @@ module.exports = {
       // playerStation-handSizeRow
       // opponentStation-handSizeRow
       const rect1 = (
-        document.getElementsByClassName("playerStationCards")[0] || {}
+        document.getElementsByClassName("field")[0] || {}
       ).getBoundingClientRect();
       const rect2 = (
         document.getElementsByClassName("matchHeader-playerBanner")[0] || {}

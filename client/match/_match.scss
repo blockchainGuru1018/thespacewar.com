@@ -17,36 +17,36 @@
      -moz-box-shadow: $shadow;       
           box-shadow: $shadow;
 }
-$color_height:  1px 1px 1px rgba(202, 40, 40, 0.6),
-                1px 1px 1px rgba(202, 40, 40, 0.6),
-                1px 1px 1px rgba(20,20,20, 0.6),
-                1px 1px 1px rgba(202, 40, 40, 0.6),
-                1px 1px 1px rgba(202, 40, 40, 0.6),
-                1px 1px 1px rgba(20,20,20, 0.6),
-                1px 1px 1px rgba(202, 40, 40, 0.6),
-                1px 1px 1px rgba(202, 40, 40, 0.6),
-                1px 1px 1px rgba(20,20,20, 0.6),
-                1px 1px 1px rgba(202, 40, 40, 0.6),
-                1px 1px 1px rgba(202, 40, 40, 0.6),
-                1px 1px 1px rgba(20,20,20, 0.6),
-                1px 1px 1px rgba(202, 40, 40, 0.6),
-                1px 1px 1px rgba(202, 40, 40, 0.6),
-                1px 1px 1px rgba(20,20,20, 0.6);
-$opponent_color_height: -1px 0px 1px rgba(13,	59,	81, 0.6),
-                        -1px 0px 1px rgba(13,	59,	81, 0.6),
-                        -1px 0px 1px rgba(20,20,20, 0.6),
-                        -1px 0px 1px rgba(13,	59,	81, 0.6),
-                        -1px 0px 1px rgba(13,	59,	81, 0.6),
-                        -1px 0px 1px rgba(20,20,20, 0.6),
-                        -1px 0px 1px rgba(13,	59,	81, 0.6),
-                        -1px 0px 1px rgba(13,	59,	81, 0.6),
-                        -1px 0px 1px rgba(20,20,20, 0.6),
-                        -1px 0px 1px rgba(13,	59,	81, 0.6),
-                        -1px 0px 1px rgba(13,	59,	81, 0.6),
-                        -1px 0px 1px rgba(20,20,20, 0.6),
-                        -1px 0px 1px rgba(13,	59,	81, 0.6),
-                        -1px 0px 1px rgba(13,	59,	81, 0.6),
-                        -1px 0px 1px rgba(20,20,20, 0.6);
+$color_height:  1px 1px 1px rgba(202, 40, 40, 0.9),
+                1px 1px 1px rgba(202, 40, 40, 0.9),
+                1px 1px 1px rgba(20,20,20, 0.9),
+                1px 1px 1px rgba(202, 40, 40, 0.9),
+                1px 1px 1px rgba(202, 40, 40, 0.9),
+                1px 1px 1px rgba(20,20,20, 0.9),
+                1px 1px 1px rgba(202, 40, 40, 0.9),
+                1px 1px 1px rgba(202, 40, 40, 0.9),
+                1px 1px 1px rgba(20,20,20, 0.9),
+                1px 1px 1px rgba(202, 40, 40, 0.9),
+                1px 1px 1px rgba(202, 40, 40, 0.9),
+                1px 1px 1px rgba(20,20,20, 0.9),
+                1px 1px 1px rgba(202, 40, 40, 0.9),
+                1px 1px 1px rgba(202, 40, 40, 0.9),
+                1px 1px 1px rgba(20,20,20, 0.9);
+$opponent_color_height: -1px 1px 1px rgba(13,	59,	81, 1),
+                        -1px 1px 1px rgba(13,	59,	81, 1),
+                        -1px 1px 1px rgba(20,20,20, 1),
+                        -1px 1px 1px rgba(13,	59,	81, 1),
+                        -1px 1px 1px rgba(13,	59,	81, 1),
+                        -1px 1px 1px rgba(20,20,20, 1),
+                        -1px 1px 1px rgba(13,	59,	81, 1),
+                        -1px 1px 1px rgba(13,	59,	81, 1),
+                        -1px 1px 1px rgba(20,20,20, 1),
+                        -1px 1px 1px rgba(13,	59,	81, 1),
+                        -1px 1px 1px rgba(13,	59,	81, 1),
+                        -1px 1px 1px rgba(20,20,20, 1),
+                        -1px 1px 1px rgba(13,	59,	81, 1),
+                        -1px 1px 1px rgba(13,	59,	81, 1),
+                        -1px 1px 1px rgba(20,20,20, 1);
 
                         
 .match {
@@ -56,7 +56,7 @@ $opponent_color_height: -1px 0px 1px rgba(13,	59,	81, 0.6),
 
   width: 100%;
   height: 100%;
-  overflow: auto;
+  // overflow: auto;
   perspective: 100px;
 }
 
@@ -81,7 +81,7 @@ $opponent_color_height: -1px 0px 1px rgba(13,	59,	81, 0.6),
 }
 
 .field-dividerWrapper {
-  position: relative;
+  // position: relative;
   height: 20px;
   z-index: 3;
   display: flex;
@@ -325,6 +325,7 @@ $opponent_color_height: -1px 0px 1px rgba(13,	59,	81, 0.6),
   transform: translate(-50%, -50%);
   width: 80%;
   text-align: center;
+  pointer-events: none;
 
   > * {
     text-shadow: 0px -2px 0px rgba(0, 0, 0, .5),
@@ -578,7 +579,8 @@ $shakeDelay: 0s;
     perspective:600px;
     perspective-origin: bottom;
     .perspectiveChild {
-      transform: rotateX(15deg) translateZ(10px);
+      // transform: rotateX(15deg) translateZ(10px);
+      transform: rotateX(15deg) translateZ(var(--z-position)) translateY(calc(4 * var(--z-position)));
       transform-style: preserve-3d;
       
     }
@@ -613,7 +615,7 @@ $shakeDelay: 0s;
     
   @for $i from 1 through 15 {
     &.h-#{$i}{
-      transform: translateZ(calc(2px * #{$i}));
+      transform: translateZ(calc(1px * #{$i}));
       pointer-events: none;
       @include box-shadow(nth($color_height,$i));
     }
@@ -629,7 +631,7 @@ $shakeDelay: 0s;
     
   @for $i from 1 through 15 {
     &.h-#{$i}{
-      transform: translateZ(calc(4px * #{$i}));
+      transform: translateZ(calc(1px * #{$i}));
       pointer-events: none;
       @include box-shadow(nth($opponent_color_height,$i));
     }
