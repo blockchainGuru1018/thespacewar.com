@@ -1111,7 +1111,7 @@ eval("\n\nconst CommonId = \"67\";\nmodule.exports = {\n  CommonId,\n  requireme
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nconst CommonId = \"77\";\nmodule.exports = {\n  CommonId,\n  dormantEffectRequirementSpec: {\n    forPlayer: [{\n      type: \"findCard\",\n      count: 3,\n      sources: [\"deck\", \"discardPile\", \"actionStationCards\", \"drawStationCards\", \"handSizeStationCards\", \"hand\"],\n      target: \"currentCardZone\",\n      filter: {\n        commonId: [\"78\"]\n      }\n    }],\n    forOpponent: []\n  }\n};\n\n//# sourceURL=webpack:///../shared/card/info/77.config.js?");
+eval("\n\nconst CommonId = \"77\";\nmodule.exports = {\n  CommonId,\n  dormantEffectRequirementSpec: {\n    forPlayer: [{\n      type: \"findCard\",\n      count: 3,\n      sources: [\"deck\", \"discardPile\"],\n      target: \"currentCardZone\",\n      filter: {\n        commonId: [\"78\"]\n      }\n    }],\n    forOpponent: []\n  }\n};\n\n//# sourceURL=webpack:///../shared/card/info/77.config.js?");
 
 /***/ }),
 

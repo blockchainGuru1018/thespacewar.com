@@ -464,7 +464,7 @@
                 "name": "Carrier",
                 "price": "7",
                 "type_card": "blue",
-                "detail": "Can after first turn send out 3 Drones from anywhere. ",
+                "detail": "Can after first turn, once per turn, send out 3 Drones (from discard and/or draw pile). The Drones are placed in the same zone as Carrier.",
                 "defense": "6",
                 "attack": "0",
                 "number_copies": "3",
@@ -548,7 +548,7 @@
                 "name": "Paralyzer",
                 "price": "6",
                 "type_card": "blue",
-                "detail": "If shooting a spaceship the target gets paralyzed.",
+                "detail": "If shooting a spaceship the target gets paralyzed (turn the card and it cannot do anything until repaired).",
                 "defense": "5",
                 "attack": "2",
                 "number_copies": "3",
@@ -632,7 +632,7 @@
                 "name": "Collision Skill",
                 "price": "3",
                 "type_card": "violet",
-                "detail": "Your spaceships can now do collision (your spaceship are destroyed in the attack) with 3 damage.",
+                "detail": "Your spaceships can now do collision instead of attack (your spaceship are destroyed in the attack) with 3 damage.",
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "2",
@@ -644,7 +644,7 @@
                 "name": "Drone Leader",
                 "price": "4",
                 "type_card": "blue",
-                "detail": "Attack value of X is equal to the number of Drone you have in play.",
+                "detail": "Attack value of X is equal to the number of Drone cards you have in play.",
                 "defense": "5",
                 "attack": "X",
                 "number_copies": "3",
@@ -1027,5 +1027,5 @@
             }
         ]
     },
-    "saveTime": 1596856538132
+    "saveTime": 1597255011161
 }

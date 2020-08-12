@@ -7,14 +7,7 @@ module.exports = {
       {
         type: "findCard",
         count: 3,
-        sources: [
-          "deck",
-          "discardPile",
-          "actionStationCards",
-          "drawStationCards",
-          "handSizeStationCards",
-          "hand",
-        ],
+        sources: ["deck", "discardPile"],
         target: "currentCardZone",
         filter: {
           commonId: ["78"],
