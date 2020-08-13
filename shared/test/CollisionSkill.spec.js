@@ -18,7 +18,7 @@ describe("Collision Skill", () => {
       card: { id: "C1A", attack: 1, type: "spaceShip", usingCollision: true },
       cardEffect,
     });
-    expect(cardtoPutDown.attack).toBe(4);
+    expect(cardtoPutDown.attack).toBe(3);
     expect(cardEffect.canCollideForDurationCard()).toBe(true);
   });
 });

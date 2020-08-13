@@ -72,15 +72,19 @@ class BaseCard {
   }
 
   get attack() {
-    return this._card.attack + this.attackBoost;
+    if (
+      this._cardEffect.attackBoostForCollision(this._card.usingCollision) > 0
+    ) {
+      return this._cardEffect.attackBoostForCollision(
+        this._card.usingCollision
+      );
+    } else {
+      return this._card.attack + this.attackBoost;
+    }
   }
 
   get attackBoost() {
-    return (
-      this.attackBoostForCardType +
-      this._cardEffect.attackBoostForCollision(this._card.usingCollision) +
-      this.attackBoostFromCommander
-    );
+    return this.attackBoostForCardType + this.attackBoostFromCommander;
   }
 
   get attackBoostForCardType() {
