@@ -17,7 +17,7 @@ module.exports = function (deps) {
 
   function start() {
     socket.on("match", onSocketMatchEvent);
-    emit("start", { deckId: getActiveDeck()});
+    emit("start", { deckId: getActiveDeck() });
 
     document.addEventListener("visibilitychange", onVisibilityChange);
   }
@@ -66,6 +66,6 @@ module.exports = function (deps) {
     }
   }
   function getActiveDeck() {
-    return JSON.parse(localStorage.getItem("active-deck"));
+    return JSON.parse(localStorage.getItem("active-deck")) || "TheSwarm";
   }
 };

@@ -13,7 +13,7 @@ function StartGameController({
     repairPotentiallyInconsistentState, //TODO Move this to its own class
   };
 
-  function start(playerId, { deckId } = {}) {
+  function start(playerId, { deckId = "TheSwarm" } = {}) {
     const playerIds = matchService.getPlayerIds();
     if (matchService.allPlayersConnected()) {
       repairPlayersPotentiallyInconsistentState(playerIds);
