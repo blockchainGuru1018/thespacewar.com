@@ -42,8 +42,7 @@ class FindAcidProjectile {
     return (
       this._isUsingStauxCommander() &&
       this._playerPhase.isAction() &&
-      this._canAffordFindAcidProjectile() &&
-      this._hasNotIssuedFindAcidProjectileThisTurn()
+      this._canAffordFindAcidProjectile()
     );
   }
 
