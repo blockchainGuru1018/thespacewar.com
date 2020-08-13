@@ -524,7 +524,7 @@
                 "name": "Alien Missile",
                 "price": "1",
                 "type_card": "red",
-                "detail": "Slow (each turn can either move or attack but not both)",
+                "detail": "Slow (each turn can either move or attack but not both).",
                 "defense": "1",
                 "attack": "5",
                 "number_copies": "3",
@@ -536,7 +536,7 @@
                 "name": "Acid Projectile",
                 "price": "1",
                 "type_card": "red",
-                "detail": "Fast (can move the first turn). If played from hand: you may draw a card.",
+                "detail": "If played from hand: you may draw a card. Fast (can move and be used the first turn).",
                 "defense": "1",
                 "attack": "1",
                 "number_copies": "3",
@@ -1027,5 +1027,5 @@
             }
         ]
     },
-    "saveTime": 1597255011161
+    "saveTime": 1597335584874
 }

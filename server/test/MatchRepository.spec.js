@@ -2,6 +2,9 @@ const MatchRepository = require("../match/MatchRepository.js");
 const FakeMatchFactory = require("./testUtils/FakeMatchFactory.js");
 const User = require("../../shared/user/User.js");
 
+const OneMinute = 60 * 1000;
+const OneHour = 60 * OneMinute;
+
 describe("Restore matches", () => {
   test("stores matches in the fridge", async () => {
     const RESTORABLE_STATE = "MATCH_RESTORABLE_STATE_FAKE";
@@ -94,6 +97,38 @@ describe("Restore matches", () => {
 
     expect(error).toBeDefined();
     expect(error.message).toContain("Player is already in a match");
+  });
+});
+
+describe("Can ask the repository if there are any matches in progress", () => {
+  const originalDateNow = Date.now;
+
+  afterEach(() => {
+    Date.now = originalDateNow;
+  });
+
+  it("says YES when 1 match has been alive for 1 minute", async () => {
+    Date.now = () => 0;
+    const repository = createMatchRepository({
+      users: [new User({ id: "P1" }), new User({ id: "P2" })],
+    });
+
+    await repository.create({ playerId: "P1", opponentId: "P2" });
+    Date.now = () => OneMinute;
+
+    expect(repository.hasSomeMatchInProgress()).toBe(true);
+  });
+
+  it("says NO when 1 match has been alive for more than 1 hour", async () => {
+    Date.now = () => 0;
+    const repository = createMatchRepository({
+      users: [new User({ id: "P1" }), new User({ id: "P2" })],
+    });
+
+    await repository.create({ playerId: "P1", opponentId: "P2" });
+    Date.now = () => OneHour + 1;
+
+    expect(repository.hasSomeMatchInProgress()).toBe(false);
   });
 });
 

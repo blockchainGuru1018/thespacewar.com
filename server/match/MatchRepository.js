@@ -1,4 +1,5 @@
 const BotId = "BOT";
+const MatchMaxAliveTime = 60 * 60 * 1000;
 
 module.exports = function ({
   userRepository,
@@ -20,6 +21,7 @@ module.exports = function ({
     clearOldMatches,
     storeAll,
     restoreAll,
+    hasSomeMatchInProgress,
     _deleteAll,
   };
 
@@ -101,7 +103,7 @@ module.exports = function ({
   function clearOldMatches() {
     const matchIdsToClear = [];
     matchById.forEach((match, matchId) => {
-      if (match.timeAlive() > 24 * 60 * 60 * 1000) {
+      if (match.timeAlive() > MatchMaxAliveTime) {
         matchIdsToClear.push(matchId);
       }
     });
@@ -128,6 +130,12 @@ module.exports = function ({
       });
       match.restoreFromRestorableState(restorableMatchInfo.restorableState);
     }
+  }
+
+  function hasSomeMatchInProgress() {
+    clearOldMatches();
+
+    return matchById.size > 0;
   }
 
   function _deleteAll() {

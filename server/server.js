@@ -126,7 +126,7 @@ async function run({ config, closeServer, exitProcess }) {
     user: UserController(deps),
     match: MatchController(deps),
     card: CardController(deps),
-    git: GitController({ closeServer, exitProcess }),
+    git: GitController({ ...deps, closeServer, exitProcess }),
     assets: AssetsController(deps),
     cheat: CheatController(deps),
     auth: AuthController(deps),
@@ -210,8 +210,9 @@ function setupRoutes(deps, controllers) {
     }
   });
 
-  // app.get('/test-match-restoration', async (req, res) => {
-  //     await controllers.match._testMatchRestoration();
+  // app.get("/test-match-restoration", async (req, res) => {
+  // await controllers.match._testMatchRestoration();
+  // await controllers.git.onPush(req, res);
   // });
 
   function validateDebugPassword(password) {

@@ -58,7 +58,8 @@ function DebugController(deps) {
 
   function timeAlive() {
     const startTime = matchService.getGameStartTime();
-    if (!startTime) return Infinity;
+    if (startTime === undefined || startTime === null) return Infinity;
+
     return Date.now() - startTime;
   }
 

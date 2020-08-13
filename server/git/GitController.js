@@ -5,23 +5,33 @@ const TIME_TO_PULL_GIT = 60 * 1000;
 module.exports = function (deps) {
   const closeServer = deps.closeServer;
   const exitProcess = deps.exitProcess;
+  const matchRepository = deps.matchRepository;
+
+  let currentRestartChecker;
 
   return {
     onPush,
   };
 
   async function onPush(req, res) {
-    await wait(TIME_TO_PULL_GIT);
-
-    console.info("GitController: closing server");
-    await closeServer();
-    console.info("GitController: running start server script");
-    serverStarter.installNpmPackagesAndBuildProdClient();
-    serverStarter.startServer();
-
+    clearInterval(currentRestartChecker);
     res.end();
 
-    exitProcess();
+    await wait(TIME_TO_PULL_GIT);
+
+    currentRestartChecker = setInterval(async () => {
+      if (matchRepository.hasSomeMatchInProgress()) return;
+      clearInterval(currentRestartChecker);
+
+      console.info("GitController: closing server");
+      await closeServer();
+      console.info("GitController: running start server script");
+
+      serverStarter.installNpmPackagesAndBuildProdClient();
+      serverStarter.startServer();
+
+      exitProcess();
+    }, 10 * 1000);
   }
 };
 
