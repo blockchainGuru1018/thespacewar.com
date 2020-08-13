@@ -637,3 +637,10 @@ $shakeDelay: 0s;
     }
   } 
 }
+
+.no-flick {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform:translateZ(0.1px);
+  transform: translateZ(0.1px);
+}

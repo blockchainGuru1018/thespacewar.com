@@ -267,7 +267,13 @@
               </div>
             </div>
 
-            <div :class="['field-discardPile', { flash: flashDiscardPile }]">
+            <div
+              :class="[
+                'field-discardPile',
+                'field-discardPile-player',
+                { flash: flashDiscardPile },
+              ]"
+            >
               <div
                 v-if="!playerTopDiscardCard"
                 class="card card-placeholder card-emptyDeck"
@@ -943,22 +949,48 @@ module.exports = {
         y: event.clientY,
       };
     },
-    playerCardsCollideWithTimer() {
+    playerCardsCollideWithTimer({ opponentCards = false } = {}) {
       // playerStation-handSizeRow
       // opponentStation-handSizeRow
       const rect1 = (
-        document.getElementsByClassName("field")[0] || {}
+        document.getElementsByClassName(
+          opponentCards
+            ? "opponentStation-handSizeRow"
+            : "playerStation-handSizeRow"
+        )[0] || {}
       ).getBoundingClientRect();
       const rect2 = (
-        document.getElementsByClassName("matchHeader-playerBanner")[0] || {}
+        document.getElementsByClassName(
+          opponentCards
+            ? "matchHeader-opponentBanner"
+            : "matchHeader-playerBanner"
+        )[0] || {}
       ).getBoundingClientRect();
-      const areOverlapping = !(
+      return !(
         rect1.right < rect2.left ||
         rect1.left > rect2.right ||
         rect1.bottom < rect2.top ||
         rect1.top > rect2.bottom
       );
-
+    },
+    isFieldFitsViewPort() {
+      const rect1 = (
+        document.getElementsByClassName("field-discardPile-player")[0] || {}
+      ).getBoundingClientRect();
+      return !(
+        rect1.top > 0 &&
+        rect1.left >= 0 &&
+        rect1.right <=
+          (window.innerWidth || document.documentElement.clientWidth) &&
+        rect1.bottom <=
+          (window.innerHeight || document.documentElement.clientHeight)
+      );
+    },
+    adjustZoom() {
+      const areOverlapping =
+        this.playerCardsCollideWithTimer() ||
+        this.playerCardsCollideWithTimer({ opponentCards: true }) ||
+        this.isFieldFitsViewPort();
       if (areOverlapping) {
         const root = document.documentElement;
         let ZPosition = parseInt(
@@ -966,9 +998,9 @@ module.exports = {
             .getPropertyValue("--z-position")
             .replace("px", "")
         );
-        ZPosition = Math.max(-250, Math.min(10, ZPosition - 1));
+        ZPosition = Math.max(-50, Math.min(10, ZPosition - 1));
         root.style.setProperty("--z-position", ZPosition + "px");
-        setTimeout(this.playerCardsCollideWithTimer, 0);
+        setTimeout(this.adjustZoom, 0);
       }
     },
     validateBG() {
@@ -1007,7 +1039,7 @@ module.exports = {
       passive: false,
     });
     document.addEventListener("touchend", this.documentTouchend);
-    this.playerCardsCollideWithTimer();
+    this.adjustZoom();
   },
   destroyed() {
     document.removeEventListener("mousemove", this.mousemove);

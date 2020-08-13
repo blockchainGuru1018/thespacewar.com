@@ -15,6 +15,10 @@ $durationCardsMarginToOtherCards: 35px;
   -webkit-user-select: none;
   user-select: none;
 
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform:translateZ(0.1px);
+  transform: translateZ(0.1px); /* needs an actual value */
   &--turnedAround {
     transform: rotate(180deg);
   }
@@ -92,6 +96,10 @@ $durationCardsMarginToOtherCards: 35px;
   &--hoveredOver, &:hover {
     background: $homeZoneCardGhost-hoverBackgroundColor;
   }
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform:translateZ(0.1px);
+  transform: translateZ(0.1px); 
 }
 
 .card-ghost.card-ghost--deactivatedZone {
@@ -119,7 +127,10 @@ $durationCardsMarginToOtherCards: 35px;
   position: absolute;
   top: 45%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translate(-50%, -50%) translateZ(0.1px);
+  transform: translate(-50%, -50%) translateZ(0.1px);
   width: 100%;
   z-index: 2;
   height: calc(#{$scaledCardHeight} * .6);
@@ -184,6 +195,11 @@ $durationCardsMarginToOtherCards: 35px;
   bottom: 0;
   display: flex;
   flex-direction: column;
+  
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform:translateZ(0.1px);
+  transform: translateZ(0.1px); /* needs an actual value */
 }
 
 .actionOverlays {
@@ -281,6 +297,7 @@ $durationCardsMarginToOtherCards: 35px;
   &:hover {
     & .actionOverlay {
       visibility: visible;
+    
     }
   }
 }
