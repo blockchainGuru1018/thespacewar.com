@@ -58,7 +58,7 @@ describe("attack phase", () => {
     dispatch(
       "stateChanged",
       FakeState({
-        turn: 1,
+        turn: 3,
         currentPlayer: "P1A",
         phase: "attack",
         events: [
@@ -84,13 +84,13 @@ describe("attack phase", () => {
     );
   });
 
-  it("should see end turn modal confirmation when cards in opponent zone still can perform actions", async () => {
+  it("should not see end turn modal confirmation when cards in opponent zone still can move back", async () => {
     const { dispatch, showPage } = controller;
     showPage();
     dispatch(
       "stateChanged",
       FakeState({
-        turn: 1,
+        turn: 3,
         currentPlayer: "P1A",
         phase: "attack",
         events: [
@@ -102,18 +102,13 @@ describe("attack phase", () => {
           }),
         ],
         cardsInOpponentZone: [createCard({ id: "C1A" })],
-        stationCards: [{ place: "draw" }],
       })
     );
 
     await timeout();
 
     await click(".nextPhaseButton-endTurn");
-    assert.elementCount(".confirmDialogHeader", 1);
-    assert.elementText(
-      ".confirmDialogContent",
-      `You have a spaceship or missile that has not moved and/or attacked. Are you sure you want to end your turn?`
-    );
+    assert.elementCount(".confirmDialogHeader", 0);
   });
 
   it(

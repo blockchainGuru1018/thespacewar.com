@@ -284,6 +284,7 @@ module.exports = function (deps) {
       state.timeNow = Date.now();
     }, 250);
   }
+
   function isFirstPlayer(state) {
     return state.playerOrder[0] === state.ownUser.id;
   }
@@ -429,6 +430,7 @@ module.exports = function (deps) {
       actionStationCardsCount: state.playerStation.actionCards.length,
     });
   }
+
   function playerHasCardThatCanCounter(state, getters) {
     return (
       getters.queryBoard.playerHasCardThatCanCounter() ||
@@ -1129,15 +1131,10 @@ module.exports = function (deps) {
   }
 
   function getCardsPendingForAction(state, getters) {
-    return [...state.playerCardsInZone, ...state.playerCardsInOpponentZone]
+    const cardsInZone = [...state.playerCardsInZone]
       .map((cardData) => getters.createCard(cardData))
-      .filter((card) => {
-        const cardInPlay = PlayerCardInPlay({
-          card,
-          attackerSelected: false,
-          canThePlayer: getters.canThePlayer,
-          opponentStateService: getters.opponentStateService,
-        });
+      .map((card) => buildCardInPlay(card, getters))
+      .filter((cardInPlay) => {
         return (
           cardInPlay.canMove() ||
           cardInPlay.canAttack() ||
@@ -1145,6 +1142,28 @@ module.exports = function (deps) {
           cardInPlay.canRepair()
         );
       });
+
+    const cardsInOpponentZone = [...state.playerCardsInOpponentZone]
+      .map((cardData) => getters.createCard(cardData))
+      .map((card) => buildCardInPlay(card, getters))
+      .filter((cardInPlay) => {
+        return (
+          cardInPlay.canAttack() ||
+          cardInPlay.canBeSacrificed() ||
+          cardInPlay.canRepair()
+        );
+      });
+
+    return [...cardsInZone, ...cardsInOpponentZone];
+  }
+
+  function buildCardInPlay(card, { canThePlayer, opponentStateService }) {
+    return PlayerCardInPlay({
+      card,
+      attackerSelected: false,
+      canThePlayer: canThePlayer,
+      opponentStateService: opponentStateService,
+    });
   }
 
   function placeCardInZone({ state }, card) {
@@ -1216,6 +1235,7 @@ module.exports = function (deps) {
   function selectAsAttacker({ state }, card) {
     state.attackerCardId = card.id;
   }
+
   function selectAsAttackerWithCollision({ state, commit }, card) {
     state.attackerCardId = card.id;
     commit("updateUsingCollision", true);
