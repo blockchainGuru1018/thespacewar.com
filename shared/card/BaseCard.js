@@ -72,6 +72,14 @@ class BaseCard {
   }
 
   get attack() {
+    if (this._card.usingCollision) {
+      return this.attackBoost;
+    } else {
+      return this._card.attack + this.attackBoost;
+    }
+  }
+
+  get attackBoost() {
     if (
       this._cardEffect.attackBoostForCollision(this._card.usingCollision) > 0
     ) {
@@ -79,12 +87,8 @@ class BaseCard {
         this._card.usingCollision
       );
     } else {
-      return this._card.attack + this.attackBoost;
+      return this.attackBoostForCardType + this.attackBoostFromCommander;
     }
-  }
-
-  get attackBoost() {
-    return this.attackBoostForCardType + this.attackBoostFromCommander;
   }
 
   get attackBoostForCardType() {

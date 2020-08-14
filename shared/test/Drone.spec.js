@@ -16,6 +16,7 @@ describe("Drone ", () => {
     const card = new createCard(Drone, {
       card: {
         attack: 1,
+        usingCollision: true,
       },
       cardEffect: {
         attackBoostForCollision: () => 3,
