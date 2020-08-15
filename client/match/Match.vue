@@ -1092,9 +1092,9 @@ module.exports = {
       url("https://uploads.staticjw.com/ba/banta/game-bg-2500x1080-2-optimized.jpg");
     background-color: #000;
 
-    background-size: auto 100%;
+    background-size: auto 100vh;
     animation-name: bghorizontal;
-    animation-duration: 360s;
+    animation-duration: 320s;
     animation-iteration-count: infinite;
 
     .grid-bg {
@@ -1114,7 +1114,7 @@ module.exports = {
     background-position: 0 0;
   }
   50% {
-    background-position: calc(((100% * 2500) / 1080) - 120%) 0;
+    background-position: calc(100vw - (100vh * 2.3)) 0; /*  2.3 is porcentage of width respect of height of the image size*/
   }
   100% {
     background-position: 0 0;
