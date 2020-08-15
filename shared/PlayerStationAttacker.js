@@ -88,7 +88,7 @@ module.exports = function ({
     const attackerCard = playerStateService.createBehaviourCard(
       attackerCardData
     );
-    if (attackerCard.type === "missile") {
+    if (attackerCard.type === "missile" || usingCollision) {
       playerStateService.removeCard(attackerCardId);
       playerStateService.discardCard(attackerCardData);
     }
