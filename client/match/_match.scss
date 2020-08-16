@@ -17,6 +17,31 @@
      -moz-box-shadow: $shadow;       
           box-shadow: $shadow;
 }
+@mixin perspective($perspectiveValue) {
+	-webkit-perspective:$perspectiveValue;
+	-moz-perspective:$perspectiveValue;
+	perspective:$perspectiveValue;
+	-webkit-transform-style:preserve-3d;
+	-moz-transform-style:preserve-3d;
+	transform-style:preserve-3d;
+}
+
+@mixin backface-visibility() {
+  -webkit-backface-visibility: hidden;
+	-moz-backface-visibility: hidden;
+	backface-visibility: hidden; 
+}
+@mixin transform($transform){
+  -webkit-transform: $transform;
+  -moz-transform: $transform;
+  transform: $transform;
+}
+
+@mixin transform-style ($transformStyle){
+  -webkit-transform-style: $transformStyle;
+	-moz-transform-style: $transformStyle;
+	transform-style: $transformStyle; 
+}
 $color_height:  1px 1px 1px rgba(202, 40, 40, 0.9),
                 1px 1px 1px rgba(202, 40, 40, 0.9),
                 1px 1px 1px rgba(20,20,20, 0.9),
@@ -558,31 +583,42 @@ $shakeDelay: 0s;
   
 }
 .perspectiveParentLeft {
-    perspective:600px;
+    @include perspective(600px);
     perspective-origin: right;
     .perspectiveChild {
-      transform: rotateX(15deg) translateZ(10px);
-      transform-style: preserve-3d;
-      
+      @include transform( rotateX(15deg) translateZ(10px));
+      @include transform-style( preserve-3d);
+      * {
+        
+      @include transform-style( preserve-3d);
+      }
     }
   }
 .perspectiveParentRight {
-    perspective:600px;
+  @include perspective(600px);
     perspective-origin: left;
     .perspectiveChild {
-      transform: rotateX(15deg) translateZ(10px);
-      transform-style: preserve-3d;
+      @include transform( rotateX(15deg) translateZ(10px));
+      @include transform-style( preserve-3d);
       
+      * {
+        
+        @include transform-style( preserve-3d);
+        }
     }
   }
 .perspectiveParentCenter {
-    perspective:600px;
+  @include perspective(600px);
     perspective-origin: bottom;
     .perspectiveChild {
       // transform: rotateX(15deg) translateZ(10px);
-      transform: rotateX(15deg) translateZ(var(--z-position)) translateY(calc(4 * var(--z-position)));
-      transform-style: preserve-3d;
+      @include transform( rotateX(15deg) translateZ(var(--z-position)) translateY(calc(4 * var(--z-position))));
+      @include transform-style( preserve-3d);
       
+      * {
+        
+        @include transform-style( preserve-3d);
+        }
     }
   }
 
@@ -615,7 +651,7 @@ $shakeDelay: 0s;
     
   @for $i from 1 through 15 {
     &.h-#{$i}{
-      transform: translateZ(calc(1px * #{$i}));
+      @include transform( translateZ(calc(1px * #{$i})));
       pointer-events: none;
       @include box-shadow(nth($color_height,$i));
     }
@@ -631,7 +667,7 @@ $shakeDelay: 0s;
     
   @for $i from 1 through 15 {
     &.h-#{$i}{
-      transform: translateZ(calc(1px * #{$i}));
+      @include transform( translateZ(calc(1px * #{$i})));
       pointer-events: none;
       @include box-shadow(nth($opponent_color_height,$i));
     }
@@ -643,4 +679,8 @@ $shakeDelay: 0s;
   backface-visibility: hidden;
   -webkit-transform:translateZ(0.1px);
   transform: translateZ(0.1px);
+}
+
+.flattenComponent > .vue-portal-target {
+  transform-style: flat;
 }

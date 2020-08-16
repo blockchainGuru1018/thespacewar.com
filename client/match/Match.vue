@@ -159,16 +159,16 @@
                   class="card card-faceDown pile-3d"
                   :style="
                     'transform: translateZ(calc(1px * ' +
-                      opponentCardPileHeight +
-                      '))'
+                    opponentCardPileHeight +
+                    '))'
                   "
                 >
                   <div
                     class="actionOverlays"
                     :style="
                       'transform: translateZ(calc(1px * ' +
-                      opponentCardPileHeight +
-                        '))'
+                        opponentCardPileHeight +
+                      '))'
                     "
                   >
                     <div
@@ -200,8 +200,8 @@
                   class="drawPile-cardCount drawPile-cardCountText"
                   :style="
                     'transform: translateZ(calc(1px * ' +
-                    opponentCardPileHeight +
-                    '))'
+                      opponentCardPileHeight +
+                      '))'
                   "
                 >
                   {{ opponentCardsInDeckCount }}
@@ -224,8 +224,8 @@
                   class="card card-faceDown pile-3d"
                   :style="
                     'transform: translateZ(calc(1px * ' +
-                    playerCardPileHeight +
-                    '))'
+                      playerCardPileHeight +
+                      '))'
                   "
                 >
                   <div class="actionOverlays">
@@ -253,8 +253,8 @@
                   class="drawPile-cardCount drawPile-cardCountText"
                   :style="
                     'transform: translateZ(calc(1px * ' +
-                    playerCardPileHeight +
-                    '))'
+                      playerCardPileHeight +
+                      '))'
                   "
                 >
                   {{ playerCardsInDeckCount }}
@@ -362,7 +362,9 @@
                 Station cards
               </div>
             </div>
-            <div class="field-stationRow playerStation-drawRow">
+            <div
+              class="field-stationRow playerStation-drawRow flattenComponent"
+            >
               <portal-target name="stationDrawRow" />
               <station-card
                 v-for="card in playerVisibleDrawStationCards"
@@ -380,7 +382,9 @@
                 />
               </StationCardWrapper>
             </div>
-            <div class="field-stationRow playerStation-actionRow">
+            <div
+              class="field-stationRow playerStation-actionRow flattenComponent"
+            >
               <portal-target name="stationActionRow" />
               <station-card
                 v-for="card in playerVisibleActionStationCards"
@@ -398,7 +402,9 @@
                 />
               </StationCardWrapper>
             </div>
-            <div class="field-stationRow playerStation-handSizeRow">
+            <div
+              class="field-stationRow playerStation-handSizeRow flattenComponent"
+            >
               <portal-target name="stationHandSizeRow" />
               <station-card
                 v-for="card in playerVisibleHandSizeStationCards"
