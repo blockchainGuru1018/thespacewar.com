@@ -47,9 +47,9 @@
       <div
         v-if="
           overworkContainerVisible ||
-            perfectPlanContainerVisible ||
-            findAcidProjectileContainerVisible ||
-          naaloxDormantEffectsContainerVisible
+          perfectPlanContainerVisible ||
+          findAcidProjectileContainerVisible ||
+            naaloxDormantEffectsContainerVisible
         "
         class="overworkContainer"
       >
@@ -220,6 +220,7 @@ export default {
       confirmModalContentText: "",
       nextTurnValidationIndex: 0,
       showOnlyConfirm: false,
+      isMobileAndIsPortrait: false,
     };
   },
   computed: {
@@ -374,6 +375,17 @@ export default {
         );
       }
     },
+    isMobileAndIsPortrait(_new, _old) {
+      if (_old === false && _new === true) {
+        // TODO only to be clear, but also could be if(_new && (_new && !_old))
+        this.displayConfirmationModal(
+          "Please rotate your device to landscape.",
+          true
+        );
+      } else {
+        this.displayConfirmLog = false;
+      }
+    },
   },
   methods: {
     ...mapActions([
@@ -478,6 +490,15 @@ export default {
       //TODO Should use new expandedCard component instead!
       this.enlargedCardVisible = true;
     },
+  },
+  mounted() {
+    if (window.orientation > -1) {
+      if (window.orientation == 0) this.isMobileAndIsPortrait = true;
+      window.addEventListener("orientationchange", () => {
+        if (window.orientation == 0) this.isMobileAndIsPortrait = true;
+        else this.isMobileAndIsPortrait = false;
+      });
+    }
   },
 };
 </script>

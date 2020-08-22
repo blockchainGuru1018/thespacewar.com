@@ -582,6 +582,16 @@ $shakeDelay: 0s;
 
   
 }
+.mobileOnPortrait {
+  display: block;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background: rgba(0,0,0,0);
+}
 .perspectiveParentLeft {
     @include perspective(600px);
     perspective-origin: right;

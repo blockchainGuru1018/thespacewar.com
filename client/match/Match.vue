@@ -159,16 +159,16 @@
                   class="card card-faceDown pile-3d"
                   :style="
                     'transform: translateZ(calc(1px * ' +
-                    opponentCardPileHeight +
-                    '))'
+                      opponentCardPileHeight +
+                      '))'
                   "
                 >
                   <div
                     class="actionOverlays"
                     :style="
                       'transform: translateZ(calc(1px * ' +
-                        opponentCardPileHeight +
-                      '))'
+                      opponentCardPileHeight +
+                        '))'
                     "
                   >
                     <div
@@ -200,8 +200,8 @@
                   class="drawPile-cardCount drawPile-cardCountText"
                   :style="
                     'transform: translateZ(calc(1px * ' +
-                      opponentCardPileHeight +
-                      '))'
+                    opponentCardPileHeight +
+                    '))'
                   "
                 >
                   {{ opponentCardsInDeckCount }}
@@ -224,8 +224,8 @@
                   class="card card-faceDown pile-3d"
                   :style="
                     'transform: translateZ(calc(1px * ' +
-                      playerCardPileHeight +
-                      '))'
+                    playerCardPileHeight +
+                    '))'
                   "
                 >
                   <div class="actionOverlays">
@@ -253,8 +253,8 @@
                   class="drawPile-cardCount drawPile-cardCountText"
                   :style="
                     'transform: translateZ(calc(1px * ' +
-                      playerCardPileHeight +
-                      '))'
+                    playerCardPileHeight +
+                    '))'
                   "
                 >
                   {{ playerCardsInDeckCount }}
