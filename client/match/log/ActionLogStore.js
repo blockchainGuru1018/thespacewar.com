@@ -3,7 +3,7 @@ export default function () {
     namespaced: true,
     name: "actionLog",
     state: {
-      expanded: true,
+      expanded: false,
     },
     actions: {
       toggleExpanded,
