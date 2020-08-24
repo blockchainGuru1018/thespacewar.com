@@ -19,7 +19,10 @@ module.exports = function PlayerInactivityService({
     const playerState = matchService.getPlayerState(playerId);
     const gameStartTime = matchService.getState().gameStartTime;
 
-    if (matchService.getCurrentPlayer() === playerId) {
+    if (
+      matchService.getCurrentPlayer() === playerId ||
+      matchService.getCurrentPlayer() === "BOT"
+    ) {
       validateTimestampsForPlayer(playerId, playerState, gameStartTime);
     }
 
