@@ -118,6 +118,7 @@ module.exports = {
     ...mapRequirementState(["selectedStationCardIdsForRequirement"]),
     ...mapGetters([
       "attackerCanAttackStationCards",
+      "attackerDamageGoThroughShields",
       "actionPoints2",
       "createCard",
       "moveStationCard",
@@ -216,9 +217,10 @@ module.exports = {
         this.isOpponentStationCard &&
         this.attackerCardId &&
         this.attackerCanAttackStationCards &&
-        !this.opponentCardsInZone.some((c) =>
+        (!this.opponentCardsInZone.some((c) =>
           this.createCard(c).stopsStationAttack()
-        )
+        ) ||
+          this.attackerDamageGoThroughShields)
       );
     },
     canBeSelectedForRepair() {

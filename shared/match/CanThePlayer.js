@@ -131,10 +131,12 @@ class CanThePlayer {
     return true;
   }
 
-  attackStationCards() {
+  attackStationCards(card) {
     //Move to RuleService
-    return !this._opponentStateService.hasMatchingCardInHomeZone((c) =>
-      c.stopsStationAttack()
+    return (
+      !this._opponentStateService.hasMatchingCardInHomeZone((c) =>
+        c.stopsStationAttack()
+      ) || card.damageGoesThroughShield
     );
   }
 

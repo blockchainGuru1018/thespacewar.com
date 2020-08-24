@@ -6,6 +6,10 @@ module.exports = class Drone extends BaseCard {
     super(deps);
   }
 
+  get damageGoesThroughShield() {
+    return true;
+  }
+
   get attackBoostFromCommander() {
     const isPlayingWithCrakux =
       this._playerStateService.getCurrentCommander() === Commander.Crakux;

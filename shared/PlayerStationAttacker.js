@@ -18,23 +18,42 @@ module.exports = function ({
     playerId,
     { attackerCardId, targetStationCardIds, usingCollision }
   ) {
-    const cannotAttackStationCards = canThePlayer.attackStationCards();
+    const attackerCard = playerStateService.createBehaviourCardById(
+      attackerCardId
+    );
+    attackerCard.usingCollision = usingCollision;
+
+    const cannotAttackStationCards = canThePlayer.attackStationCards(
+      attackerCard
+    );
+
     if (!cannotAttackStationCards)
       throw new CheatError("Cannot attack station cards");
-    const attackerCardData = playerStateService.findCard(attackerCardId);
-    attackerCardData.usingCollision = usingCollision;
+
     const opponentStationCards = opponentStateService.getStationCards();
+
+    const totalOpponentShieldCards = opponentStateService.getMatchingBehaviourCards(
+      (c) => c.stopsStationAttack()
+    );
+
+    const totalShieldDamage = totalOpponentShieldCards.reduce(
+      (acc, card) => acc + card.defense,
+      0
+    );
+
     const unflippedOpponentStationCardsCount = opponentStateService.getUnflippedStationCardsCount();
+
+    if (totalShieldDamage > attackerCard.attack) {
+      throw new CheatError("Your damage cant goes through actives shields");
+    }
+
     if (
       unflippedOpponentStationCardsCount > targetStationCardIds.length &&
-      attackerCardData.attack > targetStationCardIds.length
+      attackerCard.attack - totalShieldDamage > targetStationCardIds.length
     ) {
       throw new CheatError("Need more target station cards to attack");
     }
 
-    const attackerCard = playerStateService.createBehaviourCard(
-      attackerCardData
-    );
     if (!attackerCard.canAttackStationCards()) {
       throw new CheatError("Cannot attack station");
     }
@@ -92,5 +111,14 @@ module.exports = function ({
       playerStateService.removeCard(attackerCardId);
       playerStateService.discardCard(attackerCardData);
     }
+
+    const totalOpponentShieldCards = opponentStateService.getMatchingBehaviourCards(
+      (c) => c.stopsStationAttack()
+    );
+
+    totalOpponentShieldCards.forEach((shieldCard) => {
+      opponentStateService.removeCard(shieldCard.id);
+      // opponentStateService.discardCard(shieldCard);
+    });
   }
 };

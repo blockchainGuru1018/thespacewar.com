@@ -90,7 +90,7 @@
                 "name": "Nuclear Missile",
                 "price": "2",
                 "type_card": "red",
-                "detail": "Slow (each turn can either move or attack but not both)",
+                "detail": "Slow (each turn can either move or attack but not both).\r\nDamage goes through shield.",
                 "defense": "3",
                 "attack": "10",
                 "number_copies": "1",
@@ -524,7 +524,7 @@
                 "name": "Alien Missile",
                 "price": "1",
                 "type_card": "red",
-                "detail": "Slow (each turn can either move or attack but not both).",
+                "detail": "Slow (each turn can either move or attack but not both).\r\nDamage goes through shield.",
                 "defense": "1",
                 "attack": "5",
                 "number_copies": "3",
@@ -970,7 +970,7 @@
                 "name": "Death Ray, Charged",
                 "price": "X",
                 "type_card": "red",
-                "detail": "Attack value of X. Place on Starship. Starship can launch next turn instead of doing normal attack. Long distance.",
+                "detail": "Attack value of X. Place on Starship. Starship can launch next turn instead of doing normal attack. Long distance. Damage goes through shield.",
                 "defense": "-",
                 "attack": "X",
                 "number_copies": "2",
@@ -1027,5 +1027,5 @@
             }
         ]
     },
-    "saveTime": 1597282630375
+    "saveTime": 1597678702426
 }
