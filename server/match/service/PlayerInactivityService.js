@@ -31,7 +31,7 @@ module.exports = function PlayerInactivityService({
   }
 
   function validateTimestampsForPlayer(playerId, playerState, gameStartTime) {
-    if (playerState && playerState.phase !== PHASES.wait) {
+    if (playerState) {
       if (playerAsBeenInactiveForMaxPeriod(playerState.events, gameStartTime)) {
         logger.log(
           `player ${playerId} was forced to retreat because of inactivity`
