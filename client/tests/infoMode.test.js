@@ -36,15 +36,15 @@ test("when toggle info mode should show first step in tutorial", async () => {
   assert.elementCount('[t-id="infoMode-step0"]', 1);
 });
 
-test("when toggle info mode should collapse action log", async () => {
-  await renderWithState({
-    actionLogEntries: [{ action: "played", text: "" }],
-  });
+// test("when toggle info mode should collapse action log", async () => {
+//   await renderWithState({
+//     actionLogEntries: [{ action: "played", text: "" }],
+//   });
 
-  await click(".toggleInfoMode");
+//   await click(".toggleInfoMode");
 
-  assert.elementHasClass(".actionLog", "actionLog--collapsed");
-});
+//   assert.elementHasClass(".actionLog" /*, "actionLog--collapsed"*/);
+// });
 
 test("when in info mode and click toggle button again should hide tutorial", async () => {
   await toggleInfoMode();
@@ -84,18 +84,18 @@ test("when go to last slide in tutorial and click anywhere should hide tutorial"
   assert.elementCount(".infoMode", 0);
 });
 
-test("when finishes tutorial should expand action log", async () => {
-  await toggleInfoMode();
+// test("when finishes tutorial should expand action log", async () => {
+//   await toggleInfoMode();
 
-  const amountOfStepsInTutorial = TutorialSteps.InOrder.length;
-  await clickTimes(".infoMode", amountOfStepsInTutorial);
+//   const amountOfStepsInTutorial = TutorialSteps.InOrder.length;
+//   await clickTimes(".infoMode", amountOfStepsInTutorial);
 
-  refute.elementHasClass(
-    ".actionLog",
-    "actionLog--collapsed",
-    "Action log is NOT expanded"
-  );
-});
+//   refute.elementHasClass(
+//     ".actionLog",
+//     "actionLog--collapsed",
+//     "Action log is NOT expanded"
+//   );
+// });
 
 async function toggleInfoMode() {
   await renderWithState({});
