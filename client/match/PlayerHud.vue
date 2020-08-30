@@ -7,7 +7,7 @@
       >
         <button
           v-if="readyButtonVisible"
-          class="readyButton playerHud-phaseText nextPhaseButton nextPhaseButton-inTheCenter"
+          class="readyButton playerHud-phaseText nextPhaseButton nextPhaseButton-inTheCenter enablePointerEvent"
           @click="readyClick"
         >
           Ready
@@ -21,19 +21,19 @@
           <button
             v-if="nextPhaseButtonText"
             :disabled="nextPhaseButtonDisabled"
-            class="playerHud-phaseText nextPhaseButton nextPhaseButton-onTheLeft"
+            class="playerHud-phaseText nextPhaseButton nextPhaseButton-onTheLeft enablePointerEvent"
             @click="nextPhaseClick"
           >
             {{ nextPhaseButtonText }}
           </button>
           <div v-else-if="endTurnButtonVisible">
-            <div class="guideText-phaseButton">
+            <div class="guideText-phaseButton enablePointerEvent">
               Click on your spaceship(s) or missile(s) <br />
               and select move and/or attack.
             </div>
             <button
               :disabled="nextPhaseButtonDisabled"
-              class="playerHud-phaseText nextPhaseButton nextPhaseButton-endTurn nextPhaseButton-onTheLeft"
+              class="playerHud-phaseText nextPhaseButton nextPhaseButton-endTurn nextPhaseButton-onTheLeft enablePointerEvent"
               @click="nextPhaseClick"
             >
               End turn
@@ -47,16 +47,16 @@
       <div
         v-if="
           overworkContainerVisible ||
-          perfectPlanContainerVisible ||
-          findAcidProjectileContainerVisible ||
-            naaloxDormantEffectsContainerVisible
+            perfectPlanContainerVisible ||
+            findAcidProjectileContainerVisible ||
+          naaloxDormantEffectsContainerVisible
         "
         class="overworkContainer"
       >
         <button
           v-if="overworkContainerVisible"
           title="Your opponent may flip 1 of your station cards & you receive 2 action points"
-          class="overwork darkButton"
+          class="overwork darkButton enablePointerEvent"
           @click="overwork"
         >
           Overwork
@@ -65,7 +65,7 @@
         <button
           v-if="perfectPlanContainerVisible"
           title="Your opponent may flip 2 of your station cards & you may select any card to put in your hand"
-          class="perfectPlan darkButton"
+          class="perfectPlan darkButton enablePointerEvent"
           @click="perfectPlan"
         >
           Perfect Plan
@@ -82,7 +82,7 @@
         <button
           v-if="this.playerNaaloxDormantEffect.canIssueReviveDrone()"
           title="You can bring back a drone from your discard pile"
-          class="perfectPlan darkButton"
+          class="perfectPlan darkButton enablePointerEvent"
           @click="naaloxReviveDrone"
         >
           Revive Drone
@@ -90,7 +90,7 @@
         <button
           v-if="this.playerNaaloxDormantEffect.canIssueRepairStation()"
           title="You can fix a damaged station card"
-          class="perfectPlan darkButton"
+          class="perfectPlan darkButton enablePointerEvent"
           @click="selectNaaloxAsRepairCommander"
         >
           Repair Station Card
@@ -696,5 +696,8 @@ export default {
   text-align: center;
   font-weight: bold;
   font-size: x-large;
+}
+.enablePointerEvent {
+  pointer-events: auto;
 }
 </style>

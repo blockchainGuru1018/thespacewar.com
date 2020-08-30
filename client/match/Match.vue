@@ -53,31 +53,34 @@
           >
             <div class="field-stationRow">
               <station-card
-                v-for="card in opponentStation.drawCards"
+                v-for="(card, index) in opponentStation.drawCards"
                 :key="card.id"
                 :is-holding-card="!!holdingCard"
                 :is-opponent-station-card="true"
                 :station-card="card"
+                :z-height-class="'h-' + index"
               />
               <StationCardWrapper :transparent="true" />
             </div>
             <div class="field-stationRow">
               <station-card
-                v-for="card in opponentStation.actionCards"
+                v-for="(card, index) in opponentStation.actionCards"
                 :key="card.id"
                 :is-holding-card="!!holdingCard"
                 :is-opponent-station-card="true"
                 :station-card="card"
+                :z-height-class="'h-' + index"
               />
               <StationCardWrapper :transparent="true" />
             </div>
             <div class="field-stationRow opponentStation-handSizeRow">
               <station-card
-                v-for="card in opponentStation.handSizeCards"
+                v-for="(card, index) in opponentStation.handSizeCards"
                 :key="card.id"
                 :is-holding-card="!!holdingCard"
                 :is-opponent-station-card="true"
                 :station-card="card"
+                :z-height-class="'h-' + index"
               />
               <StationCardWrapper :transparent="true" />
             </div>
@@ -159,16 +162,16 @@
                   class="card card-faceDown pile-3d"
                   :style="
                     'transform: translateZ(calc(1px * ' +
-                      opponentCardPileHeight +
-                      '))'
+                    opponentCardPileHeight +
+                    '))'
                   "
                 >
                   <div
                     class="actionOverlays"
                     :style="
                       'transform: translateZ(calc(1px * ' +
-                      opponentCardPileHeight +
-                        '))'
+                        opponentCardPileHeight +
+                      '))'
                     "
                   >
                     <div
@@ -200,8 +203,8 @@
                   class="drawPile-cardCount drawPile-cardCountText"
                   :style="
                     'transform: translateZ(calc(1px * ' +
-                    opponentCardPileHeight +
-                    '))'
+                      opponentCardPileHeight +
+                      '))'
                   "
                 >
                   {{ opponentCardsInDeckCount }}
@@ -224,8 +227,8 @@
                   class="card card-faceDown pile-3d"
                   :style="
                     'transform: translateZ(calc(1px * ' +
-                    playerCardPileHeight +
-                    '))'
+                      playerCardPileHeight +
+                      '))'
                   "
                 >
                   <div class="actionOverlays">
@@ -253,8 +256,8 @@
                   class="drawPile-cardCount drawPile-cardCountText"
                   :style="
                     'transform: translateZ(calc(1px * ' +
-                    playerCardPileHeight +
-                    '))'
+                      playerCardPileHeight +
+                      '))'
                   "
                 >
                   {{ playerCardsInDeckCount }}
@@ -367,11 +370,12 @@
             >
               <portal-target name="stationDrawRow" />
               <station-card
-                v-for="card in playerVisibleDrawStationCards"
+                v-for="(card, index) in playerVisibleDrawStationCards"
                 :key="card.id"
                 :is-holding-card="!!holdingCard"
                 :station-card="card"
                 station-row="draw"
+                :z-height-class="'h-' + index"
               />
               <StationCardWrapper :transparent="!drawStationCardGhostVisible">
                 <CardGhost
@@ -387,11 +391,12 @@
             >
               <portal-target name="stationActionRow" />
               <station-card
-                v-for="card in playerVisibleActionStationCards"
+                v-for="(card, index) in playerVisibleActionStationCards"
                 :key="card.id"
                 :is-holding-card="!!holdingCard"
                 :station-card="card"
                 station-row="action"
+                :z-height-class="'h-' + index"
               />
               <StationCardWrapper :transparent="!actionStationCardGhostVisible">
                 <CardGhost
@@ -407,11 +412,12 @@
             >
               <portal-target name="stationHandSizeRow" />
               <station-card
-                v-for="card in playerVisibleHandSizeStationCards"
+                v-for="(card, index) in playerVisibleHandSizeStationCards"
                 :key="card.id"
                 :is-holding-card="!!holdingCard"
                 :station-card="card"
                 station-row="handSize"
+                :z-height-class="'h-' + index"
               />
               <StationCardWrapper
                 :transparent="!handSizeStationCardGhostVisible"

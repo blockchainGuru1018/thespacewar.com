@@ -128,12 +128,16 @@ $opponent_color_height: -1px 1px 1px rgba(13,	59,	81, 1),
 }
 
 .field-dividerContent {
+  pointer-events: none;
   position: absolute;
   top: var(--gui-height-adjust);
   transform: translateY(-50%);
   left: 0;
   right: 0;
   height: 66px;
+  &button{
+    pointer-events: auto;
+  }
 }
 
 .field-player, .field-opponent {

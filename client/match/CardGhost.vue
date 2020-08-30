@@ -4,6 +4,7 @@
       :class="[
         'card',
         'card-ghost',
+        'card-ghost-adjust',
         { 'card-ghost--hoveredOver': elementHoveredOver === $el },
       ]"
       :data-location="location"
