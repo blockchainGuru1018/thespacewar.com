@@ -179,16 +179,14 @@ class BaseCard {
   }
 
   canDamageGoThroughShieldsDefense() {
-    if (!this.damageGoesThroughShield) {
-      return false;
-    }
     const totalShieldDefense = this._opponentStateService
       .getMatchingBehaviourCards((c) => c.stopsStationAttack())
       .reduce((acc, card) => acc + card.defense, 0);
 
-    if (totalShieldDefense > 0) {
+    if (totalShieldDefense > 0 && this.damageGoesThroughShield) {
       return totalShieldDefense - this.attack < 0;
     }
+
     return true;
   }
 
@@ -198,7 +196,6 @@ class BaseCard {
     if (!this.attack) return false;
     if (!this._canThePlayer.attackStationCards(this)) return false;
     if (!this.canDamageGoThroughShieldsDefense()) return false;
-
     const turn = this._matchService.getTurn();
     const isInHomeZone = this.isInHomeZone();
     const isMissile = this.type === "missile";

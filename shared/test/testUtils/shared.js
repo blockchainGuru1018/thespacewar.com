@@ -23,6 +23,7 @@ function createCard(Constructor, options = {}) {
     },
     playerRuleService: playerRuleServiceFactory.withStubs(),
     turnControl: { playerHasControlOfOpponentsTurn: () => false },
+    opponentStateService: { getMatchingBehaviourCards: (matcher) => [] },
   });
   return new Constructor(options);
 }
