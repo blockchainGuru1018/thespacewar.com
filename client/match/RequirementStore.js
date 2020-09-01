@@ -112,7 +112,9 @@ module.exports = function ({ rootStore, cardInfoRepository, matchController }) {
       : 0;
   }
 
-  function cardsLeftToSelect(state, getters) {
+  //TODO: aca deberia tener en cuenta el shield prot4ection
+  function cardsLeftToSelect(state, getters, rootState, rootGetters) {
+    console.log(rootGetters["match/attackerCard"]);
     return getters.countInFirstRequirement - getters.selectedCardsCount;
   }
   function attackerRequirement(state, getters) {

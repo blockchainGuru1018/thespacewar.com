@@ -151,6 +151,7 @@ module.exports = function (deps) {
       attackerCard,
       repairerCard,
       attackerCanAttackStationCards,
+      attackerDamageGoThroughShields,
       allPlayerCardsInOwnAndOpponentZone,
       allPlayerStationCards,
       playerUnflippedStationCardCount,
@@ -973,6 +974,13 @@ module.exports = function (deps) {
     );
   }
 
+  function attackerDamageGoThroughShields(state, getters) {
+    return (
+      !!getters.attackerCard &&
+      getters.attackerCard.canDamageGoThroughShieldsDefense()
+    );
+  }
+
   function allPlayerCardsInOwnAndOpponentZone(state) {
     return [...state.playerCardsInZone, ...state.playerCardsInOpponentZone];
   }
@@ -1354,7 +1362,7 @@ module.exports = function (deps) {
   function checkLastTimeOfInactivityForPlayer() {
     matchController.emit("checkLastTimeOfInactivityForPlayer");
   }
-
+  //TODO: aca estaria la seleccion de las cartas para atacarlas station cards deberia gacer q agarre
   function selectStationCardAsDefender({ state, getters, dispatch }, { id }) {
     const attackerCard = getters.attackerCard;
     attackerCard._card.usingCollision = state.usingCollision;
@@ -1363,9 +1371,19 @@ module.exports = function (deps) {
 
     const selectedLastStationCard =
       getters.opponentUnflippedStationCardCount === targetStationCardIds.length;
+
+    const totalOpponentShieldCards = getters.opponentStateService.getMatchingBehaviourCards(
+      (c) => c.stopsStationAttack()
+    );
+    const totalShieldDamage = totalOpponentShieldCards.reduce(
+      (acc, card) => acc + card.defense,
+      0
+    );
     const selectedMaxTargetCount =
-      targetStationCardIds.length >= attackerCard.attack;
+      targetStationCardIds.length >= attackerCard.attack - totalShieldDamage;
+
     const attackerCardId = state.attackerCardId;
+
     if (selectedMaxTargetCount || selectedLastStationCard) {
       matchController.emit("attackStationCard", {
         attackerCardId,

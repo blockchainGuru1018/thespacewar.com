@@ -27,6 +27,9 @@ module.exports = class CardFactory {
       playerServiceProvider,
     });
     const opponentId = matchService.getOpponentId(playerId);
+    const opponentStateService = this._playerServiceProvider.getStateServiceById(
+      opponentId
+    );
     const opponentEventRepository = EventRepository({
       playerId: opponentId,
       playerServiceProvider,
@@ -65,6 +68,7 @@ module.exports = class CardFactory {
         playerId
       ),
       alternativeConditions,
+      opponentStateService,
     });
   }
 };
