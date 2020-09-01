@@ -51,7 +51,7 @@
             background: transparent;
         }
         ::-webkit-scrollbar-track {
-            background: rgba(0,0,0,1); 
+            background: rgba(0,0,0,1);
         }
         ::-webkit-scrollbar-thumb{
             background: rgb(80,80,80);
@@ -69,7 +69,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="/libraries/leader-line.js"></script>
     <script type="text/javascript">
-    
+
     var root = document.documentElement;
     var scroll = function (event){
       var zoomStep = 1;
@@ -86,5 +86,16 @@
 </head>
 <body>
 <script src="index.js"></script>
+<script>
+    (function() { // Redistats, track version 1.0
+        var global_id = 2; // Global ID, don't change this.
+        var property_id = 43; // Property ID
+        var url = encodeURIComponent(window.location.href.split('#')[0]);
+        var referrer = encodeURIComponent(document.referrer);
+        var x = document.createElement('script'), s = document.getElementsByTagName('script')[0];
+        x.src = '//redistats.com/track.js?gid='+global_id+'&pid='+property_id+'&url='+url+'&referrer='+referrer;
+        s.parentNode.insertBefore(x, s);
+    })();
+</script>
 </body>
 </html>
