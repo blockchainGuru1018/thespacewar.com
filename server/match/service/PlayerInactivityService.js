@@ -19,7 +19,10 @@ module.exports = function PlayerInactivityService({
     const playerState = matchService.getPlayerState(playerId);
     const gameStartTime = matchService.getState().gameStartTime;
 
-    if (matchService.getCurrentPlayer() === playerId) {
+    if (
+      matchService.getCurrentPlayer() === playerId ||
+      matchService.getCurrentPlayer() === "BOT"
+    ) {
       validateTimestampsForPlayer(playerId, playerState, gameStartTime);
     }
 
@@ -31,7 +34,7 @@ module.exports = function PlayerInactivityService({
   }
 
   function validateTimestampsForPlayer(playerId, playerState, gameStartTime) {
-    if (playerState && playerState.phase !== PHASES.wait) {
+    if (playerState) {
       if (playerAsBeenInactiveForMaxPeriod(playerState.events, gameStartTime)) {
         logger.log(
           `player ${playerId} was forced to retreat because of inactivity`

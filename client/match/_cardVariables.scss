@@ -3,6 +3,9 @@
   --card-height: 916px;
   --player-cards-on-hand-offset: 0px;
   --z-position: 0px;
+  --mobileOnPortrait:0;
+  --gui-height-adjust: 50%;
+  --space-between-GUI-n-draw-pile: 0px
   }
 
 // 1920 x 1080 -> 19:6
@@ -16,7 +19,7 @@
 // 768x1024
 
 @media only screen and (min-device-width: 320px) 
-                   and (max-device-width: 767px) 
+                   and (max-device-width: 850px) 
                    and (orientation: portrait) {
 .opponentStationCards{
   padding-bottom: 3rem;
@@ -47,6 +50,9 @@
 .matchHeader-bannerClockText{
   margin: auto;
 }
+.mobileOnPortrait {
+  display: block;
+}
 }
 
 @media only screen and (min-device-width: 320px) 
@@ -69,7 +75,11 @@
   margin: auto;
 }
 
+.mobileOnPortrait {
+  display: none;
 }
+}
+
 $cardWidth: var(--card-width);
 $cardHeight: var(--card-height);
 

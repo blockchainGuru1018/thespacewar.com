@@ -557,13 +557,14 @@ class PlayerStateService {
     this.update((playerState) => {
       playerState.stationCards.push(stationCard);
     });
+    const card = this.createBehaviourCard(cardData);
     const currentTurn = this._matchService.getTurn();
     this.storeEvent(
       PutDownCardEvent({
         turn: currentTurn,
         location,
         cardId: cardData.id,
-        cardCost: cardData.costToPlay,
+        cardCost: card.costToPlay,
         cardCommonId: cardData.commonId,
         putDownAsExtraStationCard,
         startingStation,

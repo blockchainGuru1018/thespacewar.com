@@ -22,8 +22,8 @@
         <div
           v-if="
             stationCard.flipped &&
-              !isOpponentStationCard &&
-              createCard(stationCard.card).costInflation !== 0
+            !isOpponentStationCard &&
+            createCard(stationCard.card).costInflation !== 0
           "
           :class="['card-attackBoostIndicatorWrapper']"
         >
@@ -105,6 +105,7 @@ module.exports = {
     "isOpponentStationCard",
     "isHoldingCard",
     "stationRow",
+    "zHeightClass",
   ],
   computed: {
     ...mapState([
@@ -136,7 +137,7 @@ module.exports = {
       return this.stationCard.id;
     },
     classes() {
-      const classes = ["stationCard", "card"];
+      const classes = ["stationCard", "card", this.zHeightClass];
       if (this.selectedWithDanger) {
         classes.push("selected--danger");
       }
@@ -278,9 +279,18 @@ module.exports = {
 };
 </script>
 <style lang="scss">
+@import "../_match";
+
 .possibleTargetBorder {
   border: 2px solid #2ee62e;
   border-radius: 7px;
+}
+.stationCard {
+  @for $i from 0 through 15 {
+    &.h-#{$i} {
+      @include transform(translateZ(calc(0.1px * #{$i})) !important);
+    }
+  }
 }
 .card {
   position: relative;

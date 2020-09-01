@@ -11,7 +11,7 @@
       <option :value="'Regular'">Regular (advanced play)</option>
       <option :value="'TheSwarm'" default>The Swarm (easy play)</option>
       <option v-if="unitedStarsDeck" :value="'UnitedStars'"
-        >United Stars
+      >United Stars
       </option>
     </select>
   </div>
@@ -34,6 +34,9 @@ export default {
   mounted() {
     this.selectedDeck =
       JSON.parse(localStorage.getItem("active-deck")) || "TheSwarm";
+    if (!this.unitedStarsDeck && this.selectedDeck === "UnitedStars") {
+      this.selectedDeck = "TheSwarm";
+    }
   },
   methods: {
     onChange(event) {

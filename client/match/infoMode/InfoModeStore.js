@@ -35,9 +35,11 @@ export default function ({ rootDispatch }) {
 
   function _setVisibility({ state }, visible) {
     if (visible) {
-      collapseActionLog();
-    } else {
       expandActionLog();
+      // collapseActionLog();
+    } else {
+      collapseActionLog();
+      // expandActionLog();
     }
     state.visible = visible;
   }

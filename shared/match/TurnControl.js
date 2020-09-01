@@ -1,5 +1,6 @@
 const TakeControlEvent = require("../event/TurnControlEvent.js");
 const TargetMissed = require("../card/TargetMissed");
+const Avoid = require("../card/Avoid");
 
 module.exports = class TurnControl {
   constructor({
@@ -80,8 +81,14 @@ module.exports = class TurnControl {
       .filter((card) => card.costToPlay === 0);
   }
 
+  _hasAvoidInPlay() {
+    return [...this._playerStateService.getCardsInZone()].some(
+      (c) => c.commonId === Avoid.CommonId
+    );
+  }
+
   hasZeroCostCardsToPlay() {
-    return this._getZeroCostCards().length > 0;
+    return this._getZeroCostCards().length > 0 || this._hasAvoidInPlay();
   }
 
   canTakeControlOfTurn() {

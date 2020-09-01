@@ -128,11 +128,16 @@ $opponent_color_height: -1px 1px 1px rgba(13,	59,	81, 1),
 }
 
 .field-dividerContent {
+  pointer-events: none;
   position: absolute;
-  top: 50%;
+  top: var(--gui-height-adjust);
   transform: translateY(-50%);
   left: 0;
   right: 0;
+  height: 66px;
+  &button{
+    pointer-events: auto;
+  }
 }
 
 .field-player, .field-opponent {
@@ -152,6 +157,7 @@ $opponent_color_height: -1px 1px 1px rgba(13,	59,	81, 1),
   width: 100%;
   // padding-top: 60px; //To accommodate for opponent cards on hand and the opponents "player banner" in the top left corner
   // padding-right: 15%;
+  margin-bottom: var(--space-between-GUI-n-draw-pile);
   box-sizing: border-box;
 }
 
@@ -351,7 +357,6 @@ $opponent_color_height: -1px 1px 1px rgba(13,	59,	81, 1),
   width: 80%;
   text-align: center;
   pointer-events: none;
-
   > * {
     text-shadow: 0px -2px 0px rgba(0, 0, 0, .5),
     0px 2px 0px rgba(0, 0, 0, .5);
@@ -377,6 +382,9 @@ $opponent_color_height: -1px 1px 1px rgba(13,	59,	81, 1),
   font-size: 20px;
   font-family: "Space mono", sans-serif;
   color: rgba(255, 255, 255, .8);
+   & > button {
+     pointer-events: initial;
+   }
 }
 
 .guideText-waitingForOtherPlayer {
@@ -581,6 +589,16 @@ $shakeDelay: 0s;
   }
 
   
+}
+.mobileOnPortrait {
+  display: block;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background: rgba(0,0,0,0);
 }
 .perspectiveParentLeft {
     @include perspective(600px);

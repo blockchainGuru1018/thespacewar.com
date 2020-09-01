@@ -53,31 +53,34 @@
           >
             <div class="field-stationRow">
               <station-card
-                v-for="card in opponentStation.drawCards"
+                v-for="(card, index) in opponentStation.drawCards"
                 :key="card.id"
                 :is-holding-card="!!holdingCard"
                 :is-opponent-station-card="true"
                 :station-card="card"
+                :z-height-class="'h-' + index"
               />
               <StationCardWrapper :transparent="true" />
             </div>
             <div class="field-stationRow">
               <station-card
-                v-for="card in opponentStation.actionCards"
+                v-for="(card, index) in opponentStation.actionCards"
                 :key="card.id"
                 :is-holding-card="!!holdingCard"
                 :is-opponent-station-card="true"
                 :station-card="card"
+                :z-height-class="'h-' + index"
               />
               <StationCardWrapper :transparent="true" />
             </div>
             <div class="field-stationRow opponentStation-handSizeRow">
               <station-card
-                v-for="card in opponentStation.handSizeCards"
+                v-for="(card, index) in opponentStation.handSizeCards"
                 :key="card.id"
                 :is-holding-card="!!holdingCard"
                 :is-opponent-station-card="true"
                 :station-card="card"
+                :z-height-class="'h-' + index"
               />
               <StationCardWrapper :transparent="true" />
             </div>
@@ -152,7 +155,7 @@
 
             <div class="field-commandersAndDrawPile">
               <OpponentCommanderCards />
-              <div class="field-drawPile">
+              <div class="field-drawPile opponentDrawPile">
                 <portal-target name="opponentDrawPile" />
                 <div
                   v-if="!opponentDeckIsEmpty"
@@ -367,11 +370,12 @@
             >
               <portal-target name="stationDrawRow" />
               <station-card
-                v-for="card in playerVisibleDrawStationCards"
+                v-for="(card, index) in playerVisibleDrawStationCards"
                 :key="card.id"
                 :is-holding-card="!!holdingCard"
                 :station-card="card"
                 station-row="draw"
+                :z-height-class="'h-' + index"
               />
               <StationCardWrapper :transparent="!drawStationCardGhostVisible">
                 <CardGhost
@@ -387,11 +391,12 @@
             >
               <portal-target name="stationActionRow" />
               <station-card
-                v-for="card in playerVisibleActionStationCards"
+                v-for="(card, index) in playerVisibleActionStationCards"
                 :key="card.id"
                 :is-holding-card="!!holdingCard"
                 :station-card="card"
                 station-row="action"
+                :z-height-class="'h-' + index"
               />
               <StationCardWrapper :transparent="!actionStationCardGhostVisible">
                 <CardGhost
@@ -407,11 +412,12 @@
             >
               <portal-target name="stationHandSizeRow" />
               <station-card
-                v-for="card in playerVisibleHandSizeStationCards"
+                v-for="(card, index) in playerVisibleHandSizeStationCards"
                 :key="card.id"
                 :is-holding-card="!!holdingCard"
                 :station-card="card"
                 station-row="handSize"
+                :z-height-class="'h-' + index"
               />
               <StationCardWrapper
                 :transparent="!handSizeStationCardGhostVisible"
@@ -1007,6 +1013,58 @@ module.exports = {
         ZPosition = Math.max(-50, Math.min(10, ZPosition - 1));
         root.style.setProperty("--z-position", ZPosition + "px");
         setTimeout(this.adjustZoom, 0);
+      } else {
+        this.adjustCenteredGUI();
+      }
+    },
+    centeredGUICollideWithPlayerStationCards() {
+      const rect1 = (
+        document.getElementsByClassName("field-dividerContent")[0] || {}
+      ).getBoundingClientRect();
+      const rect2 = (
+        document.getElementsByClassName("playerStationCards")[0] || {}
+      ).getBoundingClientRect();
+      return !(
+        rect1.right < rect2.left ||
+        rect1.left > rect2.right ||
+        rect1.bottom < rect2.top ||
+        rect1.top > rect2.bottom
+      );
+    },
+    spaceBetweenOpponentDrawpileAndPlayerStationCards() {
+      const rect1 = (
+        document.getElementsByClassName("playerStationCards")[0] || {}
+      ).getBoundingClientRect();
+      const rect2 = (
+        document.getElementsByClassName("opponentDrawPile")[0] || {}
+      ).getBoundingClientRect();
+      return rect1.top - rect2.bottom;
+    },
+    adjustCenteredGUI() {
+      let spaceBetweenOpponentDrawpileAndPlayerStationCards = this.spaceBetweenOpponentDrawpileAndPlayerStationCards();
+      if (spaceBetweenOpponentDrawpileAndPlayerStationCards <= 66) {
+        const root = document.documentElement;
+        let spaceBetween = parseInt(
+          getComputedStyle(document.documentElement)
+            .getPropertyValue("--space-between-GUI-n-draw-pile")
+            .replace("px", "")
+        );
+        spaceBetween = Math.min(80, spaceBetween + 1);
+        root.style.setProperty(
+          "--space-between-GUI-n-draw-pile",
+          spaceBetween + "px"
+        );
+        setTimeout(this.adjustCenteredGUI, 0);
+      } else if (this.centeredGUICollideWithPlayerStationCards()) {
+        const root = document.documentElement;
+        let GUIPosition = parseInt(
+          getComputedStyle(document.documentElement)
+            .getPropertyValue("--gui-height-adjust")
+            .replace("%", "")
+        );
+        GUIPosition = Math.max(30, Math.min(50, GUIPosition - 1));
+        root.style.setProperty("--gui-height-adjust", GUIPosition + "%");
+        setTimeout(this.adjustCenteredGUI, 0);
       }
     },
     validateBG() {

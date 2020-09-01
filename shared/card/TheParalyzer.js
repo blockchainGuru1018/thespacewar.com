@@ -9,10 +9,10 @@ module.exports = class TheParalyzer extends BaseCard {
     return "85";
   }
 
-  attackCard(defenderCard) {
+  attackCard({ defenderCard, usingCollision = false }) {
     if (defenderCard.type === "spaceShip") {
       defenderCard.paralyzed = true;
     }
-    super.attackCard(defenderCard);
+    super.attackCard({ defenderCard, usingCollision });
   }
 };
