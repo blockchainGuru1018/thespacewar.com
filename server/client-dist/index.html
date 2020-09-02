@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
     <meta name="viewport" id='viewport-meta'
-        content="width=device-width, initial-scale=.7, maximum-scale=.7, minimum-scale=.7, user-scalable=no"/>
+          content="width=device-width, initial-scale=.7, maximum-scale=.7, minimum-scale=.7, user-scalable=no"/>
     <title>The Space War</title>
     <style>
         @font-face {
@@ -50,52 +50,56 @@
             width: 1px;
             background: transparent;
         }
+
         ::-webkit-scrollbar-track {
-            background: rgba(0,0,0,1);
+            background: rgba(0, 0, 0, 1);
         }
-        ::-webkit-scrollbar-thumb{
-            background: rgb(80,80,80);
+
+        ::-webkit-scrollbar-thumb {
+            background: rgb(80, 80, 80);
         }
 
         @-moz-document url-prefix() {
-            html,body {
-                scrollbar-color: rgb(80,80,80) rgba(0,0,0,1);
+            html, body {
+                scrollbar-color: rgb(80, 80, 80) rgba(0, 0, 0, 1);
                 scrollbar-width: thin;
             }
         }
     </style>
     <link href="https://fonts.googleapis.com/css?family=Space+Mono" rel="stylesheet">
-    <link rel="shortcut icon" href="https://images.thespacewar.com/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="https://images.thespacewar.com/favicon.ico" type="image/x-icon"/>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/libraries/leader-line.js"></script>
     <script type="text/javascript">
 
-    var root = document.documentElement;
-    var scroll = function (event){
-      var zoomStep = 1;
-      var e = window.event || event;
-      var delta = Math.max(-1, Math.min(1, e.wheelDelta || -e.detail));
-      var ZPosition =  parseInt(getComputedStyle(document.documentElement).getPropertyValue('--z-position').replace('px',''));
-      ZPosition = Math.max(-50, Math.min(10, ZPosition + (zoomStep * delta)));
-      root.style.setProperty('--z-position', ZPosition + 'px');
-      e.stopPropagation();
-    }
-    // window.addEventListener("mousewheel",scroll, true);
+        var root = document.documentElement;
+        var scroll = function (event) {
+            var zoomStep = 1;
+            var e = window.event || event;
+            var delta = Math.max(-1, Math.min(1, e.wheelDelta || -e.detail));
+            var ZPosition = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--z-position').replace('px', ''));
+            ZPosition = Math.max(-50, Math.min(10, ZPosition + (zoomStep * delta)));
+            root.style.setProperty('--z-position', ZPosition + 'px');
+            e.stopPropagation();
+        }
+        // window.addEventListener("mousewheel",scroll, true);
 
     </script>
 </head>
 <body>
 <script src="index.js"></script>
 <script>
-    (function() { // Redistats, track version 1.0
-        var global_id = 2; // Global ID, don't change this.
-        var property_id = 43; // Property ID
-        var url = encodeURIComponent(window.location.href.split('#')[0]);
-        var referrer = encodeURIComponent(document.referrer);
-        var x = document.createElement('script'), s = document.getElementsByTagName('script')[0];
-        x.src = '//redistats.com/track.js?gid='+global_id+'&pid='+property_id+'&url='+url+'&referrer='+referrer;
-        s.parentNode.insertBefore(x, s);
-    })();
+    if (!window.location.href.includes('localhost')) {
+        (function () { // Redistats, track version 1.0
+            var global_id = 2; // Global ID, don't change this.
+            var property_id = 43; // Property ID
+            var url = encodeURIComponent(window.location.href.split('#')[0]);
+            var referrer = encodeURIComponent(document.referrer);
+            var x = document.createElement('script'), s = document.getElementsByTagName('script')[0];
+            x.src = '//redistats.com/track.js?gid=' + global_id + '&pid=' + property_id + '&url=' + url + '&referrer=' + referrer;
+            s.parentNode.insertBefore(x, s);
+        })();
+    }
 </script>
 </body>
 </html>
