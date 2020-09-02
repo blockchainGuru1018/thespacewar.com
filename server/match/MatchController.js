@@ -9,6 +9,7 @@ module.exports = function (deps) {
     createWithBot,
     getOwnState,
     onAction,
+    _deleteMatches,
     _testMatchRestoration,
   };
 
@@ -37,8 +38,11 @@ module.exports = function (deps) {
     const matchId = req.params.matchId;
     const playerId = req.params.playerId;
     const match = await matchRepository.getById(matchId);
-    const state = match.getOwnState(playerId);
-    res.json(state);
+    if (match) {
+      const state = match.getOwnState(playerId);
+      return res.json(state);
+    }
+    return res.send({});
   }
 
   async function onAction(data) {
@@ -59,6 +63,11 @@ module.exports = function (deps) {
         user.exitedMatchEndingScreen();
       });
     }
+  }
+
+  async function _deleteMatches() {
+    matchRepository._deleteAll();
+    await new Promise((resolve) => setTimeout(resolve, 2000));
   }
 
   async function _testMatchRestoration() {

@@ -155,7 +155,8 @@ module.exports = function ({ route, userRepository, botUpdateListener }) {
 
   async function restoreMatchFromPreviousSession() {
     const matchData = localGameDataFacade.getOngoingMatch();
-    if (matchData) {
+
+    if (await isValidMatchData(matchData)) {
       const { id: matchId, playerIds } = matchData;
       if (playerIds.includes(BotId)) {
         joinBotMatch(matchId);
@@ -163,6 +164,16 @@ module.exports = function ({ route, userRepository, botUpdateListener }) {
         joinPlayerMatch(matchId, playerIds);
       }
     }
+  }
+
+  async function isValidMatchData(matchData) {
+    if (matchData) {
+      const matchState = await ajax.get(
+        `/match/${matchData.id}/player/${matchData.ownId}/state`
+      );
+      return !_isEmptyObject(matchState);
+    }
+    return false;
   }
 
   function joinBotMatch(matchId) {
@@ -176,6 +187,11 @@ module.exports = function ({ route, userRepository, botUpdateListener }) {
     });
 
     userRepository.reconnectBot();
+  }
+
+  function _isEmptyObject(obj) {
+    for (let i in obj) return false;
+    return true;
   }
 
   function joinPlayerMatch(matchId, playerIds) {

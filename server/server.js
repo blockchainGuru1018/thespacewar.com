@@ -167,6 +167,7 @@ function setupRoutes(deps, controllers) {
     "/match/:matchId/player/:playerId/state",
     controllers.match.getOwnState
   );
+
   app.get("/card/:cardId/image", controllers.card.getImage);
   app.get("/card/back-image", controllers.card.getBackImage);
   app.get("/card/data", controllers.card.getData);
@@ -214,6 +215,12 @@ function setupRoutes(deps, controllers) {
   // await controllers.match._testMatchRestoration();
   // await controllers.git.onPush(req, res);
   // });
+
+  //WARNING: this endpoint its just for testing should not be on production i guess
+  app.delete("/match", async (req, res) => {
+    await controllers.match._deleteMatches();
+    res.json("deleted");
+  });
 
   function validateDebugPassword(password) {
     const timeSinceLastCheck = Date.now() - lastCheckTime;

@@ -1362,6 +1362,7 @@ module.exports = function (deps) {
   function checkLastTimeOfInactivityForPlayer() {
     matchController.emit("checkLastTimeOfInactivityForPlayer");
   }
+
   //TODO: aca estaria la seleccion de las cartas para atacarlas station cards deberia gacer q agarre
   function selectStationCardAsDefender({ state, getters, dispatch }, { id }) {
     const attackerCard = getters.attackerCard;
@@ -1591,8 +1592,12 @@ module.exports = function (deps) {
 
   function persistOngoingMatch() {
     const playerIds = [userRepository.getOwnUser().id, opponentUser.id];
-    const matchData = { id: matchId, playerIds };
-
+    const matchData = {
+      id: matchId,
+      playerIds,
+      ownId: userRepository.getOwnUser().id,
+      timeStamp: new Date(),
+    };
     localGameDataFacade.setOngoingMatch(matchData);
   }
 
