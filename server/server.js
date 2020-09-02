@@ -217,10 +217,10 @@ function setupRoutes(deps, controllers) {
   // });
 
   //WARNING: this endpoint its just for testing should not be on production i guess
-  app.delete("/match", async (req, res) => {
-    await controllers.match._deleteMatches();
-    res.json("deleted");
-  });
+  // app.delete("/match", async (req, res) => {
+  //   await controllers.match._deleteMatches();
+  //   res.json("deleted");
+  // });
 
   function validateDebugPassword(password) {
     const timeSinceLastCheck = Date.now() - lastCheckTime;
