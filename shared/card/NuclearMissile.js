@@ -6,6 +6,10 @@ module.exports = class NuclearMissile extends Slow(BaseCard) {
     super(deps);
   }
 
+  get damageGoesThroughShield() {
+    return true;
+  }
+
   static get CommonId() {
     return "8";
   }

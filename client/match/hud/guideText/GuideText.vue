@@ -130,7 +130,7 @@
       Discard
       {{
         amountOfCardsToDiscard +
-          (amountOfCardsToDiscard === 1 ? " card" : " cards")
+        (amountOfCardsToDiscard === 1 ? " card" : " cards")
       }}
       to continue
     </div>
@@ -207,6 +207,7 @@ export default {
       "playerCardsOnHand",
       "readyPlayerIds",
       "lastStandInfo",
+      "opponentCardsInZone",
     ]),
     ...mapGetters([
       "maxHandSize",
@@ -222,6 +223,7 @@ export default {
       "cardCostInflation",
       "repairerCommanderSelected",
       "playerHasCardThatCanCounter",
+      "createCard",
     ]),
     ...requirementHelpers.mapGetters([
       "waitingForOtherPlayerToFinishRequirements",
@@ -311,9 +313,21 @@ export default {
     numberOfStationCardsToSelect() {
       if (!this.attackerCard) return 0;
       if (this.selectedDefendingStationCards.length === 0) return 0;
-
+      const shieldDefense = this.opponentCardsInZone
+        .filter((c) => this.createCard(c).stopsStationAttack())
+        .map((card) => card.defense - card.damage)
+        .reduce((a, b) => a + b, 0);
+      // console.log(shieldDefense);
+      // console.log(getters.countInFirstRequirement);
+      // console.log(getters.selectedCardsCount);
+      // console.log(
+      //     getters.countInFirstRequirement -
+      //     getters.selectedCardsCount -
+      //     shieldDefense
       return (
-        this.attackerCard.attack - this.selectedDefendingStationCards.length
+        this.attackerCard.attack -
+        shieldDefense -
+        this.selectedDefendingStationCards.length
       );
     },
     requirementGuideText() {
@@ -465,9 +479,11 @@ function pluralize(word, count) {
 .hidden {
   visibility: hidden;
 }
+
 .visible {
   visibility: visible;
 }
+
 @keyframes flickerAnimation {
   0% {
     color: white;
@@ -479,6 +495,7 @@ function pluralize(word, count) {
     color: white;
   }
 }
+
 @-o-keyframes flickerAnimation {
   0% {
     color: white;
@@ -490,6 +507,7 @@ function pluralize(word, count) {
     color: white;
   }
 }
+
 @-moz-keyframes flickerAnimation {
   0% {
     color: white;
@@ -501,6 +519,7 @@ function pluralize(word, count) {
     color: white;
   }
 }
+
 @-webkit-keyframes flickerAnimation {
   0% {
     color: white;

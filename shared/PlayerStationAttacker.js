@@ -37,7 +37,7 @@ module.exports = function ({
     );
 
     const totalShieldDamage = totalOpponentShieldCards.reduce(
-      (acc, card) => acc + card.defense,
+      (acc, card) => acc + card.defense - card.damage,
       0
     );
 
@@ -57,7 +57,7 @@ module.exports = function ({
     if (!attackerCard.canAttackStationCards()) {
       throw new CheatError("Cannot attack station");
     }
-    if (targetStationCardIds.length > attackerCard.attack) {
+    if (targetStationCardIds.length > attackerCard.attack - totalShieldDamage) {
       throw new CheatError("Cannot attack that many station cards with card");
     }
 
@@ -117,8 +117,8 @@ module.exports = function ({
     );
 
     totalOpponentShieldCards.forEach((shieldCard) => {
-      opponentStateService.removeCard(shieldCard.id);
-      // opponentStateService.discardCard(shieldCard);
+      const removedShield = opponentStateService.removeCard(shieldCard.id);
+      opponentStateService.discardCard(removedShield);
     });
   }
 };

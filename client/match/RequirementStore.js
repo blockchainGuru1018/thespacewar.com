@@ -112,14 +112,14 @@ module.exports = function ({ rootStore, cardInfoRepository, matchController }) {
       : 0;
   }
 
-  //TODO: aca deberia tener en cuenta el shield prot4ection
-  function cardsLeftToSelect(state, getters, rootState, rootGetters) {
-    console.log(rootGetters["match/attackerCard"]);
+  function cardsLeftToSelect(state, getters) {
     return getters.countInFirstRequirement - getters.selectedCardsCount;
   }
+
   function attackerRequirement(state, getters) {
     return getters.firstRequirement.cardCommonId;
   }
+
   function requirementCardImageUrl(state, getters) {
     const firstRequirement = getters.firstRequirement;
     if (!firstRequirement || !firstRequirement.cardCommonId) return "";
@@ -150,6 +150,7 @@ module.exports = function ({ rootStore, cardInfoRepository, matchController }) {
       rootStore.dispatch("match/damageStationCards", targetIds);
     }
   }
+
   function selectCardForSacrificeForRequirement({ state, getters }, payload) {
     state.selectedCardForSacrificeForRequirement.push(payload.card.id);
     const targetIds = state.selectedCardForSacrificeForRequirement.slice();

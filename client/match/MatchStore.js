@@ -1377,7 +1377,7 @@ module.exports = function (deps) {
       (c) => c.stopsStationAttack()
     );
     const totalShieldDamage = totalOpponentShieldCards.reduce(
-      (acc, card) => acc + card.defense,
+      (acc, card) => acc + card.defense - card.damage,
       0
     );
     const selectedMaxTargetCount =

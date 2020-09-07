@@ -27,6 +27,7 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
     hasPutDownCardEvent,
     hasEventBeforeOtherEvent,
     hasActionPoints,
+    hasFlippedStationCard,
   };
 
   function send() {
@@ -111,6 +112,20 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
       },
       (state) => {
         return `There is NO unflipped station card in stationCards "${json(
+          state.stationCards
+        )}"`;
+      }
+    );
+  }
+
+  function hasFlippedStationCard(cardId) {
+    assertArrayOnStateHasSome(
+      "stationCards",
+      (stationCard) => {
+        return stationCard.id === cardId && stationCard.flipped;
+      },
+      (state) => {
+        return `There is NO Flipped station card in stationCards "${json(
           state.stationCards
         )}"`;
       }

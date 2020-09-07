@@ -181,7 +181,7 @@ class BaseCard {
   canDamageGoThroughShieldsDefense() {
     const totalShieldDefense = this._opponentStateService
       .getMatchingBehaviourCards((c) => c.stopsStationAttack())
-      .reduce((acc, card) => acc + card.defense, 0);
+      .reduce((acc, card) => acc + card.defense - card.damage, 0);
 
     if (totalShieldDefense > 0 && this.damageGoesThroughShield) {
       return totalShieldDefense - this.attack < 0;
