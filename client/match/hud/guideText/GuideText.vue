@@ -313,17 +313,12 @@ export default {
     numberOfStationCardsToSelect() {
       if (!this.attackerCard) return 0;
       if (this.selectedDefendingStationCards.length === 0) return 0;
+
       const shieldDefense = this.opponentCardsInZone
-        .filter((c) => this.createCard(c).stopsStationAttack())
-        .map((card) => card.defense - card.damage)
+        .map((c) => this.createCard(c))
+        .filter((cardData) => cardData.stopsStationAttack())
+        .map((cardData) => cardData.defense - cardData.damage)
         .reduce((a, b) => a + b, 0);
-      // console.log(shieldDefense);
-      // console.log(getters.countInFirstRequirement);
-      // console.log(getters.selectedCardsCount);
-      // console.log(
-      //     getters.countInFirstRequirement -
-      //     getters.selectedCardsCount -
-      //     shieldDefense
       return (
         this.attackerCard.attack -
         shieldDefense -
