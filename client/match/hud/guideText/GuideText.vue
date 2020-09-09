@@ -34,6 +34,14 @@
       </div>
       {{ requirementGuideText }}
       <SkipDrawCard v-if="shouldShowSkipDrawCard" />
+      <div
+        v-if="firstRequirement.cancelable"
+        class="float-right-button guideText-subText"
+      >
+        <button class="darkButton" @click="cancelClick">
+          Cancel
+        </button>
+      </div>
     </div>
 
     <!-- STARTING GAME texts -->
@@ -362,6 +370,7 @@ export default {
       }
     },
     shouldShowSkipDrawCard() {
+      // return true;
       return (
         this.firstRequirementIsDrawCard &&
         this.firstRequirement.cardCommonId === FatalError.CommonId
@@ -449,6 +458,10 @@ export default {
   },
   methods: {
     ...mapActions(["toggleControlOfTurn"]),
+    ...requirementHelpers.mapActions(["cancelRequirement"]),
+    cancelClick() {
+      this.cancelRequirement();
+    },
     showEnlargedCard() {
       this.$emit("showEnlargedCard");
     },
@@ -532,5 +545,17 @@ function pluralize(word, count) {
   -moz-animation: flickerAnimation 1s infinite;
   -o-animation: flickerAnimation 1s infinite;
   animation: flickerAnimation 1s infinite;
+}
+
+.float-right-button {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  z-index: 1;
+  width: 15%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

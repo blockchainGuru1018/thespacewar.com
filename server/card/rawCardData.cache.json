@@ -500,7 +500,7 @@
                 "name": "Fusion Ship",
                 "price": "2",
                 "type_card": "blue",
-                "detail": "After first turn: Replace this and 2 other spaceships in same zone by one spaceship from your draw pile.",
+                "detail": "After first turn instead of attack: Replace this and 2 spaceships in same zone by one spaceship from draw pile.",
                 "defense": "3",
                 "attack": "1",
                 "number_copies": "2",
@@ -1027,5 +1027,5 @@
             }
         ]
     },
-    "saveTime": 1597597144098
+    "saveTime": 1599679084808
 }

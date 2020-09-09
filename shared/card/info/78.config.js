@@ -4,6 +4,8 @@ module.exports = {
   CommonId,
   requirementSpecsWhenPutDownInHomeZone: {
     forOpponent: [],
-    forPlayer: [{ type: "drawCard", count: 1, cardCommonId: CommonId }],
+    forPlayer: [
+      { type: "drawCard", count: 1, cardCommonId: CommonId, cancelable: true },
+    ],
   },
 };

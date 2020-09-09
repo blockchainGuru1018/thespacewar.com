@@ -88,6 +88,7 @@ function PlayerRequirementService({
     common = false,
     cardCommonId = null,
     whenResolvedAddAlso = [],
+    cancelable = false,
   }) {
     const countToDraw = getCountOrMinimumAvailableForDrawingCards(count);
     if (countToDraw > 0) {
@@ -100,6 +101,9 @@ function PlayerRequirementService({
       }
       if (whenResolvedAddAlso.length) {
         requirement.whenResolvedAddAlso = whenResolvedAddAlso;
+      }
+      if (cancelable) {
+        requirement.cancelable = true;
       }
       addRequirement(requirement);
 
