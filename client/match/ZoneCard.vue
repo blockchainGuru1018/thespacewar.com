@@ -52,7 +52,7 @@
         </div>
       </div>
     </div>
-    <div v-if="disabled" class="cardDisabledOverlay">
+    <div v-if="disabled || willBeDestroyedByDamage" class="cardDisabledOverlay">
       <span class="cardDisabledOverlay-text" :style="disabledOverlayTextStyle">
         X
       </span>
@@ -240,6 +240,7 @@ module.exports = {
       "flashAttackedCardId",
       "highlightCardIds",
       "usingCollision",
+      "selectedDefendingStationCards",
     ]),
     ...mapGetters([
       "allOpponentStationCards",
@@ -388,6 +389,13 @@ module.exports = {
     },
     canTriggerDormantEffect() {
       return this.canThePlayer.triggerCardsDormantEffect(this.behaviourCard);
+    },
+    willBeDestroyedByDamage() {
+      return (
+        this.selectedDefendingStationCards.length > 0 &&
+        this.createCard(this.card).stopsStationAttack() &&
+        !this.isPlayerCard
+      );
     },
     canBeSelectedAsDefender() {
       const card = this.createCard(this.card, {
@@ -684,6 +692,11 @@ module.exports = {
 
 .selectForRepair-reActivate {
   font-size: 1em;
+}
+.willBeDestroyed {
+  opacity: 1;
+  visibility: visible;
+  background-color: rgba(255, 100, 100, 0.5);
 }
 
 .paralyzed {
