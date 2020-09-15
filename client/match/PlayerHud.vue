@@ -27,7 +27,10 @@
             {{ nextPhaseButtonText }}
           </button>
           <div v-else-if="endTurnButtonVisible">
-            <div class="guideText-phaseButton enablePointerEvent">
+            <div
+              v-if="phase === PHASES.attack"
+              class="guideText-phaseButton enablePointerEvent"
+            >
               Click on your spaceship(s) or missile(s) <br />
               and select move and/or attack.
             </div>
@@ -697,6 +700,7 @@ export default {
   font-weight: bold;
   font-size: x-large;
 }
+
 .enablePointerEvent {
   pointer-events: auto;
 }
