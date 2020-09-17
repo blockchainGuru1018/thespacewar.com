@@ -1114,8 +1114,16 @@ module.exports = function (deps) {
         }
       }
     }
+
+    if (
+      getters.getCardsPendingForAction.length === 0 &&
+      state.phase === PHASES.attack
+    ) {
+      dispatch("goToNextPhase");
+    }
   }
 
+  //TODO: should call this when there is attack phase and have no cards with actions
   function goToNextPhase({ state, getters }, { currentPhase = null } = {}) {
     const phasesUntilAction = getters.numberOfPhasesUntilNextPhaseWithAction;
     state.phase = currentPhase ? currentPhase : state.phase;
@@ -1363,7 +1371,6 @@ module.exports = function (deps) {
     matchController.emit("checkLastTimeOfInactivityForPlayer");
   }
 
-  //TODO: aca estaria la seleccion de las cartas para atacarlas station cards deberia gacer q agarre
   function selectStationCardAsDefender({ state, getters, dispatch }, { id }) {
     const attackerCard = getters.attackerCard;
     attackerCard._card.usingCollision = state.usingCollision;

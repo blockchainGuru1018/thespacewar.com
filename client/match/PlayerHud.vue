@@ -50,7 +50,7 @@
       <div
         v-if="
           overworkContainerVisible ||
-            perfectPlanContainerVisible ||
+          perfectPlanContainerVisible ||
             findAcidProjectileContainerVisible ||
           naaloxDormantEffectsContainerVisible
         "
