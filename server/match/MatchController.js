@@ -5,6 +5,7 @@ module.exports = function (deps) {
   const logger = deps.logger;
 
   return {
+    invitePlayerToGame,
     create,
     createWithBot,
     getOwnState,
@@ -12,6 +13,15 @@ module.exports = function (deps) {
     _deleteMatches,
     _testMatchRestoration,
   };
+
+  async function invitePlayerToGame(req, res) {
+    const playerId = req.body.playerId;
+    const opponentId = req.body.opponentId;
+    if (!playerId || !opponentId) throw new Error("Illegal operation");
+    await matchRepository.invitePlayerToGame(playerId, opponentId);
+
+    return res.send({});
+  }
 
   async function create(req, res) {
     const playerId = req.body.playerId;

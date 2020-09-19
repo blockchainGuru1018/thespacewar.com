@@ -10,8 +10,9 @@ module.exports = function ({
 }) {
   const matchById = new Map();
   const matchByUserId = new Map();
-
+  const matchInvitations = new Map();
   return {
+    invitePlayerToGame,
     create,
     createWithBot,
     reconnect,
@@ -24,6 +25,17 @@ module.exports = function ({
     hasSomeMatchInProgress,
     _deleteAll,
   };
+
+  async function invitePlayerToGame(playerId, opponentId) {
+    console.log(`${playerId} invited ${opponentId} to a game`);
+    const opponentInvitations = matchInvitations.get(opponentId) || [];
+    const opponentSocket = socketRepository.getForUser(opponentId);
+    /**
+     * TODO: we should update the opponent list of invitation and emit it back
+     * then in the front it should display as a queue, and after accept any of those
+     *  clear the list, or when reject clear it
+     */
+  }
 
   async function create({ playerId, opponentId }) {
     const match = await createForPlayers({

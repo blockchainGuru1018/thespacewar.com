@@ -98,11 +98,13 @@ module.exports = {
   methods: {
     ...mapActions([
       "startGameWithUser",
+      "invitePlayerToGame",
       "startGameWithBot",
       "showProfileUserPlayer",
     ]),
     userClick(user) {
-      this.startGameWithUser(user);
+      this.invitePlayerToGame(user);
+      // this.startGameWithUser(user);
     },
   },
   components: { Flag, ProfileUserPlayer, SelectDeck },
