@@ -87,7 +87,7 @@ $animation-curve: ease;
 .background {
   width: 100%;
   height: 100%;
-  background-image: url(https://uploads.staticjw.com/th/thespacewar/the-space-war-card-game.jpg);
+  background-image: url(https://images.thespacewar.com/the-space-war-card-game.jpg);
   background-repeat: no-repeat;
   background-position: top center;
   background-size: cover;
