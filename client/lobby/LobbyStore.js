@@ -17,6 +17,7 @@ module.exports = function ({
     actions: {
       init,
       startGameWithUser,
+      invitePlayerToGame,
       startGameWithBot,
       logout,
       showProfileUserPlayer,
@@ -33,6 +34,16 @@ module.exports = function ({
     const users = userRepository.getAllLocal();
     const opponentUser = users.find((u) => u.id === opponentUserId);
     route("match", { matchId, opponentUser });
+  }
+
+  async function invitePlayerToGame(actionContext, opponentUser) {
+    try {
+      const playerId = userRepository.getOwnUser().id;
+      const opponentId = opponentUser.id;
+      await userRepository.invitePlayer(playerId, opponentId);
+    } catch (error) {
+      alert("Could not invite player " + error.message);
+    }
   }
 
   async function startGameWithUser(actionContext, opponentUser) {
