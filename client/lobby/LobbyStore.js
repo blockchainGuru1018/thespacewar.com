@@ -13,19 +13,38 @@ module.exports = function ({
     name: "lobby",
     state: {
       loggingOut: false,
+      invitations: [],
+    },
+    getters: {
+      currentInvitations,
     },
     actions: {
       init,
       startGameWithUser,
       invitePlayerToGame,
+      declineInvitation,
       startGameWithBot,
       logout,
       showProfileUserPlayer,
+      cancelInvitation,
+      acceptInvitation,
     },
   };
 
-  async function init() {
+  async function init({ state }) {
     matchRepository.onMatchCreatedForPlayer(joinMatch);
+    matchRepository.onMatchInviteForPlayer((invitations) =>
+      updateInvitations(state, invitations)
+    );
+  }
+
+  function currentInvitations(state) {
+    return state.invitations;
+  }
+
+  function updateInvitations(state, invitations) {
+    console.log("invitations: ", invitations, state);
+    state.invitations = invitations;
   }
 
   async function joinMatch({ id: matchId, playerIds }) {
@@ -40,9 +59,27 @@ module.exports = function ({
     try {
       const playerId = userRepository.getOwnUser().id;
       const opponentId = opponentUser.id;
-      await userRepository.invitePlayer(playerId, opponentId);
+      await matchRepository.invitePlayer(playerId, opponentId);
     } catch (error) {
       alert("Could not invite player " + error.message);
+    }
+  }
+  async function cancelInvitation(actionContext, opponentUser) {
+    try {
+      const playerId = userRepository.getOwnUser().id;
+      const opponentId = opponentUser.id;
+      await matchRepository.cancelInvitation(playerId, opponentId);
+    } catch (error) {
+      alert("Could not decline invitation " + error.message);
+    }
+  }
+  async function declineInvitation(actionContext, opponentUser) {
+    try {
+      const playerId = userRepository.getOwnUser().id;
+      const opponentId = opponentUser.id;
+      await matchRepository.declineInvitation(playerId, opponentId);
+    } catch (error) {
+      alert("Could not decline invitation " + error.message);
     }
   }
 
@@ -57,6 +94,23 @@ module.exports = function ({
       alert("Could not create match: " + error.message);
     }
 
+    if (matchId) {
+      route("match", { matchId, opponentUser });
+    }
+  }
+  async function acceptInvitation(actionContext, opponentUser) {
+    let matchId;
+    try {
+      const playerId = userRepository.getOwnUser().id;
+      const opponentId = opponentUser.id;
+      const match = await matchRepository.acceptInvitation({
+        playerId,
+        opponentId,
+      });
+      matchId = match.id;
+    } catch (error) {
+      alert("Could not create match: " + error.message);
+    }
     if (matchId) {
       route("match", { matchId, opponentUser });
     }

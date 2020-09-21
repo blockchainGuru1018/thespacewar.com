@@ -82,6 +82,7 @@ module.exports = function ({
     if (connectedUserId) {
       userRepository.updateUser(connectedUserId, (user) => {
         user.disconnected();
+        matchRepository.clearInvitations(user);
       });
     }
   }

@@ -13,14 +13,14 @@ module.exports = function SecurityMiddleware({ userRepository, logger }) {
     if (requestPlayerId) {
       if (req.body.secret) {
         if (!isAuthorized(req.body.secret, requestPlayerId)) {
-          logger.logger.log(
+          logger.log(
             "Unauthorized user making request to url: " + req.url,
             "authorization"
           );
           next(new Error("Unauthorized access"));
         }
       } else {
-        logger.logger.log(
+        logger.log(
           "Unauthorized user making request to url without providing secret: " +
             req.url,
           "authorization"

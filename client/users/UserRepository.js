@@ -19,7 +19,6 @@ module.exports = function (deps) {
     getAll,
     getAllLocal,
     onUsersChanged,
-    invitePlayer,
   };
 
   function storeOwnUser(user) {
@@ -49,10 +48,6 @@ module.exports = function (deps) {
 
   function getAllLocal() {
     return [...cachedUsers];
-  }
-
-  async function invitePlayer(playerId, opponentId) {
-    await ajax.jsonPost(`/match/invite`, { playerId, opponentId });
   }
 
   function onUsersChanged(callback) {

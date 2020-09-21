@@ -24,17 +24,111 @@ module.exports = function ({
     restoreAll,
     hasSomeMatchInProgress,
     _deleteAll,
+    declineInvitation,
+    clearInvitations,
+    acceptInvitation,
   };
+
+  function clearInvitations(user) {
+    let playerInvitations = matchInvitations.get(user.id);
+    if (playerInvitations) {
+      playerInvitations.forEach(({ from, to }) => {
+        if (to !== user.id) {
+          updateInvitation(from, to, (invitation) => invitation.from !== from);
+        } else {
+          updateInvitation(to, from, (invitation) => invitation.to !== to);
+        }
+      });
+    }
+    matchInvitations.delete(user.id);
+  }
+
+  function updateInvitation(opponentId, playerId, filter) {
+    const invitations = matchInvitations.get(playerId) || [];
+    const filteredInvitations = invitations.filter(filter);
+
+    matchInvitations.set(playerId, filteredInvitations);
+
+    const playerSocket = socketRepository.getForUser(playerId);
+    playerSocket.emit("match/invitation", filteredInvitations);
+  }
 
   async function invitePlayerToGame(playerId, opponentId) {
     console.log(`${playerId} invited ${opponentId} to a game`);
-    const opponentInvitations = matchInvitations.get(opponentId) || [];
+
+    if (getForUser(playerId)) {
+      throw new Error("Player is already in a match: " + playerId);
+    }
+
+    if (getForUser(opponentId)) {
+      throw new Error("Player is already in a match: " + opponentId);
+    }
+
+    const invitation = {
+      from: playerId,
+      to: opponentId,
+      timeStamp: Date.now(),
+    };
+    let opponentInvitations = matchInvitations.get(opponentId) || [];
+    let playerInvitations = [invitation];
+
+    opponentInvitations = opponentInvitations.filter(
+      (invitation) => invitation.from !== playerId
+    );
+
+    opponentInvitations.push(invitation);
+
+    matchInvitations.set(opponentId, opponentInvitations);
+    matchInvitations.set(playerId, playerInvitations);
+
     const opponentSocket = socketRepository.getForUser(opponentId);
-    /**
-     * TODO: we should update the opponent list of invitation and emit it back
-     * then in the front it should display as a queue, and after accept any of those
-     *  clear the list, or when reject clear it
-     */
+    opponentSocket.emit("match/invitation", opponentInvitations);
+
+    const playerSocket = socketRepository.getForUser(playerId);
+    playerSocket.emit("match/invitation", playerInvitations);
+  }
+
+  async function declineInvitation(playerId, opponentId) {
+    console.log(`${playerId} has decline ${opponentId} invitation`);
+
+    let playerInvitations = matchInvitations.get(playerId) || [];
+
+    playerInvitations = playerInvitations.filter(
+      (invitation) => invitation.from !== opponentId
+    );
+
+    matchInvitations.set(opponentId, []);
+    matchInvitations.set(playerId, playerInvitations);
+
+    if (!socketRepository.hasConnectionToUser(playerId)) {
+      throw new Error("Player is not connected: " + playerId);
+    }
+
+    if (!socketRepository.hasConnectionToUser(opponentId)) {
+      throw new Error("Player is not connected: " + opponentId);
+    }
+
+    const opponentSocket = socketRepository.getForUser(opponentId);
+    opponentSocket.emit("match/invitation", []);
+
+    const playerSocket = socketRepository.getForUser(playerId);
+    playerSocket.emit("match/invitation", playerInvitations);
+  }
+
+  async function acceptInvitation({ playerId, opponentId }) {
+    if (!existMatchInvitation(playerId, opponentId)) {
+      throw new Error("Invalid invitation");
+    }
+
+    const opponentSocket = socketRepository.getForUser(opponentId);
+    opponentSocket.emit("match/invitation", []);
+    matchInvitations.set(opponentId, []);
+
+    const playerSocket = socketRepository.getForUser(playerId);
+    playerSocket.emit("match/invitation", []);
+    matchInvitations.set(playerId, []);
+
+    return await create({ playerId, opponentId });
   }
 
   async function create({ playerId, opponentId }) {
@@ -45,6 +139,11 @@ module.exports = function ({
     return match.toClientModel();
   }
 
+  function existMatchInvitation(playerId, opponentId) {
+    const playerInvitations = matchInvitations.get(opponentId) || [];
+
+    return playerInvitations.some((invitation) => invitation.to === playerId);
+  }
   async function createForPlayers({
     playerIds,
     emitMatchCreateEventTo = null,

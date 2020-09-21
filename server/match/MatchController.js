@@ -6,14 +6,50 @@ module.exports = function (deps) {
 
   return {
     invitePlayerToGame,
+    declineInvitation,
+    cancelInvitation,
+    acceptInvitation,
     create,
     createWithBot,
     getOwnState,
     onAction,
+
     _deleteMatches,
     _testMatchRestoration,
   };
 
+  async function declineInvitation(req, res) {
+    const playerId = req.body.playerId;
+    const opponentId = req.body.opponentId;
+    if (!playerId || !opponentId) throw new Error("Illegal operation");
+    await matchRepository.declineInvitation(playerId, opponentId);
+
+    return res.send({});
+  }
+
+  async function cancelInvitation(req, res) {
+    const playerId = req.body.playerId;
+    const opponentId = req.body.opponentId;
+    if (!playerId || !opponentId) throw new Error("Illegal operation");
+    await matchRepository.declineInvitation(opponentId, playerId);
+
+    return res.send({});
+  }
+
+  async function acceptInvitation(req, res) {
+    const playerId = req.body.playerId;
+    const opponentId = req.body.opponentId;
+    if (!playerId || !opponentId) throw new Error("Illegal operation");
+
+    matchRepository.clearOldMatches();
+
+    const match = await matchRepository.acceptInvitation({
+      playerId,
+      opponentId,
+    });
+
+    return res.json(match);
+  }
   async function invitePlayerToGame(req, res) {
     const playerId = req.body.playerId;
     const opponentId = req.body.opponentId;
@@ -31,7 +67,7 @@ module.exports = function (deps) {
     matchRepository.clearOldMatches();
     const match = await matchRepository.create({ playerId, opponentId });
 
-    res.json(match);
+    return res.json(match);
   }
 
   async function createWithBot(req, res) {
@@ -41,7 +77,7 @@ module.exports = function (deps) {
     matchRepository.clearOldMatches();
     const match = await matchRepository.createWithBot({ playerId });
 
-    res.json(match);
+    return res.json(match);
   }
 
   async function getOwnState(req, res) {

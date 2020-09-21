@@ -162,7 +162,10 @@ function setupRoutes(deps, controllers) {
   app.post("/test-access-key", controllers.user.testAccessKey);
   app.get("/user", controllers.user.getAll);
   app.post("/match", controllers.match.create); //TODO Have playerId be part of uri so that the route is authenticated
-  app.post("/match/invite", controllers.match.invitePlayerToGame); //
+  app.post("/match/invite", controllers.match.invitePlayerToGame);
+  app.post("/match/decline", controllers.match.declineInvitation); //
+  app.post("/match/accept", controllers.match.acceptInvitation); //
+  app.post("/match/cancel", controllers.match.cancelInvitation);
   app.post("/match/:playerId/bot", controllers.match.createWithBot);
   app.get(
     "/match/:matchId/player/:playerId/state",

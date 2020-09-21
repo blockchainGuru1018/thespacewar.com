@@ -60,6 +60,57 @@
         </div>
       </div>
     </div>
+    <ConfirmationDialog v-if="currentInvitations.length > 0">
+      <template slot="header">
+        <div class="confirmDialogHeader"></div>
+      </template>
+      <template slot="body">
+        <div class="confirmDialogContent">
+          <p>
+            {{ invitationMessage() }}
+          </p>
+        </div>
+      </template>
+      <template slot="footer">
+        <div class="slot-footer-container">
+          <div class="separator20Percent" />
+          <div
+            v-if="currentInvitations[0].to === ownUser.id"
+            class="confirmBoxOption"
+          >
+            <span
+              class="marginLeft10"
+              @click="acceptInvitationClick(currentInvitations[0].from)"
+            >
+              Yes
+            </span>
+          </div>
+          <div class="separator30Percent" />
+          <div
+            v-if="currentInvitations[0].to === ownUser.id"
+            class="confirmBoxOption confirmDialogCenterButton"
+          >
+            <span
+              class="'marginRight10'"
+              @click="declineInvitationClick(currentInvitations[0].from)"
+            >
+              No
+            </span>
+          </div>
+          <div
+            v-if="currentInvitations[0].from === ownUser.id"
+            class="confirmBoxOption confirmDialogCenterButton"
+          >
+            <span
+              class="'marginRight10'"
+              @click="cancelInvitationClick(currentInvitations[0].to)"
+            >
+              Cancel
+            </span>
+          </div>
+        </div>
+      </template>
+    </ConfirmationDialog>
   </div>
 </template>
 <script>
@@ -67,17 +118,20 @@ import Flag from "./Flag.vue";
 import ProfileUserPlayer from "./ProfileUserPlayer.vue";
 import SelectDeck from "./SelectDeck.vue";
 import featureToggles from "../utils/featureToggles.js";
+import ConfirmationDialog from "../match/ConfirmationDialog.vue";
+
 export default {
   components: { SelectDeck },
 };
 const Vuex = require("vuex");
-const { mapActions } = Vuex.createNamespacedHelpers("lobby");
+const { mapActions, mapGetters } = Vuex.createNamespacedHelpers("lobby");
 const userHelpers = Vuex.createNamespacedHelpers("user");
 const lobbyHelpers = Vuex.createNamespacedHelpers("lobby");
 
 module.exports = {
   computed: {
     ...userHelpers.mapState(["users", "ownUser"]),
+    ...mapGetters(["currentInvitations"]),
     ...lobbyHelpers.mapState([
       "loggingOut", //TODO Fully implement logout functionality or remove the traces of it that's left
     ]),
@@ -98,16 +152,48 @@ module.exports = {
   methods: {
     ...mapActions([
       "startGameWithUser",
+      "acceptInvitation",
       "invitePlayerToGame",
+      "declineInvitation",
       "startGameWithBot",
       "showProfileUserPlayer",
+      "cancelInvitation",
     ]),
+    playerName(playerId) {
+      const opponentUser = this.otherUsers.find((u) => u.id === playerId);
+      if (opponentUser) {
+        return opponentUser.name;
+      }
+    },
+    invitationMessage() {
+      const invitation = this.currentInvitations[0];
+      if (this.ownUser.id === invitation.from) {
+        return `Waiting for ${this.playerName(
+          invitation.to
+        )} to accept the challenge.`;
+      } else {
+        return `Do you accept the challenge to play versus ${this.playerName(
+          invitation.from
+        )} ?`;
+      }
+    },
     userClick(user) {
       this.invitePlayerToGame(user);
-      // this.startGameWithUser(user);
+    },
+    declineInvitationClick(opponentId) {
+      const opponentUser = this.otherUsers.find((u) => u.id === opponentId);
+      this.declineInvitation(opponentUser);
+    },
+    cancelInvitationClick(opponentId) {
+      const opponentUser = this.otherUsers.find((u) => u.id === opponentId);
+      this.cancelInvitation(opponentUser);
+    },
+    acceptInvitationClick(opponentId) {
+      const opponentUser = this.otherUsers.find((u) => u.id === opponentId);
+      this.acceptInvitation(opponentUser);
     },
   },
-  components: { Flag, ProfileUserPlayer, SelectDeck },
+  components: { Flag, ProfileUserPlayer, SelectDeck, ConfirmationDialog },
 };
 </script>
 <style scoped lang="scss">
@@ -137,6 +223,46 @@ module.exports = {
       margin-left: 20px;
     }
   }
+}
+
+.confirmDialogCenterButton {
+  flex: auto;
+}
+
+.slot-footer-container {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  align-content: space-between;
+}
+
+.marginLeft10 {
+  margin-left: 10px;
+}
+
+.separator20Percent {
+  width: 20%;
+}
+
+.confirmBoxOption {
+  width: 15%;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  font-size: x-large;
+
+  span {
+    cursor: pointer;
+
+    &:hover {
+      color: red;
+      transition: 0.5s;
+    }
+  }
+}
+
+.separator30Percent {
+  width: 30%;
 }
 
 .users-headerTitle {
