@@ -18,7 +18,7 @@ function PlayerRequirementService({
     getFirstMatchingRequirement:
       queryPlayerRequirements.getFirstMatchingRequirement,
     firstRequirementIsOfType: queryPlayerRequirements.firstRequirementIsOfType,
-
+    getAll: queryPlayerRequirements.all,
     addCardRequirement,
     addDrawCardRequirement,
     addDiscardCardRequirement,

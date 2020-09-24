@@ -56,11 +56,15 @@ class PlayerRequirementUpdater {
           requirement.count = 0;
           requirement.waiting = true;
         });
+        if (!this._opponentHasAnyRequirement()) {
+          this.resolve();
+        }
       }
     } else {
       this.resolve();
     }
   }
+
   progressRequirementByActionPointsLeft(
     actionPointsConsumed = 1,
     isCardGroupsEmpty
@@ -116,7 +120,9 @@ class PlayerRequirementUpdater {
     );
     return !!opponentWaitingRequirement;
   }
-
+  _opponentHasAnyRequirement() {
+    return this._opponentRequirementService.getAll().length > 0;
+  }
   _removeOpponentMatchingAndWaitingRequirement() {
     this._opponentRequirementService.removeFirstMatchingRequirement({
       ...this._getMatchCondition(),
