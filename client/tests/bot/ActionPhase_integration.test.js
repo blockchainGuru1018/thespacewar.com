@@ -4,9 +4,10 @@
 const FakeCardDataAssembler = require("../../../shared/test/testUtils/FakeCardDataAssembler.js");
 const createCard = FakeCardDataAssembler.createCard;
 const { PHASES } = require("../../../shared/phases.js");
-const { setupFromState, BotId, PlayerId } = require("./botTestHelpers.js");
+const { setupFromState } = require("./botTestHelpers.js");
 const { unflippedStationCard } = require("../../testUtils/factories.js");
 const PutDownCardEvent = require("../../../shared/PutDownCardEvent.js");
+const Drone = require("../../../shared/card/Drone.js");
 
 test("playing a card", async () => {
   const { matchController } = await setupFromState({
@@ -98,6 +99,32 @@ test("when has 2 action point and has a space ship that cost 2, should play that
 
   expect(matchController.emit).toBeCalledWith("putDownCard", {
     cardId: "C1A",
+    location: "zone",
+  });
+});
+
+test("when has drone card and can play it should always play it ", async () => {
+  const commonId = "1";
+  const fakeRawCardData = [
+    { id: commonId, price: "2" },
+    { id: Drone.CommonId, price: "2" },
+  ];
+  const { matchController } = await setupFromState(
+    {
+      turn: 1,
+      phase: "action",
+      events: [{ turn: 1, type: "putDownCard", location: "station-action" }],
+      cardsOnHand: [
+        createCard({ id: "C1A", type: "spaceShip", commonId }),
+        createCard({ id: "C2A", type: "spaceShip", commonId: Drone.CommonId }),
+      ],
+      stationCards: [stationCard("S1A", "action")],
+    },
+    fakeRawCardData
+  );
+
+  expect(matchController.emit).toBeCalledWith("putDownCard", {
+    cardId: "C2A",
     location: "zone",
   });
 });
