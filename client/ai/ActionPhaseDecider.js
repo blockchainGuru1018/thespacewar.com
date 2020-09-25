@@ -14,13 +14,14 @@ module.exports = function ({
   };
 
   function decide() {
-    if (playCardCapability.canDoIt()) {
-      playCardCapability.doIt();
-    } else if (shouldPutDownStationCard()) {
+    if (shouldPutDownStationCard()) {
       const stationRow = decideRowForStationCard();
       const location = "station-" + stationRow;
       const cardId = decideCardToPlaceAsStationCard();
       matchController.emit("putDownCard", { cardId, location });
+    }
+    if (playCardCapability.canDoIt()) {
+      playCardCapability.doIt();
     } else {
       if (
         playerServiceFactory
