@@ -19,8 +19,7 @@ module.exports = function ({
       const location = "station-" + stationRow;
       const cardId = decideCardToPlaceAsStationCard();
       matchController.emit("putDownCard", { cardId, location });
-    }
-    if (playCardCapability.canDoIt()) {
+    } else if (playCardCapability.canDoIt()) {
       playCardCapability.doIt();
     } else {
       if (

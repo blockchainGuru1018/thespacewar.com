@@ -12,6 +12,7 @@ test("playing a card", async () => {
   const { matchController } = await setupFromState({
     turn: 1,
     phase: "action",
+    events: [{ turn: 1, type: "putDownCard", location: "station-action" }],
     stationCards: [unflippedStationCard("S1A", "draw")],
     cardsOnHand: [createCard({ id: "C1A", cost: 0, type: "spaceShip" })],
   });
@@ -88,6 +89,7 @@ test("when has 2 action point and has a space ship that cost 2, should play that
     {
       turn: 1,
       phase: "action",
+      events: [{ turn: 1, type: "putDownCard", location: "station-action" }],
       cardsOnHand: [createCard({ id: "C1A", type: "spaceShip", commonId })],
       stationCards: [stationCard("S1A", "action")],
     },
