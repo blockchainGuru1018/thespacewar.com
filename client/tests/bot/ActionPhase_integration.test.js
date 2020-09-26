@@ -10,6 +10,7 @@ const PutDownCardEvent = require("../../../shared/PutDownCardEvent.js");
 const Drone = require("../../../shared/card/Drone.js");
 const DroneLeader = require("../../../shared/card/DroneLeader.js");
 const ToxicGas = require("../../../shared/card/ToxicGas.js");
+const RepairShip = require("../../../shared/card/RepairShip.js");
 
 test("playing a card", async () => {
   const { matchController } = await setupFromState({
@@ -301,10 +302,65 @@ test("When have less than  3 Drone on table not play Drone Leader", async () => 
   });
 });
 
+test("When have 2 damage station cards should play Repair Ship", async () => {
+  const commonId = "1";
+  const fakeRawCardData = [
+    { id: commonId, price: "1" },
+    { id: RepairShip.CommonId, price: "1" },
+  ];
+  const { matchController } = await setupFromState(
+    {
+      turn: 1,
+      phase: "action",
+      events: [{ turn: 1, type: "putDownCard", location: "station-action" }],
+      cardsOnHand: [
+        createCard({
+          id: "C3A",
+          type: "spaceShip",
+          commonId,
+          cost: 2,
+        }),
+        createCard({
+          id: "C4A",
+          type: "spaceShip",
+          commonId,
+          cost: 2,
+        }),
+        createCard({
+          id: "C2A",
+          type: "spaceShip",
+          commonId: RepairShip.CommonId,
+          cost: 2,
+        }),
+      ],
+      stationCards: [
+        flippedStationCard("S1A", "action"),
+        flippedStationCard("S1A", "action"),
+        stationCard("S1A", "action"),
+      ],
+    },
+    fakeRawCardData
+  );
+  expect(matchController.emit).toBeCalledWith("putDownCard", {
+    cardId: "C2A",
+    location: "zone",
+  });
+});
+
 function stationCard(cardId, stationRow) {
   return {
     flipped: false,
     id: cardId,
+    place: stationRow,
+  };
+}
+function flippedStationCard(cardId, stationRow) {
+  return {
+    flipped: true,
+    id: cardId,
+    card: {
+      commonId: "1",
+    },
     place: stationRow,
   };
 }
