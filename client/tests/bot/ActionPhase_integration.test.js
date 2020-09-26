@@ -8,6 +8,7 @@ const { setupFromState } = require("./botTestHelpers.js");
 const { unflippedStationCard } = require("../../testUtils/factories.js");
 const PutDownCardEvent = require("../../../shared/PutDownCardEvent.js");
 const Drone = require("../../../shared/card/Drone.js");
+const ToxicGas = require("../../../shared/card/ToxicGas.js");
 
 test("playing a card", async () => {
   const { matchController } = await setupFromState({
@@ -129,6 +130,40 @@ test("when has drone card and can play it should always play it ", async () => {
   });
 });
 
+test("should always play toxic gas", async () => {
+  const commonId = "1";
+  const fakeRawCardData = [
+    { id: commonId, price: "1" },
+    { id: ToxicGas.CommonId, price: "1" },
+    { id: Drone.CommonId, price: "1" },
+  ];
+  const { matchController } = await setupFromState(
+    {
+      turn: 1,
+      phase: "action",
+      events: [{ turn: 1, type: "putDownCard", location: "station-action" }],
+      cardsOnHand: [
+        createCard({
+          id: "C2A",
+          type: "duration",
+          commonId: ToxicGas.CommonId,
+        }),
+        createCard({
+          id: "C3A",
+          type: "duration",
+          commonId,
+        }),
+      ],
+      stationCards: [stationCard("S1A", "action")],
+    },
+    fakeRawCardData
+  );
+
+  expect(matchController.emit).toBeCalledWith("putDownCard", {
+    cardId: "C2A",
+    location: "zone",
+  });
+});
 function stationCard(cardId, stationRow) {
   return {
     flipped: false,

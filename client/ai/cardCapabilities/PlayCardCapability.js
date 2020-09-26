@@ -1,11 +1,12 @@
 const GoodKarma = require("../../../shared/card/GoodKarma.js");
+const ToxicGas = require("../../../shared/card/ToxicGas.js");
 const Drone = require("../../../shared/card/Drone.js");
 
 module.exports = PlayerCardCapability;
 
 const PlayableTypes = ["spaceShip", "defense", "missile"];
 
-const PlayableCards = [GoodKarma.CommonId];
+const PlayableCards = [GoodKarma.CommonId, ToxicGas.CommonId];
 const LowCostCardPriority = [Drone.CommonId];
 
 function PlayerCardCapability({
