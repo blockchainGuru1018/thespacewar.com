@@ -8,6 +8,7 @@ const { setupFromState } = require("./botTestHelpers.js");
 const { unflippedStationCard } = require("../../testUtils/factories.js");
 const PutDownCardEvent = require("../../../shared/PutDownCardEvent.js");
 const Drone = require("../../../shared/card/Drone.js");
+const DroneLeader = require("../../../shared/card/DroneLeader.js");
 const ToxicGas = require("../../../shared/card/ToxicGas.js");
 
 test("playing a card", async () => {
@@ -164,6 +165,142 @@ test("should always play toxic gas", async () => {
     location: "zone",
   });
 });
+
+test("When have more than 3 Drone on table play Drone Leader", async () => {
+  const commonId = "1";
+  const fakeRawCardData = [
+    { id: commonId, price: "1" },
+    { id: DroneLeader.CommonId, price: "3" },
+    { id: Drone.CommonId, price: "1" },
+  ];
+  const { matchController } = await setupFromState(
+    {
+      turn: 1,
+      phase: "action",
+      events: [{ turn: 1, type: "putDownCard", location: "station-action" }],
+      cardsOnHand: [
+        createCard({
+          id: "C2A",
+          type: "spaceShip",
+          commonId: DroneLeader.CommonId,
+          cost: 2,
+        }),
+        createCard({
+          id: "C3A",
+          type: "spaceShip",
+          commonId,
+          cost: 1,
+        }),
+      ],
+      cardsInZone: [
+        { id: "C4A", commonId: Drone.CommonId },
+        { id: "C5A", commonId: Drone.CommonId },
+        { id: "C6A", commonId: Drone.CommonId },
+        { id: "C7A", commonId: Drone.CommonId },
+      ],
+      stationCards: [
+        stationCard("S1A", "action"),
+        stationCard("S1A", "action"),
+      ],
+    },
+    fakeRawCardData
+  );
+
+  expect(matchController.emit).toBeCalledWith("putDownCard", {
+    cardId: "C2A",
+    location: "zone",
+  });
+});
+
+test("When have more than 3 Drone on opponent zone play Drone Leader", async () => {
+  const commonId = "1";
+  const fakeRawCardData = [
+    { id: commonId, price: "1" },
+    { id: DroneLeader.CommonId, price: "3" },
+    { id: Drone.CommonId, price: "1" },
+  ];
+  const { matchController } = await setupFromState(
+    {
+      turn: 1,
+      phase: "action",
+      events: [{ turn: 1, type: "putDownCard", location: "station-action" }],
+      cardsOnHand: [
+        createCard({
+          id: "C2A",
+          type: "spaceShip",
+          commonId: DroneLeader.CommonId,
+          cost: 2,
+        }),
+        createCard({
+          id: "C3A",
+          type: "spaceShip",
+          commonId,
+          cost: 1,
+        }),
+      ],
+      cardsInOpponentZone: [
+        { id: "C4A", commonId: Drone.CommonId },
+        { id: "C5A", commonId: Drone.CommonId },
+        { id: "C6A", commonId: Drone.CommonId },
+        { id: "C7A", commonId: Drone.CommonId },
+      ],
+      stationCards: [
+        stationCard("S1A", "action"),
+        stationCard("S1A", "action"),
+      ],
+    },
+    fakeRawCardData
+  );
+
+  expect(matchController.emit).toBeCalledWith("putDownCard", {
+    cardId: "C2A",
+    location: "zone",
+  });
+});
+
+test("When have less than  3 Drone on table not play Drone Leader", async () => {
+  const commonId = "1";
+  const fakeRawCardData = [
+    { id: commonId, price: "1" },
+    { id: DroneLeader.CommonId, price: "3" },
+    { id: Drone.CommonId, price: "1" },
+  ];
+  const { matchController } = await setupFromState(
+    {
+      turn: 1,
+      phase: "action",
+      events: [{ turn: 1, type: "putDownCard", location: "station-action" }],
+      cardsOnHand: [
+        createCard({
+          id: "C2A",
+          type: "spaceShip",
+          commonId: DroneLeader.CommonId,
+          cost: 2,
+        }),
+        createCard({
+          id: "C3A",
+          type: "spaceShip",
+          commonId,
+          cost: 1,
+        }),
+      ],
+      cardsInZone: [
+        { id: "C4A", commonId: Drone.CommonId },
+        { id: "C5A", commonId: Drone.CommonId },
+      ],
+      stationCards: [
+        stationCard("S1A", "action"),
+        stationCard("S1A", "action"),
+      ],
+    },
+    fakeRawCardData
+  );
+  expect(matchController.emit).toBeCalledWith("putDownCard", {
+    cardId: "C3A",
+    location: "zone",
+  });
+});
+
 function stationCard(cardId, stationRow) {
   return {
     flipped: false,

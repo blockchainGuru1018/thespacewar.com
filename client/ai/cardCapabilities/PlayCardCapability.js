@@ -1,20 +1,21 @@
 const GoodKarma = require("../../../shared/card/GoodKarma.js");
 const ToxicGas = require("../../../shared/card/ToxicGas.js");
 const Drone = require("../../../shared/card/Drone.js");
+const DroneLeader = require("../../../shared/card/DroneLeader");
 
 module.exports = PlayerCardCapability;
 
 const PlayableTypes = ["spaceShip", "defense", "missile"];
 
 const PlayableCards = [GoodKarma.CommonId, ToxicGas.CommonId];
-const LowCostCardPriority = [Drone.CommonId];
+const PriorityCards = [Drone.CommonId, DroneLeader.CommonId];
 
 function PlayerCardCapability({
   playerStateService,
   matchController,
   playableTypes = PlayableTypes,
   playableCards = PlayableCards,
-  lowCostCardPriority = LowCostCardPriority,
+  priorityCards = PriorityCards,
   cardPlayers,
   cardRules,
 }) {
@@ -33,7 +34,7 @@ function PlayerCardCapability({
       CheapestFirst()
     );
     const priorityCard = playableCards.find((card) =>
-      lowCostCardPriority.includes(card.commonId)
+      priorityCards.includes(card.commonId)
     );
     const card = priorityCard || playableCards[0];
     playCard(card);

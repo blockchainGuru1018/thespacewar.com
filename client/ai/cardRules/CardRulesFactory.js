@@ -1,4 +1,5 @@
 const ShouldPlayGoodKarma = require("./ShouldPlayGoodKarma.js");
+const ShouldPlayDroneLeader = require("./ShouldPlayDroneLeader.js");
 
 module.exports = function ({ BotId, playerServiceFactory }) {
   return {
@@ -6,11 +7,17 @@ module.exports = function ({ BotId, playerServiceFactory }) {
   };
 
   function createAll() {
-    return [shouldPlayGoodKarma()];
+    return [shouldPlayGoodKarma(), shouldPlayDroneLeader()];
   }
 
   function shouldPlayGoodKarma() {
     return ShouldPlayGoodKarma({
+      playerStateService: playerServiceFactory.playerStateService(BotId),
+    });
+  }
+
+  function shouldPlayDroneLeader() {
+    return ShouldPlayDroneLeader({
       playerStateService: playerServiceFactory.playerStateService(BotId),
     });
   }
