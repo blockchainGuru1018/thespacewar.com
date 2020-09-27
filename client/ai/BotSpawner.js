@@ -183,6 +183,7 @@ module.exports = function ({
   function cardRules() {
     const cardRulesFactory = CardRulesFactory({
       BotId,
+      opponentUserId,
       playerServiceFactory,
     });
     return cardRulesFactory.createAll();
