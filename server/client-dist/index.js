@@ -2530,6 +2530,18 @@ eval("module.exports = {\"MaxInDrawRow\":3,\"OrderForDrawRowUntilMinCountReached
 
 /***/ }),
 
+/***/ "./ai/cardCapabilities/AttackBiggestShipPriority.js":
+/*!**********************************************************!*\
+  !*** ./ai/cardCapabilities/AttackBiggestShipPriority.js ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\nmodule.exports = function () {\n  return function (cards) {\n    const sortedByScore = cards.slice().sort((a, b) => cardScore(b) - cardScore(a));\n    const first = sortedByScore[0];\n    return first.id;\n  };\n\n  function cardScore(card) {\n    return card.defense + card.attack;\n  }\n};\n\n//# sourceURL=webpack:///./ai/cardCapabilities/AttackBiggestShipPriority.js?");
+
+/***/ }),
+
 /***/ "./ai/cardCapabilities/AttackEnergyShieldCardCapability.js":
 /*!*****************************************************************!*\
   !*** ./ai/cardCapabilities/AttackEnergyShieldCardCapability.js ***!
@@ -2550,7 +2562,7 @@ eval("\n\nmodule.exports = function AttackEnergyShieldCardCapability({\n  card,\
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nmodule.exports = function AttackInHomeZoneCardCapability({\n  card,\n  matchController,\n  opponentStateService\n}) {\n  return {\n    canDoIt,\n    doIt\n  };\n\n  function canDoIt() {\n    return !card.canAttackStationCards() && hasAvailableTargets();\n  }\n\n  function doIt() {\n    matchController.emit(\"attack\", {\n      attackerCardId: card.id,\n      defenderCardId: firstTarget().id\n    });\n  }\n\n  function hasAvailableTargets() {\n    return targets(card).length > 0;\n  }\n\n  function firstTarget() {\n    return targets(card)[0];\n  }\n\n  function targets(playerCard) {\n    return opponentStateService.getMatchingBehaviourCards(opponentCard => playerCard.canAttackCard(opponentCard));\n  }\n};\n\n//# sourceURL=webpack:///./ai/cardCapabilities/AttackInHomeZoneCardCapability.js?");
+eval("\n\nconst TheParalyzer = __webpack_require__(/*! ../../../shared/card/TheParalyzer.js */ \"../shared/card/TheParalyzer.js\");\n\nconst attackBiggestShipPriority = __webpack_require__(/*! ../cardCapabilities/AttackBiggestShipPriority.js */ \"./ai/cardCapabilities/AttackBiggestShipPriority.js\");\n\nconst SpecificCapabilitiesInPriorityOrder = new Map();\nSpecificCapabilitiesInPriorityOrder.set(TheParalyzer.CommonId, attackBiggestShipPriority());\n\nmodule.exports = function AttackInHomeZoneCardCapability({\n  card,\n  matchController,\n  opponentStateService\n}) {\n  return {\n    canDoIt,\n    doIt\n  };\n\n  function canDoIt() {\n    return !card.canAttackStationCards() && hasAvailableTargets();\n  }\n\n  function doIt() {\n    matchController.emit(\"attack\", {\n      attackerCardId: card.id,\n      defenderCardId: firstTarget()\n    });\n  }\n\n  function hasAvailableTargets() {\n    return targets(card).length > 0;\n  }\n\n  function firstTarget() {\n    const availableTargets = targets(card);\n    const priority = SpecificCapabilitiesInPriorityOrder.get(card.commonId);\n\n    if (priority !== undefined) {\n      return priority(availableTargets);\n    }\n\n    return availableTargets[0].id;\n  }\n\n  function targets(playerCard) {\n    return opponentStateService.getMatchingBehaviourCards(opponentCard => playerCard.canAttackCard(opponentCard));\n  }\n};\n\n//# sourceURL=webpack:///./ai/cardCapabilities/AttackInHomeZoneCardCapability.js?");
 
 /***/ }),
 

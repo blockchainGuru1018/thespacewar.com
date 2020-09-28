@@ -4,6 +4,7 @@
 const PutDownCardEvent = require("../../../shared/PutDownCardEvent.js");
 const MoveCardEvent = require("../../../shared/event/MoveCardEvent.js");
 const SmallRepairShop = require("../../../shared/card/SmallRepairShop.js");
+const TheParalyzer = require("../../../shared/card/TheParalyzer.js");
 const { PHASES } = require("../../../shared/phases.js");
 const { setupFromState, BotId, PlayerId } = require("./botTestHelpers.js");
 
@@ -183,6 +184,34 @@ test("when has repair ship is in opponent zone and has damaged card both in home
   expect(matchController.emit).toBeCalledWith("repairCard", {
     repairerCardId: "C2A",
     cardToRepairId: "C3A",
+  });
+});
+
+test("paralizer should attack biggest ship first", async () => {
+  let matchController;
+
+  const stubs = await setupFromState({
+    turn: 2,
+    phase: "attack",
+    cardsInZone: [
+      {
+        id: "C1A",
+        type: "spaceShip",
+        attack: 1,
+        commonId: TheParalyzer.CommonId,
+      },
+    ],
+    opponentCardsInPlayerZone: [
+      { id: "C2A", type: "spaceShip", attack: 1, defense: 3 },
+      { id: "C3A", type: "spaceShip", attack: 1, defense: 5 },
+    ],
+    events: [PutDownCardEvent({ cardId: "C1A", turn: 1, location: "zone" })],
+  });
+  matchController = stubs.matchController;
+
+  expect(matchController.emit).toBeCalledWith("attack", {
+    attackerCardId: "C1A",
+    defenderCardId: "C3A",
   });
 });
 

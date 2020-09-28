@@ -1,3 +1,10 @@
+const TheParalyzer = require("../../../shared/card/TheParalyzer.js");
+const attackBiggestShipPriority = require("../cardCapabilities/AttackBiggestShipPriority.js");
+const SpecificCapabilitiesInPriorityOrder = new Map();
+SpecificCapabilitiesInPriorityOrder.set(
+  TheParalyzer.CommonId,
+  attackBiggestShipPriority()
+);
 module.exports = function AttackInHomeZoneCardCapability({
   card,
   matchController,
@@ -15,7 +22,7 @@ module.exports = function AttackInHomeZoneCardCapability({
   function doIt() {
     matchController.emit("attack", {
       attackerCardId: card.id,
-      defenderCardId: firstTarget().id,
+      defenderCardId: firstTarget(),
     });
   }
 
@@ -24,7 +31,12 @@ module.exports = function AttackInHomeZoneCardCapability({
   }
 
   function firstTarget() {
-    return targets(card)[0];
+    const availableTargets = targets(card);
+    const priority = SpecificCapabilitiesInPriorityOrder.get(card.commonId);
+    if (priority !== undefined) {
+      return priority(availableTargets);
+    }
+    return availableTargets[0].id;
   }
 
   function targets(playerCard) {
