@@ -11,6 +11,7 @@ const Drone = require("../../../shared/card/Drone.js");
 const DroneLeader = require("../../../shared/card/DroneLeader.js");
 const ToxicGas = require("../../../shared/card/ToxicGas.js");
 const RepairShip = require("../../../shared/card/RepairShip.js");
+const Carrier = require("../../../shared/card/Carrier.js");
 
 test("playing a card", async () => {
   const { matchController } = await setupFromState({
@@ -331,6 +332,39 @@ test("When have 2 damage station cards should play Repair Ship", async () => {
           type: "spaceShip",
           commonId: RepairShip.CommonId,
           cost: 2,
+        }),
+      ],
+      stationCards: [
+        flippedStationCard("S1A", "action"),
+        flippedStationCard("S1A", "action"),
+        stationCard("S1A", "action"),
+      ],
+    },
+    fakeRawCardData
+  );
+  expect(matchController.emit).toBeCalledWith("putDownCard", {
+    cardId: "C2A",
+    location: "zone",
+  });
+});
+
+test("Should play Carrier", async () => {
+  const commonId = "1";
+  const fakeRawCardData = [
+    { id: commonId, price: "1" },
+    { id: Carrier.CommonId, price: "1" },
+  ];
+  const { matchController } = await setupFromState(
+    {
+      turn: 1,
+      phase: "action",
+      events: [{ turn: 1, type: "putDownCard", location: "station-action" }],
+      cardsOnHand: [
+        createCard({
+          id: "C2A",
+          type: "spaceShip",
+          commonId: Carrier.CommonId,
+          cost: 4,
         }),
       ],
       stationCards: [
