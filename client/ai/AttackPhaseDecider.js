@@ -12,6 +12,7 @@ module.exports = function ({
     cardCapabilityFactory.attackInOpponentZone,
     cardCapabilityFactory.attackEnergyShield,
     cardCapabilityFactory.move,
+    cardCapabilityFactory.triggerDormantEffect,
   ];
 
   return {

@@ -1,5 +1,5 @@
 const TheParalyzer = require("../../../shared/card/TheParalyzer.js");
-const attackBiggestShipPriority = require("../cardCapabilities/AttackBiggestShipPriority.js");
+const attackBiggestShipPriority = require("./priorities/AttackBiggestShipPriority.js");
 const SpecificCapabilitiesInPriorityOrder = new Map();
 SpecificCapabilitiesInPriorityOrder.set(
   TheParalyzer.CommonId,

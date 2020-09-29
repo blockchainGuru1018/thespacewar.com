@@ -1,4 +1,4 @@
-const Priority = require("../../../../ai/cardCapabilities/AttackBiggestShipPriority.js");
+const Priority = require("../../../../ai/cardCapabilities/priorities/AttackBiggestShipPriority.js");
 
 test("should prioritize most powerfull card first", () => {
   const cards = [

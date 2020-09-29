@@ -381,6 +381,48 @@ test("Should play Carrier", async () => {
   });
 });
 
+test("Should resolve find card requirement", async () => {
+  const commonId = "1";
+  const fakeRawCardData = [
+    { id: commonId, price: "1" },
+    { id: Carrier.CommonId, price: "1" },
+  ];
+  const { matchController } = await setupFromState(
+    {
+      turn: 1,
+      phase: "attack",
+      events: [{ turn: 1, type: "putDownCard", location: "station-action" }],
+      stationCards: [stationCard("S1A", "action")],
+      requirements: [
+        {
+          cancelable: false,
+          cardGroups: [
+            {
+              cards: [{ id: "R1A" }, { id: "R2A" }, { id: "R3A" }],
+              source: "deck",
+            },
+          ],
+          count: 3,
+          target: "currentCardZone",
+          type: "findCard",
+        },
+      ],
+    },
+    fakeRawCardData
+  );
+  expect(matchController.emit).toBeCalledWith(
+    "selectCardForFindCardRequirement",
+    {
+      cardGroups: [
+        {
+          source: "deck",
+          cardIds: ["R1A", "R2A", "R3A"],
+        },
+      ],
+    }
+  );
+});
+
 function stationCard(cardId, stationRow) {
   return {
     flipped: false,

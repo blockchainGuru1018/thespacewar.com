@@ -135,6 +135,30 @@ module.exports = function ({
         "sacrificeCardForRequirement",
         decideCardToSacrifice()
       );
+    } else if (hasRequirementOfType("findCard")) {
+      const findRequirement = getRequirementOfType("findCard");
+      matchController.emit("selectCardForFindCardRequirement", {
+        cardGroups: getCardGroup(findRequirement),
+      });
     }
+  }
+
+  function getCardGroup(requirement) {
+    let cardsLeft = requirement.count;
+    const result = [];
+    requirement.cardGroups.forEach((group) => {
+      if (group.cards.length > 0) {
+        const groupSelection = { source: group.source, cardIds: [] };
+        group.cards.forEach((card) => {
+          if (cardsLeft !== 0) {
+            groupSelection.cardIds.push(card.id);
+            cardsLeft--;
+          }
+        });
+        result.push(groupSelection);
+      }
+    });
+
+    return result;
   }
 };
