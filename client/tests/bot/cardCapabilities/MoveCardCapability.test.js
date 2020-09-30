@@ -33,6 +33,14 @@ test("when card has 0 in attack should NOT move", () => {
   expect(capability.canDoIt()).toBe(false);
 });
 
+test("when card is blacklisted for move should never move", () => {
+  const capability = Capability({
+    card: Card({ commonId: "1", canMove: () => true, attack: 1 }),
+    blackList: ["1"],
+  });
+  expect(capability.canDoIt()).toBe(false);
+});
+
 function Card(options) {
   return {
     canAttackCardsInOtherZone() {},

@@ -6,6 +6,7 @@ const MoveCardEvent = require("../../../shared/event/MoveCardEvent.js");
 const SmallRepairShop = require("../../../shared/card/SmallRepairShop.js");
 const TheParalyzer = require("../../../shared/card/TheParalyzer.js");
 const Carrier = require("../../../shared/card/Carrier.js");
+const Fusion = require("../../../shared/card/Fusion.js");
 const { PHASES } = require("../../../shared/phases.js");
 const { setupFromState, BotId, PlayerId } = require("./botTestHelpers.js");
 
@@ -239,6 +240,35 @@ test("Should trigger carrier dormant effect", async () => {
   matchController = stubs.matchController;
 
   expect(matchController.emit).toBeCalledWith("triggerDormantEffect", "C1A");
+});
+
+test("Should never move Fusion Ship to enemy zone", async () => {
+  let matchController;
+
+  const stubs = await setupFromState({
+    turn: 2,
+    phase: "attack",
+    cardsInZone: [
+      {
+        id: "C1A",
+        type: "spaceShip",
+        attack: 2,
+        commonId: Fusion.CommonId,
+      },
+    ],
+    events: [
+      PutDownCardEvent({ cardId: "C1A", turn: 1, location: "zone" }),
+      {
+        type: "useDormantEffect",
+        created: Date.now(),
+        turn: 2,
+        cardId: "C1A",
+      },
+    ],
+  });
+  matchController = stubs.matchController;
+
+  expect(matchController.emit).not.toBeCalledWith("moveCard", "C1A");
 });
 
 function unflippedStationCard(id, place = "draw") {

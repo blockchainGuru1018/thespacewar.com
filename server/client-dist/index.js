@@ -2598,7 +2598,7 @@ eval("\n\nconst AttackStationCardCapability = __webpack_require__(/*! ./AttackSt
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nmodule.exports = function MoveCardCapability({\n  card,\n  matchController\n}) {\n  return {\n    canDoIt,\n    doIt\n  };\n\n  function canDoIt() {\n    return card.canMove() && card.isInHomeZone() && !card.canAttackCardsInOtherZone() && card.attack > 0;\n  }\n\n  function doIt() {\n    matchController.emit(\"moveCard\", card.id);\n  }\n};\n\n//# sourceURL=webpack:///./ai/cardCapabilities/MoveCardCapability.js?");
+eval("\n\nconst Fusion = __webpack_require__(/*! ../../../shared/card/Fusion.js */ \"../shared/card/Fusion.js\");\n\nconst Carrier = __webpack_require__(/*! ../../../shared/card/Carrier.js */ \"../shared/card/Carrier.js\");\n\nconst DEFAULT_BLACKLIST = [Fusion.CommonId, Carrier.CommonId];\n\nmodule.exports = function MoveCardCapability({\n  card,\n  matchController,\n  blackList = DEFAULT_BLACKLIST\n}) {\n  return {\n    canDoIt,\n    doIt\n  };\n\n  function canDoIt() {\n    return !blackList.includes(card.commonId) && card.canMove() && card.isInHomeZone() && !card.canAttackCardsInOtherZone() && card.attack > 0;\n  }\n\n  function doIt() {\n    matchController.emit(\"moveCard\", card.id);\n  }\n};\n\n//# sourceURL=webpack:///./ai/cardCapabilities/MoveCardCapability.js?");
 
 /***/ }),
 
@@ -2706,7 +2706,7 @@ eval("\n\nconst Luck = __webpack_require__(/*! ../../../shared/card/Luck.js */ \
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nconst ShouldPlayGoodKarma = __webpack_require__(/*! ./ShouldPlayGoodKarma.js */ \"./ai/cardRules/ShouldPlayGoodKarma.js\");\n\nconst ShouldPlayDroneLeader = __webpack_require__(/*! ./ShouldPlayDroneLeader.js */ \"./ai/cardRules/ShouldPlayDroneLeader.js\");\n\nconst ShouldPlayRepairShip = __webpack_require__(/*! ./ShouldPlayRepairShip.js */ \"./ai/cardRules/ShouldPlayRepairShip.js\");\n\nconst ShouldPlayParalizer = __webpack_require__(/*! ./ShouldPlayParalizer.js */ \"./ai/cardRules/ShouldPlayParalizer.js\");\n\nmodule.exports = function ({\n  BotId,\n  opponentUserId,\n  playerServiceFactory\n}) {\n  return {\n    createAll\n  };\n\n  function createAll() {\n    return [shouldPlayGoodKarma(), shouldPlayDroneLeader(), shouldPlayRepairShip(), shouldPlayParalizer()];\n  }\n\n  function shouldPlayGoodKarma() {\n    return ShouldPlayGoodKarma({\n      playerStateService: playerServiceFactory.playerStateService(BotId)\n    });\n  }\n\n  function shouldPlayDroneLeader() {\n    return ShouldPlayDroneLeader({\n      playerStateService: playerServiceFactory.playerStateService(BotId)\n    });\n  }\n\n  function shouldPlayRepairShip() {\n    return ShouldPlayRepairShip({\n      playerStateService: playerServiceFactory.playerStateService(BotId)\n    });\n  }\n\n  function shouldPlayParalizer() {\n    return ShouldPlayParalizer({\n      opponentStateService: playerServiceFactory.playerStateService(opponentUserId)\n    });\n  }\n};\n\n//# sourceURL=webpack:///./ai/cardRules/CardRulesFactory.js?");
+eval("\n\nconst ShouldPlayGoodKarma = __webpack_require__(/*! ./ShouldPlayGoodKarma.js */ \"./ai/cardRules/ShouldPlayGoodKarma.js\");\n\nconst ShouldPlayDroneLeader = __webpack_require__(/*! ./ShouldPlayDroneLeader.js */ \"./ai/cardRules/ShouldPlayDroneLeader.js\");\n\nconst ShouldPlayRepairShip = __webpack_require__(/*! ./ShouldPlayRepairShip.js */ \"./ai/cardRules/ShouldPlayRepairShip.js\");\n\nconst ShouldPlayParalizer = __webpack_require__(/*! ./ShouldPlayParalizer.js */ \"./ai/cardRules/ShouldPlayParalizer.js\");\n\nconst ShouldPlayFusionShip = __webpack_require__(/*! ./ShouldPlayFusionShip */ \"./ai/cardRules/ShouldPlayFusionShip.js\");\n\nmodule.exports = function ({\n  BotId,\n  opponentUserId,\n  playerServiceFactory\n}) {\n  return {\n    createAll\n  };\n\n  function createAll() {\n    return [shouldPlayGoodKarma(), shouldPlayDroneLeader(), shouldPlayRepairShip(), shouldPlayParalizer(), shouldPlayFusionShip()];\n  }\n\n  function shouldPlayGoodKarma() {\n    return ShouldPlayGoodKarma({\n      playerStateService: playerServiceFactory.playerStateService(BotId)\n    });\n  }\n\n  function shouldPlayDroneLeader() {\n    return ShouldPlayDroneLeader({\n      playerStateService: playerServiceFactory.playerStateService(BotId)\n    });\n  }\n\n  function shouldPlayRepairShip() {\n    return ShouldPlayRepairShip({\n      playerStateService: playerServiceFactory.playerStateService(BotId)\n    });\n  }\n\n  function shouldPlayParalizer() {\n    return ShouldPlayParalizer({\n      opponentStateService: playerServiceFactory.playerStateService(opponentUserId)\n    });\n  }\n\n  function shouldPlayFusionShip() {\n    return ShouldPlayFusionShip({\n      playerStateService: playerServiceFactory.playerStateService(BotId)\n    });\n  }\n};\n\n//# sourceURL=webpack:///./ai/cardRules/CardRulesFactory.js?");
 
 /***/ }),
 
@@ -2719,6 +2719,18 @@ eval("\n\nconst ShouldPlayGoodKarma = __webpack_require__(/*! ./ShouldPlayGoodKa
 
 "use strict";
 eval("\n\nconst DroneLeader = __webpack_require__(/*! ../../../shared/card/DroneLeader.js */ \"../shared/card/DroneLeader.js\");\n\nconst Drone = __webpack_require__(/*! ../../../shared/card/Drone.js */ \"../shared/card/Drone.js\");\n\nmodule.exports = function ({\n  playerStateService\n}) {\n  return card => {\n    if (card.commonId !== DroneLeader.CommonId) return true;\n    return hastMoreThanThreeDronesInZone();\n  };\n\n  function hastMoreThanThreeDronesInZone() {\n    const drones = playerStateService.getMatchingBehaviourCards(card => card.commonId === Drone.CommonId);\n    return drones.length > 3;\n  }\n};\n\n//# sourceURL=webpack:///./ai/cardRules/ShouldPlayDroneLeader.js?");
+
+/***/ }),
+
+/***/ "./ai/cardRules/ShouldPlayFusionShip.js":
+/*!**********************************************!*\
+  !*** ./ai/cardRules/ShouldPlayFusionShip.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\nconst Fusion = __webpack_require__(/*! ../../../shared/card/Fusion.js */ \"../shared/card/Fusion.js\");\n\nconst Drone = __webpack_require__(/*! ../../../shared/card/Drone.js */ \"../shared/card/Drone.js\");\n\nmodule.exports = function ({\n  playerStateService\n}) {\n  return card => {\n    if (card.commonId !== Fusion.CommonId) return true;\n    return thereAreMoreThanOneDroneInPlay();\n  };\n\n  function thereAreMoreThanOneDroneInPlay() {\n    const drones = playerStateService.getMatchingBehaviourCards(card => card.commonId === Drone.CommonId);\n    return drones.length >= 1;\n  }\n};\n\n//# sourceURL=webpack:///./ai/cardRules/ShouldPlayFusionShip.js?");
 
 /***/ }),
 
