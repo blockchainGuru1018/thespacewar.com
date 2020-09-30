@@ -12,6 +12,7 @@ const DroneLeader = require("../../../shared/card/DroneLeader.js");
 const ToxicGas = require("../../../shared/card/ToxicGas.js");
 const RepairShip = require("../../../shared/card/RepairShip.js");
 const Carrier = require("../../../shared/card/Carrier.js");
+const Fusion = require("../../../shared/card/Fusion.js");
 
 test("playing a card", async () => {
   const { matchController } = await setupFromState({
@@ -381,35 +382,66 @@ test("Should play Carrier", async () => {
   });
 });
 
-test("Should resolve find card requirement", async () => {
-  const commonId = "1";
+test("Should play Fusion", async () => {
   const fakeRawCardData = [
-    { id: commonId, price: "1" },
-    { id: Carrier.CommonId, price: "1" },
+    { id: Drone.CommonId, price: "1" },
+    { id: Fusion.CommonId, price: "1" },
   ];
   const { matchController } = await setupFromState(
     {
-      turn: 1,
-      phase: "attack",
-      events: [{ turn: 1, type: "putDownCard", location: "station-action" }],
-      stationCards: [stationCard("S1A", "action")],
-      requirements: [
+      turn: 2,
+      phase: "action",
+      events: [
+        { turn: 1, type: "putDownCard", location: "station-action" },
+        { turn: 2, type: "putDownCard", location: "station-draw" },
+      ],
+      cardsOnHand: [
+        createCard({
+          id: "C1A",
+          type: "spaceShip",
+          commonId: Fusion.CommonId,
+          cost: 1,
+          attack: 1,
+        }),
+      ],
+      cardsInZone: [
         {
-          cancelable: false,
-          cardGroups: [
-            {
-              cards: [{ id: "R1A" }, { id: "R2A" }, { id: "R3A" }],
-              source: "deck",
-            },
-          ],
-          count: 3,
-          target: "currentCardZone",
-          type: "findCard",
+          id: "C2A",
+          type: "spaceShip",
+          commonId: Drone.CommonId,
+          cost: 1,
         },
       ],
+      stationCards: [stationCard("S1A", "action")],
     },
     fakeRawCardData
   );
+  expect(matchController.emit).toBeCalledWith("putDownCard", {
+    cardId: "C1A",
+    location: "zone",
+  });
+});
+
+test("Should resolve find card requirement", async () => {
+  const { matchController } = await setupFromState({
+    turn: 1,
+    phase: "attack",
+    stationCards: [stationCard("S1A", "action")],
+    requirements: [
+      {
+        cancelable: false,
+        cardGroups: [
+          {
+            cards: [{ id: "R1A" }, { id: "R2A" }, { id: "R3A" }],
+            source: "deck",
+          },
+        ],
+        count: 3,
+        target: "currentCardZone",
+        type: "findCard",
+      },
+    ],
+  });
   expect(matchController.emit).toBeCalledWith(
     "selectCardForFindCardRequirement",
     {
