@@ -411,6 +411,12 @@ test("Should play Fusion", async () => {
           commonId: Drone.CommonId,
           cost: 1,
         },
+        {
+          id: "C3A",
+          type: "spaceShip",
+          commonId: Drone.CommonId,
+          cost: 1,
+        },
       ],
       stationCards: [stationCard("S1A", "action")],
     },

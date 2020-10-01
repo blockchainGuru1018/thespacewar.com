@@ -11,6 +11,6 @@ module.exports = function ({ playerStateService }) {
     const drones = playerStateService.getMatchingBehaviourCards(
       (card) => card.commonId === Drone.CommonId
     );
-    return drones.length >= 1;
+    return drones.length > 1;
   }
 };
