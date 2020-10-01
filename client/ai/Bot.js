@@ -140,7 +140,22 @@ module.exports = function ({
       matchController.emit("selectCardForFindCardRequirement", {
         cardGroups: getCardGroup(findRequirement),
       });
+    } else if (hasRequirementOfType("damageShieldCard")) {
+      const damageShieldCardRequirement = getRequirementOfType(
+        "damageShieldCard"
+      );
+      matchController.emit("damageShieldCards", {
+        targetIds: getTargetShields(damageShieldCardRequirement),
+      });
     }
+  }
+
+  function getTargetShields(damageShieldCardRequirement) {
+    const opponentShields = opponentStateService
+      .getMatchingBehaviourCards((card) => card.stopsStationAttack())
+      .slice(0, damageShieldCardRequirement.count);
+
+    return opponentShields.map((card) => card.id);
   }
 
   function getCardGroup(requirement) {
