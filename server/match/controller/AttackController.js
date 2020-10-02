@@ -321,6 +321,15 @@ function AttackController(deps) {
       { type: "damageShieldCard" }
     );
     requirementUpdater.progressRequirementByCount(targetIds.length);
+    if (playerId === "BOT") {
+      targetIds.forEach((target) =>
+        onAttack(playerId, {
+          attackerCardId: damageShieldCardRequirement.cardId,
+          defenderCardId: target,
+          usingCollision: false,
+        })
+      );
+    }
   }
 
   function onSacrifice(playerId, { cardId, targetCardId, targetCardIds }) {
