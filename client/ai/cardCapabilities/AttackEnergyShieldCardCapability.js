@@ -1,3 +1,5 @@
+const ToxicGas = require("../../../shared/card/ToxicGas.js");
+const BLACK_LIST_CARDS = [ToxicGas.CommonId];
 module.exports = function AttackEnergyShieldCardCapability({
   card,
   matchController,
@@ -9,7 +11,7 @@ module.exports = function AttackEnergyShieldCardCapability({
   };
 
   function canDoIt() {
-    return targets().length > 0;
+    return targets().length > 0 && !BLACK_LIST_CARDS.includes(card.commonId);
   }
 
   function doIt() {

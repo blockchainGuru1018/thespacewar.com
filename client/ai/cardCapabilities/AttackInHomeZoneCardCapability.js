@@ -1,5 +1,7 @@
 const TheParalyzer = require("../../../shared/card/TheParalyzer.js");
+const ToxicGas = require("../../../shared/card/ToxicGas.js");
 const attackBiggestShipPriority = require("./priorities/AttackBiggestShipPriority.js");
+const BLACK_LIST_CARDS = [ToxicGas.CommonId];
 const SpecificCapabilitiesInPriorityOrder = new Map();
 SpecificCapabilitiesInPriorityOrder.set(
   TheParalyzer.CommonId,
@@ -16,7 +18,11 @@ module.exports = function AttackInHomeZoneCardCapability({
   };
 
   function canDoIt() {
-    return !card.canAttackStationCards() && hasAvailableTargets();
+    return (
+      !card.canAttackStationCards() &&
+      hasAvailableTargets() &&
+      !BLACK_LIST_CARDS.includes(card.commonId)
+    );
   }
 
   function doIt() {
