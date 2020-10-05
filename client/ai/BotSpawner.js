@@ -15,7 +15,6 @@ const PlayCardCapability = require("./cardCapabilities/PlayCardCapability.js");
 const CardCapabilityFactory = require("./cardCapabilities/CardCapabilityFactory.js");
 const LuckPlayer = require("./cardPlayers/LuckPlayer.js");
 const ExcellentWorkPlayer = require("./cardPlayers/ExcellentWorkPlayer.js");
-const DronePlayer = require("./cardPlayers/DronePlayer.js");
 
 const BotId = "BOT";
 
@@ -133,7 +132,6 @@ module.exports = function ({
           decideRowForStationCard: decideRowForStationCard(),
           playerRuleService: playerServiceFactory.playerRuleService(BotId),
         }),
-        DronePlayer({ matchController }),
       ],
     });
   }

@@ -1,10 +1,11 @@
 const Carrier = require("../../../shared/card/Carrier.js");
+const Fusion = require("../../../shared/card/Fusion");
 
 module.exports = function TriggerDormantEffectCapability({
   card,
   matchController,
 }) {
-  const dormantEffetTriggersCard = [Carrier.CommonId];
+  const dormantEffetTriggersCard = [Carrier.CommonId, Fusion.CommonId];
   return {
     canDoIt,
     doIt,
