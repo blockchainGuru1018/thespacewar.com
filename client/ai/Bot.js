@@ -1,9 +1,5 @@
 const MatchMode = require("../../shared/match/MatchMode.js");
 const Commander = require("../../shared/match/commander/Commander.js");
-// TODO: extrac me
-const Drone = require("../../shared/card/Drone.js");
-const Fusion = require("../../shared/card/Fusion.js");
-const Carrier = require("../../shared/card/Carrier.js");
 
 module.exports = function ({
   matchService,
@@ -22,6 +18,7 @@ module.exports = function ({
   decideCardToSacrifice,
   attackPhaseDecider,
   matchController,
+  requirementsPlayer: requirementsPlayerInOrder = [], //WARNING: this should follow the same pattern as cardPlayer
 }) {
   if (queryPlayerRequirements.isWaitingOnOpponentFinishingRequirement()) return;
   if (hasAnyRequirements()) {
@@ -141,15 +138,10 @@ module.exports = function ({
       );
     } else if (hasRequirementOfType("findCard")) {
       const findRequirement = getRequirementOfType("findCard");
-      if (
-        findRequirement.cardCommonId &&
-        findRequirement.cardCommonId === Fusion.CommonId
-      ) {
-        fusionRequirementResolver(findRequirement);
-      } else {
-        matchController.emit("selectCardForFindCardRequirement", {
-          cardGroups: getCardGroup(findRequirement),
-        });
+      for (const player of requirementsPlayerInOrder) {
+        if (player.canResolve(findRequirement)) {
+          player.resolve(findRequirement);
+        }
       }
     } else if (hasRequirementOfType("damageShieldCard")) {
       const damageShieldCardRequirement = getRequirementOfType(
@@ -167,74 +159,5 @@ module.exports = function ({
       .slice(0, damageShieldCardRequirement.count);
 
     return opponentShields.map((card) => card.id);
-  }
-
-  //TODO: extra me to a command, test me, and clean me
-  function fusionRequirementResolver(findRequirement) {
-    if (findRequirement.target === "discardPile") {
-      const groupSelection = {
-        source: findRequirement.cardGroups[0].source,
-        cardIds: [],
-      };
-      const currentCardsAtZone = findRequirement.cardGroups[0].cards
-        .map((card) => playerStateService.createBehaviourCard(card))
-        .sort((cardA, cardB) => {
-          const cardAScore = scoreCard(cardA);
-          const cardBScore = scoreCard(cardB);
-          return cardAScore - cardBScore;
-        });
-      groupSelection.cardIds.push(
-        currentCardsAtZone[0].id,
-        currentCardsAtZone[1].id
-      );
-
-      matchController.emit("selectCardForFindCardRequirement", {
-        cardGroups: [groupSelection],
-      });
-    } else if (findRequirement.target === "currentCardZone") {
-      const cardsInDeck = findRequirement.cardGroups[0];
-      const carrier = cardsInDeck.cards.find(
-        (card) => card.commonId === Carrier.CommonId
-      );
-      const groupSelection = { source: cardsInDeck.source, cardIds: [] };
-      if (carrier) {
-        groupSelection.cardIds.push(carrier.id);
-      } else {
-        const cardNotDrone = cardsInDeck.cards.filter(
-          (card) => card.commonId !== Drone.CommonId
-        )[0];
-        groupSelection.cardIds.push(cardNotDrone.id);
-      }
-      matchController.emit("selectCardForFindCardRequirement", {
-        cardGroups: groupSelection,
-      });
-    }
-  }
-
-  function scoreCard(card) {
-    return (
-      (card.canAttack() ? 0 : 1) + (card.commonId !== Drone.CommonId ? 1 : 0)
-    );
-  }
-
-  //TODO : here we should do
-
-  function getCardGroup(requirement) {
-    let cardsLeft = requirement.count;
-    const result = [];
-    requirement.cardGroups.forEach((group) => {
-      if (group.cards.length > 0) {
-        const groupSelection = { source: group.source, cardIds: [] };
-        group.cards.forEach((card) => {
-          if (cardsLeft !== 0) {
-            groupSelection.cardIds.push(card.id);
-            cardsLeft--;
-          }
-        });
-        result.push(groupSelection);
-      }
-    });
-
-    return result;
   }
 };

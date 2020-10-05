@@ -15,6 +15,7 @@ const PlayCardCapability = require("./cardCapabilities/PlayCardCapability.js");
 const CardCapabilityFactory = require("./cardCapabilities/CardCapabilityFactory.js");
 const LuckPlayer = require("./cardPlayers/LuckPlayer.js");
 const ExcellentWorkPlayer = require("./cardPlayers/ExcellentWorkPlayer.js");
+const RequirementPlayerFactory = require("./requirementPlayers/RequirementPlayerFactory.js");
 
 const BotId = "BOT";
 
@@ -89,9 +90,17 @@ module.exports = function ({
       attackPhaseDecider: attackPhaseDecider(),
       matchController,
       clientState,
+      requirementsPlayer: requirementPlayers(),
     });
   }
-
+  function requirementPlayers() {
+    const requirementPlayerFactory = RequirementPlayerFactory({
+      BotId,
+      playerServiceFactory,
+      matchController,
+    });
+    return requirementPlayerFactory.createAll();
+  }
   function drawPhaseDecider() {
     return DrawPhaseDecider({
       matchController,
