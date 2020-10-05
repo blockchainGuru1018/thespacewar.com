@@ -1,7 +1,19 @@
 Not open source. Copyright and all rights reserved etc. 
 __________________________
 
+# TLDR;
+`npm run install-all` - Install all the dependencies for everything. Works most of the time.
+
+`npm run dev` - Runs all dependencies for testing locally inside one terminal session. Rerun this command everytime you want your changes to the server code to have effect. The client code is rebuilt automatically.
+
+When you commit, the tests are run that are affected by the code you changed. If you cannot commit, you probably made a test fail.
+
+When you push, _all tests_ are run. If you cannot push, you probably made a test fail.
+
+`npm run test` - Runs all tests right now.
+
 Important! The server is pulling from this repo (master branch) each minute with a cron. Make sure to test locally before pushing your commits to the master branch.
+
 __________________________
 
 # Software installed on this server
@@ -27,33 +39,34 @@ Setup for development
 
 * Clone the repository anywhere and follow steps above FROM the root of the repository:
 
-1. Run the install script in the /scripts directory
+1. Run "npm run install-all" from the project root directory.
 
-If the install scripts does not work, follow these steps to install everything manually:
-1. Install webpack globally with `npm install webpack -g`
-1. Install webpack-cli globally with `npm install webpack-cli -g`
-1. Run `npm install` in the root directory
-1. Run `npm install` in the /client directory
-1. Run `npm install` in the /server directory
-1. Run `npm install` in the /shared directory
-1. Run `npm install` in /client/testUtils/bocha-jest/bocha directory
-1. Run `npm install` in /server/testUtils/bocha-jest/bocha directory
-1. Run `npm install` in /shared/testUtils/bocha-jest/bocha directory
-1. In /client directory run `webpack` (you have now built the client code)
+If that doesn't work, and you are on Linux, try running the install script in the /scripts directory: "bash ./scripts/install"
+
+If nothing above works, then execute all the commands in the install script manually by yourself in the terminal.
 
 Development
 -
-* All relevant scripts are available in the roots package.json.
+* All relevant scripts are available in the project root's package.json.
 
 * Run relevant tests for you current commit in watch mode: `npm run dev:test`
+
+* You can run everything else needed for development by using: `npm run dev`
+
+If you want to run everything separately, use the following commands in separate terminal sessions:
 
 * Run webpack in watch mode for client code: `npm run dev:client`
 
 * Start server in development mode: `npm run dev:server`
 
+* Start fake login server: `npm run dev:login`
+
+* Start fake score server: `npm run dev:score`
+
 There is a pre-commit hook that will make sure all relevant tests are pass.
 There is also a pre-push hook that will make sure **all** tests are passing.
 
+Note: Servers are not running with any source code monitor, so you have to restart the server to make changes have effect when developing locally.
 
 Using feature toggles
 -
@@ -99,20 +112,9 @@ Value: `"true"`
 
 To deploy new code
 -
-_We are including the build artifacts in version control. They are built on your machine, not on a separate server._
-1. Make sure to build the client code locally if you are not running webpack in watch mode.
-1. Make sure to include the index.js bundle when commiting and then push it.
-1. After about 60 seconds the server will pick up the changes and restart.
-
-Note that when usage scales it would be best to follow a Blue-Green pattern for deployment.
-Some things will have to happen until then. There is a task for this in the backlog.
-
-Also note that it might be preferable to build the artifacts on a separate CI server in the future.
-We should not get carried away though, maybe wait until we feel more pain with the current setup.
-Probably if more developers join we will experience some "works on my machine"-syndrome, that would be our cue.
-
-Note: The package.json on the root level of the project is for development dependencies.
-Modules added there will not be installed in production and should not be referred to in code.
+1. When pushing new changes to master the server will take circa 60 seconds to detect any new changes.
+1. After that it will update and install any new dependencies and build the client bundle.
+1. Then it will restart the server when there are no players online. First then will your changes be available.
 
 Testing 
 -
@@ -122,6 +124,8 @@ to work with. So please, write the tests. It will make your life easier, even in
 
 I started writing the tests with a library called Bocha, a niche library based on Mocha.
 Now I'm using Jest. Bocha is still used in the client code for asserting on the DOM.
+
+The legacy tests that you can find are using bocha syntax. Every legacy test file has a small Jest adapter file which is the one that Jest picks up and runs during test runs.
 
 /client 
 -
@@ -184,19 +188,65 @@ server.js - Starting point for the server (good to know if you want to look how 
 index.js (client) - Starting point for the client (good to know if you want to look how it all fits together on the front end)
 
 Git:  
-Use branches! When it works and you've tested it, make a pull request and drag the task to QA in KanbanFlow. I will look at it asap! Make sure to include the branch name on the card in KanbanFlow as well as to include the link to the Pull Request as a comment.
+Use branches! When it works and you've tested it, make a pull request and drag the task to QA in KanbanFlow. Make sure to include the branch name on the card in KanbanFlow as well as to include the link to the Pull Request as a comment.
 
 Tests:  
 /client: High-level testing for a Match (see Architecture above). Almost no tests regarding Matchmaking (see Architecture above).  
 /server: High-level testing against Match.js. Almost no tests regarding Matchmaking.  
 /shared: Unit tests on individual classes (mostly)
 
-- We are using Jest for testing.
-- Previously used "Bocha" for testing. We don't do that anymore. But we still run most of them!
-- Tests are run before every commit, but only tests for files you have changed.
-- All tests are run before push.
-- Make sure to run the game locally and test it before calling it done!
-
 Policy for the /config.json file
 -
 Only Jim Westergren is allowed to change values of the constants in the /config.json file. If you want/need to change a value ask him first for approval.
+
+# Developer collaboration guidelines
+
+# Git commit messages (2020-07-06)
+Short _descriptive_ summary of what you have done: "Can now save a game through the escape menu"
+Or very short _non-descriptive_ when the change is _insignificant_ or a _simple refactoring_: "..." or "Refactor"
+
+# Trunk based develop (2020-07-06)
+Have short lived branches, less than a day. Basically, work _directly_ into master.
+How? We use feature-branches or branch-by-abstraction.
+
+Feature branching:
+    You hide some functionality behind a boolean stores in for example local storage
+    "if(myToggle) { showMyCode() }"
+
+Branch by abstraction:
+    app.get('/new-feature', NewFeatureHandler());
+    ...but then there is no frontend code that uses it yet.
+
+When we start working on a new feature:
+1. Hide your new code behind a feature toggle.
+1. Develop your code.
+1. PUSH TO MASTER
+1. Develop your code.
+1. PUSH TO MASTER
+1. Remove the feature toggle.
+
+When should I _reeeaaally_ add a feature toggle..?
+- You know you will implement front end code.
+- You really think it will take more than a couple of hours.
+
+So this is called Trunk Based Development.
+Every commit goes to master, passes all the tests, breaks no previous code, and is _not_ visible to the user until it's ready.
+
+It's great for:
+- No merge conflicts
+- You don't implement things twice
+- You get early feedback on your solution
+- And things _always_ work
+
+# Formatters (2020-07-06)
+Use ESLint. We don't want to talk about formatting. When we have a discussion around formatting... we automate by adding a rule to ESLint.
+
+# Collaborating (2020-07-06)
+- There should some constant collaboration. We want to learn from each others mistakes, share successes.
+- We work on stuff that is somewhat related, so that we _have_ that collaboration built into the process.
+- Some great tools for collaborating: Pair programming or Mob programming.
+
+# Test-names (2020-07-06)
+- /shared (domain code) - we use the name of the class (i.e. PlayerNextPhase.spec.js), and they end with .spec.js
+- /server (Match.js) - Name the file with a common theme for all the tests in a file (i.e. AttackPhase.spec.js). We end the test name with .spec.js.
+- /client (integration tests against Match.vue) Name the file with a common theme for all the tests in a file (i.e. EndGamePopup.test.js). We end test names with .test.js.
