@@ -17,11 +17,3 @@ it("Toxic gas should not attack when there its not requirement", async () => {
     defenderCardId: "C2A",
   });
 });
-
-function unflippedStationCard(id, place = "draw") {
-  return {
-    id,
-    place,
-    card: { id },
-  };
-}

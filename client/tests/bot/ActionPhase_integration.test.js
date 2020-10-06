@@ -13,6 +13,8 @@ const ToxicGas = require("../../../shared/card/ToxicGas.js");
 const RepairShip = require("../../../shared/card/RepairShip.js");
 const Carrier = require("../../../shared/card/Carrier.js");
 const Fusion = require("../../../shared/card/Fusion.js");
+const DisturbingSignals = require("../../../shared/card/DisturbingSignals.js");
+const ExtraDraw = require("../../../shared/card/ExtraDraw.js");
 
 test("playing a card", async () => {
   const { matchController } = await setupFromState({
@@ -468,6 +470,51 @@ function stationCard(cardId, stationRow) {
     place: stationRow,
   };
 }
+
+test("When can play DisturbingSignals should play it", async () => {
+  const fakeRawCardData = [
+    { id: "1", price: "1" },
+    { id: DisturbingSignals.CommonId, price: "1" },
+  ];
+  const { matchController } = await setupFromState(
+    {
+      turn: 2,
+      phase: "action",
+      events: [{ turn: 2, type: "putDownCard", location: "station-action" }],
+      stationCards: [unflippedStationCard("S1A", "draw")],
+      cardsOnHand: [
+        createCard({ id: "C1A", commonId: DisturbingSignals.CommonId }),
+      ],
+    },
+    fakeRawCardData
+  );
+
+  expect(matchController.emit).toBeCalledWith("putDownCard", {
+    location: "zone",
+    cardId: "C1A",
+  });
+});
+test("When can play ExtraDraw should play it", async () => {
+  const fakeRawCardData = [
+    { id: "1", price: "1" },
+    { id: ExtraDraw.CommonId, price: "1" },
+  ];
+  const { matchController } = await setupFromState(
+    {
+      turn: 2,
+      phase: "action",
+      events: [{ turn: 2, type: "putDownCard", location: "station-action" }],
+      stationCards: [unflippedStationCard("S1A", "draw")],
+      cardsOnHand: [createCard({ id: "C1A", commonId: ExtraDraw.CommonId })],
+    },
+    fakeRawCardData
+  );
+
+  expect(matchController.emit).toBeCalledWith("putDownCard", {
+    location: "zone",
+    cardId: "C1A",
+  });
+});
 function flippedStationCard(cardId, stationRow) {
   return {
     flipped: true,

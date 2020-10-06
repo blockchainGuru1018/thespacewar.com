@@ -1,10 +1,10 @@
 const GoodKarma = require("../../../shared/card/GoodKarma.js");
 const ToxicGas = require("../../../shared/card/ToxicGas.js");
 const Drone = require("../../../shared/card/Drone.js");
-const DroneLeader = require("../../../shared/card/DroneLeader");
-const RepairShip = require("../../../shared/card/RepairShip");
-const DisturbingSignals = require("../../../shared/card/DisturbingSignals");
-const ExtraDraw = require("../../../shared/card/ExtraDraw");
+const DroneLeader = require("../../../shared/card/DroneLeader.js");
+const RepairShip = require("../../../shared/card/RepairShip.js");
+const DisturbingSignals = require("../../../shared/card/DisturbingSignals.js");
+const ExtraDraw = require("../../../shared/card/ExtraDraw.js");
 
 module.exports = PlayerCardCapability;
 
