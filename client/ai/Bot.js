@@ -141,6 +141,7 @@ module.exports = function ({
       for (const player of requirementsPlayerInOrder) {
         if (player.canResolve(findRequirement)) {
           player.resolve(findRequirement);
+          break;
         }
       }
     } else if (hasRequirementOfType("damageShieldCard")) {

@@ -3,12 +3,19 @@ const ToxicGas = require("../../../shared/card/ToxicGas.js");
 const Drone = require("../../../shared/card/Drone.js");
 const DroneLeader = require("../../../shared/card/DroneLeader");
 const RepairShip = require("../../../shared/card/RepairShip");
+const DisturbingSignals = require("../../../shared/card/DisturbingSignals");
+const ExtraDraw = require("../../../shared/card/ExtraDraw");
 
 module.exports = PlayerCardCapability;
 
 const PlayableTypes = ["spaceShip", "defense", "missile"];
 
-const PlayableCards = [GoodKarma.CommonId, ToxicGas.CommonId];
+const PlayableCards = [
+  GoodKarma.CommonId,
+  ExtraDraw.CommonId,
+  ToxicGas.CommonId,
+  DisturbingSignals.CommonId,
+];
 const PriorityCards = [
   Drone.CommonId,
   DroneLeader.CommonId,

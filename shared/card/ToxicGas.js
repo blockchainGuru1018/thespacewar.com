@@ -8,6 +8,7 @@ module.exports = class ToxicGas extends BaseCard {
   static get DamageToShields() {
     return _DamageToShields;
   }
+
   static get CommonId() {
     return "79";
   }
@@ -24,12 +25,15 @@ module.exports = class ToxicGas extends BaseCard {
       ],
     };
   }
+
   canAttack() {
     return false;
   }
+
   canFakeAttack() {
     return true;
   }
+
   canAttackCard(otherCard) {
     return otherCard.stopsStationAttack();
   }
