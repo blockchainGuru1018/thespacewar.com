@@ -127,7 +127,7 @@ module.exports = function ({ rootStore, cardInfoRepository, matchController }) {
   }
 
   function requirementIsCancelable(state, getters) {
-    return getters.firstRequirement.cancelable;
+    return getters.firstRequirement && getters.firstRequirement.cancelable;
   }
 
   function _firstCardIdThatCanLookAtHandSizeStationRow(

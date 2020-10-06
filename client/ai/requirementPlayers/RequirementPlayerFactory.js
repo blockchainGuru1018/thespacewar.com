@@ -7,7 +7,7 @@ module.exports = function ({ BotId, playerServiceFactory, matchController }) {
   };
 
   function createAll() {
-    return [fusionRequirementResolver(), defaultRequirementResolver()];
+    return [defaultRequirementResolver()];
   }
 
   function fusionRequirementResolver() {
