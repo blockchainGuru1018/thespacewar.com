@@ -5,6 +5,7 @@ const DroneLeader = require("../../../shared/card/DroneLeader.js");
 const RepairShip = require("../../../shared/card/RepairShip.js");
 const DisturbingSignals = require("../../../shared/card/DisturbingSignals.js");
 const ExtraDraw = require("../../../shared/card/ExtraDraw.js");
+const Revive = require("../../../shared/card/Revive.js");
 
 module.exports = PlayerCardCapability;
 
@@ -15,6 +16,7 @@ const PlayableCards = [
   ExtraDraw.CommonId,
   ToxicGas.CommonId,
   DisturbingSignals.CommonId,
+  Revive.CommonId,
 ];
 const PriorityCards = [
   Drone.CommonId,

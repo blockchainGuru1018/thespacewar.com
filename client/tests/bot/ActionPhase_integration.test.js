@@ -15,6 +15,7 @@ const Carrier = require("../../../shared/card/Carrier.js");
 const Fusion = require("../../../shared/card/Fusion.js");
 const DisturbingSignals = require("../../../shared/card/DisturbingSignals.js");
 const ExtraDraw = require("../../../shared/card/ExtraDraw.js");
+const Revive = require("../../../shared/card/Revive.js");
 
 test("playing a card", async () => {
   const { matchController } = await setupFromState({
@@ -506,6 +507,32 @@ test("When can play ExtraDraw should play it", async () => {
       events: [{ turn: 2, type: "putDownCard", location: "station-action" }],
       stationCards: [unflippedStationCard("S1A", "draw")],
       cardsOnHand: [createCard({ id: "C1A", commonId: ExtraDraw.CommonId })],
+    },
+    fakeRawCardData
+  );
+
+  expect(matchController.emit).toBeCalledWith("putDownCard", {
+    location: "zone",
+    cardId: "C1A",
+  });
+});
+
+test("When have more than 1 Drone in discard pile should play Revive Procedure and pick 2 Drones", async () => {
+  const fakeRawCardData = [
+    { id: Drone.CommonId, price: "1" },
+    { id: Revive.CommonId, price: "1" },
+  ];
+  const { matchController } = await setupFromState(
+    {
+      turn: 2,
+      phase: "action",
+      events: [{ turn: 2, type: "putDownCard", location: "station-action" }],
+      stationCards: [unflippedStationCard("S1A", "draw")],
+      cardsOnHand: [createCard({ id: "C1A", commonId: Revive.CommonId })],
+      discardedCards: [
+        { id: "C2A", commonId: Drone.CommonId },
+        { id: "C3A", commonId: Drone.CommonId },
+      ],
     },
     fakeRawCardData
   );

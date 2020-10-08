@@ -3,6 +3,7 @@ const ShouldPlayDroneLeader = require("./ShouldPlayDroneLeader.js");
 const ShouldPlayRepairShip = require("./ShouldPlayRepairShip.js");
 const ShouldPlayParalizer = require("./ShouldPlayParalizer.js");
 const ShouldPlayFusionShip = require("./ShouldPlayFusionShip");
+const ShouldPlayReviveProcedure = require("./ShouldPlayReviveProcedure");
 
 module.exports = function ({ BotId, opponentUserId, playerServiceFactory }) {
   return {
@@ -16,6 +17,7 @@ module.exports = function ({ BotId, opponentUserId, playerServiceFactory }) {
       shouldPlayRepairShip(),
       shouldPlayParalizer(),
       shouldPlayFusionShip(),
+      shouldPlayReviveProcedure(),
     ];
   }
 
@@ -45,6 +47,12 @@ module.exports = function ({ BotId, opponentUserId, playerServiceFactory }) {
   }
   function shouldPlayFusionShip() {
     return ShouldPlayFusionShip({
+      playerStateService: playerServiceFactory.playerStateService(BotId),
+    });
+  }
+
+  function shouldPlayReviveProcedure() {
+    return ShouldPlayReviveProcedure({
       playerStateService: playerServiceFactory.playerStateService(BotId),
     });
   }
