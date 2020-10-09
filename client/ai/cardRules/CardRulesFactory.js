@@ -4,6 +4,7 @@ const ShouldPlayRepairShip = require("./ShouldPlayRepairShip.js");
 const ShouldPlayParalizer = require("./ShouldPlayParalizer.js");
 const ShouldPlayFusionShip = require("./ShouldPlayFusionShip");
 const ShouldPlayReviveProcedure = require("./ShouldPlayReviveProcedure");
+const ShouldPlaySacrifice = require("./ShouldPlaySacrifice");
 
 module.exports = function ({ BotId, opponentUserId, playerServiceFactory }) {
   return {
@@ -18,9 +19,17 @@ module.exports = function ({ BotId, opponentUserId, playerServiceFactory }) {
       shouldPlayParalizer(),
       shouldPlayFusionShip(),
       shouldPlayReviveProcedure(),
+      shouldPlaySacrifice(),
     ];
   }
-
+  function shouldPlaySacrifice() {
+    return ShouldPlaySacrifice({
+      opponentStateService: playerServiceFactory.playerStateService(
+        opponentUserId
+      ),
+      playerStateService: playerServiceFactory.playerStateService(BotId),
+    });
+  }
   function shouldPlayGoodKarma() {
     return ShouldPlayGoodKarma({
       playerStateService: playerServiceFactory.playerStateService(BotId),

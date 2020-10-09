@@ -16,6 +16,7 @@ const Fusion = require("../../../shared/card/Fusion.js");
 const DisturbingSignals = require("../../../shared/card/DisturbingSignals.js");
 const ExtraDraw = require("../../../shared/card/ExtraDraw.js");
 const Revive = require("../../../shared/card/Revive.js");
+const Sacrifice = require("../../../shared/card/Sacrifice.js");
 
 test("playing a card", async () => {
   const { matchController } = await setupFromState({
@@ -542,6 +543,74 @@ test("When have more than 1 Drone in discard pile should play Revive Procedure a
     cardId: "C1A",
   });
 });
+
+test("Play sacrifice only when have 0 cards in play but enemy have", async () => {
+  const fakeRawCardData = [
+    { id: Drone.CommonId, price: "1" },
+    { id: Revive.CommonId, price: "1" },
+  ];
+  const { matchController } = await setupFromState(
+    {
+      turn: 2,
+      phase: "action",
+      events: [
+        { turn: 1, type: "putDownCard", location: "station-action" },
+        { turn: 2, type: "putDownCard", location: "station-action" },
+      ],
+      stationCards: [
+        unflippedStationCard("S1A", "action"),
+        unflippedStationCard("S2A", "action"),
+        unflippedStationCard("S3A", "action"),
+      ],
+      cardsOnHand: [createCard({ id: "C1A", commonId: Sacrifice.CommonId })],
+      opponentCardsInZone: [
+        createCard({ id: "C2A", commonId: Drone.CommonId }),
+      ],
+      actionStationCardsCount: 3,
+    },
+    fakeRawCardData
+  );
+
+  expect(matchController.emit).toBeCalledWith("putDownCard", {
+    location: "zone",
+    cardId: "C1A",
+  });
+});
+
+test("Play not sacrifice only when have  cards in play but enemy have", async () => {
+  const fakeRawCardData = [
+    { id: Drone.CommonId, price: "1" },
+    { id: Revive.CommonId, price: "1" },
+  ];
+  const { matchController } = await setupFromState(
+    {
+      turn: 2,
+      phase: "action",
+      events: [
+        { turn: 1, type: "putDownCard", location: "station-action" },
+        { turn: 2, type: "putDownCard", location: "station-action" },
+      ],
+      stationCards: [
+        unflippedStationCard("S1A", "action"),
+        unflippedStationCard("S2A", "action"),
+        unflippedStationCard("S3A", "action"),
+      ],
+      cardsInZone: [createCard({ id: "C3A", commonId: Drone.CommonId })],
+      cardsOnHand: [createCard({ id: "C1A", commonId: Sacrifice.CommonId })],
+      opponentCardsInZone: [
+        createCard({ id: "C2A", commonId: Drone.CommonId }),
+      ],
+      actionStationCardsCount: 3,
+    },
+    fakeRawCardData
+  );
+
+  expect(matchController.emit).not.toBeCalledWith("putDownCard", {
+    location: "zone",
+    cardId: "C1A",
+  });
+});
+
 function flippedStationCard(cardId, stationRow) {
   return {
     flipped: true,
