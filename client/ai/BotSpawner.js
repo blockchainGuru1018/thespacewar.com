@@ -15,6 +15,7 @@ const PlayCardCapability = require("./cardCapabilities/PlayCardCapability.js");
 const CardCapabilityFactory = require("./cardCapabilities/CardCapabilityFactory.js");
 const LuckPlayer = require("./cardPlayers/LuckPlayer.js");
 const ExcellentWorkPlayer = require("./cardPlayers/ExcellentWorkPlayer.js");
+const DestroyDurationPlayer = require("./cardPlayers/DestroyDurationPlayer.js");
 const RequirementPlayerFactory = require("./requirementPlayers/RequirementPlayerFactory.js");
 
 const BotId = "BOT";
@@ -95,6 +96,7 @@ module.exports = function ({
   }
   function requirementPlayers() {
     const requirementPlayerFactory = RequirementPlayerFactory({
+      opponentUserId,
       BotId,
       playerServiceFactory,
       matchController,
@@ -140,6 +142,12 @@ module.exports = function ({
           matchController,
           decideRowForStationCard: decideRowForStationCard(),
           playerRuleService: playerServiceFactory.playerRuleService(BotId),
+        }),
+        DestroyDurationPlayer({
+          matchController,
+          opponentStateService: playerServiceFactory.playerStateService(
+            opponentUserId
+          ),
         }),
       ],
     });

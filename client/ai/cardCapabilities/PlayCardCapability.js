@@ -7,6 +7,7 @@ const DisturbingSignals = require("../../../shared/card/DisturbingSignals.js");
 const ExtraDraw = require("../../../shared/card/ExtraDraw.js");
 const Revive = require("../../../shared/card/Revive.js");
 const Sacrifice = require("../../../shared/card/Sacrifice.js");
+const DestroyDuration = require("../../../shared/card/DestroyDuration");
 
 module.exports = PlayerCardCapability;
 
@@ -19,6 +20,7 @@ const PlayableCards = [
   DisturbingSignals.CommonId,
   Revive.CommonId,
   Sacrifice.CommonId,
+  DestroyDuration.CommonId,
 ];
 const PriorityCards = [
   Sacrifice.CommonId,

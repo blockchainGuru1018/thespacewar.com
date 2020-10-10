@@ -1,7 +1,13 @@
 const FusionRequirementResolver = require("./FusionRequirementResolver.js");
 const DefaultRequirementResolver = require("./DefaultFindRequirementResolver.js");
 const ReviveProcedureFindRequirementResolver = require("./ReviveProcedureFindRequirementResolver.js");
-module.exports = function ({ BotId, playerServiceFactory, matchController }) {
+const DestroyDurationRequirementResolver = require("./DestroyDurationFindRequirementResolver.js");
+module.exports = function ({
+  opponentUserId,
+  BotId,
+  playerServiceFactory,
+  matchController,
+}) {
   return {
     createAll,
   };
@@ -10,6 +16,7 @@ module.exports = function ({ BotId, playerServiceFactory, matchController }) {
     return [
       fusionRequirementResolver(),
       reviveProcedureRequirementResolver(),
+      destroyDurationRequirementResolver(),
       defaultRequirementResolver(),
     ];
   }
@@ -17,6 +24,14 @@ module.exports = function ({ BotId, playerServiceFactory, matchController }) {
   function fusionRequirementResolver() {
     return FusionRequirementResolver({
       playerStateService: playerServiceFactory.playerStateService(BotId),
+      matchController,
+    });
+  }
+  function destroyDurationRequirementResolver() {
+    return DestroyDurationRequirementResolver({
+      opponentStateService: playerServiceFactory.playerStateService(
+        opponentUserId
+      ),
       matchController,
     });
   }

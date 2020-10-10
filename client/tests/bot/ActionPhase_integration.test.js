@@ -17,6 +17,7 @@ const DisturbingSignals = require("../../../shared/card/DisturbingSignals.js");
 const ExtraDraw = require("../../../shared/card/ExtraDraw.js");
 const Revive = require("../../../shared/card/Revive.js");
 const Sacrifice = require("../../../shared/card/Sacrifice.js");
+const DestroyDuration = require("../../../shared/card/DestroyDuration.js");
 
 test("playing a card", async () => {
   const { matchController } = await setupFromState({
@@ -608,6 +609,73 @@ test("Play not sacrifice only when have  cards in play but enemy have", async ()
   expect(matchController.emit).not.toBeCalledWith("putDownCard", {
     location: "zone",
     cardId: "C1A",
+  });
+});
+
+test("Destroy duration should be played as destroy", async () => {
+  const fakeRawCardData = [
+    { id: "1", price: "1" },
+    { id: DestroyDuration.CommonId, price: "1" },
+  ];
+  const { matchController } = await setupFromState(
+    {
+      turn: 2,
+      phase: "action",
+      events: [
+        { turn: 1, type: "putDownCard", location: "station-action" },
+        { turn: 2, type: "putDownCard", location: "station-action" },
+      ],
+      stationCards: [
+        unflippedStationCard("S1A", "action"),
+        unflippedStationCard("S3A", "action"),
+      ],
+      cardsOnHand: [
+        createCard({ id: "C1A", commonId: DestroyDuration.CommonId }),
+      ],
+      opponentCardsInZone: [
+        createCard({ id: "C2A", type: "duration", commonId: "1" }),
+      ],
+      actionStationCardsCount: 3,
+    },
+    fakeRawCardData
+  );
+
+  expect(matchController.emit).toBeCalledWith("putDownCard", {
+    location: "zone",
+    cardId: "C1A",
+    choice: "destroy",
+  });
+});
+
+test("Destroy duration should be played as draw", async () => {
+  const fakeRawCardData = [
+    { id: "1", price: "1" },
+    { id: DestroyDuration.CommonId, price: "1" },
+  ];
+  const { matchController } = await setupFromState(
+    {
+      turn: 2,
+      phase: "action",
+      events: [
+        { turn: 1, type: "putDownCard", location: "station-action" },
+        { turn: 2, type: "putDownCard", location: "station-action" },
+      ],
+      stationCards: [
+        unflippedStationCard("S1A", "action"),
+        unflippedStationCard("S3A", "action"),
+      ],
+      cardsOnHand: [
+        createCard({ id: "C1A", commonId: DestroyDuration.CommonId }),
+      ],
+      actionStationCardsCount: 3,
+    },
+    fakeRawCardData
+  );
+
+  expect(matchController.emit).toBeCalledWith("putDownCard", {
+    location: "zone",
+    cardId: "C1A",
+    choice: "draw",
   });
 });
 
