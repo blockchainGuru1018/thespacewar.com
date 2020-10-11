@@ -42,7 +42,7 @@ describe("Drone ", () => {
       },
       queryEvents: {
         hasMovedOnPreviousTurn: (id, turn) => false,
-        wasGrantedByFreeEventOnPreviousTurn: (id, turn) => true,
+        wasGrantedByFreeEventOnPreviousTurnAtOpponentZone: (id, turn) => true,
         getAttacksOnTurn: () => 0,
       },
       matchService: {
@@ -70,7 +70,7 @@ describe("Drone ", () => {
       },
       queryEvents: {
         hasMovedOnPreviousTurn: (id, turn) => false,
-        wasGrantedByFreeEventOnPreviousTurn: (id, turn) => false,
+        wasGrantedByFreeEventOnPreviousTurnAtOpponentZone: (id, turn) => false,
         getAttacksOnTurn: () => 0,
       },
       matchService: {

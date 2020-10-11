@@ -207,7 +207,7 @@ class BaseCard {
       turn
     );
 
-    const wasGrantedByFreeEventOnPreviousTurn = this._queryEvents.wasGrantedByFreeEventOnPreviousTurn(
+    const wasGrantedByFreeEventOnPreviousTurn = this._queryEvents.wasGrantedByFreeEventOnPreviousTurnAtOpponentZone(
       this.id,
       turn
     );

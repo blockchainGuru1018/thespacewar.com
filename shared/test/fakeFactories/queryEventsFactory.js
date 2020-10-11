@@ -7,6 +7,7 @@ const queryEventsFactory = {
       getAttacksOnTurn: () => [],
       playerCardWasInHandAfterOpponentCardWasPlayed: () => false,
       wasGrantedByFreeEventOnPreviousTurn: () => false,
+      wasGrantedByFreeEventOnPreviousTurnAtOpponentZone: () => false,
       ...stubs,
     };
   },
