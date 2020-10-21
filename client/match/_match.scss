@@ -169,6 +169,8 @@ $opponent_color_height: -1px 1px 1px rgba(13,	59,	81, 1),
   position: relative;
   z-index: 1;
   min-width: 20%;
+  max-width: 20%;
+  width: 20%;
   flex: 0 0 auto;
 }
 
@@ -228,9 +230,11 @@ $opponent_color_height: -1px 1px 1px rgba(13,	59,	81, 1),
   flex: 0 0 auto;
   display: flex;
   flex-wrap: nowrap;
-  justify-content: center;
   width: 100%;
-
+  &::before, &::after {
+    content: ''; 
+    margin: auto; 
+  }
   .card {
     margin: 0 4px;
     box-sizing: border-box;
@@ -242,6 +246,9 @@ $opponent_color_height: -1px 1px 1px rgba(13,	59,	81, 1),
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  min-width: 60%;
+  max-width: 60%;
+  width: 60%;
 }
 
 .field-opponentZoneRows {
@@ -257,16 +264,16 @@ $opponent_color_height: -1px 1px 1px rgba(13,	59,	81, 1),
 }
 
 .playerCardsInZone {
-  flex: 1 0 auto;
   position: relative;
-  width: auto;
   margin-top: 16px;
+  height:calc(var(--card-height) * 0.25);
 }
 
 .opponentCardsInPlayerZone {
   margin-top: 8px;
   flex: 0 1 auto;
   flex-wrap: nowrap;
+  overflow-x: auto;
 }
 
 .field-opponentZoneRow {
@@ -274,11 +281,11 @@ $opponent_color_height: -1px 1px 1px rgba(13,	59,	81, 1),
   flex-wrap: nowrap;
   display: flex;
   align-items: flex-end;
-
+  overflow-x: auto;
   flex: 1 0 auto;
   position: relative;
   width: auto;
-  margin-bottom: 16px;
+  margin: 0px 16px 16px 16px;
 }
 
 .playerCardsInOpponentZone {
@@ -701,4 +708,14 @@ $shakeDelay: 0s;
 
 .flattenComponent > .vue-portal-target {
   transform-style: flat;
+}
+
+.playerStationCards {
+  min-width: 20%;
+  max-width: 20%;
+  width: 20%;
+}
+
+.field-playerZoneCards {
+  overflow-x: auto;
 }

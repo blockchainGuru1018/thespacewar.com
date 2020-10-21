@@ -90,6 +90,24 @@
               class="opponentCardsInZone field-opponentZoneRow field-zone field-section"
             >
               >
+              <arrowsAnimated
+                v-show="visualHelper.moreCards.opponentZoneLeft"
+                style="
+                  pointer-events: none;
+                  transform: translateY(calc(50% - 20px)) translateZ(1px);
+                "
+                direction="left"
+              ></arrowsAnimated>
+              <div
+                id="opponentZoneRight"
+                ref="opponentZoneRight"
+                style="
+                  background: transparent;
+                  width: 1px;
+                  height: 1px;
+                  display: table;
+                "
+              ></div>
               <template v-for="n in opponentCardsInZone.length">
                 <zone-card
                   v-if="n <= opponentCardsInZone.length"
@@ -108,13 +126,53 @@
                 />
               </template>
               <div
+                id="opponentZoneLeft"
+                ref="opponentZoneLeft"
+                style="
+                  background: transparent;
+                  width: 1px;
+                  height: 1px;
+                  left: 0px;
+                  margin: 1px;
+                  display: table;
+                "
+              ></div>
+              <div
                 v-if="opponentCardsInZone.length === 0"
                 class="card card-placeholder"
               />
             </div>
+            <arrowsAnimated
+              v-show="visualHelper.moreCards.opponentZoneRight"
+              style="
+                pointer-events: none;
+                position: fixed;
+                right: 0px;
+                transform: translateY(calc(50% - 20px)) translateZ(1px);
+              "
+              direction="right"
+            ></arrowsAnimated>
             <div
               class="playerCardsInOpponentZone field-opponentZoneRow field-zone field-section"
             >
+              <arrowsAnimated
+                v-show="visualHelper.moreCards.playerCardsInOpponentZoneLeft"
+                style="
+                  pointer-events: none;
+                  transform: translateY(calc(50% - 20px)) translateZ(1px);
+                "
+                direction="left"
+              ></arrowsAnimated>
+              <div
+                id="playerCardsInOpponentZoneRight"
+                ref="playerCardsInOpponentZoneRight"
+                style="
+                  background: transparent;
+                  width: 1px;
+                  height: 1px;
+                  display: table;
+                "
+              ></div>
               <template v-for="n in playerCardsInOpponentZone.length">
                 <zone-card
                   v-if="n <= playerCardsInOpponentZone.length"
@@ -126,9 +184,32 @@
                 />
               </template>
               <div
+                id="playerCardsInOpponentZoneLeft"
+                ref="playerCardsInOpponentZoneLeft"
+                style="
+                  background: transparent;
+                  width: 1px;
+                  height: 1px;
+                  left: 0px;
+                  margin: 1px;
+                  display: table;
+                "
+              ></div>
+              <div
                 v-if="playerCardsInOpponentZone.length === 0"
                 class="card card-placeholder"
               />
+
+              <arrowsAnimated
+                v-show="visualHelper.moreCards.playerCardsInOpponentZoneRight"
+                style="
+                  pointer-events: none;
+                  position: fixed;
+                  right: 0px;
+                  transform: translateY(calc(50% - 20px)) translateZ(1px);
+                "
+                direction="right"
+              ></arrowsAnimated>
             </div>
           </div>
           <div class="field-piles field-section">
@@ -162,8 +243,8 @@
                   class="card card-faceDown pile-3d"
                   :style="
                     'transform: translateZ(calc(1px * ' +
-                    opponentCardPileHeight +
-                    '))'
+                      opponentCardPileHeight +
+                      '))'
                   "
                 >
                   <div
@@ -171,7 +252,7 @@
                     :style="
                       'transform: translateZ(calc(1px * ' +
                         opponentCardPileHeight +
-                      '))'
+                        '))'
                     "
                   >
                     <div
@@ -308,6 +389,24 @@
           </div>
           <div class="field-zoneRows field-playerZoneRows">
             <div class="opponentCardsInPlayerZone field-zone field-section">
+              <arrowsAnimated
+                v-show="visualHelper.moreCards.opponentCardsInPlayerZoneLeft"
+                style="
+                  pointer-events: none;
+                  transform: translateY(calc(50% - 20px)) translateZ(1px);
+                "
+                direction="left"
+              ></arrowsAnimated>
+              <div
+                id="opponentCardsInPlayerZoneRight"
+                ref="opponentCardsInPlayerZoneRight"
+                style="
+                  background: transparent;
+                  width: 1px;
+                  height: 1px;
+                  display: table;
+                "
+              ></div>
               <template v-for="n in opponentCardsInPlayerZone.length">
                 <zone-card
                   v-if="n <= opponentCardsInPlayerZone.length"
@@ -323,11 +422,61 @@
                 v-if="opponentCardsInPlayerZone.length === 0"
                 class="card card-placeholder"
               />
+              <div
+                id="opponentCardsInPlayerZoneLeft"
+                ref="opponentCardsInPlayerZoneLeft"
+                style="
+                  background: transparent;
+                  width: 1px;
+                  height: 1px;
+                  left: 0px;
+                  margin: 1px;
+                  display: table;
+                "
+              ></div>
+              <arrowsAnimated
+                v-show="visualHelper.moreCards.opponentCardsInPlayerZoneRight"
+                style="
+                  pointer-events: none;
+                  position: fixed;
+                  right: 0px;
+                  transform: translateY(calc(50% - 20px)) translateZ(1px);
+                "
+                direction="right"
+              ></arrowsAnimated>
             </div>
-
             <div
               class="playerCardsInZone field-playerZoneCards field-zone field-section"
             >
+              <CardGhost
+                v-if="playerZoneCardGhostVisible"
+                :element-hovered-over="elementHoveredOver"
+                :class="playerZoneCardGhostClasses"
+                location="zone"
+                @click="homeZoneCardGhostClick"
+              >
+                <div class="playCard">
+                  {{ playerZoneCardGhostText }}
+                </div>
+              </CardGhost>
+              <arrowsAnimated
+                v-show="visualHelper.moreCards.playerZoneLeft"
+                style="
+                  pointer-events: none;
+                  transform: translateY(calc(50% - 20px)) translateZ(1px);
+                "
+                direction="left"
+              ></arrowsAnimated>
+              <div
+                id="playerZoneLeft"
+                ref="playerZoneLeft"
+                style="
+                  background: transparent;
+                  width: 0px;
+                  height: 0px;
+                  left: 0px;
+                "
+              ></div>
               <template v-for="n in visiblePlayerCards.length">
                 <zone-card
                   v-if="n <= visiblePlayerCards.length"
@@ -343,17 +492,26 @@
                   :zone-player-row="visiblePlayerCards"
                 />
               </template>
-              <CardGhost
-                v-if="playerZoneCardGhostVisible"
-                :element-hovered-over="elementHoveredOver"
-                :class="playerZoneCardGhostClasses"
-                location="zone"
-                @click="homeZoneCardGhostClick"
-              >
-                <div class="playCard">
-                  {{ playerZoneCardGhostText }}
-                </div>
-              </CardGhost>
+              <div
+                id="playerZoneRight"
+                ref="playerZoneRight"
+                style="
+                  background: transparent;
+                  width: 1px;
+                  height: 1px;
+                  display: table;
+                "
+              ></div>
+              <arrowsAnimated
+                v-show="visualHelper.moreCards.playerZoneRight"
+                direction="right"
+                style="
+                  pointer-events: none;
+                  position: fixed;
+                  right: 0px;
+                  transform: translateY(calc(50% - 20px)) translateZ(1px);
+                "
+              ></arrowsAnimated>
             </div>
           </div>
           <div
@@ -534,11 +692,26 @@ const OpponentPreGameOverlay = resolveModule(
 const StationCardWrapper = resolveModule(
   require("./stationCard/StationCardWrapper.vue")
 );
+const arrowsAnimated = resolveModule(
+  require("../miscComponents/arrowsAnimated.vue")
+);
 const { PHASES } = require("./phases.js");
 
 module.exports = {
   data() {
     return {
+      visualHelper: {
+        moreCards: {
+          playerZoneLeft: false,
+          playerZoneRight: false,
+          opponentZoneLeft: false,
+          opponentZoneRight: false,
+          playerCardsInOpponentZoneRight: false,
+          playerCardsInOpponentZoneLeft: false,
+          opponentCardsInPlayerZoneRight: false,
+          opponentCardsInPlayerZoneLeft: false,
+        },
+      },
       elementHoveredOver: null,
       mousePosition: { x: 0, y: 0 },
       touchPosition: { x: 0, y: 0 },
@@ -1071,6 +1244,80 @@ module.exports = {
       this.bg = localStorage.getItem("background") || "background_old";
       localStorage.setItem("background", this.bg);
     },
+    initializeIntersectionObservers() {
+      const playerZoneObservers = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            this.visualHelper.moreCards[
+              entry.target.id
+            ] = !entry.isIntersecting;
+          });
+        },
+        {
+          root: document.querySelector(".playerCardsInZone"),
+          rootMargin: "0px",
+          threshold: 0,
+        }
+      );
+      const opponentZoneObservers = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            this.visualHelper.moreCards[
+              entry.target.id
+            ] = !entry.isIntersecting;
+          });
+        },
+        {
+          root: document.querySelector(".opponentCardsInZone"),
+          rootMargin: "0px",
+          threshold: 0,
+        }
+      );
+      const playerCardsInOpponentZoneObservers = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            this.visualHelper.moreCards[
+              entry.target.id
+            ] = !entry.isIntersecting;
+          });
+        },
+        {
+          root: document.querySelector(".playerCardsInOpponentZone"),
+          rootMargin: "0px",
+          threshold: 0,
+        }
+      );
+      const opponentCardsInPlayerZoneObservers = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            this.visualHelper.moreCards[
+              entry.target.id
+            ] = !entry.isIntersecting;
+          });
+        },
+        {
+          root: document.querySelector(".opponentCardsInPlayerZone"),
+          rootMargin: "0px",
+          threshold: 0,
+        }
+      );
+      playerZoneObservers.observe(this.$refs.playerZoneLeft);
+      playerZoneObservers.observe(this.$refs.playerZoneRight);
+      opponentZoneObservers.observe(this.$refs.opponentZoneLeft);
+      opponentZoneObservers.observe(this.$refs.opponentZoneRight);
+      playerCardsInOpponentZoneObservers.observe(
+        this.$refs.playerCardsInOpponentZoneLeft
+      );
+      playerCardsInOpponentZoneObservers.observe(
+        this.$refs.playerCardsInOpponentZoneRight
+      );
+      opponentCardsInPlayerZoneObservers.observe(
+        this.$refs.opponentCardsInPlayerZoneLeft
+      );
+      opponentCardsInPlayerZoneObservers.observe(
+        this.$refs.opponentCardsInPlayerZoneRight
+      );
+    },
   },
   mounted() {
     this.validateBG();
@@ -1104,6 +1351,7 @@ module.exports = {
     });
     document.addEventListener("touchend", this.documentTouchend);
     this.adjustZoom();
+    this.initializeIntersectionObservers();
   },
   destroyed() {
     document.removeEventListener("mousemove", this.mousemove);
@@ -1111,6 +1359,7 @@ module.exports = {
     document.removeEventListener("touchend", this.documentTouchend);
   },
   components: {
+    arrowsAnimated,
     ZoneCard,
     StationCard,
     PlayerHud,
