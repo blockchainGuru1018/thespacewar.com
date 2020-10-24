@@ -157,3 +157,19 @@ $holdingCardZIndex: 4;
     height: 100%;
   }  
 }
+::-webkit-scrollbar {
+  width: 0.4rem;
+  height: 0.4rem;
+ }
+ ::-webkit-scrollbar-thumb {
+  background: #999C;  
+  border-radius: 10px;
+ }
+ ::-webkit-scrollbar-thumb:hover{
+ background: radial-gradient(circle, #99999c 25%,#a5abd4 50%);
+ }
+ ::-webkit-scrollbar-track{
+  background: rgba($color: #000000, $alpha: 0);
+  border-radius: 10px;
+  box-shadow: inset 7px 10px 12px rgba($color: #000000, $alpha: 0);
+ }

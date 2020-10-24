@@ -2,38 +2,38 @@
   <div class="containerFloating">
     <div v-show="direction === 'left'" class="loader-left">
       <div
-        class="ui_arrow-1 scale-arrow animated infinite animated-175 delay-125"
+        :class="animated? 'ui_arrow-1 scale-arrow animated infinite animated-175 delay-125' : 'ui_arrow-1'"
       ></div>
       <div
-        class="ui_arrow-2 scale-arrow animated infinite animated-175 delay-1"
+        :class="animated? 'ui_arrow-2 scale-arrow animated infinite animated-175 delay-1' : 'ui_arrow-1'"
       ></div>
       <div
-        class="ui_arrow-3 scale-arrow animated infinite animated-175 delay-075"
+        :class="animated? 'ui_arrow-3 scale-arrow animated infinite animated-175 delay-075' : 'ui_arrow-1'"
       ></div>
       <div
-        class="ui_arrow-4 scale-arrow animated infinite animated-175 delay-050"
+        :class="animated? 'ui_arrow-4 scale-arrow animated infinite animated-175 delay-050' : 'ui_arrow-1'"
       ></div>
       <div
-        class="ui_arrow-5 scale-arrow animated infinite animated-175 delay-025"
+        :class="animated? 'ui_arrow-5 scale-arrow animated infinite animated-175 delay-025' : 'ui_arrow-1'"
       ></div>
-      <div class="ui_arrow-6 scale-arrow animated infinite animated-175"></div>
+      <div :class="animated? 'ui_arrow-6 scale-arrow animated infinite animated-175' : 'ui_arrow-1'"></div>
     </div>
     <div v-show="direction === 'right'" class="loader-right">
-      <div class="ui_arrow-1 scale-arrow animated animated-075 infinite"></div>
+      <div :class="animated? 'ui_arrow-1 scale-arrow animated animated-075 infinite' : 'ui_arrow-6'"></div>
       <div
-        class="ui_arrow-2 scale-arrow animated animated-075 infinite delay-015"
+        :class="animated? 'ui_arrow-2 scale-arrow animated animated-075 infinite delay-015' : 'ui_arrow-6'"
       ></div>
       <div
-        class="ui_arrow-3 scale-arrow animated animated-075 infinite delay-030"
+        :class="animated? 'ui_arrow-3 scale-arrow animated animated-075 infinite delay-030' : 'ui_arrow-6'"
       ></div>
       <div
-        class="ui_arrow-4 scale-arrow animated animated-075 infinite delay-045"
+        :class="animated? 'ui_arrow-4 scale-arrow animated animated-075 infinite delay-045' : 'ui_arrow-6'"
       ></div>
       <div
-        class="ui_arrow-5 scale-arrow animated animated-075 infinite delay-060"
+        :class="animated? 'ui_arrow-5 scale-arrow animated animated-075 infinite delay-060' : 'ui_arrow-6'"
       ></div>
       <div
-        class="ui_arrow-6 scale-arrow animated animated-075 infinite delay-075"
+        :class="animated? 'ui_arrow-6 scale-arrow animated animated-075 infinite delay-075' : 'ui_arrow-6'"
       ></div>
     </div>
   </div>
@@ -49,6 +49,10 @@ export default {
     direction: {
       type: String,
       default: "left",
+    },
+    animated: {
+      type: Boolean,
+      default: false,
     },
   },
 };
@@ -191,4 +195,6 @@ $left: "https://img-fotki.yandex.ru/get/5006/34732798.0/0_e87c1_1f1cca3e_S.png";
   left: 0px;
   transform: translateZ(1px);
 }
+  
+
 </style>
