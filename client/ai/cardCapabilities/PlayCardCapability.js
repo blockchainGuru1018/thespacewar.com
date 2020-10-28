@@ -23,6 +23,7 @@ const PlayableCards = [
   DestroyDuration.CommonId,
 ];
 const PriorityCards = [
+  ToxicGas.CommonId,
   Sacrifice.CommonId,
   Drone.CommonId,
   DroneLeader.CommonId,

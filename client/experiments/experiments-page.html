@@ -38,6 +38,15 @@
             </label>
         </div>
     </div>
+    <div class="alert alert-primary" role="alert">
+        <div class="form-check">
+            <input class="form-check-input" onclick="handleClick(this)" type="checkbox" name="debuggingBot"
+                   id="debuggingBot" data-feature="debuggingBot">
+            <label class="form-check-label" for="debuggingBot">
+                Debug Bot
+            </label>
+        </div>
+    </div>
     <form class="alert alert-primary" role="alert" id="form-bg">
         <div class="form-check">
             <input class="form-check-input" onclick="backgroundOption(this)" type="radio" name="active-Deck"
@@ -80,13 +89,14 @@
 
     // Background 
     $(document).ready(function () {
-        $('#form-bg input:radio').each(function(index, element){
-            var op = localStorage.getItem("background");  
+        $('#form-bg input:radio').each(function (index, element) {
+            var op = localStorage.getItem("background");
             $(this).prop("checked", this.getAttribute("value") == op);
         })
-        
+
     });
-    function backgroundOption(option){
+
+    function backgroundOption(option) {
         localStorage.setItem("background", option.value);
     }
 

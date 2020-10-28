@@ -122,6 +122,10 @@ class MatchComService {
 
       const opponentId = this.getOpponentId(playerId);
       const opponentState = this._getPlayerState(opponentId);
+      const botCardsOnHand =
+        opponentId === "BOT" || playerId === "BOT"
+          ? opponentState.cardsOnHand
+          : [];
 
       const data = {
         mode: this._matchService.mode(),
@@ -130,7 +134,7 @@ class MatchComService {
         currentPlayer: this._matchService.getCurrentPlayer(),
         turn: this._matchService.getTurn(),
         gameConfigEntity: this._matchService.getGameConfigEntity(),
-
+        botCardsOnHand,
         ...preparePlayerState(playerState),
         ...this._prepareOpponentState(opponentState),
 

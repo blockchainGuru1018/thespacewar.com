@@ -625,12 +625,26 @@
     <MatchHeader />
 
     <div class="cardsOnHand">
-      <div class="opponentCardsOnHand field-section">
+      <div
+        v-if="debuggingBot === false"
+        class="opponentCardsOnHand field-section"
+      >
         <div
           v-for="n in opponentCardCount"
           :key="n"
           :style="getOpponentCardStyle(n - 1)"
           class="card card-faceDown"
+        />
+      </div>
+      <div
+        v-else-if="debuggingBot === true"
+        class="opponentCardsOnHand field-section"
+      >
+        <div
+          v-for="(botCard, index) in botCardsOnHandDebug"
+          :key="botCard.id"
+          :style="getOpponentCardStyleForDebugging(index, botCard)"
+          class="card"
         />
       </div>
       <PlayerCardsOnHand
@@ -642,6 +656,8 @@
   </div>
 </template>
 <script>
+import featureToggles from "../utils/featureToggles.js";
+
 const Vuex = require("vuex");
 const getCardImageUrl = require("../utils/getCardImageUrl.js");
 const { mapState, mapGetters, mapActions } = Vuex.createNamespacedHelpers(
@@ -746,6 +762,7 @@ module.exports = {
     ]),
     ...mapGetters([
       "gameOn",
+      "botCardsOnHandDebug",
       "hasPutDownNonFreeCardThisTurn",
       "actionPoints2",
       "createCard",
@@ -785,6 +802,9 @@ module.exports = {
       "firstRequirementIsCounterCard",
     ]),
     ...ghostHelpers.mapGetters(["activateEventCardGhostVisible"]),
+    debuggingBot() {
+      return featureToggles.isEnabled("debuggingBot");
+    },
     playerZoneCardGhostClasses() {
       const classes = ["card-ghost--zone"];
       if (!this.canPutDownHoldingCard) {
@@ -1083,6 +1103,21 @@ module.exports = {
       return {
         transform: "rotate(" + (startDegrees + degrees) + "deg)",
         transformOrigin: "center -1600%",
+      };
+    },
+    getOpponentCardStyleForDebugging(index, card) {
+      const cardCount = this.opponentCardCount;
+      const turnDistance = 1.5;
+      const startDegrees = -((cardCount - 1) * turnDistance * 0.5);
+      const degrees = index * turnDistance;
+      let cardUrl;
+      if (card) {
+        cardUrl = getCardImageUrl.byCommonId(card.commonId);
+      }
+      return {
+        transform: "rotate(" + (startDegrees + degrees) + "deg)",
+        transformOrigin: "center -1600%",
+        backgroundImage: cardUrl ? `url(${cardUrl})` : "",
       };
     },
     getCardImageStyle(card) {
@@ -1388,6 +1423,7 @@ module.exports = {
 
 .match-backgroundWrapper {
   background-color: #000;
+
   .grid-bg {
     position: absolute;
     top: 0px;
@@ -1398,6 +1434,7 @@ module.exports = {
       no-repeat center center;
     background-size: cover;
   }
+
   &.animated {
     /*background: url(https://uploads.staticjw.com/ba/banta/game-bg-2500x1666-optimized.jpg) no-repeat center center;*/
     //background-image: url(https://uploads.staticjw.com/ba/banta/game-bg-2500x1080-2-optimized.jpg);
@@ -1422,6 +1459,7 @@ module.exports = {
     }
   }
 }
+
 @keyframes bghorizontal {
   0% {
     background-position: 0 0;

@@ -100,6 +100,7 @@ module.exports = function (deps) {
       opponentCommanders: [],
       opponentPhase: "",
       opponentCardCount: 0,
+      botCardsOnHand: [],
       opponentDiscardedCards: [],
       opponentStation: {
         drawCards: [],
@@ -132,6 +133,7 @@ module.exports = function (deps) {
     getters: {
       isFirstPlayer,
       gameOn,
+      botCardsOnHandDebug,
       choosingStartingPlayer,
       getTotalCardsOnHand,
       selectingStartingStationCards,
@@ -243,6 +245,7 @@ module.exports = function (deps) {
 
       // local TODO many of these have since the start become only remote calls (barely changing any local state)
       stateChanged,
+
       placeCardInZone,
       opponentDiscardedDurationCard,
       opponentMovedCard,
@@ -1059,6 +1062,10 @@ module.exports = function (deps) {
 
   function skipDrawCard() {
     matchController.emit("skipDrawCard");
+  }
+
+  function botCardsOnHandDebug(state) {
+    return state.botCardsOnHand;
   }
 
   function stateChanged({ state, getters, dispatch }, data) {
