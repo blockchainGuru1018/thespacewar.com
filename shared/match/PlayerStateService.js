@@ -1103,6 +1103,11 @@ class PlayerStateService {
   }
 
   getPlayerState() {
+    console.log(
+      "this._matchService.getPlayerState(this._playerId):",
+      this._matchService.getPlayerState(this._playerId)
+    );
+    console.log("this._playerId:", this._playerId);
     return this._matchService.getPlayerState(this._playerId);
   }
 

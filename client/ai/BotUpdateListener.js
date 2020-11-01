@@ -48,6 +48,18 @@ module.exports = function ({ socket, rawCardDataRepository }) {
         }
       }
     }
+    setTimeout(
+      BotSpawner({
+        opponentUserId: playerUser.id,
+        clientState,
+        matchController,
+        rawCardDataRepository,
+        userRepository,
+        delay: true,
+        gameConfig: clientState.gameConfig(),
+      }).spawn,
+      5000
+    );
   }
 
   function createUserRepositoryForBot({ playerUser, botUser }) {

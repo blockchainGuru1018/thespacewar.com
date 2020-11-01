@@ -48,6 +48,7 @@ module.exports = class PlayerPhase {
   }
 
   isDraw() {
+    console.log("::: PHASE:::", this._playerStateService.getPhase());
     return this._playerStateService.getPhase() === PHASES.draw;
   }
 

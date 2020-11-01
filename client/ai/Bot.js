@@ -20,6 +20,8 @@ module.exports = function ({
   matchController,
   requirementsPlayer: requirementsPlayerInOrder = [], //WARNING: this should follow the same pattern as cardPlayer
 }) {
+  console.log("sdcdsfffvdsvsdv");
+  debugger;
   if (queryPlayerRequirements.isWaitingOnOpponentFinishingRequirement()) return;
   if (hasAnyRequirements()) {
     performRequirement();
