@@ -501,7 +501,7 @@ eval("\n\nconst BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nconst BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nconst AllowFriendlySpaceShipsToMoveTurnWhenPutDown = __webpack_require__(/*! ./mixins/AllowsFriendlySpaceShipsToMoveTurnWhenPutDown */ \"../shared/card/mixins/AllowsFriendlySpaceShipsToMoveTurnWhenPutDown.js\");\n\nmodule.exports = class Fast extends AllowFriendlySpaceShipsToMoveTurnWhenPutDown(BaseCard) {\n  constructor(deps) {\n    super(deps);\n  }\n\n  static get CommonId() {\n    return \"95\";\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/Fast.js?");
+eval("\n\nconst BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nconst AllowFriendlySpaceShipsToMoveTurnWhenPutDown = __webpack_require__(/*! ./mixins/AllowsFriendlySpaceShipsToMoveTurnWhenPutDown */ \"../shared/card/mixins/AllowsFriendlySpaceShipsToMoveTurnWhenPutDown.js\"); //TODO: rename to Nitro\n\n\nmodule.exports = class Fast extends AllowFriendlySpaceShipsToMoveTurnWhenPutDown(BaseCard) {\n  constructor(deps) {\n    super(deps);\n  }\n\n  static get CommonId() {\n    return \"95\";\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/Fast.js?");
 
 /***/ }),
 
@@ -2411,6 +2411,18 @@ eval("\n\nfunction asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, 
 
 /***/ }),
 
+/***/ "./ai/CardCommonIdComparer.js":
+/*!************************************!*\
+  !*** ./ai/CardCommonIdComparer.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\nmodule.exports = commonIdsOrder => {\n  return (cardA, cardB) => {\n    const cardAScore = commonIdsOrder.indexOf(cardA.commonId) !== -1 ? commonIdsOrder.indexOf(cardA.commonId) : 99;\n    const cardBScore = commonIdsOrder.indexOf(cardB.commonId) !== -1 ? commonIdsOrder.indexOf(cardB.commonId) : 99;\n    return cardAScore - cardBScore;\n  };\n};\n\n//# sourceURL=webpack:///./ai/CardCommonIdComparer.js?");
+
+/***/ }),
+
 /***/ "./ai/CardCostComparer.js":
 /*!********************************!*\
   !*** ./ai/CardCostComparer.js ***!
@@ -2455,7 +2467,7 @@ eval("\n\nconst CardTypeComparer = __webpack_require__(/*! ./CardTypeComparer.js
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nconst CardTypeComparer = __webpack_require__(/*! ./CardTypeComparer.js */ \"./ai/CardTypeComparer.js\");\n\nconst CardCostComparer = __webpack_require__(/*! ./CardCostComparer.js */ \"./ai/CardCostComparer.js\");\n\nconst TypesInOrder = [\"defense\", \"missile\", \"spaceShip\"];\n\nmodule.exports = function ({\n  playerStateService,\n  types = TypesInOrder\n}) {\n  return () => {\n    const cards = playerStateService.getCardsOnHand().slice().sort(CardCostComparer({\n      expensiveFirst: true\n    })).sort(CardTypeComparer(types));\n    if (cards.length) return cards[0].id;\n    throw new Error(\"No cards to discard\");\n  };\n};\n\n//# sourceURL=webpack:///./ai/DecideCardToPlaceAsStationCard.js?");
+eval("\n\nconst CardTypeComparer = __webpack_require__(/*! ./CardTypeComparer.js */ \"./ai/CardTypeComparer.js\");\n\nconst CardCostComparer = __webpack_require__(/*! ./CardCostComparer.js */ \"./ai/CardCostComparer.js\");\n\nconst CardCommonIdComparer = __webpack_require__(/*! ./CardCommonIdComparer.js */ \"./ai/CardCommonIdComparer.js\");\n\nconst TypesInOrder = [\"defense\", \"missile\", \"spaceShip\"];\n\nconst Nitro = __webpack_require__(/*! ../../shared/card/Fast */ \"../shared/card/Fast.js\");\n\nconst CollisionSkill = __webpack_require__(/*! ../../shared/card/CollisionSkill */ \"../shared/card/CollisionSkill.js\");\n\nconst Sacrifice = __webpack_require__(/*! ../../shared/card/Sacrifice */ \"../shared/card/Sacrifice.js\");\n\nconst ReviveProcedure = __webpack_require__(/*! ../../shared/card/Revive */ \"../shared/card/Revive.js\");\n\nconst DroneLeader = __webpack_require__(/*! ../../shared/card/DroneLeader */ \"../shared/card/DroneLeader.js\");\n\nconst RepairShip = __webpack_require__(/*! ../../shared/card/RepairShip */ \"../shared/card/RepairShip.js\");\n\nconst Paralyzer = __webpack_require__(/*! ../../shared/card/TheParalyzer */ \"../shared/card/TheParalyzer.js\");\n\nconst Carrier = __webpack_require__(/*! ../../shared/card/Carrier */ \"../shared/card/Carrier.js\");\n\nconst ExtraDraw = __webpack_require__(/*! ../../shared/card/ExtraDraw */ \"../shared/card/ExtraDraw.js\");\n\nconst FreezingCold = __webpack_require__(/*! ../../shared/card/FreezingCold */ \"../shared/card/FreezingCold.js\");\n\nconst Fusion = __webpack_require__(/*! ../../shared/card/Fusion */ \"../shared/card/Fusion.js\");\n\nconst commonIdsOrder = [Nitro.CommonId, CollisionSkill.CommonId, FreezingCold.CommonId, Sacrifice.CommonId, ReviveProcedure.CommonId, ExtraDraw.CommonId, DroneLeader.CommonId, RepairShip.CommonId, Paralyzer.CommonId, Carrier.CommonId, Fusion.CommonId];\n\nmodule.exports = function ({\n  playerStateService,\n  types = TypesInOrder\n}) {\n  return () => {\n    const cards = playerStateService.getCardsOnHand().slice().sort(CardCostComparer({\n      expensiveFirst: true\n    })).sort(CardTypeComparer(types)).sort(CardCommonIdComparer(commonIdsOrder));\n    if (cards.length) return cards[0].id;\n    throw new Error(\"No cards to discard\");\n  };\n};\n\n//# sourceURL=webpack:///./ai/DecideCardToPlaceAsStationCard.js?");
 
 /***/ }),
 
