@@ -18,6 +18,9 @@ const ExtraDraw = require("../../../shared/card/ExtraDraw.js");
 const Revive = require("../../../shared/card/Revive.js");
 const Sacrifice = require("../../../shared/card/Sacrifice.js");
 const DestroyDuration = require("../../../shared/card/DestroyDuration.js");
+const CollisionSkill = require("../../../shared/card/CollisionSkill.js");
+const Nitro = require("../../../shared/card/Fast.js");
+const FreezingCold = require("../../../shared/card/FreezingCold.js");
 
 test("playing a card", async () => {
   const { matchController } = await setupFromState({
@@ -676,6 +679,33 @@ test("Destroy duration should be played as draw", async () => {
     location: "zone",
     cardId: "C1A",
     choice: "draw",
+  });
+});
+
+test("Should play by commonId cards", async () => {
+  const fakeRawCardData = [
+    { id: "1", price: "1" },
+    { id: Nitro.CommonId, price: "1" },
+    { id: CollisionSkill.CommonId, price: "1" },
+    { id: FreezingCold.CommonId, price: "1" },
+  ];
+  const { matchController } = await setupFromState(
+    {
+      turn: 2,
+      phase: "action",
+      events: [],
+      stationCards: [unflippedStationCard("S1A", "draw")],
+      cardsOnHand: [
+        createCard({ id: "C1A", commonId: FreezingCold.CommonId }),
+        createCard({ id: "C2A", commonId: CollisionSkill.CommonId }),
+        createCard({ id: "C3A", commonId: Nitro.CommonId }),
+      ],
+    },
+    fakeRawCardData
+  );
+  expect(matchController.emit).toBeCalledWith("putDownCard", {
+    location: "station-action",
+    cardId: "C3A",
   });
 });
 
