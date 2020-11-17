@@ -23,6 +23,7 @@ module.exports = function ({
   if (queryPlayerRequirements.isWaitingOnOpponentFinishingRequirement()) return;
   if (hasAnyRequirements()) {
     performRequirement();
+    return;
   }
 
   if (matchService.isGameOn() && turnControl.opponentHasControl()) return;
