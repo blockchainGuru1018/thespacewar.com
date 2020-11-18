@@ -489,7 +489,7 @@ eval("\n\nconst info = __webpack_require__(/*! ./info/66.config.js */ \"../share
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nconst BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n/**\n * TODO: Rename to Base Command Link\n * @type {ExtraDraw}\n */\n\n\nmodule.exports = class ExtraDraw extends BaseCard {\n  constructor(deps) {\n    super(deps);\n  }\n\n  static get CommonId() {\n    return \"87\";\n  }\n\n  get requirementsWhenEnterDrawPhase() {\n    const cardCommonId = ExtraDraw.CommonId;\n    return {\n      forOpponent: [],\n      forPlayer: [{\n        type: \"drawCard\",\n        count: 2,\n        cardCommonId\n      }]\n    };\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/ExtraDraw.js?");
+eval("\n\nconst BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n/**\r\n * TODO: Rename to Base Command Link\r\n * @type {ExtraDraw}\r\n */\n\n\nmodule.exports = class ExtraDraw extends BaseCard {\n  constructor(deps) {\n    super(deps);\n  }\n\n  static get CommonId() {\n    return \"87\";\n  }\n\n  get requirementsWhenEnterDrawPhase() {\n    const cardCommonId = ExtraDraw.CommonId;\n    return {\n      forOpponent: [],\n      forPlayer: [{\n        type: \"drawCard\",\n        count: 2,\n        cardCommonId\n      }]\n    };\n  }\n\n};\n\n//# sourceURL=webpack:///../shared/card/ExtraDraw.js?");
 
 /***/ }),
 

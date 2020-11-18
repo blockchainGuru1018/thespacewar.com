@@ -9,7 +9,12 @@ module.exports = function ({
     canAttack,
     canBeSacrificed,
     canRepair,
+    canTriggerDormantEffect,
   };
+
+  function canTriggerDormantEffect() {
+    return card.canTriggerDormantEffect();
+  }
 
   function canMove(alternativeConditions = {}) {
     if (!canThePlayer.moveCards()) return false;

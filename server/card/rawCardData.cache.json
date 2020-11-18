@@ -800,9 +800,9 @@
             {
                 "id": "215",
                 "name": "Transformation",
-                "price": "3",
+                "price": "2",
                 "type_card": "orange",
-                "detail": "Fully repair and then switch the attack and defense value for any spaceship (place this card with the spaceship to remember).",
+                "detail": "Place on spacehip. Next turn fully repair and then switch the attack and defense value.",
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "2",
@@ -1027,5 +1027,5 @@
             }
         ]
     },
-    "saveTime": 1601602973975
+    "saveTime": 1605631896625
 }

@@ -1162,7 +1162,8 @@ module.exports = function (deps) {
           cardInPlay.canMove() ||
           cardInPlay.canAttack() ||
           cardInPlay.canBeSacrificed() ||
-          cardInPlay.canRepair()
+          cardInPlay.canRepair() ||
+          cardInPlay.canTriggerDormantEffect()
         );
       });
 
@@ -1173,7 +1174,8 @@ module.exports = function (deps) {
         return (
           cardInPlay.canAttack() ||
           cardInPlay.canBeSacrificed() ||
-          cardInPlay.canRepair()
+          cardInPlay.canRepair() ||
+          cardInPlay.canTriggerDormantEffect()
         );
       });
 
