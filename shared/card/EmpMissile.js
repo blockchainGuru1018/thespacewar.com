@@ -25,7 +25,7 @@ module.exports = class EmpMissile extends BaseCard {
     );
   }
 
-  attackCard(defenderCard) {
+  attackCard({ defenderCard }) {
     const {
       attackerDestroyed,
       defenderParalyzed,

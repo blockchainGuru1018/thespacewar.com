@@ -533,7 +533,7 @@ module.exports = {
           card: { type: "spaceShip", damage: 0 },
         });
 
-        this.card.attackCard(this.otherCard);
+        this.card.attackCard({ defenderCard: this.otherCard });
       },
       "should paralyze ship": function () {
         assert(this.otherCard.paralyzed);
@@ -566,7 +566,7 @@ module.exports = {
           card: { commonId: EnergyShield.CommonId, type: "defense", damage: 0 },
         });
 
-        this.card.attackCard(this.otherCard);
+        this.card.attackCard({ defenderCard: this.otherCard });
       },
       "should destroy ship": function () {
         assert(this.otherCard.destroyed);
@@ -599,7 +599,9 @@ module.exports = {
           card: { type: "defense", damage: 0 },
         });
 
-        this.error = catchError(() => this.card.attackCard(this.otherCard));
+        this.error = catchError(() =>
+          this.card.attackCard({ defenderCard: this.otherCard })
+        );
       },
       "should NOT destroy ship": function () {
         refute(this.otherCard.destroyed);
