@@ -16,6 +16,7 @@ const Fusion = require("../../../shared/card/Fusion.js");
 const DisturbingSignals = require("../../../shared/card/DisturbingSignals.js");
 const ExtraDraw = require("../../../shared/card/ExtraDraw.js");
 const Revive = require("../../../shared/card/Revive.js");
+const TheParalyzer = require("../../../shared/card/TheParalyzer.js");
 const Sacrifice = require("../../../shared/card/Sacrifice.js");
 const DestroyDuration = require("../../../shared/card/DestroyDuration.js");
 const CollisionSkill = require("../../../shared/card/CollisionSkill.js");
@@ -707,6 +708,61 @@ test("Should play by commonId cards", async () => {
   expect(matchController.emit).toBeCalledWith("putDownCard", {
     location: "station-action",
     cardId: "C3A",
+  });
+});
+
+test("Should not play paralizer", async () => {
+  const fakeRawCardData = [
+    { id: "1", price: "1" },
+    { id: DisturbingSignals.CommonId, price: 8 },
+    { id: TheParalyzer.CommonId, price: 7 },
+  ];
+  const { matchController } = await setupFromState(
+    {
+      turn: 2,
+      phase: "action",
+      events: [
+        { turn: 1, type: "putDownCard", location: "station-action" },
+        { turn: 2, type: "putDownCard", location: "station-action" },
+      ],
+      stationCards: [
+        unflippedStationCard("S1A", "action"),
+        unflippedStationCard("S3A", "action"),
+        unflippedStationCard("S4A", "action"),
+        unflippedStationCard("S5A", "action"),
+        unflippedStationCard("S6A", "action"),
+        unflippedStationCard("S7A", "action"),
+      ],
+      cardsOnHand: [
+        createCard({
+          id: "C2A",
+          type: "spaceShip",
+          commonId: TheParalyzer.CommonId,
+          cost: 2,
+        }),
+        createCard({
+          id: "C1A",
+          type: "event",
+          commonId: DisturbingSignals.CommonId,
+          cost: 3,
+        }),
+      ],
+      opponentCardsInPlayerZone: [
+        createCard({
+          id: "C3A",
+          type: "spaceShip",
+          defense: "10",
+          commonId: "1",
+          cost: "8",
+        }),
+      ],
+    },
+    fakeRawCardData
+  );
+
+  expect(matchController.emit).toBeCalledWith("putDownCard", {
+    location: "zone",
+    cardId: "C1A",
   });
 });
 

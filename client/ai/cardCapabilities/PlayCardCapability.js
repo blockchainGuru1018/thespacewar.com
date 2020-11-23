@@ -8,6 +8,7 @@ const ExtraDraw = require("../../../shared/card/ExtraDraw.js");
 const Revive = require("../../../shared/card/Revive.js");
 const Sacrifice = require("../../../shared/card/Sacrifice.js");
 const DestroyDuration = require("../../../shared/card/DestroyDuration");
+const TheParalyzer = require("../../../shared/card/TheParalyzer");
 
 module.exports = PlayerCardCapability;
 
@@ -50,12 +51,20 @@ function PlayerCardCapability({
   }
 
   function doIt() {
-    const playableCards = playableCardsOnHandAndInStation().sort(
-      CheapestFirst()
-    );
+    let playableCards = playableCardsOnHandAndInStation().sort(CheapestFirst());
+    /**
+     *  TODO: find a better way to do this like having order for bots attribute or soemthing atm thsi will work since just 1 card
+     */
+    if (playableCards.length >= 2) {
+      playableCards = playableCards.filter(
+        (cardPlayable) => cardPlayable.commonId !== TheParalyzer.CommonId
+      );
+    }
+
     const priorityCard = playableCards.find((card) =>
       priorityCards.includes(card.commonId)
     );
+
     const card = priorityCard || playableCards[0];
     playCard(card);
   }
