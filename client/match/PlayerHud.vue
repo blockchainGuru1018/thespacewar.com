@@ -77,7 +77,7 @@
         <button
           v-if="findAcidProjectileContainerVisible"
           title="You can search from anywhere an acid projectile"
-          class="perfectPlan darkButton"
+          class="perfectPlan darkButton enablePointerEvent"
           @click="findAcidProjectile"
         >
           Find Acid Projectile
