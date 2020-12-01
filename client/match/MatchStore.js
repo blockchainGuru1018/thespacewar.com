@@ -216,6 +216,8 @@ module.exports = function (deps) {
       repairerCommanderSelected,
       playerHasCardThatCanCounter,
       queryAttacks,
+      opponentTopDiscardCard,
+      playerTopDiscardCard,
     },
     actions: {
       init,
@@ -247,6 +249,7 @@ module.exports = function (deps) {
       stateChanged,
 
       placeCardInZone,
+      placeCardInDiscardPile,
       opponentDiscardedDurationCard,
       opponentMovedCard,
       drawCards,
@@ -287,6 +290,16 @@ module.exports = function (deps) {
     setInterval(() => {
       state.timeNow = Date.now();
     }, 250);
+  }
+
+  function opponentTopDiscardCard(state) {
+    return state.opponentDiscardedCards[
+      state.opponentDiscardedCards.length - 1
+    ];
+  }
+
+  function playerTopDiscardCard(state) {
+    return state.playerDiscardedCards[state.playerDiscardedCards.length - 1];
   }
 
   function isFirstPlayer(state) {
@@ -1195,13 +1208,17 @@ module.exports = function (deps) {
     state.playerCardsInZone.push(card);
   }
 
+  function placeCardInDiscardPile({ state }, card) {
+    state.playerDiscardedCards.push(card);
+  }
+
   function discardCard({ state, getters, dispatch }, cardId) {
     const cardIndexOnHand = state.playerCardsOnHand.findIndex(
       (c) => c.id === cardId
     );
     const discardedCard = state.playerCardsOnHand[cardIndexOnHand];
     state.playerCardsOnHand.splice(cardIndexOnHand, 1);
-    state.playerDiscardedCards.push(discardedCard);
+    dispatch("match/placeCardInDiscardPile", discardedCard, { root: true });
 
     state.events.push(
       DiscardCardEvent({

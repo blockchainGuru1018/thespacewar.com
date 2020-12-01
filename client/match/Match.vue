@@ -213,12 +213,7 @@
             </div>
           </div>
           <div class="field-piles field-section">
-            <div
-              :class="[
-                'field-discardPile',
-                { flash: flashOpponentDiscardPile },
-              ]"
-            >
+            <div class="field-discardPile">
               <div
                 v-if="!opponentTopDiscardCard"
                 class="card card-placeholder"
@@ -228,7 +223,12 @@
                 v-longpress="() => expandCard(opponentTopDiscardCard)"
                 :data-cardId="opponentTopDiscardCard.id"
                 :style="getCardImageStyle(opponentTopDiscardCard)"
-                class="card card--turnedAround card--expandable"
+                :class="[
+                  'card',
+                  'card--turnedAround',
+                  'card--expandable',
+                  { flash: flashOpponentDiscardPile },
+                ]"
                 @mousedown.right="() => expandCard(opponentTopDiscardCard)"
                 @contextmenu.prevent="(e) => e.preventDefault()"
               />
@@ -351,23 +351,21 @@
               </div>
             </div>
 
-            <div
-              :class="[
-                'field-discardPile',
-                'field-discardPile-player',
-                { flash: flashDiscardPile },
-              ]"
-            >
+            <div class="field-discardPile field-discardPile-player">
               <div
                 v-if="!playerTopDiscardCard"
-                class="card card-placeholder card-emptyDeck"
+                class="card card-placeholdercard-emptyDeck"
               />
               <div
                 v-else
                 v-longpress="() => expandCard(playerTopDiscardCard)"
                 :data-cardId="playerTopDiscardCard.id"
                 :style="getCardImageStyle(playerTopDiscardCard)"
-                class="card card--expandable"
+                :class="[
+                  'card',
+                  'card--expandable',
+                  { flash: flashDiscardPile },
+                ]"
                 @mousedown.right="() => expandCard(opponentTopDiscardCard)"
                 @contextmenu.prevent="(e) => e.preventDefault()"
               />
@@ -771,6 +769,8 @@ module.exports = {
       "selectingStartingStationCards",
       "gameConfig",
       "moveStationCard",
+      "opponentTopDiscardCard",
+      "playerTopDiscardCard",
     ]),
     ...mapCardState([
       "transientPlayerCardsInHomeZone",
@@ -909,14 +909,7 @@ module.exports = {
         this.activeActionName === "putDownCard"
       );
     },
-    opponentTopDiscardCard() {
-      return this.opponentDiscardedCards[
-        this.opponentDiscardedCards.length - 1
-      ];
-    },
-    playerTopDiscardCard() {
-      return this.playerDiscardedCards[this.playerDiscardedCards.length - 1];
-    },
+
     visiblePlayerCards() {
       const allCards = [
         ...this.playerCardsInZone,
