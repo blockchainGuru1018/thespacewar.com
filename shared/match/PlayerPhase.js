@@ -45,6 +45,7 @@ module.exports = class PlayerPhase {
       this._playerStateService.getPhase() === PHASES.draw &&
       this._matchService.getTurn() === 1
     );
+    l;
   }
 
   isDraw() {

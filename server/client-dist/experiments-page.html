@@ -63,6 +63,23 @@
             </label>
         </div>
     </form>
+    <form class="alert alert-primary" role="alert" id="form-drawCardOverlay">
+        <div style="margin-bottom: 16px">Show overlay to highlight draw pile</div>
+        <div class="form-check">
+            <input class="form-check-input" onclick="pickCardOverlayOption(this)" type="radio" name="allCards"
+                   id="allCards" value="true">
+            <label class="form-check-label" for="allCards">
+                Every time on request to draw a card.
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" onclick="pickCardOverlayOption(this)" type="radio" name="onlyDroneCard"
+                   id="onlyDroneCard" value="false">
+            <label class="form-check-label" for="onlyDroneCard">
+                Only for Drone Card
+            </label>
+        </div>
+    </form>
 </div>
 </body>
 
@@ -76,6 +93,9 @@
             const activeDeck = JSON.parse(localStorage.getItem("active-deck"));
             $(this).prop("checked", this.getAttribute("value") === activeDeck);
         });
+        initVariables();
+        refreshBackground();
+        refreshPickCardOverlayForAll();
     });
 
     function handleDeckOption(option) {
@@ -87,19 +107,32 @@
         localStorage.setItem(`ft-${cb.getAttribute("data-feature")}`, cb.checked);
     }
 
-    // Background 
-    $(document).ready(function () {
+    function initVariables(){
+        localStorage.setItem("pickCardOverlayForAll",
+            localStorage.getItem("pickCardOverlayForAll") || JSON.stringify({value: true}));
+    }
+
+    function refreshBackground(){
         $('#form-bg input:radio').each(function (index, element) {
             var op = localStorage.getItem("background");
-            $(this).prop("checked", this.getAttribute("value") == op);
+            $(this).prop("checked", this.getAttribute("value") === op.value);
         })
-
-    });
+    }
+    function refreshPickCardOverlayForAll(){
+        $('#form-drawCardOverlay input:radio').each(function (index, element) {
+            var op = JSON.parse(localStorage.getItem("pickCardOverlayForAll"));
+            $(this).prop("checked", this.getAttribute("value") === op.value);
+        })
+    }
 
     function backgroundOption(option) {
         localStorage.setItem("background", option.value);
+        refreshBackground();
     }
 
-    // --------------
+    function pickCardOverlayOption(option){
+        localStorage.setItem("pickCardOverlayForAll", JSON.stringify({ value: option.value }));
+        refreshPickCardOverlayForAll();
+    }
 </script>
 </html>

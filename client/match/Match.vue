@@ -44,6 +44,8 @@
         />
       </div>
       <div class="field perspectiveChild">
+
+        <WindowedOverlay v-if="shouldShowWindowedOverlay"/>
         <div class="field-opponent" style="--aspect-ratio: (16/9) * 2;">
           <div><!-- NEEDED TO KEEP ASPECT-RATIO--></div>
           <div
@@ -234,7 +236,8 @@
               />
             </div>
 
-            <div class="field-commandersAndDrawPile">
+            <div class="field-commandersAndDrawPile" 
+              :class="shouldShowWindowedOverlay? 'setBackWindowedOverlay' : ''">
               <OpponentCommanderCards />
               <div class="field-drawPile opponentDrawPile">
                 <portal-target name="opponentDrawPile" />
@@ -710,6 +713,9 @@ const arrowsAnimated = resolveModule(
   require("../miscComponents/arrowsAnimated.vue")
 );
 const { PHASES } = require("./phases.js");
+const WindowedOverlay = resolveModule(
+  require("./overlay/windowedOverlay.vue")
+);
 
 module.exports = {
   data() {
@@ -796,6 +802,7 @@ module.exports = {
       "canPassDrawPhase",
       "canMill",
       "opponentDeckIsEmpty",
+      "shouldShowWindowedOverlay",
     ]),
     ...requirementHelpers.mapGetters([
       "firstRequirement",
@@ -1405,6 +1412,7 @@ module.exports = {
     OpponentCommanderCards,
     OpponentPreGameOverlay,
     StationCardWrapper,
+    WindowedOverlay,
   },
   directives: {
     longpress,

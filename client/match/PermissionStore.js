@@ -27,6 +27,7 @@ module.exports = function (deps) {
       canSelectForSacrificeRequirement,
       canIssueOverwork: canIssueOverworkGetter,
       canDrawCards,
+      shouldShowWindowedOverlay,
       canPassDrawPhase,
       canMill,
       deckIsEmpty,
@@ -207,5 +208,19 @@ module.exports = function (deps) {
     const cardsLeftToSelect = getFrom("cardsLeftToSelect", "requirement");
 
     return selectForSacrificeRequirement && cardsLeftToSelect > 0;
+  }
+
+  function shouldShowWindowedOverlay(state, getters, rootState, rootGetters) {
+    const pickCardOverlayForAll = 
+      (JSON.parse(localStorage.getItem('pickCardOverlayForAll')) || {})
+      .value === 'true';
+    if(pickCardOverlayForAll){
+      return rootGetters["match/playerRuleService"].canDrawCards()
+    }else{
+      const requirementIsCancelable = getFrom("requirementIsCancelable", "requirement");
+      const firstRequirementIsDrawCard = getFrom("firstRequirementIsDrawCard", "requirement");
+      return rootGetters["match/playerRuleService"].canDrawCards() &&
+      requirementIsCancelable && firstRequirementIsDrawCard
+    }
   }
 };

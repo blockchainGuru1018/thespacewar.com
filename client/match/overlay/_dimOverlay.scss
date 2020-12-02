@@ -40,3 +40,23 @@
     margin: 0 5px;
   }
 }
+
+
+.blueColor {
+}
+
+.windowedOverlay {
+  width: 500vw;
+  height: 500vh;
+  transform: translateZ(1px) translateX(-50%) translateY(-50%);
+  position: fixed; /* Sit on top of the page content */
+  background-color: rgba(20,20,20,0.85);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.setBackWindowedOverlay {
+  transform: translateZ(-13px);
+}
