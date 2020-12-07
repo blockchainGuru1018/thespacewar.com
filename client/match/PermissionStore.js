@@ -211,16 +211,16 @@ module.exports = function (deps) {
   }
 
   function shouldShowWindowedOverlayByDrawCard(state, getters, rootState, rootGetters) {
-    const pickCardOverlayForAll = 
+    const pickCardOverlayForDroneCard = 
       (JSON.parse(localStorage.getItem('pickCardOverlayForAll')) || {})
       .value === 'true';
-    if(pickCardOverlayForAll){
-      return rootGetters["match/playerRuleService"].canDrawCards()
-    }else{
+    if(pickCardOverlayForDroneCard){
       const requirementIsCancelable = getFrom("requirementIsCancelable", "requirement");
       const firstRequirementIsDrawCard = getFrom("firstRequirementIsDrawCard", "requirement");
       return rootGetters["match/playerRuleService"].canDrawCards() &&
       requirementIsCancelable && firstRequirementIsDrawCard
+    }else{
+      return rootGetters["match/playerRuleService"].canDrawCards()
     }
   }
 };

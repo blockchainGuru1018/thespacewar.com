@@ -832,8 +832,6 @@ module.exports = {
       return [];
     },
     inDiscardPhaseAndMustDiscardCard() {
-      console.log(this.phase, PHASES.discard,
-        this.playerCardsOnHand.length, this.maxHandSize);
       return (
         this.phase === PHASES.discard &&
         this.playerCardsOnHand.length > this.maxHandSize
