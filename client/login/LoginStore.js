@@ -42,7 +42,7 @@ module.exports = function ({ route, userRepository, botUpdateListener }) {
     window.addEventListener("focus", async () => {
       if (!state._isAuthenticating) {
         const loggedInToHome = await isLoggedInToHome();
-        if (!loggedInToHome) window.location.reload();
+        if (!loggedInToHome && !checkIfLoggedInAsGuest()) window.location.reload();
       }
     });
   }
