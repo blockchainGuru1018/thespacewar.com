@@ -1,19 +1,10 @@
 <template>
-  <div :class="classes" >
+  <div :class="classes" class="windowedOverlay" style="pointer-events: none;">
     <div class="dimOverlay-content">
-      <slot />
-    </div>
-    <div class="dimOverlay-topRightButtons">
-      <slot name="topRightButtons"></slot>
-      <button
-        class="dimOverlay-toggleOverlay darkButton--onlyLook"
-        @click="toggleOverlay"
-      >
-        Toggle overlay
-      </button>
     </div>
   </div>
 </template>
+
 <script>
 module.exports = {
   data() {
@@ -23,7 +14,7 @@ module.exports = {
   },
   computed: {
     classes() {
-      const classes = ["dimOverlay"];
+      const classes = ["dimOverlay blueColor"];
       if (this.hideOverlay) {
         classes.push("dimOverlay--hidden");
       }
