@@ -45,7 +45,7 @@
       </div>
       <div class="field perspectiveChild">
 
-        <WindowedOverlay v-if="shouldShowWindowedOverlay"/>
+        <WindowedOverlay v-if="shouldShowWindowedOverlayByDrawCard || inDiscardPhaseAndMustDiscardCard"/>
         <div class="field-opponent" style="--aspect-ratio: (16/9) * 2;">
           <div><!-- NEEDED TO KEEP ASPECT-RATIO--></div>
           <div
@@ -237,7 +237,7 @@
             </div>
 
             <div class="field-commandersAndDrawPile" 
-              :class="shouldShowWindowedOverlay? 'setBackWindowedOverlay' : ''">
+              :class="shouldShowWindowedOverlayByDrawCard || inDiscardPhaseAndMustDiscardCard? 'setBackWindowedOverlay' : ''">
               <OpponentCommanderCards />
               <div class="field-drawPile opponentDrawPile">
                 <portal-target name="opponentDrawPile" />
@@ -304,7 +304,7 @@
             <div class="field-commandersAndDrawPile">
               <PlayerCommanderCards class="" />
 
-              <div class="field-drawPile">
+              <div class="field-drawPile" :class="inDiscardPhaseAndMustDiscardCard? 'setBackWindowedOverlay' : ''">
                 <portal-target name="playerDrawPile" />
                 <div
                   v-if="playerCardsInDeckCount > 0"
@@ -354,7 +354,9 @@
               </div>
             </div>
 
-            <div class="field-discardPile field-discardPile-player">
+            <div class="field-discardPile field-discardPile-player"
+                :class="inDiscardPhaseAndMustDiscardCard? 'setFrontWindowedOverlay' : ''"
+            >
               <div
                 v-if="!playerTopDiscardCard"
                 class="card card-placeholdercard-emptyDeck"
@@ -654,6 +656,7 @@
         @cardDrag="playerCardDrag"
       />
     </div>
+    
   </div>
 </template>
 <script>
@@ -763,6 +766,7 @@ module.exports = {
       "playerCardsInDeckCount",
       "deckSize",
       "opponentDeckSize",
+      "playerCardsOnHand",
     ]),
     ...mapGetters([
       "gameOn",
@@ -777,6 +781,7 @@ module.exports = {
       "moveStationCard",
       "opponentTopDiscardCard",
       "playerTopDiscardCard",
+      "maxHandSize",
     ]),
     ...mapCardState([
       "transientPlayerCardsInHomeZone",
@@ -802,11 +807,12 @@ module.exports = {
       "canPassDrawPhase",
       "canMill",
       "opponentDeckIsEmpty",
-      "shouldShowWindowedOverlay",
+      "shouldShowWindowedOverlayByDrawCard",
     ]),
     ...requirementHelpers.mapGetters([
       "firstRequirement",
       "firstRequirementIsCounterCard",
+      "firstRequirementIsDiscardCard",
     ]),
     ...ghostHelpers.mapGetters(["activateEventCardGhostVisible"]),
     debuggingBot() {
@@ -824,6 +830,14 @@ module.exports = {
         return ["playerEventCardGhost--deactivated"];
       }
       return [];
+    },
+    inDiscardPhaseAndMustDiscardCard() {
+      console.log(this.phase, PHASES.discard,
+        this.playerCardsOnHand.length, this.maxHandSize);
+      return (
+        this.phase === PHASES.discard &&
+        this.playerCardsOnHand.length > this.maxHandSize
+      );
     },
     playerZoneCardGhostVisible() {
       if (!this.holdingCard) return false;

@@ -1,5 +1,5 @@
 <template>
-  <div :class="classes">
+  <div :class="classes" >
     <div class="dimOverlay-content">
       <slot />
     </div>

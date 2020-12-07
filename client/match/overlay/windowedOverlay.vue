@@ -1,5 +1,5 @@
 <template>
-  <div :class="classes" class="windowedOverlay">
+  <div :class="classes" class="windowedOverlay" style="pointer-events: none;">
     <div class="dimOverlay-content">
     </div>
   </div>

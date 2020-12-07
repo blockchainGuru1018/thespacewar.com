@@ -334,6 +334,7 @@ export default {
       );
     },
     requirementGuideText() {
+        console.log('this.firstRequirementIsDiscardCard 1234: ', this.firstRequirementIsDiscardCard);
       if (this.firstRequirementIsDiscardCard) {
         const cardsToDiscard = this.countInFirstRequirement;
         return `Discard ${cardsToDiscard} ${pluralize("card", cardsToDiscard)}`;

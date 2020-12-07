@@ -41,10 +41,6 @@
   }
 }
 
-
-.blueColor {
-}
-
 .windowedOverlay {
   width: 500vw;
   height: 500vh;
@@ -59,4 +55,8 @@
 
 .setBackWindowedOverlay {
   transform: translateZ(-13px);
+}
+
+.setFrontWindowedOverlay {
+  transform: translateZ(1px);
 }

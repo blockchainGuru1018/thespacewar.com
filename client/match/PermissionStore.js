@@ -27,7 +27,7 @@ module.exports = function (deps) {
       canSelectForSacrificeRequirement,
       canIssueOverwork: canIssueOverworkGetter,
       canDrawCards,
-      shouldShowWindowedOverlay,
+      shouldShowWindowedOverlayByDrawCard,
       canPassDrawPhase,
       canMill,
       deckIsEmpty,
@@ -210,7 +210,7 @@ module.exports = function (deps) {
     return selectForSacrificeRequirement && cardsLeftToSelect > 0;
   }
 
-  function shouldShowWindowedOverlay(state, getters, rootState, rootGetters) {
+  function shouldShowWindowedOverlayByDrawCard(state, getters, rootState, rootGetters) {
     const pickCardOverlayForAll = 
       (JSON.parse(localStorage.getItem('pickCardOverlayForAll')) || {})
       .value === 'true';
