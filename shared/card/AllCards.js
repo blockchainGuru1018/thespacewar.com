@@ -55,6 +55,7 @@ const classes = [
   require("./Electrocution.js"),
   require("./ResourceShip.js"),
   require("./MegaShield.js"),
+  require("./Starship.js"),
 ];
 
 module.exports = classes;
