@@ -1,6 +1,7 @@
 const BaseCard = require("./BaseCard.js");
+const Slow = require("./mixins/Slow");
 
-class Starship extends BaseCard {
+class Starship extends Slow(BaseCard) {
   constructor(deps) {
     super(deps);
   }
