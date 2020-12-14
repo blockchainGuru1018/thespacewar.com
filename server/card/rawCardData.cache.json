@@ -802,7 +802,7 @@
                 "name": "Transformation",
                 "price": "2",
                 "type_card": "orange",
-                "detail": "Place on spacehip. Next turn fully repair and then switch the attack and defense value.",
+                "detail": "Place on spacehip. In your next draw phase fully repair and then switch the attack and defense value of the spaceship.",
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "2",
@@ -1027,5 +1027,5 @@
             }
         ]
     },
-    "saveTime": 1606883936768
+    "saveTime": 1607870841909
 }
