@@ -44,14 +44,13 @@
         />
       </div>
       <div class="field perspectiveChild">
-
-        <WindowedOverlay v-if="shouldShowWindowedOverlayByDrawCard || inDiscardPhaseAndMustDiscardCard"/>
         <div class="field-opponent" style="--aspect-ratio: (16/9) * 2;">
           <div><!-- NEEDED TO KEEP ASPECT-RATIO--></div>
           <div
             ref="opponentStationCardsContainer"
             :style="opponentStationStyle"
             class="field-opponentStation opponentStationCards field-station field-section"
+            :class="opponentStationCardDamageOverlayPolicy"
           >
             <div class="field-stationRow">
               <station-card
@@ -90,6 +89,7 @@
           <div class="field-zoneRows field-opponentZoneRows">
             <div
               class="opponentCardsInZone field-opponentZoneRow field-zone field-section"
+              :class="opponentCardsInZoneAsDefendersOverlayPolicy"
             >
               >
               <arrowsAnimated
@@ -119,12 +119,13 @@
                     'card--turnedAround',
                     {
                       'card-lastDurationCard':
-                        lastSortedOpponentDurationCardIndex === n - 1,
+                          lastSortedOpponentDurationCardIndex === n - 1,
                     },
                   ]"
                   :owner-id="opponentUser.id"
                   :zone-opponent-row="playerCardsInOpponentZone"
                   :zone-player-row="opponentCardsInZone"
+                  :ref="sortedOpponentCardsInZone[n - 1].id"
                 />
               </template>
               <div
@@ -237,7 +238,7 @@
             </div>
 
             <div class="field-commandersAndDrawPile" 
-              :class="shouldShowWindowedOverlayByDrawCard || inDiscardPhaseAndMustDiscardCard? 'setBackWindowedOverlay' : ''">
+              :class="opponentDrawPileOverlayPolicy">
               <OpponentCommanderCards />
               <div class="field-drawPile opponentDrawPile">
                 <portal-target name="opponentDrawPile" />
@@ -304,7 +305,7 @@
             <div class="field-commandersAndDrawPile">
               <PlayerCommanderCards class="" />
 
-              <div class="field-drawPile" :class="inDiscardPhaseAndMustDiscardCard? 'setBackWindowedOverlay' : ''">
+              <div class="field-drawPile" :class="playerDrawPileOverlayPolicy">
                 <portal-target name="playerDrawPile" />
                 <div
                   v-if="playerCardsInDeckCount > 0"
@@ -355,7 +356,7 @@
             </div>
 
             <div class="field-discardPile field-discardPile-player"
-                :class="inDiscardPhaseAndMustDiscardCard? 'setFrontWindowedOverlay' : ''"
+                :class="playerDiscardPileOverlayPolicy"
             >
               <div
                 v-if="!playerTopDiscardCard"
@@ -450,6 +451,7 @@
             </div>
             <div
               class="playerCardsInZone field-playerZoneCards field-zone field-section"
+              :class="playerCardInZoneDiscardOverlayPolicy"
             >
               <CardGhost
                 v-if="playerZoneCardGhostVisible"
@@ -485,10 +487,14 @@
                   v-if="n <= visiblePlayerCards.length"
                   :key="visiblePlayerCards[n - 1].id"
                   :card="(visiblePlayerCards[n - 1])"
-                  :class="{
-                    'card-lastDurationCard':
-                      lastVisiblePlayerDurationCardIndex === n - 1,
-                  }"
+                  :class="[
+                      {
+                      'card-lastDurationCard':
+                        lastVisiblePlayerDurationCardIndex === n - 1,
+                      'setFrontWindowedOverlay':
+                        playerCardInZoneDiscardOverlayPolicy
+                      }
+                  ]"
                   :is-home-zone="true"
                   :owner-id="ownUser.id"
                   :zone-opponent-row="opponentCardsInPlayerZone"
@@ -602,6 +608,7 @@
         >
           {{ playerZoneCardGhostText }}
         </EventGhost>
+        <WindowedOverlay v-if="shouldShowWindowedOverlay" class="perspectiveChild"/>
       </div>
       <div
         v-if="holdingCard"
@@ -627,7 +634,7 @@
     <PlayerHud />
     <MatchHeader />
 
-    <div class="cardsOnHand">
+    <div class="cardsOnHand" :class="playerCardsOnHandOverlayPolicy">
       <div
         v-if="debuggingBot === false"
         class="opponentCardsOnHand field-section"
@@ -813,6 +820,9 @@ module.exports = {
       "firstRequirement",
       "firstRequirementIsCounterCard",
       "firstRequirementIsDiscardCard",
+      "firstRequirementIsDamageShieldCard",
+      "firstRequirementIsDamageStationCard",
+      "cardsLeftToSelect",
     ]),
     ...ghostHelpers.mapGetters(["activateEventCardGhostVisible"]),
     debuggingBot() {
@@ -836,6 +846,70 @@ module.exports = {
         this.phase === PHASES.discard &&
         this.playerCardsOnHand.length > this.maxHandSize
       );
+    },
+    inDiscardDurationCard() {
+      return ( this.phase === PHASES.preparation &&
+               this.actionPoints2 > 0);
+    },    
+    shouldShowWindowedOverlay(){
+      return this.shouldShowWindowedOverlayByDrawCard ||
+             this.inDiscardPhaseAndMustDiscardCard ||
+             this.inDiscardDurationCard
+    },
+    opponentDrawPileOverlayPolicy(){
+      if(
+        this.shouldShowWindowedOverlayByDrawCard ||
+        this.inDiscardPhaseAndMustDiscardCard ||
+        this.inDiscardDurationCard)
+        return 'setBackWindowedOverlay';
+      else 
+        return '';
+    },
+    playerDrawPileOverlayPolicy(){
+      if(
+          this.opponentStationCardDamageOverlayPolicy !== '' ||
+          this.opponentCardsInZoneAsDefendersOverlayPolicy !== '' ||
+          this.inDiscardPhaseAndMustDiscardCard ||
+          this.inDiscardDurationCard)
+        return 'setBackWindowedOverlay';
+      else
+        return '';
+    },
+    playerDiscardPileOverlayPolicy(){
+      if(this.inDiscardPhaseAndMustDiscardCard)
+        return 'setFrontWindowedOverlay';
+      else
+        return '';
+    },
+    playerCardsOnHandOverlayPolicy(){
+      if(this.inDiscardDurationCard)
+        return 'setBackWindowedOverlay';
+      else
+        return '';
+    },
+    playerCardInZoneDiscardOverlayPolicy(){
+      if(this.inDiscardDurationCard)
+          return 'setFrontWindowedOverlay';
+      else
+        return '';
+    },
+    opponentStationCardDamageOverlayPolicy(){
+      if(this.opponentCardsInZoneAsDefendersOverlayPolicy !== '')
+        return '';
+      if(
+        ( this.firstRequirementIsDamageStationCard ||
+          this.firstRequirementIsDamageShieldCard) &&
+        this.cardsLeftToSelect > 0)
+          return 'setFrontWindowedOverlay';
+      else
+        return '';
+        
+    },
+    opponentCardsInZoneAsDefendersOverlayPolicy(){
+      return this.sortedOpponentCardsInZone.some((card)=>
+        (this.$refs[card.id] || [{}])[0]
+        .canBeSelectedAsDefender
+      )? 'setFrontWindowedOverlay' : ''
     },
     playerZoneCardGhostVisible() {
       if (!this.holdingCard) return false;
