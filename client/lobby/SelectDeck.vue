@@ -8,10 +8,10 @@
       name="currentDeck"
       @change="onChange($event)"
     >
-      <option :value="'Regular'">Regular (advanced play)</option>
+      <option :value="'Regular'">The Terrans (advanced play)</option>
       <option :value="'TheSwarm'" default>The Swarm (easy play)</option>
       <option v-if="unitedStarsDeck" :value="'UnitedStars'"
-      >United Stars
+      >United Stars (advanced play)
       </option>
     </select>
   </div>
