@@ -691,7 +691,7 @@
             },
             {
                 "id": "205",
-                "name": "Defense Repair",
+                "name": "Repair Shield",
                 "price": "3",
                 "type_card": "green",
                 "detail": "Protects base station. Repair 5 damage, 1 damage to station [ OR ] discard to fully repair any spaceship anywhere.",
@@ -754,7 +754,7 @@
                 "name": "Meteor Shower",
                 "price": "3",
                 "type_card": "violet",
-                "detail": "1 damage to everything in your draw phase. Discard to make 1 damage to everything (shield protects station).",
+                "detail": "1 damage to everything in your draw phase. Remove from play to make 1 damage to everything (shield protects station).",
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "1",
@@ -1015,10 +1015,10 @@
             },
             {
                 "id": "248",
-                "name": "Spy Satellite",
+                "name": "Satellite",
                 "price": "1",
                 "type_card": "violet",
-                "detail": "After each draw phase (both players), the opponent needs to show which cards is in his/her hand.",
+                "detail": "Draw 1 extra card in your draw phase.\r\nRemove from play to draw 2 cards.",
                 "defense": "",
                 "attack": "",
                 "number_copies": "2",
@@ -1027,5 +1027,5 @@
             }
         ]
     },
-    "saveTime": 1607472869721
+    "saveTime": 1610290543338
 }

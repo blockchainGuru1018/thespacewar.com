@@ -25,19 +25,21 @@ class PlayerRequirementUpdater {
 
   completeRequirement() {
     const requirement = this._get();
-    const count = requirement.count;
-    for (let i = 0; i < count; i++) {
-      this.progressRequirementByCount();
-    }
-    if (requirement.actionPointsLimit) {
-      const actionPointsLeft = requirement.actionPointsLimit.actionPointsLeft;
-      for (let i = 0; i < actionPointsLeft; i++) {
-        this.progressRequirementByActionPointsLeft(1, true);
+    if (requirement) {
+      const count = requirement.count;
+      for (let i = 0; i < count; i++) {
+        this.progressRequirementByCount();
       }
+      if (requirement.actionPointsLimit) {
+        const actionPointsLeft = requirement.actionPointsLimit.actionPointsLeft;
+        for (let i = 0; i < actionPointsLeft; i++) {
+          this.progressRequirementByActionPointsLeft(1, true);
+        }
+      }
+      this._playerRequirementService.removeFirstMatchingRequirement({
+        type: requirement.type,
+      });
     }
-    this._playerRequirementService.removeFirstMatchingRequirement({
-      type: requirement.type,
-    });
   }
 
   progressRequirementByCount(count = 1) {
@@ -93,6 +95,7 @@ class PlayerRequirementUpdater {
       }
     }
   }
+
   resolve() {
     const requirement = this._get();
 
@@ -120,9 +123,11 @@ class PlayerRequirementUpdater {
     );
     return !!opponentWaitingRequirement;
   }
+
   _opponentHasAnyRequirement() {
     return this._opponentRequirementService.getAll().length > 0;
   }
+
   _removeOpponentMatchingAndWaitingRequirement() {
     this._opponentRequirementService.removeFirstMatchingRequirement({
       ...this._getMatchCondition(),
