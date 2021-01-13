@@ -382,7 +382,7 @@ export default {
       if (_old === false && _new === true) {
         // TODO only to be clear, but also could be if(_new && (_new && !_old))
         this.displayConfirmationModal(
-          "Please rotate your device to landscape.",
+          "Use a desktop computer or tablet to play this game. If you insist on using a mobile phone (not recommended) then please rotate your device to landscape. ",
           true
         );
       } else {
