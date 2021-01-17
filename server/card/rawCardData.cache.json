@@ -78,7 +78,7 @@
                 "name": "EMP Missile",
                 "price": "2",
                 "type_card": "red",
-                "detail": "Destroys Energy Shield or paralyzes spaceship (turn the card and it cannot do anything until repaired).",
+                "detail": "Destroys any shield or paralyzes spaceship (turn the card and it cannot do anything until repaired).",
                 "defense": "2",
                 "attack": "0",
                 "number_copies": "2",
@@ -886,7 +886,7 @@
                 "name": "Starhunter",
                 "price": "4",
                 "type_card": "blue",
-                "detail": "Receives a +1 +1 token in each draw phase.",
+                "detail": "Receives a +2 +2 counter each time in your draw phase.",
                 "defense": "3",
                 "attack": "2",
                 "number_copies": "1",
@@ -1027,5 +1027,5 @@
             }
         ]
     },
-    "saveTime": 1610884151941
+    "saveTime": 1610890257772
 }

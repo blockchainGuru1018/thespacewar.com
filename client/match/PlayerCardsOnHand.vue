@@ -27,7 +27,10 @@
         :class="['card-attackBoostIndicatorWrapper']"
       >
         <div class="card-costInflationWrapper" :style="damageTextStyle">
-          +{{ createCard(card).costInflation }}
+          {{
+            (createCard(card).costInflation > 0 ? "+" : "") +
+              createCard(card).costInflation
+          }}
         </div>
       </div>
     </div>
@@ -275,6 +278,7 @@ module.exports = {
 .cardHoverActivator {
   cursor: pointer;
 }
+
 .cardHoverBlowUp {
   cursor: grabbing;
 }
