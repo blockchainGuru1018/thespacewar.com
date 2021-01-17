@@ -918,9 +918,12 @@ module.exports = {
           choice: "draw",
         });
       },
-      "should NOT emit state changed with any requirements"() {
-        refute.defined(
-          this.firstPlayerConnection.stateChanged.lastCall.args[0].requirements
+      "should  emit state changed with not  requirements"() {
+        assert.calledWith(
+          this.firstPlayerConnection.stateChanged,
+          sinon.match({
+            requirements: [],
+          })
         );
       },
     },

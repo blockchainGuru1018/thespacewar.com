@@ -238,8 +238,8 @@ function PutDownCardController(deps) {
     const turnControl = playerServiceFactory.turnControl(playerId);
     if (turnControl.playerHasControlOfOpponentsTurn()) {
       turnControl.releaseControlOfOpponentsTurn();
-      matchComService.emitCurrentStateToPlayers();
     }
+    matchComService.emitCurrentStateToPlayers();
   }
 
   function putDownStationCard({ playerId, location, cardData, choice }) {
