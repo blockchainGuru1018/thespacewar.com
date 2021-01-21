@@ -44,6 +44,7 @@
         />
       </div>
       <div class="field perspectiveChild">
+        <div style="height: var(--top-spacing)"></div>
         <div class="field-opponent" style="--aspect-ratio: (16/9) * 2;">
           <div><!-- NEEDED TO KEEP ASPECT-RATIO--></div>
           <div
@@ -1279,6 +1280,15 @@ module.exports = {
         rect1.top > rect2.bottom
       );
     },
+    spaceUsedByBoardInWindow() {
+      const rect1 = (
+        document.getElementsByClassName('field-opponent')[0] || {}
+      ).getBoundingClientRect();
+      const rect2 = (
+        document.getElementsByClassName('field-player')[0] || {}
+      ).getBoundingClientRect();
+      return (rect1.height + rect2.height) / window.screen.height;
+    },
     isFieldFitsViewPort() {
       const rect1 = (
         document.getElementsByClassName("field-discardPile-player")[0] || {}
@@ -1291,6 +1301,22 @@ module.exports = {
         rect1.bottom <=
           (window.innerHeight || document.documentElement.clientHeight)
       );
+    },
+    zoomOut() {
+      if (this.spaceUsedByBoardInWindow() < 0.6) {
+        const root = document.documentElement;
+        let ZPosition = parseInt(
+          getComputedStyle(document.documentElement)
+            .getPropertyValue("--z-position")
+            .replace("px", "")
+        );
+        ZPosition = ZPosition + 1;
+        root.style.setProperty("--z-position", ZPosition + "px");
+        if(window.screen.height > 2160) root.style.setProperty("--top-spacing", ZPosition * 4 + "px");
+        setTimeout(this.zoomOut, 0);
+      } else {
+        this.adjustUPCenteredGUI();
+      }
     },
     adjustZoom() {
       const areOverlapping =
@@ -1359,6 +1385,34 @@ module.exports = {
         GUIPosition = Math.max(30, Math.min(50, GUIPosition - 1));
         root.style.setProperty("--gui-height-adjust", GUIPosition + "%");
         setTimeout(this.adjustCenteredGUI, 0);
+      }
+    },
+    adjustUPCenteredGUI() {
+      let spaceBetweenOpponentDrawpileAndPlayerStationCards = this.spaceBetweenOpponentDrawpileAndPlayerStationCards();
+      if (spaceBetweenOpponentDrawpileAndPlayerStationCards >= 200) {
+        const root = document.documentElement;
+        let spaceBetween = parseInt(
+          getComputedStyle(document.documentElement)
+            .getPropertyValue("--space-between-GUI-n-draw-pile")
+            .replace("px", "")
+        );
+        spaceBetween = Math.min(80, spaceBetween + 1);
+        root.style.setProperty(
+          "--space-between-GUI-n-draw-pile",
+          spaceBetween + "px"
+        );
+        setTimeout(this.adjustCenteredGUI, 0);
+      } else 
+      if (this.centeredGUICollideWithPlayerStationCards()) {
+        const root = document.documentElement;
+        let GUIPosition = parseInt(
+          getComputedStyle(document.documentElement)
+            .getPropertyValue("--gui-height-adjust")
+            .replace("%", "")
+        );
+        GUIPosition = Math.max(30, Math.min(50, GUIPosition - 1));
+        root.style.setProperty("--gui-height-adjust", GUIPosition + "%");
+        setTimeout(this.adjustUPCenteredGUI, 0);
       }
     },
     validateBG() {
@@ -1471,7 +1525,16 @@ module.exports = {
       passive: false,
     });
     document.addEventListener("touchend", this.documentTouchend);
-    this.adjustZoom();
+    if(this.spaceUsedByBoardInWindow() >= 0.6){
+      this.adjustZoom();
+    } else {
+      document.documentElement.style
+      .setProperty("--z-position-adjust","1");
+      let degree = window.screen.height > 2160? 5 : 11 
+      document.documentElement.style
+      .setProperty("--x-rotate-adjust",`${degree}deg`);
+      this.zoomOut();
+    }
     this.initializeIntersectionObservers();
   },
   destroyed() {

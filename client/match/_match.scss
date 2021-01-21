@@ -101,8 +101,9 @@ $opponent_color_height: -1px 1px 1px rgba(13,	59,	81, 1),
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   transform: translateZ(var(--z-position));
+  align-items: center;
 }
 
 .field-dividerWrapper {
@@ -146,15 +147,17 @@ $opponent_color_height: -1px 1px 1px rgba(13,	59,	81, 1),
   align-items: stretch;
   justify-content: space-between;
   position: relative;
+  max-width: 1920px;
 }
 
 .field-player {
-  flex: 0 1 54%;
+  flex: 0 1 ; //prev. value 54%
 }
 
 .field-opponent {
   flex: 0 1 46%;
   width: 100%;
+  max-width: 1920px;
   // padding-top: 60px; //To accommodate for opponent cards on hand and the opponents "player banner" in the top left corner
   // padding-right: 15%;
   margin-bottom: var(--space-between-GUI-n-draw-pile);
@@ -611,7 +614,7 @@ $shakeDelay: 0s;
     @include perspective(600px);
     perspective-origin: right;
     .perspectiveChild {
-      @include transform( rotateX(15deg) translateZ(10px));
+      // @include transform( rotateX(15deg) translateZ(10px));
       @include transform-style( preserve-3d);
       * {
         
@@ -623,7 +626,7 @@ $shakeDelay: 0s;
   @include perspective(600px);
     perspective-origin: left;
     .perspectiveChild {
-      @include transform( rotateX(15deg) translateZ(10px));
+      // @include transform( rotateX(15deg) translateZ(10px));
       @include transform-style( preserve-3d);
       
       * {
@@ -637,7 +640,7 @@ $shakeDelay: 0s;
     perspective-origin: bottom;
     .perspectiveChild {
       // transform: rotateX(15deg) translateZ(10px);
-      @include transform( rotateX(15deg) translateZ(var(--z-position)) translateY(calc(4 * var(--z-position))));
+      @include transform( rotateX(var(--x-rotate-adjust)) translateZ(var(--z-position)) translateY(calc(var(--z-position-adjust) * var(--z-position))));
       @include transform-style( preserve-3d);
       
       * {
