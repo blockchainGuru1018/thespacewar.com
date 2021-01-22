@@ -58,7 +58,7 @@ export default {
 .deckDropDown {
   font-family: "Space Mono", monospace;
   color: white;
-  font-size: 16px;
+  font-size: 14px;
   background: rgba(0, 0, 0, 0.5);
 }
 </style>
