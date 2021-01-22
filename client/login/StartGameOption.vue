@@ -45,7 +45,7 @@ export default {
       if (runningInLocalDevelopmentEnvironment()) {
         return "http://localhost:8081/fake-login";
       } else {
-        return "https://thespacewar.com/login";
+        return "https://thespacewar.com/account/";
       }
     },
     playAsGuestOn() {
