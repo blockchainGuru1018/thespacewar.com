@@ -6,6 +6,7 @@ class Scout extends BaseCard {
   constructor(deps) {
     super(deps);
   }
+
   static get CommonId() {
     return info.CommonId;
   }
@@ -13,6 +14,7 @@ class Scout extends BaseCard {
   static get Info() {
     return info;
   }
+
   canAttack() {
     const lastTurnWhenDormantEffectWasUsed = this._queryEvents.getTurnWhenCardDormantEffectWasUsed(
       this.id
@@ -29,14 +31,15 @@ class Scout extends BaseCard {
       this.id
     );
     const turn = this._matchService.getTurn();
-    const isAttackPhase =
-      this._playerStateService.getPhase() === PHASES.attack || PHASES.action;
+    const isAttackPhaseOrFirstActionPhase =
+      this._playerStateService.getPhase() === PHASES.attack ||
+      (this._playerStateService.getPhase() === PHASES.action && turn === 1);
     const haveNotAttackedOnTurn =
       this._queryEvents.getAttacksOnTurn(this.id, turn).length === 0;
 
     return (
       lastTurnWhenDormantEffectWasUsed !== turn &&
-      isAttackPhase &&
+      isAttackPhaseOrFirstActionPhase &&
       !this.paralyzed &&
       haveNotAttackedOnTurn
     );
