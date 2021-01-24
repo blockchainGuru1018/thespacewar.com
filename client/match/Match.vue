@@ -1304,7 +1304,7 @@ module.exports = {
     },
     zoomOut() {
       const percentageOfUsageInBoard = 
-      window.screen.height > 1080 && window.screen.height < 2160? 0.9 : 0.6;
+      window.screen.height > 1080 && window.screen.height < 2160? 0.75 : 0.6;
       if (this.spaceUsedByBoardInWindow() < percentageOfUsageInBoard) {
         const root = document.documentElement;
         let ZPosition = parseInt(
