@@ -1364,7 +1364,7 @@ module.exports = {
     },
     adjustCenteredGUI() {
       let spaceBetweenOpponentDrawpileAndPlayerStationCards = this.spaceBetweenOpponentDrawpileAndPlayerStationCards();
-      if (spaceBetweenOpponentDrawpileAndPlayerStationCards <= 66) {
+      if (spaceBetweenOpponentDrawpileAndPlayerStationCards <= 100) {
         const root = document.documentElement;
         let spaceBetween = parseInt(
           getComputedStyle(document.documentElement)
@@ -1384,7 +1384,7 @@ module.exports = {
             .getPropertyValue("--gui-height-adjust")
             .replace("%", "")
         );
-        GUIPosition = Math.max(30, Math.min(50, GUIPosition - 1));
+        GUIPosition = Math.max(10, Math.min(50, GUIPosition - 1));
         root.style.setProperty("--gui-height-adjust", GUIPosition + "%");
         setTimeout(this.adjustCenteredGUI, 0);
       }

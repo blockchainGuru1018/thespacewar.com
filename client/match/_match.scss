@@ -152,6 +152,7 @@ $opponent_color_height: -1px 1px 1px rgba(13,	59,	81, 1),
 
 .field-player {
   flex: 0 1 ; //prev. value 54%
+  margin-top: var(--space-between-GUI-n-draw-pile);
 }
 
 .field-opponent {
@@ -283,14 +284,17 @@ $opponent_color_height: -1px 1px 1px rgba(13,	59,	81, 1),
   flex-direction: row-reverse;
   flex-wrap: nowrap;
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   overflow-x: auto;
   flex: 1 0 auto;
   position: relative;
   width: auto;
   margin: 0px 16px 16px 16px;
+  height: 50%;
 }
-
+.opponentCardsInZone{
+  align-items: flex-end;
+}
 .playerCardsInOpponentZone {
   margin-bottom: 8px;
   flex: 0 1 auto;
