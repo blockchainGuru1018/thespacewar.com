@@ -877,8 +877,8 @@ module.exports = {
         return '';
     },
     playerDiscardPileOverlayPolicy(){
-      if(this.inDiscardPhaseAndMustDiscardCard)
-        return 'setFrontWindowedOverlay';
+      if(this.inDiscardPhaseAndMustDiscardCard || this.firstRequirementIsDiscardCard)
+        return 'setFrontWindowedOverlay white-blur';
       else
         return '';
     },
@@ -889,7 +889,7 @@ module.exports = {
         return '';
     },
     playerCardInZoneDiscardOverlayPolicy(){
-      if(this.inDiscardDurationCard)
+      if(this.inDiscardDurationCard && !this.playerDiscardPileOverlayPolicy)
           return 'setFrontWindowedOverlay';
       else
         return '';
