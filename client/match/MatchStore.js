@@ -399,7 +399,8 @@ module.exports = function (deps) {
         card.canMove() ||
         card.canAttack() ||
         card.canBeSacrificed() ||
-        card.canRepair()
+        card.canRepair() ||
+        card.canTriggerDormantEffect("attack")
       )
         return false;
     }

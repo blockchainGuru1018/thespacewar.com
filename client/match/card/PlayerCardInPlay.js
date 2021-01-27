@@ -12,8 +12,8 @@ module.exports = function ({
     canTriggerDormantEffect,
   };
 
-  function canTriggerDormantEffect() {
-    return card.canTriggerDormantEffect();
+  function canTriggerDormantEffect(nextPhase = null) {
+    return card.canTriggerDormantEffect(nextPhase);
   }
 
   function canMove(alternativeConditions = {}) {

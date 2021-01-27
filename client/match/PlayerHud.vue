@@ -176,13 +176,13 @@ import InfoModeContainer from "./infoMode/InfoModeContainer.vue";
 import GuideText from "./hud/guideText/GuideText.vue";
 import GuiDescriptions from "./hud/GuiDescriptions.vue";
 import LookAtStationRowOverlay from "./hud/LookAtStationRowOverlay.vue";
+import ConfirmationDialog from "./ConfirmationDialog.vue";
 
 const Vuex = require("vuex");
 const resolveModuleWithPossibleDefault = require("../../client/utils/resolveModuleWithPossibleDefault.js");
 const FindCard = resolveModuleWithPossibleDefault(
   require("./findCard/FindCard.vue")
 );
-import ConfirmationDialog from "./ConfirmationDialog.vue";
 
 const escapeMenuHelpers = Vuex.createNamespacedHelpers("escapeMenu");
 const CounterCard = resolveModuleWithPossibleDefault(

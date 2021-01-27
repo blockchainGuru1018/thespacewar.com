@@ -26,14 +26,13 @@ class Scout extends BaseCard {
     return super.canAttack() && haveNotUsedDormantEffectThisTurn;
   }
 
-  canTriggerDormantEffect() {
+  canTriggerDormantEffect(nextPhase = null) {
     const lastTurnWhenDormantEffectWasUsed = this._queryEvents.getTurnWhenCardDormantEffectWasUsed(
       this.id
     );
+    const currentPhase = nextPhase || this._playerStateService.getPhase();
     const turn = this._matchService.getTurn();
-    const isAttackPhaseOrFirstActionPhase =
-      this._playerStateService.getPhase() === PHASES.attack ||
-      (this._playerStateService.getPhase() === PHASES.action && turn === 1);
+    const isAttackPhaseOrFirstActionPhase = currentPhase === PHASES.attack;
     const haveNotAttackedOnTurn =
       this._queryEvents.getAttacksOnTurn(this.id, turn).length === 0;
 
