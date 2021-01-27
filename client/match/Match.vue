@@ -855,7 +855,8 @@ module.exports = {
     shouldShowWindowedOverlay(){
       return this.shouldShowWindowedOverlayByDrawCard ||
              this.inDiscardPhaseAndMustDiscardCard ||
-             this.inDiscardDurationCard
+             this.inDiscardDurationCard ||
+             this.opponentStationCardDamageOverlayPolicy !== ''
     },
     opponentDrawPileOverlayPolicy(){
       if(
@@ -901,7 +902,7 @@ module.exports = {
         ( this.firstRequirementIsDamageStationCard ||
           this.firstRequirementIsDamageShieldCard) &&
         this.cardsLeftToSelect > 0)
-          return 'setFrontWindowedOverlay';
+          return 'setFrontWindowedOverlayWithRotation180';
       else
         return '';
         

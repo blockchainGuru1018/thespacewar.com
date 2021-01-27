@@ -55,3 +55,7 @@
 .setFrontWindowedOverlay {
   transform: translateZ(2px);
 }
+
+.setFrontWindowedOverlayWithRotation180 {
+  transform: translateZ(2px) rotate(180deg);
+}
