@@ -117,7 +117,7 @@
         :class="playerHasCardThatCanCounter ? 'animate-flicker' : ''"
         class="guideText-drawPhaseText guideText"
       >
-        {{ playerHasCardThatCanCounter ? "Counter" : "Your turn" }}
+        {{ playerHasCardThatCanCounter ? "You can react" : "Your turn" }}
       </div>
       <div
         class="guideText-drawPhaseSubText guideText-drawCard guideText-subText"
