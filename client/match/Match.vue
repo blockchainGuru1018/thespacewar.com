@@ -239,8 +239,8 @@
             </div>
 
             <div class="field-commandersAndDrawPile" 
-              :class="opponentDrawPileOverlayPolicy">
-              <OpponentCommanderCards />
+              :class="opponentDrawPileAndCommanderOverlayPolicy">
+              <div :class="opponentCommanderOverlayPolicy"><OpponentCommanderCards /></div>
               <div class="field-drawPile opponentDrawPile">
                 <portal-target name="opponentDrawPile" />
                 <div
@@ -858,14 +858,22 @@ module.exports = {
              this.inDiscardDurationCard ||
              this.opponentStationCardDamageOverlayPolicy !== ''
     },
-    opponentDrawPileOverlayPolicy(){
-      if(
+    opponentDrawPileAndCommanderOverlayPolicy(){
+      if(this.canMill)
+        return 'setFrontWindowedOverlay'
+      else if(
         this.shouldShowWindowedOverlayByDrawCard ||
         this.inDiscardPhaseAndMustDiscardCard ||
         this.inDiscardDurationCard)
         return 'setBackWindowedOverlay';
-      else 
+      else
         return '';
+    },
+    opponentCommanderOverlayPolicy(){
+      if(this.canMill)
+        return 'setBackWindowedOverlay';
+      else 
+        return ''
     },
     playerDrawPileOverlayPolicy(){
       if(
