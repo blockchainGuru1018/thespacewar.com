@@ -126,7 +126,7 @@
                 "name": "Neutralization",
                 "price": "2",
                 "type_card": "violet",
-                "detail": "No other duration card has any effect.\r\nRemove from play to destroy another duration card.",
+                "detail": "No other duration card has any effect.\r\nDiscard any time from play to destroy another duration card.",
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "2",
@@ -1027,5 +1027,5 @@
             }
         ]
     },
-    "saveTime": 1610903115246
+    "saveTime": 1612032940709
 }

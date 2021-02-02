@@ -544,6 +544,7 @@
                 :station-card="card"
                 station-row="draw"
                 :z-height-class="'h-' + index"
+                :couldBeZoomIn="drawStationCardGhostVisible"
               />
               <StationCardWrapper :transparent="!drawStationCardGhostVisible">
                 <CardGhost
@@ -565,6 +566,7 @@
                 :station-card="card"
                 station-row="action"
                 :z-height-class="'h-' + index"
+                :couldBeZoomIn="actionStationCardGhostVisible"
               />
               <StationCardWrapper :transparent="!actionStationCardGhostVisible">
                 <CardGhost
@@ -586,6 +588,7 @@
                 :station-card="card"
                 station-row="handSize"
                 :z-height-class="'h-' + index"
+                :couldBeZoomIn="handSizeStationCardGhostVisible"
               />
               <StationCardWrapper
                 :transparent="!handSizeStationCardGhostVisible"
@@ -1186,6 +1189,7 @@ module.exports = {
         });
       } else {
         this.putDownHoldingCard({ location });
+        setTimeout(this.calculateStationCardSizenPosition,500);
       }
     },
     emptyClick() {
@@ -1303,6 +1307,17 @@ module.exports = {
         document.getElementsByClassName("field-discardPile-player")[0] || {}
       ).getBoundingClientRect();
       return !(
+        rect1.top > 0 &&
+        rect1.left >= 0 &&
+        rect1.right <=
+          (window.innerWidth || document.documentElement.clientWidth) &&
+        rect1.bottom <=
+          (window.innerHeight || document.documentElement.clientHeight)
+      );
+    },
+    isStationRowFullyVisible(row) {
+      const rect1 = row.getBoundingClientRect();
+      return (
         rect1.top > 0 &&
         rect1.left >= 0 &&
         rect1.right <=
@@ -1504,6 +1519,29 @@ module.exports = {
         this.$refs.opponentCardsInPlayerZoneRight
       );
     },
+    calculateStationCardSizenPosition(){
+      const stationRows = document.querySelectorAll('.playerStationCards > .flattenComponent');
+      for(const row of stationRows){
+        if(!this.isStationRowFullyVisible(row)){
+          const root = document.documentElement;
+          const rowWidth = Number(
+            getComputedStyle(root)
+              .getPropertyValue("--player-zone-row-width")
+              .replace("%", "")
+          );
+          const stationWidth = Number(
+            getComputedStyle(root)
+              .getPropertyValue("--player-station-row-width")
+              .replace("%", "")
+          );
+          root.style.setProperty("--player-station-row-width", `${stationWidth + 0.3}%`);
+          root.style.setProperty("--player-zone-row-width", `${rowWidth - 0.3}%`);
+          setTimeout(this.calculateStationCardSizenPosition,0)
+          return;
+        }
+      }
+
+    }
   },
   mounted() {
     this.validateBG();
@@ -1547,6 +1585,7 @@ module.exports = {
       this.zoomOut();
     }
     this.initializeIntersectionObservers();
+    setTimeout(this.calculateStationCardSizenPosition,1000);
   },
   destroyed() {
     document.removeEventListener("mousemove", this.mousemove);

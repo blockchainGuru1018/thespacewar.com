@@ -50,7 +50,7 @@
 
 .stationCardWrapper {
   flex: 0 1 auto;
-  min-width: 20px;
+  min-width: 30px;
   max-width: 30px;
   position: relative;
 
@@ -63,7 +63,9 @@
     position: absolute;
     top: 0;
     z-index: 2;
+    transform: translateZ(1px);
   }
+  
 }
 
 .field-player .stationCardWrapper {
@@ -96,4 +98,40 @@
   position: relative;
   display: flex;
   padding-bottom: 8px;
+  &:hover {
+    max-width: 30px !important;
+    min-width: 30px !important;
+    width: 30px !important;
+  }
+  &:hover > .couldBeZoomIn:hover{
+    max-width: fit-content;
+    min-width: fit-content;
+    outline: thick solid rgba(0,0,255,0.45);
+    animation: blink-animation 1s steps(60, start) infinite;
+    -webkit-animation: blink-animation 1s steps(60, start) infinite;
+    transform: translateZ(2px);
+  }
+  &:hover > .couldBeZoomIn:hover{
+    max-width: fit-content;
+    min-width: fit-content;
+    outline: thick solid rgba(0,0,255,0.45);
+    animation: blink-animation 1s steps(60, start) infinite;
+    -webkit-animation: blink-animation 1s steps(60, start) infinite;
+    transform: translateZ(2px);
+  }
+}
+
+@keyframes blink-animation {
+  to {
+    outline: thick solid rgba(0,0,255,0.15);
+    border-color:rgba(255,255,255,0.15);
+    background-color:rgba(255,255,255,0.15);
+  }
+}
+@-webkit-keyframes blink-animation {
+  to {
+    outline: thick solid rgba(0,0,255,0.15);
+    border-color:rgba(255,255,255,0.15);
+    background-color:rgba(255,255,255,0.15);
+  }
 }

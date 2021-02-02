@@ -3,9 +3,8 @@
     :class="[
       'stationCardWrapper',
       {
-        'stationCardWrapper--fullSize':
-          stationCard.flipped && !isOpponentStationCard,
-      },
+        'couldBeZoomIn' : !couldBeZoomIn
+      }      
     ]"
     :title="cardTittle"
   >
@@ -106,6 +105,7 @@ module.exports = {
     "isHoldingCard",
     "stationRow",
     "zHeightClass",
+    "couldBeZoomIn",
   ],
   computed: {
     ...mapState([
