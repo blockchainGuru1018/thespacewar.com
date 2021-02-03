@@ -106,32 +106,6 @@
   &:hover > .couldBeZoomIn:hover{
     max-width: fit-content;
     min-width: fit-content;
-    outline: thick solid rgba(0,0,255,0.45);
-    animation: blink-animation 1s steps(60, start) infinite;
-    -webkit-animation: blink-animation 1s steps(60, start) infinite;
     transform: translateZ(2px);
-  }
-  &:hover > .couldBeZoomIn:hover{
-    max-width: fit-content;
-    min-width: fit-content;
-    outline: thick solid rgba(0,0,255,0.45);
-    animation: blink-animation 1s steps(60, start) infinite;
-    -webkit-animation: blink-animation 1s steps(60, start) infinite;
-    transform: translateZ(2px);
-  }
-}
-
-@keyframes blink-animation {
-  to {
-    outline: thick solid rgba(0,0,255,0.15);
-    border-color:rgba(255,255,255,0.15);
-    background-color:rgba(255,255,255,0.15);
-  }
-}
-@-webkit-keyframes blink-animation {
-  to {
-    outline: thick solid rgba(0,0,255,0.15);
-    border-color:rgba(255,255,255,0.15);
-    background-color:rgba(255,255,255,0.15);
   }
 }
