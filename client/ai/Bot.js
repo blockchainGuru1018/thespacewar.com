@@ -1,6 +1,6 @@
 const MatchMode = require("../../shared/match/MatchMode.js");
 const Commander = require("../../shared/match/commander/Commander.js");
-
+const DecideCardToPlaceAsStationCard = require("./DecideCardToPlaceAsStationCard.js");
 module.exports = function ({
   matchService,
   playerStateService,
@@ -60,10 +60,13 @@ module.exports = function ({
   function selectingStartingStationCards() {
     const canPutDownMoreStationCards = playerRuleService.canPutDownMoreStartingStationCards();
     if (canPutDownMoreStationCards) {
-      const cardsOnHand = playerStateService.getCardsOnHand();
+      // const cardsOnHand = playerStateService.getCardsOnHand();
       const location = locationForStartingStationCard();
+      const decideCardToPlaceAsStationCard = DecideCardToPlaceAsStationCard({
+        playerStateService,
+      });
       matchController.emit("selectStartingStationCard", {
-        cardId: cardsOnHand[0].id,
+        cardId: decideCardToPlaceAsStationCard(),
         location,
       });
     } else if (!playerCommanders.hasSelectedSomeCommander()) {
