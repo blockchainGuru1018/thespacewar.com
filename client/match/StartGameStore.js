@@ -5,8 +5,8 @@ const commandersRows = {
     { name: "Keve Bakins", value: Commander.KeveBakins },
     { name: "Nicia Satu", value: Commander.NiciaSatu },
     { name: "General Jackson", value: Commander.GeneralJackson },
-    { name: "Dr.Stein", value: Commander.DrStein },
     { name: "The Miller", value: Commander.TheMiller },
+    { name:  "Liana Henders", value: Commander.LianaHenders },
   ],
   TheSwarm: [
     { name: "Zuuls", value: Commander.Zuuls },
@@ -14,6 +14,9 @@ const commandersRows = {
     { name: "Staux", value: Commander.Staux },
     { name: "Naalox", value: Commander.Naalox },
   ],
+  UnitedStars: [
+    { name: "Dr.Stein", value: Commander.DrStein },
+  ]
 };
 module.exports = function ({ matchController }) {
   return {

@@ -1,4 +1,5 @@
 const canIssueOverwork = require("../../shared/match/overwork/canIssueOverwork.js");
+const canExchangeActionPointsForDrawExtraCard = require("../../shared/match/actionPointsForDrawExtraCard/canExchangeActionPointsForDrawExtraCard.js");
 
 module.exports = function (deps) {
   const { getFrom } = deps;
@@ -26,6 +27,7 @@ module.exports = function (deps) {
       canPutDownStationCardInHomeZone,
       canSelectForSacrificeRequirement,
       canIssueOverwork: canIssueOverworkGetter,
+      canExchangeActionPointsForDrawExtraCard: canExchangeActionPointsForDrawExtraCardGetter,
       canDrawCards,
       shouldShowWindowedOverlayByDrawCard,
       canPassDrawPhase,
@@ -140,6 +142,27 @@ module.exports = function (deps) {
     return (
       rootGetters["match/playerRuleService"].canPutDownCardsInHomeZone() &&
       !rootState.card.activeAction
+    );
+  }
+
+  function canExchangeActionPointsForDrawExtraCardGetter(state, getters, rootState, rootGetters) {
+    console.log(rootGetters["match/actionPointsForDrawExtraCardEnabled"], canExchangeActionPointsForDrawExtraCard({
+      playerId: rootState.match.ownUser.id,
+      currentPlayer: rootState.match.currentPlayer,
+      unflippedStationCardCount:
+        rootGetters["match/playerUnflippedStationCardCount"],
+      phase: rootState.match.phase,
+      hasRequirements: rootState.match.requirements.length > 0,
+    }));
+    return (
+      rootGetters["match/actionPointsForDrawExtraCardEnabled"] &&
+      canExchangeActionPointsForDrawExtraCard({
+        playerId: rootState.match.ownUser.id,
+        currentPlayer: rootState.match.currentPlayer,
+        actionPoints: rootGetters["match/actionPoints2"],
+        phase: rootState.match.phase,
+        hasRequirements: rootState.match.requirements.length > 0,
+      })
     );
   }
 

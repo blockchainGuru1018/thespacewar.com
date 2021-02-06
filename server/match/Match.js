@@ -10,6 +10,7 @@ const DiscardCardController = require("./controller/DiscardCardController.js");
 const NextPhaseController = require("./controller/NextPhaseController.js");
 const StartGameController = require("./controller/StartGameController.js");
 const OverworkController = require("./controller/OverworkController.js");
+const actionPointsForDrawExtraCardController = require("./controller/actionPointsForDrawExtraCardController.js");
 const PerfectPlanController = require("./controller/PerfectPlanController.js");
 const FindAcidProjectile = require("./controller/FindAcidProjectileController.js");
 const FindDronesForZuulsController = require("./controller/FindDronesForZuulsController.js");
@@ -134,6 +135,7 @@ module.exports = function ({
   const nextPhaseController = NextPhaseController(controllerDeps);
   const startGameController = StartGameController(controllerDeps);
   const overworkController = OverworkController(controllerDeps);
+  const actionPointsForDrawExtraCardController = actionPointsForDrawExtraCardController(controllerDeps);
   const perfectPlanController = PerfectPlanController(controllerDeps);
   const findAcidProjectileController = FindAcidProjectile(controllerDeps);
   const findDronesForZuulsController = FindDronesForZuulsController(
@@ -172,6 +174,7 @@ module.exports = function ({
       sacrificeCardForRequirementController.onSelectCard,
     cancelRequirement: PlayerCommand(CancelRequirementCommand, controllerDeps),
     overwork: overworkController.overwork,
+    actionPointsForDrawExtraCard: actionPointsForDrawExtraCardController.actionPointsForDrawExtraCard,
     perfectPlan: perfectPlanController.perfectPlan,
     triggerDormantEffect: PlayerCommand(TriggerDormantEffect, controllerDeps),
     lookAtStationRow: PlayerCommand(LookAtStationRowCommand, controllerDeps),

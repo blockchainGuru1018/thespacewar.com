@@ -208,6 +208,7 @@ module.exports = function (deps) {
       opponentRetreated,
       playerRetreated,
       overworkEnabled,
+      actionPointsForDrawExtraCardEnabled,
       maxStationCardCount,
       opponentMaxStationCardCount,
       gameConfig,
@@ -945,6 +946,10 @@ module.exports = function (deps) {
 
   function overworkEnabled(state, getters) {
     return getters.playerCommanders.has(Commander.GeneralJackson);
+  }
+
+  function actionPointsForDrawExtraCardEnabled(state, getters) {
+    return getters.playerCommanders.has(Commander.LianaHenders);
   }
 
   function maxStationCardCount(state, getters) {

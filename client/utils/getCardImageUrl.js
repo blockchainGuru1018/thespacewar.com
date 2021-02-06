@@ -1,6 +1,7 @@
 const Commander = require("../../shared/match/commander/Commander.js");
 
 const CommanderToImageUrl = {
+  [Commander.LianaHenders]: "https://images.thespacewar.com/commander-0.png",
   [Commander.FrankJohnson]: "https://images.thespacewar.com/commander-1.png",
   [Commander.KeveBakins]: "https://images.thespacewar.com/commander-2.png",
   [Commander.NiciaSatu]: "https://images.thespacewar.com/commander-3.png",

@@ -8,6 +8,7 @@ const Zuuls = "Zuuls";
 const Crakux = "Crakux";
 const Staux = "Staux";
 const Naalox = "Naalox";
+const LianaHenders = ' LianaHenders'
 
 module.exports = {
   FrankJohnson,
@@ -20,4 +21,5 @@ module.exports = {
   Crakux,
   Staux,
   Naalox,
+  LianaHenders,
 };
