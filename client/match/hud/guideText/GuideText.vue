@@ -172,6 +172,12 @@
         </button>
       </div>
     </div>
+    <div v-else-if="attackerDamageGoThroughShields" class="guideText-wrapper">
+      <div class="guideText-subText">
+        Select first station cards if you want that your damage goes through
+        shield.
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -220,6 +226,7 @@ export default {
     ...mapGetters([
       "maxHandSize",
       "actionPoints2",
+      "attackerDamageGoThroughShields",
       "attackerCard",
       "amountOfCardsToDiscard",
       "turnControl",
