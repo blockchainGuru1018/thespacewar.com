@@ -4,6 +4,7 @@ module.exports = function ({ matchController }) {
     namespaced: true,
     state: {
       selectedCardInfos: [],
+      waiting: false,
     },
     getters: {
       requirement,
@@ -56,6 +57,7 @@ module.exports = function ({ matchController }) {
         state.selectedCardInfos
       );
       state.selectedCardInfos = [];
+      state.waiting = true;
       matchController.emit("selectCardForFindCardRequirement", { cardGroups });
     }
   }

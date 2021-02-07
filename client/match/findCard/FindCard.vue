@@ -11,7 +11,7 @@
         </button>
       </template>
       <template>
-        <div class="findCard">
+        <div class="findCard" :style="waiting? 'pointer-events:none;' : ''">
           <div class="findCard-header">
             <div
               v-if="requirement.cardCommonId"
@@ -100,7 +100,7 @@ module.exports = {
     };
   },
   computed: {
-    ...findCardHelpers.mapState(["selectedCardInfos"]),
+    ...findCardHelpers.mapState(["selectedCardInfos", "waiting"]),
     ...findCardHelpers.mapGetters(["requirement", "filteredRequirement"]),
     ...matchHelpers.mapGetters(["actionPoints2"]),
     ...requirementHelpers.mapGetters([
