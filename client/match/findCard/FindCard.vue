@@ -150,8 +150,8 @@ module.exports = {
     getCardImageUrl(card) {
       return getCardImageUrl.byCommonId(card.commonId);
     },
-    cardClick(card, group) {
-      this.selectCard({ id: card.id, source: group.source });
+    async cardClick(card, group) {
+      await this.selectCard({ id: card.id, source: group.source });
     },
     doneClick() {
       this.done();
