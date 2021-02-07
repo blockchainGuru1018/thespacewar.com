@@ -4,6 +4,7 @@ module.exports = function ({ matchController }) {
     namespaced: true,
     state: {
       selectedCardInfos: [],
+      waiting: false,
     },
     getters: {
       requirement,
@@ -46,13 +47,8 @@ module.exports = function ({ matchController }) {
     });
   }
 
-  function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  async function selectCard({ state, getters }, { id, source }) {
+  function selectCard({ state, getters }, { id, source }) {
     state.selectedCardInfos.push({ id, source });
-    console.log(getters.requirement.submitOnEverySelect);
     if (getters.requirement.submitOnEverySelect) {
       const cardGroups = groupFromSelectedCardIdsBySource([{ id, source }]);
       matchController.emit("selectCardForFindCardRequirement", { cardGroups });
@@ -61,9 +57,9 @@ module.exports = function ({ matchController }) {
         state.selectedCardInfos
       );
       state.selectedCardInfos = [];
+      state.waiting = true;
       matchController.emit("selectCardForFindCardRequirement", { cardGroups });
     }
-    await sleep(1000)
   }
 
   function groupFromSelectedCardIdsBySource(selectedCardInfos) {
