@@ -12,10 +12,24 @@
         Toggle overlay
       </button>
     </div>
+    <div v-show="waiting" class="waiting">
+      <div class="dots">
+        Waiting
+      <span>.</span>
+      <span>.</span>
+      <span>.</span>
+      </div>
+    </div>
   </div>
 </template>
 <script>
 module.exports = {
+  props:{
+   waiting: {
+     required: false,
+     default: false,
+   } 
+  },
   data() {
     return {
       hideOverlay: false,

@@ -12,6 +12,7 @@ module.exports = function ({ matchController }) {
     },
     actions: {
       done,
+      resetWaiting,
       selectCard,
     },
   };
@@ -45,6 +46,10 @@ module.exports = function ({ matchController }) {
     matchController.emit("selectCardForFindCardRequirement", {
       cardGroups: [],
     });
+  }
+
+  function resetWaiting ({state}){
+    state.waiting = false;
   }
 
   function selectCard({ state, getters }, { id, source }) {

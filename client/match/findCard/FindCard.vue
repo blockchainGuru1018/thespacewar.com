@@ -1,6 +1,6 @@
 <template>
   <div class="findCard-wrapper">
-    <DimOverlay>
+    <DimOverlay :waiting="waiting">
       <template slot="topRightButtons">
         <button
           v-if="requirementIsCancelable"
@@ -18,6 +18,7 @@
               class="findCard-requirementCard"
             >
               <img
+                v-show="!waiting"
                 :src="getCardImageUrl({ commonId: requirement.cardCommonId })"
               />
             </div>
@@ -99,6 +100,9 @@ module.exports = {
       updater: 0,
     };
   },
+  mounted(){
+    this.resetWaiting()
+  },
   computed: {
     ...findCardHelpers.mapState(["selectedCardInfos", "waiting"]),
     ...findCardHelpers.mapGetters(["requirement", "filteredRequirement"]),
@@ -111,7 +115,7 @@ module.exports = {
       this.updater++;
       return this.requirement.submitOnEverySelect
         ? this.requirement.count
-        : this.requirement.count - this.selectedCardInfos.length;
+        : Math.max(this.requirement.count - this.selectedCardInfos.length, 0);
     },
     cardsAvailableToSelect() {
       return this.filteredRequirement.cardGroups.reduce(
@@ -121,7 +125,7 @@ module.exports = {
     },
     findCardHeaderText() {
       let endText = "";
-
+      if(this.waiting) return "";
       const cardCommonId = this.requirement.cardCommonId;
       if (cardCommonId === Sabotage.CommonId) {
         endText = " to discard";
@@ -145,7 +149,7 @@ module.exports = {
     },
   },
   methods: {
-    ...findCardHelpers.mapActions(["selectCard", "done"]),
+    ...findCardHelpers.mapActions(["selectCard", "done","resetWaiting"]),
     ...requirementHelpers.mapActions(["cancelRequirement"]),
     getCardImageUrl(card) {
       return getCardImageUrl.byCommonId(card.commonId);
