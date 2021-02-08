@@ -7,6 +7,7 @@ module.exports = class RepairShip extends BaseCard {
 
     this._repairCapability = 3;
   }
+
   static get CommonId() {
     return "90";
   }

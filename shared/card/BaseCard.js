@@ -187,7 +187,7 @@ class BaseCard {
       return totalShieldDefense - this.attack < 0;
     }
 
-    return true;
+    return false;
   }
 
   canAttackStationCards() {
@@ -195,7 +195,8 @@ class BaseCard {
     if (!this.canAttack()) return false;
     if (!this.attack) return false;
     if (!this._canThePlayer.attackStationCards(this)) return false;
-    if (!this.canDamageGoThroughShieldsDefense()) return false;
+    if (this.opponentHaveShield() && !this.canDamageGoThroughShieldsDefense())
+      return false;
     const turn = this._matchService.getTurn();
     const isInHomeZone = this.isInHomeZone();
     const isMissile = this.type === "missile";
@@ -235,7 +236,13 @@ class BaseCard {
   canTargetStationCardsForSacrifice() {
     return false;
   }
-
+  opponentHaveShield() {
+    return (
+      this._opponentStateService.getMatchingBehaviourCards((c) =>
+        c.stopsStationAttack()
+      ).length > 0
+    );
+  }
   canBeUsed() {
     return this._canThePlayer.useThisCard(this);
   }

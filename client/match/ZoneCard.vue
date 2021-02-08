@@ -119,7 +119,7 @@
           Move
         </div>
         <div
-          v-if="canAttack"
+          v-if="canAttack && card.attack > 0"
           class="readyToAttack actionOverlay"
           @click.stop="readyToAttackClick"
         >
@@ -140,7 +140,7 @@
           Sacrifice
         </div>
         <div
-          v-if="canAttack && canCollide"
+          v-if="(canAttack || !card.attack) && canCollide"
           class="sacrifice actionOverlay"
           @click="readyToAttackWithCollision()"
         >

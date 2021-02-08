@@ -973,6 +973,7 @@ module.exports = function (deps) {
     const attackerCard = getters.allPlayerCardsInOwnAndOpponentZone.find(
       (c) => c.id === state.attackerCardId
     );
+    console.log(getters.createCard(attackerCard));
     return getters.createCard(attackerCard);
   }
 
