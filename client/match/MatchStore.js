@@ -1143,7 +1143,7 @@ module.exports = function (deps) {
 
     function postMergeHook() {
       if (
-        (!getters.requirements || getters.requirements.length === 0) &&
+        (!state.requirements || state.requirements.length === 0) &&
         getters.getCardsPendingForAction.length === 0 &&
         state.phase === PHASES.attack
       ) {
