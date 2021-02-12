@@ -1084,7 +1084,11 @@ module.exports = function (deps) {
   }
 
   function stateChanged({ state, getters, dispatch }, data) {
-    const clientStateChanger = ClientStateChanger({ state, preMergeHook });
+    const clientStateChanger = ClientStateChanger({
+      state,
+      preMergeHook,
+      postMergeHook,
+    });
     clientStateChanger.stateChanged(data);
 
     if (!gameHasBegun) {
@@ -1137,11 +1141,14 @@ module.exports = function (deps) {
       }
     }
 
-    if (
-      getters.getCardsPendingForAction.length === 0 &&
-      state.phase === PHASES.attack
-    ) {
-      dispatch("goToNextPhase");
+    function postMergeHook() {
+      if (
+        (!getters.requirements || getters.requirements.length === 0) &&
+        getters.getCardsPendingForAction.length === 0 &&
+        state.phase === PHASES.attack
+      ) {
+        dispatch("goToNextPhase");
+      }
     }
   }
 
