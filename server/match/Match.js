@@ -428,6 +428,7 @@ function createMatchState({ firstPlayerId, playerIds, matchId }) {
     lastStandInfo: null,
     playerStateById: {},
     deckIdByPlayerId: {},
+    customDeckByPlayerId: {},
   };
 }
 

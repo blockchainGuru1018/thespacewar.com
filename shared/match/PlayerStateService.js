@@ -43,12 +43,12 @@ class PlayerStateService {
     return playerId === "BOT";
   }
 
-  reset(deckId) {
+  reset(deckId, customDeck) {
     const playerId = this.getPlayerId();
     this._matchService.connectPlayer(playerId); //TODO This is already done in StartGame.js. Why is it also done here?
 
     this._resetState();
-    this._initializeDeck(deckId);
+    this._initializeDeck(deckId, customDeck);
     this._drawStartingCards();
   }
 
@@ -71,8 +71,12 @@ class PlayerStateService {
     });
   }
 
-  _initializeDeck(deckId) {
-    const cardsInDeck = this._deckFactory.createCardsForDeckById(deckId);
+  _initializeDeck(deckId, customDeck) {
+    const cardsInDeck = this._deckFactory.createCardsForDeckById(
+      deckId,
+      customDeck
+    );
+    console.log("test", customDeck);
     this.update((playerState) => {
       playerState.currentDeck = deckId;
       playerState.cardsInDeck = cardsInDeck;

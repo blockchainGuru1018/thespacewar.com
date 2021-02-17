@@ -203,10 +203,11 @@ class MatchService {
     );
   }
 
-  connectPlayer(playerId, deckId) {
+  connectPlayer(playerId, deckId, customDeck) {
     this._state.playersConnected++;
     this._state.playerStateById[playerId] = {};
     this._state.deckIdByPlayerId[playerId] = deckId;
+    this._state.customDeckByPlayerId[playerId] = customDeck;
   }
   getPlayerIds() {
     return [...this._state.playerOrder];
