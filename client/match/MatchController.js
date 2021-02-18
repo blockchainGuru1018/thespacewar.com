@@ -17,9 +17,13 @@ module.exports = function (deps) {
 
   function start() {
     socket.on("match", onSocketMatchEvent);
-    const constructedDeck = JSON.parse(
-      decodeURIComponent(`${getCookie("constructed_deck")}`)
-    );
+    let constructedDeck = {};
+    const rawConstructedDeckCookie = getCookie("constructed_deck");
+    if (rawConstructedDeckCookie) {
+      constructedDeck = JSON.parse(
+        decodeURIComponent(`${rawConstructedDeckCookie}`)
+      );
+    }
     emit("start", {
       deckId: getActiveDeck() || "TheSwarm",
       customDeck: constructedDeck || {},
