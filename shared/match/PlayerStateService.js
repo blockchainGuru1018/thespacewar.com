@@ -68,6 +68,7 @@ class PlayerStateService {
       playerState.commanders = [];
       playerState.clock = {};
       playerState.currentDeck = "";
+      playerState.customDeck = {};
     });
   }
 
@@ -76,11 +77,11 @@ class PlayerStateService {
       deckId,
       customDeck
     );
-    console.log("test", customDeck);
     this.update((playerState) => {
       playerState.currentDeck = deckId;
       playerState.cardsInDeck = cardsInDeck;
       playerState.deckSize = cardsInDeck.length;
+      playerState.customDeck = customDeck;
     });
   }
 
@@ -198,6 +199,7 @@ class PlayerStateService {
   getCardWithCommonIdInAnyZone(cardCommonId) {
     return this.getCardsInZone().filter((c) => c.commonId === cardCommonId);
   }
+
   hasMatchingCardInSomeZone(matcher) {
     return (
       this.hasMatchingCardInHomeZone(matcher) ||

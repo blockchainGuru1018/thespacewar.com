@@ -5,5 +5,6 @@ module.exports = function (serverState, clientPlayerId) {
     playerCardsInZone: playerState.cardsInZone,
     playerCardsInOpponentZone: playerState.cardsInOpponentZone,
     currentDeck: playerState.currentDeck,
+    customDeck: playerState.customDeck,
   };
 };

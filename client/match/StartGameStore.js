@@ -14,6 +14,18 @@ const commandersRows = {
     { name: "Staux", value: Commander.Staux },
     { name: "Naalox", value: Commander.Naalox },
   ],
+  AllCommander: [
+    [{ name: "Frank Johnson", value: Commander.FrankJohnson }],
+    [{ name: "Keve Bakins", value: Commander.KeveBakins }],
+    [{ name: "Nicia Satu", value: Commander.NiciaSatu }],
+    [{ name: "General Jackson", value: Commander.GeneralJackson }],
+    [{ name: "Dr.Stein", value: Commander.DrStein }],
+    [{ name: "The Miller", value: Commander.TheMiller }],
+    [{ name: "Zuuls", value: Commander.Zuuls }],
+    [{ name: "Crakux", value: Commander.Crakux }],
+    [{ name: "Staux", value: Commander.Staux }],
+    [{ name: "Naalox", value: Commander.Naalox }],
+  ],
 };
 module.exports = function ({ matchController }) {
   return {
@@ -90,6 +102,9 @@ module.exports = function ({ matchController }) {
   }
 
   function commandersOptions(state, getters, rootState) {
+    if (rootState.match.currentDeck === "CustomDeck") {
+      return commandersRows.AllCommander[rootState.match.customDeck.commander];
+    }
     return (
       commandersRows[rootState.match.currentDeck] || commandersRows["Regular"]
     );

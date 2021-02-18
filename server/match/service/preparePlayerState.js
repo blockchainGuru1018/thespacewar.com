@@ -19,6 +19,7 @@ const whitelist = [
   "stationCards",
   "cardsOnHand",
   "cardsInDeck",
+  "customDeck",
   "events",
   "requirements",
   "phase",
