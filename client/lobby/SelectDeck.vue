@@ -13,6 +13,9 @@
       <option v-if="unitedStarsDeck" :value="'UnitedStars'"
       >United Stars (advanced play)
       </option>
+      <option v-if="customDeck" :value="'CustomDeck'">
+        Constructed Deck
+      </option>
     </select>
   </div>
 </template>
@@ -29,6 +32,9 @@ export default {
   computed: {
     unitedStarsDeck() {
       return featureToggles.isEnabled("unitedStarsDeck");
+    },
+    customDeck() {
+      return featureToggles.isEnabled("customDeck");
     },
   },
   mounted() {

@@ -13,13 +13,13 @@ function StartGameController({
     repairPotentiallyInconsistentState, //TODO Move this to its own class
   };
 
-  function start(playerId, { deckId = "TheSwarm" } = {}) {
+  function start(playerId, { deckId = "TheSwarm", customDeck = {} } = {}) {
     const playerIds = matchService.getPlayerIds();
     if (matchService.allPlayersConnected()) {
       repairPlayersPotentiallyInconsistentState(playerIds);
       matchComService.emitCurrentStateToPlayers();
     } else {
-      matchService.connectPlayer(playerId, deckId);
+      matchService.connectPlayer(playerId, deckId, customDeck);
       if (matchService.allPlayersConnected()) {
         resetPlayers(playerIds);
 
@@ -68,7 +68,10 @@ function StartGameController({
       );
       const playerMatchService = playerServiceFactory.matchService(playerId);
       const deckId = playerMatchService.getState().deckIdByPlayerId[playerId];
-      playerStateService.reset(deckId);
+      const customDeck = playerMatchService.getState().customDeckByPlayerId[
+        playerId
+      ];
+      playerStateService.reset(deckId, customDeck);
     }
   }
 

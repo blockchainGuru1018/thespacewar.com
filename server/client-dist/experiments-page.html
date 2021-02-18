@@ -37,6 +37,13 @@
                 United Stars
             </label>
         </div>
+        <div class="form-check">
+            <input class="form-check-input" onclick="handleClick(this)" type="checkbox" name="active-Deck"
+                   id="customDeck" data-feature="customDeck">
+            <label class="form-check-label" for="unitedStars">
+                Custom Deck
+            </label>
+        </div>
     </div>
     <div class="alert alert-primary" role="alert">
         <div class="form-check">
@@ -107,18 +114,19 @@
         localStorage.setItem(`ft-${cb.getAttribute("data-feature")}`, cb.checked);
     }
 
-    function initVariables(){
+    function initVariables() {
         localStorage.setItem("pickCardOverlayForAll",
             localStorage.getItem("pickCardOverlayForAll") || JSON.stringify({value: true}));
     }
 
-    function refreshBackground(){
+    function refreshBackground() {
         $('#form-bg input:radio').each(function (index, element) {
             var op = localStorage.getItem("background");
             $(this).prop("checked", this.getAttribute("value") === op.value);
         })
     }
-    function refreshPickCardOverlayForAll(){
+
+    function refreshPickCardOverlayForAll() {
         $('#form-drawCardOverlay input:radio').each(function (index, element) {
             var op = JSON.parse(localStorage.getItem("pickCardOverlayForAll"));
             $(this).prop("checked", this.getAttribute("value") === op.value);
@@ -130,8 +138,8 @@
         refreshBackground();
     }
 
-    function pickCardOverlayOption(option){
-        localStorage.setItem("pickCardOverlayForAll", JSON.stringify({ value: option.value }));
+    function pickCardOverlayOption(option) {
+        localStorage.setItem("pickCardOverlayForAll", JSON.stringify({value: option.value}));
         refreshPickCardOverlayForAll();
     }
 </script>

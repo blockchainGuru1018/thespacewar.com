@@ -11,6 +11,7 @@ module.exports = function CardDataAssembler({ rawCardDataRepository }) {
     createLibrary,
     createSwarmDeck,
     createRegularDeck,
+    createCustomDeck,
     createUnitedStars,
     createOneOfEach,
     createFromCommonId,
@@ -37,6 +38,17 @@ module.exports = function CardDataAssembler({ rawCardDataRepository }) {
         cards.push(card);
       }
     }
+    return cards;
+  }
+
+  function createCustomDeck(customDeck) {
+    const cards = [];
+    Object.keys(customDeck.cards).forEach((cardCommonId) => {
+      for (let i = 0; i < customDeck.cards[cardCommonId]; i++) {
+        const card = createFromCommonId(cardCommonId);
+        cards.push(card);
+      }
+    });
     return cards;
   }
 

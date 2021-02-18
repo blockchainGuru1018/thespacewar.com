@@ -12,13 +12,13 @@ module.exports = function (deps) {
     return Deck(cards);
   }
 
-  function createCardsForDeckById(deckId) {
-    const deck = createDeckById(deckId);
+  function createCardsForDeckById(deckId, customDeck) {
+    const deck = createDeckById(deckId, customDeck);
     shuffle(deck);
     return deck;
   }
 
-  function createDeckById(deckId) {
+  function createDeckById(deckId, customDeck) {
     switch (deckId) {
       case "Regular":
         return cardDataAssembler.createRegularDeck();
@@ -26,6 +26,8 @@ module.exports = function (deps) {
         return cardDataAssembler.createSwarmDeck();
       case "UnitedStars":
         return cardDataAssembler.createUnitedStars();
+      case "CustomDeck":
+        return cardDataAssembler.createCustomDeck(customDeck);
       default:
         throw new Error("Invalid Deck ID");
     }

@@ -17,9 +17,38 @@ module.exports = function (deps) {
 
   function start() {
     socket.on("match", onSocketMatchEvent);
-    emit("start", { deckId: getActiveDeck() || "TheSwarm" });
-
+    let constructedDeck = {};
+    const rawConstructedDeckCookie = getCookie("constructed_deck");
+    if (rawConstructedDeckCookie) {
+      constructedDeck = JSON.parse(
+        decodeURIComponent(`${rawConstructedDeckCookie}`)
+      );
+    }
+    emit("start", {
+      deckId: getActiveDeck() || "TheSwarm",
+      customDeck: constructedDeck || {},
+    });
     document.addEventListener("visibilitychange", onVisibilityChange);
+  }
+
+  function getCookie(name) {
+    var dc, prefix, begin, end;
+    dc = document.cookie;
+    prefix = name + "=";
+    begin = dc.indexOf("; " + prefix);
+    end = dc.length;
+    if (begin !== -1) {
+      begin += 2;
+    } else {
+      begin = dc.indexOf(prefix);
+      if (begin === -1 || begin !== 0) return null;
+    }
+
+    if (dc.indexOf(";", begin) !== -1) {
+      end = dc.indexOf(";", begin);
+    }
+
+    return dc.substring(begin + prefix.length, end);
   }
 
   function emit(action, value) {
@@ -65,6 +94,7 @@ module.exports = function (deps) {
       emit("refresh");
     }
   }
+
   function getActiveDeck() {
     return JSON.parse(localStorage.getItem("active-deck"));
   }
