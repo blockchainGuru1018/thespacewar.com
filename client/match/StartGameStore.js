@@ -15,16 +15,35 @@ const commandersRows = {
     { name: "Naalox", value: Commander.Naalox },
   ],
   AllCommander: [
-    [{ name: "Frank Johnson", value: Commander.FrankJohnson }],
-    [{ name: "Keve Bakins", value: Commander.KeveBakins }],
-    [{ name: "Nicia Satu", value: Commander.NiciaSatu }],
-    [{ name: "General Jackson", value: Commander.GeneralJackson }],
-    [{ name: "Dr.Stein", value: Commander.DrStein }],
-    [{ name: "The Miller", value: Commander.TheMiller }],
-    [{ name: "Zuuls", value: Commander.Zuuls }],
-    [{ name: "Crakux", value: Commander.Crakux }],
-    [{ name: "Staux", value: Commander.Staux }],
-    [{ name: "Naalox", value: Commander.Naalox }],
+    {
+      id: 0,
+      value: [{ name: "Liana Henders", value: Commander.FrankJohnson }],
+    },
+    {
+      id: 1,
+      value: [{ name: "Frank Johnson", value: Commander.FrankJohnson }],
+    },
+    { id: 2, value: [{ name: "Keve Bakins", value: Commander.KeveBakins }] },
+    { id: 3, value: [{ name: "Nicia Satu", value: Commander.NiciaSatu }] },
+    {
+      id: 4,
+      value: [{ name: "General Jackson", value: Commander.GeneralJackson }],
+    },
+    { id: 5, value: [{ name: "Dr.Stein", value: Commander.DrStein }] },
+    { id: 6, value: [{ name: "The Miller", value: Commander.TheMiller }] },
+    { id: 7, value: [{ name: "Zuuls", value: Commander.Zuuls }] },
+    { id: 8, value: [{ name: "Crakux", value: Commander.Crakux }] },
+    { id: 9, value: [{ name: "Naalox", value: Commander.Naalox }] },
+    { id: 10, value: [{ name: "Staux", value: Commander.Staux }] },
+    {
+      id: 11,
+      value: [{ name: "Capt. Shera Kinson", value: Commander.FrankJohnson }],
+    },
+    {
+      id: 12,
+      value: [{ name: "Capt. Wayne Mccarter", value: Commander.FrankJohnson }],
+    },
+    { id: 13, value: [{ name: "Zyre", value: Commander.FrankJohnson }] },
   ],
 };
 module.exports = function ({ matchController }) {
@@ -103,7 +122,10 @@ module.exports = function ({ matchController }) {
 
   function commandersOptions(state, getters, rootState) {
     if (rootState.match.currentDeck === "CustomDeck") {
-      return commandersRows.AllCommander[rootState.match.customDeck.commander];
+      const { value } = commandersRows.AllCommander.find(
+        (commnader) => commnader.id === rootState.match.customDeck.commander
+      );
+      return value;
     }
     return (
       commandersRows[rootState.match.currentDeck] || commandersRows["Regular"]
