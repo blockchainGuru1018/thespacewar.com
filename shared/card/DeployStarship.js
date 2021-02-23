@@ -1,9 +1,8 @@
 const BaseCard = require("./BaseCard.js");
 const info = require("./info/221.config");
 module.exports = class DeployStarship extends BaseCard {
-  constructor({ addRequirementFromSpec, ...deps }) {
+  constructor(deps) {
     super(deps);
-    this._addRequirementFromSpec = addRequirementFromSpec;
   }
 
   static get CommonId() {
@@ -14,8 +13,15 @@ module.exports = class DeployStarship extends BaseCard {
     return info;
   }
 
-  get actionWhenPutDownInHomeZone() {
-    const spec = info.requirementSpecsWhenPutDownInHomeZone;
-    this._addRequirementFromSpec.forCardAndSpec(this, spec);
+  canBePlayed() {
+    return super.canBePlayed() && this._thereAreAtLeastThreeCardsInPlay();
+  }
+
+  get requirementsWhenPutDown() {
+    return info.requirementSpecsWhenPutDownInHomeZone;
+  }
+
+  _thereAreAtLeastThreeCardsInPlay() {
+    return this._playerStateService.getCardsInPlay().length >= 3;
   }
 };

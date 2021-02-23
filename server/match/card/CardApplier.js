@@ -11,6 +11,7 @@ const Commands = [
   require("./putDown/PutDownTheDarkDestroyer.js"),
   require("./putDown/PutDownDestroyDuration.js"),
   require("./putDown/PutDownElectrocution.js"),
+  require("./putDown/PutDownDeployStarship.js"),
 ];
 
 module.exports = function CardApplier(deps) {

@@ -2,19 +2,19 @@
   <div class="selectDeck-container">
     Deck:
     <select
-        id="currentDeck"
-        v-model="selectedDeck"
-        class="deckDropDown"
-        name="currentDeck"
-        @change="onChange($event)"
+      id="currentDeck"
+      v-model="selectedDeck"
+      class="deckDropDown"
+      name="currentDeck"
+      @change="onChange($event)"
     >
       <option :value="'Regular'">The Terrans (advanced play)</option>
       <option :value="'TheSwarm'" default>The Swarm (easy play)</option>
-      <option v-if="unitedStarsDeck && customDeckName" :value="'UnitedStars'"
+      <option v-if="unitedStarsDeck" :value="'UnitedStars'"
       >United Stars (advanced play)
       </option>
-      <option v-if="customDeck" :value="'CustomDeck'">
-        {{ customDeckName }}
+      <option v-if="customDeck && customDeckName" :value="'CustomDeck'">
+        {{ customDeckName }} (Constructed)
       </option>
     </select>
   </div>
@@ -22,7 +22,7 @@
 
 <script>
 import featureToggles from "../utils/featureToggles.js";
-
+import getCookie from "../utils/getCookies.js";
 export default {
   data: function () {
     return {
@@ -37,42 +37,20 @@ export default {
       return featureToggles.isEnabled("customDeck");
     },
     customDeckName() {
-
-      function getCookie(name) {
-        var dc, prefix, begin, end;
-        dc = document.cookie;
-        prefix = name + "=";
-        begin = dc.indexOf("; " + prefix);
-        end = dc.length;
-        if (begin !== -1) {
-          begin += 2;
-        } else {
-          begin = dc.indexOf(prefix);
-          if (begin === -1 || begin !== 0) return null;
-        }
-
-        if (dc.indexOf(";", begin) !== -1) {
-          end = dc.indexOf(";", begin);
-        }
-
-        return dc.substring(begin + prefix.length, end);
-      }
-
       let constructedDeck = {};
       const rawConstructedDeckCookie = getCookie("constructed_deck");
       if (rawConstructedDeckCookie) {
         constructedDeck = JSON.parse(
-            decodeURIComponent(`${rawConstructedDeckCookie}`)
+          decodeURIComponent(`${rawConstructedDeckCookie}`)
         );
 
         return constructedDeck.deck_name;
-
       }
-    }
+    },
   },
   mounted() {
     this.selectedDeck =
-        JSON.parse(localStorage.getItem("active-deck")) || "TheSwarm";
+      JSON.parse(localStorage.getItem("active-deck")) || "TheSwarm";
     if (!this.unitedStarsDeck && this.selectedDeck === "UnitedStars") {
       this.selectedDeck = "TheSwarm";
     }

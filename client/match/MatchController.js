@@ -1,4 +1,5 @@
 const ajax = require("../utils/ajax.js");
+const getCookie = require("../utils/getCookies.js");
 
 module.exports = function (deps) {
   //TODO Rename MatchConnectionController or something better
@@ -29,26 +30,6 @@ module.exports = function (deps) {
       customDeck: constructedDeck || {},
     });
     document.addEventListener("visibilitychange", onVisibilityChange);
-  }
-
-  function getCookie(name) {
-    var dc, prefix, begin, end;
-    dc = document.cookie;
-    prefix = name + "=";
-    begin = dc.indexOf("; " + prefix);
-    end = dc.length;
-    if (begin !== -1) {
-      begin += 2;
-    } else {
-      begin = dc.indexOf(prefix);
-      if (begin === -1 || begin !== 0) return null;
-    }
-
-    if (dc.indexOf(";", begin) !== -1) {
-      end = dc.indexOf(";", begin);
-    }
-
-    return dc.substring(begin + prefix.length, end);
   }
 
   function emit(action, value) {
