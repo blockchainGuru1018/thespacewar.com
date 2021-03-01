@@ -22,6 +22,7 @@ function FindCardRequirementFactory({
       cancelable: !!requirementSpec.cancelable,
       submitOnEverySelect: !!requirementSpec.submitOnEverySelect,
       cardId: card.id,
+      id: Date.now(),
     };
     if (requirementSpec.dormantEffect) {
       requirement.usedDormantEffect = {

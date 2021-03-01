@@ -58,7 +58,7 @@
                 "defense": "2",
                 "attack": "4",
                 "number_copies": "2",
-                "author": "Gabriel StiernstrÃ¶m",
+                "author": "Gabriel Stiernström",
                 "deck": "1"
             },
             {
@@ -70,7 +70,7 @@
                 "defense": "1",
                 "attack": "2",
                 "number_copies": "1",
-                "author": "Gabriel StiernstrÃ¶m",
+                "author": "Gabriel Stiernström",
                 "deck": "1"
             },
             {
@@ -82,7 +82,7 @@
                 "defense": "2",
                 "attack": "0",
                 "number_copies": "2",
-                "author": "Gabriel StiernstrÃ¶m",
+                "author": "Gabriel Stiernström",
                 "deck": "1"
             },
             {
@@ -94,7 +94,7 @@
                 "defense": "3",
                 "attack": "10",
                 "number_copies": "1",
-                "author": "Gabriel StiernstrÃ¶m",
+                "author": "Gabriel Stiernström",
                 "deck": "1"
             },
             {
@@ -190,7 +190,7 @@
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "1",
-                "author": "Gabriel StiernstrÃ¶m",
+                "author": "Gabriel Stiernström",
                 "deck": "1"
             },
             {
@@ -250,7 +250,7 @@
                 "defense": "1",
                 "attack": "4",
                 "number_copies": "1",
-                "author": "Gabriel StiernstrÃ¶m",
+                "author": "Gabriel Stiernström",
                 "deck": "1"
             },
             {
@@ -378,7 +378,7 @@
                 "name": "Disturbing Sensor",
                 "price": "4",
                 "type_card": "blue",
-                "detail": "Â· Enemy missiles can't move or attack.\r\nÂ· If opponent after draw phase has more   than 1 card in hand, he or she           discards a card.",
+                "detail": "· Enemy missiles can't move or attack.\r\n· If opponent after draw phase has more   than 1 card in hand, he or she           discard a card.",
                 "defense": "3",
                 "attack": "0",
                 "number_copies": "1",
@@ -428,7 +428,7 @@
                 "type_card": "blue",
                 "detail": "Normal spaceship.",
                 "defense": "6",
-                "attack": "2",
+                "attack": "3",
                 "number_copies": "1",
                 "author": "Luca Oleastri",
                 "deck": "1"
@@ -442,7 +442,7 @@
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "1",
-                "author": "SÃ©bastien Decoret",
+                "author": "Sébastien Decoret",
                 "deck": "1"
             },
             {
@@ -660,7 +660,7 @@
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "3",
-                "author": "Gabriel StiernstrÃ¶m",
+                "author": "Gabriel Stiernström",
                 "deck": "2"
             },
             {
@@ -718,7 +718,7 @@
                 "name": "Secret Deposit",
                 "price": "1",
                 "type_card": "violet",
-                "detail": "In your action phase: hide cards from hand under this and/or pick up cards hidden. If destroyed cards return to hand.",
+                "detail": "In your action phase: hide cards from hand under this and/or pick up cards hidden. If destroyed return cards to hand.",
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "2",
@@ -727,26 +727,14 @@
             },
             {
                 "id": "208",
-                "name": "DÃ©jÃ  Vu",
+                "name": "Déjà vu",
                 "price": "1",
                 "type_card": "orange",
                 "detail": "Take a card from your discard pile and put it to your hand.",
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "2",
-                "author": "SÃ©bastien Decoret",
-                "deck": "3"
-            },
-            {
-                "id": "209",
-                "name": "Obstacles",
-                "price": "3",
-                "type_card": "orange",
-                "detail": "Players cannot draw and not mill until your next action phase.",
-                "defense": "0",
-                "attack": "0",
-                "number_copies": "1",
-                "author": "Luca Oleastri",
+                "author": "Sébastien Decoret",
                 "deck": "3"
             },
             {
@@ -770,7 +758,7 @@
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "2",
-                "author": "SÃ©bastien Decoret",
+                "author": "Sébastien Decoret",
                 "deck": "3"
             },
             {
@@ -813,12 +801,12 @@
                 "id": "216",
                 "name": "Moment of Peace",
                 "price": "2",
-                "type_card": "orange",
-                "detail": "Attacks from spaceships and missiles are disabled until your next turn.",
+                "type_card": "violet",
+                "detail": "Attacks from spaceships and missiles are disabled.\r\nDiscard from play in your next draw phase.",
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "2",
-                "author": "SÃ©bastien Decoret",
+                "author": "Sébastien Decoret",
                 "deck": "3"
             },
             {
@@ -842,7 +830,7 @@
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "4",
-                "author": "SÃ©bastien Decoret",
+                "author": "Sébastien Decoret",
                 "deck": "3"
             },
             {
@@ -854,7 +842,7 @@
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "2",
-                "author": "SÃ©bastien Decoret",
+                "author": "Sébastien Decoret",
                 "deck": "3"
             },
             {
@@ -878,7 +866,7 @@
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "2",
-                "author": "SÃ©bastien Decoret",
+                "author": "Sébastien Decoret",
                 "deck": "3"
             },
             {
@@ -900,8 +888,8 @@
                 "type_card": "blue",
                 "detail": "After first turn, can take control of enemy spaceship as long as this exist. If the spaceship gets destroyed it can take control of another ship.",
                 "defense": "3",
-                "attack": "-",
-                "number_copies": "2",
+                "attack": "0",
+                "number_copies": "1",
                 "author": "Muhammad Annurmal",
                 "deck": "3"
             },
@@ -922,7 +910,7 @@
                 "name": "Resource ship",
                 "price": "2",
                 "type_card": "blue",
-                "detail": "Instead of attack can be moved to be an extra station card.",
+                "detail": "Instead of attacking can be moved to be an extra station card.",
                 "defense": "3",
                 "attack": "1",
                 "number_copies": "3",
@@ -958,7 +946,7 @@
                 "name": "Starship",
                 "price": "10",
                 "type_card": "blue",
-                "detail": "Cost 1 less for each card you have in the table. Slow (each turn can either move or attack but not both).",
+                "detail": "Cost 1 less for each card you have in play. Slow (each turn can either move or attack but not both).",
                 "defense": "12",
                 "attack": "6",
                 "number_copies": "1",
@@ -1018,14 +1006,38 @@
                 "name": "Satellite",
                 "price": "1",
                 "type_card": "violet",
-                "detail": "Draw 1 extra card in your draw phase.\r\nRemove from play to draw 2 cards.",
-                "defense": "",
-                "attack": "",
+                "detail": "Draw 1 extra card in your draw phase.\r\nDiscard from play to draw 2 cards.",
+                "defense": "0",
+                "attack": "0",
                 "number_copies": "2",
                 "author": "Konstantin Shaklein",
+                "deck": "3"
+            },
+            {
+                "id": "281",
+                "name": "Obstacles",
+                "price": "3",
+                "type_card": "violet",
+                "detail": "Players cannot move or add station cards.",
+                "defense": "0",
+                "attack": "0",
+                "number_copies": "1",
+                "author": "Elena Zemlyanskaya",
+                "deck": "3"
+            },
+            {
+                "id": "282",
+                "name": "Return",
+                "price": "2",
+                "type_card": "orange",
+                "detail": "Select a damaged station card (flipped) or a card in play that cost 3 or less.\r\nThat card goes back to the owners hand.",
+                "defense": "0",
+                "attack": "0",
+                "number_copies": "1",
+                "author": "Archy",
                 "deck": "3"
             }
         ]
     },
-    "saveTime": 1613318101812
+    "saveTime": 1614526725168
 }

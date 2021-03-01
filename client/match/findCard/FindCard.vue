@@ -100,7 +100,7 @@ module.exports = {
       updater: 0,
     };
   },
-  mounted(){
+  beforeUnmount(){
     this.resetWaiting()
   },
   computed: {
@@ -110,6 +110,9 @@ module.exports = {
     ...requirementHelpers.mapGetters([
       "requirementIsCancelable",
       "firstRequirementIsFindCard",
+    ]),
+    ...requirementHelpers.mapState([
+      "currentRequirement",
     ]),
     cardsToSelect() {
       this.updater++;
