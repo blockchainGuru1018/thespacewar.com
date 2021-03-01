@@ -1,4 +1,4 @@
-Not open source. Copyright and all rights reserved etc.  
+Not open source. Copyright and all rights reserved etc.   
 __________________________
 
 # TLDR;
