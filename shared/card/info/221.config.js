@@ -9,7 +9,6 @@ module.exports = {
         cardCommonId: CommonId,
         sources: ["cardsInZone", "cardsInOpponentZone"],
         target: "discardPile",
-        submitOnEverySelect: true,
         cancelable: false,
         common: true,
         ifAddedAddAlso: [
