@@ -11,7 +11,7 @@
         </button>
       </template>
       <template>
-        <div class="findCard" :style="waiting? 'pointer-events:none;' : ''">
+        <div class="findCard" :style="waiting ? 'pointer-events:none;' : ''">
           <div class="findCard-header">
             <div
               v-if="requirement.cardCommonId"
@@ -100,8 +100,8 @@ module.exports = {
       updater: 0,
     };
   },
-  beforeUnmount(){
-    this.resetWaiting()
+  beforeUnmount() {
+    this.resetWaiting();
   },
   computed: {
     ...findCardHelpers.mapState(["selectedCardInfos", "waiting"]),
@@ -111,11 +111,10 @@ module.exports = {
       "requirementIsCancelable",
       "firstRequirementIsFindCard",
     ]),
-    ...requirementHelpers.mapState([
-      "currentRequirement",
-    ]),
+    ...requirementHelpers.mapState(["currentRequirement"]),
     cardsToSelect() {
       this.updater++;
+      console.log(this.selectedCardInfos);
       return this.requirement.submitOnEverySelect
         ? this.requirement.count
         : Math.max(this.requirement.count - this.selectedCardInfos.length, 0);
@@ -128,7 +127,7 @@ module.exports = {
     },
     findCardHeaderText() {
       let endText = "";
-      if(this.waiting) return "";
+      if (this.waiting) return "";
       const cardCommonId = this.requirement.cardCommonId;
       if (cardCommonId === Sabotage.CommonId) {
         endText = " to discard";
@@ -152,7 +151,7 @@ module.exports = {
     },
   },
   methods: {
-    ...findCardHelpers.mapActions(["selectCard", "done","resetWaiting"]),
+    ...findCardHelpers.mapActions(["selectCard", "done", "resetWaiting"]),
     ...requirementHelpers.mapActions(["cancelRequirement"]),
     getCardImageUrl(card) {
       return getCardImageUrl.byCommonId(card.commonId);
