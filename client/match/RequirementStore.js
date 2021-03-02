@@ -78,7 +78,9 @@ module.exports = function ({ rootStore, cardInfoRepository, matchController }) {
 
   function firstRequirementIsFindCard(state, getters) {
     return (
-      getters.firstRequirement && getters.firstRequirement.type === "findCard"
+      getters.firstRequirement &&
+      getters.firstRequirement.type === "findCard" &&
+      !getters.firstRequirement.waiting
     );
   }
 

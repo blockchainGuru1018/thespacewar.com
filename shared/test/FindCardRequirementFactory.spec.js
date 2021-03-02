@@ -97,7 +97,7 @@ test("can create a requirement for cardCommonId ", () => {
   });
 
   const result = findCardRequirementFactory.create();
-  expect(result).toEqual({
+  expect(result).toMatchObject({
     type: "findCard",
     cardGroups: expect.arrayContaining([
       {
