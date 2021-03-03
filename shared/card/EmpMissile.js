@@ -30,14 +30,14 @@ module.exports = class EmpMissile extends BaseCard {
       attackerDestroyed,
       defenderParalyzed,
       defenderDestroyed,
-    } = this.simulateAttackingCard(defenderCard);
+    } = this.simulateAttackingCard({ defenderCard });
 
     defenderCard.destroyed = defenderDestroyed;
     defenderCard.paralyzed = defenderParalyzed;
     this.destroyed = attackerDestroyed;
   }
 
-  simulateAttackingCard(defenderCard) {
+  simulateAttackingCard({ defenderCard }) {
     const defenderIsEnergyShield =
       defenderCard.commonId === EnergyShield.CommonId;
     return {

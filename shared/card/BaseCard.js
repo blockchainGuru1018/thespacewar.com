@@ -81,7 +81,7 @@ class BaseCard {
     if (this._card.usingCollision) {
       return this.attackBoost;
     } else {
-      return this._card.attack + this.attackBoost;
+      return (this._card.attack || 0) + this.attackBoost;
     }
   }
 

@@ -530,7 +530,7 @@ module.exports = {
           }),
         });
         this.otherCard = createCard(BaseCard, {
-          card: { type: "spaceShip", damage: 0 },
+          card: { type: "spaceShip", commonId: "32", damage: 0 },
         });
 
         this.card.attackCard({ defenderCard: this.otherCard });
@@ -596,7 +596,7 @@ module.exports = {
           }),
         });
         this.otherCard = createCard(BaseCard, {
-          card: { type: "defense", damage: 0 },
+          card: { type: "defense", commonId: "32", damage: 0 },
         });
 
         this.error = catchError(() =>

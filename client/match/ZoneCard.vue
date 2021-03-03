@@ -119,7 +119,7 @@
           Move
         </div>
         <div
-          v-if="canAttack && card.attack > 0"
+          v-if="canAttack"
           class="readyToAttack actionOverlay"
           @click.stop="readyToAttackClick"
         >

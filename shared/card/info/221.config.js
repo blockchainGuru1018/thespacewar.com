@@ -28,7 +28,7 @@ module.exports = {
                 ],
                 target: "homeZone",
                 filter: {
-                  type: "spaceShip",
+                  commonId: ["228"],
                 },
                 cancelable: false,
               },
