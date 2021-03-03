@@ -24,6 +24,7 @@ module.exports = function ({ matchController }) {
       firstRequirement && firstRequirement.type === "findCard";
     if (isFindCardRequirement) {
       state.waiting = state.currentRequirement === firstRequirement.id;
+      state.selectedCardInfos = []
       return firstRequirement;
     }
     state.currentRequirement = null;
