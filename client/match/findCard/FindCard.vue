@@ -114,10 +114,9 @@ module.exports = {
     ...requirementHelpers.mapState(["currentRequirement"]),
     cardsToSelect() {
       this.updater++;
-      console.log(this.selectedCardInfos);
       return this.requirement.submitOnEverySelect
         ? this.requirement.count
-        : Math.max(this.requirement.count - this.selectedCardInfos.length, 0);
+        : this.requirement.count - this.selectedCardInfos.length
     },
     cardsAvailableToSelect() {
       return this.filteredRequirement.cardGroups.reduce(
