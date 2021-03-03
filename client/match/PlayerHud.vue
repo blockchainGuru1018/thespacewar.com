@@ -553,7 +553,7 @@ export default {
 .startGameButtonContainer {
   position: absolute;
   top: 50%;
-  left: 0;
+  left: 40px;
   transform: translateY(-50%);
   z-index: 1;
   display: flex;
@@ -581,7 +581,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 46px;
+  height: 40px;
   font-size: 16px;
   font-family: Helvetica, sans-serif;
   font-weight: bold;
