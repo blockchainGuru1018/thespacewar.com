@@ -1546,7 +1546,11 @@ module.exports = {
   mounted() {
     this.validateBG();
     this.$store.dispatch("audio/background");
-
+    const isChrome = navigator.appVersion.indexOf("Chrome/") != -1;
+    if(isChrome){
+      document.documentElement.style
+      .setProperty('--justify-content-field-opponentStation','center');
+    }
     document.addEventListener("mousemove", this.mousemove);
 
     this.$refs.match.addEventListener("click", (event) => {

@@ -11,31 +11,8 @@
   --top-spacing: 0px;
   --player-zone-row-width: 60%;
   --player-station-row-width: 20%;
+  --justify-content-field-opponentStation: flex-end;
   }
-
-
-// From Jim to David, on the 2021-03-03:
-// These values will solve the bug with enemy station cards not visible in Chrome
-// Looks good on my screen: 1920 x 1080 16:9  both Chrome + Firefox
-// But need proper testing first. Please test it in your localhost first.
-// Also check and maybe modify the javascript in /server/client-dist/index.html
-// And the scripts in /client/match/Match.vue which modifies several of these dynamically
-// If all good then compile and commit.
-
-// :root {
-//  --card-width: 652px; ---> 619px;
-//  --card-height: 916px; ---> 870px;
-//  --player-cards-on-hand-offset: 0px;
-//  --z-position: -20px; -----------> -40px;
-//  --z-position-adjust: 4; -------> 1;
-//  --x-rotate-adjust: 15deg; ------> 18deg;
-//  --mobileOnPortrait:0;
-//  --gui-height-adjust: 44%; ----------> 48%;
-//  --space-between-GUI-n-draw-pile: 52px; -------> 40px;
-//  --top-spacing: 0px;
-//  --player-zone-row-width: 60%; --------> 50%;
-//  --player-station-row-width: 20%; --------> 18%;
-// }
 
 
 // 1920 x 1080 -> 19:6
