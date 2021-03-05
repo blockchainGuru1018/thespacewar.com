@@ -140,7 +140,13 @@
           Sacrifice
         </div>
         <div
-          v-if="(canAttack || !card.attack) && canCollide"
+          v-if="
+            (canAttack ||
+              (!card.attack &&
+              phase == 'attack' &&
+              card.type == 'spaceShip')) &&
+              canCollide
+          "
           class="sacrifice actionOverlay"
           @click="readyToAttackWithCollision()"
         >
@@ -187,7 +193,7 @@
             ⇒
             {{
               behaviourCard.defense -
-                predictedResultsIfTargetForSacrifice.damage
+              predictedResultsIfTargetForSacrifice.damage
             }}
           </div>
         </template>
@@ -453,6 +459,7 @@ module.exports = {
       return this.checkIfCanBeSelectedForAction(options);
     },
     predictedResultsIfAttacked() {
+      console.log(this.behaviourCard);
       this.forceUpdateAttackBoost;
       if (this.canSelectShieldCardsForRequirement) {
         return this.createCard({
@@ -693,6 +700,7 @@ module.exports = {
 .selectForRepair-reActivate {
   font-size: 1em;
 }
+
 .willBeDestroyed {
   opacity: 1;
   visibility: visible;
@@ -733,10 +741,12 @@ module.exports = {
     visibility: visible;
   }
 }
+
 .possibleTargetBorder {
   border: 2px solid #2ee62e;
   border-radius: 7px;
 }
+
 @keyframes fullOpacityOnIntentionalHover {
   0% {
     opacity: 0;

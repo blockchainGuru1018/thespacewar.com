@@ -224,6 +224,7 @@ function AttackController(deps) {
       attackerCardData,
       playerId
     );
+    attackerCard._card.usingCollision = usingCollision;
     if ("canFakeAttack" in attackerCard) {
       if (!attackerCard.canFakeAttack() && !attackerCard.canAttack())
         throw new CheatError("Cannot attack");

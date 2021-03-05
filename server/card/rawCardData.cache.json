@@ -644,7 +644,7 @@
                 "name": "Drone Leader",
                 "price": "4",
                 "type_card": "blue",
-                "detail": "Attack value of X is equal to the number of Drone cards you have in play.",
+                "detail": "Attack value of X is equal to the number of Drone cards you have in play.\r\nFast (can move the first turn).",
                 "defense": "5",
                 "attack": "X",
                 "number_copies": "3",
@@ -1039,5 +1039,5 @@
             }
         ]
     },
-    "saveTime": 1614526725168
+    "saveTime": 1614815462395
 }

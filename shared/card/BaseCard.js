@@ -236,6 +236,7 @@ class BaseCard {
   canTargetStationCardsForSacrifice() {
     return false;
   }
+
   opponentHaveShield() {
     return (
       this._opponentStateService.getMatchingBehaviourCards((c) =>
@@ -243,6 +244,7 @@ class BaseCard {
       ).length > 0
     );
   }
+
   canBeUsed() {
     return this._canThePlayer.useThisCard(this);
   }
@@ -276,7 +278,6 @@ class BaseCard {
     if (!otherCard.canBeTargeted()) return false;
     if (otherCard.type === "duration") return false;
     if (otherCard.playerId === this.playerId) return false;
-
     return (
       this.canAttackCardsInOtherZone() ||
       this._matchService.cardsAreInSameZone(this, otherCard)

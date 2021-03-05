@@ -1287,8 +1287,10 @@ module.exports = function (deps) {
     state.attackerCardId = card.id;
   }
 
-  function selectAsAttackerWithCollision({ state, commit }, card) {
+  function selectAsAttackerWithCollision({ state, getters, commit }, card) {
     state.attackerCardId = card.id;
+    const attackerCard = getters.attackerCard;
+    attackerCard._card.usingCollision = true;
     commit("updateUsingCollision", true);
   }
 
