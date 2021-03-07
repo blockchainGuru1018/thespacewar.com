@@ -85,6 +85,10 @@ class BaseCard {
     }
   }
 
+  get baseCostIsDinamyc() {
+    return false;
+  }
+
   get attackBoost() {
     if (
       this._cardEffect.attackBoostForCollision(this._card.usingCollision) > 0
