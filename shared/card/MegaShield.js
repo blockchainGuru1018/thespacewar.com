@@ -7,7 +7,7 @@ class MegaShield extends StopsStationAttack(BaseCard) {
   }
 
   get selfRepairAtDrawPhase() {
-    return 3;
+    return 2;
   }
 
   repairSelf() {
