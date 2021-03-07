@@ -9,8 +9,8 @@
 // These values works perfect for smaller resolutions such as 1600x900
 // Station cards of enemy does not disappear in Chrome
 :root {
- --card-width: 619px;
- --card-height: 870px;
+ --card-width: 538px;
+ --card-height: 750px;
  --z-position: -40px;
  --z-position-adjust: 1;
  --x-rotate-adjust: 18deg;
@@ -20,11 +20,18 @@
  --player-station-row-width: 18%;
 }
 
+@media (min-width: 1390px) {
+  :root {
+    --card-width: 624px;
+    --card-height: 870px;
+    }
+}
+
 // Works perfect for bigger resolutions such as 1680x1050, 1920x1080 etc
 @media (min-width: 1610px) {
   :root {
     --card-width: 652px;
-    --card-height: 916px;
+    --card-height: 910px;
     --z-position: 0px;
     --z-position-adjust: 4;
     --x-rotate-adjust: 15deg;
