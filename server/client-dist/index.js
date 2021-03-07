@@ -633,7 +633,7 @@ eval("\n\nconst info = __webpack_require__(/*! ./info/31.config.js */ \"../share
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nconst BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nconst StopsStationAttack = __webpack_require__(/*! ./mixins/StopsStationAttack.js */ \"../shared/card/mixins/StopsStationAttack.js\");\n\nclass MegaShield extends StopsStationAttack(BaseCard) {\n  constructor(deps) {\n    super(deps);\n  }\n\n  get selfRepairAtDrawPhase() {\n    return 3;\n  }\n\n  repairSelf() {\n    this.damage = Math.max(0, this.damage - this.selfRepairAtDrawPhase);\n  }\n\n  static get CommonId() {\n    return \"204\";\n  }\n\n}\n\nmodule.exports = MegaShield;\n\n//# sourceURL=webpack:///../shared/card/MegaShield.js?");
+eval("\n\nconst BaseCard = __webpack_require__(/*! ./BaseCard.js */ \"../shared/card/BaseCard.js\");\n\nconst StopsStationAttack = __webpack_require__(/*! ./mixins/StopsStationAttack.js */ \"../shared/card/mixins/StopsStationAttack.js\");\n\nclass MegaShield extends StopsStationAttack(BaseCard) {\n  constructor(deps) {\n    super(deps);\n  }\n\n  get selfRepairAtDrawPhase() {\n    return 2;\n  }\n\n  repairSelf() {\n    this.damage = Math.max(0, this.damage - this.selfRepairAtDrawPhase);\n  }\n\n  static get CommonId() {\n    return \"204\";\n  }\n\n}\n\nmodule.exports = MegaShield;\n\n//# sourceURL=webpack:///../shared/card/MegaShield.js?");
 
 /***/ }),
 
