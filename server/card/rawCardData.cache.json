@@ -682,7 +682,7 @@
                 "name": "Mega Shield",
                 "price": "4",
                 "type_card": "green",
-                "detail": "Protects base station. Repair itself 3 damage each draw phase.",
+                "detail": "Protects base station. Repair itself 2 damage each draw phase.",
                 "defense": "6",
                 "attack": "0",
                 "number_copies": "1",
@@ -1028,7 +1028,7 @@
             {
                 "id": "282",
                 "name": "Return",
-                "price": "2",
+                "price": "0",
                 "type_card": "orange",
                 "detail": "Select a damaged station card (flipped) or a card in play that cost 3 or less.\r\nThat card goes back to the owners hand.",
                 "defense": "0",
@@ -1039,5 +1039,5 @@
             }
         ]
     },
-    "saveTime": 1614815462395
+    "saveTime": 1615121490245
 }
