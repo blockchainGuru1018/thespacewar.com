@@ -87,11 +87,11 @@ describe("Fatal Error:", () => {
     test("should have card in zone", () => {
       assert.elementCount(
         ".field-playerZoneCards .card:not(.card-placeholder)",
-        2
+        1
       );
     });
     test("should NOT have card in hand", () => {
-      assert.elementCount(".playerCardsOnHand .cardOnHand", 0);
+      assert.elementCount(".playerCardsOnHand .cardOnHand", 1);
     });
     test("should NOT have discarded card", () => {
       assert.elementCount(".field-discardPile .card-faceDown", 0);
@@ -173,11 +173,11 @@ describe("Fatal Error:", () => {
     test("should have card in zone", () => {
       assert.elementCount(
         ".field-playerZoneCards .card:not(.card-placeholder)",
-        1
+        0
       );
     });
     test("should NOT have card among station cards", () => {
-      assert.elementCount(".field-player .stationCard", 1);
+      assert.elementCount(".field-player .stationCard", 2);
     });
     test("should NOT have discarded card", () => {
       assert.elementCount(".field-discardPile .card-faceDown", 0);
