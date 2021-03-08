@@ -54,9 +54,7 @@ module.exports = class RepairShip extends BaseCard {
   simulateRepairingCard(otherCard) {
     return {
       paralyzed: false,
-      damage: otherCard.paralyzed
-        ? otherCard.damage
-        : Math.max(0, otherCard.damage - this._repairCapability),
+      damage: Math.max(0, otherCard.damage - this._repairCapability),
     };
   }
 
