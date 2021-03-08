@@ -8,7 +8,7 @@ module.exports = class FatalErrorDestroyCardAction {
   }
 
   get showTransientCardInHomeZone() {
-    return true;
+    return false;
   }
 
   get name() {
