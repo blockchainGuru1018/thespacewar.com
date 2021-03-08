@@ -3,7 +3,7 @@
     <h2>Home zone</h2>
     <p id="infoMode-opponentCardsInHomeZone">
       Cards can only attack cards in the same zone. For your opponent to attack
-      your station cards, they must move their cards to the upper side of your
+      your station cards, they must first move their cards to your
       home zone.
     </p>
   </div>

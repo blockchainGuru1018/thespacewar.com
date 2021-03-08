@@ -1,7 +1,7 @@
 <template>
   <div class="infoMode-step">
     <h2 id="startTutorialText">
-      Start Tutorial
+      Start Tutorial Here
     </h2>
   </div>
 </template>

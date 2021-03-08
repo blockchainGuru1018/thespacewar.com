@@ -10,13 +10,13 @@
       cannot move and can only attack cards in your home zone.
     </p>
     <p>
-      <span class="spaceShip">Space ships</span>
+      <span class="spaceShip">Spaceships</span>
       can move and attack.
     </p>
     <p>
       <span class="duration">Duration cards</span>
       can not be attacked but costs their price in action points every turn.
-      They can be discarded at the end of your draw phase.
+      They can be discarded at the beginning of your action phase.
     </p>
   </div>
 </template>

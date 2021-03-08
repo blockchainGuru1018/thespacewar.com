@@ -3,7 +3,7 @@
     <h2>There is actually a fifth card type...</h2>
     <p>
       <span class="event">Event cards</span>
-      are never played in your home zone, but are instead activated. Their
+      are never played in your home zone, but make something happen one time. Their
       abilities vary a lot and if they cost 0 action points they can be played
       at any time, even outside your action phase, even during your opponents
       turn!

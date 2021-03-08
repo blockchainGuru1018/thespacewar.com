@@ -2,7 +2,7 @@
   <div class="infoMode-step">
     <h2>Card types</h2>
     <p>
-      Every card is one of four types: Missile, Defense, Space ship or Duration.
+      Every card is one of four types: Missile, Defense, Spaceship or Duration.
     </p>
     <p>
       Each type have certain rules, unless the card's description says
