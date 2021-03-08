@@ -386,7 +386,6 @@ $opponent_color_height: -1px 1px 1px rgba(13,	59,	81, 1),
   justify-content: center;
   position: relative;
   top: -.1em;
-
   line-height: 100%;
   font-size: 27px;
   color: white;
@@ -402,6 +401,14 @@ $opponent_color_height: -1px 1px 1px rgba(13,	59,	81, 1),
      pointer-events: initial;
    }
 }
+
+
+// Phones in landscape mode, by Jim 2021-03-08
+@media (max-height: 500px) and (orientation: landscape) {
+  .playerActionPoints, .guideText {font-size: 23px;}
+  .guideText-subText {font-size: 17px;}
+}
+
 
 .guideText-waitingForOtherPlayer {
   font-size: 20px;

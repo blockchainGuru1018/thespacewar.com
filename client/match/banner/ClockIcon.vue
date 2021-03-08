@@ -40,4 +40,14 @@ module.exports = {
 .clockIcon--opponent {
   fill: $opponentColor;
 }
+
+// Phones in landscape mode, by Jim 2021-03-08
+@media (max-height: 500px) and (orientation: landscape) {
+  .clockIcon {
+    width: 12px;
+    height: 12px;
+    bottom: 0px;
+  }
+}
+
 </style>
