@@ -1321,9 +1321,7 @@ module.exports = {
         rect1.top > 0 &&
         rect1.left >= 0 &&
         rect1.right <=
-          (window.innerWidth || document.documentElement.clientWidth) &&
-        rect1.bottom <=
-          (window.innerHeight || document.documentElement.clientHeight)
+          (window.innerWidth || document.documentElement.clientWidth)
       );
     },
     zoomOut() {
