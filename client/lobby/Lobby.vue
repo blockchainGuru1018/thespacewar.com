@@ -202,6 +202,10 @@ module.exports = {
   min-height: 740px;
 }
 
+@media (max-height: 800px) {
+  .lobby { top 0px; }
+}
+
 .users-container {
   background: url(https://images.thespacewar.com/metal-corner.png) right bottom
       no-repeat,
