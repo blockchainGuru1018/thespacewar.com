@@ -553,7 +553,7 @@ export default {
 .startGameButtonContainer {
   position: absolute;
   top: 50%;
-  left: 40px;
+  left: 0;
   transform: translateY(-50%);
   z-index: 1;
   display: flex;
@@ -565,6 +565,7 @@ export default {
 
 .nextPhaseButtonContainer {
   min-width: 15%;
+  left: 40px;
 }
 
 .nextPhaseButton-onTheLeft {
