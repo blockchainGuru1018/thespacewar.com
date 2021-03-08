@@ -203,7 +203,9 @@ module.exports = {
 }
 
 @media (max-height: 800px) {
-  .lobby { top 0px; }
+  .lobby {
+    top: 0px;
+  }
 }
 
 .users-container {

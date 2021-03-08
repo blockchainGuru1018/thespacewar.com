@@ -55,6 +55,8 @@ function PlayerRequirementService({
       return addCounterCardRequirement(requirement);
     } else if (type === "counterAttack") {
       return addCounterAttackRequirement(requirement);
+    } else if (type === "damageStarShip") {
+      throw Error("IMPLEMENT ME PLEASE");
     }
   }
 
