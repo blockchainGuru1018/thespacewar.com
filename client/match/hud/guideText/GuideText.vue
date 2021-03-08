@@ -36,7 +36,7 @@
       <SkipDrawCard v-if="shouldShowSkipDrawCard" />
       <div
         v-if="firstRequirement.cancelable"
-        class="float-right-button guideText-subText"
+        class="cancel-button guideText-subText"
       >
         <button class="darkButton" @click="cancelClick">
           Cancel
@@ -554,15 +554,7 @@ function pluralize(word, count) {
   animation: flickerAnimation 1s infinite;
 }
 
-.float-right-button {
-  position: absolute;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-  z-index: 1;
-  width: 15%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.cancel-button {
+  margin-left: 50px;
 }
 </style>
