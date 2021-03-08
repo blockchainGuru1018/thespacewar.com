@@ -33,6 +33,9 @@ module.exports = class FatalError extends BaseCard {
       })
     );
   }
+  get baseCostIsDinamyc() {
+    return true;
+  }
 
   get baseCost() {
     const costForCounter = this._queryEvents.costOfFatalErrorUsed(this.id);

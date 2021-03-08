@@ -78,7 +78,7 @@ module.exports = class TurnControl {
       .map((cardData) =>
         this._playerStateService.createBehaviourCardById(cardData.id)
       )
-      .filter((card) => card.costToPlay === 0);
+      .filter((card) => !card.baseCostIsDinamyc && card.costToPlay === 0);
   }
 
   _hasAvoidInPlay() {
