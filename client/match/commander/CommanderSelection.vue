@@ -153,4 +153,15 @@ button.commanderSelection-hide {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+
+// Phones in landscape mode, by Jim 2021-03-09
+@media (max-height: 500px) and (orientation: landscape) {
+  .commanderSelection-header {font-size:30px;}
+}
+
+
+
+
+
 </style>

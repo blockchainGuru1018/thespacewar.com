@@ -225,6 +225,8 @@ $holdingCardZIndex: 4;
    .matchHeader-banner {height:24px;}
    .matchHeader-bannerName {font-size:15px;}
    .matchHeader-bannerBarsWrapper {display:none;}
+  $commanderCardWidth: calc(#{$cardWidth} / 5);
+  $commanderCardHeight: calc(#{$cardHeight} / 5);
 }
 
 

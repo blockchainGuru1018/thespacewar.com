@@ -12,18 +12,15 @@
         @click="selectPlayerToStart(player.id)"
       >
         You
+        <span class="cardChoiceDialog-choiceSubText">
+          Opponent start with +1 card on hand and +1 station card
+        </span>
       </button>
       <button
         class="cardChoiceDialog-choice"
         @click="selectPlayerToStart(opponent.id)"
       >
         {{ opponent.name }}
-        <span class="cardChoiceDialog-choiceSubText">
-          You start with +1 card on hand
-        </span>
-        <span class="cardChoiceDialog-choiceSubText">
-          and +1 station card
-        </span>
       </button>
     </div>
   </div>
