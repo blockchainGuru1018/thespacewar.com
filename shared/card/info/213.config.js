@@ -5,10 +5,9 @@ module.exports = {
     forOpponent: [],
     forPlayer: [
       {
-        type: "findCard",
+        type: "damageStarShip",
         count: 1,
-        sources: ["discardPile"],
-        target: "hand",
+        damage: 3,
       },
     ],
   },

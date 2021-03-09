@@ -246,6 +246,7 @@ export default {
       "firstRequirement",
       "firstRequirementIsDiscardCard",
       "firstRequirementIsDamageStationCard",
+      "firstRequirementIsSelectStarshipForDamage",
       "firstRequirementIsDamageShieldCard",
       "firstRequirementIsSelectForSacrifice",
       "firstRequirementIsDrawCard",
@@ -368,6 +369,11 @@ export default {
           "card",
           this.cardsLeftToSelect
         )} to sacrifice`;
+      } else if (
+        this.firstRequirementIsSelectStarshipForDamage &&
+        this.cardsLeftToSelect > 0
+      ) {
+        return "TESTTING";
       } else if (this.firstRequirementIsDrawCard) {
         return this.drawCardOrMillText;
       } else if (this.repairerCommanderSelected) {
