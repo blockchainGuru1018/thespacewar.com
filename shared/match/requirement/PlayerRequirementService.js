@@ -7,11 +7,6 @@ const findMatchingRequirement = require("./findMatchingRequirements.js");
 function PlayerRequirementService({
   playerStateService,
   opponentStateService,
-
-  //TODO REMOVE THESE
-  playerCommanders,
-  moreCardsCanBeDrawnForDrawPhase,
-
   queryPlayerRequirements,
 }) {
   return {
@@ -56,7 +51,7 @@ function PlayerRequirementService({
     } else if (type === "counterAttack") {
       return addCounterAttackRequirement(requirement);
     } else if (type === "damageStarShip") {
-      throw Error("IMPLEMENT ME PLEASE");
+      return addDamageStartshipRequirement(requirement);
     }
   }
 
@@ -206,7 +201,16 @@ function PlayerRequirementService({
 
     return null;
   }
+  function addDamageStartshipRequirement({ count, ...uncheckedProperties }) {
+    const requirement = {
+      ...uncheckedProperties,
+      type: "damageStarShip",
+      count: count,
+    };
+    addRequirement(requirement);
 
+    return requirement;
+  }
   function addFindCardRequirement({
     count,
     cardGroups,
