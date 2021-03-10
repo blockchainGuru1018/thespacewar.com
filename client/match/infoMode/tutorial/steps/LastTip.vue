@@ -8,6 +8,9 @@
       For more information either see <a href="https://thespacewar.com/videos">our videos</a> or our page <a href="https://thespacewar.com/rules">How to Play / Rules</a>. 
     </p>
     <p>
+      If the game breaks, hangs or look strange click the cog wheel and the button Reload Page. No data will be lost and the problem will probably be solved.
+    </p>
+    <p>
       Click anywhere to start to play. Good luck! 
     </p>
   </div>

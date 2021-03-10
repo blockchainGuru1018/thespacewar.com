@@ -1520,7 +1520,11 @@ module.exports = {
     calculateStationCardSizenPosition(){
       const stationRows = document.querySelectorAll('.playerStationCards > .flattenComponent');
       for(const row of stationRows){
-        if(!this.isStationRowFullyVisible(row)){
+        // screen.width < 600 should only be phones in portrait mode
+        // We don't want to run this then and collapse the station cards 
+        // and break the game before the user had any change
+        // to turn the phone to landscape mode
+        if(!this.isStationRowFullyVisible(row) && screen.width > 600){
           const root = document.documentElement;
           const rowWidth = Number(
             getComputedStyle(root)

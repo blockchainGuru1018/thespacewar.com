@@ -5,7 +5,7 @@
       title="If something appears to be wrong, this might fix it. No data will be lost when you reload the page!"
       @click="hideAnd(reloadPage)"
     >
-      Reload page
+      Solve Problems (saves and reloads page)
     </button>
     <button class="escapeMenu-option">
       Sound:

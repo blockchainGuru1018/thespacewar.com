@@ -14,7 +14,7 @@
         <div class="list-opponents">
           <div class="users-header">
             <div class="users-headerTitle">
-              Select opponent
+              Select opponent:
             </div>
           </div>
           <div class="users-wrapper">

@@ -144,4 +144,25 @@ export default {
 .infoMode-spacer--tiny {
   height: 50px;
 }
+
+// Phones in landscape mode, by Jim 2021-03-10
+@media (max-height: 700px) and (orientation: landscape) {
+  .infoMode {
+    top: 0;
+    max-width: 50%;
+  }
+  .infoMode-step > h2 {
+    font-size:21px;
+  }
+  .infoMode-step > p {
+    font-size:14px;
+  }
+  .infoMode-spacer--tiny {
+    height:5px;
+  }
+  .infoMode-spacer--small {
+    height:10px;
+  }
+}
+
 </style>

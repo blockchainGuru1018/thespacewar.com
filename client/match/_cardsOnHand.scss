@@ -107,3 +107,15 @@
     }
   }
 }
+
+// Phones in landscape mode, by Jim 2021-03-10
+// Must be a better way to do this and set max-height 50px less than screen height
+@media (max-height: 700px) {.cardHoverBlowUp {max-height: 650px;} }
+@media (max-height: 650px) {.cardHoverBlowUp {max-height: 600px;} }
+@media (max-height: 600px) {.cardHoverBlowUp {max-height: 550px;} }
+@media (max-height: 550px) {.cardHoverBlowUp {max-height: 500px;} }
+@media (max-height: 500px) {.cardHoverBlowUp {max-height: 450px;} }
+@media (max-height: 450px) {.cardHoverBlowUp {max-height: 400px;} }
+@media (max-height: 400px) {.cardHoverBlowUp {max-height: 350px;} }
+@media (max-height: 350px) {.cardHoverBlowUp {max-height: 300px;} }
+@media (max-height: 300px) {.cardHoverBlowUp {max-height: 250px;} }
