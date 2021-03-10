@@ -84,3 +84,12 @@ $endOpacity: .6;
     border-color: rgba(255, 255, 255, $endOpacity);
   }
 }
+
+
+// Phones in landscape mode, by Jim 2021-03-10
+@media (max-height: 700px) and (orientation: landscape) {
+  .stationCardLabelText {
+    left: 20px;
+    font-size: 18px;
+  }
+}
