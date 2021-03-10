@@ -42,7 +42,7 @@ module.exports = {
 }
 
 // Phones in landscape mode, by Jim 2021-03-08
-@media (max-height: 500px) and (orientation: landscape) {
+@media (max-height: 700px) and (orientation: landscape) {
   .clockIcon {
     width: 12px;
     height: 12px;

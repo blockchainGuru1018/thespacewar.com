@@ -216,7 +216,7 @@ $holdingCardZIndex: 4;
 
 
 // Phones in landscape mode, by Jim 2021-03-08
-@media (max-height: 500px) and (orientation: landscape) {
+@media (max-height: 700px) and (orientation: landscape) {
   :root {
    --z-position: -75px !important;
    --player-zone-row-width: 61%;

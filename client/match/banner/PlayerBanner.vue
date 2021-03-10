@@ -331,7 +331,7 @@ function range(count) {
 }
 
 // Phones in landscape mode, by Jim 2021-03-08
-@media (max-height: 500px) and (orientation: landscape) {
+@media (max-height: 700px) and (orientation: landscape) {
   .matchHeader-bannerClockText {min-width: 50px;}
 }
 

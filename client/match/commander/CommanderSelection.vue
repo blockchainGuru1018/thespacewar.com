@@ -156,7 +156,7 @@ button.commanderSelection-hide {
 
 
 // Phones in landscape mode, by Jim 2021-03-09
-@media (max-height: 500px) and (orientation: landscape) {
+@media (max-height: 700px) and (orientation: landscape) {
   .commanderSelection-header {font-size:30px;}
 }
 

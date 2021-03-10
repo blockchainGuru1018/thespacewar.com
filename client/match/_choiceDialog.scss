@@ -85,7 +85,7 @@
 
 
 // Phones in landscape mode, by Jim 2021-03-09
-@media (max-height: 500px) and (orientation: landscape) {
+@media (max-height: 700px) and (orientation: landscape) {
   .cardChoiceDialog {padding:0;}
   .chardChoiceDialog-header {font-size: 20px;padding:20px 0 0 0;}
   .cardChoiceDialog-choice {font-size: 15px;}
