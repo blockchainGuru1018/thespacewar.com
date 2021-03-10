@@ -218,9 +218,13 @@ $holdingCardZIndex: 4;
 // Phones in landscape mode, by Jim 2021-03-08
 @media (max-height: 700px) and (orientation: landscape) {
   :root {
-   --z-position: -75px !important;
+   --card-width: 466px;
+   --card-height: 650px;
+   --z-position: -9px !important;
+   --x-rotate-adjust: 16deg !important;
    --player-zone-row-width: 61%;
-   --space-between-GUI-n-draw-pile: 0px;
+   --space-between-GUI-n-draw-pile: -10px !important;
+   --z-position-adjust: -2;
    }
    .matchHeader-banner {height:24px;}
    .matchHeader-bannerName {font-size:15px;}
