@@ -222,9 +222,10 @@ $holdingCardZIndex: 4;
    --card-height: 650px;
    --z-position: -9px !important;
    --x-rotate-adjust: 16deg !important;
-   --player-zone-row-width: 61%;
+   --player-zone-row-width: 50%;
    --space-between-GUI-n-draw-pile: -10px !important;
-   --z-position-adjust: -2;
+   --z-position-adjust: 0;
+   --player-cards-on-hand-offset: 27px;
    }
    .matchHeader-banner {height:24px;}
    .matchHeader-bannerName {font-size:15px;}
