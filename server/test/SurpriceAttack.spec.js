@@ -51,7 +51,7 @@ describe("Playing SurpriseAttack", () => {
       cardId: "C3A",
     });
   });
-  it("Should have 'damageStarShip' requirement", () => {
+  test("Should have 'damageStarShip' requirement", () => {
     _firstPlayerAsserter.hasRequirement({
       cardCommonId: "213",
       common: false,
@@ -62,7 +62,10 @@ describe("Playing SurpriseAttack", () => {
     });
   });
 
-  test("Selecting enemy spaceShip should do 3 damage", () => {});
+  test("Selecting enemy spaceShip should do 3 damage", () => {
+    // _match.damageStarship("P1A", { cardId: "C2A" });
+    // _secondPlayerAsserter.hasCardWithDamageAtHomeZone("C2A", 3);
+  });
 });
 
 function stationCard(id = "some_id", place = "action") {

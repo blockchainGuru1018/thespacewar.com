@@ -34,6 +34,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "../client/match/_colors.scss";
 .modal-backdrop {
   position: fixed;
   top: 0;

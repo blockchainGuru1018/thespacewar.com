@@ -23,6 +23,7 @@ function AttackController(deps) {
     onDamageStationCard,
     onDamageShieldCard,
     onSacrifice,
+    damageStarship,
   };
 
   function onAttack(
@@ -388,6 +389,22 @@ function AttackController(deps) {
     }
   }
 
+  function damageStarship(playerId, { cardId }) {
+    const opponentId = matchService.getOpponentId(playerId);
+    const opponentStateService = playerServiceProvider.getStateServiceById(
+      opponentId
+    );
+    const attackerCardData = opponentStateService.findCard(cardId);
+    const targetCard = cardFactory.createCardForPlayer(
+      attackerCardData,
+      opponentId
+    );
+
+    if (!targetCard) {
+      throw Error("Invalid targe");
+    }
+    console.log(opponentStateService.getState());
+  }
   function isValidStationCollisionFromSacrifice({
     playerId,
     cardId,

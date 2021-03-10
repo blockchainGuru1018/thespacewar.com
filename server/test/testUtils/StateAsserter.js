@@ -14,6 +14,7 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
     refuteHasDiscardedCard,
     hasCardInZone,
     hasParalyzedCardAtHomeZone,
+    hasCardWithDamageAtHomeZone,
     refuteHasCardInZone,
     countMatchingAttacks,
     hasRequirement,
@@ -158,7 +159,26 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
       }
     );
   }
-
+  function hasCardWithDamageAtHomeZone(cardId, damage) {
+    assertArrayOnStateHasSome(
+      "cardsInZone",
+      (card) => {
+        return card.id === cardId && card.damage.damage === damage;
+      },
+      () => {
+        return `There is NO  card with ID "${cardId}" having "${damage}" damage`;
+      }
+    );
+    // assertArrayOnStateHasSome(
+    //   "cardsInOpponentZone",
+    //   (card) => {
+    //     return card.id === cardId && card.damage.damage === damage;
+    //   },
+    //   () => {
+    //     return `There is NO  card with ID "${cardId}" having "${damage}" damage`;
+    //   }
+    // );
+  }
   function hasRequirement(requirement) {
     refute.calledWith(
       playerConnection.stateChanged,
