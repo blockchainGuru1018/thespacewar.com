@@ -764,7 +764,7 @@
             {
                 "id": "213",
                 "name": "Surprise Attack",
-                "price": "1",
+                "price": "0",
                 "type_card": "orange",
                 "detail": "3 damage to a single spaceship.",
                 "defense": "0",
@@ -1039,5 +1039,5 @@
             }
         ]
     },
-    "saveTime": 1615121490245
+    "saveTime": 1615417107566
 }

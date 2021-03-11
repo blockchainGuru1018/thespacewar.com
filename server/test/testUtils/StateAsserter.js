@@ -163,7 +163,7 @@ function StateAsserter(gameMatch, playerConnection, playerId) {
     assertArrayOnStateHasSome(
       "cardsInZone",
       (card) => {
-        return card.id === cardId && card.damage.damage === damage;
+        return card.id === cardId && card.damage === damage;
       },
       () => {
         return `There is NO  card with ID "${cardId}" having "${damage}" damage`;

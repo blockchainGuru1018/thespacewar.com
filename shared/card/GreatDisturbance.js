@@ -5,6 +5,10 @@ class GreatDisturbance extends BaseCard {
     super(deps);
   }
 
+  //TODO: should also find diferrent cards with same effect
+  // canTriggerDormantEffect() {
+  //   return this.isTheLatestPlayedCardOfSameKind();
+  // }
   static get CommonId() {
     return "211";
   }

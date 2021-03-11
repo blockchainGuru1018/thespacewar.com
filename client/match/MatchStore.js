@@ -1305,6 +1305,12 @@ module.exports = function (deps) {
       attackerCardId = rootStore.getters["requirement/firstRequirement"].cardId;
       dispatch("damageShieldCards", [defenderCardId]);
     }
+    if (fromRequirement === "damageStarShip") {
+      matchController.emit("damageStarship", {
+        cardId: defenderCardId,
+      });
+      return;
+    }
     matchController.emit("attack", {
       attackerCardId,
       defenderCardId,

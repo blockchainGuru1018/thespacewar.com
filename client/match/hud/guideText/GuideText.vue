@@ -373,7 +373,7 @@ export default {
         this.firstRequirementIsSelectStarshipForDamage &&
         this.cardsLeftToSelect > 0
       ) {
-        return "TESTTING";
+        return "Select 1 starship card to do 3 damage";
       } else if (this.firstRequirementIsDrawCard) {
         return this.drawCardOrMillText;
       } else if (this.repairerCommanderSelected) {

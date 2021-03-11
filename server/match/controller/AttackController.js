@@ -403,7 +403,22 @@ function AttackController(deps) {
     if (!targetCard) {
       throw Error("Invalid targe");
     }
-    console.log(opponentStateService.getState());
+    targetCard.damage += 3;
+    if (targetCard.currentHealth <= 0) {
+      const cardData = opponentStateService.removeCard(cardId);
+      opponentStateService.discardCard(cardData);
+    } else {
+      opponentStateService.updateCardById(cardId, (card) => {
+        Object.assign(card, targetCard.getCardData());
+      });
+    }
+
+    const requirementUpdater = playerRequirementUpdaterFactory.create(
+      playerId,
+      { type: "damageStarShip" }
+    );
+    requirementUpdater.progressRequirementByCount(1);
+    //TODO: finalizar el requirement
   }
   function isValidStationCollisionFromSacrifice({
     playerId,

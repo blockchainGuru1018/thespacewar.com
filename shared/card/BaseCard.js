@@ -100,7 +100,9 @@ class BaseCard {
       return this.attackBoostForCardType + this.attackBoostFromCommander;
     }
   }
-
+  get currentHealth() {
+    return this.defense - this.damage;
+  }
   get attackBoostForCardType() {
     return this._cardEffect.attackBoostForCardType(this.type);
   }

@@ -63,8 +63,8 @@ describe("Playing SurpriseAttack", () => {
   });
 
   test("Selecting enemy spaceShip should do 3 damage", () => {
-    // _match.damageStarship("P1A", { cardId: "C2A" });
-    // _secondPlayerAsserter.hasCardWithDamageAtHomeZone("C2A", 3);
+    _match.damageStarship("P1A", { cardId: "C2A" });
+    _secondPlayerAsserter.hasCardWithDamageAtHomeZone("C2A", 3);
   });
 });
 

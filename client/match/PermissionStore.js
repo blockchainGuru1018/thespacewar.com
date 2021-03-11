@@ -25,6 +25,7 @@ module.exports = function (deps) {
       canSelectCardsForActiveAction,
       canPutDownStationCardInHomeZone,
       canSelectForSacrificeRequirement,
+      canSelectCardForDamageStarshipRequirement,
       canIssueOverwork: canIssueOverworkGetter,
       canDrawCards,
       shouldShowWindowedOverlayByDrawCard,
@@ -209,18 +210,42 @@ module.exports = function (deps) {
 
     return selectForSacrificeRequirement && cardsLeftToSelect > 0;
   }
+  function canSelectCardForDamageStarshipRequirement(state, getters) {
+    if (getters.waitingForOtherPlayerToFinishRequirements) return false;
+    const selectCardForDamageStarship = getFrom(
+      "firstRequirementIsSelectStarshipForDamage",
+      "requirement"
+    );
+    const cardsLeftToSelect = getFrom("cardsLeftToSelect", "requirement");
 
-  function shouldShowWindowedOverlayByDrawCard(state, getters, rootState, rootGetters) {
-    const pickCardOverlayForDroneCard = 
-      (JSON.parse(localStorage.getItem('pickCardOverlayForAll')) || {})
-      .value === 'true';
-    if(pickCardOverlayForDroneCard){
-      const requirementIsCancelable = getFrom("requirementIsCancelable", "requirement");
-      const firstRequirementIsDrawCard = getFrom("firstRequirementIsDrawCard", "requirement");
-      return rootGetters["match/playerRuleService"].canDrawCards() &&
-      requirementIsCancelable && firstRequirementIsDrawCard
-    }else{
-      return rootGetters["match/playerRuleService"].canDrawCards()
+    return selectCardForDamageStarship && cardsLeftToSelect > 0;
+  }
+
+  function shouldShowWindowedOverlayByDrawCard(
+    state,
+    getters,
+    rootState,
+    rootGetters
+  ) {
+    const pickCardOverlayForDroneCard =
+      (JSON.parse(localStorage.getItem("pickCardOverlayForAll")) || {})
+        .value === "true";
+    if (pickCardOverlayForDroneCard) {
+      const requirementIsCancelable = getFrom(
+        "requirementIsCancelable",
+        "requirement"
+      );
+      const firstRequirementIsDrawCard = getFrom(
+        "firstRequirementIsDrawCard",
+        "requirement"
+      );
+      return (
+        rootGetters["match/playerRuleService"].canDrawCards() &&
+        requirementIsCancelable &&
+        firstRequirementIsDrawCard
+      );
+    } else {
+      return rootGetters["match/playerRuleService"].canDrawCards();
     }
   }
 };
