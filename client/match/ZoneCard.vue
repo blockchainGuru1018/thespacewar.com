@@ -481,7 +481,10 @@ module.exports = {
         return {
           attackerDestroyed: "event",
           defenderDestroyed: 3 >= this.behaviourCard.defense,
-          defenderDamage: this.behaviourCard.damage + 3,
+          defenderDamage:
+            this.behaviourCard.damage + 3 >= this.behaviourCard.defense
+              ? this.behaviourCard.defense
+              : this.behaviourCard.damage + 3,
         };
       } else {
         if (!this.attackerCardId) return null;
