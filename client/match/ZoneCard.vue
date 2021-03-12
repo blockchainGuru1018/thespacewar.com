@@ -416,6 +416,7 @@ module.exports = {
         return true;
       } else if (
         this.canSelectCardForDamageStarshipRequirement &&
+        card.type === "spaceShip" &&
         !this.isPlayerCard
       ) {
         return true;

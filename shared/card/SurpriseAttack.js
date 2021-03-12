@@ -13,4 +13,14 @@ module.exports = class SurpriseAttack extends BaseCard {
   get canCounterAttacks() {
     return true;
   }
+
+  canBePlayed() {
+    return super.canBePlayed() && this._opponentHaveAnySpaceShipAtPlay();
+  }
+
+  _opponentHaveAnySpaceShipAtPlay() {
+    return this._queryBoard.opponentHasCardInPlay(
+      (card) => card.type === "spaceShip"
+    );
+  }
 };
