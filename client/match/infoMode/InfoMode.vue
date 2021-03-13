@@ -148,14 +148,14 @@ export default {
 // Phones in landscape mode, by Jim 2021-03-10
 @media (max-height: 700px) and (orientation: landscape) {
   .infoMode {
-    top: 0;
+    top: 50px !important;
     max-width: 50%;
   }
   .infoMode-step > h2 {
-    font-size:21px;
+    font-size:27px;
   }
   .infoMode-step > p {
-    font-size:14px;
+    font-size:16px;
   }
   .infoMode-spacer--tiny {
     height:5px;

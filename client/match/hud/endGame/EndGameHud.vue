@@ -8,10 +8,10 @@
         VICTORY
       </div>
       <button class="endGameButton" @click="endGame">
-        End game
+        Back to Game Lobby
       </button>
       <a href="https://thespacewar.com/account" class="account"
-        >Account Profile</a
+        >Back to your Account</a
       >
       >
     </div>
