@@ -1,5 +1,4 @@
 const GreatDisturbance = require("../card/GreatDisturbance");
-
 const Neutralization = require("../card/Neutralization.js");
 const LastStand = require("./LastStand.js");
 
@@ -55,14 +54,7 @@ class CanThePlayer {
   }
 
   useThisDurationCard(cardId) {
-    const latestNeutralizationPuttedDown = this._isTheLatestCardPuttedDown(
-      cardId,
-      Neutralization.CommonId
-    );
-
-    if (latestNeutralizationPuttedDown) {
-      return true;
-    }
+    const cardData = this._findCardFromOpponentOrPlayer(cardId);
     const noPlayerHasNeutralizationInPlay =
       !this._playerStateService.hasDurationCardOfType(
         Neutralization.CommonId
@@ -70,37 +62,41 @@ class CanThePlayer {
       !this._opponentStateService.hasDurationCardOfType(
         Neutralization.CommonId
       );
-
-    const latestGreatDisturbancePutDown = this._isTheLatestCardPuttedDown(
-      cardId,
-      GreatDisturbance.CommonId
-    );
-
-    if (latestGreatDisturbancePutDown) {
-      return true;
-    }
-
     const opponentDontHaveGreatDisturbance = !this._opponentStateService.hasDurationCardOfType(
       GreatDisturbance.CommonId
     );
+    if (noPlayerHasNeutralizationInPlay && opponentDontHaveGreatDisturbance) {
+      return true;
+    }
 
-    if (!opponentDontHaveGreatDisturbance) {
-      const playerGreatDisturbanceCards = this._playerStateService.getCardWithCommonIdInAnyZone(
-        GreatDisturbance.CommonId
-      );
-
-      for (const playerGreatDisturbance of playerGreatDisturbanceCards) {
-        const isTheLatestGreatDisturbancePlayed = this._isTheLatestCardPuttedDown(
-          playerGreatDisturbance.id,
-          GreatDisturbance.CommonId
+    if (noPlayerHasNeutralizationInPlay) {
+      if (!opponentDontHaveGreatDisturbance) {
+        const lastGreatDisturbance = this._queryEvents.getTimeWhenCardsWasPutDownByCommonIdOrderByCreated(
+          [GreatDisturbance.CommonId]
         );
-        if (isTheLatestGreatDisturbancePlayed) {
+        if (
+          this._playerStateService.findCardFromAnySource(
+            lastGreatDisturbance.cardId
+          )
+        ) {
           return true;
         }
       }
     }
+    if (
+      ![Neutralization.CommonId, GreatDisturbance.CommonId].includes(
+        cardData.commonId
+      )
+    ) {
+      return false;
+    }
 
-    return noPlayerHasNeutralizationInPlay && opponentDontHaveGreatDisturbance;
+    const isTheLastNeutralizationOrGreatDisturbancePuttedDown = this._isTheLastCardBeetwenPuttedDown(
+      cardId,
+      [Neutralization.CommonId, GreatDisturbance.CommonId]
+    );
+
+    return isTheLastNeutralizationOrGreatDisturbancePuttedDown;
   }
 
   _isTheLatestCardPuttedDown(cardId, commonId) {
@@ -211,6 +207,24 @@ class CanThePlayer {
       this._playerStateService.findCardFromAnySource(cardId) ||
       this._opponentStateService.findCardFromAnySource(cardId)
     );
+  }
+  _isTheLastCardBeetwenPuttedDown(cardId, commonIds) {
+    const cardData = this._findCardFromOpponentOrPlayer(cardId);
+
+    if (!commonIds.includes(cardData.commonId)) {
+      return true;
+    }
+    const timeWhenCardWasPutDown = this._queryEvents.getTimeWhenCardWasPutDownById(
+      cardId
+    );
+    const lastPutDown = this._queryEvents.getTimeWhenCardsWasPutDownByCommonIdOrderByCreated(
+      commonIds
+    );
+
+    if (!lastPutDown) {
+      return true;
+    }
+    return timeWhenCardWasPutDown >= lastPutDown.created;
   }
 }
 

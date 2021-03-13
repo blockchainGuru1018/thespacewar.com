@@ -183,7 +183,13 @@ describe("when opponent has Destiny decided in play and player has put down 1 ca
         ],
         cardsOnHand: [{ id: "C2A" }],
         events: [
-          PutDownCardEvent({ location: "zone", cardId: "C1A", turn: 1 }),
+          {
+            type: "putDownCard",
+            created: new Date("2020-06-24T11:15:00.135Z"),
+            location: "zone",
+            cardId: "C1A",
+            cardCommonId: Neutralization.CommonId,
+          },
         ],
         opponentCardsInZone: [
           { id: "C1A", type: "duration", commonId: DestinyDecided.CommonId },

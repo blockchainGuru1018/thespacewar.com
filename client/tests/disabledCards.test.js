@@ -45,6 +45,22 @@ describe("when has duration card Neutralization and other duration card", () => 
         currentPlayer: "P1A",
         phase: "draw",
         playerCardsInDeckCount: 1,
+        events: [
+          {
+            type: "putDownCard",
+            created: new Date("2020-06-24T11:25:00.135Z"),
+            location: "zone",
+            cardId: "C1A",
+            cardCommonId: Neutralization.CommonId,
+          },
+          {
+            type: "putDownCard",
+            created: new Date("2020-06-24T11:15:00.135Z"),
+            location: "zone",
+            cardId: "C2A",
+            cardCommonId: "999",
+          },
+        ],
         cardsInZone: [
           { id: "C1A", type: "duration", commonId: Neutralization.CommonId },
           { id: "C2A", type: "duration" },
@@ -62,7 +78,7 @@ describe("when has duration card Neutralization and other duration card", () => 
   });
 });
 
-describe("when bot player has Neutralization card the latest one should be the only effective", () => {
+describe("when both player has Neutralization card the latest one should be the only effective", () => {
   beforeEach(async () => {
     const { dispatch, showPage } = setUpController();
     showPage();
@@ -149,6 +165,15 @@ describe("when has Great Disturbance in play and opponent has a other Duration c
         currentPlayer: "P1A",
         phase: "draw",
         playerCardsInDeckCount: 1,
+        events: [
+          {
+            type: "putDownCard",
+            created: new Date("2020-06-24T11:15:00.135Z"),
+            location: "zone",
+            cardId: "C1A",
+            cardCommonId: GreatDisturbance.CommonId,
+          },
+        ],
         cardsInZone: [
           { id: "C1A", type: "duration", commonId: GreatDisturbance.CommonId },
           { id: "C2A", type: "duration" },
@@ -169,40 +194,103 @@ describe("when has Great Disturbance in play and opponent has a other Duration c
 });
 
 describe("when has Great Disturbance in play and play Great Disturbance later", () => {
-    beforeEach(async () => {
-        const { dispatch, showPage } = setUpController();
-        showPage();
-        dispatch(
-            "stateChanged",
-            FakeState({
-                turn: 1,
-                currentPlayer: "P1A",
-                phase: "draw",
-                playerCardsInDeckCount: 1,
-                events:[
-                    {type:"putDownCard",cardId:"C1A" ,cardCommonId:GreatDisturbance.CommonId, created: 1 }
-                ],
-                cardsInZone: [
-                    { id: "C1A", type: "duration", commonId: GreatDisturbance.CommonId },
-                    { id: "C2A", type: "duration" },
-                ],
-                opponentEvents:[ {type:"putDownCard",cardId:"C4A" ,cardCommonId:GreatDisturbance.CommonId, created: 2 }],
-                opponentCardsInZone: [
-                    { id: "C3A", type: "duration" },
-                    { id: "C4A", type: "duration", commonId: GreatDisturbance.CommonId }],
-            })
-        );
-        await timeout();
-    });
+  beforeEach(async () => {
+    const { dispatch, showPage } = setUpController();
+    showPage();
+    dispatch(
+      "stateChanged",
+      FakeState({
+        turn: 1,
+        currentPlayer: "P1A",
+        phase: "draw",
+        playerCardsInDeckCount: 1,
+        events: [
+          {
+            type: "putDownCard",
+            cardId: "C1A",
+            cardCommonId: GreatDisturbance.CommonId,
+            created: new Date("2020-06-24T11:15:00.135Z"),
+          },
+        ],
+        cardsInZone: [
+          { id: "C1A", type: "duration", commonId: GreatDisturbance.CommonId },
+          { id: "C2A", type: "duration" },
+        ],
+        opponentEvents: [
+          {
+            type: "putDownCard",
+            cardId: "C4A",
+            cardCommonId: GreatDisturbance.CommonId,
+            created: new Date("2020-06-24T11:35:00.135Z"),
+          },
+        ],
+        opponentCardsInZone: [
+          { id: "C3A", type: "duration" },
+          { id: "C4A", type: "duration", commonId: GreatDisturbance.CommonId },
+        ],
+      })
+    );
+    await timeout();
+  });
 
-    test("lasted player that played GreatDisturbance should be the winning", () => {
-        assert.elementCount(".opponentCardsInZone .card .cardDisabledOverlay", 0);
-    });
+  test("lasted player that played GreatDisturbance should be the winning", () => {
+    assert.elementCount(".opponentCardsInZone .card .cardDisabledOverlay", 0);
+  });
 
-    test("first player that played GreatDisturbance should have duration disabled", () => {
-        assert.elementCount(".playerCardsInZone .cardDisabledOverlay", 2);
-    });
+  test("first player that played GreatDisturbance should have duration disabled", () => {
+    assert.elementCount(".playerCardsInZone .cardDisabledOverlay", 2);
+  });
 });
 
+describe("when has Great Disturbance in play and opponent play Neutralization should disabled", () => {
+  beforeEach(async () => {
+    const { dispatch, showPage } = setUpController();
+    showPage();
+    dispatch(
+      "stateChanged",
+      FakeState({
+        turn: 1,
+        currentPlayer: "P1A",
+        phase: "draw",
+        playerCardsInDeckCount: 1,
+        events: [
+          {
+            type: "putDownCard",
+            cardId: "C1A",
+            cardCommonId: GreatDisturbance.CommonId,
+            created: new Date("2020-06-24T11:15:00.135Z"),
+          },
+          {
+            type: "putDownCard",
+            cardId: "C2A",
+            created: new Date("2020-06-24T11:15:00.135Z"),
+          },
+        ],
+        cardsInZone: [
+          { id: "C1A", type: "duration", commonId: GreatDisturbance.CommonId },
+          { id: "C2A", type: "duration" },
+        ],
+        opponentEvents: [
+          {
+            type: "putDownCard",
+            cardId: "C4A",
+            cardCommonId: Neutralization.CommonId,
+            created: new Date("2020-06-24T11:35:00.135Z"),
+          },
+        ],
+        opponentCardsInZone: [
+          { id: "C4A", type: "duration", commonId: Neutralization.CommonId },
+        ],
+      })
+    );
+    await timeout();
+  });
 
+  test("lasted player that played GreatDisturbance should be the winning", () => {
+    assert.elementCount(".opponentCardsInZone .card .cardDisabledOverlay", 0);
+  });
 
+  test("first player that played GreatDisturbance should have duration disabled", () => {
+    assert.elementCount(".playerCardsInZone .cardDisabledOverlay", 2);
+  });
+});
