@@ -1,17 +1,16 @@
 const BaseCard = require("./BaseCard.js");
+const info = require("./info/225.config.js");
 
-class ResourceShip extends BaseCard {
+module.exports = class ResourceShip extends BaseCard {
   constructor(deps) {
     super(deps);
   }
 
   static get CommonId() {
-    return "225";
+    return info.CommonId;
   }
 
-  get canBePutDownAsExtraStationCard() {
-    return true;
+  static get Info() {
+    return info;
   }
-}
-
-module.exports = ResourceShip;
+};
