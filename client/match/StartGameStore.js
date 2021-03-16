@@ -1,12 +1,12 @@
 const Commander = require("../../shared/match/commander/Commander.js");
 const commandersRows = {
   Regular: [
+    { name: "Liana Henders", value: Commander.LianaHenders },
     { name: "Frank Johnson", value: Commander.FrankJohnson },
     { name: "Keve Bakins", value: Commander.KeveBakins },
     { name: "Nicia Satu", value: Commander.NiciaSatu },
     { name: "General Jackson", value: Commander.GeneralJackson },
     { name: "The Miller", value: Commander.TheMiller },
-    { name:  "Liana Henders", value: Commander.LianaHenders },
   ],
   TheSwarm: [
     { name: "Zuuls", value: Commander.Zuuls },
