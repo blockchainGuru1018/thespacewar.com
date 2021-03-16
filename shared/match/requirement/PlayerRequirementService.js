@@ -34,6 +34,7 @@ function PlayerRequirementService({
 
   function addCardRequirement(requirement) {
     const type = requirement.type;
+
     if (type === "drawCard") {
       return addDrawCardRequirement(requirement);
     } else if (type === "discardCard") {
@@ -52,9 +53,15 @@ function PlayerRequirementService({
       return addCounterAttackRequirement(requirement);
     } else if (type === "damageStarShip") {
       return addDamageStartshipRequirement(requirement);
+    } else if (type === "moveCardToStationZone") {
+      return addMoveCardToStationZoneRequirement(requirement);
     }
   }
 
+  function addMoveCardToStationZoneRequirement(requirement) {
+    addRequirement(requirement);
+    return requirement;
+  }
   function addDiscardCardRequirement({
     count,
     common = false,

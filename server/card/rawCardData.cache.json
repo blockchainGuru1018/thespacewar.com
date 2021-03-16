@@ -126,7 +126,7 @@
                 "name": "Neutralization",
                 "price": "2",
                 "type_card": "violet",
-                "detail": "No other duration card has any effect.\r\nDiscard any time from play to destroy another duration card.",
+                "detail": "No other duration card has any effect.\r\nDiscard from play any time to destroy another duration card.",
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "2",
@@ -342,7 +342,7 @@
                 "name": "Luck",
                 "price": "0",
                 "type_card": "orange",
-                "detail": "Counter target card costing 2 or less.\r\n[ OR ] Draw 2 cards.",
+                "detail": "Counter a card costing 2 or less.\r\n[ OR ] Draw 2 cards.",
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "4",
@@ -485,7 +485,7 @@
             },
             {
                 "id": "79",
-                "name": "Toxic gas",
+                "name": "Toxic Gas",
                 "price": "1",
                 "type_card": "violet",
                 "detail": "Deal 1 damage to enemy station at the start of your draw phase. Shields protects but receives 2 damage instead of 1.",
@@ -678,11 +678,23 @@
         ],
         "unitedStars": [
             {
+                "id": "203",
+                "name": "Death Ray Cannon",
+                "price": "3",
+                "type_card": "blue",
+                "detail": "Receives 2 counters each draw phase. Instead of attack: replace counters with Death Ray from anywhere, X = counters.",
+                "defense": "10",
+                "attack": "0",
+                "number_copies": "1",
+                "author": "Luca Oleastri",
+                "deck": "3"
+            },
+            {
                 "id": "204",
                 "name": "Mega Shield",
                 "price": "4",
                 "type_card": "green",
-                "detail": "Protects base station. Repair itself 2 damage each draw phase.",
+                "detail": "Protects base station. Repair itself 2 damage in your draw phase.",
                 "defense": "6",
                 "attack": "0",
                 "number_copies": "1",
@@ -738,6 +750,18 @@
                 "deck": "3"
             },
             {
+                "id": "209",
+                "name": "Fate",
+                "price": "0",
+                "type_card": "orange",
+                "detail": "Counter a card that cost 0 or 1. You may draw a card and then discard a card.\r\n[ OR ] Draw 1 card.",
+                "defense": "0",
+                "attack": "0",
+                "number_copies": "2",
+                "author": "Thomas Amby Johansen",
+                "deck": "3"
+            },
+            {
                 "id": "210",
                 "name": "Meteor Shower",
                 "price": "3",
@@ -788,9 +812,9 @@
             {
                 "id": "215",
                 "name": "Transformation",
-                "price": "2",
-                "type_card": "orange",
-                "detail": "Place on spacehip. In your next draw phase fully repair and then switch the attack and defense value of the spaceship.",
+                "price": "1",
+                "type_card": "violet",
+                "detail": "In your next draw phase: select one of your spaceships. Fully repair and then switch the attack and defense value.",
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "2",
@@ -802,7 +826,7 @@
                 "name": "Moment of Peace",
                 "price": "2",
                 "type_card": "violet",
-                "detail": "Attacks from spaceships and missiles are disabled.\r\nDiscard from play in your next draw phase.",
+                "detail": "Spaceships and missiles cannot attack and move.\r\nDiscard from play in your next draw phase.",
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "2",
@@ -817,7 +841,7 @@
                 "detail": "Counter a card, then discard a card.",
                 "defense": "0",
                 "attack": "0",
-                "number_copies": "4",
+                "number_copies": "3",
                 "author": "Jukka Nieminen",
                 "deck": "3"
             },
@@ -829,7 +853,7 @@
                 "detail": "Draw 3 cards. Then from your hand discard 1 card and put another card on top of your draw pile.",
                 "defense": "0",
                 "attack": "0",
-                "number_copies": "4",
+                "number_copies": "3",
                 "author": "Sébastien Decoret",
                 "deck": "3"
             },
@@ -874,7 +898,7 @@
                 "name": "Starhunter",
                 "price": "4",
                 "type_card": "blue",
-                "detail": "Receives a +2 +2 counter each time in your draw phase.",
+                "detail": "Receives two +1/+1 counters each time in your draw phase.",
                 "defense": "3",
                 "attack": "2",
                 "number_copies": "1",
@@ -910,7 +934,7 @@
                 "name": "Resource ship",
                 "price": "2",
                 "type_card": "blue",
-                "detail": "Instead of attacking can be moved to be an extra station card.",
+                "detail": "Instead of attack: can be moved to be an extra station card.",
                 "defense": "3",
                 "attack": "1",
                 "number_copies": "3",
@@ -955,10 +979,10 @@
             },
             {
                 "id": "229",
-                "name": "Death Ray, Charged",
+                "name": "Death Ray",
                 "price": "X",
                 "type_card": "red",
-                "detail": "Attack value of X. Place on Starship. Starship can launch next turn instead of doing normal attack. Long distance. Damage goes through shield.",
+                "detail": "Attack value of X. Place on Starship. Can be launched next turn instead of doing normal attack. Long distance. Damage goes through shield.",
                 "defense": "-",
                 "attack": "X",
                 "number_copies": "2",
@@ -970,7 +994,7 @@
                 "name": "Station Repair",
                 "price": "1",
                 "type_card": "violet",
-                "detail": "Repair 1 station damage each draw phase. Discard to repair 1 station damage.",
+                "detail": "Repair 1 station damage in your draw phase. Discard anytime to repair 1 station damage.",
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "2",
@@ -1009,7 +1033,7 @@
                 "detail": "Draw 1 extra card in your draw phase.\r\nDiscard from play to draw 2 cards.",
                 "defense": "0",
                 "attack": "0",
-                "number_copies": "2",
+                "number_copies": "1",
                 "author": "Konstantin Shaklein",
                 "deck": "3"
             },
@@ -1039,5 +1063,5 @@
             }
         ]
     },
-    "saveTime": 1615417107566
+    "saveTime": 1615847361385
 }

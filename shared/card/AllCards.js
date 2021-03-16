@@ -58,7 +58,6 @@ const classes = [
   require("./Starship.js"),
   require("./DeployStarship.js"),
   require("./SurpriseAttack.js"),
-  require("./ResourceShip"),
 ];
 
 module.exports = classes;
