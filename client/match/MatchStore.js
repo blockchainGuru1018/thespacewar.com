@@ -208,6 +208,7 @@ module.exports = function (deps) {
       opponentRetreated,
       playerRetreated,
       overworkEnabled,
+      actionPointsForDrawExtraCardEnabled,
       maxStationCardCount,
       opponentMaxStationCardCount,
       gameConfig,
@@ -226,6 +227,7 @@ module.exports = function (deps) {
       passDrawPhase,
       askToDiscardOpponentTopTwoCards,
       overwork,
+      actionPointsForDrawExtraCard,
       perfectPlan,
       findAcidProjectile,
       findDronesForZuuls,
@@ -947,6 +949,10 @@ module.exports = function (deps) {
     return getters.playerCommanders.has(Commander.GeneralJackson);
   }
 
+  function actionPointsForDrawExtraCardEnabled(state, getters) {
+    return getters.playerCommanders.has(Commander.LianaHenders);
+  }
+
   function maxStationCardCount(state, getters) {
     return getters.playerRuleService.maxStationCardCount();
   }
@@ -1045,6 +1051,10 @@ module.exports = function (deps) {
 
   function overwork() {
     matchController.emit("overwork");
+  }
+
+  function actionPointsForDrawExtraCard() {
+    matchController.emit("actionPointsForDrawExtraCard");
   }
 
   function perfectPlan() {

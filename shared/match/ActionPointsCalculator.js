@@ -37,6 +37,8 @@ module.exports = function ({ cardInfoRepository }) {
         }
       } else if (event.type === "overwork") {
         actionPoints += 2;
+      } else if (event.type === "actionPointsForDrawExtraCard") {
+        actionPoints -= 2;
       } else if (event.type === "fatalErrorUsed") {
         actionPoints -= event.targetCardCost;
       } else if (event.type === "stauxFindAcidProjectile") {

@@ -51,8 +51,9 @@
         v-if="
           overworkContainerVisible ||
           perfectPlanContainerVisible ||
-            findAcidProjectileContainerVisible ||
-          naaloxDormantEffectsContainerVisible
+          findAcidProjectileContainerVisible ||
+          naaloxDormantEffectsContainerVisible ||
+          canExchangeActionPointsForDrawExtraCardContainerVisible
         "
         class="overworkContainer"
       >
@@ -63,6 +64,14 @@
           @click="overwork"
         >
           Overwork
+        </button>
+        <button
+          v-if="canExchangeActionPointsForDrawExtraCardContainerVisible"
+          title="Spend 2 action points to draw a card"
+          class="overwork darkButton enablePointerEvent"
+          @click="actionPointsForDrawExtraCard"
+        >
+          Draw a card (Commander Effect)
         </button>
 
         <button
@@ -268,6 +277,7 @@ export default {
     ...cardHelpers.mapGetters(["activeActionCardImageUrl"]),
     ...mapPermissionGetters([
       "canIssueOverwork",
+      "canExchangeActionPointsForDrawExtraCard",
       "canPutDownMoreStationCardsThisTurn",
       "canPutDownStationCards",
       "opponentHasControlOfPlayersTurn",
@@ -280,6 +290,10 @@ export default {
     },
     overworkContainerVisible() {
       return this.canIssueOverwork && !this.holdingCard;
+    },
+    canExchangeActionPointsForDrawExtraCardContainerVisible() {
+      console.log(this.canExchangeActionPointsForDrawExtraCard, !this.holdingCard);
+      return this.canExchangeActionPointsForDrawExtraCard && !this.holdingCard;
     },
     perfectPlanContainerVisible() {
       return this.playerPerfectPlan.canIssuePerfectPlan() && !this.holdingCard;
@@ -394,6 +408,7 @@ export default {
     ...mapActions([
       "goToNextPhase",
       "overwork",
+      "actionPointsForDrawExtraCard",
       "perfectPlan",
       "findAcidProjectile",
       "naaloxReviveDrone",
