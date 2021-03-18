@@ -53,8 +53,8 @@
 // 800x1280
 // 768x1024
 
-@media only screen and (min-device-width: 320px) 
-                   and (max-device-width: 850px) 
+@media only screen and (min-device-width: 320px)
+                   and (max-device-width: 850px)
                    and (orientation: portrait) {
 .opponentStationCards{
   padding-bottom: 3rem;
@@ -95,8 +95,8 @@
 }
 }
 
-@media only screen and (min-device-width: 320px) 
-                    and (max-device-width: 767px) 
+@media only screen and (min-device-width: 320px)
+                    and (max-device-width: 767px)
                     and (orientation: landscape) {
 
 .matchHeader-banner {
@@ -104,7 +104,7 @@
   height: auto;
 }
 .matchHeader-bannerName {
-  display: grid;
+  display: block;
   margin: auto;
 }
 
@@ -189,20 +189,20 @@ $holdingCardZIndex: 4;
     content: "";
     display: block;
     padding-bottom: calc(100% / (var(--aspect-ratio)));
-  }  
+  }
   [style*="--aspect-ratio"] > :first-child {
     position: absolute;
     top: 0;
     left: 0;
     height: 100%;
-  }  
+  }
 }
 ::-webkit-scrollbar {
   width: 0.4rem;
   height: 0.4rem;
  }
  ::-webkit-scrollbar-thumb {
-  background: #999C;  
+  background: #999C;
   border-radius: 10px;
  }
  ::-webkit-scrollbar-thumb:hover{
@@ -227,13 +227,9 @@ $holdingCardZIndex: 4;
    --z-position-adjust: 0;
    --player-cards-on-hand-offset: 27px;
    }
-   .matchHeader-banner {height:24px;}
+   .matchHeader-banner {height:32px;}
    .matchHeader-bannerName {font-size:15px;}
    .matchHeader-bannerBarsWrapper {display:none;}
   $commanderCardWidth: calc(#{$cardWidth} / 5);
   $commanderCardHeight: calc(#{$cardHeight} / 5);
 }
-
-
-
-
