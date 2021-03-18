@@ -1,11 +1,11 @@
 const Commander = require("../../shared/match/commander/Commander.js");
 const commandersRows = {
   Regular: [
+    { name: "Liana Henders", value: Commander.LianaHenders },
     { name: "Frank Johnson", value: Commander.FrankJohnson },
     { name: "Keve Bakins", value: Commander.KeveBakins },
     { name: "Nicia Satu", value: Commander.NiciaSatu },
     { name: "General Jackson", value: Commander.GeneralJackson },
-    { name: "Dr.Stein", value: Commander.DrStein },
     { name: "The Miller", value: Commander.TheMiller },
   ],
   TheSwarm: [
@@ -45,6 +45,9 @@ const commandersRows = {
     },
     { id: 13, value: [{ name: "Zyre", value: Commander.FrankJohnson }] },
   ],
+  UnitedStars: [
+    { name: "Dr.Stein", value: Commander.DrStein },
+  ]
 };
 module.exports = function ({ matchController }) {
   return {
