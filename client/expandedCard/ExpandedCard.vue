@@ -55,7 +55,7 @@ module.exports = {
   left: 0;
   bottom: 0;
   right: 0;
-  z-index: 3;
+  z-index: 4;
   display: flex;
   justify-content: center;
   align-items: center;

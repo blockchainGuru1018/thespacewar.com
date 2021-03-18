@@ -238,7 +238,7 @@
               />
             </div>
 
-            <div class="field-commandersAndDrawPile" 
+            <div class="field-commandersAndDrawPile"
               :class="opponentDrawPileAndCommanderOverlayPolicy">
               <div :class="opponentCommanderOverlayPolicy"><OpponentCommanderCards /></div>
               <div class="field-drawPile opponentDrawPile">
@@ -627,11 +627,11 @@
         ]"
       />
       <loading-indicator />
-      <ExpandedCard />
+
       <ChooseStartingPlayer />
       <EscapeMenu />
     </div>
-
+    <ExpandedCard />
     <portal-target multiple name="match" />
     <card-choice-dialog />
     <CommanderSelection />
@@ -667,7 +667,7 @@
         @cardDrag="playerCardDrag"
       />
     </div>
-    
+
   </div>
 </template>
 <script>
@@ -854,7 +854,7 @@ module.exports = {
     inDiscardDurationCard() {
       return ( this.phase === PHASES.preparation &&
                this.actionPoints2 > 0);
-    },    
+    },
     shouldShowWindowedOverlay(){
       return this.shouldShowWindowedOverlayByDrawCard ||
              this.inDiscardPhaseAndMustDiscardCard ||
@@ -875,7 +875,7 @@ module.exports = {
     opponentCommanderOverlayPolicy(){
       if(this.canMill)
         return 'setBackWindowedOverlay';
-      else 
+      else
         return ''
     },
     playerDrawPileOverlayPolicy(){
@@ -916,7 +916,7 @@ module.exports = {
           return 'setFrontWindowedOverlayWithRotation180';
       else
         return '';
-        
+
     },
     opponentCardsInZoneAsDefendersOverlayPolicy(){
       return this.sortedOpponentCardsInZone.some((card)=>
@@ -1325,7 +1325,7 @@ module.exports = {
       );
     },
     zoomOut() {
-      const percentageOfUsageInBoard = 
+      const percentageOfUsageInBoard =
       window.screen.height > 1080 && window.screen.height < 2160? 0.75 : 0.6;
       if (this.spaceUsedByBoardInWindow() < percentageOfUsageInBoard) {
         const root = document.documentElement;
@@ -1426,7 +1426,7 @@ module.exports = {
           spaceBetween + "px"
         );
         setTimeout(this.adjustCenteredGUI, 0);
-      } else 
+      } else
       if (this.centeredGUICollideWithPlayerStationCards()) {
         const root = document.documentElement;
         let GUIPosition = parseInt(
@@ -1521,7 +1521,7 @@ module.exports = {
       const stationRows = document.querySelectorAll('.playerStationCards > .flattenComponent');
       for(const row of stationRows){
         // screen.width < 600 should only be phones in portrait mode
-        // We don't want to run this then and collapse the station cards 
+        // We don't want to run this then and collapse the station cards
         // and break the game before the user had any change
         // to turn the phone to landscape mode
         if(!this.isStationRowFullyVisible(row) && screen.width > 600){
@@ -1585,7 +1585,7 @@ module.exports = {
     } else {
       document.documentElement.style
       .setProperty("--z-position-adjust","1");
-      let degree = window.screen.height > 2160? 5 : 11 
+      let degree = window.screen.height > 2160? 5 : 11
       document.documentElement.style
       .setProperty("--x-rotate-adjust",`${degree}deg`);
       this.zoomOut();
