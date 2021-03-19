@@ -395,6 +395,18 @@ module.exports = {
 
       assert.equals(actionPoints, 2);
     },
+    "and has issued actionPointsForDrawExtraCardEvent this turn should have 0 action points"() {
+      const calculator = ActionPointCalculator({});
+
+      const actionPoints = calculator.calculate({
+        events: [{ type: "actionPointsForDrawExtraCard", turn: 1 }],
+        turn: 1,
+        phase: "action",
+        actionStationCardsCount: 1,
+      });
+
+      assert.equals(actionPoints, 0);
+    },
     "and has issued overwork for previous turn should have 0 action points"() {
       const calculator = ActionPointCalculator({});
 
@@ -586,7 +598,6 @@ module.exports = {
     assert.equals(actionPoints, 0);
   },
 };
-
 function FakeCardInfoRepository(cards) {
   const cardDataAssembler = FakeCardDataAssembler({
     createAll: () => cards.map((c) => createCard(c)),

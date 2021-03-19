@@ -634,11 +634,11 @@
         ]"
       />
       <loading-indicator />
-      <ExpandedCard />
+
       <ChooseStartingPlayer />
       <EscapeMenu />
     </div>
-
+    <ExpandedCard />
     <portal-target multiple name="match" />
     <card-choice-dialog />
     <CommanderSelection />
