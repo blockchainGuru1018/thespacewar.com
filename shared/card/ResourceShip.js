@@ -14,17 +14,21 @@ module.exports = class ResourceShip extends BaseCard {
     return info;
   }
   canTriggerDormantEffect(nextPhase = null) {
-    // return true;
-    const turnWhenCardWasPutDown = this._queryEvents.getTurnWhenCardWasPutDown(
-      this.id
-    );
-    const turn = this._matchService.getTurn();
-    const isAttackPhase = this._playerStateService.getPhase() === PHASES.attack;
-    return turnWhenCardWasPutDown < turn && isAttackPhase && !this.paralyzed;
+    return true;
+    // const turnWhenCardWasPutDown = this._queryEvents.getTurnWhenCardWasPutDown(
+    //   this.id
+    // );
+    // const turn = this._matchService.getTurn();
+    // const isAttackPhase = this._playerStateService.getPhase() === PHASES.attack;
+    // return turnWhenCardWasPutDown < turn && isAttackPhase && !this.paralyzed;
   }
 
   triggerDormantEffect() {
     const spec = ResourceShip.Info.dormantEffectRequirementSpec;
     this._addRequirementFromSpec.forCardAndSpec(this, spec);
+  }
+
+  get canBePutDownAsExtraStationCard() {
+    return true;
   }
 };

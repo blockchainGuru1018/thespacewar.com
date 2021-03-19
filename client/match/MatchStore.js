@@ -1158,7 +1158,43 @@ module.exports = function (deps) {
         state.phase === PHASES.attack
       ) {
         dispatch("goToNextPhase");
+        return;
       }
+      if (
+        state.requirements &&
+        state.requirements.length > 0 &&
+        state.requirements[0].type === "moveCardToStationZone"
+      ) {
+        dispatch(
+          "card/_applyChoicePutDownAsExtraStationCard",
+          {
+            cardData: state.requirements[0].cardData,
+            choiceData: {
+              name: "putDownAsExtraStationCard",
+              text: "Move as extra station card",
+              action: {
+                name: "putDownCard",
+                text: "Move as extra station card",
+                showOnlyGhostsFor: ["playerStation"],
+              },
+            },
+          },
+          { root: true }
+        );
+        dispatch(
+          "card/removeTransientCard",
+          state.requirements[0].cardData.id,
+          { root: true }
+        );
+      }
+      // console.log(state.requirements[0]);
+      // if (
+      //     (!state.requirements || state.requirements.length === 0) &&
+      //     getters.getCardsPendingForAction.length === 0 &&
+      //     state.phase === PHASES.attack
+      // ) {
+      //   dispatch("goToNextPhase");
+      // }
     }
   }
 

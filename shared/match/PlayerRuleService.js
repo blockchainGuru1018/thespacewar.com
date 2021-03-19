@@ -90,11 +90,23 @@ class PlayerRuleService {
 
     if (this.hasReachedMaximumStationCardCapacity()) return false;
 
-    if (this._queryPlayerRequirements.hasAnyRequirements()) return false;
+    if (
+      this._queryPlayerRequirements.hasAnyRequirements() &&
+      !this._queryPlayerRequirements.firstRequirementIsOfType(
+        "moveCardToStationZone"
+      )
+    )
+      return false;
+
     if (this._queryPlayerRequirements.isWaitingOnOpponentFinishingRequirement())
       return false;
 
-    return this._playerHasControlOfTheirOwnActionPhase();
+    return (
+      this._playerHasControlOfTheirOwnActionPhase() ||
+      this._queryPlayerRequirements.firstRequirementIsOfType(
+        "moveCardToStationZone"
+      )
+    );
   }
 
   canPutDownMoreStartingStationCards() {

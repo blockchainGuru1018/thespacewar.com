@@ -296,7 +296,6 @@ module.exports = function (deps) {
     { cardData, choiceData }
   ) {
     await Vue.nextTick(); //WORKAROUND: Wait for click event to bubble up so that it wont cancel the action set below
-
     dispatch("showPutDownCardAction", {
       cardData: cardData,
       action: choiceData.action,
@@ -354,7 +353,6 @@ module.exports = function (deps) {
 
     state.hiddenStationCardIdsForAction = hideStationCardIds;
     state.hiddenStationCardIds.push(...hideStationCardIds);
-
     dispatch("startHoldingCard", { cardData, showOnlyCardGhostsFor });
   }
 

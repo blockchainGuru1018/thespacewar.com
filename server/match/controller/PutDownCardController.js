@@ -206,6 +206,12 @@ function PutDownCardController(deps) {
       removeCardFromPlayerHand(playerId, cardId);
     } else if (playerStateService.hasCardInStationCards(cardId)) {
       removeStationCardFromPlayer(playerId, cardId);
+    } else if (
+      playerRequirementUpdaterFactory.create(playerId, {
+        type: "moveCardToStationZone",
+      })
+    ) {
+      playerStateService.removeCardFromAnySource(cardId);
     }
   }
 
@@ -253,7 +259,13 @@ function PutDownCardController(deps) {
         cardCommonIds: [cardData.commonId],
       });
     }
-
+    const playerRequirementUpdater = playerRequirementUpdaterFactory.create(
+      playerId,
+      { type: "moveCardToStationZone" }
+    );
+    if (playerRequirementUpdater) {
+      playerRequirementUpdater.completeRequirement();
+    }
     const opponentActionLog = playerServiceFactory.actionLog(
       matchService.getOpponentId(playerId)
     );
@@ -264,6 +276,7 @@ function PutDownCardController(deps) {
     );
     playerStateService.addStationCard(cardData, location, {
       putDownAsExtraStationCard: choice === "putDownAsExtraStationCard",
+      comeFromFormantEffect: !!playerRequirementUpdater,
     });
   }
 

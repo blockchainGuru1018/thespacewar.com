@@ -556,7 +556,11 @@ class PlayerStateService {
   addStationCard(
     cardData,
     location,
-    { startingStation = false, putDownAsExtraStationCard = false } = {}
+    {
+      startingStation = false,
+      putDownAsExtraStationCard = false,
+      comeFromFormantEffect = false,
+    } = {}
   ) {
     const stationLocation = location.split("-").pop();
     const stationCard = { place: stationLocation, card: cardData };
@@ -570,7 +574,7 @@ class PlayerStateService {
         turn: currentTurn,
         location,
         cardId: cardData.id,
-        cardCost: card.costToPlay,
+        cardCost: comeFromFormantEffect ? 0 : card.costToPlay,
         cardCommonId: cardData.commonId,
         putDownAsExtraStationCard,
         startingStation,
