@@ -1337,7 +1337,7 @@ module.exports = {
         ZPosition = ZPosition + 1;
         root.style.setProperty("--z-position", ZPosition + "px");
         if(window.screen.height > 2160) root.style.setProperty("--top-spacing", ZPosition * 4 + "px");
-        setTimeout(this.zoomOut, 0);
+        setTimeout(this.zoomOut, 10000);
       } else {
         this.adjustUPCenteredGUI();
       }
@@ -1356,7 +1356,7 @@ module.exports = {
         );
         ZPosition = Math.max(-50, Math.min(10, ZPosition - 1));
         root.style.setProperty("--z-position", ZPosition + "px");
-        setTimeout(this.adjustZoom, 0);
+        setTimeout(this.adjustZoom, 10000);
       } else {
         this.adjustCenteredGUI();
       }
@@ -1398,7 +1398,7 @@ module.exports = {
           "--space-between-GUI-n-draw-pile",
           spaceBetween + "px"
         );
-        setTimeout(this.adjustCenteredGUI, 0);
+        setTimeout(this.adjustCenteredGUI, 10000);
       } else if (this.centeredGUICollideWithPlayerStationCards()) {
         const root = document.documentElement;
         let GUIPosition = parseInt(
@@ -1408,7 +1408,7 @@ module.exports = {
         );
         GUIPosition = Math.max(10, Math.min(50, GUIPosition - 1));
         root.style.setProperty("--gui-height-adjust", GUIPosition + "%");
-        setTimeout(this.adjustCenteredGUI, 0);
+        setTimeout(this.adjustCenteredGUI, 10000);
       }
     },
     adjustUPCenteredGUI() {
@@ -1425,7 +1425,7 @@ module.exports = {
           "--space-between-GUI-n-draw-pile",
           spaceBetween + "px"
         );
-        setTimeout(this.adjustCenteredGUI, 0);
+        setTimeout(this.adjustCenteredGUI, 10000);
       } else
       if (this.centeredGUICollideWithPlayerStationCards()) {
         const root = document.documentElement;
@@ -1436,7 +1436,7 @@ module.exports = {
         );
         GUIPosition = Math.max(30, Math.min(50, GUIPosition - 1));
         root.style.setProperty("--gui-height-adjust", GUIPosition + "%");
-        setTimeout(this.adjustUPCenteredGUI, 0);
+        setTimeout(this.adjustUPCenteredGUI, 10000);
       }
     },
     validateBG() {
@@ -1538,7 +1538,7 @@ module.exports = {
           );
           root.style.setProperty("--player-station-row-width", `${stationWidth + 0.3}%`);
           root.style.setProperty("--player-zone-row-width", `${rowWidth - 0.3}%`);
-          setTimeout(this.calculateStationCardSizenPosition,0)
+          setTimeout(this.calculateStationCardSizenPosition,10000)
           return;
         }
       }
