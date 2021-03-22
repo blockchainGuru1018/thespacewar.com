@@ -27,4 +27,8 @@ module.exports = class ResourceShip extends BaseCard {
     const spec = ResourceShip.Info.dormantEffectRequirementSpec;
     this._addRequirementFromSpec.forCardAndSpec(this, spec);
   }
+
+  get canBePutDownAsExtraStationCard() {
+    return true;
+  }
 };

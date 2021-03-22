@@ -20,6 +20,9 @@ module.exports = function CardFacadeContext({ playerServiceFactory }) {
         card: card(),
         playerStateService: playerServiceFactory.playerStateService(playerId),
         playerRuleService: playerServiceFactory.playerRuleService(playerId),
+        queryPlayerRequirements: playerServiceFactory.queryPlayerRequirements(
+          playerId
+        ),
       });
     }
 
