@@ -51,7 +51,7 @@ function PlayerRequirementService({
       return addCounterCardRequirement(requirement);
     } else if (type === "counterAttack") {
       return addCounterAttackRequirement(requirement);
-    } else if (type === "damageStarShip") {
+    } else if (type === "damageSpaceship") {
       return addDamageStartshipRequirement(requirement);
     } else if (type === "moveCardToStationZone") {
       return addMoveCardToStationZoneRequirement(requirement);
@@ -211,7 +211,7 @@ function PlayerRequirementService({
   function addDamageStartshipRequirement({ count, ...uncheckedProperties }) {
     const requirement = {
       ...uncheckedProperties,
-      type: "damageStarShip",
+      type: "damageSpaceship",
       count: count,
     };
     addRequirement(requirement);

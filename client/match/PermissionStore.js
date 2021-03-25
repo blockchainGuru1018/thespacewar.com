@@ -26,7 +26,7 @@ module.exports = function (deps) {
       canSelectCardsForActiveAction,
       canPutDownStationCardInHomeZone,
       canSelectForSacrificeRequirement,
-      canSelectCardForDamageStarshipRequirement,
+      canSelectCardForDamageSpaceshipRequirement,
       canIssueOverwork: canIssueOverworkGetter,
       canExchangeActionPointsForDrawExtraCard: canExchangeActionPointsForDrawExtraCardGetter,
       canDrawCards,
@@ -233,15 +233,15 @@ module.exports = function (deps) {
 
     return selectForSacrificeRequirement && cardsLeftToSelect > 0;
   }
-  function canSelectCardForDamageStarshipRequirement(state, getters) {
+  function canSelectCardForDamageSpaceshipRequirement(state, getters) {
     if (getters.waitingForOtherPlayerToFinishRequirements) return false;
-    const selectCardForDamageStarship = getFrom(
-      "firstRequirementIsSelectStarshipForDamage",
+    const selectCardForDamageSpaceship = getFrom(
+      "firstRequirementIsSelectSpaceshipForDamage",
       "requirement"
     );
     const cardsLeftToSelect = getFrom("cardsLeftToSelect", "requirement");
 
-    return selectCardForDamageStarship && cardsLeftToSelect > 0;
+    return selectCardForDamageSpaceship && cardsLeftToSelect > 0;
   }
 
   function shouldShowWindowedOverlayByDrawCard(

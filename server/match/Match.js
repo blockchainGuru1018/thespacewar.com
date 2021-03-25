@@ -192,7 +192,7 @@ module.exports = function ({
     retreat,
     restoreSavedMatch: debugController.onRestoreSavedMatch,
     cheat: cheatController.onCheat,
-    damageStarship: attackController.damageStarship,
+    damageSpaceship: attackController.damageSpaceship,
   };
 
   return {

@@ -246,7 +246,7 @@ export default {
       "firstRequirement",
       "firstRequirementIsDiscardCard",
       "firstRequirementIsDamageStationCard",
-      "firstRequirementIsSelectStarshipForDamage",
+      "firstRequirementIsSelectSpaceshipForDamage",
       "firstRequirementIsDamageShieldCard",
       "firstRequirementIsSelectForSacrifice",
       "firstRequirementIsDrawCard",
@@ -370,10 +370,10 @@ export default {
           this.cardsLeftToSelect
         )} to sacrifice`;
       } else if (
-        this.firstRequirementIsSelectStarshipForDamage &&
+        this.firstRequirementIsSelectSpaceshipForDamage &&
         this.cardsLeftToSelect > 0
       ) {
-        return "Select 1 starship card to do 3 damage";
+        return "Select 1 spaceship card to do 3 damage";
       } else if (this.firstRequirementIsDrawCard) {
         return this.drawCardOrMillText;
       } else if (this.repairerCommanderSelected) {

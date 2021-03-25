@@ -18,7 +18,7 @@ module.exports = function ({ rootStore, cardInfoRepository, matchController }) {
       firstRequirementIsCounterCard,
       firstRequirementIsCounterAttack,
       firstRequirementIsSelectForSacrifice,
-      firstRequirementIsSelectStarshipForDamage,
+      firstRequirementIsSelectSpaceshipForDamage,
       countInFirstRequirement,
       selectedCardsCount,
       firstRequirementMoveCardToStationZone,
@@ -111,10 +111,10 @@ module.exports = function ({ rootStore, cardInfoRepository, matchController }) {
     );
   }
 
-  function firstRequirementIsSelectStarshipForDamage(state, getters) {
+  function firstRequirementIsSelectSpaceshipForDamage(state, getters) {
     return (
       getters.firstRequirement &&
-      getters.firstRequirement.type === "damageStarShip"
+      getters.firstRequirement.type === "damageSpaceship"
     );
   }
 

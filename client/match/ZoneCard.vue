@@ -264,7 +264,7 @@ module.exports = {
       "canDiscardActivateDurationCards",
       "canSelectShieldCardsForRequirement",
       "canSelectForSacrificeRequirement",
-      "canSelectCardForDamageStarshipRequirement",
+      "canSelectCardForDamageSpaceshipRequirement",
     ]),
     ...mapCardState([
       "transientPlayerCardsInHomeZone",
@@ -415,7 +415,7 @@ module.exports = {
       ) {
         return true;
       } else if (
-        this.canSelectCardForDamageStarshipRequirement &&
+        this.canSelectCardForDamageSpaceshipRequirement &&
         card.type === "spaceShip" &&
         !this.isPlayerCard
       ) {
@@ -476,7 +476,7 @@ module.exports = {
           defenderCard: this.behaviourCard,
           usingCollision: this.usingCollision,
         });
-      } else if (this.canSelectCardForDamageStarshipRequirement) {
+      } else if (this.canSelectCardForDamageSpaceshipRequirement) {
         // this.behaviourCard
         return {
           attackerDestroyed: "event",
@@ -570,10 +570,10 @@ module.exports = {
           card: this.card,
           fromRequirement: "damageShieldCard",
         });
-      } else if (this.canSelectCardForDamageStarshipRequirement) {
+      } else if (this.canSelectCardForDamageSpaceshipRequirement) {
         this.selectAsDefender({
           card: this.card,
-          fromRequirement: "damageStarShip",
+          fromRequirement: "damageSpaceship",
         });
       } else {
         this.selectAsDefender({ card: this.card });

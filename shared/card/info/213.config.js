@@ -6,7 +6,7 @@ module.exports = {
     forPlayer: [
       {
         cardCommonId: CommonId,
-        type: "damageStarShip", //TODO: rename to damageSpaceship
+        type: "damageSpaceship",
         count: 1,
         damage: 3,
         common: false,

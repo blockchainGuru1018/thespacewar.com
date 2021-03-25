@@ -23,7 +23,7 @@ function AttackController(deps) {
     onDamageStationCard,
     onDamageShieldCard,
     onSacrifice,
-    damageStarship,
+    damageSpaceship,
   };
 
   function onAttack(
@@ -389,7 +389,7 @@ function AttackController(deps) {
     }
   }
 
-  function damageStarship(playerId, { cardId }) {
+  function damageSpaceship(playerId, { cardId }) {
     const opponentId = matchService.getOpponentId(playerId);
     const opponentStateService = playerServiceProvider.getStateServiceById(
       opponentId
@@ -415,7 +415,7 @@ function AttackController(deps) {
 
     const requirementUpdater = playerRequirementUpdaterFactory.create(
       playerId,
-      { type: "damageStarShip" }
+      { type: "damageSpaceship" }
     );
     requirementUpdater.progressRequirementByCount(1);
     //TODO: finalizar el requirement
