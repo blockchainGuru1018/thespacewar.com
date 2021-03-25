@@ -1,5 +1,5 @@
 const CommonId = "31";
-const DrawCardsCount = 2;
+const DrawCardsCount = 1;
 
 module.exports = {
   CommonId,
