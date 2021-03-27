@@ -219,25 +219,57 @@ export default {
       } else {
         this.showButton = "reduce";
 
-        if (!window.runningInTestHarness) {
-          //Note 2020-06-24: Making this code depend on the test because of the difficulty of mocking the documentElement property
-          await window.document.documentElement.requestFullscreen();
-        }
+        // if (!window.runningInTestHarness) {
+        //   //Note 2020-06-24: Making this code depend on the test because of the difficulty of mocking the documentElement property
+        //   await window.document.documentElement.requestFullscreen();
+        // }
       }
+
+      /* ---- Start - Go to fullscreen game | By Marco Aguilar */
+      console.log("Toggle-FullScreen ON");
+      var doc = window.document;
+      var docEl = doc.documentElement;
+
+      var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+      var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+      if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+        requestFullScreen.call(docEl);
+      }
+      else {
+        cancelFullScreen.call(doc);
+      }
+      /*----------- END goto fullscreen ------*/
+
     },
     disableFullscreen() {
       if (this.is_touch_device) {
         document.documentElement.style.setProperty("--z-position", "0px");
       } else {
-        document.exitFullscreen();
+        //document.exitFullscreen();
       }
       this.showButton = "expand";
+      /* ---- Start - Go to fullscreen game | By Marco Aguilar */
+      console.log("Toggle-FullScreen ON");
+      var doc = window.document;
+  	  var docEl = doc.documentElement;
+
+  	  var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+  	  var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+  	  if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+  	    requestFullScreen.call(docEl);
+  	  }
+  	  else {
+  	    cancelFullScreen.call(doc);
+  	  }
+      /*----------- END goto fullscreen ------*/
     },
     watchFullScreen() {
       /*
                 |-----------------------------------------------------
                 | Only run with clicked full screen mode
-                | Capture event fullscreen   
+                | Capture event fullscreen
                 |-----------------------------------------------------
                  */
       document.addEventListener("fullscreenchange", (event) => {
