@@ -251,11 +251,11 @@ export default {
       this.showButton = "expand";
       /* ---- Start - Go to fullscreen game | By Marco Aguilar */
       console.log("Toggle-FullScreen ON");
-      constconst doc = window.document;
-  	  constconst docEl = doc.documentElement;
+      const doc = window.document;
+  	  const docEl = doc.documentElement;
 
-  	  constconst requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-  	  constconst cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+  	  const requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+  	  const cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
 
   	  if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
   	    requestFullScreen.call(docEl);
