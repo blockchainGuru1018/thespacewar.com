@@ -227,11 +227,11 @@ export default {
 
       /* ---- Start - Go to fullscreen game | By Marco Aguilar */
       console.log("Toggle-FullScreen ON");
-      var doc = window.document;
-      var docEl = doc.documentElement;
+      const doc = window.document;
+      const docEl = doc.documentElement;
 
-      var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-      var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+      const requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+      const cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
 
       if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
         requestFullScreen.call(docEl);
@@ -251,11 +251,11 @@ export default {
       this.showButton = "expand";
       /* ---- Start - Go to fullscreen game | By Marco Aguilar */
       console.log("Toggle-FullScreen ON");
-      var doc = window.document;
-  	  var docEl = doc.documentElement;
+      constconst doc = window.document;
+  	  constconst docEl = doc.documentElement;
 
-  	  var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-  	  var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+  	  constconst requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+  	  constconst cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
 
   	  if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
   	    requestFullScreen.call(docEl);
