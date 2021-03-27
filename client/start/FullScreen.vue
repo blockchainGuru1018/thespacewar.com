@@ -227,17 +227,17 @@ export default {
 
       /* ---- Start - Go to fullscreen game | By Marco Aguilar */
       console.log("Toggle-FullScreen ON");
-      var doc = window.document;
-      var docEl = doc.documentElement;
+      // var doc = window.document;
+      // var docEl = window.document.documentElement;
+      //
+      // var requestFullScreen = window.document.documentElement.requestFullscreen || window.document.documentElement.mozRequestFullScreen || window.document.documentElement.webkitRequestFullScreen || window.document.documentElement.msRequestFullscreen;
+      // var cancelFullScreen = window.document.exitFullscreen || window.document.mozCancelFullScreen || window.document.webkitExitFullscreen || window.document.msExitFullscreen;
 
-      var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-      var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-
-      if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-        requestFullScreen.call(docEl);
+      if(!window.document.fullscreenElement && !window.document.mozFullScreenElement && !window.document.webkitFullscreenElement && !window.document.msFullscreenElement) {
+        window.document.documentElement.requestFullScreen.call(window.document.documentElement);
       }
       else {
-        cancelFullScreen.call(doc);
+        window.document.documentElement.cancelFullScreen.call(window.document);
       }
       /*----------- END goto fullscreen ------*/
 
@@ -251,18 +251,18 @@ export default {
       this.showButton = "expand";
       /* ---- Start - Go to fullscreen game | By Marco Aguilar */
       console.log("Toggle-FullScreen ON");
-      var doc = window.document;
-  	  var docEl = doc.documentElement;
+      // var doc = window.document;
+      // var docEl = window.document.documentElement;
+      //
+      // var requestFullScreen = window.document.documentElement.requestFullscreen || window.document.documentElement.mozRequestFullScreen || window.document.documentElement.webkitRequestFullScreen || window.document.documentElement.msRequestFullscreen;
+      // var cancelFullScreen = window.document.exitFullscreen || window.document.mozCancelFullScreen || window.document.webkitExitFullscreen || window.document.msExitFullscreen;
 
-  	  var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-  	  var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-
-  	  if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-  	    requestFullScreen.call(docEl);
-  	  }
-  	  else {
-  	    cancelFullScreen.call(doc);
-  	  }
+      if(!window.document.fullscreenElement && !window.document.mozFullScreenElement && !window.document.webkitFullscreenElement && !window.document.msFullscreenElement) {
+        window.document.documentElement.requestFullScreen.call(window.document.documentElement);
+      }
+      else {
+        window.document.documentElement.cancelFullScreen.call(window.document);
+      }
       /*----------- END goto fullscreen ------*/
     },
     watchFullScreen() {
