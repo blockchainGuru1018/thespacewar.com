@@ -226,19 +226,19 @@ export default {
       }
 
       /* ---- Start - Go to fullscreen game | By Marco Aguilar */
-      console.log("Toggle-FullScreen ON");
-      var doc = window.document;
-  	  var docEl = doc.documentElement;
-
-  	  //var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-  	  //var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-
-  	  if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-  	    docEl.requestFullScreen.call(docEl);
-  	  }
-  	  else {
-  	    docEl.cancelFullScreen.call(doc);
-  	  }
+      // console.log("Toggle-FullScreen ON");
+      // var doc = window.document;
+  	  // var docEl = doc.documentElement;
+      //
+  	  // var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+  	  // var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+      //
+  	  // if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+  	  //   requestFullScreen.call(docEl);
+  	  // }
+  	  // else {
+  	  //   cancelFullScreen.call(doc);
+  	  // }
       /*----------- END goto fullscreen ------*/
 
     },
@@ -254,14 +254,14 @@ export default {
       var doc = window.document;
   	  var docEl = doc.documentElement;
 
-  	  //var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-  	  //var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+  	  var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+  	  var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
 
   	  if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-  	    docEl.requestFullScreen.call(docEl);
+  	    requestFullScreen.call(docEl);
   	  }
   	  else {
-  	    docEl.cancelFullScreen.call(doc);
+  	    cancelFullScreen.call(doc);
   	  }
       /*----------- END goto fullscreen ------*/
     },
