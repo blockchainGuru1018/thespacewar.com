@@ -212,7 +212,7 @@ export default {
     this.watchFullScreen();
   },
   methods: {
-    async enableFullscreen() {
+    enableFullscreen() {
       if (this.is_touch_device) {
         document.documentElement.style.setProperty("--z-position", "-100px");
         this.showButton = "reduce";
@@ -226,19 +226,19 @@ export default {
       }
 
       /* ---- Start - Go to fullscreen game | By Marco Aguilar */
-      // console.log("Toggle-FullScreen ON");
-      // var doc = window.document;
-  	  // var docEl = doc.documentElement;
-      //
-  	  // var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-  	  // var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-      //
-  	  // if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-  	  //   requestFullScreen.call(docEl);
-  	  // }
-  	  // else {
-  	  //   cancelFullScreen.call(doc);
-  	  // }
+      console.log("Toggle-FullScreen ON");
+      var doc = window.document;
+  	  var docEl = doc.documentElement;
+
+  	  var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+  	  var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+  	  if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+  	    requestFullScreen.call(docEl);
+  	  }
+  	  else {
+  	    cancelFullScreen.call(doc);
+  	  }
       /*----------- END goto fullscreen ------*/
 
     },
