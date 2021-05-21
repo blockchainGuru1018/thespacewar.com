@@ -2,7 +2,7 @@
   <div class="matchHeader">
     <PlayerBanner :is-player="false" :reverse="false" />
     <div class="matchHeader-topRightButtons">
-      <ToggleInfoModeButtonContainer />
+      <ToggleInfoModeButtonContainer @changeShowingTutorial="toggleModalGame" ref="toggleInfoModeButtonContainer"/>
       <button
         class="matchHeader-escapeMenuButton escapeMenuButton"
         @click="toggleEscapeMenu"
@@ -50,6 +50,13 @@ module.exports = {
     ...escapeMenuHelpers.mapActions({
       toggleEscapeMenu: "toggleVisible",
     }),
+
+    toggleModalGame()
+    {
+      console.log("Llego al MatchHeader!!");
+      this.$emit("changeShowingTutorial");
+    },
+
   },
   components: {
     PlayerBanner,

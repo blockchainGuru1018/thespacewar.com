@@ -1,5 +1,5 @@
 <template>
-  <ToggleInfoModeButton @toggleInfoMode="toggle" />
+  <ToggleInfoModeButton @toggleInfoMode="toggle(); clikedButton()" />
 </template>
 <script>
 import ToggleInfoModeButton from "./ToggleInfoModeButton.vue";
@@ -11,6 +11,13 @@ export default {
   components: { ToggleInfoModeButton },
   methods: {
     ...infoModeHelpers.mapActions(["toggle"]),
+
+    clikedButton()
+    {
+      console.log("llego a ToggleInfoModeButtonContainer");
+      this.$emit('changeShowingTutorial');
+    },
+
   },
 };
 </script>

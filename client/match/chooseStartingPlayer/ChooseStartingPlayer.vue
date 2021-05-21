@@ -32,6 +32,11 @@ const chooseStartingPlayerHelpers = Vuex.createNamespacedHelpers(
 );
 
 module.exports = {
+  data () {
+   return {
+
+   }
+  },
   computed: {
     ...chooseStartingPlayerHelpers.mapGetters([
       "player",
@@ -41,7 +46,10 @@ module.exports = {
   },
   methods: {
     ...chooseStartingPlayerHelpers.mapActions(["selectPlayerToStart"]),
+
+
   },
+
 };
 </script>
 <style lang="scss">

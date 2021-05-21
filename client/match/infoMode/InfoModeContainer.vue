@@ -20,6 +20,8 @@ export default {
   },
   methods: {
     ...infoModeHelpers.mapActions(["hide"]),
+
+  
   },
 };
 </script>

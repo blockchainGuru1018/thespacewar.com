@@ -635,15 +635,19 @@
       />
       <loading-indicator />
 
-      <ChooseStartingPlayer />
-      <EscapeMenu />
+      <div id="modal-game" v-if="showingModalGame">
+        <ChooseStartingPlayer ref="chooseStartingPlayer" />
+
+      </div>
+
     </div>
     <ExpandedCard />
     <portal-target multiple name="match" />
+    <EscapeMenu />
     <card-choice-dialog />
     <CommanderSelection />
     <PlayerHud />
-    <MatchHeader />
+    <MatchHeader @changeShowingTutorial="toggleModalGame"/>
 
     <div class="cardsOnHand" :class="playerCardsOnHandOverlayPolicy">
       <div
@@ -755,6 +759,7 @@ module.exports = {
       touchPosition: { x: 0, y: 0 },
       PHASES,
       bg: null,
+      showingModalGame: true,
     };
   },
   computed: {
@@ -1548,6 +1553,14 @@ module.exports = {
         }
       }
     },
+
+    toggleModalGame()
+    {
+      //console.log("hideChooseStartingPlayer From Match");
+      //this.$refs.chooseStartingPlayer.toogleChooseModal();
+      this.showingModalGame = !this.showingModalGame;
+    },
+
   },
   mounted() {
     this.validateBG();
