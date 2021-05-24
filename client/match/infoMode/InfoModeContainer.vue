@@ -1,10 +1,12 @@
 <template>
-  <portal v-if="visible || shouldDisplayTutorialSuggestion" to="match">
+  <!-- <portal v-if="visible || shouldDisplayTutorialSuggestion" to="match"> -->
     <InfoMode
+      v-if="visible || shouldDisplayTutorialSuggestion"
       :show-tutorial-suggestion="shouldDisplayTutorialSuggestion"
       @hide="hide"
+      @toggleInfoMode="toggleModalGame"
     />
-  </portal>
+  <!-- </portal> -->
 </template>
 <script>
 import InfoMode from "./InfoMode.vue";
@@ -21,7 +23,12 @@ export default {
   methods: {
     ...infoModeHelpers.mapActions(["hide"]),
 
-  
+    toggleModalGame()
+    {
+      this.$emit("toggleModalGame");
+      console.log("Desde InfoModeContainer!");
+    }
+
   },
 };
 </script>

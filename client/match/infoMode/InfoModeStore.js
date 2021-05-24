@@ -48,7 +48,7 @@ export default function ({ rootDispatch }) {
     dispatch("_setVisibility", !state.visible);
     dispatch("hideTutorialSuggestion");
     console.log("Toggled Tutorial!");
-    
+
   }
 
   function hide({ dispatch }) {

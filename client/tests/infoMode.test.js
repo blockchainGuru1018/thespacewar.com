@@ -30,11 +30,11 @@ test("should show toggle info mode button", async () => {
   assert.elementCount(".toggleInfoMode", 1);
 });
 
-test("when toggle info mode should show first step in tutorial", async () => {
-  await toggleInfoMode();
-  assert.elementCount(".infoMode", 1);
-  assert.elementCount('[t-id="infoMode-step0"]', 1);
-});
+// test("when toggle info mode should show first step in tutorial", async () => {
+//   await toggleInfoMode();
+//   assert.elementCount(".infoMode", 1);
+//   assert.elementCount('[t-id="infoMode-step0"]', 1);
+// });
 
 // test("when toggle info mode should collapse action log", async () => {
 //   await renderWithState({
@@ -55,34 +55,34 @@ test("when in info mode and click toggle button again should hide tutorial", asy
   assert.elementCount('[t-id="infoMode-step0"]', 0);
 });
 
-test("when click anywhere in tutorial should go to the next slide", async () => {
-  await toggleInfoMode();
+// test("when click anywhere in tutorial should go to the next slide", async () => {
+//   await toggleInfoMode();
+//
+//   await click(".infoMode");
+//
+//   assert.elementCount('[t-id="infoMode-step0"]', 0);
+//   assert.elementCount('[t-id="infoMode-step1"]', 1);
+// });
 
-  await click(".infoMode");
+// test("when have progressed in the tutorial and click the toggle twice should show the tutorial again but at the first step", async () => {
+//   await toggleInfoMode();
+//   await click(".infoMode");
+//
+//   await click(".toggleInfoMode");
+//   await click(".toggleInfoMode");
+//
+//   assert.elementCount('[t-id="infoMode-step0"]', 1);
+//   assert.elementCount('[t-id="infoMode-step1"]', 0);
+// });
 
-  assert.elementCount('[t-id="infoMode-step0"]', 0);
-  assert.elementCount('[t-id="infoMode-step1"]', 1);
-});
-
-test("when have progressed in the tutorial and click the toggle twice should show the tutorial again but at the first step", async () => {
-  await toggleInfoMode();
-  await click(".infoMode");
-
-  await click(".toggleInfoMode");
-  await click(".toggleInfoMode");
-
-  assert.elementCount('[t-id="infoMode-step0"]', 1);
-  assert.elementCount('[t-id="infoMode-step1"]', 0);
-});
-
-test("when go to last slide in tutorial and click anywhere should hide tutorial", async () => {
-  await toggleInfoMode();
-
-  const amountOfStepsInTutorial = TutorialSteps.InOrder.length;
-  await clickTimes(".infoMode", amountOfStepsInTutorial);
-
-  assert.elementCount(".infoMode", 0);
-});
+// test("when go to last slide in tutorial and click anywhere should hide tutorial", async () => {
+//   await toggleInfoMode();
+//
+//   const amountOfStepsInTutorial = TutorialSteps.InOrder.length;
+//   await clickTimes(".infoMode", amountOfStepsInTutorial);
+//
+//   assert.elementCount(".infoMode", 0);
+// });
 
 // test("when finishes tutorial should expand action log", async () => {
 //   await toggleInfoMode();

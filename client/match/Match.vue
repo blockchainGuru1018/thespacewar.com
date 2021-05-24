@@ -643,6 +643,7 @@
     </div>
     <ExpandedCard />
     <portal-target multiple name="match" />
+    <InfoModeContainer @toggleModalGame="toggleModalGame"/>
     <EscapeMenu />
     <card-choice-dialog />
     <CommanderSelection />
@@ -713,6 +714,7 @@ const PlayerCardsOnHand = resolveModule(require("./PlayerCardsOnHand.vue"));
 const CardGhost = resolveModule(require("./CardGhost.vue"));
 const EventGhost = resolveModule(require("./ghost/EventGhost.vue"));
 const ExpandedCard = resolveModule(require("../expandedCard/ExpandedCard.vue"));
+const InfoModeContainer = resolveModule(require("./infoMode/InfoModeContainer.vue"));
 const ChooseStartingPlayer = resolveModule(
   require("./chooseStartingPlayer/ChooseStartingPlayer.vue")
 );
@@ -759,7 +761,7 @@ module.exports = {
       touchPosition: { x: 0, y: 0 },
       PHASES,
       bg: null,
-      showingModalGame: true,
+      showingModalGame: false, //+++ It's false becouse the tutorial es initialized first, with message "Start Tutorial Here"
     };
   },
   computed: {
@@ -1556,7 +1558,7 @@ module.exports = {
 
     toggleModalGame()
     {
-      //console.log("hideChooseStartingPlayer From Match");
+      console.log(">>>> Se hizo el Toggle del Modal");
       //this.$refs.chooseStartingPlayer.toogleChooseModal();
       this.showingModalGame = !this.showingModalGame;
     },
@@ -1629,6 +1631,7 @@ module.exports = {
     CardGhost,
     EventGhost,
     ExpandedCard,
+    InfoModeContainer,
     ChooseStartingPlayer,
     EscapeMenu,
     MatchHeader,
