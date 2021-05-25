@@ -643,12 +643,12 @@
     </div>
     <ExpandedCard />
     <portal-target multiple name="match" />
-    <InfoModeContainer @toggleModalGame="toggleModalGame"/>
+    <InfoModeContainer @toggleModalGame="toggleModalGame($event)"/>
     <EscapeMenu />
     <card-choice-dialog />
     <CommanderSelection />
     <PlayerHud />
-    <MatchHeader @changeShowingTutorial="toggleModalGame"/>
+    <MatchHeader @changeShowingTutorial="toggleModalGame($event)"/>
 
     <div class="cardsOnHand" :class="playerCardsOnHandOverlayPolicy">
       <div
@@ -1556,11 +1556,19 @@ module.exports = {
       }
     },
 
-    toggleModalGame()
+    toggleModalGame(e)
     {
-      console.log(">>>> Se hizo el Toggle del Modal");
+      console.log(">>>> Se hizo el Toggle del Modal: "+e);
       //this.$refs.chooseStartingPlayer.toogleChooseModal();
-      this.showingModalGame = !this.showingModalGame;
+
+      if (e === undefined || e === null)
+      {
+          this.showingModalGame = !this.showingModalGame;
+      }
+      else {
+        this.showingModalGame = e;
+      }
+
     },
 
   },

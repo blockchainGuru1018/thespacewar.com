@@ -23,9 +23,9 @@ export default {
   methods: {
     ...infoModeHelpers.mapActions(["hide"]),
 
-    toggleModalGame()
+    toggleModalGame(e)
     {
-      this.$emit("toggleModalGame");
+      this.$emit("toggleModalGame",e);
       console.log("Desde InfoModeContainer!");
     }
 

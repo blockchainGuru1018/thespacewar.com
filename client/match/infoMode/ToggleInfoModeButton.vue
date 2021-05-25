@@ -19,9 +19,23 @@
 <script>
 export default {
   name: "ToggleInfoModeButton",
+  data(){
+    return{
+      showedInfoMode: false
+    }
+  },
   methods: {
     click() {
       this.$emit("toggleInfoMode");
+      // if(this.showedInfoMode)
+      //   {
+      //     this.$emit("toggleInfoMode",true);
+      //     this.showedInfoMode = false;
+      //   }
+      // else {
+      //   this.$emit("toggleInfoMode",false);
+      //   this.showedInfoMode = true;
+      // }
     },
   },
 };

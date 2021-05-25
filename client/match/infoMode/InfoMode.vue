@@ -40,7 +40,7 @@ export default {
     next() {
       if (this.showTutorialSuggestion) {
         this.$emit("hide");
-        this.$emit("toggleInfoMode");
+        this.$emit("toggleInfoMode",true);
         console.log("Desde InfoMode!");
       } else {
         this.goToNextTutorialStep();
@@ -50,7 +50,7 @@ export default {
       if (this.step === this.Steps.length - 1) {
         this.step = 0;
         this.$emit("hide");
-        this.$emit("toggleInfoMode");//+++ to toggle the Modal of Game 
+        this.$emit("toggleInfoMode", true);//+++ to toggle the Modal of Game
       } else {
         this.step += 1;
       }
