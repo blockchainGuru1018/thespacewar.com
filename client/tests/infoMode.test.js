@@ -97,10 +97,10 @@ afterEach(() => {
 //   );
 // });
 
-async function toggleInfoMode() {
+//async function toggleInfoMode() {
   // await renderWithState({});
   // await click(".toggleInfoMode");
-}
+//}
 
 async function renderWithState(state) {
   const { dispatch, showPage } = controller;
