@@ -19,19 +19,19 @@ afterEach(() => {
   controller && controller.tearDown();
 });
 
-describe("StartTutorialSuggestion info screen", () => {
-  it("Should not be displayed when gameOn its true", async () => {
-    await renderWithoutState();
-    const { dispatch } = controller;
-    dispatch("stateChanged", FakeState({ gameOn: true }));
-    assert.elementCount("#startTutorialText", 0);
-  });
-
-  it("Should be displayed when gameOn its false", async () => {
-    await renderWithoutState();
-    assert.elementCount("#startTutorialText", 1);
-  });
-});
+//describe("StartTutorialSuggestion info screen", () => {
+  // it("Should not be displayed when gameOn its true", async () => {
+  //   await renderWithoutState();
+  //   const { dispatch } = controller;
+  //   dispatch("stateChanged", FakeState({ gameOn: true }));
+  //   assert.elementCount("#startTutorialText", 0);
+  // });
+  //
+  // it("Should be displayed when gameOn its false", async () => {
+  //   await renderWithoutState();
+  //   assert.elementCount("#startTutorialText", 1);
+  // });
+//});
 
 async function renderWithoutState() {
   const { showPage } = controller;

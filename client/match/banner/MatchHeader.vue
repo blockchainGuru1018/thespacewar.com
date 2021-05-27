@@ -2,7 +2,7 @@
   <div class="matchHeader">
     <PlayerBanner :is-player="false" :reverse="false" />
     <div class="matchHeader-topRightButtons">
-      <ToggleInfoModeButtonContainer @changeShowingTutorial="toggleModalGame($event)" ref="toggleInfoModeButtonContainer"/>
+      <ToggleInfoModeButtonContainer v-if="!isHideInfoModeButtonContainer" @changeShowingTutorial="toggleModalGame($event)" ref="toggleInfoModeButtonContainer"/>
       <button
         class="matchHeader-escapeMenuButton escapeMenuButton"
         @click="toggleEscapeMenu"
@@ -43,6 +43,11 @@ const PlayerBanner = resolveModule(require("./PlayerBanner.vue"));
 const ActionLog = resolveModule(require("../log/ActionLog.vue"));
 
 module.exports = {
+  data(){
+    return {
+        isHideInfoModeButtonContainer: false
+    }
+  },
   computed: {
     ...matchHelpers.mapState(["matchId"]),
   },
@@ -56,6 +61,11 @@ module.exports = {
       console.log("Llego al MatchHeader!!");
       this.$emit("changeShowingTutorial",e);
     },
+
+    hideInfoModeButtonContainer()
+    {
+      this.isHideInfoModeButtonContainer = true;
+    }
 
   },
   components: {

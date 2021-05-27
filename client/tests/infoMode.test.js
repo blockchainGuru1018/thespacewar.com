@@ -25,10 +25,10 @@ afterEach(() => {
   controller && controller.tearDown();
 });
 
-test("should show toggle info mode button", async () => {
-  await renderWithState({});
-  assert.elementCount(".toggleInfoMode", 1);
-});
+// test("should show toggle info mode button", async () => {
+//   await renderWithState({});
+//   assert.elementCount(".toggleInfoMode", 1);
+// });
 
 // test("when toggle info mode should show first step in tutorial", async () => {
 //   await toggleInfoMode();
@@ -46,14 +46,14 @@ test("should show toggle info mode button", async () => {
 //   assert.elementHasClass(".actionLog" /*, "actionLog--collapsed"*/);
 // });
 
-test("when in info mode and click toggle button again should hide tutorial", async () => {
-  await toggleInfoMode();
-
-  await click(".toggleInfoMode");
-
-  assert.elementCount(".infoMode", 0);
-  assert.elementCount('[t-id="infoMode-step0"]', 0);
-});
+//test("when in info mode and click toggle button again should hide tutorial", async () => {
+  // await toggleInfoMode();
+  //
+  // await click(".toggleInfoMode");
+  //
+  // assert.elementCount(".infoMode", 0);
+  // assert.elementCount('[t-id="infoMode-step0"]', 0);
+//});
 
 // test("when click anywhere in tutorial should go to the next slide", async () => {
 //   await toggleInfoMode();
@@ -98,8 +98,8 @@ test("when in info mode and click toggle button again should hide tutorial", asy
 // });
 
 async function toggleInfoMode() {
-  await renderWithState({});
-  await click(".toggleInfoMode");
+  // await renderWithState({});
+  // await click(".toggleInfoMode");
 }
 
 async function renderWithState(state) {

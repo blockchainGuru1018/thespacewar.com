@@ -648,7 +648,7 @@
     <card-choice-dialog />
     <CommanderSelection />
     <PlayerHud />
-    <MatchHeader @changeShowingTutorial="toggleModalGame($event)"/>
+    <MatchHeader ref="matchHeader" @changeShowingTutorial="toggleModalGame($event)"/>
 
     <div class="cardsOnHand" :class="playerCardsOnHandOverlayPolicy">
       <div
@@ -841,6 +841,7 @@ module.exports = {
       "firstRequirementMoveCardToStationZone",
     ]),
     ...ghostHelpers.mapGetters(["activateEventCardGhostVisible"]),
+
     debuggingBot() {
       return featureToggles.isEnabled("debuggingBot");
     },
@@ -1622,6 +1623,13 @@ module.exports = {
     }
     this.initializeIntersectionObservers();
     setTimeout(this.calculateStationCardSizenPosition, 1000);
+
+    if(this.opponentUser.id != "BOT")
+    {
+      console.log("Entro por que es BOT");
+      this.$refs.matchHeader.hideInfoModeButtonContainer();
+    }
+
   },
   destroyed() {
     document.removeEventListener("mousemove", this.mousemove);

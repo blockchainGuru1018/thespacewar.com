@@ -28,8 +28,9 @@ export default function ({ rootDispatch }) {
     rootState,
     rootGetters
   ) {
+    console.log("ID of opponent: ",rootGetters["chooseStartingPlayer/opponent"].id);
     return (
-      state._shouldDisplayTutorialSuggestion && !rootGetters["match/gameOn"]
+      state._shouldDisplayTutorialSuggestion && !rootGetters["match/gameOn"] && rootGetters["chooseStartingPlayer/opponent"].id == "BOT"
     );
   }
 
