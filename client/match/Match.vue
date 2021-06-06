@@ -1626,8 +1626,9 @@ module.exports = {
 
     if(this.opponentUser.id != "BOT")
     {
-      console.log("Entro por que es BOT");
+      console.log("This is not a BOT");
       this.$refs.matchHeader.hideInfoModeButtonContainer();
+      this.showingModalGame = true;
     }
 
   },
