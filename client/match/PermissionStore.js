@@ -1,5 +1,5 @@
 const canIssueOverwork = require("../../shared/match/overwork/canIssueOverwork.js");
-const canExchangeActionPointsForDrawExtraCard = require("../../shared/match/actionPointsForDrawExtraCard/canExchangeActionPointsForDrawExtraCard.js");
+const canExchangeActionPointsForDrawExtraCard = require("../../shared/match/ActionPointsForDrawExtraCard/canExchangeActionPointsForDrawExtraCard.js");
 
 module.exports = function (deps) {
   const { getFrom } = deps;
