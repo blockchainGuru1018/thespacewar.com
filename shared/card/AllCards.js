@@ -59,6 +59,7 @@ const classes = [
   require("./DeployStarship.js"),
   require("./SurpriseAttack.js"),
   require("./GoodPlan.js"),
+  require("./Fate.js"),
 ];
 
 module.exports = classes;
