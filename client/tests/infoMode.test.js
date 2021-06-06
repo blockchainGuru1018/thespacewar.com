@@ -75,14 +75,14 @@ afterEach(() => {
 //   assert.elementCount('[t-id="infoMode-step1"]', 0);
 // });
 
-// test("when go to last slide in tutorial and click anywhere should hide tutorial", async () => {
-//   await toggleInfoMode();
-//
-//   const amountOfStepsInTutorial = TutorialSteps.InOrder.length;
-//   await clickTimes(".infoMode", amountOfStepsInTutorial);
-//
-//   assert.elementCount(".infoMode", 0);
-// });
+test("when go to last slide in tutorial and click anywhere should hide tutorial", async () => {
+  await toggleInfoMode();
+
+  const amountOfStepsInTutorial = TutorialSteps.InOrder.length;
+  await clickTimes(".infoMode", amountOfStepsInTutorial);
+
+  assert.elementCount(".infoMode", 0);
+});
 
 // test("when finishes tutorial should expand action log", async () => {
 //   await toggleInfoMode();
@@ -97,10 +97,10 @@ afterEach(() => {
 //   );
 // });
 
-//async function toggleInfoMode() {
-  // await renderWithState({});
-  // await click(".toggleInfoMode");
-//}
+async function toggleInfoMode() {
+  await renderWithState({});
+  await click(".toggleInfoMode");
+}
 
 async function renderWithState(state) {
   const { dispatch, showPage } = controller;
