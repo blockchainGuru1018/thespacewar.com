@@ -60,6 +60,7 @@ const classes = [
   require("./SurpriseAttack.js"),
   require("./GoodPlan.js"),
   require("./Fate.js"),
+  require("./Brilliance.js"),
 ];
 
 module.exports = classes;
