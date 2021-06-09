@@ -25,6 +25,16 @@ module.exports = {
             canBeCountered: true,
           },
         },
+        {
+          type: "drawCard",
+          count: DrawCardsCount,
+          cardCommonId: CommonId,
+        },
+        {
+          type: "discardCard",
+          count: 1,
+          cardCommonId: CommonId,
+        }
       ],
     },
   },
