@@ -47,6 +47,8 @@ module.exports = function ({
       moveCardsToCurrentCardLocation(cardGroups, playerId, requirement);
     } else if (requirement.target === "discardPile") {
       moveCardsToDiscardPile(cardGroups, playerId);
+    } else if (requirement.target === "deck-top") {
+      moveCardsToDrawPileOnTop(cardGroups, playerId);
     }
 
     if (destroyCardFromUseOfDormantEffect(requirement)) {
@@ -242,6 +244,24 @@ module.exports = function ({
 
     const playerActionLog = playerServiceFactory.actionLog(playerId);
     playerActionLog.cardsDiscarded({ cardCommonIds });
+  }
+
+  function moveCardsToDrawPileOnTop(cardGroups, playerId) {
+    const playerStateService = playerServiceProvider.getStateServiceById(
+      playerId
+    );
+
+    const cardCommonIds = [];
+    for (const group of cardGroups) {
+      for (const cardId of group.cardIds) {
+        const cardData = removeCardFromSource(cardId, group.source, playerId);
+        cardCommonIds.push(cardData.commonId);
+        playerStateService.addCardToDrawPileTop(cardData);
+      }
+    }
+
+    const playerActionLog = playerServiceFactory.actionLog(playerId);
+    playerActionLog.addedCardToDrawPileTop({ cardCommonIds });
   }
 
   function removeCardFromSource(cardId, source, playerId) {
