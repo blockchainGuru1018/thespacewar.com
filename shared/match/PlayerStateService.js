@@ -1,6 +1,7 @@
 const AttackEvent = require("../event/AttackEvent.js");
 const DrawCardEvent = require("../event/DrawCardEvent.js");
 const DiscardCardEvent = require("../event/DiscardCardEvent.js");
+const AddCardToDrawPileTopEvent = require("../event/AddCardToDrawPileTopEvent.js");
 const MoveCardEvent = require("../event/MoveCardEvent.js");
 const AddCardToHandEvent = require("../event/AddCardToHandEvent.js");
 const PutDownCardEvent = require("../PutDownCardEvent.js");
@@ -787,7 +788,23 @@ class PlayerStateService {
       })
     );
   }
+  
+  addCardToDrawPileTop(cardData) {
+    const turn = this._matchService.getTurn();
 
+    this.update((playerState) => {
+      playerState.cardsInDeck.push(cardData);
+    });
+    this.storeEvent(
+      AddCardToDrawPileTopEvent({
+        turn,
+        phase: this.getPhase(),
+        cardId: cardData.id,
+        cardCommonId: cardData.commonId,
+      })
+    );
+  }
+  
   drawCard({ byEvent = false } = {}) {
     const deck = this.getDeck();
     if (deck.getCardCount() === 0) {
