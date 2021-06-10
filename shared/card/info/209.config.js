@@ -14,7 +14,7 @@ module.exports = {
         },
       ],
     },
-    counter: {
+    counter_and_draw: {
       forOpponent: [],
       forPlayer: [
         {
@@ -37,11 +37,28 @@ module.exports = {
         }
       ],
     },
+    counter_no_draw: {
+      forOpponent: [],
+      forPlayer: [
+        {
+          type: "counterCard",
+          count: 1,
+          sources: ["opponentAny"],
+          filter: {
+            canBeCountered: true,
+          },
+        }
+      ],
+    },
   },
   choicesWhenPutDownInHomeZone: [
     {
-      name: "counter",
-      text: "Counter a card costing 0 or 1. You may draw a card and discard a card.",
+      name: "counter_and_draw",
+      text: "Counter a card costing 0 or 1. Draw a card and discard a card.",
+    },
+    {
+      name: "counter_no_draw",
+      text: "Counter a card costing 0 or 1.",
     },
     {
       name: "draw",

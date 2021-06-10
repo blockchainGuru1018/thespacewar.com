@@ -859,10 +859,10 @@
             },
             {
                 "id": "219",
-                "name": "Good Plan",
+                "name": "Great Plan",
                 "price": "3",
                 "type_card": "orange",
-                "detail": "Look at the top 10 cards from your draw pile,. Then place 2 cards to your hand and the rest to the bottom of your draw pile.",
+                "detail": "Look at the top 10 cards of your draw pile. Place 2 of them to your hand and the rest to the bottom of your draw pile in random order.",
                 "defense": "0",
                 "attack": "0",
                 "number_copies": "2",
@@ -1063,5 +1063,5 @@
             }
         ]
     },
-    "saveTime": 1621265030135
+    "saveTime": 1623337110974
 }

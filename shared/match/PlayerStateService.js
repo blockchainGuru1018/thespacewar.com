@@ -788,7 +788,7 @@ class PlayerStateService {
       })
     );
   }
-  
+
   addCardToDrawPileTop(cardData) {
     const turn = this._matchService.getTurn();
 
@@ -804,7 +804,16 @@ class PlayerStateService {
       })
     );
   }
-  
+
+  removeCardsFromDeckTopAndAddItInDeckBottom(cardMoveCount) {
+    this.update((playerState) => {
+      if (playerState.cardsInDeck.length > cardMoveCount) {
+        const cardsData = playerState.cardsInDeck.splice(0, playerState.cardsInDeck.length - cardMoveCount);
+        playerState.cardsInDeck.push(...cardsData);
+      }
+    });
+  }
+
   drawCard({ byEvent = false } = {}) {
     const deck = this.getDeck();
     if (deck.getCardCount() === 0) {

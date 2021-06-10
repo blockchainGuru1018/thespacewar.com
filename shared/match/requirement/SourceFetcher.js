@@ -25,6 +25,7 @@ function SourceFetcher({
   //  on the same source (see FindCardController).
   return {
     deck: shuffleOutput(deck),
+    deckTop,
     discardPile: shuffleOutput(discardPile),
     actionStationCards: shuffleOutput(actionStationCards),
     drawStationCards: shuffleOutput(drawStationCards),
@@ -51,6 +52,14 @@ function SourceFetcher({
   }
 
   function deck(specFilter) {
+    return playerStateService
+      .getCardsInDeck()
+      .map((cardData) => playerStateService.createBehaviourCard(cardData))
+      .filter(cardFilter(specFilter))
+      .map((card) => card.getCardData());
+  }
+
+  function deckTop(specFilter) {
     return playerStateService
       .getCardsInDeck()
       .map((cardData) => playerStateService.createBehaviourCard(cardData))

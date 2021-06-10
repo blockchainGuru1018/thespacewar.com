@@ -41,13 +41,14 @@ module.exports = function ({
       moveCardsToHomeZone(cardGroups, playerId);
     } else if (requirement.target === "hand") {
       moveCardsToHand(cardGroups, playerId);
+      moveRemainingCardIfNeeded(requirement, playerId);
     } else if (requirement.target === "opponentDiscardPile") {
       moveCardsToOpponentDiscardPile(cardGroups, playerId);
     } else if (requirement.target === "currentCardZone") {
       moveCardsToCurrentCardLocation(cardGroups, playerId, requirement);
     } else if (requirement.target === "discardPile") {
       moveCardsToDiscardPile(cardGroups, playerId);
-    } else if (requirement.target === "deck-top") {
+    } else if (requirement.target === "deckTop") {
       moveCardsToDrawPileOnTop(cardGroups, playerId);
     }
 
@@ -264,11 +265,28 @@ module.exports = function ({
     playerActionLog.addedCardToDrawPileTop({ cardCommonIds });
   }
 
+  function moveRemainingCardIfNeeded(requirement, playerId) {
+    if (requirement.sourceLimit > requirement.count
+      && requirement.targetForRest === "deckBottom") {
+      const cardMoveCount = requirement.sourceLimit - requirement.count;
+      moveRemainingCardsToDrawPileOnBottom(cardMoveCount, playerId);
+    }
+  }
+
+  function moveRemainingCardsToDrawPileOnBottom(cardMoveCount, playerId) {
+    const playerStateService = playerServiceProvider.getStateServiceById(
+      playerId
+    );
+    playerStateService.removeCardsFromDeckTopAndAddItInDeckBottom(cardMoveCount);
+  }
+
   function removeCardFromSource(cardId, source, playerId) {
     const playerStateService = playerServiceProvider.getStateServiceById(
       playerId
     );
     if (source === "deck") {
+      return playerStateService.removeCardFromDeck(cardId);
+    } else if (source === "deckTop") {
       return playerStateService.removeCardFromDeck(cardId);
     } else if (source === "discardPile") {
       return playerStateService.removeCardFromDiscardPile(cardId);

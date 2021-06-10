@@ -20,7 +20,7 @@ module.exports = {
           type: "findCard",
           count: 1,
           sources: ["hand"],
-          target: "deck-top",
+          target: "deckTop",
         },
       ],
     },

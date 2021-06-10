@@ -165,6 +165,10 @@ module.exports = {
       this.cancelRequirement();
     },
     getCardGroupTitle(group) {
+      if(this.requirement.cardCommonId === "218") {
+        // 218 is Brilliance: https://images.thespacewar.com/card-218.jpg
+        return " From hand, it goes back to top of draw pile";
+      }
       return nameBySource[group.source];
     },
   },

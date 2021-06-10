@@ -68,6 +68,13 @@ There is also a pre-push hook that will make sure **all** tests are passing.
 
 Note: Servers are not running with any source code monitor, so you have to restart the server to make changes have effect when developing locally.
 
+How to test cards
+-
+First make sure that you have entered here localhost:8080/experiments and have "United Stars" selected. Then in the lobby make sure you select the deck "United Stars". Choose the commander Dr Stein and in your turn click the button "Perfect Plan" which will make you able to select any card to your hand (so you can test it).
+
+If you need to test versus a real player account you can be logged in to your normal account and in incognito window log in using the account Viper3 that has the password test123. Any games done with Viper3 will not affect any rating scores.
+
+
 Using feature toggles
 -
 Import featureToggles.js and use the method "isEnabled" to determine if a toggle is on. 

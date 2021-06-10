@@ -223,6 +223,16 @@ function PlayerRequirementService({
     cardGroups,
     ...uncheckedProperties
   }) {
+    if (uncheckedProperties.sourceLimit) {
+      cardGroups = cardGroups.map((cardGroup) => {
+        if (cardGroup.cards.length <= uncheckedProperties.sourceLimit) return cardGroup;
+        cardGroup.cards = cardGroup.cards.splice(
+          cardGroup.cards.length - uncheckedProperties.sourceLimit,
+          uncheckedProperties.sourceLimit
+        )
+        return cardGroup;
+      });
+    }
     const totalCardCount = cardGroups.reduce(
       (acc, group) => acc + group.cards.length,
       0
@@ -367,6 +377,21 @@ function PlayerRequirementService({
       });
       const reverseIndexOfRequirement = requirements.indexOf(requirement);
       playerState.requirements.splice(reverseIndexOfRequirement, 1);
+
+      const findCardRequirement = findMatchingRequirement(playerState.requirements, {
+        type: 'findCard',
+        common,
+        waiting,
+      });
+      if(findCardRequirement) {
+        const findCardRequirementIndex = playerState.requirements.indexOf(findCardRequirement);
+        const cardGroup = findCardRequirement.cardGroups.find(group => group.source === "hand");
+        if (!cardGroup) return;
+        const cardGroupIndex = findCardRequirement.cardGroups.indexOf(cardGroup);
+        playerState.requirements[findCardRequirementIndex].cardGroups[cardGroupIndex].cards = playerState.cardsOnHand;
+      }
+      // playerState.requirements[findCardRequirementIndex].cardGroups =
+
     });
   }
 }

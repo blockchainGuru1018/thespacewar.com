@@ -118,7 +118,7 @@ module.exports = function ({
 
     log({ action: "discarded", text });
   }
-  
+
   function addedCardToDrawPileTop({ cardCommonIds }) {
     if (cardCommonIds.length === 0) return;
 
