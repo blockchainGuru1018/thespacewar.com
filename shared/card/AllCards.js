@@ -58,7 +58,7 @@ const classes = [
   require("./Starship.js"),
   require("./DeployStarship.js"),
   require("./SurpriseAttack.js"),
-  require("./GoodPlan.js"),
+  require("./GreatPlan.js"),
   require("./Fate.js"),
   require("./Brilliance.js"),
 ];

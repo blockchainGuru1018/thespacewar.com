@@ -140,6 +140,9 @@ module.exports = {
       )}${endText}`;
     },
     subHeaderText() {
+      if (this.requirement.cardCommonId == 219) {
+        return "These are the top 10 cards of your draw pile";
+      }
       const actionPoints = this.requirement.actionPointsLimit
         ? this.requirement.actionPointsLimit.actionPointsLeft
         : this.actionPoints2;

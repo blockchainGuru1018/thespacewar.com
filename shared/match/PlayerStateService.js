@@ -809,6 +809,7 @@ class PlayerStateService {
     this.update((playerState) => {
       if (playerState.cardsInDeck.length > cardMoveCount) {
         const cardsData = playerState.cardsInDeck.splice(0, playerState.cardsInDeck.length - cardMoveCount);
+        shuffle(cardsData);
         playerState.cardsInDeck.push(...cardsData);
       }
     });
@@ -1180,4 +1181,19 @@ module.exports = PlayerStateService;
 
 function getStationCardId(stationCard) {
   return stationCard.card ? stationCard.card.id : stationCard.id;
+}
+
+function shuffle(array) {
+  let currentIndex = array.length;
+  let temporaryValue;
+  let randomIndex;
+
+  while (0 !== currentIndex) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
 }
