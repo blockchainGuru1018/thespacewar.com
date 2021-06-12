@@ -2,7 +2,7 @@
   <div class="infoMode-step">
     <h2>Phases</h2>
     <p id="infoMode-fieldDivider">
-      At the left end of this field divider there will be a button when you can
+      On the left side there will be a button when you can
       progress to the next phase or end your turn.
     </p>
     <div class="infoMode-spacer--small" />
@@ -12,10 +12,11 @@
   </div>
 </template>
 <script>
-import LinesMixin from "../LinesMixin.js";
+// There are no field-divider in the game anymore since a few years back ...
+//import LinesMixin from "../LinesMixin.js";
 
-export default {
-  name: "PhasesIntro",
-  mixins: [LinesMixin([["#infoMode-fieldDivider", ".field-divider"]])],
-};
+//export default {
+//  name: "PhasesIntro",
+//  mixins: [LinesMixin([["#infoMode-fieldDivider", ".field-divider"]])],
+//};
 </script>

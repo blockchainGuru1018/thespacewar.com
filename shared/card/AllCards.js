@@ -57,6 +57,11 @@ const classes = [
   require("./ResourceShip.js"),
   require("./MegaShield.js"),
   require("./Starship.js"),
+  require("./DeployStarship.js"),
+  require("./SurpriseAttack.js"),
+  require("./GreatPlan.js"),
+  require("./Fate.js"),
+  require("./Brilliance.js"),
 ];
 
 module.exports = classes;

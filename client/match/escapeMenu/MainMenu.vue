@@ -5,7 +5,10 @@
       title="If something appears to be wrong, this might fix it. No data will be lost when you reload the page!"
       @click="hideAnd(reloadPage)"
     >
-      Reload page
+      Solve Problems
+      <span class="cardChoiceDialog-choiceSubText">
+        Saves and reloads page
+      </span>
     </button>
     <button class="escapeMenu-option">
       Sound:

@@ -9,7 +9,7 @@
       phase.
     </p>
     <p>
-      When you have no more cards left in your deck you will take damage to your
+      When you have no more cards left in your deck you will take 3 damage to your
       station instead of drawing cards.
     </p>
   </div>

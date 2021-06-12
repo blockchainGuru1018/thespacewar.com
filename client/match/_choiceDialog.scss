@@ -23,8 +23,9 @@
   padding: 20px 0 40px 0;
   justify-content: center;
   align-items: stretch;
-  background: $dialogColoredGradient;
-  border: 2px solid $dialogGlowingBorderColor;
+  background: $dialogBackground;
+  border: 2px solid $dialogBorderColor;
+  border-radius: 10px;
 }
 
 .cardChoiceDialog-choice {
@@ -46,17 +47,13 @@
 
   &::after {
     content: '';
-    height: 1px;
+    height: 3px;
     width: 75%;
     background: rgba(255, 255, 255, .25);
     position: absolute;
     top: calc(100% + 10px);
     left: 50%;
     transform: translateX(-50%);
-
-    line-height: 0;
-    text-shadow: 2px 2px 2px red;
-
   }
 
   &:last-child::after {
@@ -64,7 +61,8 @@
   }
 
   &:hover {
-    background-color: rgba(120, 120, 120, .06);
+    background-color: rgba(100, 100, 130, 0.4);
+    cursor: pointer;
   }
 
   &:last-child {
@@ -84,3 +82,12 @@
   letter-spacing: .18em;
   text-align: center;
 }
+
+
+// Phones in landscape mode, by Jim 2021-03-09
+@media (max-height: 700px) and (orientation: landscape) {
+  .cardChoiceDialog {padding:0;}
+  .chardChoiceDialog-header {font-size: 20px;padding:20px 0 0 0;}
+  .cardChoiceDialog-choice {font-size: 15px;}
+}
+

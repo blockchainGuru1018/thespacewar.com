@@ -28,8 +28,9 @@ export default function ({ rootDispatch }) {
     rootState,
     rootGetters
   ) {
+    console.log("ID of opponent: ",rootGetters["chooseStartingPlayer/opponent"].id);
     return (
-      state._shouldDisplayTutorialSuggestion && !rootGetters["match/gameOn"]
+      state._shouldDisplayTutorialSuggestion && !rootGetters["match/gameOn"] && rootGetters["chooseStartingPlayer/opponent"].id == "BOT"
     );
   }
 
@@ -47,6 +48,8 @@ export default function ({ rootDispatch }) {
   function toggle({ state, dispatch }) {
     dispatch("_setVisibility", !state.visible);
     dispatch("hideTutorialSuggestion");
+    console.log("Toggled Tutorial!");
+
   }
 
   function hide({ dispatch }) {

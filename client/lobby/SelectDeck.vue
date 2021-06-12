@@ -13,13 +13,16 @@
       <option v-if="unitedStarsDeck" :value="'UnitedStars'"
       >United Stars (advanced play)
       </option>
+      <option v-if="customDeck && customDeckName" :value="'CustomDeck'">
+        {{ customDeckName }} (Constructed)
+      </option>
     </select>
   </div>
 </template>
 
 <script>
 import featureToggles from "../utils/featureToggles.js";
-
+import getCookie from "../utils/getCookies.js";
 export default {
   data: function () {
     return {
@@ -29,6 +32,20 @@ export default {
   computed: {
     unitedStarsDeck() {
       return featureToggles.isEnabled("unitedStarsDeck");
+    },
+    customDeck() {
+      return featureToggles.isEnabled("customDeck");
+    },
+    customDeckName() {
+      let constructedDeck = {};
+      const rawConstructedDeckCookie = getCookie("constructed_deck");
+      if (rawConstructedDeckCookie) {
+        constructedDeck = JSON.parse(
+          decodeURIComponent(`${rawConstructedDeckCookie}`)
+        );
+
+        return constructedDeck.deck_name;
+      }
     },
   },
   mounted() {

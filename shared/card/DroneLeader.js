@@ -1,6 +1,7 @@
 const BaseCard = require("./BaseCard.js");
+const CanMoveFirstTurn = require("./mixins/CanMoveFirstTurn.js");
 const Drone = require("./Drone.js");
-module.exports = class DroneLeader extends BaseCard {
+module.exports = class DroneLeader extends CanMoveFirstTurn(BaseCard) {
   constructor(deps) {
     super(deps);
   }

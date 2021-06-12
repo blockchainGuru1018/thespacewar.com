@@ -36,7 +36,7 @@
       <SkipDrawCard v-if="shouldShowSkipDrawCard" />
       <div
         v-if="firstRequirement.cancelable"
-        class="float-right-button guideText-subText"
+        class="cancel-button guideText-subText"
       >
         <button class="darkButton" @click="cancelClick">
           Cancel
@@ -172,6 +172,12 @@
         </button>
       </div>
     </div>
+    <div v-else-if="attackerDamageGoThroughShields" class="guideText-wrapper">
+      <div class="guideText-subText">
+        Select first station cards if you want that your damage goes through
+        shield.
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -220,6 +226,7 @@ export default {
     ...mapGetters([
       "maxHandSize",
       "actionPoints2",
+      "attackerDamageGoThroughShields",
       "attackerCard",
       "amountOfCardsToDiscard",
       "turnControl",
@@ -239,6 +246,7 @@ export default {
       "firstRequirement",
       "firstRequirementIsDiscardCard",
       "firstRequirementIsDamageStationCard",
+      "firstRequirementIsSelectSpaceshipForDamage",
       "firstRequirementIsDamageShieldCard",
       "firstRequirementIsSelectForSacrifice",
       "firstRequirementIsDrawCard",
@@ -361,6 +369,11 @@ export default {
           "card",
           this.cardsLeftToSelect
         )} to sacrifice`;
+      } else if (
+        this.firstRequirementIsSelectSpaceshipForDamage &&
+        this.cardsLeftToSelect > 0
+      ) {
+        return "Select 1 spaceship card to do 3 damage";
       } else if (this.firstRequirementIsDrawCard) {
         return this.drawCardOrMillText;
       } else if (this.repairerCommanderSelected) {
@@ -547,15 +560,7 @@ function pluralize(word, count) {
   animation: flickerAnimation 1s infinite;
 }
 
-.float-right-button {
-  position: absolute;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-  z-index: 1;
-  width: 15%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.cancel-button {
+  margin-left: 50px;
 }
 </style>

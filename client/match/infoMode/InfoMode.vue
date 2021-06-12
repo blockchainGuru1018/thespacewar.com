@@ -40,6 +40,8 @@ export default {
     next() {
       if (this.showTutorialSuggestion) {
         this.$emit("hide");
+        this.$emit("toggleInfoMode",true);
+        console.log("Desde InfoMode!");
       } else {
         this.goToNextTutorialStep();
       }
@@ -48,6 +50,7 @@ export default {
       if (this.step === this.Steps.length - 1) {
         this.step = 0;
         this.$emit("hide");
+        this.$emit("toggleInfoMode", true);//+++ to toggle the Modal of Game
       } else {
         this.step += 1;
       }
@@ -72,7 +75,7 @@ export default {
   bottom: 0;
   left: 0;
   z-index: 1;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.4);
   transition: background 1s;
 }
 
@@ -144,4 +147,25 @@ export default {
 .infoMode-spacer--tiny {
   height: 50px;
 }
+
+// Phones in landscape mode, by Jim 2021-03-10
+@media (max-height: 700px) and (orientation: landscape) {
+  .infoMode {
+    top: 50px !important;
+    max-width: 50%;
+  }
+  .infoMode-step > h2 {
+    font-size:27px;
+  }
+  .infoMode-step > p {
+    font-size:16px;
+  }
+  .infoMode-spacer--tiny {
+    height:5px;
+  }
+  .infoMode-spacer--small {
+    height:10px;
+  }
+}
+
 </style>

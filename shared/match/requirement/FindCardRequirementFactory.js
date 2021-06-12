@@ -16,12 +16,15 @@ function FindCardRequirementFactory({
       cardGroups: cardGroupsFromSpec(),
       cardCommonId: card.commonId,
       count: requirementSpec.count,
+      sourceLimit: requirementSpec.sourceLimit,
       target: requirementSpec.target,
+      targetForRest: requirementSpec.targetForRest,
       common: !!requirementSpec.common,
       waiting: requirementSpec.count === 0 && requirementSpec.common,
       cancelable: !!requirementSpec.cancelable,
       submitOnEverySelect: !!requirementSpec.submitOnEverySelect,
       cardId: card.id,
+      id: Date.now(),
     };
     if (requirementSpec.dormantEffect) {
       requirement.usedDormantEffect = {

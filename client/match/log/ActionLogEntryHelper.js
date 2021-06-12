@@ -50,7 +50,7 @@ export default function (entry) {
   function htmlWithLink() {
     const cardName = getCardName();
 
-    const cardNameWithAnchors = `<a class="actionLog-entryCardLink"> ${cardName} </a>`;
+    const cardNameWithAnchors = ` <a class="actionLog-entryCardLink">${cardName}</a> `;
 
     return html().replace(cardName, cardNameWithAnchors);
   }

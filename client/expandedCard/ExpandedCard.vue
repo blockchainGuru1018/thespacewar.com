@@ -55,7 +55,7 @@ module.exports = {
   left: 0;
   bottom: 0;
   right: 0;
-  z-index: 3;
+  z-index: 4;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -67,4 +67,18 @@ module.exports = {
   height: $expandedCardHeight;
   pointer-events: none;
 }
+
+// Phones in landscape mode, by Jim 2021-03-10
+// Must be a better way to do this and set max-height 50px less than screen height
+@media (max-height: 700px) {.expandedCard-image {max-height: 650px;} }
+@media (max-height: 650px) {.expandedCard-image {max-height: 600px;} }
+@media (max-height: 600px) {.expandedCard-image {max-height: 550px;} }
+@media (max-height: 550px) {.expandedCard-image {max-height: 500px;} }
+@media (max-height: 500px) {.expandedCard-image {max-height: 450px;} }
+@media (max-height: 450px) {.expandedCard-image {max-height: 400px;} }
+@media (max-height: 400px) {.expandedCard-image {max-height: 350px;} }
+@media (max-height: 350px) {.expandedCard-image {max-height: 300px;} }
+@media (max-height: 300px) {.expandedCard-image {max-height: 250px;} }
+
+
 </style>

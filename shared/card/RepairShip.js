@@ -7,12 +7,13 @@ module.exports = class RepairShip extends BaseCard {
 
     this._repairCapability = 3;
   }
+
   static get CommonId() {
     return "90";
   }
 
   canAttack() {
-    return super.canAttack() && !this._hasRepairedThisTurn();
+    return super.canAttack() && !this._hasRepairedThisTurn() && this.canCollide;
   }
 
   canRepair() {
@@ -39,6 +40,10 @@ module.exports = class RepairShip extends BaseCard {
     }
   }
 
+  get canCollide() {
+    return super.canCollide && this._hasCardInSameZoneThatCanBeCollided();
+  }
+
   _repairZoneCard(otherCard) {
     const { paralyzed, damage } = this.simulateRepairingCard(otherCard);
 
@@ -49,9 +54,7 @@ module.exports = class RepairShip extends BaseCard {
   simulateRepairingCard(otherCard) {
     return {
       paralyzed: false,
-      damage: otherCard.paralyzed
-        ? otherCard.damage
-        : Math.max(0, otherCard.damage - this._repairCapability),
+      damage: Math.max(0, otherCard.damage - this._repairCapability),
     };
   }
 
@@ -77,6 +80,12 @@ module.exports = class RepairShip extends BaseCard {
       (card) => {
         return card.canBeRepaired();
       }
+    );
+  }
+
+  _hasCardInSameZoneThatCanBeCollided() {
+    return this._queryBoard.opponentHasCardInSameZone(this, (card) =>
+      ["spaceShip", "missile", "defense"].includes(card.type)
     );
   }
 

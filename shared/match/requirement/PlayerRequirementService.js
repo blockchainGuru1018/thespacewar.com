@@ -7,11 +7,6 @@ const findMatchingRequirement = require("./findMatchingRequirements.js");
 function PlayerRequirementService({
   playerStateService,
   opponentStateService,
-
-  //TODO REMOVE THESE
-  playerCommanders,
-  moreCardsCanBeDrawnForDrawPhase,
-
   queryPlayerRequirements,
 }) {
   return {
@@ -39,6 +34,7 @@ function PlayerRequirementService({
 
   function addCardRequirement(requirement) {
     const type = requirement.type;
+
     if (type === "drawCard") {
       return addDrawCardRequirement(requirement);
     } else if (type === "discardCard") {
@@ -55,9 +51,17 @@ function PlayerRequirementService({
       return addCounterCardRequirement(requirement);
     } else if (type === "counterAttack") {
       return addCounterAttackRequirement(requirement);
+    } else if (type === "damageSpaceship") {
+      return addDamageStartshipRequirement(requirement);
+    } else if (type === "moveCardToStationZone") {
+      return addMoveCardToStationZoneRequirement(requirement);
     }
   }
 
+  function addMoveCardToStationZoneRequirement(requirement) {
+    addRequirement(requirement);
+    return requirement;
+  }
   function addDiscardCardRequirement({
     count,
     common = false,
@@ -204,12 +208,31 @@ function PlayerRequirementService({
 
     return null;
   }
+  function addDamageStartshipRequirement({ count, ...uncheckedProperties }) {
+    const requirement = {
+      ...uncheckedProperties,
+      type: "damageSpaceship",
+      count: count,
+    };
+    addRequirement(requirement);
 
+    return requirement;
+  }
   function addFindCardRequirement({
     count,
     cardGroups,
     ...uncheckedProperties
   }) {
+    if (uncheckedProperties.sourceLimit) {
+      cardGroups = cardGroups.map((cardGroup) => {
+        if (cardGroup.cards.length <= uncheckedProperties.sourceLimit) return cardGroup;
+        cardGroup.cards = cardGroup.cards.splice(
+          cardGroup.cards.length - uncheckedProperties.sourceLimit,
+          uncheckedProperties.sourceLimit
+        )
+        return cardGroup;
+      });
+    }
     const totalCardCount = cardGroups.reduce(
       (acc, group) => acc + group.cards.length,
       0
@@ -354,6 +377,21 @@ function PlayerRequirementService({
       });
       const reverseIndexOfRequirement = requirements.indexOf(requirement);
       playerState.requirements.splice(reverseIndexOfRequirement, 1);
+
+      const findCardRequirement = findMatchingRequirement(playerState.requirements, {
+        type: 'findCard',
+        common,
+        waiting,
+      });
+      if(findCardRequirement) {
+        const findCardRequirementIndex = playerState.requirements.indexOf(findCardRequirement);
+        const cardGroup = findCardRequirement.cardGroups.find(group => group.source === "hand");
+        if (!cardGroup) return;
+        const cardGroupIndex = findCardRequirement.cardGroups.indexOf(cardGroup);
+        playerState.requirements[findCardRequirementIndex].cardGroups[cardGroupIndex].cards = playerState.cardsOnHand;
+      }
+      // playerState.requirements[findCardRequirementIndex].cardGroups =
+
     });
   }
 }

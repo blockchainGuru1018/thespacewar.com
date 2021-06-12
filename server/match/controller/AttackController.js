@@ -23,6 +23,7 @@ function AttackController(deps) {
     onDamageStationCard,
     onDamageShieldCard,
     onSacrifice,
+    damageSpaceship,
   };
 
   function onAttack(
@@ -224,6 +225,7 @@ function AttackController(deps) {
       attackerCardData,
       playerId
     );
+    attackerCard._card.usingCollision = usingCollision;
     if ("canFakeAttack" in attackerCard) {
       if (!attackerCard.canFakeAttack() && !attackerCard.canAttack())
         throw new CheatError("Cannot attack");
@@ -387,6 +389,37 @@ function AttackController(deps) {
     }
   }
 
+  function damageSpaceship(playerId, { cardId }) {
+    const opponentId = matchService.getOpponentId(playerId);
+    const opponentStateService = playerServiceProvider.getStateServiceById(
+      opponentId
+    );
+    const attackerCardData = opponentStateService.findCard(cardId);
+    const targetCard = cardFactory.createCardForPlayer(
+      attackerCardData,
+      opponentId
+    );
+
+    if (!targetCard) {
+      throw Error("Invalid targe");
+    }
+    targetCard.damage += 3;
+    if (targetCard.currentHealth <= 0) {
+      const cardData = opponentStateService.removeCard(cardId);
+      opponentStateService.discardCard(cardData);
+    } else {
+      opponentStateService.updateCardById(cardId, (card) => {
+        Object.assign(card, targetCard.getCardData());
+      });
+    }
+
+    const requirementUpdater = playerRequirementUpdaterFactory.create(
+      playerId,
+      { type: "damageSpaceship" }
+    );
+    requirementUpdater.progressRequirementByCount(1);
+    //TODO: finalizar el requirement
+  }
   function isValidStationCollisionFromSacrifice({
     playerId,
     cardId,

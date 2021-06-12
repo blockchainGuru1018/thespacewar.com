@@ -66,7 +66,9 @@ module.exports = function ({
         : spec.forOpponent;
     for (const spec of requirementSpecs) {
       const requirement = requirementFactory.createForCardAndSpec(card, spec);
-
+      if (requirement.type === "moveCardToStationZone") {
+        requirement.cardData = card.getCardData();
+      }
       let addedRequirement;
       if (isEmptyCommonWaitingRequirement(requirement)) {
         addedRequirement = requirementService.addEmptyCommonWaitingRequirement(

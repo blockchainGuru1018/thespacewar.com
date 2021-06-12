@@ -14,7 +14,7 @@
 
 @mixin box-shadow($shadow...) {
   -webkit-box-shadow: $shadow;
-     -moz-box-shadow: $shadow;       
+     -moz-box-shadow: $shadow;
           box-shadow: $shadow;
 }
 @mixin perspective($perspectiveValue) {
@@ -29,7 +29,7 @@
 @mixin backface-visibility() {
   -webkit-backface-visibility: hidden;
 	-moz-backface-visibility: hidden;
-	backface-visibility: hidden; 
+	backface-visibility: hidden;
 }
 @mixin transform($transform){
   -webkit-transform: $transform;
@@ -40,7 +40,7 @@
 @mixin transform-style ($transformStyle){
   -webkit-transform-style: $transformStyle;
 	-moz-transform-style: $transformStyle;
-	transform-style: $transformStyle; 
+	transform-style: $transformStyle;
 }
 $color_height:  1px 1px 1px rgba(202, 40, 40, 0.9),
                 1px 1px 1px rgba(202, 40, 40, 0.9),
@@ -73,7 +73,7 @@ $opponent_color_height: -1px 1px 1px rgba(13,	59,	81, 1),
                         -1px 1px 1px rgba(13,	59,	81, 1),
                         -1px 1px 1px rgba(20,20,20, 1);
 
-                        
+
 .match {
   display: flex;
   flex-direction: column;
@@ -236,8 +236,8 @@ $opponent_color_height: -1px 1px 1px rgba(13,	59,	81, 1),
   flex-wrap: nowrap;
   width: 100%;
   &::before, &::after {
-    content: ''; 
-    margin: auto; 
+    content: '';
+    margin: auto;
   }
   .card {
     margin: 0 4px;
@@ -386,9 +386,8 @@ $opponent_color_height: -1px 1px 1px rgba(13,	59,	81, 1),
   justify-content: center;
   position: relative;
   top: -.1em;
-
   line-height: 100%;
-  font-size: 35px;
+  font-size: 27px;
   color: white;
   font-weight: bold;
   font-family: "Space mono", sans-serif;
@@ -402,6 +401,14 @@ $opponent_color_height: -1px 1px 1px rgba(13,	59,	81, 1),
      pointer-events: initial;
    }
 }
+
+
+// Phones in landscape mode, by Jim 2021-03-08
+@media (max-height: 700px) and (orientation: landscape) {
+  .playerActionPoints, .guideText {font-size: 23px;}
+  .guideText-subText {font-size: 17px;}
+}
+
 
 .guideText-waitingForOtherPlayer {
   font-size: 20px;
@@ -604,7 +611,7 @@ $shakeDelay: 0s;
     transform: translate(1px, -2px) rotate(179deg);
   }
 
-  
+
 }
 .mobileOnPortrait {
   display: block;
@@ -623,7 +630,7 @@ $shakeDelay: 0s;
       // @include transform( rotateX(15deg) translateZ(10px));
       @include transform-style( preserve-3d);
       * {
-        
+
       @include transform-style( preserve-3d);
       }
     }
@@ -634,9 +641,9 @@ $shakeDelay: 0s;
     .perspectiveChild {
       // @include transform( rotateX(15deg) translateZ(10px));
       @include transform-style( preserve-3d);
-      
+
       * {
-        
+
         @include transform-style( preserve-3d);
         }
     }
@@ -648,9 +655,9 @@ $shakeDelay: 0s;
       // transform: rotateX(15deg) translateZ(10px);
       @include transform( rotateX(var(--x-rotate-adjust)) translateZ(var(--z-position)) translateY(calc(var(--z-position-adjust) * var(--z-position))));
       @include transform-style( preserve-3d);
-      
+
       * {
-        
+
         @include transform-style( preserve-3d);
         }
     }
@@ -659,7 +666,7 @@ $shakeDelay: 0s;
 .pile-3d{
 
   // @function generateList($amount){
-  //   $newList: (); 
+  //   $newList: ();
   //   @for $i from 1 through $amount {
   //     $newList: append($newList, nth($sizes_height,$i), 'comma');
   //   }
@@ -670,7 +677,7 @@ $shakeDelay: 0s;
 // @for $i from 1 through 15 {
 //     &.partial-#{$i}{
 //       transform: translateX(calc(-1 * calc(#{$i / 15} * 15px))) translateY(calc(calc(#{$i / 15} * -15px)));
-      
+
 //       @include box-shadow( generateList($i));
 //     }
 //   }
@@ -682,14 +689,14 @@ $shakeDelay: 0s;
   height: 100%;
   top: 0;
   left: 0;
-    
+
   @for $i from 1 through 15 {
     &.h-#{$i}{
       @include transform( translateZ(calc(1px * #{$i})));
       pointer-events: none;
       @include box-shadow(nth($color_height,$i));
     }
-  } 
+  }
 }
 
 .opponent-card-height{
@@ -698,14 +705,14 @@ $shakeDelay: 0s;
   height: 100%;
   top: 0;
   left: 0;
-    
+
   @for $i from 1 through 15 {
     &.h-#{$i}{
       @include transform( translateZ(calc(1px * #{$i})));
       pointer-events: none;
       @include box-shadow(nth($opponent_color_height,$i));
     }
-  } 
+  }
 }
 
 .no-flick {
@@ -738,7 +745,7 @@ $shakeDelay: 0s;
 }
 
 .blink {
-  
+
 }
 @keyframes blink-animation {
   to {

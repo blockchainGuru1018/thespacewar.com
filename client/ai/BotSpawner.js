@@ -103,6 +103,7 @@ module.exports = function ({
     });
     return requirementPlayerFactory.createAll();
   }
+
   function drawPhaseDecider() {
     return DrawPhaseDecider({
       matchController,

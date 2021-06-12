@@ -8,9 +8,11 @@ const Commands = [
   require("./putDown/PutDownDiscovery.js"),
   require("./putDown/PutDownFatalError.js"),
   require("./putDown/PutDownLuck.js"),
+  require("./putDown/PutDownFate.js"),
   require("./putDown/PutDownTheDarkDestroyer.js"),
   require("./putDown/PutDownDestroyDuration.js"),
   require("./putDown/PutDownElectrocution.js"),
+  // require("./putDown/PutDownDeployStarship.js"),
 ];
 
 module.exports = function CardApplier(deps) {

@@ -329,4 +329,11 @@ function range(count) {
   text-align: left;
   margin: 0 0 0 4px;
 }
+
+// Phones in landscape mode, by Jim 2021-03-08
+@media (max-height: 700px) and (orientation: landscape) {
+  .matchHeader-bannerClockText {min-width: 50px;}
+}
+
+
 </style>

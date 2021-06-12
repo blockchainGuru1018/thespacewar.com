@@ -1,6 +1,7 @@
 const AttackEvent = require("../event/AttackEvent.js");
 const DrawCardEvent = require("../event/DrawCardEvent.js");
 const DiscardCardEvent = require("../event/DiscardCardEvent.js");
+const AddCardToDrawPileTopEvent = require("../event/AddCardToDrawPileTopEvent.js");
 const MoveCardEvent = require("../event/MoveCardEvent.js");
 const AddCardToHandEvent = require("../event/AddCardToHandEvent.js");
 const PutDownCardEvent = require("../PutDownCardEvent.js");
@@ -43,12 +44,12 @@ class PlayerStateService {
     return playerId === "BOT";
   }
 
-  reset(deckId) {
+  reset(deckId, customDeck) {
     const playerId = this.getPlayerId();
     this._matchService.connectPlayer(playerId); //TODO This is already done in StartGame.js. Why is it also done here?
 
     this._resetState();
-    this._initializeDeck(deckId);
+    this._initializeDeck(deckId, customDeck);
     this._drawStartingCards();
   }
 
@@ -68,15 +69,20 @@ class PlayerStateService {
       playerState.commanders = [];
       playerState.clock = {};
       playerState.currentDeck = "";
+      playerState.customDeck = {};
     });
   }
 
-  _initializeDeck(deckId) {
-    const cardsInDeck = this._deckFactory.createCardsForDeckById(deckId);
+  _initializeDeck(deckId, customDeck) {
+    const cardsInDeck = this._deckFactory.createCardsForDeckById(
+      deckId,
+      customDeck
+    );
     this.update((playerState) => {
       playerState.currentDeck = deckId;
       playerState.cardsInDeck = cardsInDeck;
       playerState.deckSize = cardsInDeck.length;
+      playerState.customDeck = customDeck;
     });
   }
 
@@ -194,6 +200,7 @@ class PlayerStateService {
   getCardWithCommonIdInAnyZone(cardCommonId) {
     return this.getCardsInZone().filter((c) => c.commonId === cardCommonId);
   }
+
   hasMatchingCardInSomeZone(matcher) {
     return (
       this.hasMatchingCardInHomeZone(matcher) ||
@@ -550,7 +557,11 @@ class PlayerStateService {
   addStationCard(
     cardData,
     location,
-    { startingStation = false, putDownAsExtraStationCard = false } = {}
+    {
+      startingStation = false,
+      putDownAsExtraStationCard = false,
+      comeFromFormantEffect = false,
+    } = {}
   ) {
     const stationLocation = location.split("-").pop();
     const stationCard = { place: stationLocation, card: cardData };
@@ -564,7 +575,7 @@ class PlayerStateService {
         turn: currentTurn,
         location,
         cardId: cardData.id,
-        cardCost: card.costToPlay,
+        cardCost: comeFromFormantEffect ? 0 : card.costToPlay,
         cardCommonId: cardData.commonId,
         putDownAsExtraStationCard,
         startingStation,
@@ -776,6 +787,32 @@ class PlayerStateService {
         cardCommonId: cardData.commonId,
       })
     );
+  }
+
+  addCardToDrawPileTop(cardData) {
+    const turn = this._matchService.getTurn();
+
+    this.update((playerState) => {
+      playerState.cardsInDeck.push(cardData);
+    });
+    this.storeEvent(
+      AddCardToDrawPileTopEvent({
+        turn,
+        phase: this.getPhase(),
+        cardId: cardData.id,
+        cardCommonId: cardData.commonId,
+      })
+    );
+  }
+
+  removeCardsFromDeckTopAndAddItInDeckBottom(cardMoveCount) {
+    this.update((playerState) => {
+      if (playerState.cardsInDeck.length > cardMoveCount) {
+        const cardsData = playerState.cardsInDeck.splice(0, playerState.cardsInDeck.length - cardMoveCount);
+        shuffle(cardsData);
+        playerState.cardsInDeck.push(...cardsData);
+      }
+    });
   }
 
   drawCard({ byEvent = false } = {}) {
@@ -1144,4 +1181,19 @@ module.exports = PlayerStateService;
 
 function getStationCardId(stationCard) {
   return stationCard.card ? stationCard.card.id : stationCard.id;
+}
+
+function shuffle(array) {
+  let currentIndex = array.length;
+  let temporaryValue;
+  let randomIndex;
+
+  while (0 !== currentIndex) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
 }

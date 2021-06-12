@@ -59,3 +59,49 @@
 .setFrontWindowedOverlayWithRotation180 {
   transform: translateZ(2px) rotate(180deg);
 }
+
+.waiting{
+  width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(40,40,40,0.9);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    margin: auto;
+}
+.dots {
+  margin: auto;
+  color: white;
+  font-family:helvetica;
+  font-size:72px;
+}
+
+@keyframes blink {
+    0% {
+      opacity: .2;
+    }
+    20% {
+      opacity: 1;
+    }
+    100% {
+      opacity: .2;
+    }
+}
+
+.dots span {
+    animation-name: blink;
+    animation-duration: 1.4s;
+    animation-iteration-count: infinite;
+    animation-fill-mode: both;
+}
+
+.dots span:nth-child(2) {
+    animation-delay: .2s;
+}
+
+.dots span:nth-child(3) {
+    animation-delay: .4s;
+}

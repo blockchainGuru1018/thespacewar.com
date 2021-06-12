@@ -227,6 +227,7 @@ module.exports = function (deps) {
       passDrawPhase,
       askToDiscardOpponentTopTwoCards,
       overwork,
+      actionPointsForDrawExtraCard,
       perfectPlan,
       findAcidProjectile,
       findDronesForZuuls,
@@ -978,6 +979,7 @@ module.exports = function (deps) {
     const attackerCard = getters.allPlayerCardsInOwnAndOpponentZone.find(
       (c) => c.id === state.attackerCardId
     );
+    console.log(getters.createCard(attackerCard));
     return getters.createCard(attackerCard);
   }
 
@@ -1051,6 +1053,10 @@ module.exports = function (deps) {
     matchController.emit("overwork");
   }
 
+  function actionPointsForDrawExtraCard() {
+    matchController.emit("actionPointsForDrawExtraCard");
+  }
+
   function perfectPlan() {
     matchController.emit("perfectPlan");
   }
@@ -1088,7 +1094,11 @@ module.exports = function (deps) {
   }
 
   function stateChanged({ state, getters, dispatch }, data) {
-    const clientStateChanger = ClientStateChanger({ state, preMergeHook });
+    const clientStateChanger = ClientStateChanger({
+      state,
+      preMergeHook,
+      postMergeHook,
+    });
     clientStateChanger.stateChanged(data);
 
     if (!gameHasBegun) {
@@ -1141,11 +1151,50 @@ module.exports = function (deps) {
       }
     }
 
-    if (
-      getters.getCardsPendingForAction.length === 0 &&
-      state.phase === PHASES.attack
-    ) {
-      dispatch("goToNextPhase");
+    function postMergeHook() {
+      if (
+        (!state.requirements || state.requirements.length === 0) &&
+        getters.getCardsPendingForAction.length === 0 &&
+        state.phase === PHASES.attack
+      ) {
+        dispatch("goToNextPhase");
+        return;
+      }
+      if (
+        state.requirements &&
+        state.requirements.length > 0 &&
+        state.requirements[0].type === "moveCardToStationZone"
+      ) {
+        dispatch(
+          "card/_applyChoicePutDownAsExtraStationCard",
+          {
+            cardData: state.requirements[0].cardData,
+            choiceData: {
+              name: "putDownAsExtraStationCard",
+              text: "Move as extra station card",
+              action: {
+                name: "putDownCard",
+                text: "Move as extra station card",
+                showOnlyGhostsFor: ["playerStation"],
+              },
+            },
+          },
+          { root: true }
+        );
+        dispatch(
+          "card/removeTransientCard",
+          state.requirements[0].cardData.id,
+          { root: true }
+        );
+      }
+      // console.log(state.requirements[0]);
+      // if (
+      //     (!state.requirements || state.requirements.length === 0) &&
+      //     getters.getCardsPendingForAction.length === 0 &&
+      //     state.phase === PHASES.attack
+      // ) {
+      //   dispatch("goToNextPhase");
+      // }
     }
   }
 
@@ -1284,8 +1333,10 @@ module.exports = function (deps) {
     state.attackerCardId = card.id;
   }
 
-  function selectAsAttackerWithCollision({ state, commit }, card) {
+  function selectAsAttackerWithCollision({ state, getters, commit }, card) {
     state.attackerCardId = card.id;
+    const attackerCard = getters.attackerCard;
+    attackerCard._card.usingCollision = true;
     commit("updateUsingCollision", true);
   }
 
@@ -1299,6 +1350,12 @@ module.exports = function (deps) {
     if (fromRequirement === "damageShieldCard") {
       attackerCardId = rootStore.getters["requirement/firstRequirement"].cardId;
       dispatch("damageShieldCards", [defenderCardId]);
+    }
+    if (fromRequirement === "damageSpaceship") {
+      matchController.emit("damageSpaceship", {
+        cardId: defenderCardId,
+      });
+      return;
     }
     matchController.emit("attack", {
       attackerCardId,

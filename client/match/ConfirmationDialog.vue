@@ -34,6 +34,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "../client/match/_colors.scss";
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -59,8 +60,8 @@ export default {
   flex-direction: column;
   align-items: stretch;
   padding: 20px 0;
-  background: linear-gradient(to bottom, #0a0a14, #140a0a);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: $dialogBackground;
+  border: 2px solid $dialogBorderColor;
   border-radius: 4px;
   overflow-x: auto;
 }

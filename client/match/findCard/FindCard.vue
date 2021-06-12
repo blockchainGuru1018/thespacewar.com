@@ -1,6 +1,6 @@
 <template>
   <div class="findCard-wrapper">
-    <DimOverlay>
+    <DimOverlay :waiting="waiting">
       <template slot="topRightButtons">
         <button
           v-if="requirementIsCancelable"
@@ -11,13 +11,14 @@
         </button>
       </template>
       <template>
-        <div class="findCard">
+        <div class="findCard" :style="waiting ? 'pointer-events:none;' : ''">
           <div class="findCard-header">
             <div
               v-if="requirement.cardCommonId"
               class="findCard-requirementCard"
             >
               <img
+                v-show="!waiting"
                 :src="getCardImageUrl({ commonId: requirement.cardCommonId })"
               />
             </div>
@@ -99,19 +100,23 @@ module.exports = {
       updater: 0,
     };
   },
+  beforeUnmount() {
+    this.resetWaiting();
+  },
   computed: {
-    ...findCardHelpers.mapState(["selectedCardInfos"]),
+    ...findCardHelpers.mapState(["selectedCardInfos", "waiting"]),
     ...findCardHelpers.mapGetters(["requirement", "filteredRequirement"]),
     ...matchHelpers.mapGetters(["actionPoints2"]),
     ...requirementHelpers.mapGetters([
       "requirementIsCancelable",
       "firstRequirementIsFindCard",
     ]),
+    ...requirementHelpers.mapState(["currentRequirement"]),
     cardsToSelect() {
       this.updater++;
       return this.requirement.submitOnEverySelect
         ? this.requirement.count
-        : this.requirement.count - this.selectedCardInfos.length;
+        : this.requirement.count - this.selectedCardInfos.length
     },
     cardsAvailableToSelect() {
       return this.filteredRequirement.cardGroups.reduce(
@@ -121,7 +126,7 @@ module.exports = {
     },
     findCardHeaderText() {
       let endText = "";
-
+      if (this.waiting) return "";
       const cardCommonId = this.requirement.cardCommonId;
       if (cardCommonId === Sabotage.CommonId) {
         endText = " to discard";
@@ -135,6 +140,9 @@ module.exports = {
       )}${endText}`;
     },
     subHeaderText() {
+      if (this.requirement.cardCommonId == 219) {
+        return "These are the top 10 cards of your draw pile";
+      }
       const actionPoints = this.requirement.actionPointsLimit
         ? this.requirement.actionPointsLimit.actionPointsLeft
         : this.actionPoints2;
@@ -145,7 +153,7 @@ module.exports = {
     },
   },
   methods: {
-    ...findCardHelpers.mapActions(["selectCard", "done"]),
+    ...findCardHelpers.mapActions(["selectCard", "done", "resetWaiting"]),
     ...requirementHelpers.mapActions(["cancelRequirement"]),
     getCardImageUrl(card) {
       return getCardImageUrl.byCommonId(card.commonId);
@@ -160,6 +168,10 @@ module.exports = {
       this.cancelRequirement();
     },
     getCardGroupTitle(group) {
+      if(this.requirement.cardCommonId === "218") {
+        // 218 is Brilliance: https://images.thespacewar.com/card-218.jpg
+        return " From hand, it goes back to top of draw pile";
+      }
       return nameBySource[group.source];
     },
   },

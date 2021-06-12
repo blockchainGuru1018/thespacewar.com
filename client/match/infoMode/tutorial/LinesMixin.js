@@ -14,6 +14,11 @@ export default function (selectorPairs) {
     },
     destroyed() {
       this.lines.forEach((line) => line.remove());
+      console.log("DESTRUYENDO LINEAS");
+      const elements = document.getElementsByClassName('leader-line');
+      while(elements.length > 0){
+          elements[0].parentNode.removeChild(elements[0]);
+      }
     },
   };
 }

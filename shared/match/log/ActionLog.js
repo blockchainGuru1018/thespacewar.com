@@ -40,6 +40,7 @@ module.exports = function ({
     queryLatest,
     damagedInAttack,
     paralyzed,
+    addedCardToDrawPileTop,
     cardDestroyed,
     cardsDiscarded,
     stationCardsWereDamaged,
@@ -116,6 +117,18 @@ module.exports = function ({
     });
 
     log({ action: "discarded", text });
+  }
+
+  function addedCardToDrawPileTop({ cardCommonIds }) {
+    if (cardCommonIds.length === 0) return;
+
+    const text = listInTextWithCorrectGrammar({
+      cardCommonIds,
+      suffixSingle: " was added on Draw Pile Top",
+      suffixMany: " were added on Draw Pile Top",
+    });
+
+    log({ action: "addedCardToDrawPileTop", text });
   }
 
   function opponentPlayedCards({ cardIds, cardCommonIds }) {

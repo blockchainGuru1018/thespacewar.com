@@ -1,4 +1,5 @@
 const ajax = require("../utils/ajax.js");
+const getCookie = require("../utils/getCookies.js");
 
 module.exports = function (deps) {
   //TODO Rename MatchConnectionController or something better
@@ -17,8 +18,17 @@ module.exports = function (deps) {
 
   function start() {
     socket.on("match", onSocketMatchEvent);
-    emit("start", { deckId: getActiveDeck() || "TheSwarm" });
-
+    let constructedDeck = {};
+    const rawConstructedDeckCookie = getCookie("constructed_deck");
+    if (rawConstructedDeckCookie) {
+      constructedDeck = JSON.parse(
+        decodeURIComponent(`${rawConstructedDeckCookie}`)
+      );
+    }
+    emit("start", {
+      deckId: getActiveDeck() || "TheSwarm",
+      customDeck: constructedDeck || {},
+    });
     document.addEventListener("visibilitychange", onVisibilityChange);
   }
 
@@ -65,6 +75,7 @@ module.exports = function (deps) {
       emit("refresh");
     }
   }
+
   function getActiveDeck() {
     return JSON.parse(localStorage.getItem("active-deck"));
   }

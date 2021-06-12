@@ -41,12 +41,6 @@
     "jest": "^25.1.0",
     "prettier": "^2.0.5"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run pre-commit",
-      "pre-push": "npm test"
-    }
-  },
   "dependencies": {
     "md5": "^2.2.1",
     "ts-md5": "^1.2.7"

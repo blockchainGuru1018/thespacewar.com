@@ -1,17 +1,47 @@
 :root {
-  --card-width: 652px;
-  --card-height: 916px;
+  --justify-content-field-opponentStation: flex-end;
   --player-cards-on-hand-offset: 0px;
-  --z-position: 0px;
-  --z-position-adjust: 4;
-  --x-rotate-adjust: 15deg;
-  --mobileOnPortrait:0;
-  --gui-height-adjust: 50%;
-  --space-between-GUI-n-draw-pile: 0px;
   --top-spacing: 0px;
-  --player-zone-row-width: 60%;
-  --player-station-row-width: 20%;
+  --mobileOnPortrait:0;
   }
+
+
+// These values works perfect for smaller resolutions such as 1600x900
+// Station cards of enemy does not disappear in Chrome
+:root {
+ --card-width: 538px;
+ --card-height: 750px;
+ --z-position: -40px;
+ --z-position-adjust: 1;
+ --x-rotate-adjust: 18deg;
+ --gui-height-adjust: 48%;
+ --space-between-GUI-n-draw-pile: 40px;
+ --player-zone-row-width: 50%;
+ --player-station-row-width: 18%;
+}
+
+@media (min-height:910px) {
+  :root {
+    --card-width: 624px;
+    --card-height: 870px;
+    }
+}
+
+// Works perfect for bigger resolutions such as 1680x1050, 1920x1080 etc
+@media (min-width: 1610px) {
+  :root {
+    --card-width: 652px;
+    --card-height: 910px;
+    --z-position: 0px;
+    --z-position-adjust: 4;
+    --x-rotate-adjust: 15deg;
+    --gui-height-adjust: 50%;
+    --space-between-GUI-n-draw-pile: 0px;
+    --player-zone-row-width: 60%;
+    --player-station-row-width: 20%;
+    }
+}
+
 
 // 1920 x 1080 -> 19:6
 // 1366 x 768 -> 16:9
@@ -23,8 +53,8 @@
 // 800x1280
 // 768x1024
 
-@media only screen and (min-device-width: 320px) 
-                   and (max-device-width: 850px) 
+@media only screen and (min-device-width: 320px)
+                   and (max-device-width: 850px)
                    and (orientation: portrait) {
 .opponentStationCards{
   padding-bottom: 3rem;
@@ -52,6 +82,11 @@
 .matchHeader-bannerBarsWrapper {
   display: grid;
 }
+
+
+
+
+
 .matchHeader-bannerClockText{
   margin: auto;
 }
@@ -60,8 +95,8 @@
 }
 }
 
-@media only screen and (min-device-width: 320px) 
-                    and (max-device-width: 767px) 
+@media only screen and (min-device-width: 320px)
+                    and (max-device-width: 767px)
                     and (orientation: landscape) {
 
 .matchHeader-banner {
@@ -69,7 +104,7 @@
   height: auto;
 }
 .matchHeader-bannerName {
-  display: grid;
+  display: block;
   margin: auto;
 }
 
@@ -154,20 +189,20 @@ $holdingCardZIndex: 4;
     content: "";
     display: block;
     padding-bottom: calc(100% / (var(--aspect-ratio)));
-  }  
+  }
   [style*="--aspect-ratio"] > :first-child {
     position: absolute;
     top: 0;
     left: 0;
     height: 100%;
-  }  
+  }
 }
 ::-webkit-scrollbar {
   width: 0.4rem;
   height: 0.4rem;
  }
  ::-webkit-scrollbar-thumb {
-  background: #999C;  
+  background: #999C;
   border-radius: 10px;
  }
  ::-webkit-scrollbar-thumb:hover{
@@ -178,3 +213,23 @@ $holdingCardZIndex: 4;
   border-radius: 10px;
   box-shadow: inset 7px 10px 12px rgba($color: #000000, $alpha: 0);
  }
+
+
+// Phones in landscape mode, by Jim 2021-03-08
+@media (max-height: 700px) and (orientation: landscape) {
+  :root {
+   --card-width: 466px;
+   --card-height: 650px;
+   --z-position: -9px !important;
+   --x-rotate-adjust: 16deg !important;
+   --player-zone-row-width: 50%;
+   --space-between-GUI-n-draw-pile: -10px !important;
+   --z-position-adjust: 0;
+   --player-cards-on-hand-offset: 27px;
+   }
+   .matchHeader-banner {height:32px;}
+   .matchHeader-bannerName {font-size:15px;}
+   .matchHeader-bannerBarsWrapper {display:none;}
+  $commanderCardWidth: calc(#{$cardWidth} / 5);
+  $commanderCardHeight: calc(#{$cardHeight} / 5);
+}

@@ -14,7 +14,7 @@
         <div class="list-opponents">
           <div class="users-header">
             <div class="users-headerTitle">
-              Select opponent
+              Select opponent:
             </div>
           </div>
           <div class="users-wrapper">
@@ -200,6 +200,12 @@ module.exports = {
 .lobby {
   width: 100%;
   min-height: 740px;
+}
+
+@media (max-height: 800px) {
+  .lobby {
+    top: 0px;
+  }
 }
 
 .users-container {

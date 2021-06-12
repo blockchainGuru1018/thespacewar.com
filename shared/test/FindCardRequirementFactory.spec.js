@@ -32,7 +32,7 @@ test("can create a requirement with a limit of actions points", () => {
   });
 
   const result = findCardRequirementFactory.create();
-  expect(result).toEqual({
+  expect(result).toMatchObject({
     type: "findCard",
     cardGroups: [
       {
@@ -97,7 +97,7 @@ test("can create a requirement for cardCommonId ", () => {
   });
 
   const result = findCardRequirementFactory.create();
-  expect(result).toEqual({
+  expect(result).toMatchObject({
     type: "findCard",
     cardGroups: expect.arrayContaining([
       {
@@ -169,7 +169,7 @@ test("can create a find requirement from current card zone", () => {
 
   const result = findCardRequirementFactory.create();
 
-  expect(result).toEqual({
+  expect(result).toMatchObject({
     type: "findCard",
     cardGroups: expect.arrayContaining([
       {

@@ -1,4 +1,4 @@
-const UseDormantEffectEvent = require("../../../shared/event/UseDormantEffectEvent");
+const UseDormantEffectEvent = require("../../../shared/event/UseDormantEffectEvent.js");
 module.exports = function ({ matchService, playerStateService, canThePlayer }) {
   return (cardId) => {
     const card = playerStateService.createBehaviourCardById(cardId);

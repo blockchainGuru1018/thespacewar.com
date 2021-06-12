@@ -145,7 +145,39 @@ class QueryEvents {
 
     return false;
   }
+  getTimeWhenCardsWasPutDownByCommonIdOrderByCreated(commonIds) {
+    const opponentEvents = this._opponentEventRepository
+      .getAll()
+      .slice()
+      .reverse();
+    const playerEvents = this._eventRepository.getAll().slice().reverse();
 
+    const putDownForPLayer = playerEvents.find((e) => {
+      return (
+        e.type === "putDownCard" &&
+        commonIds.includes(e.cardCommonId) &&
+        !e.grantedForFreeByEvent
+      );
+    });
+    const putDownForOpponent = opponentEvents.find((e) => {
+      return (
+        e.type === "putDownCard" &&
+        commonIds.includes(e.cardCommonId) &&
+        !e.grantedForFreeByEvent
+      );
+    });
+    if (putDownForPLayer && putDownForOpponent) {
+      return putDownForPLayer.created > putDownForOpponent.created
+        ? putDownForPLayer
+        : putDownForOpponent;
+    }
+    if (putDownForPLayer) {
+      return putDownForPLayer;
+    }
+    if (putDownForOpponent) {
+      return putDownForOpponent;
+    }
+  }
   getTimeWhenOpponentCardWasPutDownByCommonId(commonId) {
     const events = this._opponentEventRepository.getAll().slice().reverse();
     const putDownEventForThisCard = events.find((e) => {
@@ -173,11 +205,23 @@ class QueryEvents {
 
   getTimeWhenCardWasPutDownById(id) {
     const events = this._eventRepository.getAll().slice().reverse();
+
     const putDownEventForThisCard = events.find((e) => {
       return e.type === "putDownCard" && e.cardId === id;
     });
     if (putDownEventForThisCard) {
       return putDownEventForThisCard.created;
+    }
+    const opponentEvents = this._opponentEventRepository
+      .getAll()
+      .slice()
+      .reverse();
+
+    const putDownOpponentEventForThisCard = opponentEvents.find((e) => {
+      return e.type === "putDownCard" && e.cardId === id;
+    });
+    if (putDownOpponentEventForThisCard) {
+      return putDownOpponentEventForThisCard.created;
     }
   }
 

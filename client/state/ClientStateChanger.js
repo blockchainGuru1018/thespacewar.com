@@ -5,7 +5,11 @@ const storeItemNameByServerItemName = {
   cardsOnHand: "playerCardsOnHand",
 };
 
-module.exports = function StateChanger({ state, preMergeHook = () => {} }) {
+module.exports = function StateChanger({
+  state,
+  preMergeHook = () => {},
+  postMergeHook = () => {},
+}) {
   return {
     stateChanged,
   };
@@ -24,6 +28,7 @@ module.exports = function StateChanger({ state, preMergeHook = () => {} }) {
         state[localKey] = datum;
       }
     }
+    postMergeHook();
   }
 
   function setPlayerStationCards(stationCards) {

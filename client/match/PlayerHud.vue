@@ -69,7 +69,7 @@
           v-if="canExchangeActionPointsForDrawExtraCardContainerVisible"
           title="Spend 2 action points to draw a card"
           class="overwork darkButton enablePointerEvent"
-          @click="overwork"
+          @click="actionPointsForDrawExtraCard"
         >
           Draw a card (Commander Effect)
         </button>
@@ -408,6 +408,7 @@ export default {
     ...mapActions([
       "goToNextPhase",
       "overwork",
+      "actionPointsForDrawExtraCard",
       "perfectPlan",
       "findAcidProjectile",
       "naaloxReviveDrone",
@@ -579,6 +580,7 @@ export default {
 
 .nextPhaseButtonContainer {
   min-width: 15%;
+  left: 40px;
 }
 
 .nextPhaseButton-onTheLeft {
@@ -595,7 +597,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 46px;
+  height: 40px;
   font-size: 16px;
   font-family: Helvetica, sans-serif;
   font-weight: bold;

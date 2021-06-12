@@ -10,7 +10,7 @@ const DiscardCardController = require("./controller/DiscardCardController.js");
 const NextPhaseController = require("./controller/NextPhaseController.js");
 const StartGameController = require("./controller/StartGameController.js");
 const OverworkController = require("./controller/OverworkController.js");
-const actionPointsForDrawExtraCardController = require("./controller/actionPointsForDrawExtraCardController.js");
+const ActionPointsForDrawExtraCardController = require("./controller/ActionPointsForDrawExtraCardController.js");
 const PerfectPlanController = require("./controller/PerfectPlanController.js");
 const FindAcidProjectile = require("./controller/FindAcidProjectileController.js");
 const FindDronesForZuulsController = require("./controller/FindDronesForZuulsController.js");
@@ -22,6 +22,7 @@ const CheatController = require("./controller/CheatController.js");
 const MatchComService = require("./service/MatchComService.js");
 const PlayerRequirementUpdaterFactory = require("./PlayerRequirementUpdaterFactory.js");
 const StateChangeListener = require("../../shared/match/StateChangeListener.js");
+const ActionPointsForDrawExtraCardEventFactory = require("../../shared/match/ActionPointsForDrawExtraCard/event/ActionPointsForDrawExtraCardEventFactory.js");
 const PlayerOverworkFactory = require("../../shared/match/overwork/PlayerOverworkFactory.js");
 const ServiceFactoryFactory = require("../../shared/match/ServiceFactoryFactory.js");
 const LookAtStationRow = require("../../shared/match/card/actions/LookAtStationRow.js");
@@ -101,6 +102,8 @@ module.exports = function ({
   const playerOverworkFactory = PlayerOverworkFactory({ playerServiceFactory });
 
   const stateSerializer = gameServiceFactory.stateSerializer();
+
+  const actionPointsForDrawExtraCardEventFactory = ActionPointsForDrawExtraCardEventFactory({matchService, playerServiceFactory})
   const controllerDeps = {
     logger,
     matchService,
@@ -119,6 +122,7 @@ module.exports = function ({
     playerCardServicesFactory,
     gameActionTimeMachine: gameServiceFactory.gameActionTimeMachine(),
     gameConfig,
+    actionPointsForDrawExtraCardEventFactory,
   };
 
   const debugController = DebugController(controllerDeps);
@@ -135,7 +139,7 @@ module.exports = function ({
   const nextPhaseController = NextPhaseController(controllerDeps);
   const startGameController = StartGameController(controllerDeps);
   const overworkController = OverworkController(controllerDeps);
-  const actionPointsForDrawExtraCardController = actionPointsForDrawExtraCardController(controllerDeps);
+  const actionPointsForDrawExtraCardController = ActionPointsForDrawExtraCardController(controllerDeps);
   const perfectPlanController = PerfectPlanController(controllerDeps);
   const findAcidProjectileController = FindAcidProjectile(controllerDeps);
   const findDronesForZuulsController = FindDronesForZuulsController(
@@ -188,6 +192,7 @@ module.exports = function ({
     retreat,
     restoreSavedMatch: debugController.onRestoreSavedMatch,
     cheat: cheatController.onCheat,
+    damageSpaceship: attackController.damageSpaceship,
   };
 
   return {
@@ -431,6 +436,7 @@ function createMatchState({ firstPlayerId, playerIds, matchId }) {
     lastStandInfo: null,
     playerStateById: {},
     deckIdByPlayerId: {},
+    customDeckByPlayerId: {},
   };
 }
 

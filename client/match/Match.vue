@@ -44,7 +44,7 @@
         />
       </div>
       <div class="field perspectiveChild">
-        <div style="height: var(--top-spacing)"></div>
+        <div style="height: var(--top-spacing);"></div>
         <div class="field-opponent" style="--aspect-ratio: (16/9) * 2;">
           <div><!-- NEEDED TO KEEP ASPECT-RATIO--></div>
           <div
@@ -115,18 +115,18 @@
                 <zone-card
                   v-if="n <= opponentCardsInZone.length"
                   :key="sortedOpponentCardsInZone[n - 1].id"
+                  :ref="sortedOpponentCardsInZone[n - 1].id"
                   :card="sortedOpponentCardsInZone[n - 1]"
                   :class="[
                     'card--turnedAround',
                     {
                       'card-lastDurationCard':
-                          lastSortedOpponentDurationCardIndex === n - 1,
+                        lastSortedOpponentDurationCardIndex === n - 1,
                     },
                   ]"
                   :owner-id="opponentUser.id"
                   :zone-opponent-row="playerCardsInOpponentZone"
                   :zone-player-row="opponentCardsInZone"
-                  :ref="sortedOpponentCardsInZone[n - 1].id"
                 />
               </template>
               <div
@@ -238,9 +238,13 @@
               />
             </div>
 
-            <div class="field-commandersAndDrawPile" 
-              :class="opponentDrawPileAndCommanderOverlayPolicy">
-              <div :class="opponentCommanderOverlayPolicy"><OpponentCommanderCards /></div>
+            <div
+              class="field-commandersAndDrawPile"
+              :class="opponentDrawPileAndCommanderOverlayPolicy"
+            >
+              <div :class="opponentCommanderOverlayPolicy">
+                <OpponentCommanderCards />
+              </div>
               <div class="field-drawPile opponentDrawPile">
                 <portal-target name="opponentDrawPile" />
                 <div
@@ -356,8 +360,9 @@
               </div>
             </div>
 
-            <div class="field-discardPile field-discardPile-player"
-                :class="playerDiscardPileOverlayPolicy"
+            <div
+              class="field-discardPile field-discardPile-player"
+              :class="playerDiscardPileOverlayPolicy"
             >
               <div
                 v-if="!playerTopDiscardCard"
@@ -489,12 +494,11 @@
                   :key="visiblePlayerCards[n - 1].id"
                   :card="(visiblePlayerCards[n - 1])"
                   :class="[
-                      {
+                    {
                       'card-lastDurationCard':
                         lastVisiblePlayerDurationCardIndex === n - 1,
-                      'setFrontWindowedOverlay':
-                        playerCardInZoneDiscardOverlayPolicy
-                      }
+                      setFrontWindowedOverlay: playerCardInZoneDiscardOverlayPolicy,
+                    },
                   ]"
                   :is-home-zone="true"
                   :owner-id="ownUser.id"
@@ -544,7 +548,7 @@
                 :station-card="card"
                 station-row="draw"
                 :z-height-class="'h-' + index"
-                :couldBeZoomIn="drawStationCardGhostVisible"
+                :could-be-zoom-in="drawStationCardGhostVisible"
               />
               <StationCardWrapper :transparent="!drawStationCardGhostVisible">
                 <CardGhost
@@ -566,7 +570,7 @@
                 :station-card="card"
                 station-row="action"
                 :z-height-class="'h-' + index"
-                :couldBeZoomIn="actionStationCardGhostVisible"
+                :could-be-zoom-in="actionStationCardGhostVisible"
               />
               <StationCardWrapper :transparent="!actionStationCardGhostVisible">
                 <CardGhost
@@ -588,7 +592,7 @@
                 :station-card="card"
                 station-row="handSize"
                 :z-height-class="'h-' + index"
-                :couldBeZoomIn="handSizeStationCardGhostVisible"
+                :could-be-zoom-in="handSizeStationCardGhostVisible"
               />
               <StationCardWrapper
                 :transparent="!handSizeStationCardGhostVisible"
@@ -612,7 +616,10 @@
         >
           {{ playerZoneCardGhostText }}
         </EventGhost>
-        <WindowedOverlay v-if="shouldShowWindowedOverlay" class="perspectiveChild"/>
+        <WindowedOverlay
+          v-if="shouldShowWindowedOverlay"
+          class="perspectiveChild"
+        />
       </div>
       <div
         v-if="holdingCard"
@@ -627,16 +634,21 @@
         ]"
       />
       <loading-indicator />
-      <ExpandedCard />
-      <ChooseStartingPlayer />
-      <EscapeMenu />
-    </div>
 
+      <div id="modal-game" v-if="showingModalGame">
+        <ChooseStartingPlayer ref="chooseStartingPlayer" />
+
+      </div>
+
+    </div>
+    <ExpandedCard />
     <portal-target multiple name="match" />
+    <InfoModeContainer @toggleModalGame="toggleModalGame($event)"/>
+    <EscapeMenu />
     <card-choice-dialog />
     <CommanderSelection />
     <PlayerHud />
-    <MatchHeader />
+    <MatchHeader ref="matchHeader" @changeShowingTutorial="toggleModalGame($event)"/>
 
     <div class="cardsOnHand" :class="playerCardsOnHandOverlayPolicy">
       <div
@@ -667,7 +679,6 @@
         @cardDrag="playerCardDrag"
       />
     </div>
-    
   </div>
 </template>
 <script>
@@ -703,6 +714,7 @@ const PlayerCardsOnHand = resolveModule(require("./PlayerCardsOnHand.vue"));
 const CardGhost = resolveModule(require("./CardGhost.vue"));
 const EventGhost = resolveModule(require("./ghost/EventGhost.vue"));
 const ExpandedCard = resolveModule(require("../expandedCard/ExpandedCard.vue"));
+const InfoModeContainer = resolveModule(require("./infoMode/InfoModeContainer.vue"));
 const ChooseStartingPlayer = resolveModule(
   require("./chooseStartingPlayer/ChooseStartingPlayer.vue")
 );
@@ -727,9 +739,7 @@ const arrowsAnimated = resolveModule(
   require("../miscComponents/arrowsAnimated.vue")
 );
 const { PHASES } = require("./phases.js");
-const WindowedOverlay = resolveModule(
-  require("./overlay/windowedOverlay.vue")
-);
+const WindowedOverlay = resolveModule(require("./overlay/windowedOverlay.vue"));
 
 module.exports = {
   data() {
@@ -751,6 +761,7 @@ module.exports = {
       touchPosition: { x: 0, y: 0 },
       PHASES,
       bg: null,
+      showingModalGame: false, //+++ It's false becouse the tutorial es initialized first, with message "Start Tutorial Here"
     };
   },
   computed: {
@@ -827,8 +838,10 @@ module.exports = {
       "firstRequirementIsDamageShieldCard",
       "firstRequirementIsDamageStationCard",
       "cardsLeftToSelect",
+      "firstRequirementMoveCardToStationZone",
     ]),
     ...ghostHelpers.mapGetters(["activateEventCardGhostVisible"]),
+
     debuggingBot() {
       return featureToggles.isEnabled("debuggingBot");
     },
@@ -852,86 +865,85 @@ module.exports = {
       );
     },
     inDiscardDurationCard() {
-      return ( this.phase === PHASES.preparation &&
-               this.actionPoints2 > 0);
-    },    
-    shouldShowWindowedOverlay(){
-      return this.shouldShowWindowedOverlayByDrawCard ||
-             this.inDiscardPhaseAndMustDiscardCard ||
-             this.inDiscardDurationCard ||
-             this.opponentStationCardDamageOverlayPolicy !== ''
+      return this.phase === PHASES.preparation && this.actionPoints2 > 0;
     },
-    opponentDrawPileAndCommanderOverlayPolicy(){
-      if(this.canMill)
-        return 'setFrontWindowedOverlay'
-      else if(
+    shouldShowWindowedOverlay() {
+      return (
         this.shouldShowWindowedOverlayByDrawCard ||
         this.inDiscardPhaseAndMustDiscardCard ||
-        this.inDiscardDurationCard)
-        return 'setBackWindowedOverlay';
-      else
-        return '';
+        this.inDiscardDurationCard ||
+        this.opponentStationCardDamageOverlayPolicy !== ""
+      );
     },
-    opponentCommanderOverlayPolicy(){
-      if(this.canMill)
-        return 'setBackWindowedOverlay';
-      else 
-        return ''
+    opponentDrawPileAndCommanderOverlayPolicy() {
+      if (this.canMill) return "setFrontWindowedOverlay";
+      else if (
+        this.shouldShowWindowedOverlayByDrawCard ||
+        this.inDiscardPhaseAndMustDiscardCard ||
+        this.inDiscardDurationCard
+      )
+        return "setBackWindowedOverlay";
+      else return "";
     },
-    playerDrawPileOverlayPolicy(){
-      if(
-          this.opponentStationCardDamageOverlayPolicy !== '' ||
-          this.opponentCardsInZoneAsDefendersOverlayPolicy !== '' ||
-          this.inDiscardPhaseAndMustDiscardCard ||
-          this.inDiscardDurationCard)
-        return 'setBackWindowedOverlay';
-      else
-        return '';
+    opponentCommanderOverlayPolicy() {
+      if (this.canMill) return "setBackWindowedOverlay";
+      else return "";
     },
-    playerDiscardPileOverlayPolicy(){
-      if(this.inDiscardPhaseAndMustDiscardCard || this.firstRequirementIsDiscardCard)
-        return 'setFrontWindowedOverlay white-blur';
-      else
-        return '';
+    playerDrawPileOverlayPolicy() {
+      if (
+        this.opponentStationCardDamageOverlayPolicy !== "" ||
+        this.opponentCardsInZoneAsDefendersOverlayPolicy !== "" ||
+        this.inDiscardPhaseAndMustDiscardCard ||
+        this.inDiscardDurationCard
+      )
+        return "setBackWindowedOverlay";
+      else return "";
     },
-    playerCardsOnHandOverlayPolicy(){
-      if(this.inDiscardDurationCard)
-        return 'setBackWindowedOverlay';
-      else
-        return '';
+    playerDiscardPileOverlayPolicy() {
+      if (
+        this.inDiscardPhaseAndMustDiscardCard ||
+        this.firstRequirementIsDiscardCard
+      )
+        return "setFrontWindowedOverlay white-blur";
+      else return "";
     },
-    playerCardInZoneDiscardOverlayPolicy(){
-      if(this.inDiscardDurationCard && !this.playerDiscardPileOverlayPolicy)
-          return 'setFrontWindowedOverlay';
-      else
-        return '';
+    playerCardsOnHandOverlayPolicy() {
+      if (this.inDiscardDurationCard) return "setBackWindowedOverlay";
+      else return "";
     },
-    opponentStationCardDamageOverlayPolicy(){
-      if(this.opponentCardsInZoneAsDefendersOverlayPolicy !== '')
-        return '';
-      if(
-        ( this.firstRequirementIsDamageStationCard ||
+    playerCardInZoneDiscardOverlayPolicy() {
+      if (this.inDiscardDurationCard && !this.playerDiscardPileOverlayPolicy)
+        return "setFrontWindowedOverlay";
+      else return "";
+    },
+    opponentStationCardDamageOverlayPolicy() {
+      if (this.opponentCardsInZoneAsDefendersOverlayPolicy !== "") return "";
+      if (
+        (this.firstRequirementIsDamageStationCard ||
           this.firstRequirementIsDamageShieldCard) &&
-        this.cardsLeftToSelect > 0)
-          return 'setFrontWindowedOverlayWithRotation180';
-      else
-        return '';
-        
+        this.cardsLeftToSelect > 0
+      )
+        return "setFrontWindowedOverlayWithRotation180";
+      else return "";
     },
-    opponentCardsInZoneAsDefendersOverlayPolicy(){
-      return this.sortedOpponentCardsInZone.some((card)=>
-        (this.$refs[card.id] || [{}])[0]
-        .canBeSelectedAsDefender
-      )? 'setFrontWindowedOverlay' : ''
+    opponentCardsInZoneAsDefendersOverlayPolicy() {
+      return this.sortedOpponentCardsInZone.some(
+        (card) => (this.$refs[card.id] || [{}])[0].canBeSelectedAsDefender
+      )
+        ? "setFrontWindowedOverlay"
+        : "";
     },
     playerZoneCardGhostVisible() {
       if (!this.holdingCard) return false;
-      if (this.holdingEventCard) return false;
+      if (this.holdingEventCard) {
+        return false;
+      }
       if (
         this.showOnlyCardGhostsFor &&
         !this.showOnlyCardGhostsFor.includes("homeZone")
-      )
-        return false;
+      ) {
+        return true;
+      }
 
       if (this.holdingCardCannotBePlayedButGhostWithMessageShouldBeDisplayed)
         return true;
@@ -970,7 +982,6 @@ module.exports = {
         )
           return false;
       }
-
       return this.stationCardGhostVisible;
     },
     actionStationCardGhostVisible() {
@@ -1189,7 +1200,7 @@ module.exports = {
         });
       } else {
         this.putDownHoldingCard({ location });
-        setTimeout(this.calculateStationCardSizenPosition,500);
+        setTimeout(this.calculateStationCardSizenPosition, 500);
       }
     },
     emptyClick() {
@@ -1295,10 +1306,10 @@ module.exports = {
     },
     spaceUsedByBoardInWindow() {
       const rect1 = (
-        document.getElementsByClassName('field-opponent')[0] || {}
+        document.getElementsByClassName("field-opponent")[0] || {}
       ).getBoundingClientRect();
       const rect2 = (
-        document.getElementsByClassName('field-player')[0] || {}
+        document.getElementsByClassName("field-player")[0] || {}
       ).getBoundingClientRect();
       return (rect1.height + rect2.height) / window.screen.height;
     },
@@ -1321,14 +1332,12 @@ module.exports = {
         rect1.top > 0 &&
         rect1.left >= 0 &&
         rect1.right <=
-          (window.innerWidth || document.documentElement.clientWidth) &&
-        rect1.bottom <=
-          (window.innerHeight || document.documentElement.clientHeight)
+          (window.innerWidth || document.documentElement.clientWidth)
       );
     },
     zoomOut() {
-      const percentageOfUsageInBoard = 
-      window.screen.height > 1080 && window.screen.height < 2160? 0.75 : 0.6;
+      const percentageOfUsageInBoard =
+        window.screen.height > 1080 && window.screen.height < 2160 ? 0.75 : 0.6;
       if (this.spaceUsedByBoardInWindow() < percentageOfUsageInBoard) {
         const root = document.documentElement;
         let ZPosition = parseInt(
@@ -1339,7 +1348,7 @@ module.exports = {
         ZPosition = ZPosition + 1;
         root.style.setProperty("--z-position", ZPosition + "px");
         if(window.screen.height > 2160) root.style.setProperty("--top-spacing", ZPosition * 4 + "px");
-        setTimeout(this.zoomOut, 0);
+        setTimeout(this.zoomOut, 10000);
       } else {
         this.adjustUPCenteredGUI();
       }
@@ -1358,7 +1367,7 @@ module.exports = {
         );
         ZPosition = Math.max(-50, Math.min(10, ZPosition - 1));
         root.style.setProperty("--z-position", ZPosition + "px");
-        setTimeout(this.adjustZoom, 0);
+        setTimeout(this.adjustZoom, 10000);
       } else {
         this.adjustCenteredGUI();
       }
@@ -1400,7 +1409,7 @@ module.exports = {
           "--space-between-GUI-n-draw-pile",
           spaceBetween + "px"
         );
-        setTimeout(this.adjustCenteredGUI, 0);
+        setTimeout(this.adjustCenteredGUI, 10000);
       } else if (this.centeredGUICollideWithPlayerStationCards()) {
         const root = document.documentElement;
         let GUIPosition = parseInt(
@@ -1410,7 +1419,7 @@ module.exports = {
         );
         GUIPosition = Math.max(10, Math.min(50, GUIPosition - 1));
         root.style.setProperty("--gui-height-adjust", GUIPosition + "%");
-        setTimeout(this.adjustCenteredGUI, 0);
+        setTimeout(this.adjustCenteredGUI, 10000);
       }
     },
     adjustUPCenteredGUI() {
@@ -1427,8 +1436,8 @@ module.exports = {
           "--space-between-GUI-n-draw-pile",
           spaceBetween + "px"
         );
-        setTimeout(this.adjustCenteredGUI, 0);
-      } else 
+        setTimeout(this.adjustCenteredGUI, 10000);
+      } else
       if (this.centeredGUICollideWithPlayerStationCards()) {
         const root = document.documentElement;
         let GUIPosition = parseInt(
@@ -1438,7 +1447,7 @@ module.exports = {
         );
         GUIPosition = Math.max(30, Math.min(50, GUIPosition - 1));
         root.style.setProperty("--gui-height-adjust", GUIPosition + "%");
-        setTimeout(this.adjustUPCenteredGUI, 0);
+        setTimeout(this.adjustUPCenteredGUI, 10000);
       }
     },
     validateBG() {
@@ -1519,10 +1528,16 @@ module.exports = {
         this.$refs.opponentCardsInPlayerZoneRight
       );
     },
-    calculateStationCardSizenPosition(){
-      const stationRows = document.querySelectorAll('.playerStationCards > .flattenComponent');
-      for(const row of stationRows){
-        if(!this.isStationRowFullyVisible(row)){
+    calculateStationCardSizenPosition() {
+      const stationRows = document.querySelectorAll(
+        ".playerStationCards > .flattenComponent"
+      );
+      for (const row of stationRows) {
+        // screen.width < 600 should only be phones in portrait mode
+        // We don't want to run this then and collapse the station cards
+        // and break the game before the user had any change
+        // to turn the phone to landscape mode
+        if (!this.isStationRowFullyVisible(row) && screen.width > 600) {
           const root = document.documentElement;
           const rowWidth = Number(
             getComputedStyle(root)
@@ -1536,17 +1551,38 @@ module.exports = {
           );
           root.style.setProperty("--player-station-row-width", `${stationWidth + 0.3}%`);
           root.style.setProperty("--player-zone-row-width", `${rowWidth - 0.3}%`);
-          setTimeout(this.calculateStationCardSizenPosition,0)
+          setTimeout(this.calculateStationCardSizenPosition,10000)
           return;
         }
       }
+    },
 
-    }
+    toggleModalGame(e)
+    {
+      console.log(">>>> Se hizo el Toggle del Modal: "+e);
+      //this.$refs.chooseStartingPlayer.toogleChooseModal();
+
+      if (e === undefined || e === null)
+      {
+          this.showingModalGame = !this.showingModalGame;
+      }
+      else {
+        this.showingModalGame = e;
+      }
+
+    },
+
   },
   mounted() {
     this.validateBG();
     this.$store.dispatch("audio/background");
-
+    const isChrome = navigator.appVersion.indexOf("Chrome/") != -1;
+    if (isChrome) {
+      document.documentElement.style.setProperty(
+        "--justify-content-field-opponentStation",
+        "center"
+      );
+    }
     document.addEventListener("mousemove", this.mousemove);
 
     this.$refs.match.addEventListener("click", (event) => {
@@ -1574,18 +1610,27 @@ module.exports = {
       passive: false,
     });
     document.addEventListener("touchend", this.documentTouchend);
-    if(this.spaceUsedByBoardInWindow() >= 0.6){
+    if (this.spaceUsedByBoardInWindow() >= 0.6) {
       this.adjustZoom();
     } else {
-      document.documentElement.style
-      .setProperty("--z-position-adjust","1");
-      let degree = window.screen.height > 2160? 5 : 11 
-      document.documentElement.style
-      .setProperty("--x-rotate-adjust",`${degree}deg`);
+      document.documentElement.style.setProperty("--z-position-adjust", "1");
+      let degree = window.screen.height > 2160 ? 5 : 11;
+      document.documentElement.style.setProperty(
+        "--x-rotate-adjust",
+        `${degree}deg`
+      );
       this.zoomOut();
     }
     this.initializeIntersectionObservers();
-    setTimeout(this.calculateStationCardSizenPosition,1000);
+    setTimeout(this.calculateStationCardSizenPosition, 1000);
+
+    if(this.opponentUser.id != "BOT")
+    {
+      console.log("This is not a BOT");
+      this.$refs.matchHeader.hideInfoModeButtonContainer();
+      this.showingModalGame = true;
+    }
+
   },
   destroyed() {
     document.removeEventListener("mousemove", this.mousemove);
@@ -1603,6 +1648,7 @@ module.exports = {
     CardGhost,
     EventGhost,
     ExpandedCard,
+    InfoModeContainer,
     ChooseStartingPlayer,
     EscapeMenu,
     MatchHeader,

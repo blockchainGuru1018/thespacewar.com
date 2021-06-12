@@ -4,6 +4,8 @@ module.exports = function ({ matchController }) {
     namespaced: true,
     state: {
       selectedCardInfos: [],
+      waiting: false,
+      currentRequirement: null,
     },
     getters: {
       requirement,
@@ -11,6 +13,7 @@ module.exports = function ({ matchController }) {
     },
     actions: {
       done,
+      resetWaiting,
       selectCard,
     },
   };
@@ -20,8 +23,11 @@ module.exports = function ({ matchController }) {
     const isFindCardRequirement =
       firstRequirement && firstRequirement.type === "findCard";
     if (isFindCardRequirement) {
+      state.waiting = state.currentRequirement === firstRequirement.id;
+      state.selectedCardInfos = []
       return firstRequirement;
     }
+    state.currentRequirement = null;
     return null;
   }
 
@@ -46,6 +52,10 @@ module.exports = function ({ matchController }) {
     });
   }
 
+  function resetWaiting ({state}){
+    state.waiting = false;
+  }
+
   function selectCard({ state, getters }, { id, source }) {
     state.selectedCardInfos.push({ id, source });
     if (getters.requirement.submitOnEverySelect) {
@@ -56,6 +66,7 @@ module.exports = function ({ matchController }) {
         state.selectedCardInfos
       );
       state.selectedCardInfos = [];
+      state.waiting = true;
       matchController.emit("selectCardForFindCardRequirement", { cardGroups });
     }
   }

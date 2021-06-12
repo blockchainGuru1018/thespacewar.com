@@ -15,6 +15,7 @@ const PlayerRuleService = require("./PlayerRuleService.js");
 const PlayerPerfectPlan = require("./perfectPlan/PlayerPerfectPlan.js");
 const QueryAttacks = require("./requirement/QueryAttacks.js");
 const OverworkEventFactory = require("./overwork/event/OverworkEventFactory.js");
+const ActionPointsForDrawExtraCardEventFactory = require("./ActionPointsForDrawExtraCard/event/ActionPointsForDrawExtraCardEventFactory.js");
 const PlayerOverwork = require("./overwork/PlayerOverwork.js");
 const FindAcidProjectile = require("./commander/FindAcidProjectile.js");
 const FindDronesForZuuls = require("./commander/FindDronesForZuuls.js");
@@ -76,6 +77,7 @@ module.exports = function ({
     findDronesForZuuls: cached(findDronesForZuuls),
     naaloxDormantEffect: cached(naaloxDormantEffect),
     overworkEventFactory: cached(overworkEventFactory),
+    actionPointsForDrawExtraCardEventFactory: cached(actionPointsForDrawExtraCardEventFactory),
     cardFactory: cached(cardFactory),
     matchService: cached(matchService),
     queryAttacks: cached(queryAttacks),
@@ -327,6 +329,13 @@ module.exports = function ({
 
   function overworkEventFactory(playerId) {
     return OverworkEventFactory({
+      matchService: api.matchService(),
+      playerStateService: api.playerStateService(playerId),
+    });
+  }
+
+  function actionPointsForDrawExtraCardEventFactory(playerId) {
+    return ActionPointsForDrawExtraCardEventFactory({
       matchService: api.matchService(),
       playerStateService: api.playerStateService(playerId),
     });

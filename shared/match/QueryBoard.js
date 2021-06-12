@@ -17,6 +17,15 @@ class QueryBoard {
     return this._opponentStateService.hasMatchingCardInSomeZone(matcher);
   }
 
+  opponentHasCardInSameZone(card, matcher) {
+    const currentCardZone = this._playerStateService.nameOfCardSource(card.id);
+    if (currentCardZone === "zone") {
+      return this._opponentStateService.getCardsInOpponentZone().some(matcher);
+    } else {
+      return this._opponentStateService.getCardsInZone().some(matcher);
+    }
+  }
+
   playerHasCardThatCanCounter() {
     const playerCardsOnHand = this._playerStateService
       .getCardsOnHand()
